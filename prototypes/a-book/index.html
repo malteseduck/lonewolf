@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lone Wolf: The Open Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,700;1,400&family=Alegreya+Sans+SC:wght@500&family=DotGothic16&family=Pirata+One&display=swap">
+<link rel="stylesheet" href="../../shared/shared.css">
+<style>
+/* Layout: an open book on a dark table. Left page = woodcut plate + Action Chart, right page = the section. */
+:root {
+  color-scheme: dark;
+  --table: #14120f; --table-hi: #2a241c;
+  --page: #d9d3c1; --page-edge: #b3ab93;
+  --ink: #26221b; --ink-dim: #6e6450;
+  --kai: #2f5d46; --gilt: #b08a35; --blood: #8c2a1c;
+  --display: 'Pirata One', 'Old English Text MT', Georgia, serif;
+  --body: 'Alegreya', 'Iowan Old Style', Georgia, serif;
+  --util: 'Alegreya Sans SC', 'Gill Sans', sans-serif;
+  --o-bg: var(--page); --o-fg: var(--ink); --o-dim: var(--ink-dim); --o-line: var(--page-edge);
+  --o-accent: var(--kai); --o-accent-fg: #f1eee2; --o-display: var(--display); --o-body: var(--body);
+}
+html, body { margin: 0; }
+body { min-height: 100vh; background: radial-gradient(ellipse at 50% 0%, var(--table-hi), var(--table) 70%) fixed var(--table); color: var(--page); font-family: var(--body); font-size: 18px; line-height: 1.55; padding: 0 16px 48px; }
+
+.bar { max-width: 1120px; margin: 0 auto; padding: 14px 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; font-family: var(--util); letter-spacing: 0.08em; }
+.bar a, .bar button { color: var(--gilt); background: none; border: 0; padding: 0; text-decoration: none; font: inherit; letter-spacing: inherit; }
+.bar a:hover, .bar button:hover { color: var(--page); }
+.bar h1 { margin: 0 auto 0 0; font: 400 1.5rem/1 var(--display); letter-spacing: 0.02em; color: var(--page); }
+.bar h1 span { font: 500 0.85rem var(--util); letter-spacing: 0.1em; color: var(--gilt); margin-left: 8px; }
+
+.book { position: relative; max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; background: var(--page); color: var(--ink); box-shadow: 0 2px 0 var(--page-edge), 0 4px 0 var(--page), 0 6px 0 var(--page-edge), 0 8px 0 var(--page), 0 34px 70px rgba(0, 0, 0, 0.65); }
+.book::after { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 90px; transform: translateX(-50%); pointer-events: none; background: linear-gradient(90deg, transparent, rgba(38, 34, 27, 0.16) 46%, rgba(38, 34, 27, 0.34) 50%, rgba(38, 34, 27, 0.16) 54%, transparent); }
+.page { min-width: 0; padding: 36px 44px 40px; min-height: min(78vh, 760px); display: flex; flex-direction: column; gap: 18px; }
+
+.plate { margin: 0; }
+.plate-art { border: 1px solid var(--ink); outline: 1px solid var(--ink); outline-offset: 3px; line-height: 0; }
+.plate-art canvas { width: 100%; height: auto; image-rendering: pixelated; display: block; }
+.plate figcaption { margin-top: 12px; text-align: center; font-family: var(--util); letter-spacing: 0.14em; color: var(--ink-dim); }
+.chart-host { font-size: 0.95rem; line-height: 1.4; }
+
+.leaf { display: flex; flex-direction: column; gap: 16px; transform-origin: left center; flex: 1; }
+.leaf.turn { animation: turn 0.42s ease-out; }
+@keyframes turn { from { transform: perspective(1400px) rotateY(-38deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.sec-no { text-align: center; font: 400 3rem/1 var(--display); color: var(--kai); }
+.sec-no::before, .sec-no::after { content: ''; display: inline-block; vertical-align: middle; width: 56px; height: 1px; margin: 0 14px; background: var(--page-edge); }
+.sec-text { max-width: 34em; }
+.sec-text p { margin: 0 0 0.8em; text-align: justify; hyphens: auto; }
+.sec-text p:first-child::first-letter { float: left; font: 400 3.4em/0.82 var(--display); padding: 0.06em 0.08em 0 0; color: var(--blood); }
+.events { list-style: none; margin: 0; padding: 0; font-style: italic; color: var(--kai); }
+.loot, .foes { border-top: 1px solid var(--page-edge); padding-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.loot .lbl, .foes .lbl { font-family: var(--util); letter-spacing: 0.1em; color: var(--ink-dim); width: 100%; }
+.pill { padding: 3px 12px; border: 1px solid var(--ink); background: transparent; color: var(--ink); }
+.pill:hover:not(:disabled) { background: var(--ink); color: var(--page); }
+.pill:disabled { border-style: dashed; color: var(--ink-dim); border-color: var(--page-edge); }
+.foe { flex: 1 1 100%; display: flex; justify-content: space-between; gap: 12px; font-variant-numeric: tabular-nums; }
+.foe b { font-weight: 700; }
+.fight { margin-top: 4px; padding: 10px 28px; border: 0; background: var(--blood); color: var(--page); font: 400 1.4rem/1 var(--display); letter-spacing: 0.04em; }
+.fight:hover { background: var(--ink); }
+.choices { list-style: none; margin: auto 0 0; padding: 14px 0 0; border-top: 3px double var(--page-edge); display: flex; flex-direction: column; gap: 6px; }
+.choice { width: 100%; display: grid; grid-template-columns: 1.4em minmax(0, 1fr); padding: 6px 8px 6px 0; border: 0; background: none; text-align: left; color: var(--ink); }
+.choice::before { content: '\2767'; color: var(--kai); }
+.choice:hover:not(:disabled) span { text-decoration: underline; text-decoration-color: var(--kai); text-underline-offset: 3px; }
+.choice:disabled { color: var(--ink-dim); }
+.choice:disabled::before { content: '\2715'; color: var(--page-edge); }
+.choice small { grid-column: 2; font-family: var(--util); letter-spacing: 0.08em; color: var(--ink-dim); }
+.choice .tag { font-family: var(--util); letter-spacing: 0.08em; color: var(--kai); }
+.finis { margin-top: auto; text-align: center; border-top: 3px double var(--page-edge); padding-top: 16px; }
+.finis h2 { margin: 0 0 4px; font: 400 2.2rem/1.1 var(--display); }
+.finis.dead h2 { color: var(--blood); }
+.finis p { margin: 0 0 12px; color: var(--ink-dim); }
+
+@media (max-width: 860px) {
+  body { font-size: 17px; }
+  .book { grid-template-columns: 1fr; }
+  .book::after { display: none; }
+  .page { padding: 24px 20px; min-height: 0; }
+  .page.right { order: -1; border-bottom: 1px solid var(--page-edge); }
+}
+@media (prefers-reduced-motion: reduce) { .leaf.turn { animation: none; } }
+</style>
+</head>
+<body>
+<header class="bar">
+  <h1>Lone Wolf <span id="book-title"></span></h1>
+  <a href="../index.html">Prototypes</a>
+  <button type="button" id="btn-sound"></button>
+  <button type="button" id="btn-new">New game</button>
+</header>
+<main class="book">
+  <section class="page left" aria-label="Illustration and Action Chart">
+    <figure class="plate"><div class="plate-art"></div><figcaption></figcaption></figure>
+    <div class="chart-host" id="chart"></div>
+  </section>
+  <section class="page right" aria-label="Story">
+    <div class="leaf" id="leaf" aria-live="polite"></div>
+  </section>
+</main>
+
+<script src="../../shared/core.js"></script>
+<script src="../../shared/book-demo.js"></script>
+<script src="../../shared/art.js"></script>
+<script src="../../shared/ui.js"></script>
+<script src="../../shared/battle.js"></script>
+<script src="../../shared/flow.js"></script>
+<script>
+(function () {
+  const { esc, toast } = LW.UI;
+  const book = LW.BOOK_DEMO;
+  const game = new LW.Game(book, 'lw-proto-book');
+  const $ = (s) => document.querySelector(s);
+  const leaf = $('#leaf'), chart = $('#chart');
+  let shownScene = null;
+
+  function render(turn) {
+    const sec = game.section, id = game.s.at;
+    if (shownScene !== sec.scene) {
+      const art = $('.plate-art'); art.innerHTML = ''; art.appendChild(LW.Art.scene(sec.scene, true));
+      shownScene = sec.scene;
+    }
+    $('.plate figcaption').textContent = book.locations[sec.loc].name;
+    chart.innerHTML = LW.UI.chartHTML(game);
+
+    let h = `<div class="sec-no">${esc(id)}</div><div class="sec-text">${sec.text.map((p) => `<p>${esc(p)}</p>`).join('')}</div>`;
+    if (game.s.events.length) h += `<ul class="events">${game.s.events.map((e) => `<li>${esc(e)}</li>`).join('')}</ul>`;
+
+    const loot = game.loot();
+    if (loot.length && !game.dead) {
+      h += `<div class="loot"><span class="lbl">You may take</span>${loot.map((l) =>
+        `<button type="button" class="pill" data-loot="${l.i}" ${l.taken ? 'disabled' : ''}>${esc(l.label)}${l.taken ? ' (taken)' : ''}</button>`).join('')}</div>`;
+    }
+    if (game.dead) {
+      h += `<div class="finis dead"><h2>Your adventure ends here</h2><p>The last of the Kai falls on the road to Holmgard.</p><button type="button" class="lwo-btn" data-new>Begin again</button></div>`;
+    } else if (game.combatPending) {
+      h += `<div class="foes"><span class="lbl">You must fight</span>${sec.combat.enemies.map((f) =>
+        `<div class="foe"><b>${esc(f.name)}</b><span>Combat Skill ${f.cs} &middot; Endurance ${f.ep}</span></div>`).join('')}
+        <button type="button" class="fight" data-fight>To battle</button></div>`;
+    } else if (sec.end) {
+      h += `<div class="finis"><h2>Here the demo ends</h2><p>The full book runs to 350 sections. This was ${game.s.trail.length} of them.</p><button type="button" class="lwo-btn" data-new>Play again</button></div>`;
+    } else {
+      h += `<ul class="choices">${game.choices().map((c, i) => `<li><button type="button" class="choice" data-choice="${i}" ${c.enabled ? '' : 'disabled'}>
+        <span>${esc(c.text)}${c.need && c.need.disc && c.enabled ? ` <i class="tag">${esc(LW.DISCIPLINES[c.need.disc].name)}</i>` : ''}${c.random ? ' <i class="tag">Random Number</i>' : ''}</span>
+        ${c.enabled ? '' : `<small>${esc(c.why)}</small>`}</button></li>`).join('')}</ul>`;
+    }
+    leaf.innerHTML = h;
+    if (turn) { leaf.classList.remove('turn'); void leaf.offsetWidth; leaf.classList.add('turn'); window.scrollTo({ top: 0 }); }
+  }
+
+  leaf.addEventListener('click', async (e) => {
+    const t = e.target.closest('button'); if (!t) return;
+    if (t.dataset.loot != null) {
+      const err = game.takeLoot(+t.dataset.loot);
+      if (err) toast(err); else LW.sfx('select');
+      render();
+    } else if (t.dataset.choice != null) {
+      await LW.Flow.pick(game, game.choices()[+t.dataset.choice]);
+      render(true);
+    } else if ('fight' in t.dataset) {
+      const out = await LW.Flow.fight(game);
+      render(out === 'evade');
+    } else if ('new' in t.dataset) newGame();
+  });
+  LW.UI.bindChart(chart, game, () => render());
+
+  async function newGame() {
+    game.clear();
+    game.start(await LW.UI.createHero(book));
+    render(true);
+  }
+  const soundBtn = $('#btn-sound');
+  const soundLabel = () => { soundBtn.textContent = LW.sound.on ? 'Sound on' : 'Sound off'; };
+  soundBtn.addEventListener('click', () => { LW.setSound(!LW.sound.on); soundLabel(); });
+  $('#btn-new').addEventListener('click', newGame);
+  $('#book-title').textContent = book.title;
+  soundLabel();
+
+  if (game.load()) render(); else newGame();
+})();
+</script>
+</body>
+</html>

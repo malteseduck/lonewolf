@@ -1,0 +1,4 @@
+{
+  "_readme": "Map an enemy sprite key (kraan, giak, vordak) to an image file in this folder. When present it replaces the drawn ink creature on the combat page. Dark ink on a light or transparent ground works best; the image is multiplied onto the parchment.",
+  "enemies": {}
+}

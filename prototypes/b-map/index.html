@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lone Wolf: The Map Journey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almendra:ital,wght@0,400;0,700;1,400&family=Almendra+SC&family=DotGothic16&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/shared.css">
+<style>
+/* Layout: a painted map fills the screen and follows your pawn; the story is a column of
+   paper strips stitched together by the choices you made. Any earlier strip can be rewound to. */
+:root {
+  color-scheme: dark;
+  --night: #121826; --night-hi: #1f2940;
+  --paper: #f4f1e6; --paper-dim: #cfc9b6;
+  --ink: #1b2333; --ink-dim: #5d6472;
+  --route: #c2392b; --teal: #1f6f78;
+  --display: 'Almendra', 'Palatino Linotype', Georgia, serif;
+  --caps: 'Almendra SC', 'Palatino Linotype', Georgia, serif;
+  --body: 'Spectral', Georgia, serif;
+  --o-bg: var(--paper); --o-fg: var(--ink); --o-dim: var(--ink-dim); --o-line: var(--paper-dim);
+  --o-accent: var(--teal); --o-accent-fg: #fff; --o-display: var(--display); --o-body: var(--body);
+}
+html, body { height: 100%; margin: 0; }
+body { background: var(--night); color: var(--paper); font-family: var(--body); font-size: 17px; line-height: 1.55; overflow: hidden; }
+.app { height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) min(460px, 42vw); }
+
+.mapwrap { position: relative; overflow: hidden; background: var(--night); min-height: 0; }
+.map { position: absolute; left: 0; top: 0; width: 1000px; height: 700px; transform-origin: 0 0; transition: transform 1.1s cubic-bezier(0.3, 0.1, 0.2, 1); }
+.map canvas, .map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.map .land { font: 400 46px var(--caps); letter-spacing: 0.5em; fill: var(--ink); opacity: 0.2; }
+.map .place { font: 400 15px var(--caps); fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }
+.map .node circle { fill: var(--paper); stroke: var(--ink); stroke-width: 2; }
+.map .node.seen circle { fill: var(--route); }
+.map .node.seen { cursor: pointer; }
+.map .node.here { cursor: default; }
+.map .route { fill: none; stroke: var(--route); stroke-width: 3.5; stroke-dasharray: 9 6; stroke-linecap: round; stroke-linejoin: round; }
+.map .pawn { transition: transform 1.1s cubic-bezier(0.3, 0.1, 0.2, 1); }
+.mapwrap::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 90px 20px rgba(18, 24, 38, 0.75); }
+
+.hud { position: absolute; z-index: 2; left: 16px; top: calc(16px + env(safe-area-inset-top, 0px)); display: flex; flex-wrap: wrap; gap: 8px; max-width: calc(100% - 32px); }
+.chip { display: flex; align-items: baseline; gap: 6px; padding: 5px 12px; background: var(--paper); color: var(--ink); border: 1px solid var(--ink); font-variant-numeric: tabular-nums; }
+.chip .k { font: 400 0.8rem var(--caps); letter-spacing: 0.06em; color: var(--ink-dim); }
+.chip b { font: 700 1.15rem/1 var(--display); }
+.chip.hurt b { color: var(--route); }
+button.chip:hover { background: var(--ink); color: var(--paper); }
+button.chip { font: 400 0.95rem var(--caps); letter-spacing: 0.06em; }
+
+.story { min-height: 0; display: flex; flex-direction: column; background: linear-gradient(180deg, var(--night-hi), var(--night)); border-left: 1px solid #000; }
+.story header { padding: 14px 20px 12px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; border-bottom: 1px solid rgba(244, 241, 230, 0.15); }
+.story h1 { margin: 0 auto 0 0; font: 700 1.5rem/1.1 var(--display); }
+.story h1 small { display: block; font: 400 0.8rem var(--caps); letter-spacing: 0.12em; color: var(--paper-dim); margin-top: 3px; }
+.story header a, .story header button { font: 400 0.85rem var(--caps); letter-spacing: 0.08em; color: var(--paper-dim); background: none; border: 0; padding: 0; text-decoration: none; }
+.story header a:hover, .story header button:hover { color: #fff; }
+.scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 18px 20px calc(28px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 0; scroll-behavior: smooth; }
+
+.frag { position: relative; background: var(--paper); color: var(--ink); padding: 16px 20px 18px;
+  clip-path: polygon(0 5px, 6% 1px, 14% 4px, 23% 0, 34% 5px, 45% 2px, 58% 5px, 69% 1px, 80% 4px, 91% 0, 100% 4px, 100% calc(100% - 4px), 93% 100%, 82% calc(100% - 5px), 70% calc(100% - 1px), 57% calc(100% - 5px), 44% 100%, 31% calc(100% - 4px), 19% calc(100% - 1px), 8% calc(100% - 5px), 0 calc(100% - 2px)); }
+.frag:nth-child(4n + 1) { transform: rotate(-0.35deg); }
+.frag:nth-child(4n + 3) { transform: rotate(0.3deg); }
+.frag p { margin: 0 0 0.7em; }
+.frag p:last-child { margin-bottom: 0; }
+.frag .where { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 6px; font: 400 0.8rem var(--caps); letter-spacing: 0.1em; color: var(--ink-dim); }
+.frag.past { background: var(--paper-dim); }
+.frag.past p { color: var(--ink-dim); }
+.rewind { border: 0; background: none; padding: 0; font: inherit; letter-spacing: inherit; color: var(--teal); text-decoration: underline; text-underline-offset: 2px; }
+.stitch { align-self: center; max-width: 86%; margin: 0; padding: 12px 0; text-align: center; font-style: italic; font-size: 0.95rem; color: var(--paper-dim); background: linear-gradient(var(--paper-dim), var(--paper-dim)) center top / 1px 8px no-repeat, linear-gradient(var(--paper-dim), var(--paper-dim)) center bottom / 1px 8px no-repeat; }
+.events { list-style: none; margin: 10px 0 0; padding: 8px 0 0; border-top: 1px dashed var(--paper-dim); font-style: italic; color: var(--teal); }
+.loot, .foes { margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.lbl { width: 100%; font: 400 0.8rem var(--caps); letter-spacing: 0.1em; color: var(--ink-dim); }
+.pill { padding: 2px 12px; border: 1px solid var(--ink); border-radius: 99px; background: transparent; color: var(--ink); }
+.pill:hover:not(:disabled) { background: var(--ink); color: var(--paper); }
+.pill:disabled { border-style: dashed; color: var(--ink-dim); }
+.foe { flex: 1 1 100%; display: flex; justify-content: space-between; gap: 10px; font-variant-numeric: tabular-nums; }
+.fight { margin-top: 4px; padding: 8px 22px; border: 0; background: var(--route); color: #fff; font: 700 1.1rem var(--display); }
+.fight:hover { background: var(--ink); }
+.choices { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.choice { width: 100%; padding: 9px 14px; border: 1px solid var(--ink); background: #fff; color: var(--ink); text-align: left; box-shadow: 3px 3px 0 var(--ink); }
+.choice:hover:not(:disabled) { background: var(--ink); color: var(--paper); }
+.choice:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+.choice:disabled { border-style: dashed; background: transparent; color: var(--ink-dim); box-shadow: none; }
+.choice .tag, .choice small { display: block; font: 400 0.78rem var(--caps); letter-spacing: 0.08em; color: var(--teal); }
+.choice:hover:not(:disabled) .tag { color: var(--paper-dim); }
+.choice small { color: var(--ink-dim); }
+.finis h2 { margin: 14px 0 4px; font: 700 1.5rem/1.15 var(--display); }
+.finis.dead h2 { color: var(--route); }
+.finis p { margin: 0 0 10px; color: var(--ink-dim); }
+.finis .row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.lwo-chart { width: min(460px, 100%); }
+@media (max-width: 820px) {
+  .app { grid-template-columns: 1fr; grid-template-rows: 38% minmax(0, 1fr); }
+  .story { border-left: 0; border-top: 1px solid #000; }
+  .hud { left: 8px; top: calc(8px + env(safe-area-inset-top, 0px)); gap: 5px; }
+  .chip { padding: 3px 8px; }
+}
+@media (prefers-reduced-motion: reduce) { .map, .map .pawn { transition: none; } .scroll { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="mapwrap" id="mapwrap">
+    <div class="map" id="map">
+      <canvas width="2000" height="1400"></canvas>
+      <svg viewBox="0 0 1000 700" aria-label="Map of the road to Holmgard">
+        <text class="land" x="300" y="655">SOMMERLUND</text>
+        <polyline class="route" id="route" points=""></polyline>
+        <g id="nodes"></g>
+        <g class="pawn" id="pawn">
+          <ellipse cx="0" cy="3" rx="11" ry="4" fill="rgba(0,0,0,0.35)"></ellipse>
+          <path d="M-9 2 Q-10 -14 0 -22 Q10 -14 9 2 Z" fill="#2f6b4a" stroke="#1b2333" stroke-width="2"></path>
+          <circle cx="0" cy="-25" r="6" fill="#ecd2ad" stroke="#1b2333" stroke-width="2"></circle>
+        </g>
+      </svg>
+    </div>
+    <div class="hud" id="hud"></div>
+  </div>
+  <aside class="story">
+    <header>
+      <h1>Lone Wolf<small id="book-title"></small></h1>
+      <a href="../index.html">Prototypes</a>
+      <button type="button" id="btn-sound"></button>
+      <button type="button" id="btn-new">New game</button>
+    </header>
+    <div class="scroll" id="scroll" aria-live="polite"></div>
+  </aside>
+</div>
+
+<script src="../../shared/core.js"></script>
+<script src="../../shared/book-demo.js"></script>
+<script src="../../shared/art.js"></script>
+<script src="../../shared/ui.js"></script>
+<script src="../../shared/battle.js"></script>
+<script src="../../shared/flow.js"></script>
+<script>
+(function () {
+  const { esc, toast, el } = LW.UI;
+  const book = LW.BOOK_DEMO, L = book.locations;
+  const game = new LW.Game(book, 'lw-proto-map');
+  const $ = (s) => document.querySelector(s);
+  const scroll = $('#scroll'), hud = $('#hud'), mapEl = $('#map'), wrap = $('#mapwrap');
+  const SVGNS = 'http://www.w3.org/2000/svg';
+
+  /* ---------- Paint the map once ---------- */
+  function paintMap() {
+    const ctx = mapEl.querySelector('canvas').getContext('2d');
+    ctx.scale(2, 2);
+    const r = LW.Art.seeded(11);
+    const ell = (x, y, rx, ry) => { ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.fill(); };
+    ctx.fillStyle = '#b9c683'; ctx.fillRect(0, 0, 1000, 700);
+    for (let i = 0; i < 520; i++) {
+      ctx.fillStyle = r() < 0.5 ? 'rgba(255,244,180,0.10)' : 'rgba(64,110,58,0.10)';
+      ell(r() * 1000, r() * 700, 20 + r() * 70, 10 + r() * 30);
+    }
+    // sea
+    ctx.fillStyle = '#3f86a8'; ctx.beginPath(); ctx.moveTo(1000, 520); ctx.bezierCurveTo(950, 580, 990, 640, 940, 700); ctx.lineTo(1000, 700); ctx.fill();
+    ctx.strokeStyle = '#e9e2c0'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(1000, 520); ctx.bezierCurveTo(950, 580, 990, 640, 940, 700); ctx.stroke();
+
+    const rivers = [new Path2D('M600 0 C560 150 560 260 535 330 S470 470 420 540 S330 640 300 700'), new Path2D('M1000 380 C900 430 860 500 840 550 S790 650 770 700')];
+    const road = new Path2D('M550 468 Q640 425 735 470 T838 552 T915 628');
+    const trails = [new Path2D('M150 110 Q230 140 285 195 T350 320 T462 432'), new Path2D('M150 110 Q110 200 140 280 T350 320'), new Path2D('M462 432 Q500 370 540 318'), new Path2D('M462 432 Q430 490 418 548')];
+
+    // hills in the west, mountains in the north-east
+    for (let i = 0; i < 46; i++) {
+      const a = r() * Math.PI * 2, d = 30 + r() * 80, x = 140 + Math.cos(a) * d, y = 285 + Math.sin(a) * d * 0.7, w = 10 + r() * 10;
+      ctx.fillStyle = '#cdc381'; ctx.strokeStyle = '#8a7a45'; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.arc(x, y, w, Math.PI, 0); ctx.fill(); ctx.stroke();
+    }
+    const peaks = []; for (let i = 0; i < 22; i++) peaks.push([740 + r() * 240, 30 + r() * 150, 18 + r() * 22]);
+    peaks.sort((a, b) => a[1] - b[1]).forEach(([x, y, s]) => {
+      ctx.fillStyle = '#8d8983'; ctx.beginPath(); ctx.moveTo(x - s, y + s); ctx.lineTo(x, y - s); ctx.lineTo(x + s, y + s); ctx.fill();
+      ctx.fillStyle = '#b8b3aa'; ctx.beginPath(); ctx.moveTo(x - s, y + s); ctx.lineTo(x, y - s); ctx.lineTo(x - s * 0.15, y + s); ctx.fill();
+      ctx.fillStyle = '#f4f1e6'; ctx.beginPath(); ctx.moveTo(x - s * 0.35, y - s * 0.3); ctx.lineTo(x, y - s); ctx.lineTo(x + s * 0.35, y - s * 0.3); ctx.lineTo(x, y - s * 0.15); ctx.fill();
+    });
+
+    // water, then roads
+    ctx.lineCap = 'round';
+    rivers.forEach((p) => { ctx.strokeStyle = '#2f6f8f'; ctx.lineWidth = 15; ctx.stroke(p); ctx.strokeStyle = '#69a9c4'; ctx.lineWidth = 9; ctx.stroke(p); });
+    ctx.strokeStyle = '#8a7444'; ctx.lineWidth = 8; ctx.stroke(road); ctx.strokeStyle = '#e6d8a6'; ctx.lineWidth = 5; ctx.stroke(road);
+    ctx.setLineDash([2, 7]); ctx.strokeStyle = '#6b5a32'; ctx.lineWidth = 2.5; trails.forEach((p) => ctx.stroke(p)); ctx.setLineDash([]);
+
+    // forests: trees sorted back to front, kept off water, roads and places
+    const woods = [[290, 215, 200, 125], [370, 430, 160, 125], [630, 230, 130, 115], [650, 580, 120, 70], [110, 540, 120, 130], [860, 330, 80, 70], [480, 90, 110, 70]];
+    const trees = [];
+    ctx.lineWidth = 30;
+    for (let i = 0; i < 2600; i++) {
+      const w = woods[Math.floor(r() * woods.length)], a = r() * Math.PI * 2, d = Math.sqrt(r());
+      const x = w[0] + Math.cos(a) * d * w[2], y = w[1] + Math.sin(a) * d * w[3];
+      if (x < 0 || x > 1000 || y < 0 || y > 700) continue;
+      if (rivers.some((p) => ctx.isPointInStroke(p, x * 2, y * 2)) || ctx.isPointInStroke(road, x * 2, y * 2)) continue;
+      if (Object.values(L).some((p) => Math.hypot(p.x - x, p.y - y) < 24)) continue;
+      if (Math.hypot(140 - x, (285 - y) / 0.7) < 105) continue;
+      trees.push([x, y, 5.5 + r() * 3.5]);
+    }
+    trees.sort((a, b) => a[1] - b[1]).forEach(([x, y, s]) => {
+      ctx.fillStyle = 'rgba(20,40,25,0.22)'; ell(x + 2, y + s * 0.7, s, s * 0.5);
+      ctx.fillStyle = '#2e5e3a'; ell(x, y, s, s);
+      ctx.fillStyle = '#4f8f4f'; ell(x - s * 0.25, y - s * 0.3, s * 0.55, s * 0.55);
+    });
+
+    // landmarks
+    const ink = '#1b2333';
+    const block = (c, x, y, w, h) => { ctx.fillStyle = c; ctx.fillRect(x, y, w, h); ctx.strokeStyle = ink; ctx.lineWidth = 1.5; ctx.strokeRect(x, y, w, h); };
+    block('#8d8983', 128, 84, 12, 22); block('#8d8983', 140, 92, 26, 14); block('#8d8983', 160, 78, 10, 28);
+    ctx.fillStyle = 'rgba(40,36,44,0.45)'; for (let i = 0; i < 6; i++) ell(150 + i * 5, 72 - i * 9, 7 + i * 2, 5 + i);
+    block('#f4f1e6', 890, 604, 52, 18); [888, 910, 934].forEach((x) => block('#f4f1e6', x, 594, 10, 28));
+    ctx.fillStyle = '#c2392b'; [893, 915, 939].forEach((x) => { ctx.fillRect(x - 0.5, 582, 1.5, 12); ctx.beginPath(); ctx.moveTo(x + 1, 582); ctx.lineTo(x + 9, 585); ctx.lineTo(x + 1, 588); ctx.fill(); });
+    ctx.save(); ctx.translate(838, 552); ctx.rotate(0.7); block('#b8b3aa', -16, -5, 32, 10); ctx.restore();
+    ctx.save(); ctx.translate(540, 318); ctx.rotate(-0.25); block('#7a5230', -15, -2.5, 30, 5); ctx.restore();
+    block('#a67c45', 340, 300, 16, 8); ctx.fillStyle = ink; ell(343, 310, 3, 3); ell(353, 310, 3, 3);
+
+    // compass
+    ctx.save(); ctx.translate(70, 630); ctx.strokeStyle = ink; ctx.fillStyle = ink; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(0, 0, 26, 0, Math.PI * 2); ctx.stroke();
+    for (let i = 0; i < 4; i++) { ctx.rotate(Math.PI / 2); ctx.beginPath(); ctx.moveTo(0, -34); ctx.lineTo(5, 0); ctx.lineTo(-5, 0); ctx.fill(); }
+    ctx.font = "16px 'Almendra SC', serif"; ctx.textAlign = 'center'; ctx.fillText('N', 0, -40); ctx.restore();
+  }
+
+  /* ---------- Map overlay: places, route, pawn, camera ---------- */
+  function buildNodes() {
+    const g = $('#nodes');
+    for (const key in L) {
+      const n = document.createElementNS(SVGNS, 'g');
+      n.setAttribute('class', 'node'); n.dataset.loc = key;
+      n.innerHTML = `<circle cx="${L[key].x}" cy="${L[key].y}" r="6"></circle><text class="place" x="${L[key].x + 11}" y="${L[key].y - 9}">${esc(L[key].name)}</text>`;
+      g.appendChild(n);
+    }
+    g.addEventListener('click', (e) => {
+      const n = e.target.closest('.node.seen:not(.here)'); if (!n) return;
+      const trail = game.s.trail;
+      for (let i = trail.length - 2; i >= 0; i--) if (book.sections[trail[i].id].loc === n.dataset.loc) return rewind(i);
+    });
+  }
+  function camera() {
+    const p = L[game.section.loc], w = wrap.clientWidth, h = wrap.clientHeight;
+    const z = Math.max(w / 1000, h / 700) * 1.3;
+    const tx = Math.min(0, Math.max(w - 1000 * z, w / 2 - p.x * z));
+    const ty = Math.min(0, Math.max(h - 700 * z, h / 2 - p.y * z));
+    mapEl.style.transform = `translate(${tx}px, ${ty}px) scale(${z})`;
+  }
+  function drawMap() {
+    const locs = [];
+    game.s.trail.forEach((t) => { const k = book.sections[t.id].loc; if (locs[locs.length - 1] !== k) locs.push(k); });
+    $('#route').setAttribute('points', locs.map((k) => `${L[k].x},${L[k].y}`).join(' '));
+    const here = game.section.loc;
+    document.querySelectorAll('#nodes .node').forEach((n) => {
+      const k = n.dataset.loc, seen = locs.includes(k);
+      n.classList.toggle('seen', seen); n.classList.toggle('here', k === here);
+      n.querySelector('text').style.display = seen || k === 'holmgard' ? '' : 'none';
+    });
+    $('#pawn').style.transform = `translate(${L[here].x}px, ${L[here].y}px)`;
+    camera();
+  }
+
+  /* ---------- Story column ---------- */
+  function render(jump) {
+    const hero = game.hero, trail = game.s.trail, last = trail.length - 1;
+    hud.innerHTML = `
+      <span class="chip"><span class="k">Combat Skill</span><b>${LW.heroCS(hero).total}</b></span>
+      <span class="chip ${hero.ep <= hero.epMax / 3 ? 'hurt' : ''}"><span class="k">Endurance</span><b>${Math.max(0, hero.ep)}/${hero.epMax}</b></span>
+      <span class="chip"><span class="k">Gold</span><b>${hero.gold}</b></span>
+      <span class="chip"><span class="k">Meals</span><b>${hero.meals}</b></span>
+      <button type="button" class="chip" id="btn-chart">Action Chart</button>`;
+
+    let h = '';
+    trail.forEach((t, i) => {
+      const sec = book.sections[t.id];
+      if (t.via) h += `<p class="stitch">${esc(t.via)}</p>`;
+      if (i < last) {
+        h += `<article class="frag past"><div class="where"><span>${esc(L[sec.loc].name)}</span><button type="button" class="rewind" data-rewind="${i}">Rewind to here</button></div>${sec.text.map((p) => `<p>${esc(p)}</p>`).join('')}</article>`;
+        return;
+      }
+      h += `<article class="frag now"><div class="where"><span>${esc(L[sec.loc].name)}</span><span>&sect; ${esc(t.id)}</span></div>${sec.text.map((p) => `<p>${esc(p)}</p>`).join('')}`;
+      if (game.s.events.length) h += `<ul class="events">${game.s.events.map((e) => `<li>${esc(e)}</li>`).join('')}</ul>`;
+      const loot = game.loot();
+      if (loot.length && !game.dead) h += `<div class="loot"><span class="lbl">You may take</span>${loot.map((l) =>
+        `<button type="button" class="pill" data-loot="${l.i}" ${l.taken ? 'disabled' : ''}>${esc(l.label)}${l.taken ? ' (taken)' : ''}</button>`).join('')}</div>`;
+      if (game.dead) {
+        h += `<div class="finis dead"><h2>Your adventure ends here</h2><p>Unless you unpick a stitch and try another way.</p><div class="row">${last > 0 ? `<button type="button" class="lwo-btn" data-rewind="${last - 1}">Rewind one step</button>` : ''}<button type="button" class="lwo-btn ghost" data-new>Begin again</button></div></div>`;
+      } else if (game.combatPending) {
+        h += `<div class="foes"><span class="lbl">You must fight</span>${sec.combat.enemies.map((f) =>
+          `<div class="foe"><b>${esc(f.name)}</b><span>Combat Skill ${f.cs} &middot; Endurance ${f.ep}</span></div>`).join('')}<button type="button" class="fight" data-fight>To battle</button></div>`;
+      } else if (sec.end) {
+        h += `<div class="finis"><h2>Here the demo ends</h2><p>You reached Holmgard in ${trail.length} sections. The full book has 350.</p><div class="row"><button type="button" class="lwo-btn" data-new>Play again</button></div></div>`;
+      } else {
+        h += `<ul class="choices">${game.choices().map((c, n) => `<li><button type="button" class="choice" data-choice="${n}" ${c.enabled ? '' : 'disabled'}>${esc(c.text)}${
+          c.enabled && c.need && c.need.disc ? `<span class="tag">${esc(LW.DISCIPLINES[c.need.disc].name)}</span>` : ''}${c.random ? '<span class="tag">Random Number</span>' : ''}${c.enabled ? '' : `<small>${esc(c.why)}</small>`}</button></li>`).join('')}</ul>`;
+      }
+      h += '</article>';
+    });
+    scroll.innerHTML = h;
+    drawMap();
+    if (jump) { const now = scroll.querySelector('.frag.now'); requestAnimationFrame(() => { scroll.scrollTop = Math.max(0, now.offsetTop - scroll.offsetTop - 60); }); }
+  }
+
+  function rewind(i) { game.rewind(i); LW.sfx('page'); render(true); }
+
+  scroll.addEventListener('click', async (e) => {
+    const t = e.target.closest('button'); if (!t) return;
+    if (t.dataset.rewind != null) rewind(+t.dataset.rewind);
+    else if (t.dataset.loot != null) {
+      const err = game.takeLoot(+t.dataset.loot);
+      if (err) toast(err); else LW.sfx('select');
+      render();
+    } else if (t.dataset.choice != null) {
+      await LW.Flow.pick(game, game.choices()[+t.dataset.choice]);
+      render(true);
+    } else if ('fight' in t.dataset) {
+      const out = await LW.Flow.fight(game);
+      render(out === 'evade');
+    } else if ('new' in t.dataset) newGame();
+  });
+
+  hud.addEventListener('click', (e) => {
+    if (!e.target.closest('#btn-chart')) return;
+    const back = el('div', 'lwo');
+    const panel = el('div', 'lwo-panel lwo-chart');
+    const fill = () => { panel.innerHTML = `<h2>Action Chart</h2><div class="chart-host">${LW.UI.chartHTML(game)}</div><div class="lwo-actions"><button type="button" class="lwo-btn" data-close>Close</button></div>`; };
+    fill(); back.appendChild(panel); document.body.appendChild(back);
+    LW.UI.bindChart(panel, game, () => { fill(); render(); });
+    back.addEventListener('click', (ev) => { if (ev.target === back || ev.target.closest('[data-close]')) back.remove(); });
+    panel.querySelector('[data-close]').focus();
+  });
+
+  async function newGame() {
+    game.clear();
+    game.start(await LW.UI.createHero(book));
+    render(true);
+  }
+  const soundBtn = $('#btn-sound');
+  const soundLabel = () => { soundBtn.textContent = LW.sound.on ? 'Sound on' : 'Sound off'; };
+  soundBtn.addEventListener('click', () => { LW.setSound(!LW.sound.on); soundLabel(); });
+  $('#btn-new').addEventListener('click', newGame);
+  $('#book-title').textContent = book.title;
+  soundLabel();
+  window.addEventListener('resize', () => game.s && camera());
+
+  paintMap(); buildNodes();
+  if (game.load()) render(true); else newGame();
+})();
+</script>
+</body>
+</html>
