@@ -1,5 +1,5 @@
 /* Map buildings drawn as vectors, after the icons on the official Maps of Magnamund (a castle, the
-   Kai Monastery, a tower, a keep, a house, a temple, an obelisk), in pen and wash: pale walls, a
+   Kai Monastery, a tower, a keep, a house, a temple, an obelisk, a bridge), in pen and wash: pale walls, a
    wash and hatching on the shaded right-hand faces, dark openings, and a slightly unsteady ink
    line so they sit with the engraved symbols. Each is drawn in its own units (ground at y = 0, up
    is negative) and scaled to any height, so it stays crisp at every zoom. They are part of the
@@ -123,6 +123,24 @@ const BUILDINGS = {
       T.fill(shaft, LIT); T.fill([[1, -7], [1, -58], [5, -51], [8, -7]], SHADE); T.hatch([[1, -7], [1, -58], [5, -51], [8, -7]], 2.6);
       T.line(shaft, true); T.line([[0, -59], [1, -7]], false, 0.5);
       T.hatch([[2, 0], [15, 0], [15, -7], [2, -7]], 2.6);
+    },
+  },
+  /* a stone bridge seen from the side: two arches over the water, a parapet along the top */
+  bridge: {
+    h: 34,
+    draw(T) {
+      // the water under the arches, in ripples
+      for (const [y, a, b] of [[-3, -36, 34], [-7, -30, 28], [1, -40, 38]]) T.line([[a, y], [(a + b) / 2 - 6, y - 1.2], [(a + b) / 2 + 6, y + 0.8], [b, y]], false, 0.45);
+      const span = [[-46, -14], [-34, -22], [0, -26], [34, -22], [46, -14], [46, -10], [-46, -10]];
+      const body = [[-46, -10], [-46, -14], [-34, -22], [0, -26], [34, -22], [46, -14], [46, -10], [26, -10], [26, 0], [-26, 0], [-26, -10]];
+      T.shape(body, LIT); T.hatch(span, 4.5, 0.04, 0.3);
+      T.stones(-40, 30, -12, -22, 5);
+      // the arches, dark, with the river through them
+      [-13, 13].forEach((c) => { const pts = [[c - 10, 0], [c - 10, -8]]; for (let i = 1; i < 8; i++) { const a = Math.PI - (i / 8) * Math.PI; pts.push([c + Math.cos(a) * 10, -8 - Math.sin(a) * 8]); } pts.push([c + 10, -8], [c + 10, 0]); T.shape(pts, DARK, 0.8); });
+      const end = [[30, -10], [30, -23], [34, -22], [46, -14], [46, -10]]; T.fill(end, SHADE); T.hatch(end, 2.2); T.line(end, true, 0.8);
+      // the parapet
+      T.line([[-48, -16], [-34, -25], [0, -29], [34, -25], [48, -16]], false, 0.9);
+      T.line([[-46, -14], [-34, -22], [0, -26], [34, -22], [46, -14]], false, 0.8);
     },
   },
   monastery: {

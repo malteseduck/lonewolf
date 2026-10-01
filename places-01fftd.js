@@ -4,35 +4,35 @@
    laid out between the Kai Monastery and Holmgard: a few fixed by hand, the rest placed so the
    routes between them stay short. Positions are in the printed map's pixels.
    [name, symbol, x, y]; the symbol is drawn on the map whether or not he has been there: a
-   building (house, tower, keep, temple, obelisk), or bridge, hill, tree, lake, marsh. */
+   building (house, tower, keep, temple, obelisk, bridge), or stream, hill, tree, wood, lake, marsh. */
 export const PLACES = {
   kai: ['Kai Monastery', null, 168, 466], undergrowth: ['The undergrowth', null, 169, 477],
   raumas: ['Ruins of Raumas', 'temple', 191, 468], ambushrun: ['Giak ambush', null, 177, 479],
   rockyhill: ['Rocky hill', 'hill', 171, 487], foothill: ['Foot of the slope', null, 166, 494],
   logcabin: ['Old log cabin', 'house', 169, 511], treehouse: ["Hermit's tree", 'tree', 177, 504],
-  lostwoods: ['Deep woods', null, 165, 503], tunnel: ['Tunnel in the hill', 'hill', 182, 494],
+  lostwoods: ['Deep woods', 'wood', 165, 503], tunnel: ['Tunnel in the hill', 'hill', 182, 494],
   twisting: ['Twisting track', null, 157, 466], gallowbrush: ['Sleeptooth briars', null, 163, 483],
   fogwood: ['Fogwood', 'house', 157, 477], ravenoak: ["Raven's oak", 'tree', 143, 484],
-  redstranger: ['The red stranger', null, 150, 493], streamwash: ['Clear stream', null, 158, 499],
+  redstranger: ['The red stranger', null, 150, 493], streamwash: ['Clear stream', 'stream', 158, 499],
   kraanpath: ['Wide path', null, 151, 482], prints: ['Clearing of claw prints', null, 140, 495],
   fallentree: ['Fallen tree', null, 149, 503], watchtower: ['Watchtower', 'tower', 159, 490],
   refugeeclearing: ["Refugees' clearing", null, 164, 472], boulderhill: ['Hill of boulders', 'hill', 172, 497],
   druidcave: ["Druids' cave", 'hill', 184, 483], skeleton: ['Skeleton clearing', null, 158, 509],
-  icystream: ['Icy stream', null, 178, 488], soldiers: ['Soldiers on the track', null, 190, 491],
+  icystream: ['Icy stream', 'stream', 178, 488], soldiers: ['Soldiers on the track', null, 190, 491],
   smallbridge: ['Small bridge', 'bridge', 178, 471], benchclearing: ['Carved bench', null, 185, 462],
   swordclearing: ['Sword on a plinth', null, 186, 473], burntcabin: ['Burnt cabin', 'house', 195, 462],
   mossyhut: ['Mossy hut', 'house', 177, 462], woundedsoldier: ['Wounded soldier', null, 194, 475],
   stonebridge: ['Stone bridge', 'bridge', 202, 477], refugeeroad: ['Refugee column', null, 201, 470],
   farmhouse: ['Farmhouse', 'house', 193, 481], caravan: ['Merchant caravan', null, 205, 489],
-  sparsewood: ['Sparse hills', 'hill', 197, 496], alema: ['Bridge of Alema', 'bridge', 199, 486],
+  sparsewood: ['Sparse hills', 'hill', 197, 496], alema: ['Bridge of Alema', 'bridge', 204, 484],
   signpost: ['Hacked signpost', null, 192, 509], meadow: ['Meadow', null, 188, 502],
-  roadambush: ['Ambush', null, 201, 522], deepforest: ['Deep forest', null, 184, 512],
+  roadambush: ['Ambush', null, 201, 522], deepforest: ['Deep forest', 'wood', 184, 512],
   lakeshack: ['Lake and shack', 'lake', 190, 520], marsh: ['Marsh', 'marsh', 212, 499],
   ridgeway: ['Footbridge', 'bridge', 212, 477], cabinstable: ['Cabin and stable', 'house', 212, 487],
   vordakglade: ['Glade', null, 199, 514], highwaysign: ['Highway signpost', null, 208, 496],
-  overlook: ['Ridge above Holmgard', null, 205, 502], cottages: ['Cottages', 'house', 213, 508],
-  banditbridge: ['Footbridge on the highway', 'bridge', 216, 512], riverbank: ['River bank', null, 207, 513],
-  barge: ['Wrecked barge', null, 211, 518], graveyard: ['Graveyard of the Ancients', 'obelisk', 200, 506],
+  overlook: ['Ridge above Holmgard', 'hill', 205, 502], cottages: ['Cottages', 'house', 213, 508],
+  banditbridge: ['Footbridge on the highway', 'bridge', 216, 512], riverbank: ['River bank', null, 204, 519],
+  barge: ['Wrecked barge', null, 211, 519], graveyard: ['Graveyard of the Ancients', 'obelisk', 200, 506],
   fieldworks: ['Fieldworks', 'keep', 217, 516], holmgard: ['Holmgard', null, 222, 520],
 };
 

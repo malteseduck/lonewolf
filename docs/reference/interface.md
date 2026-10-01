@@ -61,6 +61,9 @@ bronze plaque with Combat Skill, Endurance and gold.
 - **map**: three cases, plus "The whole map" (the zoomable replica) for any book whose spec is one.
   - Book has `locations` (the demo, and Book 1 through `placeBook`): `updateMap()`. Destinations for the current choices are lit rings;
     the same choices are listed under the map. Picking one walks the figure there, then turns the page.
+    The list under the map is filled before `updateMap()` pans, since it takes height from the map
+    and the pan is in pixels. A destination's name that would fall off the view (roads spread wider
+    than it) is shifted back in, or put under its ring at the top edge.
   - Book has a spec in `MAPS` but no locations (Book 1): `updateJourney()`. Lone Wolf's figure stands
     part-way along `spec.route` by `progress()`: 1 minus (shortest number of choices from the
     current section to the victory section) over (the same from the start). "The whole map" swaps
@@ -83,7 +86,8 @@ away from), `labels`, `compass`, and for journey maps `route`, `start`, `goal`.
 `mapCanvas(id)` paints it once at 2000x1400 and caches it, in this order: parchment and washes,
 sea, rivers, then the land symbols back to front (rows of mountains filling `peaks.box`, small
 peaks for `hills`, forest clumps and single trees through each wood), then roads and trails as
-white dashes over them, then settlements on a pale halo, labels, compass, border.
+white dashes over them, then settlements as buildings from `buildings.js` (`MARK_BUILDING`: city
+castle, town tower, ruins keep, bridge bridge), labels, compass, border.
 
 The symbols are stamped from `assets/map/widman.png`, a sheet of engravings from a 1680 atlas
 (K. M. Alexander's Widman set, CC0) indexed by `widman.json` (`kind: [[x, y, w, h]]`, kinds
@@ -91,8 +95,9 @@ The symbols are stamped from `assets/map/widman.png`, a sheet of engravings from
 downloaded pack by `tools/build_map_atlas.py`; one file because the local server takes seconds to
 serve hundreds. `loadStamps()` fetches it and tints it to the sepia ink (and a paper-coloured
 copy for halos); `mapCanvas` returns null until then and the panel redraws when it lands.
-A stamp is drawn at its own pixels times a scale, standing on its foot. `MARK_POOL` says which
-kind each landmark uses; minor landmarks (cairn, wagon) get no symbol.
+A stamp is drawn at its own pixels times a scale, standing on its foot. Minor landmarks (cairn,
+wagon) get no symbol. The Widman `town city village fort walled bridge` stamps are no longer drawn
+anywhere: they do not look like the official maps' icons (the `bridge` ones are towns by a river).
 
 `printedCanvas(img, crop, w, h)` repaints a book's printed map as sepia ink: lightness becomes ink
 depth, water is pushed darker, strong red survives faintly, then parchment grain is multiplied
@@ -110,8 +115,8 @@ The printed map is about 1000 px wide, so cropping and enlarging it blurs. Inste
 - every pixel is sorted into a terrain class by hue, saturation and value (ink, pale, water,
   plain, forest, hill, mountain, waste, red);
 - the sea is flood-filled from `LASTLANDS.sea` through everything that is not land, inside
-  `frame` and with `cover` boxes (banners, title, key, compass rose, arms, ships) painted over
-  first. Blurring that sea and taking the 0.5 contour (marching squares) gives the coast as smooth
+  `frame` and with `cover` boxes (banners, title, key, compass rose, arms, ships, and Holmgard's
+  castle, whose dark ink otherwise floods as a false inlet of the Holmgulf) painted over first. Blurring that sea and taking the 0.5 contour (marching squares) gives the coast as smooth
   closed outlines, islands included;
 - blurred class densities give grids of mountain, forest, hill and waste, zeroed at sea.
 - where the printed map leaves land plain, and the owner has the reference world map
@@ -149,16 +154,17 @@ highway stops); the rest were placed by a one-off force layout that pulls togeth
 story moves between, so they are plausible rather than surveyed. `placeBook(book)` (maps.js), called
 from `useBook`, turns them into `book.locations` on the 1000x700 grid of `view` and sets each
 section's `loc`, which switches the book to travel on the map exactly like the demo. The replica
-draws each place's symbol (a building: house, tower, keep, temple, obelisk; or bridge, hill, tree,
-lake, marsh) whether visited
-or not; names appear once visited or offered. When a book has its own places, the Magnamund detail
+draws each place's symbol (a building: house, tower, keep, temple, obelisk, bridge; or stream,
+hill, tree, wood, lake, marsh) whether visited or not. A bridge not on a river, and a stream, get
+a winding brook of their own that runs through the spot into the nearest river; a wood is a ring of
+forest clumps for places the story calls woods where the printed map shows open country; names appear once visited or offered. When a book has its own places, the Magnamund detail
 layer is left out.
 
 ### Buildings (`buildings.js`)
 
 Towns and buildings on the replica are vector drawings modelled on the icons of the official Maps
 of Magnamund: `castle` (Holmgard), `monastery` (the Kai Monastery), `tower`, `keep`, `house`,
-`temple`, `obelisk`. Each is drawn in its own units (ground at y = 0) by `drawBuilding(x, kind, cx,
+`temple`, `obelisk`, `bridge` (two arches over the water, for the book's bridges and the demo's). Each is drawn in its own units (ground at y = 0) by `drawBuilding(x, kind, cx,
 cy, height, seed)`, so it is crisp at any zoom. It is drawn as an engraving to match the map's
 other symbols: sepia ink only, walls the colour of the map's paper with fine vertical strokes,
 shaded right-hand faces cross-hatched, roofs hatched, solid ink openings, stone coursing,
@@ -172,9 +178,10 @@ the icons out of the map images was tried first and dropped: low resolution and 
 Reuse before drawing. In order:
 
 1. **A Widman stamp** (`assets/map/widman.png`, CC0 engravings, tinted to the map's ink by
-   `loadStamps`): `mountain range forest tree city town village fort walled bridge`. Pick one with
+   `loadStamps`): `mountain range forest tree`. Its settlement kinds (`city town village fort
+   walled bridge`) do not match the official maps' icons: use a building instead. Pick one with
    `pick(r, kind)` and draw it with `stamp(x, st, cx, cy, s, 0)`. Halo 0: map symbols get no rim.
-2. **A building in `buildings.js`**: `castle monastery tower keep house temple obelisk`, drawn with
+2. **A building in `buildings.js`**: `castle monastery tower keep house temple obelisk bridge`, drawn with
    `drawBuilding(x, kind, cx, cy, height, seed)`. A book's places name one as their symbol.
 3. **A new vector drawing** in `buildings.js`, added to `BUILDINGS` as `{h, draw(T)}`:
    - Model it on the matching icon in the official Maps of Magnamund (sheet 1's inset,
@@ -188,7 +195,7 @@ Reuse before drawing. In order:
    - Check it beside the engraved trees and mountains on the map at the journey zoom and zoomed
      right out: it should not stand out as paler, cleaner or darker than they do.
 
-Landscape that is not a building (a lake, a marsh) is drawn in place in `replicaCanvas`, in the
+Landscape that is not a building (a lake, a marsh, a wood, a brook) is drawn in place in `replicaCanvas`, in the
 same ink and with hatching.
 
 ### Lone Wolf's figure (`.pawn`)

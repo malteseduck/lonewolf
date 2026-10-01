@@ -331,6 +331,7 @@ function panTo(gx, gy) {
   const vw = mapNode.clientWidth, vh = mapNode.clientHeight, W = mapInner.clientWidth || 1, H = mapInner.clientHeight || 1;
   const tx = Math.min(0, Math.max(vw - W, vw / 2 - (gx / 1000) * W)), ty = Math.min(0, Math.max(vh - H, vh / 2 - (gy / 700) * H));
   mapInner.style.transform = `translate(${tx}px, ${ty}px)`;
+  return [tx, ty];
 }
 const pct = (p) => `left:${p.x / 10}%;top:${p.y / 7}%`;
 function updateMap() {
@@ -346,7 +347,7 @@ function updateMap() {
     if (destLocs.has(k)) continue;
     const named = MAPS[book.id] && MAPS[book.id].replica && LASTLANDS.places.some((p) => p[0] === L[k].name); // the map already prints it
     if (locs.includes(k) && k !== here) h += `<div class="mk" style="${pct(L[k])}"><i></i>${named ? '' : `<span>${esc(L[k].name)}</span>`}</div>`;
-    else if (k === 'holmgard' && k !== here) h += `<div class="mk goal" style="${pct(L[k])}"><i></i><span>${esc(L[k].name)}</span></div>`;
+    else if (k === 'holmgard' && k !== here) h += `<div class="mk goal" style="${pct(L[k])}"><i></i>${named ? '' : `<span>${esc(L[k].name)}</span>`}</div>`;
   }
   destLocs.forEach((k) => {
     const opts = rd.filter((r) => r.loc === k), r = opts.find((o) => o.c.enabled) || opts[0];
@@ -356,8 +357,14 @@ function updateMap() {
   place(pawn, L[here].x / 10 + '%', L[here].y / 7 + '%');
   // keep the figure and the open roads in view
   const pts = [L[here], ...[...destLocs].map((k) => L[k])], cx = pts.reduce((a, p) => a + p.x, 0) / pts.length, cy = pts.reduce((a, p) => a + p.y, 0) / pts.length;
-  panTo(cx, cy);
-  return rd.length;
+  const [tx, ty] = panTo(cx, cy);
+  // roads spread wider than the view leave a name off its edge: tuck it back in, under the ring at the top
+  const vw = mapNode.clientWidth, vh = mapNode.clientHeight;
+  mapNode.querySelectorAll('.dest').forEach((d) => {
+    const b = d.querySelector('b'), x0 = tx + d.offsetLeft - d.offsetWidth / 2 + b.offsetLeft, y0 = ty + d.offsetTop - d.offsetHeight / 2 + b.offsetTop; // .dest is centred by a transform
+    const dx = Math.max(0, -x0) - Math.max(0, x0 + b.offsetWidth - vw), dy = y0 < 0 ? d.offsetHeight - b.offsetTop : y0 + b.offsetHeight > vh ? vh - y0 - b.offsetHeight : 0;
+    if (dx || dy) b.style.transform = `translate(${dx}px, ${dy}px)`;
+  });
 }
 
 /* A book without per-section places still gets a journey: the figure's distance along the road is
@@ -416,15 +423,17 @@ function renderRight() {
     } else {
       const hint = el('p', 'maphint');
       host.append(mapNode, hint);
-      updateJourney();
       hint.innerHTML = `Your road from ${esc(m.start)} to ${esc(m.goal)}. Your figure marks how far the story has carried you. <button type="button" class="inkbtn" data-scan>The whole map</button>`;
+      updateJourney();
     }
   } else if (panel === 'map') {
     const hint = el('div'), whole = MAPS[book.id] && MAPS[book.id].replica ? ' <button type="button" class="inkbtn" data-scan>The whole map</button>' : '';
     host.append(mapNode, hint);
-    const n = updateMap();
-    hint.innerHTML = n ? `<ul class="roads">${roads().map((r) => `<li><button type="button" class="choice" data-choice="${r.i}" ${r.c.enabled ? '' : 'disabled'}><span>${esc(shown(r.c.text))}<em>${esc(r.c.enabled ? L[r.loc].name : r.c.why)}</em></span></button></li>`).join('')}</ul>${whole ? `<p class="maphint">${whole}</p>` : ''}`
+    // the hint first: it takes height from the map, and the map pans by its size
+    const rd = mode === 'story' && !isDead() ? roads() : [];
+    hint.innerHTML = rd.length ? `<ul class="roads">${rd.map((r) => `<li><button type="button" class="choice" data-choice="${r.i}" ${r.c.enabled ? '' : 'disabled'}><span>${esc(shown(r.c.text))}<em>${esc(r.c.enabled ? L[r.loc].name : r.c.why)}</em></span></button></li>`).join('')}</ul>${whole ? `<p class="maphint">${whole}</p>` : ''}`
       : `<p class="maphint">${isDead() ? 'Your road ends here.' : game.combatPending ? 'There is no leaving until the fight is settled.' : 'No road is open yet. The story continues in the book.'}${whole}</p>`;
+    updateMap();
   } else host.innerHTML = panel === 'kai' ? kaiHTML() : packHTML();
 }
 function render() {

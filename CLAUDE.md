@@ -65,9 +65,9 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
   `assets/map/WIDMAN-README.txt` does). Project Aon images stay in `data/projectaon/` and are
   only restyled at runtime. Downloading a new asset pack needs the owner's go-ahead.
 - **Map symbols** look engraved, like the Widman set: sepia ink only, no colour, no rim. For a
-  new map feature, first reuse what exists: a Widman stamp (`mountain range forest tree city town
-  village fort walled bridge`) or a building in `buildings.js` (`castle monastery tower keep house
-  temple obelisk`). If neither fits, add a vector drawing to `buildings.js` the same way (see
+  new map feature, first reuse what exists: a Widman stamp (`mountain range forest tree`; its settlement stamps do
+  not match the official icons) or a building in `buildings.js` (`castle monastery tower keep house
+  temple obelisk bridge`). If neither fits, add a vector drawing to `buildings.js` the same way (see
   "Map symbols" in `docs/reference/interface.md`). Never cut symbols out of map images: at their
   resolution they come out blurred and carry stray colour.
 - Art borrowed for personal use (Lone Wolf HD screenshots and the like) lives in `art/`, which is

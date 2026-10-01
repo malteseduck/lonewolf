@@ -95,6 +95,8 @@ Smaller things noted along the way:
   lay out maps for the Magnakai books, whose printed maps cover other parts of Magnamund.
 - Replica: the hand-placed rivers, roads and towns were read off the printed map by eye and are
   approximate. Book 1's places were laid out by a force layout: check them by playing, and move any
-  that sit oddly (some horse-route places ended up east of the highway). Books 2-5 use the same
+  that sit oddly (some horse-route places ended up east of the highway). All 350 sections were checked on
+  the map on 2026-09-30 (no errors, every destination in view); Alema, the river bank and the barge
+  were moved onto their water then. Books 2-5 use the same
   map and could reuse it; Magnakai books need their own.
 - Delete `prototypes/` (and `shared/art.js`, `battle.js`, `flow.js`) once the owner is sure.

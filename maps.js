@@ -7,7 +7,7 @@ import { analyse, worldTerrain, toPath, toLine } from './replica.js';
 import { drawBuilding } from './buildings.js';
 import { PLACES as BOOK1_PLACES, AT as BOOK1_AT } from './places-01fftd.js';
 
-const INK = '38,26,16', PAPER = '226,212,176', RED = '140,28,18';
+const INK = '38,26,16', PAPER = '226,212,176';
 const ink = (a) => `rgba(${INK},${a})`;
 
 /* points in the printed map's pixels to the 1000x700 grid of a 10:7 view of it */
@@ -23,7 +23,8 @@ const BOOK1_TRAIL = [[168, 466], [176, 478], [186, 490], [198, 501], [211, 511],
 export const LASTLANDS = {
   frame: [22, 150, 966, 570],
   cover: [[0, 0, 390, 290, 'sea'], [370, 20, 330, 215, 'sea'], [680, 0, 344, 245, 'sea'], [548, 335, 140, 140, 'sea'], [855, 280, 115, 145, 'land'],
-    [365, 250, 40, 40, 'sea'], [670, 265, 45, 45, 'sea'], [835, 230, 40, 40, 'sea'], [478, 196, 56, 30, 'sea']],
+    [365, 250, 40, 40, 'sea'], [670, 265, 45, 45, 'sea'], [835, 230, 40, 40, 'sea'], [478, 196, 56, 30, 'sea'],
+    [199, 463, 47, 61, 'land']], // Holmgard's castle, whose dark ink otherwise floods as an inlet of the Holmgulf
   sea: [[600, 240], [330, 430], [560, 500], [620, 300], [830, 700], [950, 665]],
   places: [
     ['Holmgard', 'city', 222, 520], ['Toran', 'city', 179, 404], ['Tyso', 'town', 260, 461], ['Anskaven', 'town', 306, 352],
@@ -47,7 +48,7 @@ export const LASTLANDS = {
   ],
   rivers: [
     [[60, 421], [100, 422], [140, 418], [167, 408], [177, 400]],
-    [[85, 482], [140, 486], [191, 483], [207, 484], [217, 495]],
+    [[85, 482], [140, 486], [191, 483], [207, 484], [217, 495], [229, 499], [241, 498], [252, 495]],
     [[45, 549], [100, 539], [152, 531], [199, 521], [247, 515], [287, 511]],
     [[502, 583], [497, 607], [507, 631], [524, 655], [530, 700], [535, 740]],
     [[941, 562], [929, 605], [914, 620], [900, 639], [890, 663], [881, 682]],
@@ -113,9 +114,9 @@ export const MAPS = {
   },
 };
 
-/* which symbol kind a landmark in a spec is drawn with. Minor places (a cairn, a wagon) get no
-   symbol: the map's own place markers show them once visited. */
-const MARK_POOL = { city: 'walled', town: 'town', ruins: 'fort', bridge: 'bridge' };
+/* which building (buildings.js) and how tall a landmark in a spec is drawn with. Minor places (a
+   cairn, a wagon) get none: the map's own place markers show them once visited. */
+const MARK_BUILDING = { city: ['castle', 58], town: ['tower', 40], ruins: ['keep', 34], bridge: ['bridge', 16] };
 /* the engraved symbols, one sheet built by tools/build_map_atlas.py: kind -> [{x, y, w, h}] */
 const STAMPS = {};
 let sheet = null, loading = null;
@@ -158,7 +159,7 @@ export function placeBook(book) {
 
 /* a settlement in LASTLANDS by kind, as a building (buildings.js); its height in printed pixels */
 const BUILDING = { city: ['castle', 16], walled: ['castle', 12], town: ['tower', 10], fort: ['monastery', 12], village: ['house', 7] };
-const ICON_HEIGHT = { castle: 12, monastery: 12, tower: 9, keep: 9, house: 7, temple: 8, obelisk: 7 };
+const ICON_HEIGHT = { castle: 12, monastery: 12, tower: 9, keep: 9, house: 7, temple: 8, obelisk: 7, bridge: 4 };
 /* a building standing on (cx, cy), height canvas pixels tall; where it stands varies the hand */
 const building = (x, r, key, cx, cy, height) => drawBuilding(x, key, cx, cy, height, cx * 0.37 + cy);
 
@@ -255,16 +256,33 @@ export function replicaCanvas(model, view, W, H, extra) {
 
   // rivers: ink banks and pale water, a fixed width on screen
   const rw = Math.max(4, Math.min(13, z));
-  R.rivers.forEach((l) => {
-    const p = toLine([l]);
+  // a book's stream, and its bridges away from the rivers, get a brook of their own (so no bridge
+  // stands on dry land): it rises a little above the spot and runs down into the nearest river
+  const brooks = [];
+  (extra || []).forEach(([, kind, px, py]) => {
+    if (kind !== 'bridge' && kind !== 'stream') return;
+    let best = null;
+    R.rivers.forEach((l) => l.forEach((p, i) => { if (!i) return; const q = nearest([px, py], l[i - 1], p), d = Math.hypot(q[0] - px, q[1] - py); if (!best || d < best[2]) best = [...q, d]; }));
+    if (best[2] < 4) return;
+    const [tx, ty] = best[2] < 30 ? best : [px + 1, py + 12], d = Math.hypot(tx - px, ty - py), ux = (tx - px) / d, uy = (ty - py) / d;
+    // it winds: a gentle swing either side of the straight line, through the spot itself
+    const pts = [], n = Math.max(4, Math.round((d + 8) / 2.5)), ph = (px * 7 + py * 3) % 6;
+    for (let i = 0; i <= n; i++) {
+      const s = -8 + ((d + 8) * i) / n, sway = i && i < n ? Math.sin(s / 3.2 + ph) * 1.1 - Math.sin(ph) * 1.1 * Math.max(0, 1 - Math.abs(s) / 4) : 0;
+      pts.push([px + ux * s - uy * sway, py + uy * s + ux * sway]);
+    }
+    brooks.push(pts);
+  });
+  [...R.rivers, ...brooks].forEach((l, i) => {
+    const p = toLine([l]), w = i < R.rivers.length ? rw : rw * 0.5;
     x.lineCap = 'round'; x.lineJoin = 'round';
-    x.strokeStyle = ink(0.85); x.lineWidth = (rw + 4) / z; x.stroke(p);
-    x.strokeStyle = `rgb(${PAPER})`; x.lineWidth = rw / z; x.stroke(p);
+    x.strokeStyle = ink(0.85); x.lineWidth = (w + 4) / z; x.stroke(p);
+    x.strokeStyle = `rgb(${PAPER})`; x.lineWidth = w / z; x.stroke(p);
     x.strokeStyle = ink(0.26); x.stroke(p);
   });
 
   // land symbols on a jittered screen grid, read from the terrain the printed map shows there
-  const roadPaths = roads.map((l) => toLine([l])), riverPaths = R.rivers.map((l) => toLine([l]));
+  const roadPaths = roads.map((l) => toLine([l])), riverPaths = [...R.rivers, ...brooks].map((l) => toLine([l]));
   const spots = [...places, ...(extra || []).filter((e) => e[1])].map(([, , px, py]) => P([px, py])), items = [], tufts = [];
   const clear = (cx, cy) => {
     x.lineWidth = 44 / z;
@@ -304,7 +322,7 @@ export function replicaCanvas(model, view, W, H, extra) {
   // the book's own places: a symbol each, no name until he has been there (the panel adds that)
   (extra || []).forEach(([, kind, px, py]) => {
     const [cx, cy] = P([px, py]);
-    if (!kind || cx < -80 || cx > W + 80 || cy < -80 || cy > H + 120) return;
+    if (!kind || kind === 'stream' || cx < -80 || cx > W + 80 || cy < -80 || cy > H + 120) return;
     if (kind === 'lake') {
       x.beginPath(); x.ellipse(cx + 34 * k, cy + 4, 46 * k, 20 * k, -0.1, 0, Math.PI * 2);
       x.fillStyle = ink(0.26); x.fill(); x.strokeStyle = ink(0.85); x.lineWidth = 2.4; x.stroke();
@@ -314,7 +332,11 @@ export function replicaCanvas(model, view, W, H, extra) {
       for (let i = 0; i < 14; i++) { const ax = cx + (r() - 0.5) * 90 * k, ay = cy + (r() - 0.5) * 40 * k; for (let j = -1; j <= 1; j++) { x.beginPath(); x.moveTo(ax + j * 4, ay); x.lineTo(ax + j * 7, ay - 12 - r() * 6); x.stroke(); } x.beginPath(); x.moveTo(ax - 9, ay + 1); x.lineTo(ax + 9, ay + 1); x.stroke(); }
     } else if (kind === 'hill') stamp(x, pick(r, 'mountain', 90), cx, cy + 8, 2 * k, 6);
     else if (kind === 'tree') stamp(x, pick(r, 'tree'), cx, cy + 6, 2.6 * k, 6);
-    else if (ICON_HEIGHT[kind]) building(x, r, kind, cx, cy + 4, Math.max(40, Math.min(150, ICON_HEIGHT[kind] * z * 0.45)), k);
+    else if (kind === 'wood') { // a wood where the printed map shows open country: clumps round the spot, back to front
+      const clumps = []; for (let i = 0; i < 9; i++) { const a = r() * Math.PI * 2, d = (0.3 + r() * 0.7) * 46 * k; clumps.push([cy + Math.sin(a) * d * 0.55, cx + Math.cos(a) * d]); }
+      clumps.push([cy + 4, cx]); clumps.sort((a, b) => a[0] - b[0]).forEach(([py2, px2], i) => stamp(x, pick(r, i % 3 ? 'forest' : 'tree'), px2, py2 + 6, (i % 3 ? 1.5 : 2.2) * k, 0));
+    }
+    else if (ICON_HEIGHT[kind]) building(x, r, kind, cx, cy + 4, Math.max(kind === 'bridge' ? 24 : 40, Math.min(150, ICON_HEIGHT[kind] * z * 0.45)), k);
     else stamp(x, pick(r, kind), cx, cy + 6, 2 * k, 0);
   });
 
@@ -346,6 +368,11 @@ export function replicaCanvas(model, view, W, H, extra) {
   const gr = x.createRadialGradient(W / 2, H / 2, H * 0.4, W / 2, H / 2, W * 0.66);
   gr.addColorStop(0, 'rgba(40,24,10,0)'); gr.addColorStop(1, 'rgba(40,24,10,0.5)'); x.fillStyle = gr; x.fillRect(0, 0, W, H);
   return cv;
+}
+/* the point of the segment a-b nearest to p */
+function nearest([px, py], [ax, ay], [bx, by]) {
+  const dx = bx - ax, dy = by - ay, t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy || 1)));
+  return [ax + t * dx, ay + t * dy];
 }
 /* a random symbol of a kind, optionally only those narrower than maxW */
 function pick(r, kind, maxW) {
@@ -449,17 +476,12 @@ export function mapCanvas(id, img, world) {
       if (free(px, py, 26)) items.push([py, st, px, py, s, 0]);
     }
   });
-  // settlements, lifted off the land on a pale halo
-  m.marks.forEach(([type, px, py]) => { if (MARK_POOL[type]) items.push([py + 1000, pick(MARK_POOL[type]), px, py + 12, type === 'city' ? 2 : 1.7, 6]); });
-  items.filter((it) => !it[5]).sort((a, b) => a[0] - b[0]).forEach(([, st, px, py, s, halo]) => stamp(x, st, px, py, s, halo));
+  items.sort((a, b) => a[0] - b[0]).forEach(([, st, px, py, s, halo]) => stamp(x, st, px, py, s, halo));
   // roads and tracks over the land: white dashes on a dark bed, as on the HD maps
   const way = (p, w, dash) => { x.setLineDash([]); x.strokeStyle = ink(0.6); x.lineWidth = w + 3; x.stroke(p); x.setLineDash(dash); x.strokeStyle = 'rgba(255,248,228,0.95)'; x.lineWidth = w; x.stroke(p); x.setLineDash([]); };
   trails.forEach((p) => way(p, 2.2, [7, 6])); roads.forEach((p) => way(p, 3, [11, 6]));
-  items.filter((it) => it[5]).forEach(([, st, px, py, s, halo]) => stamp(x, st, px, py, s, halo));
-  if (m.marks.some(([type]) => type === 'city')) {
-    const [, cx, cy] = m.marks.find(([type]) => type === 'city');
-    x.fillStyle = `rgba(${RED},0.95)`; x.fillRect(cx - 0.6, cy - 40, 1.5, 12); x.beginPath(); x.moveTo(cx + 0.9, cy - 40); x.lineTo(cx + 11, cy - 36); x.lineTo(cx + 0.9, cy - 32); x.fill();
-  }
+  // settlements over the roads, drawn as the buildings of the Magnamund maps
+  m.marks.forEach(([type, px, py]) => { const b = MARK_BUILDING[type]; if (b) drawBuilding(x, b[0], px, py + 8, b[1], px * 0.37 + py); });
 
   x.textAlign = 'center';
   m.labels.forEach(([text, px, py, size, rot, soft]) => {
