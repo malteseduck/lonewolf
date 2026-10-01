@@ -422,7 +422,8 @@ function updateJourney() {
 function renderRight() {
   const tabs = [['kai', 'Kai Disciplines'], ['pack', 'Inventory'], ['map', 'Map']];
   rtabs.hidden = mode !== 'story';
-  rtabs.innerHTML = tabs.map(([id, label]) => `<button type="button" class="med ${id === 'map' && panel !== 'map' && mode === 'story' && roads().length ? 'call' : ''}" role="tab" aria-selected="${panel === id}" aria-label="${label}" data-panel="${id}">${TAB_ART[id]}</button>`).join('');
+  rtabs.innerHTML = tabs.map(([id, label]) => `<button type="button" class="med ${id === 'map' && panel !== 'map' && mode === 'story' && roads().length ? 'call' : ''}" role="tab" aria-selected="${panel === id}" aria-label="${label}" data-panel="${id}">${TAB_ART[id]}</button>`).join('')
+    + `<button type="button" class="med home" data-home aria-label="Back to the title page" title="Back to the title page">${glyph('return-arrow')}</button>`; // the HD return medallion: start over, or pick another book
   if (mode === 'title') { pr.innerHTML = ''; return; }
   const h = game.hero, cs = B ? B.cs() : LW.heroCS(h).total;
   const place = mode === 'battle' ? 'Combat' : book.locations ? L[game.section.loc].name : book.title;
@@ -640,7 +641,7 @@ bookEl.addEventListener('click', (e) => {
   else if (d.choice != null) guard(() => choose(+d.choice));
   else if ('fight' in d) guard(startBattle);
   else if ('endbattle' in d) guard(endBattle);
-  else if ('new' in d) toTitle();
+  else if ('new' in d || 'home' in d) { LW.sfx('select'); toTitle(); }
   else if ('scan' in d) { mapScan = !mapScan; renderRight(); }
   else if (d.zoom) zoomBy(d.zoom === 'in' ? 1.5 : 1 / 1.5);
 });

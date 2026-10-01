@@ -14,7 +14,8 @@ body
       section#pl.page.left        the story page (ornate frame via ::before)
       .edges                      the stacked page edges between the two pages
       .rightwrap
-          #rtabs                  three tab medallions (TAB_ART: wolf head, chest, compass rose), hidden outside story mode
+          #rtabs                  three tab medallions (TAB_ART: wolf head, chest, compass rose), then a smaller
+                                  return-arrow medallion (data-home) back to the title page; hidden outside story mode
           section#pr.page.right   the panel (torn edge via clip-path)
 ```
 

@@ -9,7 +9,7 @@ its white fill were removed, so the page can use the shape as a mask.
     barbed-spear, battle-axe, brainstorm, bowman, broadsword, crossed-swords, crystal-ball,
     eye-shield, fire-shield, footprint, gem-pendant, high-shot, hood, knapsack, locked-chest,
     mace-head, magic-palm, magic-shield, mail-shirt, plain-dagger, pocket-bow, pointy-sword,
-    psychic-waves, run, stag-head, swap-bag, third-eye, treasure-map, visored-helm, wizard-staff,
+    psychic-waves, return-arrow, run, stag-head, swap-bag, third-eye, treasure-map, visored-helm, wizard-staff,
     wolf-head, wolf-howl
   by Delapouite (https://delapouite.com):
     healing, health-potion, herbs-bundle, invisible, meal, quiver, two-coins,
