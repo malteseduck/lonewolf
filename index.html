@@ -18,6 +18,7 @@
   --bronze: #a08a58; --bronze-hi: #e2d09a; --bronze-lo: #3b3020; --bone: #e9e0c8; --kai: #7fe9f2;
   /* the HD character sheet's medallions: dark enamel in a ring of worn, beaded pewter; ivory glyphs that glow ember when learned */
   --enamel: #2f211a; --enamel-lo: #140c08; --pewter: #8a7b64; --pewter-lo: #4a3f31; --glyph: #f6eedc; --ember: #f0a040; --glyph-off: rgba(233, 224, 200, 0.2);
+  --silver-hi: #fbf8f0; --silver: #cdc6b6; --silver-lo: #7d766a;
   --script: 'Charm', 'Apple Chancery', 'Segoe Script', cursive;
   --cap: 'Almendra Display', 'Old English Text MT', Georgia, serif;
   --title: 'Metamorphous', 'Palatino Linotype', Georgia, serif;
@@ -100,8 +101,19 @@ button.med:disabled { opacity: 0.4; }
 .medcap small { font: 400 1.15em var(--script); letter-spacing: 0; text-transform: none; color: var(--ink-dim); }
 
 .rtabs { position: absolute; left: -0.9em; top: 0.6em; z-index: 5; display: flex; flex-direction: column; gap: 0.45em; }
-.rtabs .med { --s: 3em; }
-.rtabs .med[aria-selected='true'] { color: #ffe9a8; }
+/* the HD tab medallions: a heavy bronze bezel, banded and notched, round a black face with a silver glyph */
+.rtabs .med { --s: 3.3em;
+  background: radial-gradient(circle closest-side, #1d140f 0, #070403 74%, var(--bronze-lo) 75% 77%, transparent 78%),
+    radial-gradient(circle closest-side, transparent 0 88%, rgba(20, 12, 6, 0.75) 89% 91%, transparent 92%),
+    repeating-conic-gradient(from 3deg, transparent 0 7deg, rgba(30, 20, 8, 0.3) 7deg 9deg),
+    conic-gradient(from 20deg, var(--bronze-hi), var(--bronze) 12%, var(--bronze-lo) 30%, var(--bronze) 48%, var(--bronze-hi) 58%, var(--bronze-lo) 78%, var(--bronze) 92%, var(--bronze-hi)); }
+.med .glyph { width: 56%; height: 56%; filter: drop-shadow(0 0.05em 0.04em #000); }
+.med .glyph i { background: linear-gradient(var(--silver-hi), var(--silver) 55%, var(--silver-lo)); }
+.med .rose { width: 72%; height: 72%; filter: drop-shadow(0 0.05em 0.04em #000); }
+.rose .lt { fill: var(--silver-hi); }
+.rose .dk { fill: var(--silver-lo); }
+.rose .ring { fill: none; stroke: var(--silver); stroke-width: 2.4; }
+.rtabs .med[aria-selected='true'] .glyph, .rtabs .med[aria-selected='true'] .rose { filter: drop-shadow(0 0 0.12em rgba(255, 225, 160, 0.9)) drop-shadow(0 0 0.3em rgba(240, 160, 64, 0.6)); }
 .rtabs .med.call { animation: call 1.5s ease-in-out infinite; }
 @keyframes call { 50% { box-shadow: 0 0 0 0.08em #140d08, 0 0 1.1em 0.3em rgba(255, 210, 120, 0.95); color: #fff; } }
 .plaque { flex: none; display: flex; align-items: center; gap: 0.9em; padding: 0.3em 0.9em 0.3em 1.2em; background: linear-gradient(#8e7d56, #4d4029 60%, #3b3020); color: var(--bone); font: 400 0.82em var(--title); letter-spacing: 0.06em; box-shadow: inset 0 0 0 0.12em rgba(226, 208, 154, 0.4), 0 0.2em 0.5em rgba(0, 0, 0, 0.5); clip-path: polygon(0.8em 0, 100% 0, 100% 100%, 0.8em 100%, 0 50%); font-variant-numeric: lining-nums; }

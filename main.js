@@ -23,9 +23,6 @@ const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- icons (24x24) ---------- */
 const ICON = {
-  hood: '<path d="M12 2c5 0 8 4 8 9v11h-4v-8a4 4 0 0 0-8 0v8H4V11c0-5 3-9 8-9z"/>',
-  chest: '<path fill-rule="evenodd" d="M3 9a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v10H3zm2 2.500V17h14v-5.500h-5.500V14h-3v-2.500z"/>',
-  compass: '<path fill-rule="evenodd" d="M12 1l2.600 8.400L23 12l-8.400 2.600L12 23l-2.600-8.400L1 12l8.400-2.600zm0 9a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/><path d="M5 5l4 2.500L7.500 9zM19 5l-2.500 4L15 7.500zM5 19l2.500-4L9 16.500zM19 19l-4-2.500 1.500-1.500z"/>',
   sword: '<path d="M12 1l2 3.500V14h3v2h-3.600v4.500L12 23l-1.400-2.500V16H7v-2h3V4.500z"/>',
   swords: '<path d="M3 2l3 .6 9.200 9.200 1.600-1.600 1.500 1.500-1.700 1.700 3.400 3.400-2.200 2.200-3.400-3.400-1.700 1.700-1.500-1.500 1.600-1.600L3.600 5z"/><path d="M21 2l-3 .6-5.200 5.200 2.400 2.400L20.400 5zM9.800 12.200l-2 2-1.700-1.700-1.500 1.500 1.700 1.700L2.900 19.100l2.200 2.200 3.400-3.400 1.700 1.700 1.500-1.500-1.600-1.600 2-2z"/>',
   axe: '<path d="M10.500 2h2.500v20h-2.500zM13 4c5 .500 7 3 7 6s-2 5.500-7 6zM10.500 6C7 6.500 5 8 5 10s2 3.500 5.500 4z"/>',
@@ -50,6 +47,13 @@ const ICON = {
 const DISC_GLYPH = { camouflage: 'hood', hunting: 'high-shot', sixthSense: 'third-eye', tracking: 'footsteps', healing: 'herbs-bundle', weaponskill: 'broadsword', mindshield: 'eye-shield', mindblast: 'brainstorm', animalKinship: 'wolf-howl', mindOverMatter: 'magic-palm',
   weaponmastery: 'crossed-swords', animalControl: 'stag-head', curing: 'healing', invisibility: 'invisible', huntmastery: 'bowman', pathsmanship: 'footprint', psiSurge: 'psychic-waves', psiScreen: 'magic-shield', nexus: 'fire-shield', divination: 'crystal-ball' };
 const glyph = (name) => `<span class="glyph" aria-hidden="true"><i style="--g:url(assets/icons/${name}.svg)"></i></span>`;
+/* the HD map medallion's compass rose: eight points, each split into a lit and a shaded half */
+const ROSE = (() => {
+  const pt = (a, len, w) => `<g transform="rotate(${a})"><path class="lt" d="M0 0L0 ${-len}L${w} ${-w}Z"/><path class="dk" d="M0 0L0 ${-len}L${-w} ${-w}Z"/></g>`;
+  const minor = [45, 135, 225, 315].map((a) => pt(a, 30, 6)).join(''), major = [0, 90, 180, 270].map((a) => pt(a, 47, 8.5)).join('');
+  return `<svg class="rose" viewBox="-50 -50 100 100" aria-hidden="true"><circle class="ring" r="21"/>${minor}${major}<circle class="lt" r="3.2"/></svg>`;
+})();
+const TAB_ART = { kai: glyph('wolf-head'), pack: glyph('locked-chest'), map: ROSE };
 const ITEM_ICON = { axe: 'axe', potion: 'flask', meal: 'bowl', map: 'scroll', helmet: 'helm', chainmail: 'shield' };
 const icon = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[name] || ICON.sword}</svg>`;
 const itemIcon = (id) => icon(ITEM_ICON[id] || (LW.itemKind(id) === 'weapon' ? 'sword' : LW.itemKind(id) === 'special' ? 'scroll' : 'sack'));
@@ -182,7 +186,7 @@ function leftHTML() {
   }
   else {
     const ch = game.choices(), rd = roads();
-    if (rd.length) h += `<div class="compass"><div class="orn"><button type="button" class="med" data-panel="map" aria-label="Open the map">${icon('compass')}</button></div><span>${rd.length === 1 ? 'A road lies open.' : `${rd.length} roads lie open.`} Choose on the map.</span></div>`;
+    if (rd.length) h += `<div class="compass"><div class="orn"><button type="button" class="med" data-panel="map" aria-label="Open the map">${ROSE}</button></div><span>${rd.length === 1 ? 'A road lies open.' : `${rd.length} roads lie open.`} Choose on the map.</span></div>`;
     const local = ch.map((c, i) => ({ c, i })).filter(({ c }) => !destLoc(c));
     if (local.length) h += `<ul class="choices">${local.map(({ c, i }) => `<li><button type="button" class="choice" data-choice="${i}" ${c.enabled ? '' : 'disabled'}><span>${esc(shown(c.text))}${
       c.enabled ? (c.need && c.need.disc ? `<em>${esc(LW.DISCIPLINES[c.need.disc].name)}</em>` : c.random ? '<em>Random Number</em>' : '') : `<em>${esc(c.why)}</em>`}</span></button></li>`).join('')}</ul>`;
@@ -414,9 +418,9 @@ function updateJourney() {
 }
 
 function renderRight() {
-  const tabs = [['kai', 'hood', 'Kai Disciplines'], ['pack', 'chest', 'Inventory'], ['map', 'compass', 'Map']];
+  const tabs = [['kai', 'Kai Disciplines'], ['pack', 'Inventory'], ['map', 'Map']];
   rtabs.hidden = mode !== 'story';
-  rtabs.innerHTML = tabs.map(([id, ic, label]) => `<button type="button" class="med ${id === 'map' && panel !== 'map' && mode === 'story' && roads().length ? 'call' : ''}" role="tab" aria-selected="${panel === id}" aria-label="${label}" data-panel="${id}">${icon(ic)}</button>`).join('');
+  rtabs.innerHTML = tabs.map(([id, label]) => `<button type="button" class="med ${id === 'map' && panel !== 'map' && mode === 'story' && roads().length ? 'call' : ''}" role="tab" aria-selected="${panel === id}" aria-label="${label}" data-panel="${id}">${TAB_ART[id]}</button>`).join('');
   if (mode === 'title') { pr.innerHTML = ''; return; }
   const h = game.hero, cs = B ? B.cs() : LW.heroCS(h).total;
   const place = mode === 'battle' ? 'Combat' : book.locations ? L[game.section.loc].name : book.title;
