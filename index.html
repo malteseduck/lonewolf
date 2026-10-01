@@ -121,7 +121,7 @@ button.med:disabled { opacity: 0.4; }
 .who { position: absolute; left: 0; bottom: 0; display: flex; align-items: center; gap: 0.4em; }
 .who .disc { --s: 2.7em; }
 .who h3 { margin: 0; padding: 0 1.4em 0 0.1em; font: 700 1.75em/1.1 var(--script); color: var(--ink); border-bottom: 1px solid var(--ink); text-shadow: 0 0 0.3em var(--page); }
-.ledgers { flex: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.4em; position: relative; font: 400 0.8em/1.45 var(--title); font-variant-numeric: lining-nums; }
+.ledgers { flex: none; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 1.4em; position: relative; font: 400 0.8em/1.45 var(--title); font-variant-numeric: lining-nums; }
 .ledgers::before { content: ''; position: absolute; left: 50%; top: 1.6em; bottom: 0.2em; border-left: 1px solid var(--ink-faint); }
 .ledgers::after { content: ''; position: absolute; left: 50%; top: 0.75em; width: 0.5em; height: 0.5em; margin-left: -0.25em; background: var(--ink); transform: rotate(45deg); }
 .panel .ledgers h4 { display: block; letter-spacing: 0.02em; text-transform: none; margin: 0 0 0.15em; font: 400 1.35em/1.2 var(--title); color: var(--ink); text-align: right; }
@@ -131,6 +131,9 @@ button.med:disabled { opacity: 0.4; }
 .swash i { flex: 1; height: 0.07em; margin-bottom: 0.25em; background: linear-gradient(90deg, var(--ink), var(--ink-dim)); }
 .ledgers section > div { display: flex; justify-content: space-between; align-items: center; gap: 0.6em; padding: 0 0.15em; color: var(--ink); }
 .ledgers section > div b { font-weight: 400; white-space: nowrap; }
+/* Magnakai ranks ("Kai Master Superior") and circle lists are long: they wrap, right-aligned */
+.ledgers section > div.long { align-items: baseline; }
+.ledgers section > div.long b { white-space: normal; text-align: right; line-height: 1.15; }
 .ledgers .step { margin: 0 0.15em 0 0; }
 .ledgers .step button { width: 1.35em; height: 1.35em; }
 /* the grid of medallions, framed like the HD sheet's lower panel */
