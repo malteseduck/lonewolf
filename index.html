@@ -150,17 +150,26 @@ button.med:disabled { opacity: 0.4; }
 .med .rose { width: 72%; height: 72%; filter: drop-shadow(0 0.05em 0.04em #000); }
 .med.lit .glyph { filter: drop-shadow(0 0 0.08em var(--ember)) drop-shadow(0 0 0.3em rgba(240, 160, 64, 0.6)); }
 .med.lit .glyph i { background: radial-gradient(circle at 50% 45%, var(--glyph) 45%, #f3d6a0 80%, var(--ember)); }
-.plaque .coin .glyph { display: inline-block; width: 1.15em; height: 1.15em; vertical-align: -0.2em; }
-.plaque .coin .glyph i { background: linear-gradient(var(--bronze-hi), var(--bronze) 60%, var(--bronze-lo)); }
 .rose .lt { fill: var(--silver-hi); }
 .rose .dk { fill: var(--silver-lo); }
 .rose .ring { fill: none; stroke: var(--silver); stroke-width: 2.4; }
 .rtabs .med[aria-selected='true'] .glyph, .rtabs .med[aria-selected='true'] .rose { filter: drop-shadow(0 0 0.12em rgba(255, 225, 160, 0.9)) drop-shadow(0 0 0.3em rgba(240, 160, 64, 0.6)); }
 .rtabs .med.call { animation: call 1.5s ease-in-out infinite; }
 @keyframes call { 50% { box-shadow: 0 0 0 0.08em #140d08, 0 0 1.1em 0.3em rgba(255, 210, 120, 0.95); color: #fff; } }
-.plaque { flex: none; display: flex; align-items: center; gap: 0.9em; padding: 0.3em 0.9em 0.3em 1.2em; background: linear-gradient(#8e7d56, #4d4029 60%, #3b3020); color: var(--bone); font: 400 0.82em var(--title); letter-spacing: 0.06em; box-shadow: inset 0 0 0 0.12em rgba(226, 208, 154, 0.4), 0 0.2em 0.5em rgba(0, 0, 0, 0.5); clip-path: polygon(0.8em 0, 100% 0, 100% 100%, 0.8em 100%, 0 50%); font-variant-numeric: lining-nums; }
-.plaque b { font-weight: 400; font-size: 1.35em; color: #fff3cf; }
-.plaque .bar { width: 5em; }
+/* the head of the right page: Combat Skill, Endurance, gold as small gauges, after the HD gold counter */
+.gauges { flex: none; display: flex; align-items: center; gap: 0.5em; font-variant-numeric: lining-nums; }
+.gauge { position: relative; display: flex; align-items: center; height: 1.75em; padding: 0 0.6em 0 0; margin-left: 0.9em; border: 0.14em solid transparent; border-radius: 0.3em; color: var(--glyph);
+  background: radial-gradient(ellipse at 50% 30%, #3b2e25, #1a120d 75%) padding-box, linear-gradient(135deg, var(--bronze-hi), var(--bronze) 35%, var(--bronze-lo) 60%, var(--bronze-hi)) border-box;
+  box-shadow: 0 0.15em 0.35em rgba(0, 0, 0, 0.45), inset 0 0 0 0.06em rgba(10, 6, 4, 0.9); }
+.gauge > .med { --s: 2.1em; margin: 0 0.4em 0 -1.05em; }
+.gauge > .med .glyph { width: 58%; height: 58%; }
+.gauge b { font: 400 1.05em/1 var(--title); color: #fff3d6; }
+.gauge small { font-size: 0.72em; color: #b9ab8c; }
+.gauge .thread { position: absolute; left: 1.3em; right: 0.5em; bottom: 0.2em; height: 0.12em; background: rgba(0, 0, 0, 0.55); }
+.gauge .thread i { display: block; height: 100%; background: #b13a2a; box-shadow: 0 0 0.2em rgba(200, 60, 40, 0.7); transition: width 0.5s; }
+.gauge.gold .glyph i { background: linear-gradient(var(--bronze-hi), var(--bronze) 60%, var(--bronze-lo)); }
+.gauge.ep b { margin-top: -0.25em; }
+.gauge.ep .glyph i { background: linear-gradient(#f0b0a0, #b13a2a 60%, #6e1a10); }
 .bar { height: 0.36em; background: rgba(0, 0, 0, 0.45); box-shadow: 0 0 0 1px rgba(226, 208, 154, 0.35); }
 .bar i { display: block; height: 100%; background: #b13a2a; transition: width 0.5s; }
 .panel { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 0.6em; margin-top: 0.6em; padding-left: 1.6em; }
@@ -320,7 +329,7 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 .place { min-width: 0; height: 2.6em; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0.95em 0.6em 0; font: 400 1em/1.2 var(--title); color: var(--ink); text-align: center;
   border: solid transparent; border-width: 0 3em; border-image: var(--banner) 0 160 fill / 0 3em / 0 stretch; background: var(--crest) center top / 8.2em 1em no-repeat; }
 .headrow { display: flex; flex-direction: column-reverse; align-items: stretch; gap: 0.5em; padding-left: 1.6em; }
-.headrow .plaque { align-self: flex-end; }
+.headrow .gauges { align-self: flex-end; }
 .headrow .place { align-self: center; min-width: 13em; padding-inline: 1em; }
 .compass { align-self: center; display: flex; flex-direction: column; align-items: center; gap: 0.3em; font-size: 1.1em; color: var(--ink-dim); margin: 0.3em 0; }
 .compass .med { --s: 3.7em; }

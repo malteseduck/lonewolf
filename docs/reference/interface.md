@@ -53,8 +53,10 @@ Textures are generated at start-up in `main.js` and set as CSS variables: `--par
 
 ## Right-page panels (`renderRight`)
 
-Header on every panel: a place plaque (location name, or the book's title, or "Combat") and a
-bronze plaque with Combat Skill, Endurance and gold.
+Header on every panel: the place's name on a ribbon (location name, or the book's title, or
+"Combat") and `gauges()`: Combat Skill, Endurance and gold, each a dark window in a bronze frame
+with a medallion (crossed swords, heart, coins) at its end; Endurance has a red thread for what is
+left. `updateBattle` redraws the gauges each round.
 
 - **kai** (`kaiHTML`), after the HD character sheet:
   - `.likeness`: Lone Wolf's portrait (`portraitURL`, made by `portraitFromArt` from

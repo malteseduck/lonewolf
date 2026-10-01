@@ -469,6 +469,15 @@ function updateJourney() {
   panTo(at[0], at[1]);
 }
 
+/* Combat Skill, Endurance and gold at the head of the right page, after the HD gold counter: each
+   a dark window in a bronze frame with its medallion at one end. Endurance carries a thread of red
+   showing how much is left. */
+function gauges(cs, h) {
+  const ep = Math.max(0, h.ep), g = (id, art, label, v, extra = '') => `<span class="gauge ${id}" title="${label}" aria-label="${label} ${v.replace(/<[^>]+>/g, '')}"><span class="med">${art}</span><b>${v}</b>${extra}</span>`;
+  return g('cs', glyph('crossed-swords'), 'Combat Skill', String(cs))
+    + g('ep', glyph('heart-drop'), 'Endurance', `${ep}<small>/${h.epMax}</small>`, `<i class="thread"><i style="width:${Math.round((ep / h.epMax) * 100)}%"></i></i>`)
+    + g('gold', glyph('two-coins'), 'Gold Crowns', String(h.gold));
+}
 function renderRight() {
   const tabs = [['kai', 'Kai Disciplines'], ['pack', 'Inventory'], ['map', 'Map']];
   rtabs.hidden = mode !== 'story';
@@ -478,7 +487,7 @@ function renderRight() {
   const h = game.hero, cs = B ? B.cs() : LW.heroCS(h).total;
   const place = mode === 'battle' ? 'Combat' : book.locations ? L[game.section.loc].name : book.title;
   const head = `<div class="headrow"><div class="place">${esc(place)}</div>
-    <div class="plaque"><span>CS <b>${cs}</b></span><span>EP <b>${Math.max(0, h.ep)}</b>/${h.epMax}</span><span class="coin">${glyph('two-coins')} <b>${h.gold}</b></span></div></div>`;
+    <div class="gauges">${gauges(cs, h)}</div></div>`;
   pr.innerHTML = head + '<div class="panel" id="panel"></div>';
   const host = $('#panel');
   if (mode === 'battle') host.append(B.node);
@@ -605,8 +614,8 @@ function updateBattle() {
   cmds.querySelector('[data-dial]').replaceWith(B.dial.el);
   renderLeft();
   const sc = $('#scroll'); if (sc) sc.scrollTop = 1e6;
-  const pq = pr.querySelector('.plaque');
-  if (pq) { pq.children[0].innerHTML = `CS <b>${B.cs()}</b>`; pq.children[1].innerHTML = `EP <b>${Math.max(0, hero.ep)}</b>/${hero.epMax}`; }
+  const gq = pr.querySelector('.gauges');
+  if (gq) gq.innerHTML = gauges(B.cs(), hero);
 }
 async function lunge(n) {
   await tween(200, (k) => { B.fx.lunge = k * k; });
