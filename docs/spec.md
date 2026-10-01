@@ -174,8 +174,11 @@ hand.
 
 ### 6.4 Map
 
-- A sepia ink map in the style of Lone Wolf HD: dark washes, hatched mountains, small firs, white
-  dashed roads, landmarks with a pale outline.
+- A sepia ink map in the style of Lone Wolf HD, built from image tiles: engraved mountains,
+  forests and settlements stamped onto parchment, with white dashed roads over them. Not plain
+  geometric shapes.
+- The book's own printed map can be viewed too, repainted in sepia on the owner's machine
+  (personal use; never committed).
 - The player's route so far is drawn and a pawn marks the current position.
 - **Where a book has a location for each section**, choices that move to another place are made
   on the map: reachable places light up and the player touches one. Choices that stay in place

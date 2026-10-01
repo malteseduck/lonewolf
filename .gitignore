@@ -1,1 +1,4 @@
 data/projectaon/
+# art/ holds the owner's reference shots and borrowed game art: personal use only, never committed
+art/*
+!art/manifest.json

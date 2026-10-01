@@ -60,11 +60,16 @@ bronze plaque with Combat Skill, Endurance and gold.
   cells, a ledger (gold -/+, "Add an item by hand" select), and the caption with Drink / Drop / Eat.
 - **map**: three cases.
   - Book has `locations` (demo): `updateMap()`. Destinations for the current choices are lit rings;
-    the same choices are listed under the map. Picking one moves the pawn, then turns the page.
-  - Book has a spec in `MAPS` but no locations (Book 1): `updateJourney()`. The pawn sits part-way
-    along `spec.route` by `progress()`: 1 minus (shortest number of choices from the current
-    section to the victory section) over (the same from the start). A link swaps to the printed map.
-  - Neither: the printed map only, sepia-filtered, draggable.
+    the same choices are listed under the map. Picking one walks the figure there, then turns the page.
+  - Book has a spec in `MAPS` but no locations (Book 1): `updateJourney()`. Lone Wolf's figure stands
+    part-way along `spec.route` by `progress()`: 1 minus (shortest number of choices from the
+    current section to the victory section) over (the same from the start). "The whole map" swaps
+    to the zoomable replica (below).
+  - Neither: the whole printed map, repainted by `printedCanvas`, draggable.
+
+The book's printed map is loaded once per book by `printedMap()`, which returns null until the
+image has arrived and redraws the panel when it does. It is shown at 130% of the panel width: the
+source is about 1000 px wide, and more zoom only blurs it.
 
 `destLoc(choice)` decides whether a choice is a road: every target of the choice is in one
 location, and it is not the current one.
@@ -72,14 +77,79 @@ location, and it is not the current one.
 ## Maps (`maps.js`)
 
 `MAPS[id]` is a spec on a 1000x700 grid: `sea`, `rivers`, `roads`, `trails` (SVG path strings),
-`woods` (ellipses), `hills`, `peaks`, `marks` (landmark glyphs), `clear` (points to keep trees
+`woods` (ellipses), `hills`, `peaks.box`, `marks` (landmarks), `clear` (points to keep symbols
 away from), `labels`, `compass`, and for journey maps `route`, `start`, `goal`.
-`mapCanvas(id)` paints it once at 2000x1400 and caches it. `along(route, f)` returns the walked
-part of the route. Dynamic parts (route line, rings, pawn, labels of visited places) are DOM and
-SVG laid over the canvas in `.mapinner`, which is translated to keep the pawn in view.
 
-`MAPS.demo` is the invented country of the demo. `MAPS['01fftd']` is an original drawing of the
-country between the Kai Monastery and Holmgard.
+`mapCanvas(id)` paints it once at 2000x1400 and caches it, in this order: parchment and washes,
+sea, rivers, then the land symbols back to front (rows of mountains filling `peaks.box`, small
+peaks for `hills`, forest clumps and single trees through each wood), then roads and trails as
+white dashes over them, then settlements on a pale halo, labels, compass, border.
+
+The symbols are stamped from `assets/map/widman.png`, a sheet of engravings from a 1680 atlas
+(K. M. Alexander's Widman set, CC0) indexed by `widman.json` (`kind: [[x, y, w, h]]`, kinds
+`mountain range forest tree city town fort walled bridge`). The sheet is built from the
+downloaded pack by `tools/build_map_atlas.py`; one file because the local server takes seconds to
+serve hundreds. `loadStamps()` fetches it and tints it to the sepia ink (and a paper-coloured
+copy for halos); `mapCanvas` returns null until then and the panel redraws when it lands.
+A stamp is drawn at its own pixels times a scale, standing on its foot. `MARK_POOL` says which
+kind each landmark uses; minor landmarks (cairn, wagon) get no symbol.
+
+`printedCanvas(img, crop, w, h)` repaints a book's printed map as sepia ink: lightness becomes ink
+depth, water is pushed darker, strong red survives faintly, then parchment grain is multiplied
+over it. Used for the "printed map" view. `along(route, f)` returns the walked
+part of the route. Dynamic parts (route line, rings, figure, labels of visited places) are DOM and
+SVG laid over the canvas in `.mapinner`, which is translated to keep the figure in view.
+
+`MAPS.demo` is the invented country of the demo, a drawn spec.
+
+### The Lastlands replica (`replica.js`, `LASTLANDS` and `replicaCanvas` in `maps.js`)
+
+The printed map is about 1000 px wide, so cropping and enlarging it blurs. Instead it is redrawn.
+`analyse(img, LASTLANDS)` (replica.js) reads the owner's copy once per session (~0.3 s):
+
+- every pixel is sorted into a terrain class by hue, saturation and value (ink, pale, water,
+  plain, forest, hill, mountain, waste, red);
+- the sea is flood-filled from `LASTLANDS.sea` through everything that is not land, inside
+  `frame` and with `cover` boxes (banners, title, key, compass rose, arms, ships) painted over
+  first. Blurring that sea and taking the 0.5 contour (marching squares) gives the coast as smooth
+  closed outlines, islands included;
+- blurred class densities give grids of mountain, forest, hill and waste, zeroed at sea.
+
+Rivers, roads, settlements and names are not read from the image: auto-detection found only
+fragments. They are hand-placed in `LASTLANDS` in the printed map's pixels. `LASTLANDS.detail`
+adds the heart of Sommerlund from the inset on sheet 1 of Project Aon's *Maps of Magnamund*
+(villages, towers, lakes, lanes), fitted by `fit()` to two towns both maps show, and drawn only when
+zoomed in (6+ canvas px per map px).
+
+`replicaCanvas(model, view, W, H)` paints any view at any size: parchment and washes, sea with a
+shore wash and ripples, inked coast, lakes, rivers, then land symbols on a jittered screen-space
+grid (so zooming in shows more symbols, not bigger ones) chosen by the terrain under each point
+and kept off roads, rivers and towns; roads as white dashes; settlements on halos with names;
+region names; border.
+
+`MAPS['01fftd']` is `{replica: true, view, trail, route}`: the journey panel shows `view` (a 10:7
+box round the Kai Monastery and Holmgard) and the figure walks `trail`. "The whole map" opens
+`.mapview.zoomable`: `drawZoom()` repaints the replica for `zoomV` (left, top, width in map
+pixels) at the panel's device resolution; dragging slides the canvas and repaints on release;
+the wheel and the +/- medallions call `zoomBy`. The figure is placed from the same `trail`.
+
+### Lone Wolf's figure (`.pawn`)
+
+Lone Wolf standing over a bronze arrowhead that points at his spot, toned sepia and outlined in
+white. He slides from place to place; `place()` adds `.walking` for the
+second it moves, which bobs and sways it (CSS `walk`). The picture comes from `art/manifest.json`
+`hero`: either a file already cut out, or `{src, crop}`, in which case `heroFromArt(img, crop)`
+(plates.js) cuts the figure out of its plain, smoky ground at load: a flood fill in from the crop's
+edges through mid-toned greyish pixels close to their neighbour; a smooth colour surface fitted
+to that ground then keys out anything near it. An optional `outline` (a polygon traced by hand in
+crop pixels) overrides both: inside it is figure, outside ground, and only a 10 px band along it is
+left to the keying. Without an outline, the largest piece left is kept. Then it
+tones it sepia, stands it over `pointer` centred between its feet, and `outlined` rims it in white. The owner's current picture is the full-length Lone Wolf from a
+Lone Wolf HD store screenshot (in git-ignored `art/`). Without one, `drawHero()` paints a stand-in.
+
+`replica.js` also has `trace()`, which redraws the printed map itself as vector tones. It was tried
+in place of the stamped replica and looked worse (giant lettering and blobs when zoomed in); it is
+not used.
 
 ## Combat (`startBattle`, `updateBattle`, `battleAct`, `endBattle`)
 

@@ -8,8 +8,10 @@ How the code is laid out today. Intent lives in `docs/spec.md`.
 index.html                  the player: markup, all CSS, script tags
 main.js                     ES module: state, rendering, input, combat, title page
 plates.js                   ES module: ink creatures, inkPlate (restyles an illustration), figure, frame, gear
-maps.js                     ES module: map specs and the sepia map painter
+maps.js                     ES module: map specs, the Lastlands data, the stamp painters
+replica.js                  ES module: reads a printed map into coast outlines and terrain grids
 art/manifest.json           optional: map an enemy sprite key to an image file in art/
+assets/map/                 widman.png + widman.json: engraved map symbols (CC0), built by tools/build_map_atlas.py
 CLAUDE.md, README.md
 docs/                       spec, plan, reference
 shared/                     used by the player and the prototypes (classic scripts on a global LW)
@@ -26,7 +28,9 @@ prototypes/                 earlier experiments, kept working, not developed
 tools/
   fetch_projectaon.py       downloads one book into data/projectaon/<code>/
   import_projectaon.py      converts it to data/projectaon/<code>/book.js and rewrites data/projectaon/index.js
-data/projectaon/            git-ignored. Downloaded pages and images, generated book.js files, index.js
+  build_map_atlas.py        packs the downloaded Widman symbol pack into assets/map/widman.png
+data/projectaon/            git-ignored. Downloaded pages and images, generated book.js files, index.js;
+                            maps/: sheets 1-2 of Project Aon's Maps of Magnamund (reference for LASTLANDS.detail)
 .claude/launch.json         local server definition (python http.server on 8765)
 ```
 
@@ -39,7 +43,7 @@ data/projectaon/index.js    document.writes a <script> for each imported book ->
 shared/ui.js                LW.UI, LW.sfx
 shared/sfx-soft.js          overrides LW.sfx
 shared/rules-series.js      adds Magnakai, overrides LW.has and LW.heroCS, adds LW.Character, LW.UI.chooseCharacter
-main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js
+main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js (which imports ./replica.js)
 ```
 
 Order matters: `rules-series.js` overrides functions defined in `core.js` and needs `LW.UI`.

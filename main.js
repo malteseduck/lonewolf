@@ -2,8 +2,8 @@
    Left page: the story. Right page: a panel (Kai Disciplines, inventory, map, or the fight).
    Plays the built-in demo chapter, or a full book imported by tools/import_projectaon.py. */
 import * as Ink from './shared/ink.js';
-import { drawCreature, setArt, newWound, drawFigure, drawFrame, gearSVG } from './plates.js';
-import { MAPS, mapCanvas, along } from './maps.js';
+import { drawCreature, setArt, newWound, drawFigure, drawHero, heroFromArt, drawFrame, gearSVG } from './plates.js';
+import { MAPS, LASTLANDS, mapCanvas, loadStamps, stampsLoaded, printedCanvas, replicaModel, replicaCanvas, along } from './maps.js';
 
 const LW = window.LW;
 const BOOKS = Object.assign({ demo: LW.BOOK_DEMO }, LW.BOOKS || {});
@@ -67,6 +67,17 @@ root.setProperty('--wood', `linear-gradient(rgba(10,7,6,0.55), rgba(10,7,6,0.55)
 }
 gear.innerHTML = gearSVG();
 const figureURL = drawFigure().toDataURL();
+/* Lone Wolf on the maps: the owner's picture of him cut out, toned sepia, over a pointer (art/manifest.json
+   "hero": {src, crop}, or a file already cut out), else a painted stand-in */
+let heroURL = drawHero().toDataURL();
+const heroHTML = () => `<div class="pawn"><img src="${heroURL}" alt="Lone Wolf"></div>`;
+/* move the figure; while it slides to a new spot it walks (a bob and a sway, in CSS) */
+function place(tok, left, top) {
+  if (tok.style.left && (tok.style.left !== left || tok.style.top !== top)) {
+    tok.classList.add('walking'); clearTimeout(tok.walk); tok.walk = setTimeout(() => tok.classList.remove('walking'), 1000);
+  }
+  tok.style.left = left; tok.style.top = top;
+}
 const vignettes = {};
 const vignette = (scene) => vignettes[scene] || (vignettes[scene] = Ink.inkScene(scene, 1000, 340).toDataURL());
 
@@ -126,7 +137,7 @@ function storyText(sec) {
 function leftHTML() {
   if (mode === 'title') {
     const kept = LW.Character.load(), can = (id) => kept && id !== 'demo' && !kept.completed.includes(id);
-    const row = (id, label) => `<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:0.2em 0.8em"><button type="button" class="seal" data-book="${id}">${hasSave(id) ? 'Continue: ' : ''}${esc(label)}</button>${
+    const row = (id, label) => `<div class="shelf"><button type="button" class="seal" data-book="${id}">${hasSave(id) ? 'Continue: ' : ''}${esc(label)}</button>${
       hasSave(id) ? `<button type="button" class="inkbtn" data-book="${id}" data-fresh>start over</button>` : ''}${can(id) ? `<button type="button" class="inkbtn" data-book="${id}" data-anew>new character</button>` : ''}</div>`;
     const ids = Object.keys(BOOKS).filter((id) => id !== 'demo').sort((a, b) => (BOOKS[a].number || 0) - (BOOKS[b].number || 0));
     return `<div class="story" style="justify-content:center;align-items:center;text-align:center;gap:0.45em"><div class="scroll" style="flex:0 1 auto;align-items:center;gap:0.45em">
@@ -241,11 +252,59 @@ const mapNode = el('div', 'mapview');
 mapNode.innerHTML = `<div class="mapinner"><canvas width="2000" height="1400"></canvas>
   <svg class="lines" viewBox="0 0 1000 700" aria-hidden="true"><g class="ways"></g><polyline class="routeback"></polyline><polyline class="route"></polyline></svg>
   <div class="marks"></div>
-  <svg class="pawn" viewBox="0 0 30 46"><path d="M15 3a7 7 0 0 1 7 7c0 3-1.600 5-3.400 6.200C25 19 27 30 28 43H2C3 30 5 19 11.400 16.200 9.600 15 8 13 8 10a7 7 0 0 1 7-7z" fill="#2a1a10" stroke="#fff8e4" stroke-width="1.800"/></svg></div>`;
+  ${heroHTML()}</div>`;
 function showTerrain(id) {
   if (mapShown === id) return;
-  const cv = mapNode.querySelector('canvas'), x = cv.getContext('2d');
-  x.clearRect(0, 0, cv.width, cv.height); x.drawImage(mapCanvas(id), 0, 0); mapShown = id;
+  const cv = mapNode.querySelector('canvas'), x = cv.getContext('2d'), map = mapCanvas(id, MAPS[id].replica && lastlands());
+  x.clearRect(0, 0, cv.width, cv.height);
+  if (!map) return void ((mapShown = null), loadStamps().then(() => { if (panel === 'map') renderRight(); })); // painted once the symbols and image arrive
+  x.drawImage(map, 0, 0); mapShown = id;
+}
+/* Book 1's printed map, which the Lastlands replica is read from: the image, null while it
+   loads (the panel redraws then), or undefined if Book 1 is not imported */
+function lastlands() {
+  const b = BOOKS['01fftd'];
+  if (!b) return undefined;
+  const url = b.assets + b.map;
+  if (!printed[url]) { const im = (printed[url] = new Image()); im.onload = () => { if (panel === 'map') renderRight(); }; im.src = url; }
+  return printed[url].complete && printed[url].naturalWidth ? printed[url] : null;
+}
+/* the current book's printed map, or null until it has loaded (the panel redraws then) */
+const printed = {};
+function printedMap() {
+  const url = asset(book.map);
+  if (!printed[url]) { const im = (printed[url] = new Image()); im.onload = () => { if (panel === 'map') renderRight(); }; im.src = url; }
+  return printed[url].complete && printed[url].naturalWidth ? printed[url] : null;
+}
+const scans = {};
+const scanOf = (img) => (scans[img.src] = scans[img.src] || printedCanvas(img, [0, 0, img.naturalWidth, img.naturalHeight], img.naturalWidth * 2, img.naturalHeight * 2));
+
+/* The whole replica, repainted for whatever part is in view so it stays sharp at any zoom.
+   zoomV is the view's left, top and width in the printed map's pixels; its height follows the box. */
+let zoomV = null;
+function drawZoom() {
+  const box = $('.mapview.zoomable'), img = lastlands();
+  if (!box || !img) return;
+  if (!stampsLoaded()) return void loadStamps().then(() => { if (panel === 'map') renderRight(); });
+  const dpr = Math.min(2, devicePixelRatio || 1), W = Math.round(box.clientWidth * dpr), H = Math.round(box.clientHeight * dpr), [fx, fy, fw, fh] = LASTLANDS.frame;
+  const at = along(MAPS[book.id].trail, progress()).pop();
+  if (!zoomV) { const w0 = fh * (W / H) * 0.5; zoomV = [at[0] - w0 / 2, at[1] - (w0 * H) / W / 2, w0]; }
+  const w = Math.max(30, Math.min(fw, (fh * W) / H, zoomV[2])), h = (w * H) / W; // zoomed out, the frame's height fills the box
+  const keep = (v, lo, span, size) => (size >= span ? lo + (span - size) / 2 : Math.max(lo, Math.min(lo + span - size, v))); // stay on the map
+  zoomV = [keep(zoomV[0], fx, fw, w), keep(zoomV[1], fy, fh, h), w];
+  const cv = box.querySelector('canvas');
+  cv.width = W; cv.height = H;
+  cv.getContext('2d').drawImage(replicaCanvas(replicaModel(img), [zoomV[0], zoomV[1], w, h], W, H), 0, 0);
+  const tok = box.querySelector('.pawn');
+  tok.style.left = ((at[0] - zoomV[0]) / w) * 100 + '%'; tok.style.top = ((at[1] - zoomV[1]) / h) * 100 + '%'; // repainted, not walked
+}
+/* zoom by f about a point given as fractions of the box */
+function zoomBy(f, ax = 0.5, ay = 0.5) {
+  const box = $('.mapview.zoomable');
+  if (!box || !zoomV) return;
+  const [x0, y0, w] = zoomV, h = (w * box.clientHeight) / box.clientWidth;
+  zoomV = [x0 + w * ax * (1 - 1 / f), y0 + h * ay * (1 - 1 / f), w / f];
+  drawZoom();
 }
 const mapInner = mapNode.querySelector('.mapinner'), pawn = mapNode.querySelector('.pawn');
 const pct = (p) => `left:${p.x / 10}%;top:${p.y / 7}%`;
@@ -268,15 +327,15 @@ function updateMap() {
     h += `<button type="button" class="dest" style="${pct(L[k])}" data-choice="${r.i}" ${r.c.enabled ? '' : 'disabled'}><b>${esc(L[k].name)}</b></button>`;
   });
   mapNode.querySelector('.marks').innerHTML = h;
-  pawn.style.left = L[here].x / 10 + '%'; pawn.style.top = L[here].y / 7 + '%';
-  // keep the pawn and the open roads in view
+  place(pawn, L[here].x / 10 + '%', L[here].y / 7 + '%');
+  // keep the figure and the open roads in view
   const vw = mapNode.clientWidth, W = mapInner.clientWidth || 1;
   const xs = [L[here].x, ...[...destLocs].map((k) => L[k].x)], cx = xs.reduce((a, b) => a + b, 0) / xs.length;
   mapInner.style.transform = `translateX(${Math.min(0, Math.max(vw - W, vw / 2 - (cx / 1000) * W))}px)`;
   return rd.length;
 }
 
-/* A book without per-section places still gets a journey: the pawn's distance along the road is
+/* A book without per-section places still gets a journey: the figure's distance along the road is
    how close the current section is, by the shortest chain of choices, to the book's last section. */
 function progress() {
   if (!book._dist) {
@@ -302,7 +361,7 @@ function updateJourney() {
   mapNode.querySelector('.route').setAttribute('points', line); mapNode.querySelector('.routeback').setAttribute('points', line);
   mapNode.querySelector('.ways').innerHTML = '';
   mapNode.querySelector('.marks').innerHTML = `<div class="mk ring" style="left:${goal[0] / 10}%;top:${goal[1] / 7}%"><i></i></div>`;
-  pawn.style.left = at[0] / 10 + '%'; pawn.style.top = at[1] / 7 + '%';
+  place(pawn, at[0] / 10 + '%', at[1] / 7 + '%');
   const vw = mapNode.clientWidth, W = mapInner.clientWidth || 1;
   mapInner.style.transform = `translateX(${Math.min(0, Math.max(vw - W, vw / 2 - (at[0] / 1000) * W))}px)`;
 }
@@ -322,12 +381,21 @@ function renderRight() {
   else if (panel === 'map' && !book.locations) {
     const m = MAPS[book.id];
     if (!m || mapScan) {
-      host.innerHTML = `<div class="mapview scrolly"><img class="scan" src="${asset(book.map)}" alt="Map of the Lastlands"></div><p class="maphint">The map printed in the book. Drag to look around.${m ? ' <button type="button" class="inkbtn" data-scan>Back to the journey map</button>' : ''}</p>`;
+      if (m) {
+        host.innerHTML = `<div class="mapview zoomable" role="img" aria-label="Map of the Lastlands"><canvas></canvas>${heroHTML()}
+          <div class="zoomctl"><button type="button" class="med" data-zoom="in" aria-label="Zoom in">+</button><button type="button" class="med" data-zoom="out" aria-label="Zoom out">&minus;</button></div></div>
+          <p class="maphint">The Lastlands. Drag to look around; scroll or use the medallions to zoom. <button type="button" class="inkbtn" data-scan>Back to the journey</button></p>`;
+        drawZoom();
+      } else {
+        const img = printedMap();
+        host.innerHTML = '<div class="mapview scrolly" role="img" aria-label="Map of the Lastlands"></div><p class="maphint">The map printed in the book. Drag to look around.</p>';
+        if (img) host.firstChild.append(scanOf(img));
+      }
     } else {
       const hint = el('p', 'maphint');
       host.append(mapNode, hint);
       updateJourney();
-      hint.innerHTML = `Your road from ${esc(m.start)} to ${esc(m.goal)}. The pawn marks how far the story has carried you. <button type="button" class="inkbtn" data-scan>The printed map</button>`;
+      hint.innerHTML = `Your road from ${esc(m.start)} to ${esc(m.goal)}. Your figure marks how far the story has carried you. <button type="button" class="inkbtn" data-scan>The whole map</button>`;
     }
   } else if (panel === 'map') {
     const hint = el('div');
@@ -372,7 +440,7 @@ async function choose(i) {
     await wait(900);
   }
   if (travel) {
-    pawn.style.left = L[travel].x / 10 + '%'; pawn.style.top = L[travel].y / 7 + '%';
+    place(pawn, L[travel].x / 10 + '%', L[travel].y / 7 + '%');
     await wait(still ? 0 : 1050);
   }
   game.choose(c, to);
@@ -516,6 +584,7 @@ bookEl.addEventListener('click', (e) => {
   else if ('endbattle' in d) guard(endBattle);
   else if ('new' in d) toTitle();
   else if ('scan' in d) { mapScan = !mapScan; renderRight(); }
+  else if (d.zoom) zoomBy(d.zoom === 'in' ? 1.5 : 1 / 1.5);
 });
 function addItem(id) { const err = game.addItem(id); if (err) LW.UI.toast(err); else LW.sfx('select'); render(); }
 pr.addEventListener('change', (e) => {
@@ -530,11 +599,34 @@ pr.addEventListener('keydown', (e) => {
   const name = e.target.value.trim().replace(/[|"<>]/g, '');
   if (name) addItem(`${e.target.dataset.prefix}:${name}`); else render();
 });
-/* drag the book's own map around */
+/* drag a map around: the printed one scrolls; the replica slides, then repaints where it stopped */
 let drag = null;
-pr.addEventListener('pointerdown', (e) => { const v = e.target.closest('.mapview.scrolly'); if (v) { drag = { v, x: e.clientX, y: e.clientY, l: v.scrollLeft, t: v.scrollTop }; e.preventDefault(); } });
-window.addEventListener('pointermove', (e) => { if (drag) { drag.v.scrollLeft = drag.l - (e.clientX - drag.x); drag.v.scrollTop = drag.t - (e.clientY - drag.y); } });
-window.addEventListener('pointerup', () => { drag = null; });
+pr.addEventListener('pointerdown', (e) => {
+  const v = e.target.closest('.mapview.scrolly, .mapview.zoomable');
+  if (v && !e.target.closest('button')) { drag = { v, x: e.clientX, y: e.clientY, l: v.scrollLeft, t: v.scrollTop }; e.preventDefault(); }
+});
+window.addEventListener('pointermove', (e) => {
+  if (!drag) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  if (drag.v.classList.contains('zoomable')) drag.v.querySelectorAll('canvas, .pawn').forEach((n) => { n.style.translate = `${dx}px ${dy}px`; });
+  else { drag.v.scrollLeft = drag.l - dx; drag.v.scrollTop = drag.t - dy; }
+});
+window.addEventListener('pointerup', (e) => {
+  if (drag && drag.v.classList.contains('zoomable') && zoomV) {
+    const k = zoomV[2] / drag.v.clientWidth;
+    zoomV = [zoomV[0] - (e.clientX - drag.x) * k, zoomV[1] - (e.clientY - drag.y) * k, zoomV[2]];
+    drag.v.querySelectorAll('canvas, .pawn').forEach((n) => { n.style.translate = ''; });
+    drawZoom();
+  }
+  drag = null;
+});
+pr.addEventListener('wheel', (e) => {
+  const v = e.target.closest('.mapview.zoomable');
+  if (!v || !zoomV) return;
+  e.preventDefault();
+  const b = v.getBoundingClientRect();
+  zoomBy(e.deltaY < 0 ? 1.25 : 0.8, (e.clientX - b.left) / b.width, (e.clientY - b.top) / b.height);
+}, { passive: false });
 pr.addEventListener('pointerover', (e) => { const c = e.target.closest('.roads .choice'); pr.querySelectorAll('.dest').forEach((d) => d.classList.toggle('hot', !!c && d.dataset.choice === c.dataset.choice)); });
 
 function toTitle() { B = null; mode = 'title'; render(); }
@@ -560,6 +652,14 @@ soundLabel();
 /* optional illustrations dropped into art/ */
 fetch('art/manifest.json').then((r) => r.json()).then((m) => {
   for (const kind in m.enemies || {}) { const im = new Image(); im.onload = () => setArt(kind, im); im.src = 'art/' + m.enemies[kind]; }
+  if (m.hero) {
+    const im = new Image();
+    im.onload = () => {
+      heroURL = m.hero.crop ? heroFromArt(im, m.hero.crop, m.hero.outline).toDataURL() : im.src;
+      [...document.querySelectorAll('.pawn img'), mapNode.querySelector('.pawn img')].forEach((n) => { n.src = heroURL; }); // the map node may be out of the page
+    };
+    im.src = 'art/' + (m.hero.src || m.hero);
+  }
 }).catch(() => {});
 
 window.__lw = { get game() { return game; }, render: () => render(), BOOKS, begin }; // for poking at a section from the console

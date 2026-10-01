@@ -1,9 +1,82 @@
-/* Sepia ink maps in the Lone Wolf HD manner: dark washes, hatched mountains, small firs,
-   white dashed roads, and inked landmarks with a pale outline. Each map is a 1000x700 spec. */
+/* Sepia ink maps in the Lone Wolf HD manner. Mountains, forests and settlements are stamped from
+   engraved symbols (assets/map/widman, CC0, from a 1680 atlas) tinted to the ink; water, roads and
+   washes are painted. Each map is a 1000x700 spec, painted at 2000x1400 so a stamp's own pixels
+   land one to one on the canvas. */
 import * as Ink from './shared/ink.js';
+import { analyse, toPath, toLine } from './replica.js';
 
 const INK = '38,26,16', PAPER = '226,212,176', RED = '140,28,18';
 const ink = (a) => `rgba(${INK},${a})`;
+
+/* points in the printed map's pixels to the 1000x700 grid of a 10:7 view of it */
+const onView = (v, pts) => pts.map(([px, py]) => [((px - v[0]) / v[2]) * 1000, ((py - v[1]) / v[3]) * 700]);
+const BOOK1_VIEW = [110, 425, 170, 119];
+/* the road the figure walks in Book 1, in the printed map's pixels */
+const BOOK1_TRAIL = [[168, 466], [176, 478], [186, 490], [198, 501], [211, 511], [222, 519]];
+
+/* The Lastlands as printed in Book 1, redrawn. replica.js reads the coast and the terrain from
+   the owner's copy of that map; the rest is set here by hand. All in that image's pixels
+   (1024x793). frame: the drawn country inside the decorations. cover: boxes laid over the country
+   (banners, title, key, compass rose, arms) and what lies under them. sea: points in open water. */
+export const LASTLANDS = {
+  frame: [22, 150, 966, 570],
+  cover: [[0, 0, 390, 290, 'sea'], [370, 20, 330, 215, 'sea'], [680, 0, 344, 245, 'sea'], [548, 335, 140, 140, 'sea'], [855, 280, 115, 145, 'land'],
+    [365, 250, 40, 40, 'sea'], [670, 265, 45, 45, 'sea'], [835, 230, 40, 40, 'sea'], [478, 196, 56, 30, 'sea']],
+  sea: [[600, 240], [330, 430], [560, 500], [620, 300], [830, 700], [950, 665]],
+  places: [
+    ['Holmgard', 'city', 222, 520], ['Toran', 'city', 179, 404], ['Tyso', 'town', 260, 461], ['Anskaven', 'town', 306, 352],
+    ['Kai Monastery', 'fort', 168, 466], ['Ragadorn', 'walled', 507, 569], ['Gorn Cove', 'village', 660, 607],
+    ['Port Bax', 'city', 711, 577], ['Lof', 'town', 798, 343], ['Hammerdal', 'walled', 918, 487], ['Blave', 'town', 785, 627],
+    ['Ryme', 'town', 757, 689], [null, 'village', 862, 641],
+  ],
+  roads: [
+    [[183, 404], [190, 425], [196, 445], [203, 480], [213, 505], [220, 515]],
+    [[188, 398], [215, 385], [242, 372], [270, 363], [304, 353]],
+    [[258, 463], [248, 482], [238, 500], [228, 512]],
+    [[232, 521], [270, 520], [310, 521], [360, 522], [400, 525], [440, 531], [478, 558], [503, 568]],
+    [[305, 521], [301, 560], [299, 600], [297, 650]],
+    [[512, 571], [560, 576], [598, 581], [650, 581], [675, 584], [700, 580]],
+    [[714, 566], [728, 530], [740, 495], [748, 458], [756, 420], [765, 381], [790, 348]],
+    [[722, 580], [752, 600], [781, 622]],
+    [[795, 615], [840, 595], [871, 580], [895, 552], [915, 500]],
+    [[795, 627], [830, 634], [860, 641], [895, 647], [940, 646], [985, 642]],
+    [[783, 632], [772, 660], [762, 684]],
+    [[770, 682], [810, 672], [838, 665], [860, 645]],
+  ],
+  rivers: [
+    [[60, 421], [100, 422], [140, 418], [167, 408], [177, 400]],
+    [[85, 482], [140, 486], [191, 483], [207, 484], [217, 495]],
+    [[45, 549], [100, 539], [152, 531], [199, 521], [247, 515], [287, 511]],
+    [[502, 583], [497, 607], [507, 631], [524, 655], [530, 700], [535, 740]],
+    [[941, 562], [929, 605], [914, 620], [900, 639], [890, 663], [881, 682]],
+    [[850, 425], [830, 445], [815, 460], [810, 491]],
+    [[650, 612], [648, 650], [652, 700]],
+  ],
+  /* [text, x, y, size in map pixels, angle, kind] */
+  labels: [
+    ['The Kaltersee', 600, 245, 12, 0, 'sea'], ['The Holmgulf', 300, 465, 8, -0.75, 'sea'], ['The Gulf of Durenor', 560, 505, 10, 0, 'sea'],
+    ['Kirlundin Isles', 432, 330, 7, -1.25, 'sea'], ['The Rymerift', 815, 722, 7, 0, 'sea'],
+    ['Sommerlund', 245, 318, 12, 0.45, 'land'], ['Durenor', 770, 420, 13, -0.25, 'land'], ['The Wildlands', 455, 650, 16, 0.08, 'land'],
+    ['Durncrag Mountains', 92, 640, 9, 0.95, 'land'], ['Pass of Moytura', 223, 618, 5, 0, 'land'],
+  ],
+  /* Finer detail for the heart of Sommerlund, from the inset on sheet 1 of the Maps of Magnamund,
+     in that inset's pixels (577x577). It is fitted to this map by two places both show, and drawn
+     only when zoomed in far enough to have room for it. */
+  detail: {
+    anchors: [[[268, 150], [168, 466]], [[465, 505], [222, 520]]],
+    places: [
+      ['Tower Bern', 'fort', 75, 98], ['Fogwood', 'village', 195, 192], ['Malis Mound', 'fort', 128, 218], ['Oak Hill', 'village', 432, 35],
+      ['Searsby', 'village', 420, 162], ['Deerley', 'village', 520, 162], ['Raumas T.', 'fort', 383, 192], ['Alema Mitre', 'fort', 385, 248],
+      ['Alema Br.', 'bridge', 412, 295], ['Searsheld', 'fort', 283, 378], ['Graveyard of the Ancients', 'fort', 378, 392],
+      ['Tower Zil', 'fort', 22, 402], ['Ft. Clanor', 'fort', 195, 548], [null, 'fort', 35, 268], [null, 'village', 550, 258],
+    ],
+    roads: [
+      [[268, 150], [340, 148], [420, 148], [530, 150]], [[255, 150], [160, 120], [80, 100]], [[262, 160], [215, 180], [200, 195]],
+      [[35, 240], [130, 285], [200, 340], [283, 375], [380, 450], [450, 500]], [[430, 40], [425, 160], [420, 290], [415, 360]],
+    ],
+    lakes: [[340, 85, 22, 12], [440, 330, 18, 14]],
+  },
+};
 
 export const MAPS = {
   /* the invented country of the demo chapter */
@@ -14,134 +87,288 @@ export const MAPS = {
     trails: ['M150 110 Q230 140 285 195 T350 320 T462 432', 'M150 110 Q110 200 140 280 T350 320', 'M462 432 Q500 370 540 318 T550 468', 'M462 432 Q430 490 418 548 T550 468'],
     woods: [[290, 215, 200, 125], [370, 430, 160, 125], [630, 230, 130, 115], [650, 580, 120, 70], [110, 540, 120, 130], [860, 330, 80, 70], [480, 90, 110, 70]],
     hills: [[140, 288, 95, 36]],
-    peaks: { box: [740, 40, 230, 140], n: 20 },
+    peaks: { box: [740, 40, 230, 140] },
     marks: [['ruins', 150, 104], ['cairn', 140, 272], ['wagon', 350, 314], ['posts', 462, 428], ['log', 540, 316], ['reeds', 418, 546], ['posts', 550, 466], ['tent', 735, 462], ['bridge', 838, 552], ['city', 915, 618]],
     clear: [[150, 110], [285, 195], [140, 280], [350, 320], [462, 432], [540, 318], [418, 548], [550, 468], [735, 470], [838, 552], [915, 628]],
     labels: [],
     compass: [84, 606],
   },
-  /* Book 1: the country between the Kai Monastery and Holmgard, drawn fresh for this project */
+  /* Book 1: the redrawn Lastlands, framed on the road from the Kai Monastery to Holmgard */
   '01fftd': {
-    sea: 'M560 0 C640 110 770 140 745 255 S800 450 752 548 S860 650 1000 640 L1000 0 Z',
-    rivers: ['M60 330 C200 372 380 398 520 462 S690 540 748 560', 'M40 604 C250 628 520 650 748 566', 'M96 118 C190 142 270 112 332 96'],
-    roads: ['M332 96 C420 250 560 380 742 556', 'M742 556 C700 420 688 300 702 204', 'M236 300 C320 330 410 332 462 318'],
-    trails: ['M236 300 C300 350 380 392 470 440 S650 520 742 556'],
-    woods: [[340, 410, 190, 110], [540, 290, 110, 90], [300, 205, 120, 70], [560, 610, 170, 50], [470, 545, 110, 50], [200, 470, 90, 70]],
-    hills: [[170, 560, 90, 36], [420, 150, 70, 28]],
-    peaks: { box: [20, 50, 130, 600], n: 34 },
-    marks: [['ruins', 236, 292], ['town', 332, 88], ['town', 702, 196], ['city', 742, 546]],
-    clear: [[236, 300], [332, 96], [702, 204], [742, 556]],
-    labels: [['Kai Monastery', 236, 262, 17], ['Toran', 332, 58, 17], ['Tyso', 702, 166, 17], ['Holmgard', 742, 600, 20], ['The Holmgulf', 880, 330, 22, -1.1, true], ['R. Unoram', 400, 388, 12, 0.2, true], ['R. Eledil', 330, 622, 12, 0.08, true], ['Durncrag Mountains', 70, 370, 15, -1.5708, true]],
-    compass: [910, 90],
-    /* the pawn walks this line as the story nears its end */
-    route: [[236, 300], [300, 350], [380, 392], [470, 440], [560, 480], [650, 520], [742, 556]],
+    replica: true,
+    view: BOOK1_VIEW,
+    trail: BOOK1_TRAIL, route: onView(BOOK1_VIEW, BOOK1_TRAIL),
     start: 'Kai Monastery', goal: 'Holmgard',
   },
 };
 
-/* small inked landmarks: a pale outline first, then the ink */
-const GLYPHS = {
-  city: [[[-26, 8], [26, 8], [26, -6], [-26, -6]], [[-30, 8], [-30, -16], [-25, -26], [-20, -16], [-20, 8]], [[20, 8], [20, -16], [25, -26], [30, -16], [30, 8]], [[-6, 8], [-6, -22], [0, -36], [6, -22], [6, 8]]],
-  town: [[[-16, 8], [-16, -4], [-9, -12], [-2, -4], [-2, 8]], [[2, 8], [2, -16], [7, -26], [12, -16], [12, 8]], [[12, 8], [12, -2], [20, -2], [20, 8]]],
-  ruins: [[[-20, 8], [-20, -14], [-16, -20], [-13, -12], [-10, -18], [-8, 8]], [[-8, 8], [-8, -4], [2, -6], [8, -2], [10, 8]], [[10, 8], [10, -22], [13, -28], [16, -20], [19, -26], [20, 8]]],
-  bridge: [[[-22, 4], [-22, -4], [22, -4], [22, 4], [14, 4], [8, -1], [0, 4], [-8, -1], [-14, 4]]],
-  tent: [[[-14, 8], [0, -14], [14, 8]], [[-2, 8], [0, 0], [2, 8]]],
-  wagon: [[[-14, 2], [-14, -8], [12, -8], [12, 2]], [[-12, 8], [-7, 3], [-2, 8]], [[2, 8], [7, 3], [12, 8]]],
-  posts: [[[-10, 8], [-10, -8], [-7, -8], [-7, 8]], [[-1, 8], [-1, -12], [2, -12], [2, 8]], [[8, 8], [8, -6], [11, -6], [11, 8]]],
-  log: [[[-18, -2], [16, -8], [18, -3], [-16, 4]]],
-  reeds: [[[-8, 8], [-10, -10], [-6, 8]], [[-1, 8], [0, -14], [2, 8]], [[6, 8], [10, -9], [9, 8]]],
-  cairn: [[[-12, 8], [-8, 0], [8, 0], [12, 8]], [[-7, 0], [-4, -8], [5, -8], [7, 0]], [[-3, -8], [0, -15], [3, -8]]],
-};
-function glyph(x, type, px, py, s = 1) {
-  const shapes = GLYPHS[type] || GLYPHS.posts;
-  const path = (pts) => { x.beginPath(); pts.forEach(([a, b], i) => (i ? x.lineTo(px + a * s, py + b * s) : x.moveTo(px + a * s, py + b * s))); x.closePath(); };
-  x.lineJoin = 'round';
-  shapes.forEach((pts) => { path(pts); x.strokeStyle = `rgba(${PAPER},0.95)`; x.lineWidth = 5; x.stroke(); });
-  shapes.forEach((pts) => { path(pts); x.fillStyle = ink(0.92); x.fill(); });
-  if (type === 'city') { x.fillStyle = `rgba(${RED},0.95)`; x.fillRect(px - 0.5 * s, py - 46 * s, 1.5 * s, 12 * s); x.beginPath(); x.moveTo(px + s, py - 46 * s); x.lineTo(px + 11 * s, py - 42 * s); x.lineTo(px + s, py - 38 * s); x.fill(); }
-  if (type === 'ruins') for (let i = 0; i < 7; i++) { x.beginPath(); x.ellipse(px + i * 5 * s, py - (30 + i * 9) * s, (6 + i * 2) * s, (4 + i) * s, 0, 0, Math.PI * 2); x.fillStyle = ink(0.1); x.fill(); }
+/* which symbol kind a landmark in a spec is drawn with. Minor places (a cairn, a wagon) get no
+   symbol: the map's own place markers show them once visited. */
+const MARK_POOL = { city: 'walled', town: 'town', ruins: 'fort', bridge: 'bridge' };
+/* the engraved symbols, one sheet built by tools/build_map_atlas.py: kind -> [{x, y, w, h}] */
+const STAMPS = {};
+let sheet = null, loading = null;
+export const stampsLoaded = () => !!sheet;
+export function loadStamps() {
+  if (loading) return loading;
+  const im = new Image();
+  im.src = 'assets/map/widman.png';
+  return (loading = Promise.all([fetch('assets/map/widman.json').then((r) => r.json()), im.decode()]).then(([index]) => {
+    for (const kind in index) STAMPS[kind] = index[kind].map(([x, y, w, h]) => ({ x, y, w, h }));
+    sheet = { ink: tint(im, ink(0.95)), pale: tint(im, `rgb(${PAPER})`) };
+  }));
+}
+/* black engraving -> sepia ink, or -> paper for the halo that lifts a symbol off the washes */
+function tint(im, col) {
+  const c = Ink.canvas(im.width, im.height), x = c.getContext('2d');
+  x.drawImage(im, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = col; x.fillRect(0, 0, im.width, im.height);
+  return c;
+}
+/* a stamp sits on its foot: (px, py) is the middle of its base line, s scales its own pixels */
+function stamp(x, st, px, py, s, halo) {
+  const w = st.w * s / 2, h = st.h * s / 2, put = (src) => x.drawImage(src, st.x, st.y, st.w, st.h, px - w / 2, py - h, w, h);
+  if (halo) {
+    x.save(); x.shadowColor = `rgba(${PAPER},0.95)`; x.shadowBlur = halo;
+    put(sheet.pale); put(sheet.pale);
+    x.restore();
+  }
+  put(sheet.ink);
 }
 
+/* the similarity (move, turn, scale) that takes two points of one map onto the same two of another */
+function fit([[a, A], [b, B]]) {
+  const dx = b[0] - a[0], dy = b[1] - a[1], DX = B[0] - A[0], DY = B[1] - A[1], d2 = dx * dx + dy * dy;
+  const c = (dx * DX + dy * DY) / d2, s = (dx * DY - dy * DX) / d2;
+  const f = ([px, py]) => [A[0] + c * (px - a[0]) - s * (py - a[1]), A[1] + s * (px - a[0]) + c * (py - a[1])];
+  f.scale = Math.hypot(c, s);
+  return f;
+}
+
+/* the replica's reading of the printed map, made once per image */
+const models = {};
+export const replicaModel = (img) => (models[img.src] = models[img.src] || analyse(img, LASTLANDS));
+
+/* Paint the replica: view is [x, y, w, h] in the printed map's pixels, W x H the canvas. Symbols
+   keep roughly their own size on screen, so zooming in shows more of them, not bigger ones. */
+export function replicaCanvas(model, view, W, H) {
+  const [vx, vy, vw] = view, z = W / vw, R = LASTLANDS, cv = Ink.canvas(W, H), x = cv.getContext('2d');
+  const r = Ink.seeded(Math.round(vx * 7 + vy * 13 + vw * 3));
+  const P = ([px, py]) => [(px - vx) * z, (py - vy) * z];
+  const toMap = () => x.setTransform(z, 0, 0, z, -vx * z, -vy * z), toCanvas = () => x.setTransform(1, 0, 0, 1, 0, 0);
+  const D = z >= 6 && R.detail, dt = D && fit(D.anchors);
+  const places = [...R.places, ...(D ? D.places.map(([n, k, px, py]) => [n, k, ...dt([px, py])]) : [])];
+  const roads = [...R.roads, ...(D ? D.roads.map((l) => l.map(dt)) : [])];
+  const k = Math.max(1.1, Math.min(2, 1 + 0.3 * Math.log2(z))); // symbol scale
+
+  x.drawImage(Ink.parchment(W, H, false, true), 0, 0);
+  x.fillStyle = 'rgba(84,56,26,0.2)'; x.fillRect(0, 0, W, H);
+  for (let i = 0; i < 140; i++) {
+    const px = r() * W, py = r() * H, a = r() * Math.PI, l = (40 + r() * 150) * W / 1000;
+    x.strokeStyle = r() < 0.7 ? ink(0.02 + r() * 0.04) : `rgba(${PAPER},${0.04 + r() * 0.06})`; x.lineWidth = (14 + r() * 50) * W / 1000;
+    x.beginPath(); x.moveTo(px, py); x.quadraticCurveTo(px + Math.cos(a) * l * 0.5, py + Math.sin(a) * l * 0.5, px + Math.cos(a) * l, py + Math.sin(a) * l); x.stroke();
+  }
+
+  // sea: a wash darkening along the shore, ripples, an inked coast
+  toMap();
+  const land = toPath(model.coast), [fx, fy, fw, fh] = R.frame, sea = new Path2D();
+  sea.rect(fx - 60, fy - 60, fw + 120, fh + 120); sea.addPath(land);
+  x.fillStyle = ink(0.28); x.fill(sea, 'evenodd');
+  x.save(); x.clip(sea, 'evenodd');
+  for (let i = 6; i >= 1; i--) { x.strokeStyle = ink(0.05); x.lineWidth = (i * 14) / z; x.stroke(land); }
+  const ripples = [];
+  for (let i = 0; i < 400; i++) { const cx = r() * W, cy = r() * H; if (x.isPointInPath(sea, cx, cy, 'evenodd')) ripples.push([cx, cy]); }
+  x.restore();
+  toCanvas();
+  ripples.forEach(([cx, cy]) => { x.strokeStyle = r() < 0.5 ? `rgba(${PAPER},0.22)` : ink(0.22); x.lineWidth = 1.6; x.beginPath(); x.moveTo(cx, cy); x.quadraticCurveTo(cx + 12, cy - 5, cx + 24, cy); x.stroke(); });
+  toMap();
+  x.strokeStyle = ink(0.9); x.lineWidth = 2.6 / z; x.stroke(land);
+  if (D) D.lakes.forEach(([px, py, rx, ry]) => {
+    const [cx, cy] = dt([px, py]); x.beginPath(); x.ellipse(cx, cy, rx * dt.scale, ry * dt.scale, 0, 0, Math.PI * 2);
+    x.fillStyle = ink(0.24); x.fill(); x.strokeStyle = ink(0.85); x.lineWidth = 2.2 / z; x.stroke();
+  });
+
+  // rivers: ink banks and pale water, a fixed width on screen
+  const rw = Math.max(4, Math.min(13, z));
+  R.rivers.forEach((l) => {
+    const p = toLine([l]);
+    x.lineCap = 'round'; x.lineJoin = 'round';
+    x.strokeStyle = ink(0.85); x.lineWidth = (rw + 4) / z; x.stroke(p);
+    x.strokeStyle = `rgb(${PAPER})`; x.lineWidth = rw / z; x.stroke(p);
+    x.strokeStyle = ink(0.26); x.stroke(p);
+  });
+
+  // land symbols on a jittered screen grid, read from the terrain the printed map shows there
+  const roadPaths = roads.map((l) => toLine([l])), riverPaths = R.rivers.map((l) => toLine([l]));
+  const spots = places.map(P), items = [];
+  const clear = (cx, cy) => {
+    x.lineWidth = 44 / z;
+    return !spots.some(([sx, sy]) => Math.hypot(sx - cx, sy - cy) < 60 * k)
+      && !roadPaths.some((p) => x.isPointInStroke(p, cx, cy)) && !riverPaths.some((p) => x.isPointInStroke(p, cx, cy));
+  };
+  const g = 30;
+  for (let cy = 0; cy < H + 80; cy += g * 0.75) for (let cx = -40; cx < W + 40; cx += g) {
+    const jx = cx + (r() - 0.5) * g * 0.9, jy = cy + (r() - 0.5) * g * 0.6, mx = Math.floor(vx + jx / z), my = Math.floor(vy + jy / z);
+    if (mx < 0 || my < 0 || mx >= model.W || my >= model.H) continue;
+    const i = my * model.W + mx;
+    if (model.land[i] < 0.6) continue;
+    const m = model.mountain[i], f = model.forest[i], h = model.hill[i], roll = r();
+    let st = null, s = 1;
+    if (m > 0.2 && roll < 0.45) { const big = r() < 0.3; st = pick(r, big ? 'range' : 'mountain'); s = (big ? 1.1 + r() * 0.4 : 1.5 + r() * 0.6) * k * 0.8; }
+    else if (f > 0.03 && roll < Math.min(0.6, f * 5)) { const clump = f > 0.09 && r() < 0.3; st = pick(r, clump ? 'forest' : 'tree'); s = (clump ? 0.8 + r() * 0.3 : 1.2 + r() * 0.4) * k * 0.8; }
+    else if (h > 0.15 && roll < 0.35) { st = pick(r, 'mountain', 90); s = (1 + r() * 0.3) * k * 0.7; }
+    if (st && clear(jx, jy)) items.push([jy, st, jx, jy, s]);
+  }
+  toCanvas();
+  items.sort((a, b) => a[0] - b[0]).forEach(([, st, px, py, s]) => stamp(x, st, px, py, s * 2, 0));
+
+  // roads over the land, white dashes on a dark bed
+  toMap();
+  roadPaths.forEach((p) => {
+    x.setLineDash([]); x.strokeStyle = ink(0.6); x.lineWidth = 6 / z; x.stroke(p);
+    x.setLineDash([12 / z, 7 / z]); x.strokeStyle = 'rgba(255,248,228,0.95)'; x.lineWidth = 3 / z; x.stroke(p);
+  });
+  x.setLineDash([]);
+  toCanvas();
+
+  // settlements on a pale halo, with their names; then the names of seas and lands
+  const kinds = { city: 'walled', walled: 'walled', town: 'town', village: 'village', fort: 'fort', bridge: 'bridge' };
+  places.forEach(([, kind, px, py]) => { const [cx, cy] = P([px, py]); if (cx > -80 && cx < W + 80 && cy > -80 && cy < H + 120) stamp(x, pick(r, kinds[kind]), cx, cy + 6, (kind === 'city' ? 2.6 : 2.1) * k, 8); });
+  x.textAlign = 'center'; x.lineJoin = 'round';
+  const fs = Math.max(24, Math.min(40, 20 + 5 * Math.log2(z)));
+  places.forEach(([name, kind, px, py]) => {
+    if (!name) return;
+    const [cx, cy] = P([px, py]), size = kind === 'city' || kind === 'walled' ? fs * 1.15 : fs * 0.85;
+    x.font = `${size}px 'Metamorphous', serif`;
+    x.lineWidth = size * 0.3; x.strokeStyle = `rgba(${PAPER},0.9)`; x.strokeText(name, cx, cy + size * 1.25); x.fillStyle = ink(0.95); x.fillText(name, cx, cy + size * 1.25);
+  });
+  R.labels.forEach(([text, px, py, size, rot, kind]) => {
+    const [cx, cy] = P([px, py]), s = Math.max(16, Math.min(110, size * z));
+    x.save(); x.translate(cx, cy); x.rotate(rot);
+    x.font = `${kind === 'sea' ? 'italic ' : ''}${s}px ${kind === 'sea' ? "'Charm', cursive" : "'Metamorphous', serif"}`;
+    if ('letterSpacing' in x) x.letterSpacing = kind === 'land' ? `${s * 0.25}px` : '0px';
+    x.fillStyle = ink(kind === 'sea' ? 0.55 : 0.4); x.fillText(kind === 'land' ? text.toUpperCase() : text, 0, 0); x.restore();
+  });
+
+  // border and a burnt edge
+  x.strokeStyle = ink(0.85); x.lineWidth = 5; x.strokeRect(14, 14, W - 28, H - 28); x.lineWidth = 1.5; x.strokeRect(24, 24, W - 48, H - 48);
+  const gr = x.createRadialGradient(W / 2, H / 2, H * 0.4, W / 2, H / 2, W * 0.66);
+  gr.addColorStop(0, 'rgba(40,24,10,0)'); gr.addColorStop(1, 'rgba(40,24,10,0.5)'); x.fillStyle = gr; x.fillRect(0, 0, W, H);
+  return cv;
+}
+/* a random symbol of a kind, optionally only those narrower than maxW */
+function pick(r, kind, maxW) {
+  const list = maxW ? STAMPS[kind].filter((st) => st.w < maxW) : STAMPS[kind];
+  return list[Math.floor(r() * list.length)];
+}
+
+/* A book's printed map repainted as sepia ink: lightness becomes ink depth, water is pushed a
+   shade darker so coasts still read, and strong red survives as a faint rubric (flags, banners).
+   Then the parchment grain is multiplied over it. crop is in image pixels. */
+const DARK = [38, 25, 14], LIGHT = [236, 222, 186], RUBRIC = [146, 40, 24];
+export function printedCanvas(img, crop, w, h) {
+  const cv = Ink.canvas(w, h), x = cv.getContext('2d');
+  x.imageSmoothingQuality = 'high';
+  x.drawImage(img, crop[0], crop[1], crop[2], crop[3], 0, 0, w, h);
+  const d = x.getImageData(0, 0, w, h), p = d.data;
+  for (let i = 0; i < p.length; i += 4) {
+    const r = p[i], g = p[i + 1], b = p[i + 2];
+    const water = Math.max(0, Math.min(1, (b - r - 25) / 110)), red = Math.max(0, Math.min(1, (r - g - 60) / 90));
+    const v = Math.max(0, Math.min(1, ((0.3 * r + 0.55 * g + 0.15 * b) / 255 - water * 0.24 - 0.5) * 1.3 + 0.56));
+    for (let k = 0; k < 3; k++) { const o = DARK[k] + (LIGHT[k] - DARK[k]) * v; p[i + k] = o + (RUBRIC[k] - o) * red * 0.75; }
+  }
+  x.putImageData(d, 0, 0);
+  x.globalCompositeOperation = 'multiply'; x.globalAlpha = 0.7;
+  x.drawImage(Ink.parchment(w, h, false, true), 0, 0);
+  x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1;
+  const g = x.createRadialGradient(w / 2, h / 2, h * 0.35, w / 2, h / 2, w * 0.68);
+  g.addColorStop(0, 'rgba(40,24,10,0)'); g.addColorStop(1, 'rgba(40,24,10,0.6)'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+  return cv;
+}
+
+/* the painted map for a spec, or null until the symbols (loadStamps) and, for a replica, the
+   book's printed map (img) have loaded */
 const cache = {};
-export function mapCanvas(id) {
+export function mapCanvas(id, img) {
   if (cache[id]) return cache[id];
+  if (!stampsLoaded()) return null;
+  if (MAPS[id].replica) return img ? (cache[id] = replicaCanvas(replicaModel(img), MAPS[id].view, 2000, 1400)) : null;
   const m = MAPS[id], cv = Ink.canvas(2000, 1400), x = cv.getContext('2d'), r = Ink.seeded(id.length * 131 + 11);
+  const pick = (kind) => STAMPS[kind][Math.floor(r() * STAMPS[kind].length)];
   x.drawImage(Ink.parchment(cv.width, cv.height, false, true), 0, 0);
-  x.fillStyle = 'rgba(84,56,26,0.3)'; x.fillRect(0, 0, cv.width, cv.height);
+  x.fillStyle = 'rgba(84,56,26,0.22)'; x.fillRect(0, 0, cv.width, cv.height);
   x.save(); x.scale(2, 2);
   x.lineCap = 'round'; x.lineJoin = 'round';
   const P = (d) => new Path2D(d);
   const rivers = m.rivers.map(P), roads = m.roads.map(P), trails = m.trails.map(P), sea = m.sea && P(m.sea);
 
-  // broad brush washes give the land its relief
-  for (let i = 0; i < 170; i++) {
+  // broad soft washes give the land its relief
+  for (let i = 0; i < 140; i++) {
     const px = r() * 1000, py = r() * 700, a = r() * Math.PI, l = 40 + r() * 150;
-    x.strokeStyle = r() < 0.72 ? ink(0.025 + r() * 0.05) : `rgba(${PAPER},${0.04 + r() * 0.06})`; x.lineWidth = 10 + r() * 44;
+    x.strokeStyle = r() < 0.7 ? ink(0.02 + r() * 0.04) : `rgba(${PAPER},${0.04 + r() * 0.06})`; x.lineWidth = 14 + r() * 50;
     x.beginPath(); x.moveTo(px, py); x.quadraticCurveTo(px + Math.cos(a) * l * 0.5 + (r() - 0.5) * 50, py + Math.sin(a) * l * 0.5 + (r() - 0.5) * 50, px + Math.cos(a) * l, py + Math.sin(a) * l); x.stroke();
   }
-  x.strokeStyle = ink(0.09); x.lineWidth = 0.7;
-  for (let g = 100; g < 1000; g += 100) { x.beginPath(); x.moveTo(g, 0); x.lineTo(g, 700); x.stroke(); }
-  for (let g = 100; g < 700; g += 100) { x.beginPath(); x.moveTo(0, g); x.lineTo(1000, g); x.stroke(); }
 
+  // sea: a dark wash deepening off the coast, ripple strokes, an inked shore
   if (sea) {
-    x.fillStyle = ink(0.34); x.fill(sea);
+    x.fillStyle = ink(0.22); x.fill(sea);
     x.save(); x.clip(sea);
-    for (let i = 0; i < 260; i++) { const px = r() * 1000, py = r() * 700; x.strokeStyle = r() < 0.5 ? `rgba(${PAPER},0.22)` : ink(0.3); x.lineWidth = 1; x.beginPath(); x.moveTo(px, py); x.quadraticCurveTo(px + 7, py - 3, px + 14, py); x.stroke(); }
+    for (let k = 6; k >= 1; k--) { x.strokeStyle = ink(0.05); x.lineWidth = k * 10; x.stroke(sea); }
+    for (let i = 0; i < 300; i++) { const px = r() * 1000, py = r() * 700; x.strokeStyle = r() < 0.5 ? `rgba(${PAPER},0.2)` : ink(0.25); x.lineWidth = 0.9; x.beginPath(); x.moveTo(px, py); x.quadraticCurveTo(px + 7, py - 3, px + 14, py); x.stroke(); }
     x.restore();
-    x.strokeStyle = ink(0.9); x.lineWidth = 2.4; x.stroke(sea); x.strokeStyle = `rgba(${PAPER},0.5)`; x.lineWidth = 6; x.save(); x.clip(sea); x.stroke(sea); x.restore();
+    x.strokeStyle = ink(0.9); x.lineWidth = 2; x.stroke(sea);
   }
-
-  // mountains: a dark ridge, a lit face, and hatching down the shadow side
-  const pk = m.peaks, peaks = [];
-  for (let i = 0; i < pk.n; i++) peaks.push([pk.box[0] + r() * pk.box[2], pk.box[1] + r() * pk.box[3], 18 + r() * 26]);
-  peaks.sort((a, b) => a[1] - b[1]).forEach(([px, py, s]) => {
-    const lean = (r() - 0.5) * s * 0.4;
-    x.beginPath(); x.moveTo(px - s * 1.1, py + s); x.lineTo(px + lean, py - s); x.lineTo(px + s * 1.1, py + s); x.closePath(); x.fillStyle = `rgba(${PAPER},0.9)`; x.fill(); x.fillStyle = ink(0.16); x.fill();
-    x.beginPath(); x.moveTo(px + lean, py - s); x.lineTo(px + s * 1.1, py + s); x.lineTo(px + lean * 0.4 + s * 0.12, py + s); x.closePath(); x.fillStyle = ink(0.62); x.fill();
-    x.strokeStyle = ink(0.92); x.lineWidth = 1.6; x.beginPath(); x.moveTo(px - s * 1.1, py + s); x.lineTo(px + lean, py - s); x.lineTo(px + s * 1.1, py + s); x.stroke();
-    x.strokeStyle = ink(0.45); x.lineWidth = 0.9;
-    for (let k = 1; k < 5; k++) { x.beginPath(); x.moveTo(px + lean - k * s * 0.2, py - s + k * s * 0.42); x.lineTo(px + lean - k * s * 0.3, py + s * 0.95); x.stroke(); }
-  });
-  (m.hills || []).forEach(([hx, hy, hr, n]) => {
-    for (let i = 0; i < n; i++) {
-      const a = r() * Math.PI * 2, d = 12 + r() * hr, px = hx + Math.cos(a) * d, py = hy + Math.sin(a) * d * 0.7, w = 9 + r() * 11;
-      x.beginPath(); x.arc(px, py, w, Math.PI, 0); x.fillStyle = ink(0.1); x.fill(); x.strokeStyle = ink(0.75); x.lineWidth = 1.3; x.stroke();
-      x.strokeStyle = ink(0.4); x.lineWidth = 0.9;
-      for (let k = 0; k < 3; k++) { x.beginPath(); x.moveTo(px + w * 0.25 + k * 3, py - w * 0.62 + k * 2.4); x.lineTo(px + w * 0.5 + k * 3, py); x.stroke(); }
-    }
-  });
 
   // rivers: ink banks, pale water
-  rivers.forEach((p) => { x.strokeStyle = ink(0.9); x.lineWidth = 7.5; x.stroke(p); x.strokeStyle = `rgba(${PAPER},0.9)`; x.lineWidth = 4; x.stroke(p); x.strokeStyle = ink(0.3); x.lineWidth = 0.9; x.stroke(p); });
+  rivers.forEach((p) => { x.strokeStyle = ink(0.85); x.lineWidth = 6; x.stroke(p); x.strokeStyle = `rgba(${PAPER},0.9)`; x.lineWidth = 3.2; x.stroke(p); x.strokeStyle = ink(0.25); x.lineWidth = 0.8; x.stroke(p); });
 
-  // firs, back to front, kept clear of water, roads and places
-  const trees = [], hit = (p, px, py) => x.isPointInStroke(p, px * 2, py * 2);
-  x.lineWidth = 24;
-  for (let i = 0; i < 1150; i++) {
-    const w = m.woods[Math.floor(r() * m.woods.length)], a = r() * Math.PI * 2, d = Math.sqrt(r());
-    const px = w[0] + Math.cos(a) * d * w[2], py = w[1] + Math.sin(a) * d * w[3];
-    if (px < 26 || px > 974 || py < 30 || py > 676) continue;
-    if (rivers.some((p) => hit(p, px, py)) || roads.some((p) => hit(p, px, py)) || trails.some((p) => hit(p, px, py))) continue;
-    if (sea && x.isPointInPath(sea, px * 2, py * 2)) continue;
-    if (m.clear.some(([cx, cy]) => Math.hypot(cx - px, cy - py) < 30)) continue;
-    if ((m.hills || []).some(([hx, hy, hr]) => Math.hypot(hx - px, (hy - py) / 0.7) < hr)) continue;
-    if (px > pk.box[0] && px < pk.box[0] + pk.box[2] && py > pk.box[1] && py < pk.box[1] + pk.box[3]) continue;
-    trees.push([px, py, 4.2 + r() * 3.2]);
+  // every stamp is collected first, then drawn back to front so nearer ones overlap farther ones
+  const items = [], hitWay = (px, py) => {
+    x.lineWidth = 22;
+    return rivers.some((p) => x.isPointInStroke(p, px * 2, py * 2)) || roads.some((p) => x.isPointInStroke(p, px * 2, py * 2)) || trails.some((p) => x.isPointInStroke(p, px * 2, py * 2));
+  };
+  const free = (px, py, room) => px > 24 && px < 976 && py > 34 && py < 680 && !hitWay(px, py) && !(sea && x.isPointInPath(sea, px * 2, py * 2))
+    && !m.clear.some(([cx, cy]) => Math.hypot(cx - px, cy - py) < room) && Math.hypot(m.compass[0] - px, m.compass[1] - py) > 70;
+
+  // mountains: rows of engraved ranges and peaks filling the box, front rows overlapping back ones
+  const [bx, by, bw, bh] = m.peaks.box;
+  for (let py = by + 30; py <= by + bh; py += 30 + r() * 10) {
+    let px = bx - r() * 30;
+    while (px < bx + bw) {
+      const big = r() < 0.35, st = pick(big ? 'range' : 'mountain'), s = big ? 1.1 + r() * 0.4 : 1.5 + r() * 0.6;
+      const cx = px + (st.w * s) / 4;
+      if (cx > bx && free(cx, py, 40)) items.push([py, st, cx, py + (r() - 0.5) * 6, s, 0]);
+      px += (st.w * s) / 2 * (0.55 + r() * 0.25);
+    }
   }
-  trees.sort((a, b) => a[1] - b[1]).forEach(([px, py, s]) => {
-    x.fillStyle = ink(0.16); x.beginPath(); x.ellipse(px + s * 0.5, py + s * 0.9, s * 0.9, s * 0.3, 0, 0, Math.PI * 2); x.fill();
-    for (let t = 0; t < 2; t++) {
-      const top = py - s * (1.5 - t * 0.7), base = py + s * (0.1 + t * 0.7), hw = s * (0.55 + t * 0.2);
-      x.beginPath(); x.moveTo(px, top); x.lineTo(px + hw, base); x.lineTo(px - hw, base); x.closePath(); x.fillStyle = ink(0.9); x.fill();
-      x.beginPath(); x.moveTo(px, top); x.lineTo(px - hw, base); x.lineTo(px - hw * 0.25, base); x.closePath(); x.fillStyle = `rgba(${PAPER},0.3)`; x.fill();
+  // hills: the smallest peaks, low and scattered
+  const small = STAMPS.mountain.filter((st) => st.w < 90);
+  (m.hills || []).forEach(([hx, hy, hr, n]) => {
+    for (let i = 0; i < n / 2; i++) {
+      const a = r() * Math.PI * 2, d = 10 + r() * hr, px = hx + Math.cos(a) * d, py = hy + Math.sin(a) * d * 0.6;
+      if (free(px, py, 30)) items.push([py, small[Math.floor(r() * small.length)], px, py, 1.2 + r() * 0.4, 0]);
     }
   });
-
-  // roads and tracks: white dashes over a dark bed
+  // forests: clumps through the middle of each wood, single trees round its edge
+  m.woods.forEach(([wx, wy, rx, ry]) => {
+    const n = Math.round((rx * ry) / 330);
+    for (let i = 0; i < n; i++) {
+      const a = r() * Math.PI * 2, d = Math.sqrt(r()), px = wx + Math.cos(a) * d * rx, py = wy + Math.sin(a) * d * ry;
+      const clump = d < 0.8 && r() < 0.45, st = pick(clump ? 'forest' : 'tree'), s = clump ? 0.9 + r() * 0.4 : 1.4 + r() * 0.4;
+      if (free(px, py, 26)) items.push([py, st, px, py, s, 0]);
+    }
+  });
+  // settlements, lifted off the land on a pale halo
+  m.marks.forEach(([type, px, py]) => { if (MARK_POOL[type]) items.push([py + 1000, pick(MARK_POOL[type]), px, py + 12, type === 'city' ? 2 : 1.7, 6]); });
+  items.filter((it) => !it[5]).sort((a, b) => a[0] - b[0]).forEach(([, st, px, py, s, halo]) => stamp(x, st, px, py, s, halo));
+  // roads and tracks over the land: white dashes on a dark bed, as on the HD maps
   const way = (p, w, dash) => { x.setLineDash([]); x.strokeStyle = ink(0.6); x.lineWidth = w + 3; x.stroke(p); x.setLineDash(dash); x.strokeStyle = 'rgba(255,248,228,0.95)'; x.lineWidth = w; x.stroke(p); x.setLineDash([]); };
   trails.forEach((p) => way(p, 2.2, [7, 6])); roads.forEach((p) => way(p, 3, [11, 6]));
+  items.filter((it) => it[5]).forEach(([, st, px, py, s, halo]) => stamp(x, st, px, py, s, halo));
+  if (m.marks.some(([type]) => type === 'city')) {
+    const [, cx, cy] = m.marks.find(([type]) => type === 'city');
+    x.fillStyle = `rgba(${RED},0.95)`; x.fillRect(cx - 0.6, cy - 40, 1.5, 12); x.beginPath(); x.moveTo(cx + 0.9, cy - 40); x.lineTo(cx + 11, cy - 36); x.lineTo(cx + 0.9, cy - 32); x.fill();
+  }
 
-  m.marks.forEach(([type, px, py]) => glyph(x, type, px, py, type === 'city' ? 1.15 : 1));
   x.textAlign = 'center';
   m.labels.forEach(([text, px, py, size, rot, soft]) => {
     x.save(); x.translate(px, py); x.rotate(rot || 0);
@@ -158,7 +385,7 @@ export function mapCanvas(id) {
   x.strokeStyle = ink(0.85); x.lineWidth = 3; x.strokeRect(14, 14, 972, 672); x.lineWidth = 1; x.strokeRect(21, 21, 958, 658);
   x.setLineDash([2, 5]); x.lineWidth = 3; x.strokeStyle = ink(0.5); x.strokeRect(17.5, 17.5, 965, 665); x.setLineDash([]);
   const g = x.createRadialGradient(500, 350, 260, 500, 350, 640);
-  g.addColorStop(0, 'rgba(40,24,10,0)'); g.addColorStop(1, 'rgba(40,24,10,0.55)'); x.fillStyle = g; x.fillRect(0, 0, 1000, 700);
+  g.addColorStop(0, 'rgba(40,24,10,0)'); g.addColorStop(1, 'rgba(40,24,10,0.5)'); x.fillStyle = g; x.fillRect(0, 0, 1000, 700);
   x.restore();
   return (cache[id] = cv);
 }
@@ -172,5 +399,5 @@ export function along(route, f) {
     if (left <= seg[i]) { const k = seg[i] ? left / seg[i] : 0; pts.push([route[i][0] + (route[i + 1][0] - route[i][0]) * k, route[i][1] + (route[i + 1][1] - route[i][1]) * k]); break; }
     left -= seg[i]; pts.push(route[i + 1]);
   }
-  return pts; // the walked part; its last point is where the pawn stands
+  return pts; // the walked part; its last point is where the figure stands
 }

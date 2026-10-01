@@ -182,6 +182,195 @@ export function drawFigure(w = 520, h = 820) {
   return c;
 }
 
+/* ---------- Lone Wolf as a figure standing on the maps ---------- */
+
+/* under the feet, on a 300x460 canvas: a bronze arrowhead pointing down to the spot itself at
+   (150, 456), after the map marker in Lone Wolf HD */
+function pointer(x) {
+  const g = x.createLinearGradient(0, 410, 0, 456); g.addColorStop(0, '#ead08c'); g.addColorStop(0.5, '#a07c3c'); g.addColorStop(1, '#3f2c12');
+  x.beginPath(); x.moveTo(150, 456); x.lineTo(120, 412); x.lineTo(138, 417); x.lineTo(150, 431); x.lineTo(162, 417); x.lineTo(180, 412); x.closePath();
+  x.fillStyle = g; x.fill(); x.lineJoin = 'round'; x.lineWidth = 2.5; x.strokeStyle = '#120b06'; x.stroke();
+  x.beginPath(); x.moveTo(126, 415); x.lineTo(150, 449); x.lineWidth = 1.5; x.strokeStyle = 'rgba(255,240,200,0.6)'; x.stroke();
+}
+
+/* Cut a figure out of a picture of it standing on a plain, smoky ground (crop: [x, y, w, h] round
+   the figure), tone it to sepia like the maps, and stand it on the pointer. The ground is
+   flood-filled in from the crop's edges through pixels that are mid-toned, greyish and close in
+   colour to their neighbour; the figure's outline stops the fill. Made at load from the owner's
+   own image; never stored. */
+export function heroFromArt(img, crop, outline) {
+  const [cx, cy, W, H] = crop, cut = Ink.canvas(W, H), x = cut.getContext('2d', { willReadFrequently: true });
+  x.drawImage(img, cx, cy, W, H, 0, 0, W, H);
+  const d = x.getImageData(0, 0, W, H), p = d.data, N = W * H, bg = new Uint8Array(N), stack = [];
+  const ground = (i) => {
+    const r = p[i * 4], g = p[i * 4 + 1], b = p[i * 4 + 2], mx = Math.max(r, g, b), l = (0.3 * r + 0.59 * g + 0.11 * b) / 255;
+    return l > 0.2 && l < 0.7 && (mx ? (mx - Math.min(r, g, b)) / mx : 0) < 0.35;
+  };
+  const near = (i, j) => Math.abs(p[i * 4] - p[j * 4]) + Math.abs(p[i * 4 + 1] - p[j * 4 + 1]) + Math.abs(p[i * 4 + 2] - p[j * 4 + 2]) < 24;
+  for (let i = 0; i < W; i++) stack.push(i, (H - 1) * W + i);
+  for (let i = 0; i < H; i++) stack.push(i * W, i * W + W - 1);
+  stack.forEach((i) => { if (ground(i)) bg[i] = 1; });
+  while (stack.length) {
+    const i = stack.pop();
+    if (!bg[i]) continue;
+    const px = i % W;
+    for (const j of [px > 0 ? i - 1 : -1, px < W - 1 ? i + 1 : -1, i - W, i + W]) if (j >= 0 && j < N && !bg[j] && ground(j) && near(i, j)) { bg[j] = 1; stack.push(j); }
+  }
+  // That fill is cautious, so it leaves ground behind and can stop short, or bite into steel and
+  // leather that look like the ground. So model the ground from what it found: a smooth surface
+  // per colour channel (least squares over x, y, xy, x², y²), and call figure whatever stands
+  // clearly off that surface. Pixels the figure encloses are figure too.
+  const terms = (u, v) => [1, u, v, u * v, u * u, v * v];
+  const fitSurface = (ch) => {
+    const A = Array.from({ length: 6 }, () => new Float64Array(6)), y = new Float64Array(6);
+    for (let i = 0; i < N; i += 7) {
+      if (!bg[i]) continue;
+      const t = terms((i % W) / W, Math.floor(i / W) / H), val = p[i * 4 + ch];
+      for (let a = 0; a < 6; a++) { y[a] += t[a] * val; for (let b = 0; b < 6; b++) A[a][b] += t[a] * t[b]; }
+    }
+    for (let c = 0; c < 6; c++) { // Gauss-Jordan
+      let m = c; for (let r = c + 1; r < 6; r++) if (Math.abs(A[r][c]) > Math.abs(A[m][c])) m = r;
+      [A[c], A[m]] = [A[m], A[c]]; [y[c], y[m]] = [y[m], y[c]];
+      for (let r = 0; r < 6; r++) if (r !== c) { const f = A[r][c] / A[c][c]; for (let b = c; b < 6; b++) A[r][b] -= f * A[c][b]; y[r] -= f * y[c]; }
+    }
+    return (u, v) => terms(u, v).reduce((s, t, a) => s + t * (y[a] / A[a][a]), 0);
+  };
+  const surf = [0, 1, 2].map(fitSurface), off = new Float32Array(N);
+  let sum = 0, cnt = 0;
+  for (let i = 0; i < N; i++) {
+    const u = (i % W) / W, v = Math.floor(i / W) / H;
+    off[i] = Math.max(...[0, 1, 2].map((ch) => Math.abs(p[i * 4 + ch] - surf[ch](u, v))));
+    if (bg[i]) { sum += off[i]; cnt++; }
+  }
+  const T = Math.max(16, (sum / (cnt || 1)) * 2.6);
+  // the ground is now what reaches the edge through pixels close to the surface
+  bg.fill(0);
+  const edge = [];
+  for (let i = 0; i < W; i++) edge.push(i, (H - 1) * W + i);
+  for (let i = 0; i < H; i++) edge.push(i * W, i * W + W - 1);
+  edge.forEach((i) => { if (off[i] < T) bg[i] = 1; });
+  while (edge.length) {
+    const i = edge.pop();
+    if (!bg[i]) continue;
+    const px = i % W;
+    for (const j of [px > 0 ? i - 1 : -1, px < W - 1 ? i + 1 : -1, i - W, i + W]) if (j >= 0 && j < N && !bg[j] && off[j] < T) { bg[j] = 1; edge.push(j); }
+  }
+  // An outline traced by hand round the figure (crop pixels) settles what keying cannot: steel the
+  // colour of the smoke. Well inside it is figure; well outside is ground; near it, the keying decides.
+  if (outline) {
+    const m = Ink.canvas(W, H), mx = m.getContext('2d', { willReadFrequently: true }), path = new Path2D();
+    outline.forEach(([a, b], i) => (i ? path.lineTo(a, b) : path.moveTo(a, b))); path.closePath();
+    mx.fillStyle = '#f00'; mx.fill(path); mx.lineJoin = 'round';
+    mx.strokeStyle = '#0f0'; mx.lineWidth = 10; mx.stroke(path); // band: green over the edge
+    const md = mx.getImageData(0, 0, W, H).data;
+    for (let i = 0; i < N; i++) {
+      const inner = md[i * 4] > 128 && md[i * 4 + 1] < 128, band = md[i * 4 + 1] > 128;
+      if (inner) bg[i] = 0; else if (!band) bg[i] = 1;
+    }
+  }
+  // keep only the figure itself, the largest piece left: specks of frame and ground go
+  const piece = new Int32Array(N).fill(-1), sizes = [];
+  for (let i = 0; i < N; i++) {
+    if (bg[i] || piece[i] >= 0) continue;
+    const id = sizes.length, q = [i];
+    piece[i] = id; let n0 = 0;
+    while (q.length) {
+      const j = q.pop(), px = j % W; n0++;
+      for (const k of [px > 0 ? j - 1 : -1, px < W - 1 ? j + 1 : -1, j - W, j + W]) if (k >= 0 && k < N && !bg[k] && piece[k] < 0) { piece[k] = id; q.push(k); }
+    }
+    sizes.push(n0);
+  }
+  const keep = sizes.indexOf(Math.max(...sizes));
+  if (!outline) for (let i = 0; i < N; i++) if (!bg[i] && piece[i] !== keep) bg[i] = 1; // a traced outline already bounds it
+  // soften the cut by a pixel, and find where the figure stands: between its two feet
+  let top = H, bottom = 0, left = W, right = 0;
+  for (let i = 0; i < N; i++) {
+    const px = i % W, py = (i - px) / W;
+    let s = 0, k = 0;
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const qx = px + dx, qy = py + dy; if (qx >= 0 && qy >= 0 && qx < W && qy < H) { s += bg[qy * W + qx]; k++; } }
+    p[i * 4 + 3] = Math.round(255 * (1 - s / k));
+    if (!bg[i]) { top = Math.min(top, py); bottom = Math.max(bottom, py); }
+    // sepia: lightness mapped from dark ink to warm paper, kept dark so he stands out on the map
+    const v = Math.min(1, ((0.3 * p[i * 4] + 0.59 * p[i * 4 + 1] + 0.11 * p[i * 4 + 2]) / 255) * 1.05);
+    p[i * 4] = 24 + 196 * v; p[i * 4 + 1] = 16 + 178 * v; p[i * 4 + 2] = 9 + 136 * v;
+  }
+  for (let i = (bottom - Math.round((bottom - top) * 0.12)) * W; i < (bottom + 1) * W; i++) if (!bg[i]) { left = Math.min(left, i % W); right = Math.max(right, i % W); }
+  x.putImageData(d, 0, 0);
+
+  const fig = Ink.canvas(300, 460), f = fig.getContext('2d'), s = 340 / (bottom - top), fx = right >= left ? (left + right) / 2 : W / 2;
+  pointer(f);
+  f.drawImage(cut, 150 - fx * s, 410 - bottom * s, W * s, H * s);
+  return outlined(fig);
+}
+
+/* a white outline round everything drawn on c, as the map's old pawn had */
+function outlined(c, r = 4) {
+  const white = Ink.canvas(c.width, c.height), w = white.getContext('2d'), out = Ink.canvas(c.width, c.height), o = out.getContext('2d');
+  w.drawImage(c, 0, 0); w.globalCompositeOperation = 'source-in'; w.fillStyle = '#fff8e4'; w.fillRect(0, 0, c.width, c.height);
+  for (let a = 0; a < 16; a++) o.drawImage(white, Math.cos((a / 16) * Math.PI * 2) * r, Math.sin((a / 16) * Math.PI * 2) * r);
+  o.drawImage(c, 0, 0);
+  return out;
+}
+
+/* Without the owner's picture: a painted stand-in. Light from the upper left; every shape gets a
+   gradient, an ink outline and a rim of light. */
+export function drawHero(w = 300, h = 460) {
+  const c = Ink.canvas(w, h), x = c.getContext('2d'), OUT = '#120b06';
+  const shape = (pts, fill) => {
+    x.beginPath(); x.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < pts.length; i++) {
+      const p = pts[i];
+      if (p.length === 4) x.quadraticCurveTo(p[0], p[1], p[2], p[3]); else x.lineTo(p[0], p[1]);
+    }
+    x.closePath(); x.fillStyle = fill; x.fill(); x.lineJoin = 'round'; x.lineWidth = 3; x.strokeStyle = OUT; x.stroke();
+  };
+  const grad = (x0, y0, x1, y1, stops) => { const g = x.createLinearGradient(x0, y0, x1, y1); stops.forEach(([o, col]) => g.addColorStop(o, col)); return g; };
+  const stroke = (pts, wid, col) => { x.beginPath(); x.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) { const p = pts[i]; if (p.length === 4) x.quadraticCurveTo(p[0], p[1], p[2], p[3]); else x.lineTo(p[0], p[1]); } x.lineWidth = wid; x.strokeStyle = col; x.lineCap = 'round'; x.stroke(); };
+
+  pointer(x);
+
+  // cloak behind, falling to a ragged hem
+  shape([[104, 160], [66, 230, 58, 330], [50, 392], [80, 398, 96, 392], [120, 402, 150, 398], [182, 404, 204, 394], [226, 400, 248, 392], [246, 300, 234, 236], [214, 170, 196, 160]],
+    grad(50, 0, 250, 0, [[0, '#4f7556'], [0.45, '#2e4a35'], [1, '#14231a']]));
+  // boots
+  shape([[124, 352], [146, 352], [148, 398], [116, 400], [118, 384]], grad(116, 0, 150, 0, [[0, '#6b4a2c'], [1, '#2c1c0e']]));
+  shape([[158, 352], [180, 352], [186, 384], [190, 398], [156, 398]], grad(156, 0, 190, 0, [[0, '#5a3d22'], [1, '#22150a']]));
+  // tunic and belt
+  shape([[124, 176], [176, 176], [186, 356], [116, 356]], grad(116, 0, 186, 0, [[0, '#7a6040'], [0.5, '#56412a'], [1, '#2e2216']]));
+  stroke([[132, 200], [128, 340]], 2, 'rgba(255,230,190,0.18)');
+  shape([[118, 254], [182, 254], [183, 268], [117, 268]], '#2a1a0c');
+  shape([[143, 252], [157, 252], [157, 270], [143, 270]], grad(143, 252, 157, 270, [[0, '#f0d58c'], [1, '#8a6a2a']]));
+  // cloak front flaps
+  shape([[104, 160], [130, 176], [124, 290, 112, 396], [80, 398], [80, 300, 92, 230]], grad(80, 0, 130, 0, [[0, '#5d8763'], [1, '#2c4632']]));
+  shape([[196, 160], [172, 176], [178, 290, 194, 394], [232, 394], [226, 290, 214, 220]], grad(172, 0, 232, 0, [[0, '#2f4b36'], [1, '#15241a']]));
+  stroke([[96, 240], [88, 320, 90, 380]], 2, 'rgba(10,20,12,0.55)'); stroke([[208, 230], [214, 320, 218, 380]], 2, 'rgba(6,12,8,0.6)');
+  stroke([[100, 176], [84, 260, 84, 380]], 2.5, 'rgba(220,240,200,0.28)');
+  // sword arm: sleeve, hand, and the blade held point-down
+  shape([[104, 168], [120, 186], [114, 248, 104, 290], [86, 288], [88, 230, 92, 190]], grad(86, 0, 120, 0, [[0, '#5d8763'], [1, '#2a4430']]));
+  shape([[57, 392], [92, 302], [100, 305], [63, 395]], grad(57, 0, 100, 0, [[0, '#f4f2ea'], [0.5, '#a9adb2'], [1, '#55595f']]));
+  shape([[78, 296], [112, 306], [110, 313], [76, 303]], grad(76, 296, 112, 313, [[0, '#f0d58c'], [1, '#7a5a20']]));
+  x.beginPath(); x.ellipse(96, 293, 9, 8, 0.3, 0, Math.PI * 2); x.fillStyle = '#c99a72'; x.fill(); x.lineWidth = 2.5; x.strokeStyle = OUT; x.stroke();
+  shape([[98, 270], [104, 272], [101, 288], [95, 286]], '#3a2410');
+  x.beginPath(); x.arc(102, 266, 5, 0, Math.PI * 2); x.fillStyle = '#d9b868'; x.fill(); x.lineWidth = 2; x.strokeStyle = OUT; x.stroke();
+  // mantle over the shoulders
+  shape([[100, 150], [150, 178, 200, 150], [210, 184], [150, 214, 92, 186]], grad(92, 0, 210, 0, [[0, '#6b956f'], [0.5, '#3c5e43'], [1, '#1b2e21']]));
+  x.beginPath(); x.arc(150, 196, 7, 0, Math.PI * 2); x.fillStyle = '#d9b868'; x.fill(); x.lineWidth = 2; x.strokeStyle = OUT; x.stroke();
+  // hood, the face in its shadow
+  shape([[150, 58], [192, 82, 200, 140], [194, 172], [150, 186, 106, 172], [100, 140], [108, 82, 150, 58]], grad(100, 60, 200, 180, [[0, '#71a076'], [0.5, '#3a5c41'], [1, '#17271c']]));
+  x.beginPath(); x.ellipse(152, 132, 22, 30, 0, 0, Math.PI * 2); x.fillStyle = '#0d0805'; x.fill();
+  const face = x.createLinearGradient(0, 112, 0, 160); face.addColorStop(0, 'rgba(120,80,56,0)'); face.addColorStop(0.45, '#8a6248'); face.addColorStop(1, '#c4946c');
+  x.beginPath(); x.ellipse(153, 142, 15, 18, 0, 0, Math.PI * 2); x.fillStyle = face; x.fill();
+  stroke([[146, 152], [153, 155], [160, 152]], 1.5, 'rgba(40,20,10,0.7)');
+  stroke([[116, 96], [106, 130, 110, 160]], 3, 'rgba(225,245,210,0.35)');
+  stroke([[150, 64], [150, 100]], 1.5, 'rgba(10,20,12,0.4)');
+
+  // a little grain over the paint
+  x.globalCompositeOperation = 'source-atop';
+  const r = Ink.seeded(77);
+  for (let i = 0; i < 900; i++) { x.fillStyle = r() < 0.5 ? 'rgba(255,240,210,0.05)' : 'rgba(0,0,0,0.07)'; x.fillRect(r() * w, r() * h, 2, 2); }
+  return outlined(c);
+}
+
 /* ---------- Ornate ink frame for the story page ---------- */
 export function drawFrame(w = 1000, h = 1480) {
   const c = Ink.canvas(w, h), x = c.getContext('2d'), col = 'rgba(58,38,24,0.86)';

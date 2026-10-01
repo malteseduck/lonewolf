@@ -59,8 +59,12 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
 - Everything inside the book is sized in `em` off `--bw` (book width), so the whole spread scales
   with the window. Do not use px for anything inside `.book`.
 - All colour comes from the CSS custom properties at the top of `index.html`.
-- Art is drawn in code (`shared/ink.js`, `plates.js`, `maps.js`) or derived at
-  runtime from the owner's local images. There are no image files in the repo.
+- Prefer real image assets to shapes drawn in code: the owner finds vector-only art stark. Images
+  in the repo must be free to redistribute (CC0 or similar; say where they came from, as
+  `assets/map/WIDMAN-README.txt` does). Project Aon images stay in `data/projectaon/` and are
+  only restyled at runtime. Downloading a new asset pack needs the owner's go-ahead.
+- Art borrowed for personal use (Lone Wolf HD screenshots and the like) lives in `art/`, which is
+  git-ignored except `art/manifest.json`. Never move it anywhere committed.
 - HTML is built as template strings. Pass every piece of book or user text through `esc()`.
 - Comments say why, briefly. Match the density of the file you are in.
 
