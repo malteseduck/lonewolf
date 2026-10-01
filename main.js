@@ -256,7 +256,7 @@ mapNode.innerHTML = `<div class="mapinner"><canvas width="2000" height="1400"></
 function showTerrain(id) {
   if (mapShown === id) return;
   const world = MAPS[id].replica && worldMap();
-  if (world === null) return void (mapShown = null); // painted once the world map has loaded or failed
+  if (world === null) return void (mapShown = null); // painted once it has loaded or failed
   const cv = mapNode.querySelector('canvas'), x = cv.getContext('2d'), map = mapCanvas(id, MAPS[id].replica && lastlands(), world);
   x.clearRect(0, 0, cv.width, cv.height);
   if (!map) return void ((mapShown = null), loadStamps().then(() => { if (panel === 'map') renderRight(); })); // painted once the symbols and image arrive
@@ -273,19 +273,21 @@ function lastlands() {
   if (!printed[url]) { const im = (printed[url] = new Image()); im.onload = () => { if (panel === 'map') renderRight(); }; im.src = url; }
   return printed[url].complete && printed[url].naturalWidth ? printed[url] : null;
 }
-/* the owner's reference world map, if they have one: the image, null while loading, or false */
-let world;
-function worldMap() {
-  if (world === undefined) {
-    world = null;
-    // fetched whole before use: the local server sometimes drops a big file part-way
-    const get = (tries) => fetch(LASTLANDS.world.file).then((r) => (r.ok ? r.blob() : Promise.reject(r.status)))
+/* An image the owner may or may not have (git-ignored): the image, null while loading, or false.
+   Fetched whole before use: the local server sometimes drops a big file part-way. */
+const optionals = {};
+function optional(file) {
+  if (!(file in optionals)) {
+    optionals[file] = null;
+    const get = (tries) => fetch(file).then((r) => (r.ok ? r.blob() : Promise.reject(r.status)))
       .then((b) => { const im = new Image(); im.src = URL.createObjectURL(b); return im.decode().then(() => im); })
       .catch((e) => (tries > 1 && e !== 404 ? get(tries - 1) : false));
-    get(3).then((im) => { world = im; if (panel === 'map') { mapShown = null; renderRight(); } });
+    get(3).then((im) => { optionals[file] = im; if (panel === 'map') { mapShown = null; renderRight(); } });
   }
-  return world;
+  return optionals[file];
 }
+/* the owner's reference world map, if they have one */
+const worldMap = () => optional(LASTLANDS.world.file);
 /* the current book's printed map, or null until it has loaded (the panel redraws then) */
 const printed = {};
 function printedMap() {

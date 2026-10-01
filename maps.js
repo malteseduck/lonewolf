@@ -4,6 +4,7 @@
    land one to one on the canvas. */
 import * as Ink from './shared/ink.js';
 import { analyse, worldTerrain, toPath, toLine } from './replica.js';
+import { drawBuilding } from './buildings.js';
 import { PLACES as BOOK1_PLACES, AT as BOOK1_AT } from './places-01fftd.js';
 
 const INK = '38,26,16', PAPER = '226,212,176', RED = '140,28,18';
@@ -155,6 +156,12 @@ export function placeBook(book) {
   for (const k in m.at) m.at[k].forEach((s) => { if (book.sections[s]) book.sections[s].loc = k; });
 }
 
+/* a settlement in LASTLANDS by kind, as a building (buildings.js); its height in printed pixels */
+const BUILDING = { city: ['castle', 16], walled: ['castle', 12], town: ['tower', 10], fort: ['monastery', 12], village: ['house', 7] };
+const ICON_HEIGHT = { castle: 12, monastery: 12, tower: 9, keep: 9, house: 7, temple: 8, obelisk: 7 };
+/* a building standing on (cx, cy), height canvas pixels tall; where it stands varies the hand */
+const building = (x, r, key, cx, cy, height) => drawBuilding(x, key, cx, cy, height, cx * 0.37 + cy);
+
 /* the similarity (move, turn, scale) that takes two points of one map onto the same two of another */
 function fit([[a, A], [b, B]]) {
   const dx = b[0] - a[0], dy = b[1] - a[1], DX = B[0] - A[0], DY = B[1] - A[1], d2 = dx * dx + dy * dy;
@@ -301,18 +308,23 @@ export function replicaCanvas(model, view, W, H, extra) {
     if (kind === 'lake') {
       x.beginPath(); x.ellipse(cx + 34 * k, cy + 4, 46 * k, 20 * k, -0.1, 0, Math.PI * 2);
       x.fillStyle = ink(0.26); x.fill(); x.strokeStyle = ink(0.85); x.lineWidth = 2.4; x.stroke();
-      stamp(x, pick(r, 'village'), cx - 6, cy + 6, 1.8 * k, 8);
+      building(x, r, 'house', cx - 6, cy + 4, Math.max(40, Math.min(150, ICON_HEIGHT.house * z * 0.45)), k);
     } else if (kind === 'marsh') {
       x.strokeStyle = ink(0.7); x.lineWidth = 1.6;
       for (let i = 0; i < 14; i++) { const ax = cx + (r() - 0.5) * 90 * k, ay = cy + (r() - 0.5) * 40 * k; for (let j = -1; j <= 1; j++) { x.beginPath(); x.moveTo(ax + j * 4, ay); x.lineTo(ax + j * 7, ay - 12 - r() * 6); x.stroke(); } x.beginPath(); x.moveTo(ax - 9, ay + 1); x.lineTo(ax + 9, ay + 1); x.stroke(); }
     } else if (kind === 'hill') stamp(x, pick(r, 'mountain', 90), cx, cy + 8, 2 * k, 6);
     else if (kind === 'tree') stamp(x, pick(r, 'tree'), cx, cy + 6, 2.6 * k, 6);
-    else stamp(x, pick(r, kind), cx, cy + 6, 2 * k, 8);
+    else if (ICON_HEIGHT[kind]) building(x, r, kind, cx, cy + 4, Math.max(40, Math.min(150, ICON_HEIGHT[kind] * z * 0.45)), k);
+    else stamp(x, pick(r, kind), cx, cy + 6, 2 * k, 0);
   });
 
   // settlements on a pale halo, with their names; then the names of seas and lands
-  const kinds = { city: 'walled', walled: 'walled', town: 'town', village: 'village', fort: 'fort', bridge: 'bridge' };
-  places.forEach(([, kind, px, py]) => { const [cx, cy] = P([px, py]); if (cx > -80 && cx < W + 80 && cy > -80 && cy < H + 120) stamp(x, pick(r, kinds[kind]), cx, cy + 6, (kind === 'city' ? 2.6 : 2.1) * k, 8); });
+  places.forEach(([, kind, px, py]) => {
+    const [cx, cy] = P([px, py]);
+    if (cx < -160 || cx > W + 160 || cy < -80 || cy > H + 220) return;
+    if (BUILDING[kind]) building(x, r, BUILDING[kind][0], cx, cy + 4, Math.max(36, Math.min(220, BUILDING[kind][1] * z * 0.45)), k);
+    else stamp(x, pick(r, kind), cx, cy + 6, 2.1 * k, 0);
+  });
   x.textAlign = 'center'; x.lineJoin = 'round';
   const fs = Math.max(24, Math.min(40, 20 + 5 * Math.log2(z)));
   places.forEach(([name, kind, px, py]) => {

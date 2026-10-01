@@ -149,9 +149,22 @@ highway stops); the rest were placed by a one-off force layout that pulls togeth
 story moves between, so they are plausible rather than surveyed. `placeBook(book)` (maps.js), called
 from `useBook`, turns them into `book.locations` on the 1000x700 grid of `view` and sets each
 section's `loc`, which switches the book to travel on the map exactly like the demo. The replica
-draws each place's symbol (fort, village, bridge, walled, hill, tree, lake, marsh) whether visited
+draws each place's symbol (a building: house, tower, keep, temple, obelisk; or bridge, hill, tree,
+lake, marsh) whether visited
 or not; names appear once visited or offered. When a book has its own places, the Magnamund detail
 layer is left out.
+
+### Buildings (`buildings.js`)
+
+Towns and buildings on the replica are vector drawings modelled on the icons of the official Maps
+of Magnamund: `castle` (Holmgard), `monastery` (the Kai Monastery), `tower`, `keep`, `house`,
+`temple`, `obelisk`. Each is drawn in its own units (ground at y = 0) by `drawBuilding(x, kind, cx,
+cy, height, seed)`, so it is crisp at any zoom: pale walls, a wash and hatching on the shaded
+right-hand faces, dark arched openings, stone coursing, battlements, cone roofs, a red pennant,
+and an ink line given a slight seeded wobble so it sits with the engraved symbols. They are part
+of the map, so unlike the figure they get no rim. `BUILDING` in maps.js maps the LASTLANDS kinds to them (city and walled: castle;
+town: tower; fort: the monastery; village: house); Book 1's places name theirs directly. Cutting
+the icons out of the map images was tried first and dropped: low resolution and stray colours.
 
 ### Lone Wolf's figure (`.pawn`)
 
