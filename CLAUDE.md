@@ -59,10 +59,17 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
 - Everything inside the book is sized in `em` off `--bw` (book width), so the whole spread scales
   with the window. Do not use px for anything inside `.book`.
 - All colour comes from the CSS custom properties at the top of `index.html`.
-- Prefer real image assets to shapes drawn in code: the owner finds vector-only art stark. Images
+- No plain geometric shapes: the owner finds them stark. Use real image assets, or vector drawing
+  detailed enough to pass for the engraved art beside it (as `buildings.js` does). Images
   in the repo must be free to redistribute (CC0 or similar; say where they came from, as
   `assets/map/WIDMAN-README.txt` does). Project Aon images stay in `data/projectaon/` and are
   only restyled at runtime. Downloading a new asset pack needs the owner's go-ahead.
+- **Map symbols** look engraved, like the Widman set: sepia ink only, no colour, no rim. For a
+  new map feature, first reuse what exists: a Widman stamp (`mountain range forest tree city town
+  village fort walled bridge`) or a building in `buildings.js` (`castle monastery tower keep house
+  temple obelisk`). If neither fits, add a vector drawing to `buildings.js` the same way (see
+  "Map symbols" in `docs/reference/interface.md`). Never cut symbols out of map images: at their
+  resolution they come out blurred and carry stray colour.
 - Art borrowed for personal use (Lone Wolf HD screenshots and the like) lives in `art/`, which is
   git-ignored except `art/manifest.json`. Reference images (fan maps) live in git-ignored
   `data/reference/`, with their sources in `SOURCES.txt`. Never move either anywhere committed.

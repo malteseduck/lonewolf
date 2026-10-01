@@ -159,12 +159,37 @@ layer is left out.
 Towns and buildings on the replica are vector drawings modelled on the icons of the official Maps
 of Magnamund: `castle` (Holmgard), `monastery` (the Kai Monastery), `tower`, `keep`, `house`,
 `temple`, `obelisk`. Each is drawn in its own units (ground at y = 0) by `drawBuilding(x, kind, cx,
-cy, height, seed)`, so it is crisp at any zoom: pale walls, a wash and hatching on the shaded
-right-hand faces, dark arched openings, stone coursing, battlements, cone roofs, a red pennant,
-and an ink line given a slight seeded wobble so it sits with the engraved symbols. They are part
+cy, height, seed)`, so it is crisp at any zoom. It is drawn as an engraving to match the map's
+other symbols: sepia ink only, walls the colour of the map's paper with fine vertical strokes,
+shaded right-hand faces cross-hatched, roofs hatched, solid ink openings, stone coursing,
+battlements, cone roofs, a pennant, and every line cut twice with a slight seeded wobble. They are part
 of the map, so unlike the figure they get no rim. `BUILDING` in maps.js maps the LASTLANDS kinds to them (city and walled: castle;
 town: tower; fort: the monastery; village: house); Book 1's places name theirs directly. Cutting
 the icons out of the map images was tried first and dropped: low resolution and stray colours.
+
+### Map symbols: adding one
+
+Reuse before drawing. In order:
+
+1. **A Widman stamp** (`assets/map/widman.png`, CC0 engravings, tinted to the map's ink by
+   `loadStamps`): `mountain range forest tree city town village fort walled bridge`. Pick one with
+   `pick(r, kind)` and draw it with `stamp(x, st, cx, cy, s, 0)`. Halo 0: map symbols get no rim.
+2. **A building in `buildings.js`**: `castle monastery tower keep house temple obelisk`, drawn with
+   `drawBuilding(x, kind, cx, cy, height, seed)`. A book's places name one as their symbol.
+3. **A new vector drawing** in `buildings.js`, added to `BUILDINGS` as `{h, draw(T)}`:
+   - Model it on the matching icon in the official Maps of Magnamund (sheet 1's inset,
+     `data/projectaon/maps/01-detail.jpg`, is the best reference). Look at it; do not slice it.
+   - Units: ground at y = 0, up is negative, about 50-110 tall; set `h` to the full height.
+   - Use the kit only: `shape(pts, LIT)` for a lit face (it adds the fine vertical strokes),
+     `fill` + `hatch(pts, 2.2)` for a shaded face (2.2 or less cross-hatches it), `arch` for an
+     opening, `merlons`, `cone`, `flag`, `stones`. Light comes from the upper left, so shade the
+     right-hand faces.
+   - Keep to `INK` and `LIT`: no other colours. Draw what is behind first, so `LIT` walls hide it.
+   - Check it beside the engraved trees and mountains on the map at the journey zoom and zoomed
+     right out: it should not stand out as paler, cleaner or darker than they do.
+
+Landscape that is not a building (a lake, a marsh) is drawn in place in `replicaCanvas`, in the
+same ink and with hatching.
 
 ### Lone Wolf's figure (`.pawn`)
 

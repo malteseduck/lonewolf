@@ -177,6 +177,11 @@ hand.
 - A sepia ink map in the style of Lone Wolf HD, built from image tiles: engraved mountains,
   forests and settlements stamped onto parchment, with white dashed roads over them. Not plain
   geometric shapes.
+- Every symbol on the map reads as one engraving: the same sepia ink, hatching for shade, the
+  paper showing through, no colour and no outline lifting it off the map. Buildings are vector
+  drawings in that manner, modelled on the official Maps of Magnamund icons, so they scale with
+  the zoom. Only things that are not part of the map (Lone Wolf's figure, the lit destination
+  rings) stand out from it.
 - The book's own printed map can be viewed too, repainted in sepia on the owner's machine
   (personal use; never committed).
 - The player's route so far is drawn and a pawn marks the current position.
