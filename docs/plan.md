@@ -90,8 +90,6 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
 
 Smaller things noted along the way:
 
-- The combat command medallions (strike, mind attack, Laumspur, evade) still use the simple 24px
-  icons; the owner prefers drawn art. They could take game-icons glyphs like the panels.
 - Laumspur in combat is a house rule; the books do not allow it. Decide.
 - Bow and Arrow rules; Special Item limit.
 - Title page gets crowded with twelve books.

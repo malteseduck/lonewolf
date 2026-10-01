@@ -2,7 +2,7 @@
    Left page: the story. Right page: a panel (Kai Disciplines, inventory, map, or the fight).
    Plays the built-in demo chapter, or a full book imported by tools/import_projectaon.py. */
 import * as Ink from './shared/ink.js';
-import { drawCreature, setArt, newWound, drawHero, heroFromArt, portraitFromArt, drawFrame, gearSVG } from './plates.js';
+import { drawCreature, setArt, setEmblem, newWound, drawHero, heroFromArt, portraitFromArt, drawFrame, gearSVG } from './plates.js';
 import { MAPS, LASTLANDS, mapCanvas, loadStamps, stampsLoaded, printedCanvas, replicaModel, replicaCanvas, placeBook, along } from './maps.js';
 
 const LW = window.LW;
@@ -21,16 +21,7 @@ const $ = (s) => document.querySelector(s);
 const pl = $('#pl'), pr = $('#pr'), bookEl = $('#book'), rtabs = $('#rtabs'), gear = $('#gear');
 const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ---------- icons (24x24) ---------- */
-const ICON = {
-  sword: '<path d="M12 1l2 3.500V14h3v2h-3.600v4.500L12 23l-1.400-2.500V16H7v-2h3V4.500z"/>',
-  swords: '<path d="M3 2l3 .6 9.200 9.200 1.600-1.600 1.500 1.500-1.700 1.700 3.400 3.400-2.200 2.200-3.400-3.400-1.700 1.700-1.500-1.500 1.600-1.600L3.600 5z"/><path d="M21 2l-3 .6-5.200 5.200 2.400 2.400L20.400 5zM9.800 12.200l-2 2-1.700-1.700-1.500 1.500 1.700 1.700L2.900 19.100l2.200 2.200 3.400-3.400 1.700 1.700 1.500-1.500-1.600-1.600 2-2z"/>',
-  axe: '<path d="M10.500 2h2.500v20h-2.500zM13 4c5 .500 7 3 7 6s-2 5.500-7 6zM10.500 6C7 6.500 5 8 5 10s2 3.500 5.500 4z"/>',
-  burst: '<path d="M12 1l2.500 7L21 5l-3.500 6.500L23 14l-6.500 1L18 22l-6-4-6 4 1.500-7L1 14l5.500-2.500L3 5l6.500 3z"/>',
-  flask: '<path d="M9 2h6v2h-1v5l5 9a3 3 0 0 1-2.600 4.500H7.600A3 3 0 0 1 5 18l5-9V4H9z"/>',
-  coins: '<ellipse cx="9" cy="8" rx="7" ry="3.500"/><path d="M2 11c0 2 3 3.500 7 3.500s7-1.500 7-3.500v3c0 2-3 3.500-7 3.500S2 16 2 14z"/><path d="M8 19.500c1 1.500 3.500 2.500 7 2.500 4 0 7-1.500 7-3.500v-3c0 1.700-2.300 3.100-5.500 3.400-.8 1-2.900 1.800-5.500 2z"/>',
-  flee: '<path d="M3 11h11.500l-3.800-3.800L12.500 5.500 19.500 12.500l-7 7-1.800-1.700L14.500 14H3z"/><path d="M20 4h2v17h-2z"/>',
-};
+/* ---------- icons ---------- */
 /* Drawn glyphs for the disciplines, from game-icons.net (assets/icons/README.txt), cut from the
    medallion's colour by a mask so they can glow like the HD ones */
 const DISC_GLYPH = { camouflage: 'hood', hunting: 'high-shot', sixthSense: 'third-eye', tracking: 'footsteps', healing: 'herbs-bundle', weaponskill: 'broadsword', mindshield: 'eye-shield', mindblast: 'brainstorm', animalKinship: 'wolf-howl', mindOverMatter: 'magic-palm',
@@ -43,7 +34,6 @@ const ROSE = (() => {
   return `<svg class="rose" viewBox="-50 -50 100 100" aria-hidden="true"><circle class="ring" r="21"/>${minor}${major}<circle class="lt" r="3.2"/></svg>`;
 })();
 const TAB_ART = { kai: glyph('wolf-head'), pack: glyph('locked-chest'), map: ROSE };
-const icon = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[name] || ICON.sword}</svg>`;
 /* items, drawn the same way; anything typed in by hand gets a pouch or a pendant by its kind */
 const ITEM_GLYPH = { dagger: 'plain-dagger', spear: 'barbed-spear', mace: 'mace-head', shortSword: 'gladius', warhammer: 'warhammer', sword: 'pointy-sword', axe: 'battle-axe', quarterstaff: 'wizard-staff', broadsword: 'two-handed-sword',
   bow: 'pocket-bow', quiver: 'quiver', potion: 'health-potion', meal: 'meal', map: 'treasure-map', helmet: 'visored-helm', chainmail: 'mail-shirt' };
@@ -168,7 +158,7 @@ function leftHTML() {
   h += '</div><div class="dialslot" id="dialslot"></div>';
 
   if (isDead()) h += `<div class="finis dead"><h2>Your adventure ends here</h2><p>The last of the Kai has fallen.</p><button type="button" class="seal" data-new>Begin again</button></div>`;
-  else if (game.combatPending) h += `<div class="compass"><div class="orn"><button type="button" class="med" data-fight aria-label="Begin the fight">${icon('swords')}</button></div><span>Draw your weapon.</span></div>`;
+  else if (game.combatPending) h += `<div class="compass"><div class="orn"><button type="button" class="med" data-fight aria-label="Begin the fight">${glyph('crossed-swords')}</button></div><span>Draw your weapon.</span></div>`;
   else if (sec.end) {
     const next = !book.locations && Object.keys(BOOKS).find((k) => BOOKS[k].number === book.number + 1);
     h += `<div class="finis"><h2>${book.locations ? 'Here the demo ends' : 'Your quest is fulfilled'}</h2><p>You came through in ${game.s.trail.length} sections.${book.locations ? '' : ' Your Lone Wolf is kept for the next book.'}</p>${
@@ -436,7 +426,7 @@ function renderRight() {
   const h = game.hero, cs = B ? B.cs() : LW.heroCS(h).total;
   const place = mode === 'battle' ? 'Combat' : book.locations ? L[game.section.loc].name : book.title;
   const head = `<div class="headrow"><div class="place">${esc(place)}</div>
-    <div class="plaque"><span>CS <b>${cs}</b></span><span>EP <b>${Math.max(0, h.ep)}</b>/${h.epMax}</span><span>${icon('coins').replace('<svg', '<svg style="width:1.100em;height:1.100em;fill:#e2d09a;vertical-align:-0.150em"')} <b>${h.gold}</b></span></div></div>`;
+    <div class="plaque"><span>CS <b>${cs}</b></span><span>EP <b>${Math.max(0, h.ep)}</b>/${h.epMax}</span><span class="coin">${glyph('two-coins')} <b>${h.gold}</b></span></div></div>`;
   pr.innerHTML = head + '<div class="panel" id="panel"></div>';
   const host = $('#panel');
   if (mode === 'battle') host.append(B.node);
@@ -552,12 +542,12 @@ function updateBattle() {
   B.node.querySelector('.bar i').style.width = Math.max(0, (foe.ep / foe.max) * 100) + '%';
   q('stats').textContent = `CS ${foe.cs} · EP ${Math.max(0, foe.ep)} · Ratio ${r > 0 ? '+' : ''}${r}`;
   const ev = B.c.evade, evadeOpen = ev && B.rounds >= ev.after, locked = B.lock || B.over;
-  const med = (id, ic, label, note, off, extra = '') => `<div class="medcap"><button type="button" class="med ${extra}" data-cmd="${id}" ${locked || off ? 'disabled' : ''} aria-label="${label}">${icon(ic)}</button>${label}<small>${note}</small></div>`;
+  const med = (id, ic, label, note, off, extra = '') => `<div class="medcap"><button type="button" class="med ${extra}" data-cmd="${id}" ${locked || off ? 'disabled' : ''} aria-label="${label}">${ic}</button>${label}<small>${note}</small></div>`;
   const n = hero.backpack.filter((b) => b === 'potion').length;
-  const left = med('fight', hero.weapons[0] === 'axe' && hero.weapons.length === 1 ? 'axe' : 'sword', 'Strike', 'spin to attack')
-    + (B.power ? med('mind', 'burst', B.power === 2 ? 'Psi-surge' : 'Mindblast', foe.immune ? 'no effect' : ['at rest', B.power === 2 ? 'as Mindblast, +2' : 'focused, +2', '+4, costs 2 a round'][B.blasting()], false, B.blasting() ? 'lit' : '') : '');
-  const right = (n ? med('item', 'flask', 'Laumspur', `${n} left`, hero.ep >= hero.epMax) : '')
-    + (ev ? med('evade', 'flee', 'Evade', evadeOpen ? 'take one blow' : `after round ${ev.after}`, !evadeOpen) : '');
+  const left = med('fight', hero.weapons.length ? itemGlyph(hero.weapons[0]) : glyph('crossed-swords'), 'Strike', 'spin to attack')
+    + (B.power ? med('mind', glyph(B.power === 2 ? 'psychic-waves' : 'brainstorm'), B.power === 2 ? 'Psi-surge' : 'Mindblast', foe.immune ? 'no effect' : ['at rest', B.power === 2 ? 'as Mindblast, +2' : 'focused, +2', '+4, costs 2 a round'][B.blasting()], false, B.blasting() ? 'lit' : '') : '');
+  const right = (n ? med('item', itemGlyph('potion'), 'Laumspur', `${n} left`, hero.ep >= hero.epMax) : '')
+    + (ev ? med('evade', glyph('run'), 'Evade', evadeOpen ? 'take one blow' : `after round ${ev.after}`, !evadeOpen) : '');
   const cmds = q('cmds');
   cmds.innerHTML = left + '<span data-dial></span>' + right;
   cmds.querySelector('[data-dial]').replaceWith(B.dial.el);
@@ -714,6 +704,12 @@ soundBtn.addEventListener('click', () => { LW.setSound(!LW.sound.on); soundLabel
 $('#btn-new').addEventListener('click', () => { if (mode !== 'battle' && !busy) toTitle(); });
 window.addEventListener('resize', () => { if (B && B.fit) B.fit(); if (mode === 'story' && panel === 'map') renderRight(); });
 soundLabel();
+
+/* the crossed swords drawn on the plate of a foe with no picture */
+fetch('assets/icons/crossed-swords.svg').then((r) => r.text()).then((t) => {
+  const d = [...t.matchAll(/ d="([^"]+)"/g)].map((m) => m[1]).join(' ');
+  if (d) setEmblem(d);
+}).catch(() => {});
 
 /* optional illustrations dropped into art/ */
 fetch('art/manifest.json').then((r) => r.json()).then((m) => {

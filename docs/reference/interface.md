@@ -256,7 +256,11 @@ attack; `item` drinks Laumspur. When `B.over` is set the left page shows the out
 - `drawCreature(canvas, kind, scene, t, fx, img)`: draws the plate. With `img` (or an entry from
   `art/manifest.json`) it draws the inked illustration top-aligned, showing about 80% of its
   height. Without, it draws a procedural silhouette (`kraan`, `giak`, `vordak`) or the crossed-
-  swords `emblem`.
+  swords `emblem`: the crossed-swords glyph (handed over by `setEmblem` once main.js has fetched
+  it) over a blot of wash, or a plain ring and blades until then.
+- The fight's command medallions use glyphs too: Strike shows the weapon in hand (`itemGlyph`),
+  Mindblast/Psi-surge a brain or psychic waves (lit while in use), Laumspur the potion, Evade a
+  running man.
 - `portraitFromArt`, `drawFrame`, `gearSVG`: Lone Wolf's ink likeness for the Kai and
   inventory panels, the page frame (also the discipline grid's frame), the clockwork.
 - Story illustrations are plain `<img>` with `mix-blend-mode: multiply`; full plates also get a

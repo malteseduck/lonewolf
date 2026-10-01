@@ -62,15 +62,16 @@ body { background: var(--void) var(--wood, none) center / 820px; color: var(--bo
 .events { list-style: none; margin: 0; padding: 0; font-size: 1.15em; color: #31503a; }
 .block { border-top: 1px solid var(--ink-faint); padding-top: 0.4em; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.1em 1.2em; font-size: 1.15em; }
 .eyebrow { width: 100%; font: 400 0.62em var(--title); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-dim); }
-.inkbtn { border: 0; background: none; padding: 0; font: inherit; font-weight: 700; color: var(--ink); text-decoration: underline; text-decoration-color: var(--ink-faint); text-underline-offset: 0.18em; }
-.inkbtn:hover:not(:disabled) { color: var(--blood); text-decoration-color: var(--blood); }
+.inkbtn { border: 0; background: none; padding: 0; font: inherit; font-weight: 700; color: var(--ink); text-decoration: none; }
+.inkbtn:hover:not(:disabled), .inkbtn:focus-visible { color: var(--blood); outline: none; }
 .inkbtn:disabled { color: var(--ink-dim); text-decoration: none; font-weight: 400; }
 .foeline { width: 100%; display: flex; justify-content: space-between; gap: 1em; font-weight: 700; }
 .foeline i { font-weight: 400; color: var(--ink-dim); }
 .choices { list-style: none; margin: 0; padding: 0.55em 0 0; border-top: 3px double var(--ink-faint); display: flex; flex-direction: column; gap: 0.25em; }
 .choice { width: 100%; display: grid; grid-template-columns: 1.5em minmax(0, 1fr); align-items: start; border: 0; background: none; padding: 0.1em 0; text-align: left; font: 700 1.2em/1.25 var(--script); color: var(--ink); }
 .choice::before { content: ''; width: 0.62em; height: 0.62em; margin-top: 0.32em; border-radius: 50%; background: radial-gradient(circle at 35% 30%, var(--bronze-hi), var(--bronze) 45%, var(--bronze-lo)); box-shadow: 0 0 0 0.1em var(--ink); }
-.choice:hover:not(:disabled) span { color: var(--blood); text-decoration: underline; text-underline-offset: 0.16em; }
+.choice:hover:not(:disabled) span, .choice:focus-visible span { color: var(--blood); }
+.choice:focus-visible { outline: none; }
 .choice:disabled { color: var(--ink-dim); font-weight: 400; }
 .choice:disabled::before { background: none; box-shadow: 0 0 0 0.08em var(--ink-faint); }
 .choice em { font: 400 0.52em var(--title); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); margin-left: 0.6em; white-space: nowrap; }
@@ -110,6 +111,10 @@ button.med:disabled { opacity: 0.4; }
 .med .glyph { width: 56%; height: 56%; filter: drop-shadow(0 0.05em 0.04em #000); }
 .med .glyph i { background: linear-gradient(var(--silver-hi), var(--silver) 55%, var(--silver-lo)); }
 .med .rose { width: 72%; height: 72%; filter: drop-shadow(0 0.05em 0.04em #000); }
+.med.lit .glyph { filter: drop-shadow(0 0 0.08em var(--ember)) drop-shadow(0 0 0.3em rgba(240, 160, 64, 0.6)); }
+.med.lit .glyph i { background: radial-gradient(circle at 50% 45%, var(--glyph) 45%, #f3d6a0 80%, var(--ember)); }
+.plaque .coin .glyph { display: inline-block; width: 1.15em; height: 1.15em; vertical-align: -0.2em; }
+.plaque .coin .glyph i { background: linear-gradient(var(--bronze-hi), var(--bronze) 60%, var(--bronze-lo)); }
 .rose .lt { fill: var(--silver-hi); }
 .rose .dk { fill: var(--silver-lo); }
 .rose .ring { fill: none; stroke: var(--silver); stroke-width: 2.4; }

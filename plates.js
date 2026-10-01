@@ -81,8 +81,18 @@ const CREATURES = {
   },
 };
 
+/* the drawn crossed swords (a game-icons.net glyph, 512 square) for foes with no picture, once loaded */
+let EMBLEM = null;
+export function setEmblem(d) { EMBLEM = new Path2D(d); }
 CREATURES.emblem = (x) => {
-  // no portrait for this foe: crossed blades in a ring
+  if (EMBLEM) {
+    // a blot of wash behind, as if the plate were inked over a stain, then the blades in solid ink
+    const r = Ink.seeded(7);
+    for (let i = 0; i < 26; i++) oval(x, (r() - 0.5) * 260, (r() - 0.5) * 220, 90 + r() * 120, 70 + r() * 110, `rgba(${INK},0.035)`);
+    x.save(); x.translate(-235, -235); x.scale(470 / 512, 470 / 512); x.fillStyle = solid; x.fill(EMBLEM); x.restore();
+    return;
+  }
+  // until it loads: crossed blades in a ring
   x.beginPath(); x.arc(0, 0, 250, 0, Math.PI * 2); x.lineWidth = 10; x.strokeStyle = solid; x.stroke();
   x.beginPath(); x.arc(0, 0, 226, 0, Math.PI * 2); x.lineWidth = 2.5; x.stroke();
   [-1, 1].forEach((d) => {
