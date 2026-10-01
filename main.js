@@ -358,22 +358,41 @@ function drawZoom() {
   const dpr = Math.min(2, devicePixelRatio || 1), W = Math.round(box.clientWidth * dpr), H = Math.round(box.clientHeight * dpr), [fx, fy, fw, fh] = LASTLANDS.frame;
   const m = MAPS[book.id], here = book.locations && m.places[game.section.loc], at = here ? [here[2], here[3]] : along(m.trail, progress()).pop();
   if (!zoomV) { const w0 = fh * (W / H) * 0.5; zoomV = [at[0] - w0 / 2, at[1] - (w0 * H) / W / 2, w0]; }
-  const w = Math.max(30, Math.min(fw, (fh * W) / H, zoomV[2])), h = (w * H) / W; // zoomed out, the frame's height fills the box
-  const keep = (v, lo, span, size) => (size >= span ? lo + (span - size) / 2 : Math.max(lo, Math.min(lo + span - size, v))); // stay on the map
-  zoomV = [keep(zoomV[0], fx, fw, w), keep(zoomV[1], fy, fh, h), w];
+  zoomV = fitView(zoomV, W / H);
+  const w = zoomV[2], h = (w * H) / W;
   const cv = box.querySelector('canvas');
+  clearTimeout(zoomLater); cv.style.transform = '';
   cv.width = W; cv.height = H;
   cv.getContext('2d').drawImage(replicaCanvas(replicaModel(img, worldMap() || undefined), [zoomV[0], zoomV[1], w, h], W, H, m.places && Object.values(m.places)), 0, 0);
+  drawnV = [zoomV[0], zoomV[1], w];
   const tok = box.querySelector('.pawn');
+  tok.style.visibility = '';
   tok.style.left = ((at[0] - zoomV[0]) / w) * 100 + '%'; tok.style.top = ((at[1] - zoomV[1]) / h) * 100 + '%'; // repainted, not walked
 }
-/* zoom by f about a point given as fractions of the box */
+/* a view kept within its zoom limits and on the map; ratio is the box's width over its height */
+function fitView([x, y, w0], ratio) {
+  const [fx, fy, fw, fh] = LASTLANDS.frame, w = Math.max(30, Math.min(fw, fh * ratio, w0)), h = w / ratio; // zoomed out, the frame's height fills the box
+  const keep = (v, lo, span, size) => (size >= span ? lo + (span - size) / 2 : Math.max(lo, Math.min(lo + span - size, v)));
+  return [keep(x, fx, fw, w), keep(y, fy, fh, h), w];
+}
+/* Zoom by f about a point given as fractions of the box: the spot under the pointer stays under
+   it. A repaint takes a moment, so while the wheel turns the painted map is only scaled to match,
+   and repainted once it stops. The limits apply at every tick, so a burst past them cannot leave
+   the view somewhere the next repaint has to jump away from. */
+let drawnV = null, zoomLater = 0;
 function zoomBy(f, ax = 0.5, ay = 0.5) {
   const box = $('.mapview.zoomable');
   if (!box || !zoomV) return;
-  const [x0, y0, w] = zoomV, h = (w * box.clientHeight) / box.clientWidth;
-  zoomV = [x0 + w * ax * (1 - 1 / f), y0 + h * ay * (1 - 1 / f), w / f];
-  drawZoom();
+  const ratio = box.clientWidth / box.clientHeight, [x0, y0, w] = zoomV, h = w / ratio;
+  const w1 = fitView([x0, y0, w / f], ratio)[2], px = x0 + w * ax, py = y0 + h * ay; // the spot under the pointer
+  zoomV = fitView([px - w1 * ax, py - (w1 / ratio) * ay, w1], ratio);
+  if (drawnV) {
+    const p1 = box.clientWidth / zoomV[2], s = drawnV[2] / zoomV[2];
+    const cv = box.querySelector('canvas');
+    cv.style.transformOrigin = '0 0'; cv.style.transform = `translate(${(drawnV[0] - zoomV[0]) * p1}px, ${(drawnV[1] - zoomV[1]) * p1}px) scale(${s})`;
+    box.querySelector('.pawn').style.visibility = 'hidden';
+  }
+  clearTimeout(zoomLater); zoomLater = setTimeout(drawZoom, 160);
 }
 const mapInner = mapNode.querySelector('.mapinner'), pawn = mapNode.querySelector('.pawn');
 /* slide the map so a point of its 1000x700 grid sits as near the middle as the edges allow */

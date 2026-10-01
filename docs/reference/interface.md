@@ -163,7 +163,11 @@ region names; border.
 box round the Kai Monastery and Holmgard) and the figure walks `trail`. "The whole map" opens
 `.mapview.zoomable`: `drawZoom()` repaints the replica for `zoomV` (left, top, width in map
 pixels) at the panel's device resolution; dragging slides the canvas and repaints on release;
-the wheel and the +/- medallions call `zoomBy`. The figure is placed from the same `trail`.
+the wheel and the +/- medallions call `zoomBy`, which only scales the painted canvas in CSS
+(the figure hidden) and repaints 160 ms after the last tick: a repaint takes a noticeable moment, and
+repainting on every tick queued them up and froze the page. In `replicaCanvas`, symbols and tufts
+are kept off roads and rivers by one raster mask of them per repaint, not `isPointInStroke` per
+spot (which took seconds). The figure is placed from the same `trail`.
 
 ### Book 1's places (`places-01fftd.js`)
 

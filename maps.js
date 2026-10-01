@@ -193,11 +193,13 @@ function affine(pairs) {
 
 /* The replica's reading of the printed map, made once per image. With the world map (world), land
    the printed map leaves plain takes its hills, mountains and forest from the world map instead. */
-const models = {};
+const models = {}, readings = {};
 export function replicaModel(img, world) {
   const key = img.src + (world ? '+' + world.src : '');
   if (models[key]) return models[key];
-  const m = analyse(img, LASTLANDS);
+  // the printed map is read once; the world map's terrain goes into copies of its grids
+  const base = readings[img.src] || (readings[img.src] = analyse(img, LASTLANDS));
+  const m = world ? { ...base, mountain: base.mountain.slice(), hill: base.hill.slice(), forest: base.forest.slice() } : base;
   if (world) {
     const S = LASTLANDS.world, t = worldTerrain(world, S.crop), toWorld = affine(S.anchors.map(([w, p]) => [p, w]));
     const [rx, ry, rw, rh] = S.region;
@@ -216,6 +218,7 @@ export function replicaModel(img, world) {
 /* Paint the replica: view is [x, y, w, h] in the printed map's pixels, W x H the canvas. Symbols
    keep roughly their own size on screen, so zooming in shows more of them, not bigger ones.
    extra: a book's own places ([name, symbol, x, y]); when given, they replace the Magnamund detail. */
+const sheets = {};
 export function replicaCanvas(model, view, W, H, extra) {
   const [vx, vy, vw] = view, z = W / vw, R = LASTLANDS, cv = Ink.canvas(W, H), x = cv.getContext('2d');
   const r = Ink.seeded(Math.round(vx * 7 + vy * 13 + vw * 3));
@@ -226,7 +229,8 @@ export function replicaCanvas(model, view, W, H, extra) {
   const roads = [...R.roads, ...(D ? D.roads.map((l) => l.map(dt)) : [])];
   const k = Math.max(1.1, Math.min(2, 1 + 0.3 * Math.log2(z))); // symbol scale
 
-  x.drawImage(Ink.parchment(W, H, false, true), 0, 0);
+  const pk = W + 'x' + H; // the same sheet every repaint of this size
+  x.drawImage(sheets[pk] || (sheets[pk] = Ink.parchment(W, H, false, true)), 0, 0);
   x.fillStyle = 'rgba(84,56,26,0.2)'; x.fillRect(0, 0, W, H);
   x.lineCap = 'round'; // square-ended washes read as pale blocks on open ground
   for (let i = 0; i < 140; i++) {
@@ -284,11 +288,15 @@ export function replicaCanvas(model, view, W, H, extra) {
   // land symbols on a jittered screen grid, read from the terrain the printed map shows there
   const roadPaths = roads.map((l) => toLine([l])), riverPaths = [...R.rivers, ...brooks].map((l) => toLine([l]));
   const spots = [...places, ...(extra || []).filter((e) => e[1])].map(([, , px, py]) => P([px, py])), items = [], tufts = [];
-  const clear = (cx, cy) => {
-    x.lineWidth = 44 / z;
-    return !spots.some(([sx, sy]) => Math.hypot(sx - cx, sy - cy) < 60 * k)
-      && !roadPaths.some((p) => x.isPointInStroke(p, cx, cy)) && !riverPaths.some((p) => x.isPointInStroke(p, cx, cy));
-  };
+  // Where roads and rivers run, 44 px wide on screen, drawn once into a quarter-size mask and
+  // looked up per spot: testing every path with isPointInStroke for every grid cell took seconds
+  // a repaint and froze the page while zooming.
+  const MS = 4, mw = Math.ceil(W / MS), mh = Math.ceil(H / MS), mc = Ink.canvas(mw, mh), mk = mc.getContext('2d', { willReadFrequently: true });
+  mk.setTransform(z / MS, 0, 0, z / MS, (-vx * z) / MS, (-vy * z) / MS); mk.lineWidth = 44 / z; mk.lineCap = 'round'; mk.lineJoin = 'round';
+  [...roadPaths, ...riverPaths].forEach((p) => mk.stroke(p));
+  const md = mk.getImageData(0, 0, mw, mh).data;
+  const onLine = (cx, cy) => { const ix = Math.floor(cx / MS), iy = Math.floor(cy / MS); return ix >= 0 && iy >= 0 && ix < mw && iy < mh && md[(iy * mw + ix) * 4 + 3] > 0; };
+  const clear = (cx, cy) => !onLine(cx, cy) && !spots.some(([sx, sy]) => Math.hypot(sx - cx, sy - cy) < 60 * k);
   const g = 30;
   for (let cy = 0; cy < H + 80; cy += g * 0.75) for (let cx = -40; cx < W + 40; cx += g) {
     const jx = cx + (r() - 0.5) * g * 0.9, jy = cy + (r() - 0.5) * g * 0.6, mx = Math.floor(vx + jx / z), my = Math.floor(vy + jy / z);
