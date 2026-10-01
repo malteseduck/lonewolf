@@ -66,6 +66,8 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
   in the repo must be free to redistribute (CC0 or similar; say where they came from, as
   `assets/map/WIDMAN-README.txt` does). Project Aon images stay in `data/projectaon/` and are
   only restyled at runtime. Downloading a new asset pack needs the owner's go-ahead.
+- **A book's travel on the map** is made by hand, step by step, in `docs/reference/map-places.md`.
+  The importer reports where a book stands on it; follow it for every new book.
 - **Map symbols** look engraved, like the Widman set: sepia ink only, no colour, no rim. For a
   new map feature, first reuse what exists: a Widman stamp (`mountain range forest tree`; its settlement stamps do
   not match the official icons) or a building in `buildings.js` (`castle monastery tower keep house
@@ -98,6 +100,7 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
 | `docs/reference/rules-engine.md` | How the rules are implemented and where |
 | `docs/reference/importer.md` | The downloader and importer: what is parsed and how |
 | `docs/reference/interface.md` | The interface: pages, panels, map, combat, art pipeline |
+| `docs/reference/map-places.md` | The procedure for putting a book on the map: places, layout, checks |
 | `docs/plan.md` | State of the work, decisions made, what is waiting on the owner, next steps. **Read this first in a new session.** |
 
 Keep them current: a change to behaviour updates the matching reference file in the same piece of

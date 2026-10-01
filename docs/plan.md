@@ -83,8 +83,11 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
    Today a new Magnakai character gets a simplified kit.
 4. **Play Book 1 through** and fix what the importer misread. Decide how much item handling to
    automate (pick-ups are the most frequent by-hand step).
-5. **Map travel for real books.** Needs a location per section. Options: author it by hand per
-   book, or derive stages from the section graph. Then a map spec per book in `maps.js`.
+5. **Map travel for books 2-12.** Book 1 has it. Each further book follows
+   docs/reference/map-places.md (made-up places by hand, tools to lay out and check them).
+   Books 2-5 can use the Lastlands replica if their journeys stay on it; the Magnakai books need
+   a replica of their own printed maps first. Book 1's sweep on 2026-10-01 finds three destination
+   rings cut by the map's edge (sections 140, 235, 254), still touchable; not yet looked into.
 6. **Enemy plates for unpictured enemies**, and a check by eye of which illustration each enemy
    borrows in books 2-12 (`PLATE_FIXES`).
 

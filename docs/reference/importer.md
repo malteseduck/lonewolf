@@ -64,6 +64,10 @@ The report it prints is the check that a book imported sanely: section count, co
 free Random Number sections, gates, illustrations, dead ends, forced Meals, enemies with a plate,
 broken links, and sections with no way on and no ending. The last two should be empty.
 
+It ends with the book's map places, from `tools/check_places.py`: either that the book has no
+`places-<code>.js` yet (it reads without travel on the map; docs/reference/map-places.md says how
+to give it some), or what is wrong with the file and the longest routes between its places.
+
 ## What it does not read
 
 Item and gold pick-ups, losses, Endurance changes stated in prose, shops, conditional combat

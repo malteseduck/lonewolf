@@ -164,3 +164,9 @@ print(len(foes), 'kinds of enemy,', sum(1 for a in foes.values() if a), 'with a 
 broken = [(k, c['to']) for k, s in sections.items() for c in s['choices'] if c['to'] not in sections]
 print('broken links:', broken, '| no way on and no ending:', [k for k, s in sections.items() if not s['choices'] and 'end' not in s])
 print('books loaded by index.js:', have)
+
+# The book's places on the map (made up per section, by hand): checked here so every import shows
+# whether the book travels on the map yet, and what is wrong if it does. See docs/reference/map-places.md.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import check_places
+check_places.check(book, sections)

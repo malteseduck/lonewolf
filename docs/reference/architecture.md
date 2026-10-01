@@ -32,6 +32,11 @@ tools/
   fetch_projectaon.py       downloads one book into data/projectaon/<code>/
   import_projectaon.py      converts it to data/projectaon/<code>/book.js and rewrites data/projectaon/index.js
   build_map_atlas.py        packs the downloaded Widman symbol pack into assets/map/widman.png
+  check_places.py           checks places-<code>.js against the book; run by the importer too
+  reading_copy.py           writes data/projectaon/<code>/reading.txt, the book as text to read when placing it
+  layout_places.js          lays out the places not fixed by hand (node)
+  map_sweep.js              in the browser console: every section shown on the map and checked
+                            (the four above: docs/reference/map-places.md)
 data/projectaon/            git-ignored. Downloaded pages and images, generated book.js files, index.js;
                             maps/: sheets 1-2 of Project Aon's Maps of Magnamund (reference for LASTLANDS.detail)
 data/reference/             git-ignored. Reference images fetched for the owner: a fan-made world map of
