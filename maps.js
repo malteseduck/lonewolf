@@ -4,13 +4,14 @@
    land one to one on the canvas. */
 import * as Ink from './shared/ink.js';
 import { analyse, toPath, toLine } from './replica.js';
+import { PLACES as BOOK1_PLACES, AT as BOOK1_AT } from './places-01fftd.js';
 
 const INK = '38,26,16', PAPER = '226,212,176', RED = '140,28,18';
 const ink = (a) => `rgba(${INK},${a})`;
 
 /* points in the printed map's pixels to the 1000x700 grid of a 10:7 view of it */
 const onView = (v, pts) => pts.map(([px, py]) => [((px - v[0]) / v[2]) * 1000, ((py - v[1]) / v[3]) * 700]);
-const BOOK1_VIEW = [110, 425, 170, 119];
+const BOOK1_VIEW = [125, 446, 110, 77];
 /* the road the figure walks in Book 1, in the printed map's pixels */
 const BOOK1_TRAIL = [[168, 466], [176, 478], [186, 490], [198, 501], [211, 511], [222, 519]];
 
@@ -93,10 +94,11 @@ export const MAPS = {
     labels: [],
     compass: [84, 606],
   },
-  /* Book 1: the redrawn Lastlands, framed on the road from the Kai Monastery to Holmgard */
+  /* Book 1: the redrawn Lastlands, framed on the country between the Kai Monastery and Holmgard,
+     with made-up places for the story to move between (places-01fftd.js) */
   '01fftd': {
     replica: true,
-    view: BOOK1_VIEW,
+    view: BOOK1_VIEW, places: BOOK1_PLACES, at: BOOK1_AT,
     trail: BOOK1_TRAIL, route: onView(BOOK1_VIEW, BOOK1_TRAIL),
     start: 'Kai Monastery', goal: 'Holmgard',
   },
@@ -135,6 +137,16 @@ function stamp(x, st, px, py, s, halo) {
   put(sheet.ink);
 }
 
+/* Give a book the places its map spec has: book.locations in the 1000x700 grid of the spec's
+   view, and each section its place. That switches the book to travel on the map. */
+export function placeBook(book) {
+  const m = MAPS[book.id];
+  if (!m || !m.places || book.locations) return;
+  book.locations = {};
+  for (const k in m.places) { const [name, , x, y] = m.places[k], [[gx, gy]] = onView(m.view, [[x, y]]); book.locations[k] = { x: gx, y: gy, name }; }
+  for (const k in m.at) m.at[k].forEach((s) => { if (book.sections[s]) book.sections[s].loc = k; });
+}
+
 /* the similarity (move, turn, scale) that takes two points of one map onto the same two of another */
 function fit([[a, A], [b, B]]) {
   const dx = b[0] - a[0], dy = b[1] - a[1], DX = B[0] - A[0], DY = B[1] - A[1], d2 = dx * dx + dy * dy;
@@ -149,13 +161,14 @@ const models = {};
 export const replicaModel = (img) => (models[img.src] = models[img.src] || analyse(img, LASTLANDS));
 
 /* Paint the replica: view is [x, y, w, h] in the printed map's pixels, W x H the canvas. Symbols
-   keep roughly their own size on screen, so zooming in shows more of them, not bigger ones. */
-export function replicaCanvas(model, view, W, H) {
+   keep roughly their own size on screen, so zooming in shows more of them, not bigger ones.
+   extra: a book's own places ([name, symbol, x, y]); when given, they replace the Magnamund detail. */
+export function replicaCanvas(model, view, W, H, extra) {
   const [vx, vy, vw] = view, z = W / vw, R = LASTLANDS, cv = Ink.canvas(W, H), x = cv.getContext('2d');
   const r = Ink.seeded(Math.round(vx * 7 + vy * 13 + vw * 3));
   const P = ([px, py]) => [(px - vx) * z, (py - vy) * z];
   const toMap = () => x.setTransform(z, 0, 0, z, -vx * z, -vy * z), toCanvas = () => x.setTransform(1, 0, 0, 1, 0, 0);
-  const D = z >= 6 && R.detail, dt = D && fit(D.anchors);
+  const D = z >= 6 && !extra && R.detail, dt = D && fit(D.anchors);
   const places = [...R.places, ...(D ? D.places.map(([n, k, px, py]) => [n, k, ...dt([px, py])]) : [])];
   const roads = [...R.roads, ...(D ? D.roads.map((l) => l.map(dt)) : [])];
   const k = Math.max(1.1, Math.min(2, 1 + 0.3 * Math.log2(z))); // symbol scale
@@ -199,7 +212,7 @@ export function replicaCanvas(model, view, W, H) {
 
   // land symbols on a jittered screen grid, read from the terrain the printed map shows there
   const roadPaths = roads.map((l) => toLine([l])), riverPaths = R.rivers.map((l) => toLine([l]));
-  const spots = places.map(P), items = [];
+  const spots = [...places, ...(extra || []).filter((e) => e[1])].map(([, , px, py]) => P([px, py])), items = [];
   const clear = (cx, cy) => {
     x.lineWidth = 44 / z;
     return !spots.some(([sx, sy]) => Math.hypot(sx - cx, sy - cy) < 60 * k)
@@ -229,6 +242,22 @@ export function replicaCanvas(model, view, W, H) {
   });
   x.setLineDash([]);
   toCanvas();
+
+  // the book's own places: a symbol each, no name until he has been there (the panel adds that)
+  (extra || []).forEach(([, kind, px, py]) => {
+    const [cx, cy] = P([px, py]);
+    if (!kind || cx < -80 || cx > W + 80 || cy < -80 || cy > H + 120) return;
+    if (kind === 'lake') {
+      x.beginPath(); x.ellipse(cx + 34 * k, cy + 4, 46 * k, 20 * k, -0.1, 0, Math.PI * 2);
+      x.fillStyle = ink(0.26); x.fill(); x.strokeStyle = ink(0.85); x.lineWidth = 2.4; x.stroke();
+      stamp(x, pick(r, 'village'), cx - 6, cy + 6, 1.8 * k, 8);
+    } else if (kind === 'marsh') {
+      x.strokeStyle = ink(0.7); x.lineWidth = 1.6;
+      for (let i = 0; i < 14; i++) { const ax = cx + (r() - 0.5) * 90 * k, ay = cy + (r() - 0.5) * 40 * k; for (let j = -1; j <= 1; j++) { x.beginPath(); x.moveTo(ax + j * 4, ay); x.lineTo(ax + j * 7, ay - 12 - r() * 6); x.stroke(); } x.beginPath(); x.moveTo(ax - 9, ay + 1); x.lineTo(ax + 9, ay + 1); x.stroke(); }
+    } else if (kind === 'hill') stamp(x, pick(r, 'mountain', 90), cx, cy + 8, 2 * k, 6);
+    else if (kind === 'tree') stamp(x, pick(r, 'tree'), cx, cy + 6, 2.6 * k, 6);
+    else stamp(x, pick(r, kind), cx, cy + 6, 2 * k, 8);
+  });
 
   // settlements on a pale halo, with their names; then the names of seas and lands
   const kinds = { city: 'walled', walled: 'walled', town: 'town', village: 'village', fort: 'fort', bridge: 'bridge' };
@@ -291,7 +320,7 @@ const cache = {};
 export function mapCanvas(id, img) {
   if (cache[id]) return cache[id];
   if (!stampsLoaded()) return null;
-  if (MAPS[id].replica) return img ? (cache[id] = replicaCanvas(replicaModel(img), MAPS[id].view, 2000, 1400)) : null;
+  if (MAPS[id].replica) return img ? (cache[id] = replicaCanvas(replicaModel(img), MAPS[id].view, 3200, 2240, MAPS[id].places && Object.values(MAPS[id].places))) : null; // shown 1.8 times larger
   const m = MAPS[id], cv = Ink.canvas(2000, 1400), x = cv.getContext('2d'), r = Ink.seeded(id.length * 131 + 11);
   const pick = (kind) => STAMPS[kind][Math.floor(r() * STAMPS[kind].length)];
   x.drawImage(Ink.parchment(cv.width, cv.height, false, true), 0, 0);

@@ -3,13 +3,13 @@
    Plays the built-in demo chapter, or a full book imported by tools/import_projectaon.py. */
 import * as Ink from './shared/ink.js';
 import { drawCreature, setArt, newWound, drawFigure, drawHero, heroFromArt, drawFrame, gearSVG } from './plates.js';
-import { MAPS, LASTLANDS, mapCanvas, loadStamps, stampsLoaded, printedCanvas, replicaModel, replicaCanvas, along } from './maps.js';
+import { MAPS, LASTLANDS, mapCanvas, loadStamps, stampsLoaded, printedCanvas, replicaModel, replicaCanvas, placeBook, along } from './maps.js';
 
 const LW = window.LW;
 const BOOKS = Object.assign({ demo: LW.BOOK_DEMO }, LW.BOOKS || {});
 let book = LW.BOOK_DEMO, L = book.locations || {}, game = new LW.Game(book, 'lw-save');
 function useBook(id) {
-  book = BOOKS[id] || LW.BOOK_DEMO; L = book.locations || {};
+  book = BOOKS[id] || LW.BOOK_DEMO; placeBook(book); L = book.locations || {};
   game = new LW.Game(book, id === 'demo' ? 'lw-save' : 'lw-save-' + id);
   try { localStorage.setItem('lw-book', id); } catch (e) { /* not remembered */ }
 }
@@ -258,7 +258,9 @@ function showTerrain(id) {
   const cv = mapNode.querySelector('canvas'), x = cv.getContext('2d'), map = mapCanvas(id, MAPS[id].replica && lastlands());
   x.clearRect(0, 0, cv.width, cv.height);
   if (!map) return void ((mapShown = null), loadStamps().then(() => { if (panel === 'map') renderRight(); })); // painted once the symbols and image arrive
+  if (cv.width !== map.width) { cv.width = map.width; cv.height = map.height; }
   x.drawImage(map, 0, 0); mapShown = id;
+  mapNode.classList.toggle('deep', !!MAPS[id].replica); // a replica is looked at closer, and pans both ways
 }
 /* Book 1's printed map, which the Lastlands replica is read from: the image, null while it
    loads (the panel redraws then), or undefined if Book 1 is not imported */
@@ -287,14 +289,14 @@ function drawZoom() {
   if (!box || !img) return;
   if (!stampsLoaded()) return void loadStamps().then(() => { if (panel === 'map') renderRight(); });
   const dpr = Math.min(2, devicePixelRatio || 1), W = Math.round(box.clientWidth * dpr), H = Math.round(box.clientHeight * dpr), [fx, fy, fw, fh] = LASTLANDS.frame;
-  const at = along(MAPS[book.id].trail, progress()).pop();
+  const m = MAPS[book.id], here = book.locations && m.places[game.section.loc], at = here ? [here[2], here[3]] : along(m.trail, progress()).pop();
   if (!zoomV) { const w0 = fh * (W / H) * 0.5; zoomV = [at[0] - w0 / 2, at[1] - (w0 * H) / W / 2, w0]; }
   const w = Math.max(30, Math.min(fw, (fh * W) / H, zoomV[2])), h = (w * H) / W; // zoomed out, the frame's height fills the box
   const keep = (v, lo, span, size) => (size >= span ? lo + (span - size) / 2 : Math.max(lo, Math.min(lo + span - size, v))); // stay on the map
   zoomV = [keep(zoomV[0], fx, fw, w), keep(zoomV[1], fy, fh, h), w];
   const cv = box.querySelector('canvas');
   cv.width = W; cv.height = H;
-  cv.getContext('2d').drawImage(replicaCanvas(replicaModel(img), [zoomV[0], zoomV[1], w, h], W, H), 0, 0);
+  cv.getContext('2d').drawImage(replicaCanvas(replicaModel(img), [zoomV[0], zoomV[1], w, h], W, H, m.places && Object.values(m.places)), 0, 0);
   const tok = box.querySelector('.pawn');
   tok.style.left = ((at[0] - zoomV[0]) / w) * 100 + '%'; tok.style.top = ((at[1] - zoomV[1]) / h) * 100 + '%'; // repainted, not walked
 }
@@ -307,9 +309,15 @@ function zoomBy(f, ax = 0.5, ay = 0.5) {
   drawZoom();
 }
 const mapInner = mapNode.querySelector('.mapinner'), pawn = mapNode.querySelector('.pawn');
+/* slide the map so a point of its 1000x700 grid sits as near the middle as the edges allow */
+function panTo(gx, gy) {
+  const vw = mapNode.clientWidth, vh = mapNode.clientHeight, W = mapInner.clientWidth || 1, H = mapInner.clientHeight || 1;
+  const tx = Math.min(0, Math.max(vw - W, vw / 2 - (gx / 1000) * W)), ty = Math.min(0, Math.max(vh - H, vh / 2 - (gy / 700) * H));
+  mapInner.style.transform = `translate(${tx}px, ${ty}px)`;
+}
 const pct = (p) => `left:${p.x / 10}%;top:${p.y / 7}%`;
 function updateMap() {
-  showTerrain('demo');
+  showTerrain(MAPS[book.id] ? book.id : 'demo');
   const here = game.section.loc, locs = [], rd = mode === 'story' && !isDead() ? roads() : [];
   game.s.trail.forEach((t) => { const k = book.sections[t.id].loc; if (locs[locs.length - 1] !== k) locs.push(k); });
   const line = locs.map((k) => `${L[k].x},${L[k].y}`).join(' ');
@@ -319,7 +327,8 @@ function updateMap() {
   let h = '';
   for (const k in L) {
     if (destLocs.has(k)) continue;
-    if (locs.includes(k) && k !== here) h += `<div class="mk" style="${pct(L[k])}"><i></i><span>${esc(L[k].name)}</span></div>`;
+    const named = MAPS[book.id] && MAPS[book.id].replica && LASTLANDS.places.some((p) => p[0] === L[k].name); // the map already prints it
+    if (locs.includes(k) && k !== here) h += `<div class="mk" style="${pct(L[k])}"><i></i>${named ? '' : `<span>${esc(L[k].name)}</span>`}</div>`;
     else if (k === 'holmgard' && k !== here) h += `<div class="mk goal" style="${pct(L[k])}"><i></i><span>${esc(L[k].name)}</span></div>`;
   }
   destLocs.forEach((k) => {
@@ -329,9 +338,8 @@ function updateMap() {
   mapNode.querySelector('.marks').innerHTML = h;
   place(pawn, L[here].x / 10 + '%', L[here].y / 7 + '%');
   // keep the figure and the open roads in view
-  const vw = mapNode.clientWidth, W = mapInner.clientWidth || 1;
-  const xs = [L[here].x, ...[...destLocs].map((k) => L[k].x)], cx = xs.reduce((a, b) => a + b, 0) / xs.length;
-  mapInner.style.transform = `translateX(${Math.min(0, Math.max(vw - W, vw / 2 - (cx / 1000) * W))}px)`;
+  const pts = [L[here], ...[...destLocs].map((k) => L[k])], cx = pts.reduce((a, p) => a + p.x, 0) / pts.length, cy = pts.reduce((a, p) => a + p.y, 0) / pts.length;
+  panTo(cx, cy);
   return rd.length;
 }
 
@@ -362,8 +370,7 @@ function updateJourney() {
   mapNode.querySelector('.ways').innerHTML = '';
   mapNode.querySelector('.marks').innerHTML = `<div class="mk ring" style="left:${goal[0] / 10}%;top:${goal[1] / 7}%"><i></i></div>`;
   place(pawn, at[0] / 10 + '%', at[1] / 7 + '%');
-  const vw = mapNode.clientWidth, W = mapInner.clientWidth || 1;
-  mapInner.style.transform = `translateX(${Math.min(0, Math.max(vw - W, vw / 2 - (at[0] / 1000) * W))}px)`;
+  panTo(at[0], at[1]);
 }
 
 function renderRight() {
@@ -378,19 +385,17 @@ function renderRight() {
   pr.innerHTML = head + '<div class="panel" id="panel"></div>';
   const host = $('#panel');
   if (mode === 'battle') host.append(B.node);
-  else if (panel === 'map' && !book.locations) {
+  else if (panel === 'map' && mapScan && MAPS[book.id] && MAPS[book.id].replica) {
+    host.innerHTML = `<div class="mapview zoomable" role="img" aria-label="Map of the Lastlands"><canvas></canvas>${heroHTML()}
+      <div class="zoomctl"><button type="button" class="med" data-zoom="in" aria-label="Zoom in">+</button><button type="button" class="med" data-zoom="out" aria-label="Zoom out">&minus;</button></div></div>
+      <p class="maphint">The Lastlands. Drag to look around; scroll or use the medallions to zoom. <button type="button" class="inkbtn" data-scan>Back to the road</button></p>`;
+    drawZoom();
+  } else if (panel === 'map' && !book.locations) {
     const m = MAPS[book.id];
     if (!m || mapScan) {
-      if (m) {
-        host.innerHTML = `<div class="mapview zoomable" role="img" aria-label="Map of the Lastlands"><canvas></canvas>${heroHTML()}
-          <div class="zoomctl"><button type="button" class="med" data-zoom="in" aria-label="Zoom in">+</button><button type="button" class="med" data-zoom="out" aria-label="Zoom out">&minus;</button></div></div>
-          <p class="maphint">The Lastlands. Drag to look around; scroll or use the medallions to zoom. <button type="button" class="inkbtn" data-scan>Back to the journey</button></p>`;
-        drawZoom();
-      } else {
-        const img = printedMap();
-        host.innerHTML = '<div class="mapview scrolly" role="img" aria-label="Map of the Lastlands"></div><p class="maphint">The map printed in the book. Drag to look around.</p>';
-        if (img) host.firstChild.append(scanOf(img));
-      }
+      const img = printedMap();
+      host.innerHTML = '<div class="mapview scrolly" role="img" aria-label="Map of the Lastlands"></div><p class="maphint">The map printed in the book. Drag to look around.</p>';
+      if (img) host.firstChild.append(scanOf(img));
     } else {
       const hint = el('p', 'maphint');
       host.append(mapNode, hint);
@@ -398,11 +403,11 @@ function renderRight() {
       hint.innerHTML = `Your road from ${esc(m.start)} to ${esc(m.goal)}. Your figure marks how far the story has carried you. <button type="button" class="inkbtn" data-scan>The whole map</button>`;
     }
   } else if (panel === 'map') {
-    const hint = el('div');
+    const hint = el('div'), whole = MAPS[book.id] && MAPS[book.id].replica ? ' <button type="button" class="inkbtn" data-scan>The whole map</button>' : '';
     host.append(mapNode, hint);
     const n = updateMap();
-    hint.innerHTML = n ? `<ul class="roads">${roads().map((r) => `<li><button type="button" class="choice" data-choice="${r.i}" ${r.c.enabled ? '' : 'disabled'}><span>${esc(r.c.text)}<em>${esc(r.c.enabled ? L[r.loc].name : r.c.why)}</em></span></button></li>`).join('')}</ul>`
-      : `<p class="maphint">${isDead() ? 'Your road ends here.' : game.combatPending ? 'There is no leaving until the fight is settled.' : 'No road is open yet. The story continues in the book.'}</p>`;
+    hint.innerHTML = n ? `<ul class="roads">${roads().map((r) => `<li><button type="button" class="choice" data-choice="${r.i}" ${r.c.enabled ? '' : 'disabled'}><span>${esc(shown(r.c.text))}<em>${esc(r.c.enabled ? L[r.loc].name : r.c.why)}</em></span></button></li>`).join('')}</ul>${whole ? `<p class="maphint">${whole}</p>` : ''}`
+      : `<p class="maphint">${isDead() ? 'Your road ends here.' : game.combatPending ? 'There is no leaving until the fight is settled.' : 'No road is open yet. The story continues in the book.'}${whole}</p>`;
   } else host.innerHTML = panel === 'kai' ? kaiHTML() : packHTML();
 }
 function render() {

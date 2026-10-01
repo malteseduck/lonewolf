@@ -58,8 +58,8 @@ bronze plaque with Combat Skill, Endurance and gold.
   selected one.
 - **pack** (`packHTML`): Special Items row, two weapon slots beside the figure, eight Backpack
   cells, a ledger (gold -/+, "Add an item by hand" select), and the caption with Drink / Drop / Eat.
-- **map**: three cases.
-  - Book has `locations` (demo): `updateMap()`. Destinations for the current choices are lit rings;
+- **map**: three cases, plus "The whole map" (the zoomable replica) for any book whose spec is one.
+  - Book has `locations` (the demo, and Book 1 through `placeBook`): `updateMap()`. Destinations for the current choices are lit rings;
     the same choices are listed under the map. Picking one walks the figure there, then turns the page.
   - Book has a spec in `MAPS` but no locations (Book 1): `updateJourney()`. Lone Wolf's figure stands
     part-way along `spec.route` by `progress()`: 1 minus (shortest number of choices from the
@@ -132,6 +132,20 @@ box round the Kai Monastery and Holmgard) and the figure walks `trail`. "The who
 `.mapview.zoomable`: `drawZoom()` repaints the replica for `zoomV` (left, top, width in map
 pixels) at the panel's device resolution; dragging slides the canvas and repaints on release;
 the wheel and the +/- medallions call `zoomBy`. The figure is placed from the same `trail`.
+
+### Book 1's places (`places-01fftd.js`)
+
+The book names few of the places it passes through, so they are made up to fit what each passage
+describes (a watchtower, a fallen tree, a lake with a shack), named in our own words. `PLACES` holds
+`[name, symbol, x, y]` in the printed map's pixels; `AT` lists the section numbers that happen at
+each. A few were fixed by hand (the Monastery, Holmgard, Fogwood, Raumas, Alema, the Graveyard, the
+highway stops); the rest were placed by a one-off force layout that pulls together places the
+story moves between, so they are plausible rather than surveyed. `placeBook(book)` (maps.js), called
+from `useBook`, turns them into `book.locations` on the 1000x700 grid of `view` and sets each
+section's `loc`, which switches the book to travel on the map exactly like the demo. The replica
+draws each place's symbol (fort, village, bridge, walled, hill, tree, lake, marsh) whether visited
+or not; names appear once visited or offered. When a book has its own places, the Magnamund detail
+layer is left out.
 
 ### Lone Wolf's figure (`.pawn`)
 

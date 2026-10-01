@@ -46,6 +46,8 @@ Working and checked by playing in the browser:
 - LWHD-style sepia maps stamped from engraved CC0 symbols (Widman): the demo's country (with
   travel), and a redrawn, zoomable replica of the Lastlands read from Book 1's printed map, with
   extra detail for central Sommerlund from the Maps of Magnamund. Book 1's journey is a view of it,
+  Book 1 travels on the map like the demo: about 55 made-up places, every section assigned one
+  (`places-01fftd.js`).
   Lone Wolf is a sepia figure over a bronze arrow that walks between places, cut out at load from
   a Lone Wolf HD screenshot the owner keeps in `art/`.
 - Series rules: Kai and Magnakai disciplines, ranks, Lore-circles, Weaponmastery, Psi-surge.
@@ -90,6 +92,7 @@ Smaller things noted along the way:
 - Bow and Arrow rules; Special Item limit.
 - Title page gets crowded with twelve books.
 - Replica: the hand-placed rivers, roads and towns were read off the printed map by eye and are
-  approximate; Book 1's trail is a straight walk, not the book's real route. Books 2-5 use the same
+  approximate. Book 1's places were laid out by a force layout: check them by playing, and move any
+  that sit oddly (some horse-route places ended up east of the highway). Books 2-5 use the same
   map and could reuse it; Magnakai books need their own.
 - Delete `prototypes/` (and `shared/art.js`, `battle.js`, `flow.js`) once the owner is sure.

@@ -22,6 +22,10 @@ The data model `LW.Game` plays. `shared/book-demo.js` is a hand-written example;
 }
 ```
 
+An imported book has no `locations` of its own; `placeBook` (maps.js) adds them, and each
+section's `loc`, from a hand-made places file when its map spec has one (Book 1:
+`places-01fftd.js`).
+
 `locations` is the switch between the two ways a book plays:
 with it, choices that change location are made on the map; without it, every choice is on the page.
 
