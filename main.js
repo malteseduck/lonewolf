@@ -125,20 +125,48 @@ function storyText(sec) {
   const at = sec.img ? Math.min(sec.img.at, sec.text.length) : 1;
   return sec.text.map((p, i) => `${i === at ? pic : ''}<p class="${i ? '' : 'first'}">${esc(p)}</p>`).join('') + (at >= sec.text.length ? pic : '');
 }
+/* ---------- the title spread, after the HD title page ---------- */
+/* the series as tools/import_projectaon.py knows it, so books not yet downloaded can show on the shelf */
+const SERIES_TITLES = ['Flight from the Dark', 'Fire on the Water', 'The Caverns of Kalte', 'The Chasm of Doom', 'Shadow on the Sand', 'The Kingdoms of Terror',
+  'Castle Death', 'The Jungle of Horrors', 'The Cauldron of Fear', 'The Dungeons of Torgar', 'The Prisoners of Time', 'The Masters of Darkness'];
+const bookIds = () => Object.keys(BOOKS).filter((id) => id !== 'demo').sort((a, b) => (BOOKS[a].number || 0) - (BOOKS[b].number || 0));
+const savedAt = (id) => { try { return JSON.parse(localStorage.getItem(id === 'demo' ? 'lw-save' : 'lw-save-' + id)).s.at; } catch (e) { return null; } };
+/* engraved scrollwork either side of a row of medallions: a hairline that curls at each end, with leaves */
+const SCROLL = `<svg class="scrollwork" viewBox="0 0 120 24" preserveAspectRatio="none" aria-hidden="true"><path d="M2 12.6C14 12.4 30 9.200 46 9.600 64 10 78 15 96 14.400 104 14.100 110 12.400 112 10.200 113.400 8.600 112.600 6.600 110.800 6.700 109 6.800 108.600 8.900 110 9.600 108.200 9 108.400 7.600 109.800 7.400 111.400 7.200 112.200 9 111.200 10.600 109 13.600 103 15.600 96 15.800 78 16.400 64 11.400 46 11 30 10.600 14 13.800 2 13.400Z"/><path d="M40 9.800C37 6.400 32 5.600 29.400 7.400 32.600 7.200 36 8 40 9.800ZM58 11.600C61.600 15 66.400 16 69.400 14.600 66 14.400 62.400 13.400 58 11.600ZM76 14.400C79 11.600 83.600 10.800 86.600 12 83.400 12.400 80 13.200 76 14.400Z"/></svg>`;
+function titleLeftHTML() {
+  const ids = bookIds(), byNum = {};
+  ids.forEach((id) => { byNum[BOOKS[id].number] = id; });
+  const numeral = (n) => {
+    const id = byNum[n], name = `${n}. ${SERIES_TITLES[n - 1]}`;
+    return id ? `<button type="button" class="med numeral ${hasSave(id) ? 'lit' : ''}" data-book="${id}" title="${esc(name)}" aria-label="${esc(name)}">${ROMAN[n - 1]}</button>`
+      : `<span class="med numeral off" title="${esc(name)}, not downloaded">${ROMAN[n - 1]}</span>`;
+  };
+  const band = (label, from, to) => `<div class="band"><em>${label}</em><div>${SCROLL}${Array.from({ length: to - from + 1 }, (_, i) => numeral(from + i)).join('')}${SCROLL}</div></div>`;
+  return `<div class="titlepage">
+    <div class="maker">A solo adventure in Magnamund</div>
+    <h1 class="mark"><span>Lone</span><span class="wolfmark">${glyph('wolf-head')}</span><span>Wolf</span></h1>
+    <div class="frontis">${portraitURL ? `<img src="${portraitURL}" alt="">` : `<img src="${vignette('ruins')}" alt="">`}</div>
+    <p class="motto">The monastery burns. The Kai are gone.<br>One remains.</p>
+    ${band('The Kai', 1, 5)}${band('The Magnakai', 6, 12)}
+  </div>`;
+}
+function titleRightHTML() {
+  const kept = LW.Character.load(), can = (id) => kept && id !== 'demo' && !kept.completed.includes(id);
+  const plaque = (id, num, name, emblem) => {
+    const at = hasSave(id) && savedAt(id);
+    return `<div class="plaq ${at ? 'going' : ''}"><button type="button" class="plaqmain" data-book="${id}">
+        <span class="med">${emblem}</span><span class="plaqtext"><b>${esc(name)}</b><i>${at ? `Continue at section ${esc(String(at))}` : num ? `Book ${num} · begin` : 'Begin'}</i></span></button>
+      <span class="plaqmore">${at ? `<button type="button" class="inkbtn" data-book="${id}" data-fresh>start over</button>` : ''}${can(id) ? `<button type="button" class="inkbtn" data-book="${id}" data-anew>new character</button>` : ''}</span></div>`;
+  };
+  const ids = bookIds();
+  return `<div class="shelfpage">${ruled('Choose your book')}
+    ${kept ? `<p class="kept">Your Lone Wolf, ${esc(LW.rankOf(kept.hero) || 'Kai Lord')}, waits after <i>${esc(kept.fromTitle)}</i>. A book not yet finished begins with him.</p>` : ''}
+    <div class="plaqs">${ids.map((id) => plaque(id, BOOKS[id].number, BOOKS[id].title, `<span class="roman">${ROMAN[BOOKS[id].number - 1] || BOOKS[id].number}</span>`)).join('')}
+      ${plaque('demo', 0, 'Demo chapter, with map travel', ROSE)}</div>
+    ${ids.length < 12 ? `<p class="kept">${12 - ids.length} more books wait on the shelf: tools/fetch_projectaon.py downloads them.</p>` : ''}</div>`;
+}
 function leftHTML() {
-  if (mode === 'title') {
-    const kept = LW.Character.load(), can = (id) => kept && id !== 'demo' && !kept.completed.includes(id);
-    const row = (id, label) => `<div class="shelf"><button type="button" class="seal" data-book="${id}">${hasSave(id) ? 'Continue: ' : ''}${esc(label)}</button>${
-      hasSave(id) ? `<button type="button" class="inkbtn" data-book="${id}" data-fresh>start over</button>` : ''}${can(id) ? `<button type="button" class="inkbtn" data-book="${id}" data-anew>new character</button>` : ''}</div>`;
-    const ids = Object.keys(BOOKS).filter((id) => id !== 'demo').sort((a, b) => (BOOKS[a].number || 0) - (BOOKS[b].number || 0));
-    return `<div class="story" style="justify-content:center;align-items:center;text-align:center;gap:0.45em"><div class="scroll" style="flex:0 1 auto;align-items:center;gap:0.45em">
-      <div class="eyebrow" style="width:auto">A solo adventure</div>
-      <div style="font:400 3.400em/1.1 var(--title)">Lone Wolf</div>
-      <img class="vignette" src="${vignette('ruins')}" alt="">
-      ${kept ? `<div style="font-size:1.1em;color:var(--ink-dim)">Your Lone Wolf, ${esc(LW.rankOf(kept.hero) || 'Kai Lord')}, waits after ${esc(kept.fromTitle)}. A book you have not finished begins with that character.</div>` : ''}
-      ${ids.map((id) => row(id, `${BOOKS[id].number}. ${BOOKS[id].title}`)).join('')}
-      ${row('demo', 'Demo chapter, with map travel')}</div></div>`;
-  }
+  if (mode === 'title') return titleLeftHTML();
   const sec = game.section, id = game.s.at;
   const badge = `<div class="badge"><div class="med" style="--s:3.300em"><span style="font:400 1em var(--title)">${esc(id)}</span></div></div>`;
 
@@ -424,7 +452,7 @@ function renderRight() {
   rtabs.hidden = mode !== 'story';
   rtabs.innerHTML = tabs.map(([id, label]) => `<button type="button" class="med ${id === 'map' && panel !== 'map' && mode === 'story' && roads().length ? 'call' : ''}" role="tab" aria-selected="${panel === id}" aria-label="${label}" data-panel="${id}">${TAB_ART[id]}</button>`).join('')
     + `<button type="button" class="med home" data-home aria-label="Back to the title page" title="Back to the title page">${glyph('return-arrow')}</button>`; // the HD return medallion: start over, or pick another book
-  if (mode === 'title') { pr.innerHTML = ''; return; }
+  if (mode === 'title') { pr.innerHTML = titleRightHTML(); return; }
   const h = game.hero, cs = B ? B.cs() : LW.heroCS(h).total;
   const place = mode === 'battle' ? 'Combat' : book.locations ? L[game.section.loc].name : book.title;
   const head = `<div class="headrow"><div class="place">${esc(place)}</div>
@@ -726,7 +754,7 @@ fetch('art/manifest.json').then((r) => r.json()).then((m) => {
   }
   if (m.portrait) {
     const im = new Image();
-    im.onload = () => { portraitURL = portraitFromArt(im, m.portrait.crop, m.portrait.fade).toDataURL(); if (mode === 'story' && panel === 'kai') renderRight(); };
+    im.onload = () => { portraitURL = portraitFromArt(im, m.portrait.crop, m.portrait.fade).toDataURL(); if (mode === 'title') renderLeft(); else if (mode === 'story' && panel === 'kai') renderRight(); };
     im.src = 'art/' + m.portrait.src;
   }
 }).catch(() => {});

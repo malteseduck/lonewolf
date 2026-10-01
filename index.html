@@ -81,9 +81,45 @@ body { background: var(--void) var(--wood, none) center / 820px; color: var(--bo
 .finis p { margin: 0; font-size: 1.1em; color: var(--ink-dim); }
 .seal { padding: 0.35em 1.5em; border: 1px solid var(--bronze-lo); background: linear-gradient(#8a7850, #4a3d26); color: var(--bone); font: 400 1em var(--title); letter-spacing: 0.08em; box-shadow: inset 0 0 0 0.12em rgba(226, 208, 154, 0.35), 0 0.2em 0.4em rgba(0, 0, 0, 0.4); clip-path: polygon(0.7em 0, calc(100% - 0.7em) 0, 100% 50%, calc(100% - 0.7em) 100%, 0.7em 100%, 0 50%); }
 .seal:hover { filter: brightness(1.25); }
-/* title page: one row per book, kept small so a dozen books fit */
-.shelf { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.15em 0.7em; font-size: 0.78em; }
-.shelf .seal { padding: 0.25em 1.2em; letter-spacing: 0.05em; }
+/* ---------- the title spread, after the HD title page ---------- */
+.titlepage { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5em; text-align: center; }
+.maker { font: 400 0.78em var(--title); letter-spacing: 0.3em; white-space: nowrap; text-transform: uppercase; color: var(--ink-dim); }
+/* the mark: LONE and WOLF with the wolf's head between, as the HD logo has it */
+.mark { margin: 0; display: flex; align-items: center; justify-content: center; gap: 0.16em; font: 400 2.8em/1 var(--title); letter-spacing: 0.03em; text-transform: uppercase; color: var(--ink); text-shadow: 0 0.03em 0 rgba(255, 245, 220, 0.5), 0 0 0.02em var(--ink); }
+.mark > span:not(.wolfmark)::first-letter { font-size: 1.3em; }
+.wolfmark { width: 1.15em; height: 1.15em; display: block; filter: drop-shadow(0 0.02em 0 rgba(255, 245, 220, 0.4)); }
+.wolfmark .glyph { width: 100%; height: 100%; }
+.wolfmark .glyph i { background: linear-gradient(var(--ink-dim), var(--ink) 55%); }
+.frontis { width: 100%; height: 11em; display: grid; place-items: center; margin: -0.3em 0 -0.6em; }
+.frontis img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.motto { margin: 0; font: 700 1.3em/1.25 var(--script); color: var(--ink); }
+.band { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 0.15em; }
+.band em { font: 400 0.68em var(--title); font-style: normal; letter-spacing: 0.3em; text-transform: uppercase; color: var(--ink-dim); }
+.band div { width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.35em; }
+.scrollwork { flex: 1; min-width: 1.5em; height: 1.1em; fill: var(--ink); opacity: 0.85; }
+.band div .scrollwork:last-child { transform: scaleX(-1); }
+.med.numeral { --s: 2.25em; font: 400 0.82em/1 var(--title); color: rgba(233, 224, 200, 0.85); }
+.med.numeral.lit { color: #fff3d6; text-shadow: 0 0 0.3em var(--ember), 0 0 0.6em rgba(240, 160, 64, 0.6); }
+.med.numeral.off { opacity: 0.42; filter: grayscale(0.6); color: rgba(233, 224, 200, 0.5); }
+/* the right page: each book a plaque in a bronze frame, its medallion standing out at the left, a rod running off towards the clockwork */
+.shelfpage { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 0.6em; padding: 0.6em 0 0 1em; }
+.kept { margin: 0; font-size: 1.05em; line-height: 1.25; color: var(--ink-dim); }
+.plaqs { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; justify-content: safe center; gap: 1.6em; padding: 0.5em 0 0.5em 1.4em; margin-right: -1.8em; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--ink-faint) transparent; }
+.plaq { position: relative; flex: none; margin-right: 2.6em; display: flex; flex-direction: column; align-items: flex-start; gap: 0.15em; }
+.plaq::after { content: ''; position: absolute; left: calc(100% - 0.3em); top: 1.55em; width: 3em; height: 0.42em; background: linear-gradient(var(--bronze-hi), var(--bronze) 45%, var(--bronze-lo)); box-shadow: 0 0 0 0.06em #140d08; }
+.plaqmain { position: relative; z-index: 1; width: 100%; display: flex; align-items: center; gap: 0.8em; min-height: 3.4em; padding: 0.3em 1em 0.3em 0; border: 0.2em solid transparent; border-radius: 0.55em; color: var(--bone); font: inherit; text-align: left;
+  background: radial-gradient(ellipse at 60% 30%, #4b3c30, #2a1f18 70%) padding-box, linear-gradient(135deg, var(--bronze-hi), var(--bronze) 30%, var(--bronze-lo) 55%, var(--bronze) 75%, var(--bronze-hi)) border-box;
+  box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.45), inset 0 0 0 0.08em rgba(10, 6, 4, 0.8), inset 0 0 0 0.16em rgba(226, 208, 154, 0.18); }
+.plaqmain:hover, .plaqmain:focus-visible { outline: none; box-shadow: 0 0 0.9em 0.2em rgba(255, 220, 140, 0.55), inset 0 0 0 0.08em rgba(10, 6, 4, 0.8), inset 0 0 0 0.16em rgba(226, 208, 154, 0.3); }
+.plaqmain:hover .plaqtext b { color: #fff3d6; }
+.plaqmain > .med { --s: 3.6em; margin: -0.4em 0 -0.4em -1.6em; }
+.plaq.going .plaqmain > .med { box-shadow: 0 0 0 0.08em #140d08, 0 0 0.7em 0.1em rgba(240, 160, 64, 0.55); }
+.roman { font: 400 1.05em/1 var(--title); color: #fff3d6; text-shadow: 0 0 0.3em var(--ember); }
+.plaqtext { min-width: 0; display: flex; flex-direction: column; gap: 0.1em; }
+.plaqtext b { font: 400 1.15em/1.15 var(--title); letter-spacing: 0.02em; }
+.plaqtext i { font: 400 1em/1.1 var(--script); color: #b9ab8c; }
+.plaqmore { display: flex; gap: 1.2em; padding-left: 2.4em; font-size: 0.95em; }
+.plaqmore:empty { display: none; }
 .rounds { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.15em; font-size: 1.15em; color: var(--ink-dim); }
 .rounds li:last-child { color: var(--ink); font-weight: 700; }
 
@@ -324,6 +360,8 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
   .edges { display: none; }
   .page.left { min-height: 70vh; padding: 2.6em 2.4em; }
   .rightwrap { min-height: 34em; }
+  .maker { white-space: normal; letter-spacing: 0.2em; }
+  .mark { font-size: 2.3em; }
 }
 @media (prefers-reduced-motion: reduce) { .rtabs .med.call, .dest::before, .book.hurt, .pawn.walking img { animation: none; } .pawn, .gear, .mapinner { transition: none; } }
 </style>

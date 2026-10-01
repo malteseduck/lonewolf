@@ -33,7 +33,7 @@ Textures are generated at start-up in `main.js` and set as CSS variables: `--par
 
 | `mode` | Left page | Right page |
 |---|---|---|
-| `title` | book list: continue / start over / new character | blank |
+| `title` | `titleLeftHTML`: the mark (LONE, wolf's head, WOLF), the portrait as frontispiece (the ruins vignette without it), a motto, and the series as two rows of numeral medallions in scrollwork, lit where a book has a save, dim where not downloaded (`SERIES_TITLES`) | `titleRightHTML`: "Choose your book", each imported book and the demo as a bronze-framed plaque with its medallion and a rod off to the clockwork; continue (with the saved section) / start over / new character |
 | `story` | section text, illustration, arrival events, loot, Random Number medallion, choices or an action medallion | the chosen panel |
 | `battle` | first paragraph of the section, then the fight's record line by line | the fight |
 

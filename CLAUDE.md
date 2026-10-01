@@ -22,7 +22,9 @@ python -m http.server 8765 --bind 127.0.0.1
 Then open http://localhost:8765/. `.claude/launch.json` has the same
 server as `lone-wolf` for the preview tools. It must be served: `main.js` is an ES module.
 
-There are no automated tests and no linter. `node --check <file>` catches syntax errors.
+There are no automated tests and no linter. `node --check <file>` catches syntax errors, but on
+the root `.js` files it misses a `const` declared twice; copy the file to a `.mjs` name in the
+scratchpad and check that to catch it.
 
 ## Verify a change
 
