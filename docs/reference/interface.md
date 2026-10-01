@@ -82,7 +82,7 @@ left. `updateBattle` redraws the gauges each round.
   Item glyphs are game-icons.net SVGs (`ITEM_GLYPH`); items typed in by hand get a pouch or a
   pendant by their kind.
 - **map**: three cases, plus "The whole map" (the zoomable replica) for any book whose spec is one.
-  - Book has `locations` (the demo, and Book 1 through `placeBook`): `updateMap()`. Destinations for the current choices are lit rings;
+  - Book has `locations` (the demo, and Book 1 through `placeBook`): `updateMap()`. Destinations for the current choices are lit rings, named only when `told(k)`: the place is in the book's `KNOWN` list (named on its printed map) or he has been there, so the map gives away no more than the choice does;
     the same choices are listed under the map. Picking one walks the figure there, then turns the page.
     The list under the map is filled before `updateMap()` pans, since it takes height from the map
     and the pan is in pixels. A destination's name that would fall off the view (roads spread wider

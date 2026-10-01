@@ -89,8 +89,10 @@ const destLoc = (c) => {
 };
 /* the book's own page references mean nothing here */
 const shown = (t) => {
-  const s = t.replace(/[,;]?\s*(?:(?:now|then|and|so|please)\s+)*turn(?:ing)? to \d+\.?\s*$/i, '').trim();
-  return /[a-z]{3,}/i.test(s.replace(/\b(?:now|then|and|so|please|you|may|must|can)\b/gi, '')) ? s.replace(/[,;:]$/, '') + '.' : 'Continue';
+  let s = t.replace(/[,;]?\s*(?:(?:now|then|and|so|please|by)\s+)*(?:turn(?:ing)?|go(?:ing)?) to \d+[.?!]?\s*$/i, '').trim(); // "..., turn to 12."
+  s = s.replace(/^(?:turn|go) to \d+,?\s*(?:and\s+)?/i, '').trim(); // "Turn to 12 and take the south path."
+  s = s.charAt(0).toUpperCase() + s.slice(1);
+  return /[a-z]{3,}/i.test(s.replace(/\b(?:now|then|and|so|please|you|may|must|can)\b/gi, '')) ? s.replace(/[,;:]+$/, '').replace(/([^.?!])$/, '$1.') : 'Continue'; // one full stop, or the question mark
 };
 const roads = () => game.choices().map((c, i) => ({ c, i, loc: destLoc(c) })).filter((r) => r.loc);
 
@@ -406,6 +408,9 @@ function panTo(gx, gy) {
   return [tx, ty];
 }
 const pct = (p) => `left:${p.x / 10}%;top:${p.y / 7}%`;
+/* whether the map may name a place: one he knows before he gets there, or one he has been to.
+   Otherwise a road offered on the map says no more than the choice in the book does. */
+const told = (k) => L[k].known !== false || game.s.trail.some((t) => book.sections[t.id].loc === k);
 function updateMap() {
   showTerrain(MAPS[book.id] ? book.id : 'demo');
   const here = game.section.loc, locs = [], rd = mode === 'story' && !isDead() ? roads() : [];
@@ -423,7 +428,7 @@ function updateMap() {
   }
   destLocs.forEach((k) => {
     const opts = rd.filter((r) => r.loc === k), r = opts.find((o) => o.c.enabled) || opts[0];
-    h += `<button type="button" class="dest" style="${pct(L[k])}" data-choice="${r.i}" ${r.c.enabled ? '' : 'disabled'}><b>${esc(L[k].name)}</b></button>`;
+    h += `<button type="button" class="dest" style="${pct(L[k])}" data-choice="${r.i}" ${r.c.enabled ? '' : 'disabled'}><b>${told(k) ? esc(L[k].name) : ''}</b></button>`;
   });
   mapNode.querySelector('.marks').innerHTML = h;
   place(pawn, L[here].x / 10 + '%', L[here].y / 7 + '%');
@@ -513,7 +518,7 @@ function renderRight() {
     host.append(mapNode, hint);
     // the hint first: it takes height from the map, and the map pans by its size
     const rd = mode === 'story' && !isDead() ? roads() : [];
-    hint.innerHTML = rd.length ? `<ul class="roads">${rd.map((r) => `<li><button type="button" class="choice" data-choice="${r.i}" ${r.c.enabled ? '' : 'disabled'}><span>${esc(shown(r.c.text))}<em>${esc(r.c.enabled ? L[r.loc].name : r.c.why)}</em></span></button></li>`).join('')}</ul>${whole ? `<p class="maphint">${whole}</p>` : ''}`
+    hint.innerHTML = rd.length ? `<ul class="roads">${rd.map((r) => `<li><button type="button" class="choice" data-choice="${r.i}" ${r.c.enabled ? '' : 'disabled'}><span>${esc(shown(r.c.text))}<em>${esc(r.c.enabled ? (told(r.loc) ? L[r.loc].name : '') : r.c.why)}</em></span></button></li>`).join('')}</ul>${whole ? `<p class="maphint">${whole}</p>` : ''}`
       : `<p class="maphint">${isDead() ? 'Your road ends here.' : game.combatPending ? 'There is no leaving until the fight is settled.' : 'No road is open yet. The story continues in the book.'}${whole}</p>`;
     updateMap();
   } else host.innerHTML = panel === 'kai' ? kaiHTML() : packHTML();

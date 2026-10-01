@@ -5,7 +5,7 @@
 import * as Ink from './shared/ink.js';
 import { analyse, worldTerrain, toPath, toLine } from './replica.js';
 import { drawBuilding } from './buildings.js';
-import { PLACES as BOOK1_PLACES, AT as BOOK1_AT } from './places-01fftd.js';
+import { PLACES as BOOK1_PLACES, AT as BOOK1_AT, KNOWN as BOOK1_KNOWN } from './places-01fftd.js';
 
 const INK = '38,26,16', PAPER = '226,212,176';
 const ink = (a) => `rgba(${INK},${a})`;
@@ -108,7 +108,7 @@ export const MAPS = {
      with made-up places for the story to move between (places-01fftd.js) */
   '01fftd': {
     replica: true,
-    view: BOOK1_VIEW, places: BOOK1_PLACES, at: BOOK1_AT,
+    view: BOOK1_VIEW, places: BOOK1_PLACES, at: BOOK1_AT, known: BOOK1_KNOWN,
     trail: BOOK1_TRAIL, route: onView(BOOK1_VIEW, BOOK1_TRAIL),
     start: 'Kai Monastery', goal: 'Holmgard',
   },
@@ -153,7 +153,7 @@ export function placeBook(book) {
   const m = MAPS[book.id];
   if (!m || !m.places || book.locations) return;
   book.locations = {};
-  for (const k in m.places) { const [name, , x, y] = m.places[k], [[gx, gy]] = onView(m.view, [[x, y]]); book.locations[k] = { x: gx, y: gy, name }; }
+  for (const k in m.places) { const [name, , x, y] = m.places[k], [[gx, gy]] = onView(m.view, [[x, y]]); book.locations[k] = { x: gx, y: gy, name, known: !m.known || m.known.includes(k) }; }
   for (const k in m.at) m.at[k].forEach((s) => { if (book.sections[s]) book.sections[s].loc = k; });
 }
 

@@ -32,6 +32,8 @@ def read_places(book):
     places = {m.group(1): [m.group(2)[1:-1], m.group(4), None if m.group(5) == 'null' else float(m.group(5)),
                            None if m.group(6) == 'null' else float(m.group(6))] for m in ENTRY.finditer(block(src, 'PLACES') or '')}
     at = {m.group(1): [int(n) for n in re.findall(r'\d+', m.group(2))] for m in AT_ENTRY.finditer(block(src, 'AT') or '')}
+    known = re.search(r'export const KNOWN\s*=\s*\[(.*?)\]', src, re.S)
+    at['__known__'] = re.findall(r"'(\w+)'", known.group(1)) if known else None
     return places, at
 
 
@@ -54,6 +56,11 @@ def check(book, sections):
         print(f'  To give it travel, follow docs/reference/map-places.md. {len(sections)} sections to place.')
         return 0
     problems = []
+    known = at.pop('__known__', None)
+    if known is None:
+        problems.append('no KNOWN list: say which places the printed map names (step 3)')
+    else:
+        problems += [f'KNOWN has {k}, which PLACES does not' for k in known if k not in places]
     where = {}
     for k, ids in at.items():
         if k not in places:

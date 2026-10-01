@@ -40,6 +40,10 @@ text. Read it all, and group the sections into places:
   one place (all of Holmgard is one), and a long ride with nothing distinct along it is one.
 - **Use the book's names where it gives them** (a town, a bridge, a ruin, a forest). Otherwise
   name the place by what is there, in a few words of our own.
+- **Never name a place by what happens there.** "Ambush", "Wounded soldier", "Merchant caravan"
+  give the story away: the name shows in the banner as he arrives, before the passage is read.
+  Name what he would see on coming to the spot ("Path to the Durncrag", "Edge of the wood", "On
+  the highway"), taking the direction or terrain from the choice that leads there where you can.
 - Note for each place whether the passage shows a **landmark worth a symbol** (step 3).
 - Every section needs a place. That includes death and ending sections: put them where they happen.
 
@@ -52,10 +56,16 @@ patterns, so keep it in this form:
 export const PLACES = {
   key: ['Name in our words', 'symbol' or null, x, y],   // x, y in the printed map's pixels, or null, null
 };
+export const KNOWN = ['key', ...];                      // places the book's printed map names
 export const AT = {
   key: [section, section, ...],                         // every section in exactly one place
 };
 ```
+
+- **Known names:** `KNOWN` lists the places named on the book's printed map. The map always shows
+  their names. It shows any other place's name only once he has been there, so a road offered on
+  the map says no more than the choice in the book ("turn left") does. To check a name, look at the
+  printed map, or at `LASTLANDS.places` in `maps.js` for the Lastlands.
 
 - **Symbol:** what is drawn at the place from the start, whether or not he has been there. Use
   `null` for a spot with nothing to show (a clearing, a path). The map knows `house`, `tower`,
@@ -88,7 +98,7 @@ In `maps.js`, import the file and add a `MAPS['<book>']` entry like Book 1's:
 - `replica: true` if the journey lies within the Lastlands. Book 1's printed map is read for the
   replica, so books whose travel stays there can share it.
 - `view`: the part of the printed map shown, as `[x, y, w, h]` with w:h = 10:7.
-- `places`, `at`: the imports.
+- `places`, `at`, `known`: the imports.
 - `trail` and `route`: the road shown as his way; `start` and `goal`: their names.
 
 A book whose travel leaves the Lastlands (the Magnakai books) needs a replica of its own map
@@ -103,7 +113,8 @@ switches it to travel on the map.
 
 - sections with no place, sections in two places, section numbers not in the book;
 - places with no sections, unknown symbols, places still without a position;
-- places on top of each other, and whether `maps.js` uses the file yet;
+- places on top of each other, a missing `KNOWN` list or one naming places that don't exist,
+  and whether `maps.js` uses the file yet;
 - the longest routes between places. These are not errors, but they are where to look first.
 
 It exits non-zero when something is wrong. It can't judge whether a place fits its passage;
