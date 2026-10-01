@@ -95,7 +95,7 @@ const roads = () => game.choices().map((c, i) => ({ c, i, loc: destLoc(c) })).fi
 function makeDial(onIdleClick) {
   const d = el('button', 'dial');
   d.type = 'button'; d.setAttribute('aria-label', 'Random Number');
-  d.innerHTML = `<div class="dial-ring">${Array.from({ length: 10 }, (_, i) => `<span style="transform:rotate(${i * 36}deg) translateY(-2.950em)">${i}</span>`).join('')}</div><div class="dial-hub"></div><div class="dial-pin"></div>`;
+  d.innerHTML = `<div class="dial-ring">${Array.from({ length: 10 }, (_, i) => `<span style="transform:rotate(${i * 36}deg) translateY(-4.200em)">${i}</span>`).join('')}</div><div class="dial-hub"></div><div class="dial-pin"></div>`;
   const ring = d.querySelector('.dial-ring'), hub = d.querySelector('.dial-hub');
   let angle = 0, anim = null;
   d.addEventListener('click', () => (anim ? anim.finish() : onIdleClick && onIdleClick()));
@@ -107,10 +107,11 @@ function makeDial(onIdleClick) {
       const n = LW.rand10(), from = angle;
       angle = Math.floor(from / 360) * 360 - 1080 - n * 36;
       hub.textContent = ''; ring.querySelectorAll('.hit').forEach((s) => s.classList.remove('hit'));
-      const ticks = setInterval(() => LW.sfx('roll'), 70);
+      hub.classList.add('shuffle');
+      const ticks = setInterval(() => { LW.sfx('roll'); hub.textContent = LW.rand10(); }, 70); // the face shuffles while the bezel turns
       anim = ring.animate([{ transform: `rotate(${from}deg)` }, { transform: `rotate(${angle}deg)` }], { duration: still ? 1 : 1500, easing: 'cubic-bezier(0.15, 0.6, 0.2, 1)', fill: 'forwards' });
       await anim.finished.catch(() => {});
-      clearInterval(ticks); anim = null;
+      clearInterval(ticks); anim = null; hub.classList.remove('shuffle');
       mark(n); LW.sfx('select');
       await wait(350);
       return n;

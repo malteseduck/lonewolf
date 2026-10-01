@@ -43,6 +43,9 @@ Textures are generated at start-up in `main.js` and set as CSS variables: `--par
   paragraph index in `sec.img.at` (imported) or after the first paragraph (demo vignette).
 - `.scroll` holds the text and scrolls if the section is long. What follows is pinned below it.
 - `#dialslot`: for `rnt` sections the Random Number medallion is mounted here by `mountRnt()`.
+  `makeDial()` builds it: a 4.6em medallion whose bronze bezel is engraved 0-9 and turns, while
+  the black face shuffles digits, then shows the drawn one under the notch at the top, glowing.
+  The same medallion sits among the fight's commands.
 - Then one of: death panel, the crossed-swords medallion ("Draw your weapon"), the ending panel,
   or a compass medallion (if map roads are open) plus the list of on-page choices.
 - `shown(text)` strips "turn to N" from a choice; if nothing meaningful is left it shows "Continue".

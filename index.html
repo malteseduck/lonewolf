@@ -234,14 +234,22 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 .fight .cmds { position: relative; padding-top: 3em; background: linear-gradient(rgba(178, 154, 112, 0), rgba(176, 152, 110, 0.95) 48%); }
 .cmds .medcap .med { --s: 5.4em; }
 .cmds { display: flex; align-items: flex-end; justify-content: center; gap: 0.7em; }
-.dial { position: relative; flex: none; width: 7.4em; height: 7.4em; border: 0; padding: 0; border-radius: 50%; color: #241608; font: inherit; background: radial-gradient(circle at 38% 32%, #efe0a8, #a89058 40%, #5b4a26 74%, #2c220e); box-shadow: 0 0.3em 0.8em rgba(0, 0, 0, 0.55), inset 0 0 0 0.16em #33270f, inset 0 0 0 0.3em rgba(240, 225, 170, 0.45); }
+/* The Random Number: a medallion like the others, its bronze bezel engraved 0-9. The bezel turns;
+   the black face shuffles the digits and settles on the one under the notch at the top. */
+.dial { position: relative; flex: none; width: 4.6em; height: 4.6em; border: 0; padding: 0; border-radius: 50%; color: #1c1208; font: inherit;
+  background: radial-gradient(circle closest-side, transparent 0 88%, rgba(20, 12, 6, 0.7) 89% 91%, transparent 92%),
+    conic-gradient(from 20deg, var(--bronze-hi), var(--bronze) 12%, var(--bronze-lo) 30%, var(--bronze) 48%, var(--bronze-hi) 58%, var(--bronze-lo) 78%, var(--bronze) 92%, var(--bronze-hi));
+  box-shadow: 0 0 0 0.08em #140d08, 0 0.22em 0.5em rgba(0, 0, 0, 0.6), inset 0 0 0 0.1em rgba(255, 240, 200, 0.18); }
 .dial-ring { position: absolute; inset: 0; border-radius: 50%; }
-.dial-ring span { position: absolute; left: 50%; top: 50%; width: 1.4em; margin: -0.62em 0 0 -0.7em; text-align: center; font: 400 1.05em/1.24 var(--title); font-variant-numeric: lining-nums; }
-.dial-ring span.hit { color: #8a160c; text-shadow: 0 0 0.4em #ffe9a8; }
-.dial-hub { position: absolute; inset: 27%; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #3a2a1c, #120b07); box-shadow: inset 0 0 0 0.12em var(--bronze), 0 0 0.5em rgba(0, 0, 0, 0.6); display: grid; place-items: center; color: #ffe9a8; font: 400 1.7em/1 var(--title); font-variant-numeric: lining-nums; }
-.dial-pin { position: absolute; left: 50%; top: -0.5em; width: 0; height: 0; margin-left: -0.45em; border: 0.45em solid transparent; border-top: 0.9em solid #8a160c; filter: drop-shadow(0 0.1em 0.1em rgba(0, 0, 0, 0.5)); }
+.dial-ring span { position: absolute; left: 50%; top: 50%; width: 1.4em; margin: -0.62em 0 0 -0.7em; text-align: center; font: 400 0.42em/1.24 var(--title); font-variant-numeric: lining-nums; text-shadow: 0 0.06em 0 rgba(255, 240, 200, 0.45); }
+.dial-ring span.hit { color: #fff3d6; text-shadow: 0 0 0.3em var(--ember), 0 0 0.6em var(--ember); }
+.dial-hub { position: absolute; inset: 19%; border-radius: 50%; background: radial-gradient(circle at 50% 40%, #1d140f, #070403 75%); box-shadow: 0 0 0 0.07em var(--bronze-lo), inset 0 0.12em 0.3em rgba(0, 0, 0, 0.8); display: grid; place-items: center;
+  color: var(--glyph); font: 400 1.35em/1 var(--title); font-variant-numeric: lining-nums; text-shadow: 0 0 0.15em var(--ember), 0 0 0.4em rgba(240, 160, 64, 0.6); }
+.dial-hub.shuffle { color: rgba(233, 224, 200, 0.55); text-shadow: none; }
+.dial-pin { position: absolute; left: 50%; top: -0.2em; width: 0.42em; height: 0.42em; margin-left: -0.21em; transform: rotate(45deg); background: linear-gradient(135deg, var(--bronze-hi), var(--bronze-lo)); box-shadow: 0 0 0 0.06em #140d08; }
+.dial:hover, .dial:focus-visible { outline: none; box-shadow: 0 0 0 0.08em #140d08, 0 0 0.9em 0.18em rgba(255, 220, 140, 0.8), inset 0 0 0 0.1em rgba(255, 240, 200, 0.3); }
 .dialslot { display: flex; align-items: center; justify-content: center; gap: 1em; }
-.dialslot .dial { font-size: 0.7em; }
+.cmds .dial { align-self: flex-start; margin-top: -0.4em; } /* level with the command medallions, its foot beside their labels */
 .dialslot p { margin: 0; font-size: 1.15em; color: var(--ink-dim); max-width: 10em; }
 .book.hurt { animation: hurt 0.38s; }
 .book.hurt .page.left { box-shadow: inset 0 0 5em rgba(150, 20, 10, 0.7); }
