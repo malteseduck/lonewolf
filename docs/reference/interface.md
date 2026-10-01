@@ -85,8 +85,9 @@ left. `updateBattle` redraws the gauges each round.
   - Book has `locations` (the demo, and Book 1 through `placeBook`): `updateMap()`. Destinations for the current choices are lit rings, named only when `told(k)`: the place is in the book's `KNOWN` list (named on its printed map) or he has been there, so the map gives away no more than the choice does;
     the same choices are listed under the map. Picking one walks the figure there, then turns the page.
     The list under the map is filled before `updateMap()` pans, since it takes height from the map
-    and the pan is in pixels. A destination's name that would fall off the view (roads spread wider
-    than it) is shifted back in, or put under its ring at the top edge.
+    and the pan is in pixels. It centres on the middle of the figure's and the roads' spread (not
+    their average, which pushed a lone far road off). Any name that would fall off the view, a
+    destination's or a place passed, is shifted back in, or put under its ring at the top edge.
   - Book has a spec in `MAPS` but no locations (Book 1): `updateJourney()`. Lone Wolf's figure stands
     part-way along `spec.route` by `progress()`: 1 minus (shortest number of choices from the
     current section to the victory section) over (the same from the start). "The whole map" swaps

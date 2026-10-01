@@ -14,6 +14,8 @@ function useBook(id) {
   try { localStorage.setItem('lw-book', id); } catch (e) { /* not remembered */ }
 }
 const asset = (f) => (book.assets || '') + f;
+/* the built-in demo chapter (a real book can have places on the map too, so that is no test) */
+const isDemo = () => book === LW.BOOK_DEMO;
 const hasSave = (id) => { try { return !!localStorage.getItem(id === 'demo' ? 'lw-save' : 'lw-save-' + id); } catch (e) { return false; } };
 
 const { esc, el, wait } = LW.UI;
@@ -90,6 +92,7 @@ const destLoc = (c) => {
 /* the book's own page references mean nothing here */
 const shown = (t) => {
   let s = t.replace(/[,;]?\s*(?:(?:now|then|and|so|please|by)\s+)*(?:turn(?:ing)?|go(?:ing)?) to \d+[.?!]?\s*$/i, '').trim(); // "..., turn to 12."
+  s = s.replace(/\b(?:turn|go) to \d+ and /i, ''); // "..., turn to 12 and risk ..."
   s = s.replace(/^(?:turn|go) to \d+,?\s*(?:and\s+)?/i, '').trim(); // "Turn to 12 and take the south path."
   s = s.charAt(0).toUpperCase() + s.slice(1);
   return /[a-z]{3,}/i.test(s.replace(/\b(?:now|then|and|so|please|you|may|must|can)\b/gi, '')) ? s.replace(/[,;:]+$/, '').replace(/([^.?!])$/, '$1.') : 'Continue'; // one full stop, or the question mark
@@ -194,8 +197,8 @@ function leftHTML() {
   if (isDead()) h += `<div class="finis dead"><h2>Your adventure ends here</h2><p>The last of the Kai has fallen.</p><button type="button" class="seal" data-new>Begin again</button></div>`;
   else if (game.combatPending) h += `<div class="compass"><div class="orn"><button type="button" class="med" data-fight aria-label="Begin the fight">${glyph('crossed-swords')}</button></div><span>Draw your weapon.</span></div>`;
   else if (sec.end) {
-    const next = !book.locations && Object.keys(BOOKS).find((k) => BOOKS[k].number === book.number + 1);
-    h += `<div class="finis"><h2>${book.locations ? 'Here the demo ends' : 'Your quest is fulfilled'}</h2><p>You came through in ${game.s.trail.length} sections.${book.locations ? '' : ' Your Lone Wolf is kept for the next book.'}</p>${
+    const next = !isDemo() && Object.keys(BOOKS).find((k) => BOOKS[k].number === book.number + 1);
+    h += `<div class="finis"><h2>${isDemo() ? 'Here the demo ends' : 'Your quest is fulfilled'}</h2><p>You came through in ${game.s.trail.length} sections.${isDemo() ? '' : ' Your Lone Wolf is kept for the next book.'}</p>${
       next ? `<button type="button" class="seal" data-book="${next}" data-fresh>On to ${esc(BOOKS[next].title)}</button>` : '<button type="button" class="seal" data-new>Back to the title page</button>'}</div>`;
   }
   else {
@@ -433,12 +436,16 @@ function updateMap() {
   mapNode.querySelector('.marks').innerHTML = h;
   place(pawn, L[here].x / 10 + '%', L[here].y / 7 + '%');
   // keep the figure and the open roads in view
-  const pts = [L[here], ...[...destLocs].map((k) => L[k])], cx = pts.reduce((a, p) => a + p.x, 0) / pts.length, cy = pts.reduce((a, p) => a + p.y, 0) / pts.length;
+  // the middle of their spread, not their average: an average drifts towards the side with more roads and pushes a lone far one off
+  const pts = [L[here], ...[...destLocs].map((k) => L[k])], xs = pts.map((p) => p.x), ys = pts.map((p) => p.y);
+  const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
   const [tx, ty] = panTo(cx, cy);
-  // roads spread wider than the view leave a name off its edge: tuck it back in, under the ring at the top
+  // a name that would fall off the view's edge (a road's, or a place passed) is tucked back in; at the top, under its ring
   const vw = mapNode.clientWidth, vh = mapNode.clientHeight;
-  mapNode.querySelectorAll('.dest').forEach((d) => {
-    const b = d.querySelector('b'), x0 = tx + d.offsetLeft - d.offsetWidth / 2 + b.offsetLeft, y0 = ty + d.offsetTop - d.offsetHeight / 2 + b.offsetTop; // .dest is centred by a transform
+  mapNode.querySelectorAll('.dest, .mk').forEach((d) => {
+    const b = d.querySelector('b, span');
+    if (!b || !b.textContent) return;
+    const x0 = tx + d.offsetLeft - d.offsetWidth / 2 + b.offsetLeft, y0 = ty + d.offsetTop - d.offsetHeight / 2 + b.offsetTop; // .dest is centred by a transform
     const dx = Math.max(0, -x0) - Math.max(0, x0 + b.offsetWidth - vw), dy = y0 < 0 ? d.offsetHeight - b.offsetTop : y0 + b.offsetHeight > vh ? vh - y0 - b.offsetHeight : 0;
     if (dx || dy) b.style.transform = `translate(${dx}px, ${dy}px)`;
   });
@@ -519,13 +526,13 @@ function renderRight() {
     // the hint first: it takes height from the map, and the map pans by its size
     const rd = mode === 'story' && !isDead() ? roads() : [];
     hint.innerHTML = rd.length ? `<ul class="roads">${rd.map((r) => `<li><button type="button" class="choice" data-choice="${r.i}" ${r.c.enabled ? '' : 'disabled'}><span>${esc(shown(r.c.text))}<em>${esc(r.c.enabled ? (told(r.loc) ? L[r.loc].name : '') : r.c.why)}</em></span></button></li>`).join('')}</ul>${whole ? `<p class="maphint">${whole}</p>` : ''}`
-      : `<p class="maphint">${isDead() ? 'Your road ends here.' : game.combatPending ? 'There is no leaving until the fight is settled.' : 'No road is open yet. The story continues in the book.'}${whole}</p>`;
+      : `<p class="maphint">${isDead() ? 'Your road ends here.' : game.section.end ? 'Your journey is over.' : game.combatPending ? 'There is no leaving until the fight is settled.' : 'No road is open yet. The story continues in the book.'}${whole}</p>`;
     updateMap();
   } else host.innerHTML = panel === 'kai' ? kaiHTML() : packHTML();
 }
 function render() {
   // reaching the end of a real book keeps the character for the next one
-  if (mode === 'story' && !book.locations && game.section.end === 'victory' && !game.dead) LW.Character.save(game.hero, book);
+  if (mode === 'story' && !isDemo() && game.section.end === 'victory' && !game.dead) LW.Character.save(game.hero, book);
   renderLeft(); renderRight();
 }
 

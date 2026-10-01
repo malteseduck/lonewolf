@@ -86,8 +86,7 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
 5. **Map travel for books 2-12.** Book 1 has it. Each further book follows
    docs/reference/map-places.md (made-up places by hand, tools to lay out and check them).
    Books 2-5 can use the Lastlands replica if their journeys stay on it; the Magnakai books need
-   a replica of their own printed maps first. Book 1's sweep on 2026-10-01 finds three destination
-   rings cut by the map's edge (sections 140, 235, 254), still touchable; not yet looked into.
+   a replica of their own printed maps first. Book 1's sweep is clean (2026-10-01).
 6. **Enemy plates for unpictured enemies**, and a check by eye of which illustration each enemy
    borrows in books 2-12 (`PLATE_FIXES`).
 

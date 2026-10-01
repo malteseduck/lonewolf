@@ -28,7 +28,7 @@ export const PLACES = {
   farmhouse: ['Farmhouse', 'house', 193, 481], caravan: ['On the highway', null, 205, 489],
   sparsewood: ['Sparse hills', 'hill', 197, 496], alema: ['Bridge of Alema', 'bridge', 204, 484],
   signpost: ['Signpost', null, 192, 509], meadow: ['Meadow', null, 188, 502],
-  roadambush: ['Path to the Durncrag', null, 201, 522], deepforest: ['Deep forest', 'wood', 184, 512],
+  roadambush: ['Path to the Durncrag', null, 201, 517], deepforest: ['Deep forest', 'wood', 184, 512],
   lakeshack: ['Lake and shack', 'lake', 190, 520], marsh: ['Marsh', 'marsh', 212, 499],
   ridgeway: ['Footbridge', 'bridge', 212, 477], cabinstable: ['Cabin and stable', 'house', 212, 487],
   vordakglade: ['Glade', null, 199, 514], highwaysign: ['Highway signpost', null, 208, 496],
