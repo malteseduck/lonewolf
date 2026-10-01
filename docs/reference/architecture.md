@@ -32,6 +32,8 @@ tools/
   build_map_atlas.py        packs the downloaded Widman symbol pack into assets/map/widman.png
 data/projectaon/            git-ignored. Downloaded pages and images, generated book.js files, index.js;
                             maps/: sheets 1-2 of Project Aon's Maps of Magnamund (reference for LASTLANDS.detail)
+data/reference/             git-ignored. Reference images fetched for the owner: a fan-made world map of
+                            Magnamund (4658x5234, World Anvil); SOURCES.txt says where each came from
 .claude/launch.json         local server definition (python http.server on 8765)
 ```
 

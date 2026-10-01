@@ -32,6 +32,28 @@ function density(cls, W, H, test, rad) {
 }
 const area = (l) => { let s = 0; for (let i = 0; i < l.length; i++) { const a = l[i], b = l[(i + 1) % l.length]; s += a[0] * b[1] - b[0] * a[1]; } return Math.abs(s / 2); };
 
+/* Read a fuller map (the owner's reference world map) for terrain: within crop [x, y, w, h] of its
+   pixels, grids of how much is mountain, hill and forest. Its key draws plains green, hills as
+   small brown marks on tan, mountains as peaks whose shaded faces are a dark brown that only
+   mountains have, and forest as dark green tree marks. */
+export function worldTerrain(img, crop) {
+  const [cx, cy, W, H] = crop, cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const x = cv.getContext('2d', { willReadFrequently: true });
+  x.drawImage(img, cx, cy, W, H, 0, 0, W, H);
+  const d = x.getImageData(0, 0, W, H).data, cls = new Uint8Array(W * H);
+  for (let i = 0; i < W * H; i++) {
+    const r = d[i * 4], g = d[i * 4 + 1], b = d[i * 4 + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b), v = mx / 255, s = mx ? (mx - mn) / mx : 0;
+    if (g > r && g > b && v < 0.7 && s > 0.5) cls[i] = 3; // tree marks
+    else if (r > g && g > b && s > 0.45 && v < 0.55) cls[i] = 1; // the shaded face of a peak
+    else if (r > g && g > b && s > 0.3) cls[i] = 2; // tan hill country and its marks
+  }
+  return {
+    crop, W, H,
+    mountain: density(cls, W, H, (c) => c === 1, 8), hill: density(cls, W, H, (c) => c === 2 || c === 1, 6), forest: density(cls, W, H, (c) => c === 3, 8),
+  };
+}
+
 /* Read the printed map. spec.frame is the drawn map's extent inside the decorations; spec.cover
    lists boxes (banners, key, compass rose, arms) that hide the country, each counted as sea or
    land; spec.sea gives points known to be open water. Returns the coast outlines and terrain

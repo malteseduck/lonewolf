@@ -114,6 +114,11 @@ The printed map is about 1000 px wide, so cropping and enlarging it blurs. Inste
   first. Blurring that sea and taking the 0.5 contour (marching squares) gives the coast as smooth
   closed outlines, islands included;
 - blurred class densities give grids of mountain, forest, hill and waste, zeroed at sea.
+- where the printed map leaves land plain, and the owner has the reference world map
+  (`data/reference`, git-ignored), its terrain fills in: `worldTerrain` reads that map's hills
+  (tan and brown marks), mountains (the dark brown of shaded peaks) and forest (dark green marks),
+  and `LASTLANDS.world.anchors` (Kai Monastery, Holmgard, Toran, Tyso on both maps) give a
+  least-squares affine fit between them, good to a pixel or two. Without the file, nothing changes.
 
 Rivers, roads, settlements and names are not read from the image: auto-detection found only
 fragments. They are hand-placed in `LASTLANDS` in the printed map's pixels. `LASTLANDS.detail`
@@ -124,7 +129,8 @@ zoomed in (6+ canvas px per map px).
 `replicaCanvas(model, view, W, H)` paints any view at any size: parchment and washes, sea with a
 shore wash and ripples, inked coast, lakes, rivers, then land symbols on a jittered screen-space
 grid (so zooming in shows more symbols, not bigger ones) chosen by the terrain under each point
-and kept off roads, rivers and towns; roads as white dashes; settlements on halos with names;
+and kept off roads, rivers and towns (open country, zoomed in, gets grass tufts and the odd lone
+tree so it is not left bare); roads as white dashes; settlements on halos with names;
 region names; border.
 
 `MAPS['01fftd']` is `{replica: true, view, trail, route}`: the journey panel shows `view` (a 10:7

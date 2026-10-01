@@ -64,7 +64,8 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
   `assets/map/WIDMAN-README.txt` does). Project Aon images stay in `data/projectaon/` and are
   only restyled at runtime. Downloading a new asset pack needs the owner's go-ahead.
 - Art borrowed for personal use (Lone Wolf HD screenshots and the like) lives in `art/`, which is
-  git-ignored except `art/manifest.json`. Never move it anywhere committed.
+  git-ignored except `art/manifest.json`. Reference images (fan maps) live in git-ignored
+  `data/reference/`, with their sources in `SOURCES.txt`. Never move either anywhere committed.
 - HTML is built as template strings. Pass every piece of book or user text through `esc()`.
 - Comments say why, briefly. Match the density of the file you are in.
 

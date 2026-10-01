@@ -91,6 +91,8 @@ Smaller things noted along the way:
 - Laumspur in combat is a house rule; the books do not allow it. Decide.
 - Bow and Arrow rules; Special Item limit.
 - Title page gets crowded with twelve books.
+- `data/reference/magnamund-world-goodwin.png` (a fan-made world map, git-ignored) is there to
+  lay out maps for the Magnakai books, whose printed maps cover other parts of Magnamund.
 - Replica: the hand-placed rivers, roads and towns were read off the printed map by eye and are
   approximate. Book 1's places were laid out by a force layout: check them by playing, and move any
   that sit oddly (some horse-route places ended up east of the highway). Books 2-5 use the same

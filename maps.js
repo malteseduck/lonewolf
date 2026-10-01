@@ -3,7 +3,7 @@
    washes are painted. Each map is a 1000x700 spec, painted at 2000x1400 so a stamp's own pixels
    land one to one on the canvas. */
 import * as Ink from './shared/ink.js';
-import { analyse, toPath, toLine } from './replica.js';
+import { analyse, worldTerrain, toPath, toLine } from './replica.js';
 import { PLACES as BOOK1_PLACES, AT as BOOK1_AT } from './places-01fftd.js';
 
 const INK = '38,26,16', PAPER = '226,212,176', RED = '140,28,18';
@@ -60,6 +60,14 @@ export const LASTLANDS = {
     ['Sommerlund', 245, 318, 12, 0.45, 'land'], ['Durenor', 770, 420, 13, -0.25, 'land'], ['The Wildlands', 455, 650, 16, 0.08, 'land'],
     ['Durncrag Mountains', 92, 640, 9, 0.95, 'land'], ['Pass of Moytura', 223, 618, 5, 0, 'land'],
   ],
+  /* The owner's reference world map (data/reference, git-ignored; used only if present) fills in
+     terrain the printed map leaves blank. anchors: the same four towns on both, [world, printed];
+     crop: the part of the world map read; region: the printed area it may fill. */
+  world: {
+    file: 'data/reference/magnamund-world-goodwin.png',
+    anchors: [[[2779, 1170], [168, 466]], [[2820, 1252], [222, 520]], [[2810, 1080], [179, 404]], [[2871, 1171], [260, 461]]],
+    crop: [2560, 960, 480, 520], region: [40, 330, 300, 320],
+  },
   /* Finer detail for the heart of Sommerlund, from the inset on sheet 1 of the Maps of Magnamund,
      in that inset's pixels (577x577). It is fitted to this map by two places both show, and drawn
      only when zoomed in far enough to have room for it. */
@@ -156,9 +164,46 @@ function fit([[a, A], [b, B]]) {
   return f;
 }
 
-/* the replica's reading of the printed map, made once per image */
+/* the affine map (least squares) taking points a onto points b, from pairs [a, b] */
+function affine(pairs) {
+  const solve = (A) => { // Gauss-Jordan on an augmented 3x4
+    for (let c = 0; c < 3; c++) {
+      let m = c; for (let r = c + 1; r < 3; r++) if (Math.abs(A[r][c]) > Math.abs(A[m][c])) m = r;
+      [A[c], A[m]] = [A[m], A[c]];
+      for (let r = 0; r < 3; r++) if (r !== c) { const f = A[r][c] / A[c][c]; for (let k = c; k < 4; k++) A[r][k] -= f * A[c][k]; }
+    }
+    return A.map((row, i) => row[3] / row[i]);
+  };
+  const axis = (j) => {
+    const A = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+    pairs.forEach(([a, b]) => { const t = [a[0], a[1], 1]; for (let r = 0; r < 3; r++) { A[r][3] += t[r] * b[j]; for (let c = 0; c < 3; c++) A[r][c] += t[r] * t[c]; } });
+    return solve(A);
+  };
+  const X = axis(0), Y = axis(1);
+  return ([px, py]) => [X[0] * px + X[1] * py + X[2], Y[0] * px + Y[1] * py + Y[2]];
+}
+
+/* The replica's reading of the printed map, made once per image. With the world map (world), land
+   the printed map leaves plain takes its hills, mountains and forest from the world map instead. */
 const models = {};
-export const replicaModel = (img) => (models[img.src] = models[img.src] || analyse(img, LASTLANDS));
+export function replicaModel(img, world) {
+  const key = img.src + (world ? '+' + world.src : '');
+  if (models[key]) return models[key];
+  const m = analyse(img, LASTLANDS);
+  if (world) {
+    const S = LASTLANDS.world, t = worldTerrain(world, S.crop), toWorld = affine(S.anchors.map(([w, p]) => [p, w]));
+    const [rx, ry, rw, rh] = S.region;
+    for (let y = ry; y < ry + rh; y++) for (let x = rx; x < rx + rw; x++) {
+      const i = y * m.W + x;
+      if (m.land[i] < 0.6 || m.mountain[i] > 0.2 || m.forest[i] > 0.03 || m.hill[i] > 0.15) continue;
+      const [wx, wy] = toWorld([x, y]), gx = Math.round(wx - S.crop[0]), gy = Math.round(wy - S.crop[1]);
+      if (gx < 0 || gy < 0 || gx >= t.W || gy >= t.H) continue;
+      const j = gy * t.W + gx;
+      m.mountain[i] = t.mountain[j] * 1.2; m.hill[i] = t.hill[j] * 0.3; m.forest[i] = t.forest[j]; // scaled to the printed map's thresholds
+    }
+  }
+  return (models[key] = m);
+}
 
 /* Paint the replica: view is [x, y, w, h] in the printed map's pixels, W x H the canvas. Symbols
    keep roughly their own size on screen, so zooming in shows more of them, not bigger ones.
@@ -175,6 +220,7 @@ export function replicaCanvas(model, view, W, H, extra) {
 
   x.drawImage(Ink.parchment(W, H, false, true), 0, 0);
   x.fillStyle = 'rgba(84,56,26,0.2)'; x.fillRect(0, 0, W, H);
+  x.lineCap = 'round'; // square-ended washes read as pale blocks on open ground
   for (let i = 0; i < 140; i++) {
     const px = r() * W, py = r() * H, a = r() * Math.PI, l = (40 + r() * 150) * W / 1000;
     x.strokeStyle = r() < 0.7 ? ink(0.02 + r() * 0.04) : `rgba(${PAPER},${0.04 + r() * 0.06})`; x.lineWidth = (14 + r() * 50) * W / 1000;
@@ -212,7 +258,7 @@ export function replicaCanvas(model, view, W, H, extra) {
 
   // land symbols on a jittered screen grid, read from the terrain the printed map shows there
   const roadPaths = roads.map((l) => toLine([l])), riverPaths = R.rivers.map((l) => toLine([l]));
-  const spots = [...places, ...(extra || []).filter((e) => e[1])].map(([, , px, py]) => P([px, py])), items = [];
+  const spots = [...places, ...(extra || []).filter((e) => e[1])].map(([, , px, py]) => P([px, py])), items = [], tufts = [];
   const clear = (cx, cy) => {
     x.lineWidth = 44 / z;
     return !spots.some(([sx, sy]) => Math.hypot(sx - cx, sy - cy) < 60 * k)
@@ -229,9 +275,14 @@ export function replicaCanvas(model, view, W, H, extra) {
     if (m > 0.2 && roll < 0.45) { const big = r() < 0.3; st = pick(r, big ? 'range' : 'mountain'); s = (big ? 1.1 + r() * 0.4 : 1.5 + r() * 0.6) * k * 0.8; }
     else if (f > 0.03 && roll < Math.min(0.6, f * 5)) { const clump = f > 0.09 && r() < 0.3; st = pick(r, clump ? 'forest' : 'tree'); s = (clump ? 0.8 + r() * 0.3 : 1.2 + r() * 0.4) * k * 0.8; }
     else if (h > 0.15 && roll < 0.35) { st = pick(r, 'mountain', 90); s = (1 + r() * 0.3) * k * 0.7; }
+    // open country is not left bare: a lone tree now and then, and tufts of grass
+    else if (z >= 4 && roll < 0.025) { st = pick(r, 'tree'); s = (1 + r() * 0.3) * k * 0.7; }
+    else if (z >= 4 && roll < 0.3 && clear(jx, jy)) tufts.push([jx, jy]);
     if (st && clear(jx, jy)) items.push([jy, st, jx, jy, s]);
   }
   toCanvas();
+  x.strokeStyle = ink(0.45); x.lineWidth = 1.4; x.lineCap = 'round';
+  tufts.forEach(([px, py]) => { for (let j = -1; j <= 1; j++) { x.beginPath(); x.moveTo(px + j * 3, py); x.lineTo(px + j * 5 + (r() - 0.5) * 3, py - 6 - r() * 5); x.stroke(); } });
   items.sort((a, b) => a[0] - b[0]).forEach(([, st, px, py, s]) => stamp(x, st, px, py, s * 2, 0));
 
   // roads over the land, white dashes on a dark bed
@@ -317,10 +368,10 @@ export function printedCanvas(img, crop, w, h) {
 /* the painted map for a spec, or null until the symbols (loadStamps) and, for a replica, the
    book's printed map (img) have loaded */
 const cache = {};
-export function mapCanvas(id, img) {
+export function mapCanvas(id, img, world) {
   if (cache[id]) return cache[id];
   if (!stampsLoaded()) return null;
-  if (MAPS[id].replica) return img ? (cache[id] = replicaCanvas(replicaModel(img), MAPS[id].view, 3200, 2240, MAPS[id].places && Object.values(MAPS[id].places))) : null; // shown 1.8 times larger
+  if (MAPS[id].replica) return img ? (cache[id] = replicaCanvas(replicaModel(img, world), MAPS[id].view, 3200, 2240, MAPS[id].places && Object.values(MAPS[id].places))) : null; // shown 1.8 times larger
   const m = MAPS[id], cv = Ink.canvas(2000, 1400), x = cv.getContext('2d'), r = Ink.seeded(id.length * 131 + 11);
   const pick = (kind) => STAMPS[kind][Math.floor(r() * STAMPS[kind].length)];
   x.drawImage(Ink.parchment(cv.width, cv.height, false, true), 0, 0);

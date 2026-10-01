@@ -255,7 +255,9 @@ mapNode.innerHTML = `<div class="mapinner"><canvas width="2000" height="1400"></
   ${heroHTML()}</div>`;
 function showTerrain(id) {
   if (mapShown === id) return;
-  const cv = mapNode.querySelector('canvas'), x = cv.getContext('2d'), map = mapCanvas(id, MAPS[id].replica && lastlands());
+  const world = MAPS[id].replica && worldMap();
+  if (world === null) return void (mapShown = null); // painted once the world map has loaded or failed
+  const cv = mapNode.querySelector('canvas'), x = cv.getContext('2d'), map = mapCanvas(id, MAPS[id].replica && lastlands(), world);
   x.clearRect(0, 0, cv.width, cv.height);
   if (!map) return void ((mapShown = null), loadStamps().then(() => { if (panel === 'map') renderRight(); })); // painted once the symbols and image arrive
   if (cv.width !== map.width) { cv.width = map.width; cv.height = map.height; }
@@ -270,6 +272,19 @@ function lastlands() {
   const url = b.assets + b.map;
   if (!printed[url]) { const im = (printed[url] = new Image()); im.onload = () => { if (panel === 'map') renderRight(); }; im.src = url; }
   return printed[url].complete && printed[url].naturalWidth ? printed[url] : null;
+}
+/* the owner's reference world map, if they have one: the image, null while loading, or false */
+let world;
+function worldMap() {
+  if (world === undefined) {
+    world = null;
+    // fetched whole before use: the local server sometimes drops a big file part-way
+    const get = (tries) => fetch(LASTLANDS.world.file).then((r) => (r.ok ? r.blob() : Promise.reject(r.status)))
+      .then((b) => { const im = new Image(); im.src = URL.createObjectURL(b); return im.decode().then(() => im); })
+      .catch((e) => (tries > 1 && e !== 404 ? get(tries - 1) : false));
+    get(3).then((im) => { world = im; if (panel === 'map') { mapShown = null; renderRight(); } });
+  }
+  return world;
 }
 /* the current book's printed map, or null until it has loaded (the panel redraws then) */
 const printed = {};
@@ -296,7 +311,7 @@ function drawZoom() {
   zoomV = [keep(zoomV[0], fx, fw, w), keep(zoomV[1], fy, fh, h), w];
   const cv = box.querySelector('canvas');
   cv.width = W; cv.height = H;
-  cv.getContext('2d').drawImage(replicaCanvas(replicaModel(img), [zoomV[0], zoomV[1], w, h], W, H, m.places && Object.values(m.places)), 0, 0);
+  cv.getContext('2d').drawImage(replicaCanvas(replicaModel(img, worldMap() || undefined), [zoomV[0], zoomV[1], w, h], W, H, m.places && Object.values(m.places)), 0, 0);
   const tok = box.querySelector('.pawn');
   tok.style.left = ((at[0] - zoomV[0]) / w) * 100 + '%'; tok.style.top = ((at[1] - zoomV[1]) / h) * 100 + '%'; // repainted, not walked
 }
