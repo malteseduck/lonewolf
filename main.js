@@ -254,16 +254,28 @@ function packHTML() {
   for (let i = 0; i < h.meals; i++) cells.push(`<button type="button" class="disc item ${on('meal', 'meal')}" data-sel="meal|meal" aria-label="Meal">${itemGlyph('meal')}</button>`);
   h.backpack.forEach((b) => cells.push(slot('pack', b)));
   while (cells.length < LW.MAX_BACKPACK) cells.push(empty());
-  return `<div class="kit">${portraitURL ? `<img src="${portraitURL}" alt="">` : ''}
+  const kit = adding ? pickerHTML() : `<div class="kit">${portraitURL ? `<img src="${portraitURL}" alt="">` : ''}
       <div class="worn"><span class="head">${worn('helmet')}</span>${weapon(h.weapons[0])}<span class="body">${worn('chainmail')}</span>${weapon(h.weapons[1])}</div>
-      <div class="specials">${others.join('')}</div></div>
+      <div class="specials">${others.join('')}</div></div>`;
+  return `${kit}
     ${ruled(`Backpack <small>${h.backpack.length + h.meals} of ${LW.MAX_BACKPACK}</small>`)}
     <div class="bag"><span class="disc lit">${glyph('knapsack')}</span><div class="pack">${cells.map((c) => `<div class="cell">${c}</div>`).join('')}</div></div>
     <div class="ledger"><span class="purse">${glyph('two-coins')}<b>${h.gold}</b> Gold Crowns ${stepper('gold')}</span>
-      <select id="additem" aria-label="Add an item"><option value="">Add an item by hand</option><optgroup label="Weapons">${LW.WEAPONS.map((w) => `<option value="${w}">${esc(LW.itemName(w))}</option>`).join('')}</optgroup>
-      <optgroup label="Backpack"><option value="meal">Meal</option><option value="potion">Laumspur Potion</option><option value="other:pack">Something else</option></optgroup>
-      <optgroup label="Special Items"><option value="helmet">Helmet</option><option value="chainmail">Chainmail Waistcoat</option><option value="other:spec">Something else</option></optgroup></select></div>
-    <div class="caption">${captionHTML()}</div>`;
+      ${adding ? '' : '<button type="button" class="inkbtn" data-adding="open">Add an item by hand</button>'}</div>
+    ${adding ? '' : `<div class="caption">${captionHTML()}</div>`}`; // while picking, the picker's own line names things
+}
+/* Adding by hand: the items as medallions in place of the worn kit, so the Backpack below fills
+   while you pick. "Something else" asks for a name on the line beneath. */
+let adding = false, naming = null; // naming: 'pack' or 'spec' while a name is being typed
+function pickerHTML() {
+  const pick = (id) => `<button type="button" class="disc item" data-add="${id}" title="${esc(LW.itemName(id))}" aria-label="Add ${esc(LW.itemName(id))}">${itemGlyph(id)}</button>`;
+  const other = (kind, g, label) => `<button type="button" class="disc item other ${naming === kind ? 'sel' : ''}" data-add="other:${kind}" title="${label}" aria-label="${label}">${glyph(g)}</button>`;
+  const row = (name, discs) => `<div class="pickrow"><em>${name}</em><div>${discs}</div></div>`;
+  return `<div class="picker">${ruled('Add an item <button type="button" class="inkbtn" data-adding="close">done</button>')}
+    ${row('Weapons', LW.WEAPONS.map(pick).join(''))}
+    ${row('Backpack', pick('meal') + pick('potion') + other('pack', 'swap-bag', 'Another Backpack Item'))}
+    ${row('Special Items', pick('helmet') + pick('chainmail') + pick('map') + other('spec', 'gem-pendant', 'Another Special Item'))}
+    ${naming ? `<input id="itemname" class="pickname" placeholder="Name it, then press Enter" aria-label="Item name" data-prefix="${naming}">` : '<p class="pickname">Touch an item to add it.</p>'}</div>`;
 }
 
 /* the demo map is built once and moved in and out of the panel */
@@ -623,7 +635,12 @@ bookEl.addEventListener('click', (e) => {
   if (d.cmd) return void battleAct(d.cmd);
   if (busy) return;
   if (d.book) guard(() => begin(d.book, 'fresh' in d, 'anew' in d));
-  else if (d.panel) { panel = d.panel; sel = null; LW.sfx('select'); render(); }
+  else if (d.panel) { panel = d.panel; sel = null; adding = false; naming = null; LW.sfx('select'); render(); }
+  else if (d.adding) { adding = d.adding === 'open'; naming = null; LW.sfx('select'); renderRight(); }
+  else if (d.add) {
+    if (!d.add.startsWith('other:')) return void addItem(d.add);
+    naming = d.add.slice(6); renderRight(); $('#itemname').focus();
+  }
   else if (d.sel) { const [kind, id] = d.sel.split('|'); sel = { kind, id }; LW.sfx('select'); renderRight(); }
   else if (d.adj) { const [field, by] = d.adj.split(':'); game.adjust(field, +by); render(); }
   else if (d.loot != null) { const err = game.takeLoot(+d.loot); if (err) LW.UI.toast(err); else LW.sfx('select'); render(); }
@@ -637,17 +654,16 @@ bookEl.addEventListener('click', (e) => {
   else if (d.zoom) zoomBy(d.zoom === 'in' ? 1.5 : 1 / 1.5);
 });
 function addItem(id) { const err = game.addItem(id); if (err) LW.UI.toast(err); else LW.sfx('select'); render(); }
-pr.addEventListener('change', (e) => {
-  if (e.target.id !== 'additem' || !e.target.value) return;
-  const v = e.target.value;
-  if (!v.startsWith('other:')) return addItem(v);
-  const box = el('input'); box.id = 'itemname'; box.placeholder = 'Name it, then press Enter'; box.dataset.prefix = v.slice(6); box.setAttribute('aria-label', 'Item name');
-  e.target.replaceWith(box); box.focus();
-});
 pr.addEventListener('keydown', (e) => {
-  if (e.target.id !== 'itemname' || e.key !== 'Enter') return;
-  const name = e.target.value.trim().replace(/[|"<>]/g, '');
-  if (name) addItem(`${e.target.dataset.prefix}:${name}`); else render();
+  if (e.target.id !== 'itemname' || (e.key !== 'Enter' && e.key !== 'Escape')) return;
+  const name = e.key === 'Enter' && e.target.value.trim().replace(/[|"<>]/g, ''), prefix = e.target.dataset.prefix;
+  naming = null;
+  if (name) addItem(`${prefix}:${name}`); else renderRight();
+});
+/* the picker names whatever the pointer is over */
+pr.addEventListener('pointerover', (e) => {
+  const t = e.target.closest('[data-add]'), line = pr.querySelector('p.pickname');
+  if (t && line) line.textContent = t.title;
 });
 /* drag a map around: the printed one scrolls; the replica slides, then repaints where it stopped */
 let drag = null;

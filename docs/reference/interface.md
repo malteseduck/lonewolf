@@ -68,7 +68,11 @@ bronze plaque with Combat Skill, Endurance and gold.
   slots he wears (helmet above, the two weapons either side of the chainmail; a mastered weapon is
   lit), the other Special Items in a row beneath (at least four slots, empty ones as bare rings);
   then a ruled "Backpack" heading, a knapsack medallion beside eight dark tiles (one per Meal or
-  item); a ledger (gold -/+, "Add an item by hand" select); and the caption with Drink / Drop / Eat.
+  item); a ledger (gold -/+, "Add an item by hand"); and the caption with Drink / Drop / Eat.
+  "Add an item by hand" (`adding`) swaps the worn kit for `pickerHTML()`: rows of small medallions
+  (weapons, Backpack Items, Special Items) that add on a touch and stay open, with "+" medallions
+  for something else, which ask for a name on an inked line (`naming`; Enter adds, Escape cancels).
+  The caption is hidden meanwhile; the picker's own line names whatever is under the pointer.
   Item glyphs are game-icons.net SVGs (`ITEM_GLYPH`); items typed in by hand get a pouch or a
   pendant by their kind.
 - **map**: three cases, plus "The whole map" (the zoomable replica) for any book whose spec is one.
