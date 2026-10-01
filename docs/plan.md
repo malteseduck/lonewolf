@@ -37,7 +37,8 @@ Working and checked by playing in the browser:
 
 - Title page listing the demo chapter and imported books, with continue / start over / new character.
 - Story page: frame, script text, drop cap, illustrations in place, arrival events, choices.
-- Panels: Kai (scores, modifiers, rank, Lore-circles, discipline medallions), inventory (slots,
+- Panels: Kai, laid out like the HD character sheet (ink portrait from the owner's screenshot,
+  ruled ledgers, a framed grid of every discipline with drawn game-icons glyphs), inventory (slots,
   Backpack grid, by-hand gold and item controls), map.
 - Random Number medallion on the page; automatic gating of choices where the ranges are clean.
 - Combat on the page: plate, medallion commands, dial, round log, evasion, wounds.
@@ -88,6 +89,8 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
 
 Smaller things noted along the way:
 
+- The inventory panel still has the plain cloaked figure (`drawFigure`) and the simple 24px item
+  icons; the owner prefers drawn art. It could get the same treatment as the Kai panel.
 - Laumspur in combat is a house rule; the books do not allow it. Decide.
 - Bow and Arrow rules; Special Item limit.
 - Title page gets crowded with twelve books.

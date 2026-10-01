@@ -163,8 +163,12 @@ and must be checked against the rules pages of the books.
 
 ### 6.2 Character panel
 
-Scores and their modifiers, rank, Lore-circles, and the character's disciplines as medallions
-around a figure. Touching a discipline explains it.
+Laid out after the Lone Wolf HD character sheet (owner's request, 2026-10-01): an ink-wash
+likeness of Lone Wolf across the top with his name in script beneath it; two ruled ledgers,
+"Attributes" (scores, rank, Lore-circles) and the make-up of Combat Skill and Endurance; then every
+discipline of the series as a medallion in a framed grid, linked by bars, the learned ones glowing.
+Touching a discipline explains it. Drawn art over minimal figures: the glyphs are detailed drawings,
+not plain shapes.
 
 ### 6.3 Inventory panel
 

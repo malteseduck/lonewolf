@@ -52,10 +52,18 @@ Textures are generated at start-up in `main.js` and set as CSS variables: `--par
 Header on every panel: a place plaque (location name, or the book's title, or "Combat") and a
 bronze plaque with Combat Skill, Endurance and gold.
 
-- **kai** (`kaiHTML`): attribute rows (CS, EP with -/+ steppers, each CS modifier, Meals, rank,
-  Lore-circles held), then the discipline medallions around the figure on fixed positions
-  (`TREE`), joined to a hub. Shows the disciplines of the book's series. `.caption` explains the
-  selected one.
+- **kai** (`kaiHTML`), after the HD character sheet:
+  - `.likeness`: Lone Wolf's portrait (`portraitURL`, made by `portraitFromArt` from
+    `art/manifest.json` "portrait": an ink drawing cropped from an HD screenshot, paper keyed out,
+    edges faded) with the name and a wolf medallion under it. Without the art, just the name.
+  - `.ledgers`: "Attributes" (CS, EP with -/+ steppers, Meals, rank, Lore-circles in Magnakai
+    books) beside "Combat Skill" (`heroCS` parts) and "Endurance" (base, plus Special Items' and
+    Lore-circles' bonuses). Headings are ruled with a swash (`ruled()`).
+  - `.discs`: every discipline of the book's series, five to a row, as `.disc` medallions joined
+    by bars, in a box framed by `drawFrame(1000, 470)` (`--grid-frame`). Learned ones are `.lit`.
+    Glyphs are game-icons.net SVGs in `assets/icons/` (`DISC_GLYPH`), used as CSS masks so they
+    can take the ivory fill and ember glow.
+  - `.caption` explains the selected discipline, and says when it is not learned.
 - **pack** (`packHTML`): Special Items row, two weapon slots beside the figure, eight Backpack
   cells, a ledger (gold -/+, "Add an item by hand" select), and the caption with Drink / Drop / Eat.
 - **map**: three cases, plus "The whole map" (the zoomable replica) for any book whose spec is one.

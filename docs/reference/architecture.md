@@ -12,8 +12,9 @@ maps.js                     ES module: map specs, the Lastlands data, the stamp 
 replica.js                  ES module: reads a printed map into coast outlines and terrain grids
 places-01fftd.js            ES module: Book 1's made-up places and which sections happen at each
 buildings.js                ES module: the map's towns and buildings as vector pen-and-wash drawings
-art/manifest.json           optional: map an enemy sprite key to an image file in art/
+art/manifest.json           optional pictures in art/: enemy sprites, the map figure, the Kai panel portrait
 assets/map/                 widman.png + widman.json: engraved map symbols (CC0), built by tools/build_map_atlas.py
+assets/icons/               discipline glyphs from game-icons.net (CC BY 3.0, credited in README.txt)
 CLAUDE.md, README.md
 docs/                       spec, plan, reference
 shared/                     used by the player and the prototypes (classic scripts on a global LW)

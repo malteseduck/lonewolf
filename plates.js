@@ -303,6 +303,33 @@ export function heroFromArt(img, crop, outline) {
   return outlined(fig);
 }
 
+/* Lone Wolf's likeness at the head of the Kai panel, from an ink drawing of him in the owner's own
+   image (crop: [x, y, w, h]). The paper is keyed out, so what is left is ink alone, laid on the
+   page's own parchment, and the edges fade into it as a wash does. Scaled up 2x and smoothed:
+   the screenshots are small. Made at load; never stored. */
+export function portraitFromArt(img, crop, fade = 0.5) {
+  const [cx, cy, W, H] = crop, k = 2, c = Ink.canvas(W * k, H * k), x = c.getContext('2d', { willReadFrequently: true });
+  x.imageSmoothingQuality = 'high';
+  x.drawImage(img, cx, cy, W, H, 0, 0, W * k, H * k);
+  const d = x.getImageData(0, 0, c.width, c.height), p = d.data, lum = new Float32Array(p.length / 4);
+  for (let i = 0; i < lum.length; i++) lum[i] = 0.3 * p[i * 4] + 0.59 * p[i * 4 + 1] + 0.11 * p[i * 4 + 2];
+  // the paper is the light end of the picture, the ink its darkest few percent
+  const sorted = Float32Array.from(lum).sort(), at = (q) => sorted[Math.floor(q * (sorted.length - 1))];
+  const ink = at(0.03), paper = at(0.7);
+  for (let i = 0; i < lum.length; i++) {
+    const a = Math.max(0, Math.min(1, (paper - lum[i]) / (paper - ink)));
+    p[i * 4] = 38; p[i * 4 + 1] = 28; p[i * 4 + 2] = 18; p[i * 4 + 3] = Math.round(255 * Math.pow(a, 0.85));
+  }
+  x.putImageData(d, 0, 0);
+  // a wash fades out at its edges: solid out to `fade` of the way from the middle, then gone at the rim
+  x.globalCompositeOperation = 'destination-in';
+  x.translate(c.width / 2, c.height / 2); x.scale(c.width / 2, c.height / 2);
+  const g = x.createRadialGradient(0, 0, 0, 0, 0, 1);
+  g.addColorStop(0, '#000'); g.addColorStop(fade, '#000'); g.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = g; x.fillRect(-1, -1, 2, 2);
+  return c;
+}
+
 /* a white outline round everything drawn on c, as the map's old pawn had */
 function outlined(c, r = 4) {
   const white = Ink.canvas(c.width, c.height), w = white.getContext('2d'), out = Ink.canvas(c.width, c.height), o = out.getContext('2d');

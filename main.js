@@ -2,7 +2,7 @@
    Left page: the story. Right page: a panel (Kai Disciplines, inventory, map, or the fight).
    Plays the built-in demo chapter, or a full book imported by tools/import_projectaon.py. */
 import * as Ink from './shared/ink.js';
-import { drawCreature, setArt, newWound, drawFigure, drawHero, heroFromArt, drawFrame, gearSVG } from './plates.js';
+import { drawCreature, setArt, newWound, drawFigure, drawHero, heroFromArt, portraitFromArt, drawFrame, gearSVG } from './plates.js';
 import { MAPS, LASTLANDS, mapCanvas, loadStamps, stampsLoaded, printedCanvas, replicaModel, replicaCanvas, placeBook, along } from './maps.js';
 
 const LW = window.LW;
@@ -45,7 +45,11 @@ const ICON = {
   paw: '<ellipse cx="12" cy="16" rx="5.500" ry="4.500"/><ellipse cx="5" cy="10" rx="2.200" ry="3"/><ellipse cx="9.500" cy="6" rx="2.200" ry="3"/><ellipse cx="14.500" cy="6" rx="2.200" ry="3"/><ellipse cx="19" cy="10" rx="2.200" ry="3"/>',
   stones: '<path d="M12 2l4 5-4 5-4-5zM5 12l3 4-3 4-3-4zM19 12l3 4-3 4-3-4zM12 15l2.500 3.500L12 22l-2.500-3.500z"/>',
 };
-const DISC_ICON = { weaponmastery: 'swords', animalControl: 'paw', curing: 'leaf', invisibility: 'hood', huntmastery: 'arrow', pathsmanship: 'foot', psiSurge: 'burst', psiScreen: 'shield', nexus: 'stones', divination: 'eye', camouflage: 'hood', hunting: 'arrow', sixthSense: 'eye', tracking: 'foot', healing: 'leaf', weaponskill: 'sword', mindshield: 'shield', mindblast: 'burst', animalKinship: 'paw', mindOverMatter: 'stones' };
+/* Drawn glyphs for the disciplines, from game-icons.net (assets/icons/README.txt), cut from the
+   medallion's colour by a mask so they can glow like the HD ones */
+const DISC_GLYPH = { camouflage: 'hood', hunting: 'high-shot', sixthSense: 'third-eye', tracking: 'footsteps', healing: 'herbs-bundle', weaponskill: 'broadsword', mindshield: 'eye-shield', mindblast: 'brainstorm', animalKinship: 'wolf-howl', mindOverMatter: 'magic-palm',
+  weaponmastery: 'crossed-swords', animalControl: 'stag-head', curing: 'healing', invisibility: 'invisible', huntmastery: 'bowman', pathsmanship: 'footprint', psiSurge: 'psychic-waves', psiScreen: 'magic-shield', nexus: 'fire-shield', divination: 'crystal-ball' };
+const glyph = (name) => `<span class="glyph" aria-hidden="true"><i style="--g:url(assets/icons/${name}.svg)"></i></span>`;
 const ITEM_ICON = { axe: 'axe', potion: 'flask', meal: 'bowl', map: 'scroll', helmet: 'helm', chainmail: 'shield' };
 const icon = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[name] || ICON.sword}</svg>`;
 const itemIcon = (id) => icon(ITEM_ICON[id] || (LW.itemKind(id) === 'weapon' ? 'sword' : LW.itemKind(id) === 'special' ? 'scroll' : 'sack'));
@@ -55,6 +59,7 @@ const root = document.documentElement.style;
 root.setProperty('--parch-l', `url(${Ink.parchment(900, 1300, false, true).toDataURL('image/jpeg', 0.86)})`);
 root.setProperty('--parch-r', `linear-gradient(rgba(120,88,50,0.34), rgba(120,88,50,0.34)), url(${Ink.parchment(860, 1300, true, true).toDataURL('image/jpeg', 0.86)})`);
 root.setProperty('--frame', `url(${drawFrame().toDataURL()})`);
+root.setProperty('--grid-frame', `url(${drawFrame(1000, 470).toDataURL()})`);
 root.setProperty('--wood', `linear-gradient(rgba(10,7,6,0.55), rgba(10,7,6,0.55)), url(${Ink.leather(512).toDataURL('image/jpeg', 0.8)})`);
 {
   const r = Ink.seeded(77), pts = [];
@@ -67,6 +72,7 @@ root.setProperty('--wood', `linear-gradient(rgba(10,7,6,0.55), rgba(10,7,6,0.55)
 }
 gear.innerHTML = gearSVG();
 const figureURL = drawFigure().toDataURL();
+let portraitURL = null; // Lone Wolf's likeness over the Kai panel, if the owner has a picture of him (art/manifest.json "portrait")
 /* Lone Wolf on the maps: the owner's picture of him cut out, toned sepia, over a pointer (art/manifest.json
    "hero": {src, crop}, or a file already cut out), else a painted stand-in */
 let heroURL = drawHero().toDataURL();
@@ -202,13 +208,12 @@ function mountRnt() {
 function renderLeft() { pl.innerHTML = leftHTML(); mountRnt(); }
 
 /* ---------- right page ---------- */
-const TREE = [[50, 15], [21, 40], [79, 40], [33, 70], [67, 70], [50, 88], [12, 66], [88, 66], [21, 15], [79, 15]];
 function captionHTML() {
   const h = game.hero, id = sel && sel.id, drop = (word = 'Drop') => `<button type="button" class="seal" data-remove="${esc(id)}">${word}</button>`;
   if (sel && sel.kind === 'disc') {
     const d = LW.DISCIPLINES[id], extra = id === 'weaponskill' && h.weaponskill ? ` in ${esc(LW.itemName(h.weaponskill))}` : '';
     const mastered = id === 'weaponmastery' && (h.mastery || []).length ? ` Mastered: ${esc(h.mastery.map(LW.itemName).join(', '))}.` : '';
-    return `<div><h3>${esc(d.name)}${extra}</h3><p>${esc(d.blurb)}${mastered}</p></div>`;
+    return `<div><h3>${esc(d.name)}${extra}</h3><p>${esc(d.blurb)}${mastered}${LW.has(h, id) ? '' : ' <i>Not yet learned.</i>'}</p></div>`;
   }
   if (sel && sel.kind === 'weapon' && h.weapons.includes(id)) return `<div><h3>${esc(LW.itemName(id))}</h3><p>${h.weaponskill === id ? 'Your mastered weapon: +2 Combat Skill.' : 'A weapon. You may carry two.'}</p></div>${drop()}`;
   if (sel && sel.kind === 'pack' && id === 'potion' && h.backpack.includes(id)) return `<div><h3>Laumspur Potion</h3><p>Restores 4 Endurance.</p></div><button type="button" class="seal" data-drink ${h.ep >= h.epMax ? 'disabled' : ''}>Drink</button>${drop()}`;
@@ -218,16 +223,27 @@ function captionHTML() {
   return `<div><p>${panel === 'kai' ? 'Touch a medallion to read what the discipline does.' : 'Touch an item to see what it is for.'}</p></div>`;
 }
 const stepper = (field) => `<span class="step"><button type="button" data-adj="${field}:-1" aria-label="Less">&minus;</button><button type="button" data-adj="${field}:1" aria-label="More">+</button></span>`;
+/* a ruled heading with the HD sheet's swash: a hairline that curls back at its left end */
+const ruled = (t) => `<h4>${t}<span class="swash"><svg viewBox="0 0 30 10" aria-hidden="true"><path d="M30 4.2C20 4.2 11 4.6 5.5 7.4 2.6 8.9.6 7.8 1.4 6.1 2.1 4.7 4.6 4.9 4.7 6.4 4.2 5.6 2.8 5.7 2.7 6.6 3.4 7.3 5 6.6 6.4 5.7 12 3.2 20 3.3 30 3.3Z"/></svg><i></i></span></h4>`;
+/* Kai panel, after the HD character sheet: his likeness, two ruled ledgers, and every discipline of
+   the series as a medallion in a framed grid, the ones he has learned lit */
 function kaiHTML() {
-  const h = game.hero;
-  const list = LW.owned(h, book.series || 'kai'), circles = LW.circlesOf(h);
-  const meds = list.map((d, i) => `<button type="button" class="med lit ${sel && sel.id === d ? 'sel' : ''}" style="left:${TREE[i][0]}%;top:${TREE[i][1]}%" data-sel="disc|${d}" aria-label="${esc(LW.DISCIPLINES[d].name)}">${icon(DISC_ICON[d])}</button>`).join('');
-  const links = list.map((d, i) => `<line x1="50" y1="46" x2="${TREE[i][0]}" y2="${TREE[i][1]}" vector-effect="non-scaling-stroke"/>`).join('');
-  const cs = LW.heroCS(h), row = (k, v, wide) => `<div class="${wide ? 'wide' : ''}"><span>${k}</span><b>${v}</b></div>`;
-  return `<div class="attrs"><h3>Lone Wolf</h3>${row('Combat Skill', cs.total)}${row('Endurance', `${Math.max(0, h.ep)} of ${h.epMax}${stepper('ep')}`)}${cs.parts.slice(1).map((p) => row(esc(p.label), (p.n > 0 ? '+' : '') + p.n)).join('')}${row('Meals', h.meals)}${row('Rank', esc(LW.rankOf(h) || 'Kai Lord'), true)}${
-    book.series === 'magnakai' ? row('Circles held', circles.length ? esc(circles.map((c) => c.name.replace('Circle of ', '').replace('the ', '')).join(', ')) : 'none', true) : ''}</div>
-    <div class="tree ${list.length > 6 ? 'many' : ''}"><img src="${figureURL}" alt=""><svg class="links" viewBox="0 0 100 100" preserveAspectRatio="none">${links}</svg>
-    <div class="med hub" style="left:50%;top:46%">${icon('hood')}</div>${meds}</div><div class="caption">${captionHTML()}</div>`;
+  const h = game.hero, series = book.series || 'kai', circles = LW.circlesOf(h), cs = LW.heroCS(h);
+  const row = (k, v) => `<div><span>${k}</span><b>${v}</b></div>`, signed = (n) => (n > 0 ? '+' : '') + n;
+  const epParts = h.special.filter((s) => LW.ITEMS[s] && LW.ITEMS[s].ep).map((s) => ({ label: esc(LW.itemName(s)), n: LW.ITEMS[s].ep }));
+  if (h.circleEp) epParts.push({ label: 'Lore-circles', n: h.circleEp });
+  const disc = (d) => `<button type="button" class="disc ${LW.has(h, d) ? 'lit' : ''} ${sel && sel.id === d ? 'sel' : ''}" data-sel="disc|${d}" aria-label="${esc(LW.DISCIPLINES[d].name)}${LW.has(h, d) ? '' : ', not learned'}">${glyph(DISC_GLYPH[d])}</button>`;
+  const bar = '<svg class="link" viewBox="0 0 40 14" preserveAspectRatio="none" aria-hidden="true"><path class="band" d="M0 3.4h40v7.2H0z"/><path class="edge" d="M0 4h40M0 10h40M15 7c2.5-3.2 5-3.2 6.2 0s3.700 3.200 6.200 0" vector-effect="non-scaling-stroke"/></svg><span class="chev" aria-hidden="true"></span>';
+  const list = LW.SERIES[series].list, rows = [];
+  for (let i = 0; i < list.length; i += 5) rows.push(list.slice(i, i + 5));
+  return `<div class="likeness">${portraitURL ? `<img src="${portraitURL}" alt="">` : ''}
+      <div class="who"><span class="disc lit">${glyph('wolf-head')}</span><h3>Lone Wolf</h3></div></div>
+    <div class="ledgers"><section>${ruled('Attributes')}${row('Combat Skill', cs.total)}${row('Endurance', `${stepper('ep')} ${Math.max(0, h.ep)}/${h.epMax}`)}${row('Meals', h.meals)}${row('Rank', esc(LW.rankOf(h) || 'Kai Lord'))}${
+      series === 'magnakai' ? row('Lore-circles', circles.length ? esc(circles.map((c) => c.name.replace('Circle of ', '').replace('the ', '')).join(', ')) : 'none') : ''}</section>
+      <section>${ruled('Combat Skill')}${cs.parts.map((p, i) => row(esc(p.label), i ? signed(p.n) : p.n)).join('')}
+      ${ruled('Endurance')}${row('Base', h.epMax - epParts.reduce((t, p) => t + p.n, 0))}${epParts.map((p) => row(p.label, signed(p.n))).join('')}</section></div>
+    <div class="discs">${rows.map((r) => `<div class="drow">${r.map(disc).join(`<span class="linkwrap">${bar}</span>`)}</div>`).join('')}</div>
+    <div class="caption">${captionHTML()}</div>`;
 }
 function packHTML() {
   const h = game.hero, cells = [], on = (kind, id) => (sel && sel.kind === kind && sel.id === id ? 'sel' : '');
@@ -690,6 +706,11 @@ fetch('art/manifest.json').then((r) => r.json()).then((m) => {
       [...document.querySelectorAll('.pawn img'), mapNode.querySelector('.pawn img')].forEach((n) => { n.src = heroURL; }); // the map node may be out of the page
     };
     im.src = 'art/' + (m.hero.src || m.hero);
+  }
+  if (m.portrait) {
+    const im = new Image();
+    im.onload = () => { portraitURL = portraitFromArt(im, m.portrait.crop, m.portrait.fade).toDataURL(); if (mode === 'story' && panel === 'kai') renderRight(); };
+    im.src = 'art/' + m.portrait.src;
   }
 }).catch(() => {});
 

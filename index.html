@@ -16,6 +16,8 @@
   --void: #0a0706; --hide: #231510;
   --page: #dccb9f; --sheet: #b79f74; --ink: #33231a; --ink-dim: #6b553c; --ink-faint: rgba(51, 35, 26, 0.3); --blood: #7d1d14;
   --bronze: #a08a58; --bronze-hi: #e2d09a; --bronze-lo: #3b3020; --bone: #e9e0c8; --kai: #7fe9f2;
+  /* the HD character sheet's medallions: dark enamel in a ring of worn, beaded pewter; ivory glyphs that glow ember when learned */
+  --enamel: #2f211a; --enamel-lo: #140c08; --pewter: #8a7b64; --pewter-lo: #4a3f31; --glyph: #f6eedc; --ember: #f0a040; --glyph-off: rgba(233, 224, 200, 0.2);
   --script: 'Charm', 'Apple Chancery', 'Segoe Script', cursive;
   --cap: 'Almendra Display', 'Old English Text MT', Georgia, serif;
   --title: 'Metamorphous', 'Palatino Linotype', Georgia, serif;
@@ -113,15 +115,48 @@ button.med:disabled { opacity: 0.4; }
 .caption h3 { margin: 0; font: 400 0.95em var(--title); letter-spacing: 0.06em; }
 .caption p { margin: 0; font-size: 1.05em; line-height: 1.2; color: var(--ink-dim); }
 
-/* Kai panel */
-.tree { position: relative; flex: 1; min-height: 0; }
-.tree img { position: absolute; left: 50%; top: 0; height: 100%; transform: translateX(-50%); mix-blend-mode: multiply; opacity: 0.85; }
-.tree svg.links { position: absolute; inset: 0; width: 100%; height: 100%; }
-.tree svg.links line { stroke: #5b4a30; stroke-width: 3; }
-.tree .med { position: absolute; transform: translate(-50%, -50%); --s: 4.2em; }
-.tree .med.hub { --s: 3.4em; }
-.tree.many .med { --s: 3.3em; }
-.tree.many .med.hub { --s: 2.8em; }
+/* Kai panel, after the HD character sheet */
+.likeness { position: relative; flex: none; height: 7.2em; margin: -0.6em 0 0; }
+.likeness img { position: absolute; right: -0.6em; top: -0.4em; width: 100%; height: 8.6em; object-fit: contain; object-position: right top; pointer-events: none; }
+.who { position: absolute; left: 0; bottom: 0; display: flex; align-items: center; gap: 0.4em; }
+.who .disc { --s: 2.7em; }
+.who h3 { margin: 0; padding: 0 1.4em 0 0.1em; font: 700 1.75em/1.1 var(--script); color: var(--ink); border-bottom: 1px solid var(--ink); text-shadow: 0 0 0.3em var(--page); }
+.ledgers { flex: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.4em; position: relative; font: 400 0.8em/1.45 var(--title); font-variant-numeric: lining-nums; }
+.ledgers::before { content: ''; position: absolute; left: 50%; top: 1.6em; bottom: 0.2em; border-left: 1px solid var(--ink-faint); }
+.ledgers::after { content: ''; position: absolute; left: 50%; top: 0.75em; width: 0.5em; height: 0.5em; margin-left: -0.25em; background: var(--ink); transform: rotate(45deg); }
+.panel .ledgers h4 { display: block; letter-spacing: 0.02em; text-transform: none; margin: 0 0 0.15em; font: 400 1.35em/1.2 var(--title); color: var(--ink); text-align: right; }
+.ledgers section > div ~ h4 { margin-top: 0.35em; }
+.swash { display: flex; align-items: flex-end; height: 0.42em; margin-top: -0.05em; }
+.swash svg { flex: none; width: 1.9em; height: 0.62em; fill: var(--ink); }
+.swash i { flex: 1; height: 0.07em; margin-bottom: 0.25em; background: linear-gradient(90deg, var(--ink), var(--ink-dim)); }
+.ledgers section > div { display: flex; justify-content: space-between; align-items: center; gap: 0.6em; padding: 0 0.15em; color: var(--ink); }
+.ledgers section > div b { font-weight: 400; white-space: nowrap; }
+.ledgers .step { margin: 0 0.15em 0 0; }
+.ledgers .step button { width: 1.35em; height: 1.35em; }
+/* the grid of medallions, framed like the HD sheet's lower panel */
+.discs { flex: none; position: relative; display: flex; flex-direction: column; justify-content: center; gap: 0.75em; padding: 1.15em 1.1em 1.3em; background: var(--grid-frame) center / 100% 100% no-repeat, rgba(51, 35, 26, 0.08); }
+.drow { display: flex; align-items: center; }
+.linkwrap { position: relative; flex: 1; min-width: 0.6em; height: 1em; margin: 0 -0.15em; z-index: 0; }
+.linkwrap .link { position: absolute; inset: 0; width: 100%; height: 100%; }
+.link .band { fill: var(--enamel); }
+.link .edge { fill: none; stroke: var(--pewter); stroke-width: 1; }
+.linkwrap .chev { position: absolute; left: 0.25em; top: 50%; width: 0.55em; height: 0.55em; margin-top: -0.275em; background: var(--pewter); clip-path: polygon(0 0, 45% 0, 100% 50%, 45% 100%, 0 100%, 55% 50%); }
+.disc { --s: 3.1em; position: relative; z-index: 1; flex: none; width: var(--s); height: var(--s); padding: 0; border: 0; border-radius: 50%; display: grid; place-items: center; color: inherit; font: inherit;
+  /* enamel; a dark groove; the beaded pewter ring, banded with two engraved lines */
+  background: radial-gradient(circle closest-side, var(--enamel) 0, var(--enamel-lo) 64%, #0c0705 65% 68%, transparent 69%),
+    radial-gradient(circle closest-side, transparent 0 73%, rgba(20, 12, 8, 0.6) 74% 76%, transparent 77% 88%, rgba(20, 12, 8, 0.7) 89% 91%, transparent 92%),
+    radial-gradient(circle at 40% 25%, rgba(255, 245, 220, 0.35), transparent 60%),
+    repeating-conic-gradient(var(--pewter) 0 5deg, var(--pewter-lo) 5deg 7.5deg, var(--pewter) 7.5deg 10deg),
+    var(--pewter);
+  box-shadow: 0 0 0 0.07em var(--enamel-lo), 0 0.15em 0.35em rgba(0, 0, 0, 0.45), inset 0 0.08em 0.1em rgba(255, 245, 220, 0.35); }
+.disc::after { content: ''; position: absolute; left: 50%; bottom: -0.32em; width: 0.42em; height: 0.42em; margin-left: -0.21em; transform: rotate(45deg); background: var(--enamel); box-shadow: 0 0 0 0.08em var(--pewter), 0 0 0 0.13em var(--enamel-lo); }
+.who .disc::after { display: none; }
+.glyph { width: 50%; height: 50%; display: block; }
+.glyph i { display: block; width: 100%; height: 100%; background: var(--glyph-off); -webkit-mask: var(--g) center / contain no-repeat; mask: var(--g) center / contain no-repeat; }
+.disc.lit .glyph { filter: drop-shadow(0 0 0.06em var(--ember)) drop-shadow(0 0 0.22em rgba(240, 160, 64, 0.55)); }
+.disc.lit .glyph i { background: radial-gradient(circle at 50% 45%, var(--glyph) 45%, #f3d6a0 80%, var(--ember)); }
+button.disc:hover, button.disc:focus-visible, .disc.sel { outline: none; box-shadow: 0 0 0 0.07em var(--enamel-lo), 0 0 0.8em 0.15em rgba(255, 220, 140, 0.85), inset 0 0.08em 0.1em rgba(255, 245, 220, 0.35); }
+button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background: rgba(233, 224, 200, 0.45); }
 
 /* inventory */
 .gear-up { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr minmax(0, 1.3fr) 1fr; grid-template-rows: auto minmax(0, 1fr); align-items: center; justify-items: center; gap: 0.4em 0.6em; }
@@ -191,12 +226,6 @@ button.med:disabled { opacity: 0.4; }
 .orn { display: flex; align-items: center; gap: 0.35em; }
 .orn::before, .orn::after { content: ''; width: 2.8em; height: 1.5em; background: var(--ink); opacity: 0.8; clip-path: polygon(0 50%, 100% 8%, 72% 50%, 100% 92%, 62% 62%, 40% 50%, 62% 38%); }
 .orn::after { transform: scaleX(-1); }
-.attrs { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.6em; font-size: 1.05em; line-height: 1.3; }
-.attrs div.wide { grid-column: 1 / -1; }
-.attrs .step { margin-left: 0.3em; }
-.attrs h3 { grid-column: 1 / -1; margin: 0 0 0.1em; font: 700 1.5em var(--script); border-bottom: 1px solid var(--ink-faint); }
-.attrs div { display: flex; justify-content: space-between; gap: 0.6em; border-bottom: 1px dotted var(--ink-faint); }
-.attrs b { font: 400 0.82em/1.7 var(--title); font-variant-numeric: lining-nums; white-space: nowrap; }
 .mk { position: absolute; transform: translate(-50%, -50%); display: grid; place-items: center; pointer-events: none; }
 .mk i { width: 0.7em; height: 0.7em; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 0.16em rgba(217, 203, 166, 0.9); }
 .mk span, .dest b { position: absolute; top: -1.75em; white-space: nowrap; font: 400 0.9em var(--title); letter-spacing: 0.04em; text-shadow: 0 0 0.3em #d9cba6, 0 0 0.3em #d9cba6, 0 0 0.5em #d9cba6, 0 0 0.6em #d9cba6; }

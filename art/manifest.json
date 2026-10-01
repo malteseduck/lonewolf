@@ -1,9 +1,10 @@
 {
-  "_readme": "Pictures the owner adds to this folder (git-ignored apart from this file; personal use only). enemies: map an enemy sprite key (kraan, giak, vordak) to an image; dark ink on a light or transparent ground works best, it is multiplied onto the parchment. hero: Lone Wolf on the maps, either a file already cut out, or {src, crop, outline} where crop [x, y, w, h] frames him standing on a plain ground, which is cut away at load, and outline (optional) is a polygon traced round him in crop pixels to keep the cut honest where he and the ground look alike.",
+  "_readme": "Pictures the owner adds to this folder (git-ignored apart from this file; personal use only). enemies: map an enemy sprite key (kraan, giak, vordak) to an image; dark ink on a light or transparent ground works best, it is multiplied onto the parchment. hero: Lone Wolf on the maps, either a file already cut out, or {src, crop, outline} where crop [x, y, w, h] frames him standing on a plain ground, which is cut away at load, and outline (optional) is a polygon traced round him in crop pixels to keep the cut honest where he and the ground look alike. portrait: his likeness at the head of the Kai panel, {src, crop, fade}: crop [x, y, w, h] frames an ink drawing of him on light paper; the paper is keyed out and the edges fade into the page from fade (0-1) of the way out.",
   "enemies": {},
   "hero": {
     "src": "lwhd-hero-source.jpg",
     "crop": [1064, 250, 556, 780],
     "outline": [[256,14],[270,2],[286,6],[290,30],[288,45],[300,38],[322,33],[338,52],[345,80],[350,108],[368,118],[396,130],[410,150],[414,180],[422,215],[440,230],[460,242],[481,262],[497,292],[500,330],[490,365],[470,385],[452,392],[455,410],[470,450],[486,505],[488,520],[478,528],[466,522],[440,470],[420,425],[398,440],[410,505],[424,565],[436,640],[443,700],[444,736],[408,738],[404,700],[398,650],[366,565],[338,492],[326,445],[318,428],[311,450],[295,492],[283,555],[276,650],[280,684],[263,694],[191,710],[185,700],[230,670],[238,648],[247,560],[243,513],[239,450],[231,410],[222,395],[200,388],[183,388],[159,368],[80,384],[0,395],[0,378],[80,366],[159,350],[199,338],[215,330],[228,300],[236,268],[251,212],[255,170],[265,142],[287,112],[287,78],[297,45]]
-  }
+  },
+  "portrait": { "src": "image-1790823200615.webp", "crop": [590, 92, 245, 128], "fade": 0.55 }
 }
