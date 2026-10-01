@@ -44,7 +44,7 @@ body { background: var(--void) var(--wood, none) center / 820px; color: var(--bo
 .page { position: relative; min-width: 0; min-height: 0; color: var(--ink); background: var(--page) center / 100% 100% no-repeat; display: flex; flex-direction: column; }
 .page.left { background-image: var(--parch-l); padding: 4em 4.1em 4em 4.3em; box-shadow: 0 1.2em 2.4em rgba(0, 0, 0, 0.7); transform-origin: left center; }
 .page.left::before { content: ''; position: absolute; inset: 0.9em; background: var(--frame) center / 100% 100% no-repeat; pointer-events: none; }
-.page.right { background-image: var(--parch-r); background-color: var(--sheet); margin: 1.1em 0 1.5em; padding: 1.6em 1.8em 2.1em; clip-path: var(--torn); filter: none; }
+.page.right { background-image: var(--sheet-art), var(--parch-r); background-color: var(--sheet); margin: 1.1em 0 1.5em; padding: 2.1em 2.4em 2.6em 2.2em; clip-path: var(--torn); filter: none; }
 .rightwrap { position: relative; display: flex; min-width: 0; min-height: 0; filter: drop-shadow(0 1em 1.4em rgba(0, 0, 0, 0.75)); }
 .rightwrap .page { flex: 1; }
 .turning { position: absolute; left: 0; top: 0; z-index: 4; pointer-events: none; }
@@ -316,10 +316,12 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 .roads { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.1em; }
 .roads .choice { font-size: 1.08em; }
 .mapinner canvas { filter: none; }
-.place { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0.25em 0.8em; font: 400 1em var(--title); color: var(--ink); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); background: rgba(51, 35, 26, 0.08); }
+/* the place's name on a ribbon with scrolled ends (drawBanner), its ends kept whole by border-image */
+.place { min-width: 0; height: 2.6em; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0.95em 0.6em 0; font: 400 1em/1.2 var(--title); color: var(--ink); text-align: center;
+  border: solid transparent; border-width: 0 3em; border-image: var(--banner) 0 160 fill / 0 3em / 0 stretch; background: var(--crest) center top / 8.2em 1em no-repeat; }
 .headrow { display: flex; flex-direction: column-reverse; align-items: stretch; gap: 0.5em; padding-left: 1.6em; }
 .headrow .plaque { align-self: flex-end; }
-.headrow .place { align-self: center; padding-inline: 2.2em; }
+.headrow .place { align-self: center; min-width: 13em; padding-inline: 1em; }
 .compass { align-self: center; display: flex; flex-direction: column; align-items: center; gap: 0.3em; font-size: 1.1em; color: var(--ink-dim); margin: 0.3em 0; }
 .compass .med { --s: 3.7em; }
 .orn { display: flex; align-items: center; gap: 0.35em; }

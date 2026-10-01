@@ -2,7 +2,7 @@
    Left page: the story. Right page: a panel (Kai Disciplines, inventory, map, or the fight).
    Plays the built-in demo chapter, or a full book imported by tools/import_projectaon.py. */
 import * as Ink from './shared/ink.js';
-import { drawCreature, setArt, setEmblem, newWound, drawHero, heroFromArt, portraitFromArt, drawFrame, gearSVG } from './plates.js';
+import { drawCreature, setArt, setEmblem, newWound, drawHero, heroFromArt, portraitFromArt, drawFrame, drawSheet, drawBanner, drawCrest, gearSVG } from './plates.js';
 import { MAPS, LASTLANDS, mapCanvas, loadStamps, stampsLoaded, printedCanvas, replicaModel, replicaCanvas, placeBook, along } from './maps.js';
 
 const LW = window.LW;
@@ -44,7 +44,10 @@ const root = document.documentElement.style;
 root.setProperty('--parch-l', `url(${Ink.parchment(900, 1300, false, true).toDataURL('image/jpeg', 0.86)})`);
 root.setProperty('--parch-r', `linear-gradient(rgba(120,88,50,0.34), rgba(120,88,50,0.34)), url(${Ink.parchment(860, 1300, true, true).toDataURL('image/jpeg', 0.86)})`);
 root.setProperty('--frame', `url(${drawFrame().toDataURL()})`);
-root.setProperty('--grid-frame', `url(${drawFrame(1000, 470).toDataURL()})`);
+root.setProperty('--grid-frame', `url(${drawFrame(1000, 470, { vine: false }).toDataURL()})`);
+root.setProperty('--sheet-art', `url(${drawSheet().toDataURL()})`);
+root.setProperty('--banner', `url(${drawBanner().toDataURL()})`);
+root.setProperty('--crest', `url(${drawCrest().toDataURL()})`);
 root.setProperty('--wood', `linear-gradient(rgba(10,7,6,0.55), rgba(10,7,6,0.55)), url(${Ink.leather(512).toDataURL('image/jpeg', 0.8)})`);
 {
   const r = Ink.seeded(77), pts = [];

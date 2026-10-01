@@ -389,37 +389,181 @@ export function drawHero(w = 300, h = 460) {
   return outlined(c);
 }
 
-/* ---------- Ornate ink frame for the story page ---------- */
-export function drawFrame(w = 1000, h = 1480) {
-  const c = Ink.canvas(w, h), x = c.getContext('2d'), col = 'rgba(58,38,24,0.86)';
+/* ---------- Ornate ink frame for the story page, after the HD book ---------- */
+/* A spiral that winds inwards from (cx, cy) + r0 at angle a0, the way an engraver ends a tendril */
+function curl(x, cx, cy, r0, a0, turns, dir) {
+  x.beginPath();
+  for (let i = 0; i <= 48; i++) {
+    const t = i / 48, a = a0 + dir * t * turns * Math.PI * 2, r = r0 * (1 - 0.78 * t);
+    if (i) x.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r); else x.moveTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+  }
+  x.stroke();
+}
+/* A running vine along a band from x = 0 to len, centred on y = 0 and b high: a wavering stem, a
+   tendril curling out of every crest and trough, a leaf beside it and a berry in the hollow. */
+function vine(x, len, b, col) {
+  const n = Math.max(2, Math.round(len / (b * 1.6))), p = len / n, A = b * 0.15, r0 = b * 0.19;
+  x.strokeStyle = col; x.fillStyle = col; x.lineCap = 'round'; x.lineJoin = 'round';
+  x.lineWidth = b * 0.1; x.beginPath(); x.moveTo(0, 0);
+  for (let i = 0; i < n * 2; i++) x.quadraticCurveTo(((i + 0.5) * p) / 2, (i % 2 ? 1 : -1) * A * 2, ((i + 1) * p) / 2, 0);
+  x.stroke();
+  for (let i = 0; i < n * 2; i++) {
+    const sgn = i % 2 ? 1 : -1, px = ((i + 0.5) * p) / 2, py = sgn * A, cx = px + r0 * 0.35, cy = sgn * (A + r0);
+    x.lineWidth = b * 0.085; curl(x, cx, cy, r0, Math.atan2(py - cy, px - cx), 1.15, sgn > 0 ? -1 : 1);
+    oval(x, px - p * 0.17, sgn * A * 1.7, b * 0.17, b * 0.065, col, sgn * 0.55);
+    dot(x, px + p * 0.25, -sgn * b * 0.24, b * 0.06, col);
+  }
+}
+/* opts.vine: the running vine in the border band (the page); without it, the beaded band of the
+   small boxes such as the discipline grid */
+export function drawFrame(w = 1000, h = 1480, opts = { vine: true }) {
+  const c = Ink.canvas(w, h), x = c.getContext('2d'), col = 'rgba(58,38,24,0.86)', V = opts.vine, B = 40, mid = 8 + 5 + B / 2, T = V ? 92 : 76; // the band lies between the rules; T: the corner tile
   x.strokeStyle = col; x.fillStyle = col; x.lineCap = 'round';
   x.lineWidth = 5; x.strokeRect(8, 8, w - 16, h - 16);
-  x.lineWidth = 1.5; x.strokeRect(31, 31, w - 62, h - 62);
-  x.lineWidth = 8; x.setLineDash([3, 8]); x.lineCap = 'butt'; x.strokeRect(19.5, 19.5, w - 39, h - 39); x.setLineDash([]); x.lineCap = 'round';
+  if (V) {
+    x.lineWidth = 2.5; x.strokeRect(57, 57, w - 114, h - 114);
+    x.lineWidth = 1; x.strokeRect(64, 64, w - 128, h - 128);
+    const e = 8 + T;
+    [[e, mid, 0, w - 2 * e], [w - e, h - mid, Math.PI, w - 2 * e], [mid, h - e, -Math.PI / 2, h - 2 * e], [w - mid, e, Math.PI / 2, h - 2 * e]].forEach(([tx, ty, a, len]) => {
+      x.save(); x.translate(tx, ty); x.rotate(a); vine(x, len, B, col); x.restore();
+    });
+  } else {
+    x.lineWidth = 1.5; x.strokeRect(31, 31, w - 62, h - 62);
+    x.lineWidth = 8; x.setLineDash([3, 8]); x.lineCap = 'butt'; x.strokeRect(19.5, 19.5, w - 39, h - 39); x.setLineDash([]); x.lineCap = 'round';
+  }
+  x.strokeStyle = col; x.fillStyle = col;
   const flourish = () => {
+    x.save(); if (V) x.translate(10, 10);
     x.lineWidth = 4.5; x.beginPath(); x.moveTo(78, 44); x.bezierCurveTo(140, 38, 206, 46, 190, 84); x.bezierCurveTo(181, 104, 150, 98, 157, 76); x.bezierCurveTo(162, 63, 180, 68, 175, 80); x.stroke();
     x.lineWidth = 3; x.beginPath(); x.moveTo(78, 62); x.bezierCurveTo(116, 74, 118, 116, 90, 114); x.bezierCurveTo(76, 112, 78, 96, 90, 98); x.stroke();
     x.beginPath(); x.ellipse(122, 56, 24, 7, 0.25, 0, Math.PI * 2); x.fill();
     x.beginPath(); x.ellipse(214, 50, 16, 4.5, -0.1, 0, Math.PI * 2); x.fill();
     x.beginPath(); x.arc(246, 48, 4, 0, Math.PI * 2); x.fill();
+    x.restore();
   };
+  // corner bosses: a dark tile with an interlaced quatrefoil cut through it, as the HD corners
   [[8, 8, 1, 1], [w - 8, 8, -1, 1], [8, h - 8, 1, -1], [w - 8, h - 8, -1, -1]].forEach(([tx, ty, sx, sy]) => {
     x.save(); x.translate(tx, ty); x.scale(sx, sy);
-    x.clearRect(-2, -2, 80, 80);
-    x.fillRect(0, 0, 76, 76);
-    x.globalCompositeOperation = 'destination-out'; poly(x, [[38, 10], [66, 38], [38, 66], [10, 38]], '#000'); x.globalCompositeOperation = 'source-over';
-    poly(x, [[38, 22], [54, 38], [38, 54], [22, 38]], col); x.strokeStyle = col;
+    x.clearRect(-2, -2, T + 6, T + 6);
+    x.fillRect(0, 0, T, T);
+    x.save(); x.scale(T / 76, T / 76); x.globalCompositeOperation = 'destination-out'; x.strokeStyle = '#000'; x.fillStyle = '#000'; x.lineWidth = 2;
+    x.strokeRect(6, 6, 64, 64);
+    if (V) {
+      x.lineWidth = 3.2; [[38, 25], [51, 38], [38, 51], [25, 38]].forEach(([qx, qy]) => { x.beginPath(); x.arc(qx, qy, 12.5, 0, Math.PI * 2); x.stroke(); });
+      x.lineWidth = 2.4; x.beginPath(); x.arc(38, 38, 25, 0, Math.PI * 2); x.stroke();
+      [[12, 12], [64, 12], [12, 64], [64, 64]].forEach(([qx, qy]) => { x.beginPath(); x.arc(qx, qy, 2.6, 0, Math.PI * 2); x.fill(); });
+    } else poly(x, [[38, 10], [66, 38], [38, 66], [10, 38]], '#000');
+    x.restore();
+    const d = (V ? 7 : 16) * (T / 76), o = T / 2;
+    poly(x, [[o, o - d], [o + d, o], [o, o + d], [o - d, o]], col);
     flourish(); x.save(); x.transform(0, 1, 1, 0, 0, 0); flourish(); x.restore();
     x.restore();
   });
-  [[w / 2, 19.5, 1], [w / 2, h - 19.5, -1]].forEach(([tx, ty, sy]) => {
+  // the middle of each long side: a lozenge in the band with scrolls either way along it
+  const lozenge = (tx, ty, a, size) => {
+    x.save(); x.translate(tx, ty); x.rotate(a);
+    x.clearRect(-size * 2.6, -B / 2 - 1, size * 5.2, B + 2);
+    poly(x, [[0, -size], [size * 1.1, 0], [0, size], [-size * 1.1, 0]], col);
+    x.save(); x.globalCompositeOperation = 'destination-out'; poly(x, [[0, -size * 0.45], [size * 0.5, 0], [0, size * 0.45], [-size * 0.5, 0]], '#000'); x.restore();
+    x.strokeStyle = col; x.lineWidth = 3;
+    [-1, 1].forEach((s) => {
+      x.beginPath(); x.moveTo(s * size * 1.15, 0); x.bezierCurveTo(s * size * 1.6, -size * 0.9, s * size * 2.4, -size * 0.6, s * size * 2.3, 0); x.stroke();
+      curl(x, s * size * 1.95, size * 0.05, size * 0.35, s > 0 ? 0 : Math.PI, 1, s > 0 ? 1 : -1);
+    });
+    x.restore();
+  };
+  if (V) { lozenge(mid, h / 2, Math.PI / 2, 17); lozenge(w - mid, h / 2, Math.PI / 2, 17); }
+  // the top and bottom: a diamond with leaves swept out either side
+  [[w / 2, V ? mid - 9 : 19.5, 1], [w / 2, V ? h - mid + 9 : h - 19.5, -1]].forEach(([tx, ty, sy]) => {
     x.save(); x.translate(tx, ty); x.scale(1, sy);
-    x.clearRect(-30, -14, 60, 28);
+    x.clearRect(V ? -46 : -30, -14, V ? 92 : 60, V ? B : 28);
     poly(x, [[0, -13], [22, 8], [0, 29], [-22, 8]], col);
-    x.globalCompositeOperation = 'destination-out'; poly(x, [[0, -2], [10, 8], [0, 18], [-10, 8]], '#000'); x.globalCompositeOperation = 'source-over';
+    x.save(); x.globalCompositeOperation = 'destination-out'; poly(x, [[0, -2], [10, 8], [0, 18], [-10, 8]], '#000'); x.restore();
+    x.strokeStyle = col; x.fillStyle = col;
     [-1, 1].forEach((s) => { x.lineWidth = 3.5; x.beginPath(); x.moveTo(s * 24, 26); x.bezierCurveTo(s * 60, 44, s * 96, 30, s * 84, 46); x.bezierCurveTo(s * 76, 56, s * 64, 48, s * 72, 42); x.stroke(); x.beginPath(); x.ellipse(s * 52, 30, 14, 4, s * 0.2, 0, Math.PI * 2); x.fill(); });
     x.restore();
   });
+  return c;
+}
+
+/* The right page's own dressing, laid over its parchment: a faint damask woven across it, as on
+   the HD sheets, a fine double rule inside the torn edge with curled corners, and the edges
+   darkened as old paper is. */
+function damask(x, s, col) {
+  for (const m of [1, -1]) {
+    x.save(); x.scale(m * s, s); x.fillStyle = col; x.strokeStyle = col; x.lineCap = 'round';
+    x.beginPath(); x.moveTo(0, 46); x.bezierCurveTo(26, 40, 50, 14, 40, -10); x.bezierCurveTo(34, -24, 18, -22, 20, -10); x.bezierCurveTo(22, 0, 32, -2, 30, -10);
+    x.bezierCurveTo(36, 10, 18, 28, 0, 28); x.closePath(); x.fill();
+    x.beginPath(); x.moveTo(0, 20); x.bezierCurveTo(8, 4, 8, -18, 0, -34); x.lineTo(0, 20); x.fill();
+    x.beginPath(); x.moveTo(0, -38); x.quadraticCurveTo(12, -54, 0, -72); x.quadraticCurveTo(4, -54, 0, -38); x.fill();
+    x.lineWidth = 2.4; curl(x, 46, 40, 9, Math.PI, 1.1, -1);
+    x.beginPath(); x.moveTo(6, 52); x.bezierCurveTo(20, 62, 36, 58, 42, 48); x.stroke();
+    x.restore();
+  }
+}
+export function drawSheet(w = 860, h = 1300) {
+  const c = Ink.canvas(w, h), x = c.getContext('2d'), col = 'rgba(58,38,24,';
+  for (let row = 0, y = -40; y < h + 160; row++, y += 150) for (let i = -1; i * 170 < w + 170; i++) { // a half-drop repeat
+    x.save(); x.translate(i * 170 + (row % 2 ? 85 : 0), y); damask(x, 0.9, col + '0.07)'); x.restore();
+  }
+  const g = x.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.35, w / 2, h / 2, Math.max(w, h) * 0.72);
+  g.addColorStop(0, 'rgba(40,24,10,0)'); g.addColorStop(1, 'rgba(40,24,10,0.32)'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+  // a slim border band inside the torn edge: rules either side of a fine vine, lighter than the story page's
+  const o = 30, B = 20, m = o + B / 2 + 2, e = o + 44;
+  x.strokeStyle = col + '0.7)'; x.lineWidth = 2; x.strokeRect(o, o, w - 2 * o, h - 2 * o);
+  x.lineWidth = 1.2; x.strokeRect(o + B + 4, o + B + 4, w - 2 * (o + B + 4), h - 2 * (o + B + 4));
+  [[e, m, 0, w - 2 * e], [w - e, h - m, Math.PI, w - 2 * e], [m, h - e, -Math.PI / 2, h - 2 * e], [w - m, e, Math.PI / 2, h - 2 * e]].forEach(([tx, ty, a, len]) => {
+    x.save(); x.translate(tx, ty); x.rotate(a); vine(x, len, B, col + '0.55)'); x.restore();
+  });
+  x.lineCap = 'round';
+  [[o, o, 1, 1], [w - o, o, -1, 1], [o, h - o, 1, -1], [w - o, h - o, -1, -1]].forEach(([tx, ty, sx, sy]) => {
+    x.save(); x.translate(tx, ty); x.scale(sx, sy);
+    x.fillStyle = col + '0.8)'; x.fillRect(0, 0, B + 4, B + 4);
+    x.save(); x.globalCompositeOperation = 'destination-out'; poly(x, [[12, 4], [20, 12], [12, 20], [4, 12]], '#000'); x.restore();
+    x.strokeStyle = col + '0.65)';
+    for (const t of [false, true]) {
+      x.save(); if (t) x.transform(0, 1, 1, 0, 0, 0);
+      x.lineWidth = 2.2; x.beginPath(); x.moveTo(B + 12, B + 12); x.bezierCurveTo(B + 44, B + 10, B + 74, B + 18, B + 68, B + 38); x.stroke(); curl(x, B + 60, B + 34, 9, -0.3, 1, 1);
+      oval(x, B + 38, B + 16, 9, 2.8, col + '0.65)', 0.15);
+      x.restore();
+    }
+    x.restore();
+  });
+  [[w / 2, m], [w / 2, h - m]].forEach(([tx, ty]) => { x.clearRect(tx - 22, ty - B / 2, 44, B); poly(x, [[tx, ty - 9], [tx + 14, ty], [tx, ty + 9], [tx - 14, ty]], col + '0.75)'); });
+  return c;
+}
+
+/* The ribbon that names the place at the head of the right page, after the HD banners: a pale
+   band with scrolled ends. Drawn wide, then used as a border-image so the ends keep their shape
+   and only the middle stretches; the crest above its middle is drawn apart (drawCrest) for the
+   same reason. */
+export function drawBanner(w = 900, h = 120) {
+  const c = Ink.canvas(w, h), x = c.getContext('2d'), ink = 'rgba(52,34,20,0.9)', paper = 'rgba(228,214,180,0.8)';
+  x.lineCap = 'round'; x.lineJoin = 'round';
+  // the band
+  const top = 42, bot = 98, l = 104, r = w - 104;
+  x.fillStyle = paper; x.strokeStyle = ink; x.lineWidth = 3;
+  x.beginPath(); x.moveTo(l, top); x.lineTo(r, top); x.lineTo(r, bot); x.lineTo(l, bot); x.closePath(); x.fill(); x.stroke();
+  x.lineWidth = 1; x.strokeRect(l + 4, top + 5, r - l - 8, bot - top - 10);
+  // the scrolled ends: the band rolls back on itself round a spindle, its tail curling away
+  [-1, 1].forEach((s) => {
+    const ex = s < 0 ? l : r, cx = ex + s * 26, cy = (top + bot) / 2;
+    x.fillStyle = paper; x.strokeStyle = ink; x.lineWidth = 3;
+    x.beginPath(); x.moveTo(ex, top); x.bezierCurveTo(ex + s * 30, top - 4, cx + s * 30, cy - 30, cx + s * 30, cy); x.bezierCurveTo(cx + s * 30, cy + 26, ex + s * 20, bot + 4, ex, bot); x.closePath(); x.fill(); x.stroke();
+    x.lineWidth = 2.6; curl(x, cx + s * 6, cy, 20, s > 0 ? Math.PI : 0, 1.4, s > 0 ? 1 : -1);
+    x.lineWidth = 2.4; x.beginPath(); x.moveTo(cx + s * 26, cy + 18); x.bezierCurveTo(cx + s * 50, cy + 30, cx + s * 70, cy + 14, cx + s * 66, cy - 2); x.stroke();
+    curl(x, cx + s * 60, cy - 2, 7, s > 0 ? 0 : Math.PI, 1, s > 0 ? -1 : 1);
+  });
+  return c;
+}
+/* the pointed arch of flourish over the ribbon's middle, with a lozenge at its peak */
+export function drawCrest(w = 360, h = 44) {
+  const c = Ink.canvas(w, h), x = c.getContext('2d'), ink = 'rgba(52,34,20,0.9)', m = w / 2;
+  x.lineCap = 'round'; x.strokeStyle = ink; x.lineWidth = 2.6;
+  x.beginPath(); x.moveTo(m - 150, h - 4); x.bezierCurveTo(m - 80, h - 8, m - 30, h - 16, m, 14); x.bezierCurveTo(m + 30, h - 16, m + 80, h - 8, m + 150, h - 4); x.stroke();
+  [-1, 1].forEach((s) => curl(x, m + s * 160, h - 11, 8, s > 0 ? Math.PI : 0, 1, s > 0 ? -1 : 1));
+  [-1, 1].forEach((s) => oval(x, m + s * 58, h - 13, 13, 3.5, ink, s * -0.2));
+  poly(x, [[m, 2], [m + 8, 11], [m, 20], [m - 8, 11]], ink);
   return c;
 }
 

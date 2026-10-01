@@ -271,6 +271,14 @@ attack; `item` drinks Laumspur. When `B.over` is set the left page shows the out
   running man.
 - `portraitFromArt`, `drawFrame`, `gearSVG`: Lone Wolf's ink likeness for the Kai and
   inventory panels, the page frame (also the discipline grid's frame), the clockwork.
+  `drawFrame` (after the HD book): a border band with a running vine (`vine`: a wavering stem,
+  curled tendrils, leaves, berries) between heavy and double rules, square corner tiles with an
+  interlaced quatrefoil cut through them and flourishes, lozenges with scrolls mid-side, a diamond
+  with swept leaves top and bottom. `{ vine: false }` gives the plain beaded band for small boxes.
+- `drawSheet`: laid over the right page's parchment (`--sheet-art`): a faint half-drop damask, a
+  darkened edge, and a slimmer vine band inside the torn edge with corner tiles and curls.
+- `drawBanner` / `drawCrest`: the place's ribbon with scrolled ends (a border-image, so only its
+  middle stretches) and the pointed arch of flourish above it (its own background, unstretched).
 - Story illustrations are plain `<img>` with `mix-blend-mode: multiply`; full plates also get a
   soft radial mask.
 
