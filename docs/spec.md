@@ -172,7 +172,8 @@ not plain shapes.
 
 ### 6.3 Inventory panel
 
-Weapon and Special Item slots around the figure, the Backpack as a grid of eight, gold. Touching
+After the HD equipment sheet (owner's request, 2026-10-01): weapon and Special Item slots over Lone
+Wolf's ink likeness, the Backpack as a grid of eight dark tiles, gold. Items are drawn glyphs. Touching
 an item explains it and offers what can be done with it. Controls to add or remove anything by
 hand.
 

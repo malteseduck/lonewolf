@@ -136,7 +136,9 @@ button.med:disabled { opacity: 0.4; }
 .ledgers { flex: none; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 1.4em; position: relative; font: 400 0.8em/1.45 var(--title); font-variant-numeric: lining-nums; }
 .ledgers::before { content: ''; position: absolute; left: 50%; top: 1.6em; bottom: 0.2em; border-left: 1px solid var(--ink-faint); }
 .ledgers::after { content: ''; position: absolute; left: 50%; top: 0.75em; width: 0.5em; height: 0.5em; margin-left: -0.25em; background: var(--ink); transform: rotate(45deg); }
-.panel .ledgers h4 { display: block; letter-spacing: 0.02em; text-transform: none; margin: 0 0 0.15em; font: 400 1.35em/1.2 var(--title); color: var(--ink); text-align: right; }
+h4.ruled { flex: none; margin: 0 0 0.15em; font: 400 1.08em/1.2 var(--title); color: var(--ink); text-align: right; }
+.ledgers h4.ruled { font-size: 1.35em; }
+h4.ruled small { font-size: 0.7em; color: var(--ink-dim); margin-left: 0.3em; }
 .ledgers section > div ~ h4 { margin-top: 0.35em; }
 .swash { display: flex; align-items: flex-end; height: 0.42em; margin-top: -0.05em; }
 .swash svg { flex: none; width: 1.9em; height: 0.62em; fill: var(--ink); }
@@ -174,16 +176,35 @@ button.disc:hover, button.disc:focus-visible, .disc.sel { outline: none; box-sha
 button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background: rgba(233, 224, 200, 0.45); }
 
 /* inventory */
-.gear-up { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr minmax(0, 1.3fr) 1fr; grid-template-rows: auto minmax(0, 1fr); align-items: center; justify-items: center; gap: 0.4em 0.6em; }
-.gear-up img { grid-column: 2; grid-row: 2; height: 100%; min-height: 0; max-width: 100%; object-fit: contain; mix-blend-mode: multiply; opacity: 0.8; }
-.gear-up > .med, .gear-up > button.med { grid-row: 2; }
-.gear-up .specials { grid-column: 1 / -1; grid-row: 1; display: flex; gap: 0.6em; }
-.gear-up .med { --s: 4.4em; }
-.gear-up .specials .med { --s: 3em; }
-.pack { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.35em; padding: 0.4em; background: rgba(51, 35, 26, 0.16); box-shadow: inset 0 0 0 1px var(--ink-faint); }
-.pack .cell { display: grid; place-items: center; padding: 0.3em; background: rgba(51, 35, 26, 0.18); box-shadow: inset 0 0 0 1px rgba(51, 35, 26, 0.35); }
-.pack .med { --s: 3.3em; }
-.panel h4 { margin: 0; font: 400 0.68em var(--title); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-dim); display: flex; justify-content: space-between; }
+/* inventory, after the HD equipment sheet */
+.kit { position: relative; flex: 1; min-height: 9.5em; display: flex; flex-direction: column; justify-content: center; gap: 0.5em; }
+.kit img { position: absolute; left: 50%; top: 50%; width: 120%; max-height: 120%; object-fit: contain; transform: translate(-50%, -54%); opacity: 0.7; pointer-events: none; }
+.worn { position: relative; display: grid; grid-template-columns: repeat(3, auto); grid-template-rows: auto auto; justify-content: center; align-items: center; gap: 0 1.1em; }
+.worn .head { grid-column: 2; grid-row: 1; justify-self: center; margin-bottom: -0.2em; }
+.worn > .disc { grid-row: 2; --s: 3.6em; }
+.worn .body { grid-column: 2; grid-row: 2; }
+.worn .body .disc { --s: 4.4em; }
+.specials { position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4em 0.7em; }
+.specials .disc { --s: 2.7em; }
+.disc.item .glyph i { background: linear-gradient(var(--silver-hi), var(--silver) 55%, var(--silver-lo)); }
+.disc.item.lit .glyph i { background: radial-gradient(circle at 50% 45%, var(--glyph) 45%, #f3d6a0 80%, var(--ember)); }
+/* an empty slot: the ring alone, open to whatever lies under it */
+.disc.empty { -webkit-mask: radial-gradient(circle closest-side, transparent 64%, #000 65%); mask: radial-gradient(circle closest-side, transparent 64%, #000 65%);
+  background: radial-gradient(circle closest-side, transparent 0 64%, rgba(12, 7, 5, 0.6) 65% 68%, transparent 69%),
+    radial-gradient(circle closest-side, transparent 0 73%, rgba(20, 12, 8, 0.5) 74% 76%, transparent 77% 88%, rgba(20, 12, 8, 0.6) 89% 91%, transparent 92%),
+    repeating-conic-gradient(var(--pewter) 0 5deg, var(--pewter-lo) 5deg 7.5deg, var(--pewter) 7.5deg 10deg);
+  opacity: 0.8; box-shadow: 0 0 0 0.07em rgba(20, 12, 8, 0.5); }
+.disc.empty::after, .bag > .disc::after, .pack .disc::after, .specials .disc::after { display: none; }
+.bag { flex: none; display: flex; align-items: center; gap: 0.7em; }
+.bag > .disc { --s: 3.4em; }
+.pack { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.25em; padding: 0.3em; background: var(--enamel); box-shadow: 0 0 0 0.08em var(--pewter-lo), 0 0 0 0.16em var(--enamel-lo), 0 0.15em 0.4em rgba(0, 0, 0, 0.4); }
+/* each tile: dark leather with an engraved inner line, as the HD Backpack grid */
+.pack .cell { display: grid; place-items: center; padding: 0.25em; background: radial-gradient(circle, #3b2b21, #22170f 75%); box-shadow: inset 0 0 0 0.06em rgba(138, 123, 100, 0.55), inset 0 0 0 0.16em #1a110b, inset 0 0 0 0.22em rgba(138, 123, 100, 0.25); }
+.pack .disc { --s: 2.9em; }
+.purse { display: inline-flex; align-items: center; gap: 0.3em; font: 400 0.9em var(--title); }
+.purse b { font-weight: 400; font-size: 1.3em; font-variant-numeric: lining-nums; }
+.purse .glyph { width: 1.4em; height: 1.4em; }
+.purse .glyph i { background: linear-gradient(var(--bronze-hi), var(--bronze) 55%, var(--bronze-lo)); }
 
 /* the fight */
 .foebar { display: flex; align-items: center; gap: 0.8em; font: 400 1.05em var(--title); color: var(--blood); }

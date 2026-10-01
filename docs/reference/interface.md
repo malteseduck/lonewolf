@@ -64,8 +64,13 @@ bronze plaque with Combat Skill, Endurance and gold.
     Glyphs are game-icons.net SVGs in `assets/icons/` (`DISC_GLYPH`), used as CSS masks so they
     can take the ivory fill and ember glow.
   - `.caption` explains the selected discipline, and says when it is not learned.
-- **pack** (`packHTML`): Special Items row, two weapon slots beside the figure, eight Backpack
-  cells, a ledger (gold -/+, "Add an item by hand" select), and the caption with Drink / Drop / Eat.
+- **pack** (`packHTML`), after the HD equipment sheet: in `.kit`, the portrait faint behind the
+  slots he wears (helmet above, the two weapons either side of the chainmail; a mastered weapon is
+  lit), the other Special Items in a row beneath (at least four slots, empty ones as bare rings);
+  then a ruled "Backpack" heading, a knapsack medallion beside eight dark tiles (one per Meal or
+  item); a ledger (gold -/+, "Add an item by hand" select); and the caption with Drink / Drop / Eat.
+  Item glyphs are game-icons.net SVGs (`ITEM_GLYPH`); items typed in by hand get a pouch or a
+  pendant by their kind.
 - **map**: three cases, plus "The whole map" (the zoomable replica) for any book whose spec is one.
   - Book has `locations` (the demo, and Book 1 through `placeBook`): `updateMap()`. Destinations for the current choices are lit rings;
     the same choices are listed under the map. Picking one walks the figure there, then turns the page.
@@ -248,7 +253,8 @@ attack; `item` drinks Laumspur. When `B.over` is set the left page shows the out
   `art/manifest.json`) it draws the inked illustration top-aligned, showing about 80% of its
   height. Without, it draws a procedural silhouette (`kraan`, `giak`, `vordak`) or the crossed-
   swords `emblem`.
-- `drawFigure`, `drawFrame`, `gearSVG`: the cloaked figure, the page frame, the clockwork.
+- `portraitFromArt`, `drawFrame`, `gearSVG`: Lone Wolf's ink likeness for the Kai and
+  inventory panels, the page frame (also the discipline grid's frame), the clockwork.
 - Story illustrations are plain `<img>` with `mix-blend-mode: multiply`; full plates also get a
   soft radial mask.
 

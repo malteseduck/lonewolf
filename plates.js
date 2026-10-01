@@ -163,25 +163,6 @@ export function newWound() {
   return { x1: cx - Math.cos(a) * len / 2, y1: cy - Math.sin(a) * len / 2, x2: cx + Math.cos(a) * len / 2, y2: cy + Math.sin(a) * len / 2, k: 0, spots };
 }
 
-/* ---------- The Kai lord on the Action Chart ---------- */
-export function drawFigure(w = 520, h = 820) {
-  const c = Ink.canvas(w, h), x = c.getContext('2d');
-  oval(x, 260, 770, 190, 26, `rgba(${INK},0.18)`);
-  for (let i = 0; i < 40; i++) oval(x, 260 + (Math.random() - 0.5) * 300, 420 + (Math.random() - 0.5) * 500, 60 + Math.random() * 80, 60 + Math.random() * 80, `rgba(${INK},0.012)`);
-  poly(x, [[206, 690], [250, 690], [246, 772], [196, 772]], solid); poly(x, [[272, 690], [316, 690], [326, 772], [276, 772]], solid);
-  poly(x, [[196, 190], [324, 190], [372, 300], [400, 520], [424, 712], [388, 694], [356, 722], [318, 696], [282, 720], [246, 696], [208, 722], [170, 694], [134, 716], [110, 708], [126, 520], [150, 300]], solid);
-  oval(x, 260, 132, 66, 82, solid);
-  poly(x, [[206, 170], [314, 170], [338, 236], [182, 236]], solid);
-  oval(x, 260, 150, 36, 48, 'rgba(10,6,4,0.98)');
-  cut(x, () => { poly(x, [[246, 250], [274, 250], [292, 690], [228, 690]], 'rgba(0,0,0,0.42)'); });
-  line(x, [[228, 440], [292, 452]], 7, solid); dot(x, 262, 446, 9, `rgba(${PAPER},0.5)`);
-  line(x, [[330, 430], [392, 700]], 8, solid); line(x, [[312, 442], [352, 424]], 8, solid); dot(x, 322, 410, 8, solid);
-  line(x, [[176, 300], [156, 560]], 2, `rgba(${PAPER},0.16)`); line(x, [[346, 300], [372, 580]], 2, `rgba(${PAPER},0.16)`);
-  x.globalCompositeOperation = 'source-atop'; x.strokeStyle = `rgba(${PAPER},0.12)`; x.lineWidth = 1.2;
-  for (let i = -h; i < w; i += 8) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i + h, h); x.stroke(); }
-  return c;
-}
-
 /* ---------- Lone Wolf as a figure standing on the maps ---------- */
 
 /* under the feet, on a 300x460 canvas: a bronze arrowhead pointing down to the spot itself at

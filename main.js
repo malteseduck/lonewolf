@@ -2,7 +2,7 @@
    Left page: the story. Right page: a panel (Kai Disciplines, inventory, map, or the fight).
    Plays the built-in demo chapter, or a full book imported by tools/import_projectaon.py. */
 import * as Ink from './shared/ink.js';
-import { drawCreature, setArt, newWound, drawFigure, drawHero, heroFromArt, portraitFromArt, drawFrame, gearSVG } from './plates.js';
+import { drawCreature, setArt, newWound, drawHero, heroFromArt, portraitFromArt, drawFrame, gearSVG } from './plates.js';
 import { MAPS, LASTLANDS, mapCanvas, loadStamps, stampsLoaded, printedCanvas, replicaModel, replicaCanvas, placeBook, along } from './maps.js';
 
 const LW = window.LW;
@@ -28,19 +28,8 @@ const ICON = {
   axe: '<path d="M10.500 2h2.500v20h-2.500zM13 4c5 .500 7 3 7 6s-2 5.500-7 6zM10.500 6C7 6.500 5 8 5 10s2 3.500 5.500 4z"/>',
   burst: '<path d="M12 1l2.500 7L21 5l-3.500 6.500L23 14l-6.500 1L18 22l-6-4-6 4 1.500-7L1 14l5.500-2.500L3 5l6.500 3z"/>',
   flask: '<path d="M9 2h6v2h-1v5l5 9a3 3 0 0 1-2.600 4.500H7.600A3 3 0 0 1 5 18l5-9V4H9z"/>',
-  bowl: '<path d="M2 11h20a10 10 0 0 1-6.500 9.400V22h-7v-1.600A10 10 0 0 1 2 11zM8 3c2 2-1 3 1 6H7C5.500 6 8 5 8 3zm5 0c2 2-1 3 1 6h-2c-1.500-3 1-4 1-6z"/>',
-  scroll: '<path fill-rule="evenodd" d="M4 4h13a3 3 0 0 1 3 3v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm3 4v1.800h9V8zm0 4v1.800h9V12zm0 4v1.800h6V16z"/>',
-  sack: '<path d="M9 2h6l-1.500 3.500C18 7 20 11 20 15c0 4-3 7-8 7s-8-3-8-7c0-4 2-8 6.500-9.500z"/>',
-  helm: '<path d="M12 2c5 0 9 4 9 10v8h-6v-7h-2v7H4v-8c0-6 3-10 8-10z"/>',
   coins: '<ellipse cx="9" cy="8" rx="7" ry="3.500"/><path d="M2 11c0 2 3 3.500 7 3.500s7-1.500 7-3.500v3c0 2-3 3.500-7 3.500S2 16 2 14z"/><path d="M8 19.500c1 1.500 3.500 2.500 7 2.500 4 0 7-1.500 7-3.500v-3c0 1.700-2.300 3.100-5.500 3.400-.8 1-2.900 1.800-5.500 2z"/>',
   flee: '<path d="M3 11h11.500l-3.800-3.800L12.500 5.500 19.500 12.500l-7 7-1.800-1.700L14.500 14H3z"/><path d="M20 4h2v17h-2z"/>',
-  eye: '<path fill-rule="evenodd" d="M1 12c3-5.500 7-8 11-8s8 2.500 11 8c-3 5.500-7 8-11 8S4 17.500 1 12zm11-4.500a4.500 4.500 0 1 0 0 9 4.500 4.500 0 0 0 0-9z"/><circle cx="12" cy="12" r="2"/>',
-  arrow: '<path d="M21 3l-1 7-2.200-2.200L6 19.600V22H3v-3h2.400L17.200 7.200 15 5z"/>',
-  foot: '<ellipse cx="9" cy="14" rx="4.500" ry="7"/><circle cx="6" cy="4" r="1.800"/><circle cx="10" cy="3" r="1.800"/><circle cx="14" cy="4.500" r="1.800"/><ellipse cx="18" cy="16" rx="2.500" ry="4.500"/>',
-  leaf: '<path fill-rule="evenodd" d="M12 2c4 5 7 8.500 7 12a7 7 0 1 1-14 0c0-3.500 3-7 7-12zm-1 9v2.500H8.500v2H11V18h2v-2.500h2.500v-2H13V11z"/>',
-  shield: '<path d="M12 2l8 3v6c0 5-3.500 9-8 11-4.500-2-8-6-8-11V5z"/>',
-  paw: '<ellipse cx="12" cy="16" rx="5.500" ry="4.500"/><ellipse cx="5" cy="10" rx="2.200" ry="3"/><ellipse cx="9.500" cy="6" rx="2.200" ry="3"/><ellipse cx="14.500" cy="6" rx="2.200" ry="3"/><ellipse cx="19" cy="10" rx="2.200" ry="3"/>',
-  stones: '<path d="M12 2l4 5-4 5-4-5zM5 12l3 4-3 4-3-4zM19 12l3 4-3 4-3-4zM12 15l2.500 3.500L12 22l-2.500-3.500z"/>',
 };
 /* Drawn glyphs for the disciplines, from game-icons.net (assets/icons/README.txt), cut from the
    medallion's colour by a mask so they can glow like the HD ones */
@@ -54,9 +43,11 @@ const ROSE = (() => {
   return `<svg class="rose" viewBox="-50 -50 100 100" aria-hidden="true"><circle class="ring" r="21"/>${minor}${major}<circle class="lt" r="3.2"/></svg>`;
 })();
 const TAB_ART = { kai: glyph('wolf-head'), pack: glyph('locked-chest'), map: ROSE };
-const ITEM_ICON = { axe: 'axe', potion: 'flask', meal: 'bowl', map: 'scroll', helmet: 'helm', chainmail: 'shield' };
 const icon = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[name] || ICON.sword}</svg>`;
-const itemIcon = (id) => icon(ITEM_ICON[id] || (LW.itemKind(id) === 'weapon' ? 'sword' : LW.itemKind(id) === 'special' ? 'scroll' : 'sack'));
+/* items, drawn the same way; anything typed in by hand gets a pouch or a pendant by its kind */
+const ITEM_GLYPH = { dagger: 'plain-dagger', spear: 'barbed-spear', mace: 'mace-head', shortSword: 'gladius', warhammer: 'warhammer', sword: 'pointy-sword', axe: 'battle-axe', quarterstaff: 'wizard-staff', broadsword: 'two-handed-sword',
+  bow: 'pocket-bow', quiver: 'quiver', potion: 'health-potion', meal: 'meal', map: 'treasure-map', helmet: 'visored-helm', chainmail: 'mail-shirt' };
+const itemGlyph = (id) => glyph(ITEM_GLYPH[id] || (LW.itemKind(id) === 'special' ? 'gem-pendant' : LW.itemKind(id) === 'weapon' ? 'pointy-sword' : 'swap-bag'));
 
 /* ---------- materials, drawn once ---------- */
 const root = document.documentElement.style;
@@ -75,7 +66,6 @@ root.setProperty('--wood', `linear-gradient(rgba(10,7,6,0.55), rgba(10,7,6,0.55)
   root.setProperty('--torn', `polygon(${pts.join(',')})`);
 }
 gear.innerHTML = gearSVG();
-const figureURL = drawFigure().toDataURL();
 let portraitURL = null; // Lone Wolf's likeness over the Kai panel, if the owner has a picture of him (art/manifest.json "portrait")
 /* Lone Wolf on the maps: the owner's picture of him cut out, toned sepia, over a pointer (art/manifest.json
    "hero": {src, crop}, or a file already cut out), else a painted stand-in */
@@ -228,7 +218,7 @@ function captionHTML() {
 }
 const stepper = (field) => `<span class="step"><button type="button" data-adj="${field}:-1" aria-label="Less">&minus;</button><button type="button" data-adj="${field}:1" aria-label="More">+</button></span>`;
 /* a ruled heading with the HD sheet's swash: a hairline that curls back at its left end */
-const ruled = (t) => `<h4>${t}<span class="swash"><svg viewBox="0 0 30 10" aria-hidden="true"><path d="M30 4.2C20 4.2 11 4.6 5.5 7.4 2.6 8.9.6 7.8 1.4 6.1 2.1 4.7 4.6 4.9 4.7 6.4 4.2 5.6 2.8 5.7 2.7 6.6 3.4 7.3 5 6.6 6.4 5.7 12 3.2 20 3.3 30 3.3Z"/></svg><i></i></span></h4>`;
+const ruled = (t) => `<h4 class="ruled">${t}<span class="swash"><svg viewBox="0 0 30 10" aria-hidden="true"><path d="M30 4.2C20 4.2 11 4.6 5.5 7.4 2.6 8.9.6 7.8 1.4 6.1 2.1 4.7 4.6 4.9 4.7 6.4 4.2 5.6 2.8 5.7 2.7 6.6 3.4 7.3 5 6.6 6.4 5.7 12 3.2 20 3.3 30 3.3Z"/></svg><i></i></span></h4>`;
 /* Kai panel, after the HD character sheet: his likeness, two ruled ledgers, and every discipline of
    the series as a medallion in a framed grid, the ones he has learned lit */
 function kaiHTML() {
@@ -249,18 +239,27 @@ function kaiHTML() {
     <div class="discs">${rows.map((r) => `<div class="drow">${r.map(disc).join(`<span class="linkwrap">${bar}</span>`)}</div>`).join('')}</div>
     <div class="caption">${captionHTML()}</div>`;
 }
+/* Inventory, after the HD equipment sheet: his likeness faint behind the slots he wears (helmet
+   above, weapons either side of the chest), the other Special Items in a row beneath, then the
+   Backpack as a grid of tiles beside its own medallion */
 function packHTML() {
   const h = game.hero, cells = [], on = (kind, id) => (sel && sel.kind === kind && sel.id === id ? 'sel' : '');
-  const med = (kind, id, extra = '') => `<button type="button" class="med ${on(kind, id)} ${extra}" data-sel="${kind}|${esc(id)}" aria-label="${esc(LW.itemName(id))}">${itemIcon(id)}</button>`;
-  for (let i = 0; i < h.meals; i++) cells.push(`<button type="button" class="med ${on('meal', 'meal')}" data-sel="meal|meal" aria-label="Meal">${icon('bowl')}</button>`);
-  h.backpack.forEach((b) => cells.push(med('pack', b)));
-  while (cells.length < LW.MAX_BACKPACK) cells.push('<div class="med empty"></div>');
-  const weapon = (w) => (w ? med('weapon', w, h.weaponskill === w ? 'lit' : '') : '<div class="med empty"></div>');
-  return `<div class="gear-up"><div class="specials">${h.special.map((s) => med('special', s)).join('')}</div>
-      ${weapon(h.weapons[0])}<img src="${figureURL}" alt="">${weapon(h.weapons[1])}</div>
-    <h4><span>Backpack</span><span>${h.backpack.length + h.meals} of ${LW.MAX_BACKPACK}</span></h4>
-    <div class="pack">${cells.map((c) => `<div class="cell">${c}</div>`).join('')}</div>
-    <div class="ledger"><span>Gold Crowns ${stepper('gold')}</span>
+  const slot = (kind, id, extra = '') => `<button type="button" class="disc item ${on(kind, id)} ${extra}" data-sel="${kind}|${esc(id)}" aria-label="${esc(LW.itemName(id))}">${itemGlyph(id)}</button>`;
+  const empty = (label) => `<span class="disc empty"${label ? ` title="${label}"` : ''}></span>`;
+  const worn = (id) => (h.special.includes(id) ? slot('special', id) : empty(esc(LW.itemName(id))));
+  const skilled = (w) => h.weaponskill === w || (h.series === 'magnakai' && LW.has(h, 'weaponmastery') && (h.mastery || []).includes(w));
+  const weapon = (w) => (w ? slot('weapon', w, skilled(w) ? 'lit' : '') : empty('Weapon'));
+  const others = h.special.filter((s) => s !== 'helmet' && s !== 'chainmail').map((s) => slot('special', s));
+  while (others.length < 4) others.push(empty());
+  for (let i = 0; i < h.meals; i++) cells.push(`<button type="button" class="disc item ${on('meal', 'meal')}" data-sel="meal|meal" aria-label="Meal">${itemGlyph('meal')}</button>`);
+  h.backpack.forEach((b) => cells.push(slot('pack', b)));
+  while (cells.length < LW.MAX_BACKPACK) cells.push(empty());
+  return `<div class="kit">${portraitURL ? `<img src="${portraitURL}" alt="">` : ''}
+      <div class="worn"><span class="head">${worn('helmet')}</span>${weapon(h.weapons[0])}<span class="body">${worn('chainmail')}</span>${weapon(h.weapons[1])}</div>
+      <div class="specials">${others.join('')}</div></div>
+    ${ruled(`Backpack <small>${h.backpack.length + h.meals} of ${LW.MAX_BACKPACK}</small>`)}
+    <div class="bag"><span class="disc lit">${glyph('knapsack')}</span><div class="pack">${cells.map((c) => `<div class="cell">${c}</div>`).join('')}</div></div>
+    <div class="ledger"><span class="purse">${glyph('two-coins')}<b>${h.gold}</b> Gold Crowns ${stepper('gold')}</span>
       <select id="additem" aria-label="Add an item"><option value="">Add an item by hand</option><optgroup label="Weapons">${LW.WEAPONS.map((w) => `<option value="${w}">${esc(LW.itemName(w))}</option>`).join('')}</optgroup>
       <optgroup label="Backpack"><option value="meal">Meal</option><option value="potion">Laumspur Potion</option><option value="other:pack">Something else</option></optgroup>
       <optgroup label="Special Items"><option value="helmet">Helmet</option><option value="chainmail">Chainmail Waistcoat</option><option value="other:spec">Something else</option></optgroup></select></div>
