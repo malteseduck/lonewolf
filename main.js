@@ -149,7 +149,7 @@ let mode = 'title';          // title | story | battle
 let panel = 'kai';           // kai | pack | map
 let sel = null;              // what the caption under a panel describes
 let busy = false, gearTurn = 0, B = null, mapScan = false, mapShown = null;
-let intro = false;           // a new game shows the book's introduction before section 1
+let intro = false;           // the book's introduction is showing: 'new' before section 1 of a new game, 'again' when re-read from the shelf
 let armed = null;            // steps back to the past place on the map whose "Go back here" is showing
 const REWIND = 3;            // how many sections back a rewind reaches
 
@@ -256,7 +256,7 @@ function shelfHTML() {
     const at = savedAt(id), b = BOOKS[id];
     return `<div class="plaq ${at ? 'going' : ''}"><button type="button" class="plaqmain" data-book="${id}">
         <span class="med">${roman(b.number)}</span><span class="plaqtext"><b>${esc(b.title)}</b><i>${at ? `Continue at section ${esc(String(at))}` : `Book ${b.number} · begin`}</i></span></button>
-      <span class="plaqmore">${at ? `<button type="button" class="inkbtn" data-book="${id}" data-fresh>start over</button>` : ''}${can(id) ? `<button type="button" class="inkbtn" data-book="${id}" data-anew>new character</button>` : ''}</span></div>`;
+      <span class="plaqmore">${at && b.intro && b.intro.length ? `<button type="button" class="inkbtn" data-book="${id}" data-tssf>the story so far</button>` : ''}${at ? `<button type="button" class="inkbtn" data-book="${id}" data-fresh>start over</button>` : ''}${can(id) ? `<button type="button" class="inkbtn" data-book="${id}" data-anew>new character</button>` : ''}</span></div>`;
   };
   const ids = bookIds();
   return `<div class="shelfpage">${ruled(`${advName(adv.at)} <button type="button" class="inkbtn" data-shelf="">all adventures</button>`)}
@@ -268,7 +268,7 @@ function leftHTML() {
   if (mode === 'title') return titleLeftHTML();
   if (intro) return `<div class="badge"><div class="med" style="--s:3.300em">${glyph('wolf-head')}</div></div><div class="story"><div class="scroll" id="scroll">
       <span class="eyebrow lead">The story so far</span><div class="text">${book.intro.map((p, i) => `<p class="${i ? '' : 'first'}">${esc(p)}</p>`).join('')}</div></div>
-      <div class="finis"><button type="button" class="seal" data-intro>Begin</button></div></div>`;
+      <div class="finis"><button type="button" class="seal" data-intro>${intro === 'again' ? `Back to section ${esc(game.s.at)}` : 'Begin'}</button></div></div>`;
   const sec = game.section, id = game.s.at;
   const badge = `<div class="badge"><div class="med" style="--s:3.300em"><span style="font:400 1em var(--title)">${esc(id)}</span></div></div>`;
 
@@ -868,7 +868,7 @@ bookEl.addEventListener('click', (e) => {
   if (!('arm' in d)) armed = null;
   if (d.arm) { armed = armed === +d.arm ? null : +d.arm; LW.sfx('select'); return void renderRight(); }
   if (d.back) return void guard(() => goBack(+d.back));
-  if (d.book) guard(() => begin(d.book, 'fresh' in d, 'anew' in d));
+  if (d.book) guard(() => begin(d.book, 'fresh' in d, 'anew' in d, 'tssf' in d));
   else if (d.adv) {
     useAdventure(d.adv);
     const b = adventure().book, alive = b && BOOKS[b] && hasSave(b) && saved(b).s.hero.ep > 0; // a fallen one goes to the books, to start over
@@ -940,15 +940,16 @@ pr.addEventListener('pointerover', (e) => { const c = e.target.closest('.roads .
 
 /* toShelf: back to this adventure's books (after a death or an ending) rather than the list of adventures */
 function toTitle(toShelf) { B = null; mode = 'title'; intro = false; shelf = !!toShelf; forgetting = null; render(); }
-/* fresh = ignore this book's save. anew = roll a new character even though one is being carried. */
-async function begin(id, fresh, anew) {
+/* fresh = ignore this book's save. anew = roll a new character even though one is being carried.
+   reread = open a saved game on the introduction. */
+async function begin(id, fresh, anew, reread) {
   useBook(id);
   intro = false;
-  if (!fresh && !anew && game.load()) { mode = 'story'; panel = roads().length ? 'map' : 'kai'; sel = null; return turn(render); }
+  if (!fresh && !anew && game.load()) { mode = 'story'; panel = roads().length ? 'map' : 'kai'; sel = null; if (reread && book.intro && book.intro.length) intro = 'again'; return turn(render); }
   game.clear();
   const kept = LW.Character.load(), carry = !anew && kept && !kept.completed.includes(id) ? kept : null;
   const hero = await LW.UI.chooseCharacter(book, carry);
-  game.start(hero); mode = 'story'; panel = 'kai'; sel = null; intro = !!(book.intro && book.intro.length);
+  game.start(hero); mode = 'story'; panel = 'kai'; sel = null; intro = book.intro && book.intro.length ? 'new' : false;
   await turn(render);
   if (hero.found) LW.UI.toast(`In the ruins you also find: ${hero.found === 'meals' ? 'two Meals' : hero.found === 'gold' ? '12 Gold Crowns' : LW.itemName(hero.found)}.`);
   else if (hero.simpleKit) LW.UI.toast('You start with a Sword, a Meal and some gold. Add the rest of the book\u2019s starting kit by hand.');
