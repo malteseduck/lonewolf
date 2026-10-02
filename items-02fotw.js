@@ -6,6 +6,8 @@
      rolls gold  Gold Crowns won or lost by the number drawn
      take special: 'all'   every Special Item
      need null   clears a gate the importer set wrongly
+     need item   may be a list, any of which will do; ever: having once been given it is enough
+     noHunt      Hunting does not excuse the Meal (the Wildlands)
      fight       undead (a blade that doubles against the undead does so), drain (ENDURANCE lost
                  each round unless shielded), with ('none': bare-handed; an item: only it can harm
                  this foe), double (every loss the foe takes is doubled)
@@ -47,6 +49,10 @@ export const SECTIONS = {
   29: { ep: -2 },
   30: { fight: { undead: true } },
   31: { ep: 6 },
+  // the Wildlands: Hunting finds nothing there (346 says so; the owner applied it to Ragadorn and its road)
+  32: { noHunt: true },
+  36: { need: { 145: { item: ['laumspurHerb', 'potion', 'rendalimPotion'], spend: true } } },
+  37: { noHunt: true },
   39: { need: { 346: { item: 'ticket' }, 156: { item: 'ticket', not: true } } },
   40: { ep: 'full', give: [{ item: 'rendalimPotion' }] },
   41: { todo: 'if you take his advice and sleep, restore 1 ENDURANCE.' },
@@ -82,6 +88,7 @@ export const SECTIONS = {
   // reached only by giving Rhygar the spear (or not having one)
   118: { take: [{ item: 'magicSpear' }] },
   124: { loot: [{ gold: 42 }, { item: 'shortSword' }, { item: 'dagger' }] },
+  127: { noHunt: true },
   128: { fight: { undead: true } },
   // bare-handed whatever he carries: the importer's -4 is the engine's own
   131: { fight: { csMod: 0, with: 'none' } },
@@ -92,7 +99,8 @@ export const SECTIONS = {
   141: { ep: -2, take: [{ item: 'chainmail' }] },
   142: { give: [{ item: 'whitePass' }] },
   144: { give: [{ meal: 2 }], take: [{ gold: 'all' }] },
-  145: { ep: -5, todo: 'the Laumspur you swallowed is gone: drop it from your Backpack.' },
+  145: { ep: -5 },
+  148: { noHunt: true },
   149: { need: { 223: { item: 'seal' } } },
   154: { ep: -2 },
   157: { fight: { unarmed: true } },
@@ -120,7 +128,7 @@ export const SECTIONS = {
   237: { fight: { undead: true } },
   238: { todo: 'your weapons wait at the door (keep them on your Action Chart); you are given a token worth 1 Gold Crown here, once only. Play Cartwheel with the medallion and settle your gold by hand.' },
   240: { todo: 'with Healing, restore all your ENDURANCE; without it, half of what you have lost in combat.' },
-  246: { need: { 170: { item: 'whitePass' }, 202: { item: 'redPass' } } },
+  246: { need: { 170: { item: 'whitePass' }, 202: { item: 'redPass' }, 327: { item: ['whitePass', 'redPass'], not: true } } },
   250: { need: { 223: { item: 'seal' } } },
   258: { ep: -1 },
   260: { loot: [{ item: 'sword' }] },
@@ -146,6 +154,7 @@ export const SECTIONS = {
   313: { ep: -4, take: [{ item: 'magicSpear' }] },
   321: { todo: 'unless you have food in your Backpack, lose 2 ENDURANCE.' },
   327: { loot: [{ item: 'papers', cost: 6 }] },
+  328: { need: { 113: { item: 'crystalStar', ever: true } } },
   329: { give: [{ gold: 10 }] },
   330: { ep: -5 },
   331: { loot: [{ item: 'sword' }, { item: 'dagger' }, { gold: 3 }] },

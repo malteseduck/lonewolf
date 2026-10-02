@@ -40,6 +40,7 @@ with it, choices that change location are made on the map; without it, every cho
 | `combat` | Combat | must be won (or evaded) before choices open |
 | `rnt` | `'auto'` \| `'free'` | the section calls for a Random Number. `auto`: the draw opens only the matching choice. `free`: the draw is shown and every choice stays open |
 | `meal` | true | a Meal must be eaten on arrival |
+| `noHunt` | true | item table: Hunting does not excuse that Meal (Book 2's Wildlands) |
 | `img` | `{file, full, at}` | imported: illustration file, whether it is a full-page plate, and the paragraph index it sits before |
 | `loc` | string | authored: key into `locations` |
 | `scene` | string | authored: which procedural ink scene to draw (`ruins`, `forest`, `hill`, `river`, `road`, `night`, `bridge`, `city`) |
@@ -85,7 +86,7 @@ the tools: `items.md`.
 | `to` | target section id |
 | `need.disc` | discipline id required |
 | `need.rank` | minimum number of disciplines in the book's series |
-| `need.item`, `need.spend` | authored or item table: item required (any kind), and whether choosing consumes it. `need.not`: open only without it |
+| `need.item`, `need.spend` | authored or item table: item required (any kind), and whether choosing consumes it. A list: any of them will do (and the first held is spent). `need.not`: open only without it (without any of them). `need.ever`: having once been given it is enough (`hero.had`) |
 | `need.gold`, `need.spend` | item table: Gold Crowns required, and whether choosing pays them |
 | `range` | `[lo, hi]`: imported, in `rnt: 'auto'` sections: the Random Numbers that lead here |
 | `evade` | true: imported: this choice is the way out of the section's combat. Hidden from the list; used by the Evade control |

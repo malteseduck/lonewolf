@@ -26,7 +26,7 @@ const T = await import(pathToFileURL(file).href), B = LW.BOOKS[book], bad = [];
 // every book's items are known in the page (an item from Book 1 can gate a choice in Book 2)
 for (const f of fs.readdirSync(ROOT).filter((f) => /^items-\w+\.js$/.test(f))) LW.addItems((await import(pathToFileURL(path.join(ROOT, f)).href)).ITEMS);
 
-const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'todo', 'need', 'fight']);
+const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'noHunt', 'todo', 'need', 'fight']);
 const known = (id) => id === 'meal' || !!LW.ITEMS[id];
 for (const [k, it] of Object.entries(T.ITEMS)) {
   if (!['weapon', 'backpack', 'special'].includes(it.kind)) bad.push(`item ${k}: kind must be weapon, backpack or special`);
@@ -55,7 +55,7 @@ for (const [id, x] of Object.entries(T.SECTIONS)) {
   if (x.ep != null && x.ep !== 'full' && typeof x.ep !== 'number') bad.push(`${id}: ep must be a number or 'full'`);
   for (const [to, n] of Object.entries(x.need || {})) {
     if (!(sec.choices || []).some((c) => c.to === to)) bad.push(`${id}: need for a choice to ${to}, which it does not have`);
-    if (n && n.item && !known(n.item)) bad.push(`${id}: need for unknown item ${n.item}`);
+    [].concat(n && n.item || []).forEach((i) => { if (!known(i)) bad.push(`${id}: need for unknown item ${i}`); });
   }
 }
 console.log(bad.length ? bad.join('\n') : 'no errors');

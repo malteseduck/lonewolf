@@ -85,6 +85,7 @@
     if (kind === 'backpack' && hero.backpack.length + hero.meals >= LW.MAX_BACKPACK) return 'Your backpack is full.';
     if (id === 'meal') hero.meals += 1;
     else listOf(hero, id).push(id);
+    if (id !== 'meal' && !(hero.had = hero.had || []).includes(id)) hero.had.push(id); // for "if you have ever been given"
     const ep = kind === 'special' && LW.ITEMS[id] && LW.ITEMS[id].ep;
     if (ep) { hero.ep += ep; hero.epMax += ep; }
     return null;
@@ -190,7 +191,7 @@
         events.push('A Meal is lost from your pack.');
       }
       if (sec.meal) {
-        if (LW.hunts(hero)) events.push(`${LW.hunts(hero)}: you catch what you need and keep your Meals.`);
+        if (LW.hunts(hero) && !sec.noHunt) events.push(`${LW.hunts(hero)}: you catch what you need and keep your Meals.`);
         else if (hero.meals > 0) { hero.meals -= 1; events.push('You eat a Meal.'); }
         else { hero.ep -= 3; events.push('You have nothing to eat. You lose 3 ENDURANCE.'); }
       }
@@ -259,10 +260,10 @@
           enabled = false; why = `Needs ${LW.DISCIPLINES[c.need.disc].name}`;
         }
         if (c.need && c.need.rank && LW.rankCount(hero) < c.need.rank) { enabled = false; why = 'Needs a higher rank'; }
-        if (c.need && c.need.item && !c.need.not && !LW.hasItem(hero, c.need.item)) {
-          enabled = false; why = `Needs ${LW.itemName(c.need.item)}`;
-        }
-        if (c.need && c.need.item && c.need.not && LW.hasItem(hero, c.need.item)) { enabled = false; why = `You have the ${LW.itemName(c.need.item)}`; }
+        // need.item: one id, or a list of which any will do; ever: having once been given it is enough
+        const ids = c.need && c.need.item ? [].concat(c.need.item) : [], held = ids.filter((i) => LW.hasItem(hero, i) || (c.need.ever && (hero.had || []).includes(i)));
+        if (ids.length && !c.need.not && !held.length) { enabled = false; why = `Needs ${ids.map(LW.itemName).join(' or ')}`; }
+        if (ids.length && c.need.not && held.length) { enabled = false; why = `You have the ${LW.itemName(held[0])}`; }
         if (c.need && c.need.gold && hero.gold < c.need.gold) { enabled = false; why = `Needs ${c.need.gold} Gold Crowns`; }
         return Object.assign({}, c, { enabled, why });
       });
@@ -281,7 +282,7 @@
 
     choose(choice, to) {
       const hero = this.s.hero;
-      if (choice.need && choice.need.item && choice.need.spend) LW.dropItem(hero, choice.need.item);
+      if (choice.need && choice.need.item && choice.need.spend) [].concat(choice.need.item).some((i) => LW.dropItem(hero, i)); // the first he has
       if (choice.need && choice.need.gold && choice.need.spend) hero.gold -= choice.need.gold;
       this.go(to || choice.to, choice.text);
     }

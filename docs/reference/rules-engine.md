@@ -13,6 +13,7 @@ Magnakai and overrides some functions).
   magnakai: [...],           // Magnakai discipline ids (absent until the character enters that series)
   series: 'kai'|'magnakai',  // the ruleset of the book being played; set when a book is started
   weaponskill: 'sword'|null, // Kai Weaponskill weapon
+  had: [ids],               // every item he has ever been given (LW.putItem), for "if you have ever been given"
   mastery: [...],            // Magnakai Weaponmastery weapons
   circleEp: 0,               // Endurance already granted by Lore-circles
   weapons: [...],            // max 2

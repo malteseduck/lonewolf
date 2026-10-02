@@ -30,6 +30,11 @@ Decisions the owner has made:
 - The clockwork gear should not take space from the pages.
 - A single choice that is only a page reference reads "Continue".
 - Carry-over between books: support both, default to continuing the same character.
+- Book 2's readings (2026-10-01): Hunting does not excuse a Meal anywhere in the Wildlands, Ragadorn
+  and its coast road included (32, 37, 127, 148, 346). Documents and the Gold Ring are Special
+  Items; the Healing Potion, Potion of Orange Liquid, Fur Blanket and Rope Backpack Items. "Some
+  Laumspur" (36) is the herb or any Laumspur potion, and one is used up. "Ever been given" (328)
+  counts a Pendant since lost. "No pass" (246) closes when he holds either pass.
 
 ## State of the player
 
@@ -98,14 +103,6 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
 
 ## Waiting on the owner
 
-- **Book 2, readings to confirm** (left open or by hand until then):
-  - Hunting and Meals in the Wildlands. Section 346 says Hunting cannot be used for Meals on the
-    journey through the Wildlands; the engine applies that there only. Ragadorn and the coast road
-    to it (32, 37, 127, 148) still let Hunting off the Meal. Should they?
-  - Kinds the text does not give: Documents and Gold Ring made Special Items; Healing Potion,
-    Potion of Orange Liquid, Fur Blanket and Rope Backpack Items.
-  - Left ungated: 36 "if you have some Laumspur" (does a Laumspur Potion count?), 328 "if you have
-    ever been given a Crystal Star Pendant" (he may have lost it), 246 "if you do not have a pass".
 
 - **Import books 3-12?** Downloaded on 2026-10-01 for their art. Book 2 imported at the owner's
   word; ask before each further one. Needed before Magnakai can be tested on real text.
