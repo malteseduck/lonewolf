@@ -1,7 +1,7 @@
 # Plan and state
 
 Working notes: where the project stands and what comes next. Rough; to be refined with the owner.
-Last updated 2026-10-01.
+Last updated 2026-10-02.
 
 ## How we got here
 
@@ -76,7 +76,7 @@ Working and checked by playing in the browser:
   combat, Weaponskill with any sword counts, undead foes lose double), Special Items that fight
   (the Magic Spear), fights only one weapon can win and bare-handed ones, Helghast mind drain per
   round, shops (buy as often as you like), "choose any two", gold won or lost by a number, losing
-  every Special Item. The Seal of Hammerdal is given at section 1. Tried section by section on a
+  every Special Item. The Seal of Hammerdal comes with the starting kit. Tried section by section on a
   stand-in hero, not yet in a play-through. The inventory's "add by hand" lists the open book's
   own items.
 - Battle plates made from the book's illustrations, restyled as sepia ink, shown whole with ruled
@@ -98,6 +98,14 @@ Working and checked by playing in the browser:
   eye in each leg, not yet played.
 - Series rules: Kai and Magnakai disciplines, ranks, Lore-circles, Weaponmastery, Psi-surge.
 - Character carry-over between books.
+- Every rule in docs/reference/rules-books.md (2026-10-02): each book's starting kit as a second
+  page of the character dialog (gold, given items, the choice, weapons kept, the Monastery), the
+  Shield and the other kit items, the 12 Special Item limit, safekeeping of items and gold, the
+  Bow (useless hand to hand; shots that spend Arrows and add Weaponmastery), the improved
+  disciplines' numbers (Tutelary and Scion-kai unarmed and +4, Archmaster Psi-surge and Curing,
+  read as once a book), Huntmastery against an ambush, Laumspur eaten as a Meal. The potion in a
+  fight stays our house rule. Tried in the page on stand-in books 2, 8, 11 and 12, not on real
+  Magnakai text; bow shots and ambushes need marking in each Magnakai book's item table.
 - Docs: spec, reference, CLAUDE.md.
 
 Tested only against stand-in data, not real text:
@@ -117,36 +125,24 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
 
 ## Next steps
 
-1. **Book 2: fight pictures** (step 7 below; its item table and map places are done), and the rest
-   of its starting kit (step 4).
+1. **Book 2: fight pictures** (step 5 below; its item table, map places and starting kit are done).
 2. **Import books 3-12** once the owner says so, and read the importer's report for
    every one. Fix whatever the reports show (broken links, sections with no way on, oddly low
    counts). Expect new phrasings for gates, Random Number and combat in later books.
-3. **The rules the engine does not apply yet**, from docs/reference/rules-books.md (done
-   2026-10-02: every rule read from the books' rules pages; the Combat Results Table, Lore-circles
-   and ranks checked; Weaponskill now drawn from the books' table; the spec's "(verify)" marks
-   settled): the improved disciplines with numbers (Tutelary on), the Bow and Arrows, the Shield and
-   other kit items the engine lacks (Padded Leather Waistcoat, Special Rations, Lantern, Fireseeds),
-   the 12 Special Item limit, safekeeping, and Huntmastery's ambush rule.
-4. **Per-book starting equipment** and the discipline/equipment choices at the start of each book.
-   Today a new Magnakai character gets a simplified kit. Each book's kit and choices are now listed
-   in rules-books.md ("Book addenda").
-5. **Play Book 1 through** and fix what the importer misread, and anything the item table missed
+3. **Play Book 1 through** and fix what the importer misread, and anything the item table missed
    or got wrong.
-6. **Map travel for books 2-12.** Book 1 has it. Each further book follows
+4. **Map travel for books 2-12.** Book 1 has it. Each further book follows
    docs/reference/map-places.md (made-up places by hand, tools to lay out and check them).
    Books 2-5 can use the Lastlands replica if their journeys stay on it; the Magnakai books need
    a replica of their own printed maps first. Book 1's sweep is clean (2026-10-01); Book 2 is done
    (2026-10-02), in legs.
-7. **Items and fight pictures for books 2-12**, by docs/reference/items.md on importing each:
-   the item table, and a plate-library entry for every enemy the importer lists "with none". Book 1
+5. **Items and fight pictures for books 2-12**, by docs/reference/items.md on importing each:
+   the item table (in the Magnakai books, mark ambushes and bow shots: the engine applies them only there), and a plate-library entry for every enemy the importer lists "with none". Book 1
    is done (2026-10-01); Book 2 has its item table, and 16 enemies with no picture. Check by eye which illustration each enemy borrows (`PLATE_FIXES`, and the
    library's generic soldier/robber entries).
 
 Smaller things noted along the way:
 
-- Laumspur in combat is a house rule; the books do not allow it. Decide.
-- Bow and Arrow rules; Special Item limit.
 - Title page gets crowded with twelve books.
 - `data/reference/magnamund-world-goodwin.png` (a fan-made world map, git-ignored) is there to
   lay out maps for the Magnakai books, whose printed maps cover other parts of Magnamund.

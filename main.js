@@ -23,8 +23,10 @@ function applyItems(b) {
   for (const [id, x] of Object.entries(t.SECTIONS)) {
     const sec = b.sections[id];
     if (!sec) continue;
-    const { need, fight, ...rest } = x;
+    const { need, fight, bowShot, ...rest } = x;
     Object.assign(sec, rest);
+    // a bow shot: the ranges are for the total, so the importer could not read them; given here per choice
+    if (bowShot) { sec.bowShot = true; sec.rnt = 'auto'; for (const [to, r] of Object.entries(bowShot)) sec.choices.filter((c) => c.to === to).forEach((c) => { c.range = r; }); }
     if (fight && sec.combat) {
       const { mindforce, undead, drain, ...f } = fight; // these three belong to each enemy
       Object.assign(sec.combat, f);
@@ -81,6 +83,7 @@ let book = null, L = {}, game = null;
 function useBook(id) {
   if (!adventure()) newAdventure();
   book = BOOKS[id]; placeBook(book); applyItems(book); L = book.locations || {};
+  LW.bookNumber = book.number || 0; // the Special Item limit depends on it
   game = new LW.Game(book, saveKey(adv.at, id)); game.keep = REWIND;
   adventure().book = id; keepAdventures();
 }
@@ -108,7 +111,7 @@ const ROSE = (() => {
 const TAB_ART = { kai: glyph('wolf-head'), pack: glyph('locked-chest'), map: ROSE };
 /* items, drawn the same way; anything typed in by hand gets a pouch or a pendant by its kind */
 const ITEM_GLYPH = { dagger: 'plain-dagger', spear: 'barbed-spear', mace: 'mace-head', shortSword: 'gladius', warhammer: 'warhammer', sword: 'pointy-sword', axe: 'battle-axe', quarterstaff: 'wizard-staff', broadsword: 'two-handed-sword',
-  bow: 'pocket-bow', quiver: 'quiver', potion: 'health-potion', meal: 'meal', map: 'treasure-map', helmet: 'visored-helm', chainmail: 'mail-shirt' };
+  bow: 'pocket-bow', quiver: 'quiver', arrows: 'arrow-flights', potion: 'health-potion', meal: 'meal', map: 'treasure-map', helmet: 'visored-helm', chainmail: 'mail-shirt' };
 const itemGlyph = (id) => glyph(ITEM_GLYPH[id] || (LW.ITEMS[id] && LW.ITEMS[id].glyph) || (id === 'gold' ? 'two-coins' : id === 'pack' ? 'backpack' : LW.itemKind(id) === 'special' ? 'gem-pendant' : LW.itemKind(id) === 'weapon' ? 'pointy-sword' : 'swap-bag'));
 
 /* ---------- materials, drawn once ---------- */
@@ -321,15 +324,19 @@ function mountRnt() {
   const sec = mode === 'story' && game.section, slot = $('#dialslot');
   if (!sec || !sec.rnt || !slot || isDead() || game.combatPending) return;
   const note = el('p');
+  const shot = game.shot();
   const dial = makeDial(async () => {
     if (busy || (sec.rnt === 'auto' && game.s.rolled != null)) return;
+    if (shot && shot.why) return void LW.UI.toast(shot.why);
     busy = true;
     const n = await dial.spin();
     game.setRolled(n); busy = false;
     render(); // what the number did may show on either page
   });
-  if (game.s.rolled != null) { dial.show(game.s.rolled); note.textContent = `You drew ${game.s.rolled}.`; }
-  else note.textContent = 'Touch the medallion for your Random Number.';
+  // a bow shot shows its sum: "You drew 4, +3 Weaponmastery with Bow: 7."
+  const plus = (game.s.shot || []).map((p) => `, +${p.n} ${p.label}`).join(''), drawn = game.s.drawn != null ? game.s.drawn : game.s.rolled;
+  if (game.s.rolled != null) { dial.show(drawn); note.textContent = plus ? `You drew ${drawn}${plus}: ${game.s.rolled}.` : `You drew ${drawn}.`; }
+  else note.textContent = shot ? shot.why || `Touch the medallion to shoot. It spends an Arrow (${game.hero.arrows} left).` : 'Touch the medallion for your Random Number.';
   slot.append(dial.el, note);
 }
 function renderLeft() { pl.innerHTML = leftHTML(); mountRnt(); trimSmall(); }
@@ -379,8 +386,11 @@ function captionHTML() {
   if (sel && sel.kind === 'pack' && it.heal && h.backpack.includes(id)) return `<div><h3>${esc(it.name)}</h3><p>Restores ${it.heal} Endurance.${id === 'potion' ? '' : about}</p></div><button type="button" class="seal" data-drink="${esc(id)}" ${h.ep >= h.epMax ? 'disabled' : ''}>${id === 'potion' ? 'Drink' : 'Eat'}</button>${drop()}`;
   if (sel && sel.kind === 'pack' && h.backpack.includes(id)) return `<div><h3>${esc(LW.itemName(id))}</h3><p>A Backpack Item.${about}</p></div>${drop()}`;
   if (sel && sel.kind === 'meal' && h.meals) return `<div><h3>Meal</h3><p>Eaten when the story calls for it. Go hungry and you lose 3 Endurance.</p></div>${drop('Eat')}`;
-  if (sel && sel.kind === 'special' && h.special.includes(id)) return `<div><h3>${esc(LW.itemName(id))}</h3><p>A Special Item${it.ep ? `: +${it.ep} Endurance while you carry it` : ''}.${about}</p></div>${drop()}`;
-  return `<div><p>${panel === 'kai' ? 'Touch a medallion to read what the discipline does.' : 'Touch an item to see what it is for.'}</p></div>`;
+  const arrows = id === 'quiver' ? ` ${h.arrows || 0} of ${LW.MAX_ARROWS} Arrows ${stepper('arrows')}` : '';
+  if (sel && sel.kind === 'special' && h.special.includes(id)) return `<div><h3>${esc(LW.itemName(id))}</h3><p>A Special Item${it.ep ? `: +${it.ep} Endurance while you carry it` : ''}.${about}${arrows}</p></div>${drop()}`;
+  // what is in safekeeping is shown when nothing is picked out
+  const kept = [...(h.stored || []).map(LW.itemName), ...(h.storedGold ? [`${h.storedGold} Gold Crowns`] : [])];
+  return `<div><p>${panel === 'kai' ? 'Touch a medallion to read what the discipline does.' : `Touch an item to see what it is for.${kept.length ? ` At the Kai Monastery, taken up or left at the start of a book: ${esc(kept.join(', '))}.` : ''}`}</p></div>`;
 }
 const stepper = (field) => `<span class="step"><button type="button" data-adj="${field}:-1" aria-label="Less">&minus;</button><button type="button" data-adj="${field}:1" aria-label="More">+</button></span>`;
 /* a ruled heading with the HD sheet's swash: a hairline that curls back at its left end */
@@ -778,7 +788,9 @@ async function startBattle() {
   // the fight's own adjustment, unless he carries what the text says spares him it (a torch), or
   // it is the text's "unarmed" penalty and he has no weapon anyway (heroCS already counts that)
   const spared = (c.unless || []).length && c.unless.every((i) => LW.hasItem(hero, i));
-  const csMod = spared || (c.unarmed && !LW.armedWith(hero)) ? 0 : c.csMod;
+  // Huntmastery: what a surprise attack or ambush costs (combat.ambush) is not lost
+  const ambush = c.ambush && c.csMod < 0 && hero.series === 'magnakai' && LW.has(hero, 'huntmastery');
+  const csMod = spared || ambush || (c.unarmed && !LW.armedWith(hero)) ? 0 : c.csMod;
   const node = el('div', 'fight');
   node.innerHTML = `<canvas width="600" height="800"></canvas><div class="foebar"><span data-b="name"></span><div class="bar"><i></i></div><small data-b="stats"></small></div><div class="cmds" data-b="cmds"></div>`;
   const dial = makeDial();
@@ -793,6 +805,7 @@ async function startBattle() {
   if (B.foe.mindforce) B.log.push(LW.shielded(hero) ? 'Its will breaks against your Mindshield.' : `Its will presses on yours: Combat Skill less ${B.foe.mindforce}.`);
   if (csMod) B.log.push(`${c.csNote}: Combat Skill ${csMod > 0 ? 'plus' : 'less'} ${Math.abs(csMod)}.`);
   else if (spared) B.log.push(`Your ${c.unless.map(LW.itemName).join(' and ')} spare you the penalty.`);
+  else if (ambush) B.log.push('Huntmastery: the ambush does not catch you off guard.');
   if (c.with === 'none') B.log.push('You fight bare-handed.');
   else if (c.with) B.log.push(B.weapon ? `Only your ${LW.itemName(c.with)} can harm it.` : `Only the ${LW.itemName(c.with)} can harm it, and you do not have it.`);
   if (B.weapon && LW.ITEMS[B.weapon] && LW.ITEMS[B.weapon].cs) B.log.push(`You fight with the ${LW.itemName(B.weapon)}.`);
@@ -826,10 +839,11 @@ function updateBattle() {
   q('stats').textContent = `CS ${foe.cs} · EP ${Math.max(0, foe.ep)} · Ratio ${r > 0 ? '+' : ''}${r}`;
   const ev = B.c.evade, evadeOpen = ev && B.rounds >= ev.after, locked = B.lock || B.over;
   const med = (id, ic, label, note, off, extra = '') => `<div class="medcap"><button type="button" class="med ${extra}" data-cmd="${id}" ${locked || off ? 'disabled' : ''} aria-label="${label}">${ic}</button>${label}<small>${note}</small></div>`;
-  const n = hero.backpack.filter((b) => b === 'potion').length;
+  const n = hero.backpack.filter((b) => b === 'potion').length, psi = LW.psi(hero);
   const left = med('fight', B.weapon ? itemGlyph(B.weapon) : glyph('crossed-swords'), 'Strike', 'spin to attack')
-    + (B.power ? med('mind', glyph(B.power === 2 ? 'psychic-waves' : 'brainstorm'), B.power === 2 ? 'Psi-surge' : 'Mindblast', foe.immune ? 'no effect' : ['at rest', B.power === 2 ? 'as Mindblast, +2' : 'focused, +2', '+4, costs 2 a round'][B.blasting()], false, B.blasting() ? 'lit' : '') : '');
+    + (B.power ? med('mind', glyph(B.power === 2 ? 'psychic-waves' : 'brainstorm'), B.power === 2 ? 'Psi-surge' : 'Mindblast', foe.immune ? 'no effect' : ['at rest', B.power === 2 ? `as Mindblast, +${psi.blast}` : 'focused, +2', `+${psi.surge}, costs ${psi.cost} a round`][B.blasting()], false, B.blasting() ? 'lit' : '') : '');
   const right = (n ? med('item', itemGlyph('potion'), 'Laumspur', `${n} left`, hero.ep >= hero.epMax) : '')
+    + (LW.canCure(hero, book.id) ? med('cure', glyph('healing'), 'Curing', hero.ep <= 6 ? '20 back, once a book' : 'at 6 or less', hero.ep > 6) : '')
     + (ev ? med('evade', glyph('run'), 'Evade', evadeOpen ? 'take one blow' : `after round ${ev.after}`, !evadeOpen) : '');
   const cmds = q('cmds');
   cmds.innerHTML = left + '<span data-dial></span>' + right;
@@ -852,9 +866,13 @@ async function battleAct(id) {
     if (foe.immune) B.log.push(`${foe.name} is immune to attacks of the mind.`);
     else {
       B.mind = (B.mind + 1) % (B.power + 1);
-      if (B.mind === 2 && hero.ep <= 6) { B.mind = 0; B.log.push('You are too weak to Psi-surge.'); }
-      else B.log.push(['You let your mind rest.', 'You gather your will to a point: Mindblast.', 'You loose the full Psi-surge. It will cost you 2 Endurance a round.'][B.mind]);
+      if (B.mind === 2 && hero.ep <= LW.psi(hero).floor) { B.mind = 0; B.log.push('You are too weak to Psi-surge.'); }
+      else B.log.push(['You let your mind rest.', 'You gather your will to a point: Mindblast.', `You loose the full Psi-surge. It will cost you ${LW.psi(hero).cost} Endurance a round.`][B.mind]);
     }
+  } else if (id === 'cure') {
+    const back = Math.min(20, hero.epMax - hero.ep);
+    hero.ep += back; hero.cured = book.id;
+    LW.sfx('heal'); B.log.push(`Curing: you draw on your mastery and ${back} Endurance returns.`);
   } else if (id === 'item') {
     hero.backpack.splice(hero.backpack.indexOf('potion'), 1); hero.ep = Math.min(hero.epMax, hero.ep + 4);
     LW.sfx('heal'); B.log.push('The Laumspur burns going down. 4 Endurance restored.');
@@ -882,8 +900,9 @@ async function battleAct(id) {
         else { hero.ep -= foe.drain; B.log.push(`Its mind attack costs you ${foe.drain} Endurance.`); }
       }
       if (B.blasting() === 2 && hero.ep > 0) {
-        hero.ep -= 2; B.log.push('The Psi-surge costs you 2 Endurance.');
-        if (hero.ep <= 6 && hero.ep > 0) { B.mind = 1; B.log.push('Too weak to hold it, you fall back on Mindblast.'); }
+        const psi = LW.psi(hero);
+        hero.ep -= psi.cost; B.log.push(`The Psi-surge costs you ${psi.cost} Endurance.`);
+        if (hero.ep <= psi.floor && hero.ep > 0) { B.mind = 1; B.log.push('Too weak to hold it, you fall back on Mindblast.'); }
       }
       if (hero.ep <= 0) B.over = 'dead';
       else if (foe.ep <= 0) {
@@ -1001,7 +1020,6 @@ async function begin(id, fresh, anew, reread) {
   game.start(hero); mode = 'story'; panel = 'kai'; sel = null; intro = book.intro && book.intro.length ? 'new' : false;
   await turn(render);
   if (hero.found) LW.UI.toast(`In the ruins you also find: ${hero.found === 'meals' ? 'two Meals' : hero.found === 'gold' ? '12 Gold Crowns' : LW.itemName(hero.found)}.`);
-  else if (hero.simpleKit) LW.UI.toast('You start with a Sword, a Meal and some gold. Add the rest of the book\u2019s starting kit by hand.');
 }
 const soundBtn = $('#btn-sound');
 const soundLabel = () => { soundBtn.textContent = LW.sound.on ? 'Sound on' : 'Sound off'; };

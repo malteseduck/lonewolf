@@ -62,6 +62,24 @@
     map: { name: 'Map of Sommerlund', kind: 'special' },
     helmet: { name: 'Helmet', kind: 'special', ep: 2 },
     chainmail: { name: 'Chainmail Waistcoat', kind: 'special', ep: 4 },
+    // what the books' starting kits offer (docs/reference/rules-books.md, "Book addenda")
+    shield: { name: 'Shield', kind: 'special', fightCs: 2, glyph: 'viking-shield', about: '+2 COMBAT SKILL in a fight.' },
+    leatherWaistcoat: { name: 'Padded Leather Waistcoat', kind: 'special', ep: 2, glyph: 'leather-vest' },
+    lantern: { name: 'Lantern', kind: 'backpack', glyph: 'lantern-flame', about: 'It lights itself.' },
+    fireseed: { name: 'Fireseed', kind: 'special', glyph: 'fire-bomb', about: 'Bursts into flame when thrown against something hard.' },
+    rope: { name: 'Rope', kind: 'backpack', glyph: 'rope-coil' },
+    tinderbox: { name: 'Tinderbox', kind: 'backpack', glyph: 'flint-spark' },
+    alether: { name: 'Potion of Alether', kind: 'backpack', glyph: 'standing-potion', about: 'Drink before a fight: +2 COMBAT SKILL for that fight. Apply it by hand.' },
+    badge: { name: 'Badge of Rank', kind: 'special', glyph: 'medal' },
+    mapKalte: { name: 'Map of Kalte', kind: 'special', glyph: 'treasure-map' },
+    mapSouthlands: { name: 'Map of the Southlands', kind: 'special', glyph: 'treasure-map' },
+    mapVassagonia: { name: 'Map of Vassagonia', kind: 'special', glyph: 'treasure-map' },
+    mapStornlands: { name: 'Map of the Stornlands', kind: 'special', glyph: 'treasure-map' },
+    mapMagi: { name: 'Map of the Magi\u2019s Land', kind: 'special', glyph: 'treasure-map' },
+    mapDanarg: { name: 'Map of the Danarg', kind: 'special', glyph: 'treasure-map' },
+    mapAnari: { name: 'Map of Anari', kind: 'special', glyph: 'treasure-map' },
+    mapGhatan: { name: 'Map of Ghatan', kind: 'special', glyph: 'treasure-map' },
+    mapDarklands: { name: 'Map of the Darklands', kind: 'special', glyph: 'treasure-map' },
   };
   /* Items typed in by hand are stored as 'pack:Name' or 'spec:Name'. */
   LW.itemName = (id) => (LW.ITEMS[id] ? LW.ITEMS[id].name : id.replace(/^\w+:/, ''));
@@ -69,6 +87,11 @@
   LW.WEAPONS = Object.keys(LW.ITEMS).filter((k) => LW.ITEMS[k].kind === 'weapon');
   LW.MAX_WEAPONS = 2;
   LW.MAX_BACKPACK = 8;
+  LW.MAX_ARROWS = 6; // a Quiver's load
+  /* the book being played (main.js sets it): the Special Item limit depends on it */
+  LW.bookNumber = 0;
+  /* At most 12 Special Items from Book 8 on (the books' rules); no limit before. */
+  LW.specialLimit = (hero) => (hero.series === 'magnakai' && LW.bookNumber >= 8 ? 12 : Infinity);
   /* A book's own items (name, kind, and optionally heal, ep, glyph, about) join the list. */
   LW.addItems = (items) => {
     Object.assign(LW.ITEMS, items);
@@ -83,6 +106,7 @@
     if (kind === 'weapon' && hero.weapons.length >= LW.MAX_WEAPONS) return 'You can carry only two weapons. Drop one first.';
     if (kind === 'backpack' && hero.noPack) return 'You have no Backpack to carry it in.';
     if (kind === 'backpack' && hero.backpack.length + hero.meals >= LW.MAX_BACKPACK) return 'Your backpack is full.';
+    if (kind === 'special' && hero.special.length >= LW.specialLimit(hero)) return 'You can carry at most 12 Special Items. Drop one first.';
     if (id === 'meal') hero.meals += 1;
     else listOf(hero, id).push(id);
     if (id !== 'meal' && !(hero.had = hero.had || []).includes(id)) hero.had.push(id); // for "if you have ever been given"
@@ -195,6 +219,11 @@
       if (sec.meal) {
         if (LW.hunts(hero) && !sec.noHunt) events.push(`${LW.hunts(hero)}: you catch what you need and keep your Meals.`);
         else if (hero.meals > 0) { hero.meals -= 1; events.push('You eat a Meal.'); }
+        else if (hero.backpack.some((b) => LW.ITEMS[b] && LW.ITEMS[b].meal)) {
+          const food = hero.backpack.find((b) => LW.ITEMS[b] && LW.ITEMS[b].meal), heal = LW.ITEMS[food].heal || 0;
+          LW.dropItem(hero, food); hero.ep = Math.min(hero.epMax, hero.ep + heal);
+          events.push(`You eat the ${LW.itemName(food)} as a Meal${heal ? ` and regain ${heal} ENDURANCE` : ''}.`);
+        }
         else { hero.ep -= 3; events.push('You have nothing to eat. You lose 3 ENDURANCE.'); }
       }
       if (!sec.combat && LW.heals(hero) && hero.ep > 0 && hero.ep < hero.epMax) {
@@ -224,6 +253,7 @@
         if (t.item) { if (LW.dropItem(hero, t.item)) events.push(`The ${name(t.item)} is gone.`); }
         else if (t.gold != null) { const n = t.gold === 'all' ? hero.gold : Math.min(hero.gold, t.gold); if (n) { hero.gold -= n; events.push(`You lose ${n} Gold Crowns.`); } }
         else if (t.weapons === 'all') { if (hero.weapons.length) { hero.weapons = []; events.push('Your weapons are gone.'); } }
+        else if (t.arrows != null) { const n = t.arrows === 'all' ? hero.arrows || 0 : Math.min(hero.arrows || 0, t.arrows); if (n) { hero.arrows -= n; events.push(`You lose ${n} Arrow${n > 1 ? 's' : ''}.`); } }
         else if (t.special === 'all') { if (hero.special.length) { [...hero.special].forEach((x) => LW.dropItem(hero, x)); events.push('Your Special Items are gone.'); } }
         else if (t.weapons === 'one') {
           if (hero.weapons.length === 1) events.push(`Your ${name(hero.weapons.pop())} is lost.`);
@@ -254,7 +284,8 @@
       const fought = !!sec.combat, rolled = this.s.rolled;
       return (sec.choices || []).filter((c) => !(fought && c.evade)).map((c) => {
         let enabled = true, why = '';
-        if (sec.rnt === 'auto') {
+        // in a bow shot, a choice with no range (no Bow, or not shooting) is open without the draw
+        if (sec.rnt === 'auto' && (c.range || !sec.bowShot)) {
           if (rolled == null) { enabled = false; why = 'Spin the medallion first'; }
           else if (c.range && (rolled < c.range[0] || rolled > c.range[1])) { enabled = false; why = `You drew ${rolled}`; }
         }
@@ -297,9 +328,9 @@
       const sec = this.section, all = [...(sec.give || []).map((l, n) => [l, 'give' + n]), ...(sec.loot || []).map((l, n) => [l, n])];
       const got = (i) => !!this.s.looted[this.s.at + ':' + i];
       return all.map(([l, i]) => {
-        const label = l.gold ? `${l.gold} Gold Crowns` : l.meal ? (l.meal > 1 ? `${l.meal} Meals` : 'a Meal') : l.pack ? 'a Backpack' : LW.itemName(l.item);
+        const label = l.gold ? `${l.gold} Gold Crowns` : l.meal ? (l.meal > 1 ? `${l.meal} Meals` : 'a Meal') : l.pack ? 'a Backpack' : l.arrows ? `${l.arrows} Arrow${l.arrows > 1 ? 's' : ''}` : LW.itemName(l.item);
         const share = l.or && all.filter(([m, j]) => j !== i && m.or === l.or && got(j)).length >= (l.pick || 1);
-        return { i, label, taken: got(i), closed: share, cost: l.cost, pick: l.pick, item: l.item || (l.meal ? 'meal' : l.gold ? 'gold' : 'pack') };
+        return { i, label, taken: got(i), closed: share, cost: l.cost, pick: l.pick, item: l.item || (l.meal ? 'meal' : l.gold ? 'gold' : l.arrows ? 'arrows' : 'pack') };
       });
     }
     /* Returns an error string when it cannot be taken. */
@@ -312,6 +343,11 @@
       if (l.cost && l.pack && !hero.noPack) return 'You have a Backpack already.';
       if (l.gold) hero.gold = Math.min(50, hero.gold + l.gold);
       else if (l.pack) hero.noPack = false;
+      else if (l.arrows) {
+        if (!hero.special.includes('quiver')) return 'You need a Quiver to carry Arrows.';
+        if ((hero.arrows || 0) >= LW.MAX_ARROWS) return 'Your Quiver is full.';
+        hero.arrows = Math.min(LW.MAX_ARROWS, (hero.arrows || 0) + l.arrows);
+      }
       else if (l.meal) {
         if (hero.noPack) return 'You have no Backpack to carry it in.';
         const room = LW.MAX_BACKPACK - hero.backpack.length - hero.meals;
@@ -324,9 +360,17 @@
       return null;
     }
     /* sec.rolls: what the number drawn here does to him, where the text says so outright: ep, gold
-       won (gold), and what is lost (take). */
+       won (gold), and what is lost (take). sec.bowShot: the draw is a shot, which spends an Arrow and
+       has his skill with the bow added (LW.bowShot); s.rolled is then the total, s.drawn the number. */
+    shot() { return this.section.bowShot && LW.bowShot ? LW.bowShot(this.s.hero) : null; }
     setRolled(n) {
-      this.s.rolled = n;
+      const shot = this.shot();
+      if (shot && shot.why) return shot.why;
+      if (shot) this.s.hero.arrows -= 1;
+      this.s.shot = shot ? shot.parts : null;
+      this.s.drawn = n;
+      this.s.rolled = n + (shot ? shot.plus : 0);
+      n = this.s.rolled;
       const hero = this.s.hero, r = (this.section.rolls || []).find((x) => n >= x.range[0] && n <= x.range[1]);
       if (r && !this.s.looted[this.s.at + ':rolled']) {
         this.s.looted[this.s.at + ':rolled'] = true;
@@ -335,6 +379,7 @@
         this.lose(r.take, this.s.events);
       }
       this.save();
+      return null;
     }
     /* By-hand bookkeeping, for rules the importer leaves as text. */
     addItem(id) {
@@ -347,6 +392,7 @@
       const hero = this.s.hero;
       if (field === 'ep') hero.ep = Math.max(0, Math.min(hero.epMax, hero.ep + by));
       if (field === 'gold') hero.gold = Math.max(0, Math.min(50, hero.gold + by));
+      if (field === 'arrows') hero.arrows = Math.max(0, Math.min(LW.MAX_ARROWS, (hero.arrows || 0) + by));
       this.save();
     }
     dropWeapon(id) {

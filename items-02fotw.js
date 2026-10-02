@@ -10,7 +10,12 @@
      noHunt      Hunting does not excuse the Meal (the Wildlands)
      fight       undead (a blade that doubles against the undead does so), drain (ENDURANCE lost
                  each round unless shielded), with ('none': bare-handed; an item: only it can harm
-                 this foe), double (every loss the foe takes is doubled)
+                 this foe), double (every loss the foe takes is doubled), ambush (csMod is what a
+                 surprise attack or ambush costs, which Huntmastery spares)
+     bowShot     the Random Number is a bow shot: {to: [lo, hi]}, the range of the total for each
+                 choice it decides (a choice left out is open without shooting)
+   An item with meal: true is eaten when a Meal is due and he has none (the engine's own items are in
+   shared/core.js; the starting kit, the Seal included, is LW.KITS in shared/rules-series.js).
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {
   seal: { name: 'Seal of Hammerdal', kind: 'special', glyph: 'ring', about: 'The ring that proves your mission to the people of Durenor.' },
@@ -35,8 +40,6 @@ const firstRound = 'you took them by surprise: add 2 to your COMBAT SKILL for th
 const watchtower = [{ item: 'broadsword' }, { item: 'mace' }, { item: 'quarterstaff' }, { item: 'healingPotion' }, { meal: 3 }, { pack: true }, { gold: 12 }];
 
 export const SECTIONS = {
-  // the Seal is the book's starting equipment, handed over before the story begins
-  1: { give: [{ item: 'seal' }] },
   5: { fight: { undead: true } },
   // the importer read the first round's +2 as the whole fight's
   7: { fight: { csMod: 0 }, todo: firstRound },

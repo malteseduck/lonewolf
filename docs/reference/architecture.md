@@ -23,7 +23,7 @@ CLAUDE.md, README.md
 docs/                       spec, plan, reference
 shared/                     used by the player and the prototypes (classic scripts on a global LW)
   core.js                   rules data (Combat Results Table, Kai disciplines, items) and LW.Game, the book runner
-  rules-series.js           per-series rules (Kai/Magnakai), Lore-circles, ranks, carried character, character dialog
+  rules-series.js           per-series rules (Kai/Magnakai), Lore-circles, ranks, carried character, character dialog, starting kits
   book-demo.js              LW.BOOK_DEMO: the original 20-section demo chapter, with map locations (prototypes only;
                             the player dropped it, but MAPS.demo, its country, is still the fallback terrain)
   ui.js                     LW.UI helpers: el, esc, wait, toast, createHero (Kai only), pickRandom, chart; LW.sfx (blips)
@@ -60,7 +60,7 @@ shared/core.js              defines LW, LW.Game, Kai rules
 data/projectaon/index.js    document.writes a <script> for each imported book -> LW.BOOKS[code]
 shared/ui.js                LW.UI, LW.sfx
 shared/sfx-soft.js          overrides LW.sfx
-shared/rules-series.js      adds Magnakai, overrides LW.has and LW.heroCS, adds LW.Character, LW.UI.chooseCharacter
+shared/rules-series.js      adds Magnakai, overrides LW.has and LW.heroCS, adds LW.Character, LW.UI.chooseCharacter, LW.KITS
 main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js (which imports ./replica.js)
 ```
 

@@ -41,12 +41,13 @@ with it, choices that change location are made on the map; without it, every cho
 | `rnt` | `'auto'` \| `'free'` | the section calls for a Random Number. `auto`: the draw opens only the matching choice. `free`: the draw is shown and every choice stays open |
 | `meal` | true | a Meal must be eaten on arrival |
 | `noHunt` | true | item table: Hunting does not excuse that Meal (Book 2's Wildlands) |
+| `bowShot` | true | from an item table's `bowShot: {to: [lo, hi]}`: the Random Number is a bow shot. It needs a Bow and an Arrow, spends the Arrow, and has `LW.bowShot`'s bonus added; the ranges (set on the choices, `rnt` made `auto`) are for the total. A choice with no range stays open without shooting |
 | `img` | `{file, full, at}` | imported: illustration file, whether it is a full-page plate, and the paragraph index it sits before |
 | `loc` | string | authored: key into `locations` |
 | `scene` | string | authored: which procedural ink scene to draw (`ruins`, `forest`, `hill`, `river`, `road`, `night`, `bridge`, `city`) |
-| `loot` | `[{item}\|{gold}\|{meal}\|{pack}]` | authored, or from an item table: things that can be taken here, one button each. `or`: a group of which only `pick` (default 1) may be taken. `cost`: a shop's price in Gold Crowns; bought as often as he likes |
+| `loot` | `[{item}\|{gold}\|{meal}\|{pack}\|{arrows}]` | authored, or from an item table: things that can be taken here, one button each. `or`: a group of which only `pick` (default 1) may be taken. `cost`: a shop's price in Gold Crowns; bought as often as he likes |
 | `give` | same shape as `loot` | item table: handed over or pocketed with no choice; taken on arrival if it fits, otherwise left as a button |
-| `take` | `[{item}\|{gold: n\|'all'}\|{weapons: 'all'\|'one'}\|{backpack: 'items'\|'all'}\|{special: 'all'}]` | item table: lost outright on arrival. `weapons: 'one'` takes the only weapon, or asks the player to choose when there are two. `backpack: 'all'` loses the Backpack itself (`hero.noPack`) |
+| `take` | `[{item}\|{gold: n\|'all'}\|{weapons: 'all'\|'one'}\|{backpack: 'items'\|'all'}\|{special: 'all'}]` | item table: lost outright on arrival. `weapons: 'one'` takes the only weapon, or asks the player to choose when there are two. `backpack: 'all'` loses the Backpack itself (`hero.noPack`). `{arrows: n\|'all'}` empties the Quiver by that many |
 | `rolls` | `[{range: [lo, hi], ep, gold, take}]` | item table: what the Random Number drawn here does (`gold`: won, or lost when negative) |
 | `cs` | number | item table: COMBAT SKILL changed for good on arrival |
 | `todo` | string | item table: a by-hand reminder shown with the arrival events |
@@ -63,7 +64,8 @@ story sentence, the instruction in the next, and many are conditional. So each b
 read and written down by hand in `items-<code>.js` at the project root (Book 1: `items-01fftd.js`,
 52 sections, 2026-10-01), as its map places are. It exports `ITEMS` (the book's own items: `name`,
 `kind` (`weapon` | `backpack` | `special`), optionally `glyph` (an icon in `assets/icons/`), `heal`,
-`ep`, `about`, and for a Special Item that is also a weapon `weapon` (the kinds it counts as for
+`ep`, `about`, `meal` (eaten when a Meal is due and he has none, healing its `heal`), `shot` (a bow of
+the book's own: what it adds to a shot), and for a Special Item that is also a weapon `weapon` (the kinds it counts as for
 Weaponskill), `cs` (what it adds in a fight) and `undead` (it doubles undead foes' losses)) and
 `SECTIONS` (by section number: any of the fields above, plus `meal` where the
 importer's pattern missed one, plus `need: {to: {item | gold, not, spend}}` to gate the choice
@@ -73,7 +75,8 @@ them spares the `csMod`), `unarmed: true` (the `csMod` is the text's no-weapon p
 dropped when he has no weapon and the engine's own -4 applies), `with` (`'none'`: bare-handed;
 an item id: the only weapon that can harm this foe), `double` (the foe's losses are doubled),
 `undead` and `drain` (set on every enemy: undead; Endurance it costs him each round unless he is
-shielded)). A `need` of `null` clears a gate the importer set wrongly. `main.js` lays the table over the
+shielded)), `ambush` (the `csMod` is a surprise attack's or ambush's, which Huntmastery spares);
+plus `bowShot` (above). A `need` of `null` clears a gate the importer set wrongly. `main.js` lays the table over the
 book (`applyItems`) when it is first opened. Where the text leaves the choice to the player (which
 weapon breaks, which item is stolen), the table gives a `todo`, not a guess. How to write one, and
 the tools: `items.md`.
@@ -108,7 +111,7 @@ how the books are written: draw first, then one choice per range.
   evade: { after, to },      // evasion allowed once `after` rounds have been fought; go to `to`
   to,                        // authored: section to continue to after winning. Imported books leave this out and show the section's choices
   csMod, csNote,             // adjustment to the hero's CS for this fight, and its label
-  // from an item table: unless, unarmed, with, double; enemies may carry undead, drain, mindforce
+  // from an item table: unless, unarmed, with, double, ambush; enemies may carry undead, drain, mindforce
 }
 ```
 

@@ -12,12 +12,13 @@ its white fill were removed, so the page can use the shape as a mask.
     psychic-waves, return-arrow, run, stag-head, swap-bag, third-eye, treasure-map, visored-helm, wizard-staff,
     wolf-head, wolf-howl,
     and for the books' own items: cut-diamond, gems, gem-necklace, key, scroll-unfurled, skeleton-key,
-    standing-potion, round-bottom-flask, shining-sword, wax-seal
+    standing-potion, round-bottom-flask, shining-sword, wax-seal, leather-vest, lantern-flame,
+    fire-bomb, medal, arrow-flights
   by Delapouite (https://delapouite.com):
     healing, health-potion, herbs-bundle, invisible, meal, quiver, two-coins,
     two-handed-sword, warhammer,
     and for the books' own items: backpack, blanket, diamond-ring, flint-spark, id-card, ring,
-    rope-coil, scroll-quill, soap, spear-feather, ticket, torch
+    rope-coil, scroll-quill, soap, spear-feather, ticket, torch, viking-shield
   by Skoll:
     footsteps, gladius
 

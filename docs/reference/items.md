@@ -55,7 +55,15 @@ Decide each section by what the text says, outright:
 - **fight**: where the importer misread a fight's Combat Skill adjustment: `mindforce` for an
   enemy's mind attack that Mindshield blocks (Book 1's Vordaks), `unless: [items]` for a penalty
   an item spares (the Burrowcrawler's darkness and a Torch with Tinderbox), `unarmed: true` when the
-  penalty is the text's "you are unarmed" (the engine already gives -4 with no weapon).
+  penalty is the text's "you are unarmed" (the engine already gives -4 with no weapon), `ambush:
+  true` when the `csMod` is what a surprise attack or ambush costs (Huntmastery spares it; mark
+  these in every Magnakai book).
+- **bowShot** (Magnakai books): a Random Number that is a bow shot, `{to: [lo, hi]}` for each
+  choice it decides, with the ranges of the total as the text gives them (use 99 for "or
+  higher"). Leave out the choice for having no Bow. The engine adds Weaponmastery and spends the
+  Arrow. Arrows found or bought are `{arrows: n}` in `loot`; lost ones `{arrows: n | 'all'}` in `take`.
+- **food as a Meal**: an item the text says can be eaten as a Meal gets `meal: true` (Book 1's
+  Laumspur).
 - **todo**: anything the player must decide, in our words, shown as "By hand: ...". Never guess.
 - **shops** (Book 2 on): each ware is a `loot` entry with `cost`; "choose any two" is a group with
   `or` and `pick: 2`. Gold won or lost by a number is `rolls` with `gold`.
@@ -64,14 +72,17 @@ Decide each section by what the text says, outright:
   bare-handed one is `with: 'none'` with the importer's -4 cleared (`csMod: 0`).
 - **effects written on a choice** ("restore 2 and turn to 312") go on the section turned to, but
   only when nothing else leads there (check who links to it); otherwise a `todo`.
-- **starting equipment** the book hands over before section 1 (Book 2's Seal) is a `give` at
-  section 1.
+- **starting equipment** is not in the item table: each book's kit is `LW.KITS` in
+  `shared/rules-series.js`, from rules-books.md's addendum. A kit item the engine lacks goes in
+  `LW.ITEMS` (core.js) or, if only that book has it, the book's `ITEMS`.
 
 Kinds: the text says "Special Item" or "Backpack Item" for most. Where it does not, keys, papers
 and things worn are `special`, other goods `backpack`; say so in the plan when unsure. Give a
 book item a `name` (the book's label), `kind`, `glyph`, and where useful `heal`, `ep`, `about`
 (our words: what it is for). Standard items (weapons, Laumspur Potion, Helmet...) are in
-`LW.ITEMS` already. A potion with a fight effect (Alether) is described, not applied.
+`LW.ITEMS` already, with the kit items (Shield, Padded Leather Waistcoat, Lantern, Fireseed, Rope,
+Tinderbox, Alether, Badge of Rank, each book's map). A potion with a fight effect (Alether) is
+described, not applied.
 
 Gold found is a `give` when it is pocketed in the text, a `loot` when it is offered.
 

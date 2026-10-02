@@ -20,13 +20,14 @@ if (!fs.existsSync(file)) { console.log(`no items-${book}.js yet: the book's ite
 const require = createRequire(import.meta.url);
 globalThis.window = globalThis; globalThis.LW = { BOOKS: {} }; globalThis.document = { write() {} };
 require(path.join(ROOT, 'shared', 'core.js'));
-Object.assign(LW.ITEMS, { bow: { name: 'Bow', kind: 'weapon' }, quiver: { name: 'Quiver', kind: 'special' } }); // rules-series.js
+Object.assign(LW.ITEMS, { bow: { name: 'Bow', kind: 'weapon', ranged: true }, quiver: { name: 'Quiver', kind: 'special' } }); // rules-series.js
 require(path.join(ROOT, 'data', 'projectaon', book, 'book.js'));
 const T = await import(pathToFileURL(file).href), B = LW.BOOKS[book], bad = [];
 // every book's items are known in the page (an item from Book 1 can gate a choice in Book 2)
 for (const f of fs.readdirSync(ROOT).filter((f) => /^items-\w+\.js$/.test(f))) LW.addItems((await import(pathToFileURL(path.join(ROOT, f)).href)).ITEMS);
 
-const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'noHunt', 'todo', 'need', 'fight']);
+const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'noHunt', 'todo', 'need', 'fight', 'bowShot']);
+const FIGHT = new Set(['csMod', 'csNote', 'mindforce', 'unless', 'unarmed', 'undead', 'drain', 'with', 'double', 'ambush']);
 const known = (id) => id === 'meal' || !!LW.ITEMS[id];
 for (const [k, it] of Object.entries(T.ITEMS)) {
   if (!['weapon', 'backpack', 'special'].includes(it.kind)) bad.push(`item ${k}: kind must be weapon, backpack or special`);
@@ -34,7 +35,7 @@ for (const [k, it] of Object.entries(T.ITEMS)) {
 }
 const things = (list, where) => (list || []).forEach((l) => {
   if (l.item && !known(l.item)) bad.push(`${where}: unknown item ${l.item}`);
-  if (!l.item && l.gold == null && l.meal == null && !l.pack) bad.push(`${where}: give/loot entry with nothing in it`);
+  if (!l.item && l.gold == null && l.meal == null && !l.pack && !l.arrows) bad.push(`${where}: give/loot entry with nothing in it`);
 });
 const losses = (list, where) => (list || []).forEach((t) => {
   if (t.item && !known(t.item)) bad.push(`${where}: unknown item ${t.item}`);
@@ -49,6 +50,15 @@ for (const [id, x] of Object.entries(T.SECTIONS)) {
   things(x.give, `${id} give`); things(x.loot, `${id} loot`); losses(x.take, `${id} take`);
   (x.rolls || []).forEach((r, i) => { if (!sec.rnt) bad.push(`${id}: rolls, but the section draws no Random Number`); losses(r.take, `${id} rolls[${i}]`); });
   if (x.fight && !sec.combat) bad.push(`${id}: fight, but the section has no combat`);
+  Object.keys(x.fight || {}).filter((f) => !FIGHT.has(f)).forEach((f) => bad.push(`${id} fight: unknown field ${f}`));
+  if (x.fight && x.fight.ambush && !(x.fight.csMod < 0 || sec.combat.csMod < 0)) bad.push(`${id} fight: ambush, but no COMBAT SKILL lost`);
+  if (x.bowShot) {
+    if (!sec.rnt) bad.push(`${id}: bowShot, but the section draws no Random Number`);
+    for (const [to, r] of Object.entries(x.bowShot)) {
+      if (!(sec.choices || []).some((c) => c.to === to)) bad.push(`${id}: bowShot range for a choice to ${to}, which it does not have`);
+      if (!Array.isArray(r) || r.length !== 2 || r[0] > r[1]) bad.push(`${id}: bowShot range for ${to} must be [lo, hi]`);
+    }
+  }
   (x.fight && x.fight.unless || []).forEach((i) => { if (!known(i)) bad.push(`${id} fight: unknown item ${i}`); });
   if (x.fight && x.fight.with && x.fight.with !== 'none' && !(LW.ITEMS[x.fight.with] && (LW.ITEMS[x.fight.with].kind === 'weapon' || LW.ITEMS[x.fight.with].weapon))) bad.push(`${id} fight: with ${x.fight.with}, which is not a weapon`);
   (x.loot || []).forEach((l) => { if (l.pick && !l.or) bad.push(`${id} loot: pick without or`); });

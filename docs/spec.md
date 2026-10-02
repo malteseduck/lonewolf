@@ -106,8 +106,10 @@ engine does and does not apply.
   section given for evading.
 - An enemy may be immune to mind attacks.
 - Combat in a section must be resolved before the section's onward choices open.
-- House rule kept from the prototypes: a Laumspur potion may be drunk during combat without
-  costing a round. (The books do not allow this. Revisit.)
+- House rule, kept by the owner (2026-10-02): a Laumspur potion may be drunk during combat without
+  costing a round. The books allow it only after a fight.
+- The books' other combat rules (a Shield, the Bow, the improved disciplines' numbers, Huntmastery
+  against an ambush) are applied as docs/reference/rules-books.md lists them.
 
 ### 4.4 Random Number
 
@@ -154,7 +156,9 @@ not guessed by the importer (principle 2). Where the book leaves the decision to
 - The player can always choose to roll a new character for any book instead.
 - A new character starting in a later series is given that series' starting disciplines and is
   treated as already holding every discipline of the earlier series.
-- Each book's own starting equipment should be granted as that book specifies.
+- Each book's own starting equipment is granted as that book specifies: after the disciplines, the
+  character dialog shows the book's gold and given items, its choice of equipment, the weapons he
+  carries (any may be left), and from Book 5 what he leaves at or takes from the Kai Monastery.
 
 ## 5. The book model
 
@@ -265,9 +269,4 @@ hand.
 
 ## 10. Open questions
 
-- Apply the improved disciplines with numbers, the Bow, the Special Item limit and each book's
-  starting kit (rules-books.md marks each as not yet in the engine).
-- Whether Kai Disciplines keep their effects inside Magnakai books.
-- Bow and Arrow rules, and the Special Item limit in later books.
-- Per-book starting equipment.
 - Location data for imported books, so map travel works in them as it does in the demo.

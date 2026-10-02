@@ -56,6 +56,8 @@ Textures are generated at start-up in `main.js` and set as CSS variables: `--par
   about 243x425, in a 1274x914 window.
 - `.scroll` holds the text and scrolls if the section is long. What follows is pinned below it.
 - `#dialslot`: for `rnt` sections the Random Number medallion is mounted here by `mountRnt()`.
+  In a bow shot (`bowShot`) the line under it says what the shot costs, or why he cannot shoot
+  (a toast if touched), and afterwards shows the sum: the number drawn, each bonus, the total.
   `makeDial()` builds it: a 4.6em medallion whose bronze bezel is engraved 0-9 and turns, while
   the black face shuffles digits, then shows the drawn one under the notch at the top, glowing.
   The same medallion sits among the fight's commands.
@@ -90,7 +92,9 @@ left. `updateBattle` redraws the gauges each round.
   slots he wears (helmet above, the two weapons either side of the chainmail; a mastered weapon is
   lit), the other Special Items in a row beneath (at least four slots, empty ones as bare rings);
   then a ruled "Backpack" heading, a knapsack medallion beside eight dark tiles (one per Meal or
-  item); a ledger (gold -/+, "Add an item by hand"); and the caption with Drink / Drop / Eat. With
+  item); a ledger (gold -/+, "Add an item by hand"); and the caption with Drink / Drop / Eat. The
+  Quiver's caption counts its Arrows, with -/+ (`adjust('arrows')`); with nothing selected the
+  caption lists what is kept at the Kai Monastery (`hero.stored`, `hero.storedGold`). With
   the Backpack lost (`hero.noPack`) its heading says so. The caption gives a book item's `about`;
   anything with `heal` can be drunk (the potion) or eaten (Laumspur herb). Icons: `ITEM_GLYPH` for the
   standard items, else the item's own `glyph` from its book's item table, else a pouch or pendant
@@ -333,7 +337,10 @@ A requestAnimationFrame loop calls `drawCreature` each frame; the plate itself i
 wound marks, the lunge scale and the death fade change.
 
 `battleAct(id)`: `fight` and `evade` spin the dial and resolve a round; `mind` cycles the mind
-attack; `item` drinks Laumspur. When `B.over` is set the left page shows the outcome and a
+attack (Psi-surge's numbers from `LW.psi`: an Archmaster's are +6, 1 a round, not at 4 or less);
+`item` drinks Laumspur; `cure` (an Archmaster with Curing, once a book, `LW.canCure`; the
+medallion is dim above 6 Endurance) restores 20 without costing a round. A fight marked `ambush`
+loses its `csMod` for a Magnakai hero with Huntmastery, and says so in the log. When `B.over` is set the left page shows the outcome and a
 "Turn the page" button, which calls `endBattle` to move the story on.
 
 ## Art pipeline (`plates.js`, `shared/ink.js`)
@@ -363,8 +370,8 @@ attack; `item` drinks Laumspur. When `B.over` is set the left page shows the out
 - The shaded bands behind the enemy's name and the controls are `::before` layers faded out at
   the sides too, so no straight edge shows over the plate.
 - The fight's command medallions use glyphs too: Strike shows the weapon in hand (`itemGlyph`),
-  Mindblast/Psi-surge a brain or psychic waves (lit while in use), Laumspur the potion, Evade a
-  running man.
+  Mindblast/Psi-surge a brain or psychic waves (lit while in use), Laumspur the potion, Curing its
+  discipline's glyph, Evade a running man.
 - `portraitFromArt`, `drawFrame`, `gearSVG`: Lone Wolf's ink likeness for the Kai and
   inventory panels, the page frame (also the discipline grid's frame), the clockwork.
   `drawFrame` (after the HD book): a border band with a running vine (`vine`: a wavering stem,

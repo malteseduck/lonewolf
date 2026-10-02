@@ -41,7 +41,9 @@ table, not here.
 |---|---|
 | When told to eat, eat a Meal or lose 3 ENDURANCE | `sec.meal` |
 | Hunting (Kai) spares the Meal, **except in wasteland and desert**; each book names its own such land | `LW.hunts`; per-section `noHunt` |
-| A healing (Laumspur) potion restores 4 ENDURANCE, drunk **after** a fight, never just before one; other potions say their own effect | yes; drinking during a fight is a house rule (spec 4.3) |
+| A healing (Laumspur) potion restores 4 ENDURANCE, drunk **after** a fight, never just before one; other potions say their own effect | yes, with our exception below |
+| *Our exception, kept by the owner (2026-10-02)*: a healing potion may be drunk during a fight without costing a round. The books allow it only after a fight | the fight's Laumspur medallion (spec 4.3) |
+| Food that the text says serves as a Meal is eaten when a Meal is due and he has none | `meal: true` on the item |
 
 ### Combat
 
@@ -52,7 +54,7 @@ table, not here.
 | The table is the same in every book; the engine's copy was checked cell by cell (2026-10-02) | `CRT_ROWS` in core.js |
 | Ratio columns: ≤−11, −10/−9, −8/−7, −6/−5, −4/−3, −2/−1, 0, +1/+2, +3/+4, +5/+6, +7/+8, +9/+10, ≥+11 | `LW.crtColumn` |
 | Rounds go on until one side is at 0 or below | yes |
-| No weapon: −4 COMBAT SKILL, bare hands | yes |
+| No weapon: −4 COMBAT SKILL, bare hands | yes (less with Weaponmastery from Tutelary: see the Magnakai series) |
 | Evasion only where the text offers it: the round is fought, only his loss counts, and he is away | yes (`evade`) |
 | Several enemies "one at a time" are fought in turn; "as one enemy" is one combat line | importer |
 
@@ -63,7 +65,7 @@ table, not here.
 | A completed book's COMBAT SKILL, ENDURANCE, disciplines, Weapons and Special Items carry into the next | `LW.Character` |
 | Gold carries; each book's starting gold is **added** to it (still at most 50) | yes |
 | Backpack Items and Meals do not carry over: the rules pages name only Weapons and Special Items | yes: the Backpack starts empty (`chooseCharacter`) |
-| A new character may start at any book, with that book's own kit | Book 1 only; later books: see their addenda |
+| A new character may start at any book, with that book's own kit | yes: Book 1 by `makeHero`, later books by `LW.KITS` |
 
 ## Kai series (Books 1–5)
 
@@ -104,19 +106,20 @@ books begin), 6 Aspirant, 7 Guardian, 8 Warmarn (or Journeyman), 9 Savant, 10 Ma
 - The Kai effects are restated as Magnakai ones (Book 6's equipment page: Weaponmastery for weapons,
   Huntmastery for Meals), so in a Magnakai book only Magnakai Disciplines act. *Engine*: yes
   (`rules-series.js`); the spec's interpretation is confirmed.
-- Gold over 50 may be left in safekeeping at the Kai Monastery. *Engine*: no.
+- Gold over 50 may be left in safekeeping at the Kai Monastery. *Engine*: yes: at a book's start
+  (the kit step) the excess goes to `hero.storedGold`, and may be drawn on at a later book's start.
 
 ### Magnakai Disciplines
 
 | Discipline | Effect | Engine |
 |---|---|---|
-| Weaponmastery | +3 COMBAT SKILL with a mastered weapon; with the Bow, +3 to the Random Number of a shot | +3 yes; Bow no |
+| Weaponmastery | +3 COMBAT SKILL with a mastered weapon; with the Bow, +3 to the Random Number of a shot | yes (`LW.bowShot` for the Bow) |
 | Animal Control | Command and read animals; fight well from the saddle | gates only |
 | Curing | +1 ENDURANCE for each section without a fight, up to the maximum; cures disease and wounds, knows herbs and potions | yes (the +1) |
 | Invisibility | Hide even in the open; mask heat and scent; pass as a native | gates only |
-| Huntmastery | No Meal ever needed, desert and wasteland included; **ignores the extra COMBAT SKILL lost to a surprise attack or ambush** | Meals yes; ambush no |
+| Huntmastery | No Meal ever needed, desert and wasteland included; **ignores the extra COMBAT SKILL lost to a surprise attack or ambush** | yes; the ambush where the item table marks a fight `ambush` |
 | Pathsmanship | Right path, foreign writing, tracks, traps, always knows north | gates only |
-| Psi-surge | +4 COMBAT SKILL at 2 ENDURANCE a round; or Mindblast, +2 at no cost (not both); not at 6 ENDURANCE or less; not on immune enemies | yes |
+| Psi-surge | +4 COMBAT SKILL at 2 ENDURANCE a round; or Mindblast, +2 at no cost (not both); not at 6 ENDURANCE or less; not on immune enemies | yes (`LW.psi`) |
 | Psi-screen | No ENDURANCE lost to Mindforce; resists illusion and hypnosis | yes (`shielded`) |
 | Nexus | Withstands heat and cold; moves objects | gates only |
 | Divination | Senses danger, hidden enemies, intentions; telepathy | gates only |
@@ -146,15 +149,16 @@ By the number of Magnakai Disciplines: 1 Kai Master, 2 Kai Master Senior, 3 Kai 
 ### Improved Disciplines
 
 From Book 7 each book lists what a rank adds to some disciplines. A rank's improvements are first
-printed in the book named, and hold from then on. Those with numbers the engine could apply:
+printed in the book named, and hold from then on. A carried character reaches each rank in the book
+that first prints it, so the engine goes by rank alone (`LW.mkRank`). Those with numbers:
 
 | Rank (first in) | Discipline | Improvement | Engine |
 |---|---|---|---|
-| Tutelary (Book 8) | Weaponmastery | Unarmed: −2 COMBAT SKILL instead of −4 | no |
-| Mentora (Book 10) | Weaponmastery | +2 to the Random Number with a bow or thrown weapon | no |
-| Scion-kai (Book 11) | Weaponmastery | +4 (not +3) with a mastered weapon; unarmed −1 | no |
-| Archmaster (Book 12) | Curing | Once in 100 days, at 6 ENDURANCE or less in a fight, restore 20 | no |
-| Archmaster (Book 12) | Psi-surge | +6 at 1 ENDURANCE a round; Mindblast +3; not at 4 ENDURANCE or less | no |
+| Tutelary (Book 8) | Weaponmastery | Unarmed: −2 COMBAT SKILL instead of −4 | yes |
+| Mentora (Book 10) | Weaponmastery | +2 to the Random Number with a bow or thrown weapon | yes for the Bow, when the Bow is a mastered weapon (owner's reading, 2026-10-02); a thrown weapon is the text's |
+| Scion-kai (Book 11) | Weaponmastery | +4 (not +3) with a mastered weapon; unarmed −1 | yes |
+| Archmaster (Book 12) | Curing | Once in 100 days, at 6 ENDURANCE or less in a fight, restore 20 | yes, read as **once a book** (no book spans 100 days of play we can count); a Curing medallion in the fight |
+| Archmaster (Book 12) | Psi-surge | +6 at 1 ENDURANCE a round; Mindblast +3; not at 4 ENDURANCE or less | yes (`LW.psi`) |
 
 The others widen what a discipline lets the text offer, and the text gates them:
 Primate (Book 7): Animal Control repels an attacking animal; Curing slows poison; Huntmastery climbs
@@ -173,9 +177,9 @@ Nexus limited immunity to fire, gas and acid.
 
 | Rule | From | Engine |
 |---|---|---|
-| Bow: used only when the text allows; needs a Quiver and an Arrow, one Arrow a shot; useless hand to hand (armed only with a Bow, fight as unarmed). A Quiver holds six Arrows | Book 6 | no |
-| Special Items: at most 12 carried; more may be left at the Monastery | Book 8 | no |
-| Special Items may be left in safekeeping at the Monastery between books | Book 5 | no |
+| Bow: used only when the text allows; needs a Quiver and an Arrow, one Arrow a shot; useless hand to hand (armed only with a Bow, fight as unarmed). A Quiver holds six Arrows | Book 6 | yes: `ranged` weapons; `hero.arrows`; a section's `bowShot` |
+| Special Items: at most 12 carried; more may be left at the Monastery | Book 8 | yes (`LW.specialLimit`) |
+| Special Items may be left in safekeeping at the Monastery between books | Book 5 | yes: `hero.stored`, in the kit step |
 
 ## Book addenda
 
@@ -183,8 +187,9 @@ What each book adds to the common and series rules above: its starting kit, its 
 improved disciplines it introduces, and its footnote rulings. Each section is complete for its
 book without the other books' sections. "Choose N" lists are what the book offers to add to what he
 carries. From Book 2 on, starting gold is 10 + a Random Number, added to any he carries.
-*Engine*: Book 1's kit is automatic; Book 2 gives the Seal (its item table); every other kit is by
-hand ("Per-book starting equipment" in docs/plan.md).
+*Engine*: Book 1's kit is `makeHero`'s; every later book's is `LW.KITS` in rules-series.js, offered
+after the disciplines in the character dialog (gold, given items, the choice, his weapons, the
+Monastery). Clothing is named there but not tracked.
 
 ### Book 1, Flight from the Dark (Kai)
 
@@ -196,14 +201,15 @@ hand ("Per-book starting equipment" in docs/plan.md).
 - **Footnotes**: Laumspur gathered as food counts as a Meal when eaten as one, and restores 3
   ENDURANCE as well (113); take as many Torches as will fit, one Backpack space each (347); the
   Crystal Star Pendant may be kept, and later books ask whether he ever had it (349). *Engine*: the
-  Laumspur heals 3 but is not a Meal; the Torches are one find; "ever had" is `hero.had`.
+  Laumspur heals 3 and is eaten as a Meal when he has none (`meal: true`); the Torches are one find;
+  "ever had" is `hero.had`.
 
 ### Book 2, Fire on the Water (Kai)
 
 - **Kit**: a Map and the **Seal of Hammerdal** (Special, a ring). Choose any **2** of: Sword, Short
   Sword, two Meals, Chainmail Waistcoat (Special, +4 ENDURANCE), Mace, Healing Potion (4 after a
   fight, one dose), Quarterstaff, Spear, Shield (Special, +2 COMBAT SKILL in a fight), Broadsword;
-  carried Weapons may be exchanged for these. *Engine*: the Seal at section 1; no Shield item.
+  carried Weapons may be exchanged for these. *Engine*: yes (`LW.KITS[2]`; the Shield is `shield`).
 - **Meals**: Hunting does not spare a Meal in the Wildlands (Ragadorn, its coast road, the coach
   road east; section 346).
 - **The Sommerswerd** (Special, weapon-like): +8 COMBAT SKILL in a fight; Weaponskill with Sword,
@@ -246,7 +252,7 @@ hand ("Per-book starting equipment" in docs/plan.md).
   after a fight, one dose), Sword, Spear, two Special Rations (a Meal and a Backpack space each),
   Mace, Shield (Special, +2 COMBAT SKILL in a fight).
 - **Safekeeping**: before setting out, Special Items may be left at the Kai Monastery: safe, but
-  not usable. *Engine*: no.
+  not usable. *Engine*: yes (the kit step).
 - **Meals**: Hunting fails in the desert.
 - **Completion**: finishing Books 1–5 makes him a Kai Master, and he goes on to the Magnakai series.
 - **Footnotes**: in the fight at 20, half of the ENDURANCE lost (rounded down) comes back after
@@ -285,12 +291,13 @@ hand ("Per-book starting equipment" in docs/plan.md).
   six Arrows), Rope, Potion of Laumspur (4 after a fight, one dose), Lantern (lights itself), Mace,
   three Meals, Dagger, three Fireseeds (Special; burst into flame when thrown).
 - **Special Items**: at most 12 carried from here on; more may be left at the Monastery.
-  *Engine*: no limit.
+  *Engine*: yes.
 - **Money**: none in the Danarg; in Talestria 4 Lune = 1 Gold Crown.
 - **Improved Disciplines introduced: Tutelary** (5): **Weaponmastery: unarmed costs only 2 COMBAT
   SKILL, not 4**; Invisibility draws an enemy's eye elsewhere; Pathsmanship senses an ambush within
   500 yards unless he is weak from wounds or hunger; Psi-screen resists charms and hostile
-  telepathy; Divination recognises magical things unless they are shielded. *Engine*: no.
+  telepathy; Divination recognises magical things unless they are shielded. *Engine*: the
+  Weaponmastery number, yes.
 - **Footnotes**: keep the Pass (1) and the Lodestone (202), which many sections assume; only the
   Sommerswerd serves against the Helghast at 60.
 
@@ -314,7 +321,8 @@ hand ("Per-book starting equipment" in docs/plan.md).
 - **Money**: Eru's Lune, 4 to the Gold Crown.
 - **Improved Disciplines introduced: Mentora** (7): **Weaponmastery: +2 to the Random Number with a
   bow or a thrown weapon**; Curing neutralises any poison; Pathsmanship leaves no tracks, even in
-  snow; Psi-screen wards off spirits; Divination sees a past event where it happened. *Engine*: no.
+  snow; Psi-screen wards off spirits; Divination sees a past event where it happened. *Engine*: the
+  Weaponmastery number, yes, for the Bow.
 - **Footnotes**: when told to lose a Weapon, a weapon-like Special Item goes only if he has no
   ordinary Weapon (11, 210); the Dagger of Vashna at 142 likewise, or he may keep it; at 203 a 0
   counts as 10, and at least 1 point is lost even with Curing's −3.
@@ -329,7 +337,7 @@ hand ("Per-book starting equipment" in docs/plan.md).
   with a mastered weapon, and unarmed costs only 1**; Invisibility changes his appearance;
   Pathsmanship speaks with any sentient creature and hides him from magical detection; Psi-screen
   turns hostile psychic energy; Divination spirit-walks (his body lies helpless meanwhile; if
-  either dies, both do). *Engine*: no.
+  either dies, both do). *Engine*: the Weaponmastery numbers, yes.
 - **Footnote**: the book is very hard for a new or average character.
 
 ### Book 12, The Masters of Darkness (Magnakai)
@@ -340,7 +348,8 @@ hand ("Per-book starting equipment" in docs/plan.md).
 - **Improved Disciplines introduced: Archmaster** (9): **Curing: once in 100 days, at 6 ENDURANCE
   or less in a fight, restore 20**; **Psi-surge: +6 COMBAT SKILL at 1 ENDURANCE a round, Mindblast
   +3, unusable at 4 ENDURANCE or less**; Animal Control commands most animals; Huntmastery keen
-  hearing, smell and night sight; Nexus limited immunity to fire, toxic gas and acid. *Engine*: no.
+  hearing, smell and night sight; Nexus limited immunity to fire, toxic gas and acid. *Engine*: the
+  Curing and Psi-surge numbers, yes (Curing once a book).
 - **Footnotes**: his base ENDURANCE itself can be lowered (240, 268), and at 0 he is dead even if
   armour keeps his current score above it; the Dagger of Vashna adds 7 COMBAT SKILL against a
   Darklord of Helgedad (75, 230); at 75 he cannot harm Kraagenskûl for three rounds without it.

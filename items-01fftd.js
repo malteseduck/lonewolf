@@ -21,7 +21,7 @@ export const ITEMS = {
   message: { name: 'Message', kind: 'special', glyph: 'scroll-quill', about: 'Written on an animal skin.' },
   crystalStar: { name: 'Crystal Star Pendant', kind: 'special', glyph: 'gem-necklace', about: 'A talisman of good fortune, worn on a gold chain.' },
   alether: { name: 'Potion of Alether', kind: 'backpack', glyph: 'standing-potion', about: 'Drink before a fight: +2 COMBAT SKILL for that fight. Apply it by hand.' },
-  laumspurHerb: { name: 'Laumspur', kind: 'backpack', glyph: 'herbs-bundle', heal: 3, about: 'A handful of the healing herb: eat it to restore 3 ENDURANCE.' },
+  laumspurHerb: { name: 'Laumspur', kind: 'backpack', glyph: 'herbs-bundle', heal: 3, meal: true, about: 'A handful of the healing herb: eat it to restore 3 ENDURANCE. It serves as a Meal when you have none.' },
   soap: { name: 'Tablet of Perfumed Soap', kind: 'backpack', glyph: 'soap' },
   torch: { name: 'Torch', kind: 'backpack', glyph: 'torch' },
   tinderbox: { name: 'Tinderbox', kind: 'backpack', glyph: 'flint-spark' },
