@@ -221,6 +221,7 @@
         if (t.item) { if (LW.dropItem(hero, t.item)) events.push(`The ${name(t.item)} is gone.`); }
         else if (t.gold != null) { const n = t.gold === 'all' ? hero.gold : Math.min(hero.gold, t.gold); if (n) { hero.gold -= n; events.push(`You lose ${n} Gold Crowns.`); } }
         else if (t.weapons === 'all') { if (hero.weapons.length) { hero.weapons = []; events.push('Your weapons are gone.'); } }
+        else if (t.special === 'all') { if (hero.special.length) { [...hero.special].forEach((x) => LW.dropItem(hero, x)); events.push('Your Special Items are gone.'); } }
         else if (t.weapons === 'one') {
           if (hero.weapons.length === 1) events.push(`Your ${name(hero.weapons.pop())} is lost.`);
           else if (hero.weapons.length > 1) events.push('By hand: one weapon of your choice is lost. Drop it in the inventory.');
@@ -287,14 +288,15 @@
 
     /* What can be taken here: the section's gifts (sec.give, taken on arrival if they fit) and its
        finds (sec.loot). Each is {gold: n} | {meal: n} | {item: id} | {pack: true} (a Backpack), and
-       may carry or: a name shared by finds of which only one may be taken. i is 'give0' or 0. */
+       may carry or: a name shared by finds of which only pick (default 1) may be taken, or cost: a
+       price in Gold Crowns (a shop: bought as often as he likes). i is 'give0' or 0. */
     loot() {
       const sec = this.section, all = [...(sec.give || []).map((l, n) => [l, 'give' + n]), ...(sec.loot || []).map((l, n) => [l, n])];
       const got = (i) => !!this.s.looted[this.s.at + ':' + i];
       return all.map(([l, i]) => {
         const label = l.gold ? `${l.gold} Gold Crowns` : l.meal ? (l.meal > 1 ? `${l.meal} Meals` : 'a Meal') : l.pack ? 'a Backpack' : LW.itemName(l.item);
-        const other = l.or && all.some(([m, j]) => j !== i && m.or === l.or && got(j));
-        return { i, label, taken: got(i), closed: other, item: l.item || (l.meal ? 'meal' : l.gold ? 'gold' : 'pack') };
+        const share = l.or && all.filter(([m, j]) => j !== i && m.or === l.or && got(j)).length >= (l.pick || 1);
+        return { i, label, taken: got(i), closed: share, cost: l.cost, pick: l.pick, item: l.item || (l.meal ? 'meal' : l.gold ? 'gold' : 'pack') };
       });
     }
     /* Returns an error string when it cannot be taken. */
@@ -302,7 +304,9 @@
       const sec = this.section, l = String(i).startsWith('give') ? sec.give[+String(i).slice(4)] : sec.loot[i];
       const hero = this.s.hero, key = this.s.at + ':' + i;
       if (!l || this.s.looted[key]) return null;
-      if (l.or && this.loot().some((o) => o.i !== i && o.taken && (String(o.i).startsWith('give') ? sec.give[+String(o.i).slice(4)] : sec.loot[o.i]).or === l.or)) return 'You may take only one of these.';
+      if (l.or && this.loot().find((o) => o.i === i).closed) return l.pick > 1 ? `You may take only ${l.pick} of these.` : 'You may take only one of these.';
+      if (l.cost && hero.gold < l.cost) return `It costs ${l.cost} Gold Crowns.`;
+      if (l.cost && l.pack && !hero.noPack) return 'You have a Backpack already.';
       if (l.gold) hero.gold = Math.min(50, hero.gold + l.gold);
       else if (l.pack) hero.noPack = false;
       else if (l.meal) {
@@ -311,17 +315,20 @@
         if (room < l.meal) return room ? `Your backpack has room for only ${room}.` : 'Your backpack is full.';
         hero.meals += l.meal;
       } else { const err = LW.putItem(hero, l.item); if (err) return err; }
+      if (l.cost) { hero.gold -= l.cost; this.save(); return null; } // a shop's goods stay on sale
       this.s.looted[key] = true;
       this.save();
       return null;
     }
-    /* sec.rolls: what the number drawn here does to him, where the text says so outright. */
+    /* sec.rolls: what the number drawn here does to him, where the text says so outright: ep, gold
+       won (gold), and what is lost (take). */
     setRolled(n) {
       this.s.rolled = n;
       const hero = this.s.hero, r = (this.section.rolls || []).find((x) => n >= x.range[0] && n <= x.range[1]);
       if (r && !this.s.looted[this.s.at + ':rolled']) {
         this.s.looted[this.s.at + ':rolled'] = true;
         if (r.ep) { hero.ep = Math.max(0, Math.min(hero.epMax, hero.ep + r.ep)); this.s.events.push(r.ep < 0 ? `You lose ${-r.ep} ENDURANCE.` : `You regain ${r.ep} ENDURANCE.`); }
+        if (r.gold) { const was = hero.gold; hero.gold = Math.max(0, Math.min(50, hero.gold + r.gold)); this.s.events.push(r.gold > 0 ? `You win ${hero.gold - was} Gold Crowns.` : `You lose ${was - hero.gold} Gold Crowns.`); }
         this.lose(r.take, this.s.events);
       }
       this.save();

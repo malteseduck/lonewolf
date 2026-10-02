@@ -6,6 +6,7 @@ import { drawCreature, setArt, setEmblem, newWound, drawHero, heroFromArt, portr
 import { MAPS, LASTLANDS, mapCanvas, loadStamps, stampsLoaded, printedCanvas, replicaModel, replicaCanvas, placeBook, along } from './maps.js';
 
 import * as ITEMS_01 from './items-01fftd.js';
+import * as ITEMS_02 from './items-02fotw.js';
 
 const LW = window.LW;
 const BOOKS = Object.assign({}, LW.BOOKS || {});
@@ -13,7 +14,7 @@ const BOOKS = Object.assign({}, LW.BOOKS || {});
 /* Each book's hand-made item table (items-<code>.js) is laid over its sections the first time the
    book is opened. Every book's items are known from the start, so a Lone Wolf carried on from one
    book still shows what he took from it. */
-const ITEM_TABLES = { '01fftd': ITEMS_01 };
+const ITEM_TABLES = { '01fftd': ITEMS_01, '02fotw': ITEMS_02 };
 Object.values(ITEM_TABLES).forEach((t) => LW.addItems(t.ITEMS));
 function applyItems(b) {
   const t = ITEM_TABLES[b.id];
@@ -25,11 +26,12 @@ function applyItems(b) {
     const { need, fight, ...rest } = x;
     Object.assign(sec, rest);
     if (fight && sec.combat) {
-      const { mindforce, ...f } = fight;
+      const { mindforce, undead, drain, ...f } = fight; // these three belong to each enemy
       Object.assign(sec.combat, f);
-      if (mindforce) sec.combat.enemies.forEach((e) => { e.mindforce = mindforce; });
+      sec.combat.enemies.forEach((e) => Object.assign(e, mindforce && { mindforce }, undead && { undead }, drain && { drain }));
     }
-    for (const [to, n] of Object.entries(need || {})) sec.choices.filter((c) => c.to === to).forEach((c) => { c.need = Object.assign({}, c.need, n); });
+    // a gate the importer set wrongly is cleared with null
+    for (const [to, n] of Object.entries(need || {})) sec.choices.filter((c) => c.to === to).forEach((c) => { if (n === null) delete c.need; else c.need = Object.assign({}, c.need, n); });
   }
 }
 
@@ -285,8 +287,10 @@ function leftHTML() {
   if (game.s.events.length) h += `<ul class="events">${game.s.events.map((e) => `<li>${esc(e)}</li>`).join('')}</ul>`;
   const loot = game.loot();
   // what is found here: each a medallion to touch to take it; things handed over come already taken
-  if (loot.length && !isDead()) h += `<div class="block finds"><span class="eyebrow">Found here</span>${loot.map((l) => `<button type="button" class="find ${l.taken ? 'got' : ''}" data-loot="${l.i}" ${l.taken || l.closed ? 'disabled' : ''}>
-      <span class="med ${l.taken ? 'lit' : ''}">${itemGlyph(l.item)}</span><span>${esc(l.label)}<i>${l.taken ? 'yours' : l.closed ? 'you took the other' : 'take it'}</i></span></button>`).join('')}</div>`;
+  // a shop's goods are bought, as often as he likes; a "choose two" closes once two are taken
+  const note = (l) => (l.taken ? 'yours' : l.closed ? (l.pick > 1 ? 'you have taken your share' : 'you took the other') : l.cost ? `buy it: ${l.cost} Gold Crown${l.cost > 1 ? 's' : ''}` : 'take it');
+  if (loot.length && !isDead()) h += `<div class="block finds"><span class="eyebrow">${loot.every((l) => l.cost) ? 'For sale' : 'Found here'}</span>${loot.map((l) => `<button type="button" class="find ${l.taken ? 'got' : ''}" data-loot="${l.i}" ${l.taken || l.closed ? 'disabled' : ''}>
+      <span class="med ${l.taken ? 'lit' : ''}">${itemGlyph(l.item)}</span><span>${esc(l.label)}<i>${note(l)}</i></span></button>`).join('')}</div>`;
   if (game.combatPending && !isDead()) h += `<div class="block"><span class="eyebrow">You must fight</span>${sec.combat.enemies.map((f) => `<div class="foeline"><span>${esc(f.name)}</span><i>Combat Skill ${f.cs}, Endurance ${f.ep}</i></div>`).join('')}</div>`;
   h += '</div><div class="dialslot" id="dialslot"></div>';
 
@@ -436,6 +440,7 @@ function pickerHTML() {
     ${row('Weapons', LW.WEAPONS.map(pick).join(''))}
     ${row('Backpack', pick('meal') + pick('potion') + other('pack', 'swap-bag', 'Another Backpack Item'))}
     ${row('Special Items', pick('helmet') + pick('chainmail') + pick('map') + other('spec', 'gem-pendant', 'Another Special Item'))}
+    ${ITEM_TABLES[book.id] ? row('This book', Object.keys(ITEM_TABLES[book.id].ITEMS).map(pick).join('')) : ''}
     ${naming ? `<input id="itemname" class="pickname" placeholder="Name it, then press Enter" aria-label="Item name" data-prefix="${naming}">` : '<p class="pickname">Touch an item to add it.</p>'}</div>`;
 }
 
@@ -646,6 +651,7 @@ function renderRight() {
   rtabs.innerHTML = tabs.map(([id, label]) => `<button type="button" class="med ${id === 'map' && panel !== 'map' && mode === 'story' && roads().length ? 'call' : ''}" role="tab" aria-selected="${panel === id}" aria-label="${label}" data-panel="${id}">${TAB_ART[id]}</button>`).join('')
     + `<button type="button" class="med home" data-home aria-label="Back to the title page" title="Back to the title page">${glyph('return-arrow')}</button>`; // the HD return medallion: start over, or pick another book
   if (mode === 'title') { pr.innerHTML = titleRightHTML(); return; }
+  if (!game.s) return; // a new game is being set up (a map image that arrives meanwhile asks for a redraw)
   const h = game.hero, cs = B ? B.cs() : LW.heroCS(h).total;
   const place = mode === 'battle' ? 'Combat' : book.locations ? L[game.section.loc].name : book.title;
   const head = `<div class="headrow"><div class="place">${esc(place)}</div>
@@ -739,7 +745,7 @@ async function startBattle() {
   // the fight's own adjustment, unless he carries what the text says spares him it (a torch), or
   // it is the text's "unarmed" penalty and he has no weapon anyway (heroCS already counts that)
   const spared = (c.unless || []).length && c.unless.every((i) => LW.hasItem(hero, i));
-  const csMod = spared || (c.unarmed && !hero.weapons.length) ? 0 : c.csMod;
+  const csMod = spared || (c.unarmed && !LW.armedWith(hero)) ? 0 : c.csMod;
   const node = el('div', 'fight');
   node.innerHTML = `<canvas width="600" height="800"></canvas><div class="foebar"><span data-b="name"></span><div class="bar"><i></i></div><small data-b="stats"></small></div><div class="cmds" data-b="cmds"></div>`;
   const dial = makeDial();
@@ -747,12 +753,16 @@ async function startBattle() {
   B = { c, i: -1, foe: null, img: null, power: LW.mindPower(hero), mind: LW.mindPower(hero) ? 1 : 0, rounds: 0, log: [], over: null, lock: false, scene: sec.scene, node, dial,
     fx: { lunge: 0, hit: 0, dead: 0, wounds: [] },
     blasting() { return this.foe.immune ? 0 : this.mind; },
-    cs() { return LW.heroCS(hero, { mindblast: this.blasting() === 1, psiSurge: this.blasting() === 2, enemy: this.foe, csMod, csNote: c.csNote }).total; },
+    cs() { return LW.heroCS(hero, { mindblast: this.blasting() === 1, psiSurge: this.blasting() === 2, enemy: this.foe, csMod, csNote: c.csNote, with: c.with }).total; },
+    weapon: LW.armedWith(hero, { with: c.with }),
     ratio() { return this.cs() - this.foe.cs; } };
   nextFoe();
   if (B.foe.mindforce) B.log.push(LW.shielded(hero) ? 'Its will breaks against your Mindshield.' : `Its will presses on yours: Combat Skill less ${B.foe.mindforce}.`);
   if (csMod) B.log.push(`${c.csNote}: Combat Skill ${csMod > 0 ? 'plus' : 'less'} ${Math.abs(csMod)}.`);
   else if (spared) B.log.push(`Your ${c.unless.map(LW.itemName).join(' and ')} spare you the penalty.`);
+  if (c.with === 'none') B.log.push('You fight bare-handed.');
+  else if (c.with) B.log.push(B.weapon ? `Only your ${LW.itemName(c.with)} can harm it.` : `Only the ${LW.itemName(c.with)} can harm it, and you do not have it.`);
+  if (B.weapon && LW.ITEMS[B.weapon] && LW.ITEMS[B.weapon].cs) B.log.push(`You fight with the ${LW.itemName(B.weapon)}.`);
   mode = 'battle'; LW.sfx('battle');
   await turn(render);
   updateBattle();
@@ -784,7 +794,7 @@ function updateBattle() {
   const ev = B.c.evade, evadeOpen = ev && B.rounds >= ev.after, locked = B.lock || B.over;
   const med = (id, ic, label, note, off, extra = '') => `<div class="medcap"><button type="button" class="med ${extra}" data-cmd="${id}" ${locked || off ? 'disabled' : ''} aria-label="${label}">${ic}</button>${label}<small>${note}</small></div>`;
   const n = hero.backpack.filter((b) => b === 'potion').length;
-  const left = med('fight', hero.weapons.length ? itemGlyph(hero.weapons[0]) : glyph('crossed-swords'), 'Strike', 'spin to attack')
+  const left = med('fight', B.weapon ? itemGlyph(B.weapon) : glyph('crossed-swords'), 'Strike', 'spin to attack')
     + (B.power ? med('mind', glyph(B.power === 2 ? 'psychic-waves' : 'brainstorm'), B.power === 2 ? 'Psi-surge' : 'Mindblast', foe.immune ? 'no effect' : ['at rest', B.power === 2 ? 'as Mindblast, +2' : 'focused, +2', '+4, costs 2 a round'][B.blasting()], false, B.blasting() ? 'lit' : '') : '');
   const right = (n ? med('item', itemGlyph('potion'), 'Laumspur', `${n} left`, hero.ep >= hero.epMax) : '')
     + (ev ? med('evade', glyph('run'), 'Evade', evadeOpen ? 'take one blow' : `after round ${ev.after}`, !evadeOpen) : '');
@@ -825,13 +835,19 @@ async function battleAct(id) {
       B.log.push(`${tag} You turn and run${loss ? `; it catches you for ${loss}` : ', untouched'}.`);
       B.over = hero.ep > 0 ? 'evade' : 'dead';
     } else {
-      const dealt = Math.min(res.enemy, foe.ep), taken = Math.min(res.hero, hero.ep);
+      // the text's own doubling (a blow meant to stun), or an undead foe struck with a blade that doubles against them
+      const twice = B.c.double || (foe.undead && LW.ITEMS[B.weapon] && LW.ITEMS[B.weapon].undead);
+      const dealt = Math.min(res.enemy * (twice ? 2 : 1), foe.ep), taken = Math.min(res.hero, hero.ep);
       LW.sfx('swing'); await wait(still ? 0 : 140);
       if (dealt) { B.fx.wounds.push(newWound()); B.fx.hit = 1; LW.sfx('hit'); }
       foe.ep -= dealt; updateBattle();
       await wait(still ? 0 : 480);
       if (foe.ep > 0 || taken) { await lunge(taken); hero.ep -= taken; }
       B.log.push(`${tag} ${res.enemy === Infinity ? 'A killing blow' : dealt ? `${foe.name} loses ${dealt}` : 'Your blow is turned'}; ${res.hero === Infinity ? 'but it finds the gap in your guard' : taken ? `you lose ${taken}` : 'you are untouched'}.`);
+      if (foe.drain && hero.ep > 0) { // every round fought, the last one too
+        if (LW.shielded(hero)) { if (B.rounds === 1) B.log.push('Its mind attack breaks against your shield.'); }
+        else { hero.ep -= foe.drain; B.log.push(`Its mind attack costs you ${foe.drain} Endurance.`); }
+      }
       if (B.blasting() === 2 && hero.ep > 0) {
         hero.ep -= 2; B.log.push('The Psi-surge costs you 2 Endurance.');
         if (hero.ep <= 6 && hero.ep > 0) { B.mind = 1; B.log.push('Too weak to hold it, you fall back on Mindblast.'); }

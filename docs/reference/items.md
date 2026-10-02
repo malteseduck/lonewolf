@@ -3,7 +3,7 @@
 Two jobs done by hand for each imported book, after `docs/reference/map-places.md`'s steps 1-2
 (import, reading copy): the **item table**, so the engine gives, offers, takes and gates what the
 text says (spec 4.5a), and the **fight pictures**, so every fight has a plate (spec 6.5). Book 1
-has both (2026-10-01). The field reference is in `book-format.md` ("Section", "Item tables").
+has both (2026-10-01); Book 2 has its item table (2026-10-01), not yet its pictures. The field reference is in `book-format.md` ("Section", "Item tables").
 
 Never put the book's text anywhere but `data/projectaon/`: tools print section numbers and
 counts, the table holds only the book's short item names, and everything else is in our words.
@@ -21,6 +21,9 @@ counts, the table holds only the book's short item names, and everything else is
 | 7 | Register the table | `ITEM_TABLES` in `main.js` | certain |
 
 ### 2. The reading list
+
+Lists in a section (what a shop sells, what a body carries) come through as lines starting with a
+dash. Book 2's first import dropped them; check a new book's shops show their wares.
 
 `python tools/item_sections.py <book>` scans every section for item, gold, Meal, Endurance and
 Combat Skill wording and writes those sections, from the reading copy, to
@@ -54,6 +57,15 @@ Decide each section by what the text says, outright:
   an item spares (the Burrowcrawler's darkness and a Torch with Tinderbox), `unarmed: true` when the
   penalty is the text's "you are unarmed" (the engine already gives -4 with no weapon).
 - **todo**: anything the player must decide, in our words, shown as "By hand: ...". Never guess.
+- **shops** (Book 2 on): each ware is a `loot` entry with `cost`; "choose any two" is a group with
+  `or` and `pick: 2`. Gold won or lost by a number is `rolls` with `gold`.
+- **book weapons**: a Special Item that fights (the Sommerswerd, the Magic Spear) gets `weapon`,
+  and `cs` / `undead` where the text gives them. A fight only one weapon can win is `with`; a
+  bare-handed one is `with: 'none'` with the importer's -4 cleared (`csMod: 0`).
+- **effects written on a choice** ("restore 2 and turn to 312") go on the section turned to, but
+  only when nothing else leads there (check who links to it); otherwise a `todo`.
+- **starting equipment** the book hands over before section 1 (Book 2's Seal) is a `give` at
+  section 1.
 
 Kinds: the text says "Special Item" or "Backpack Item" for most. Where it does not, keys, papers
 and things worn are `special`, other goods `backpack`; say so in the plan when unsure. Give a
@@ -77,7 +89,8 @@ Pendant), standing-potion (Alether), soap, torch, flint-spark (Tinderbox), backp
 `node tools/check_items.mjs <book>`: errors (sections, choices, items or icons that do not exist,
 unknown fields), the counts, and the flagged sections the table leaves out. Every left-out
 section should be one that was read and judged to need nothing. Book 1: no errors; 12 items, 61
-sections; 107 left out.
+sections; 107 left out. Book 2: no errors; 13 items, 109 sections; 106 left out (three it first
+listed were real misses, so read the list). It knows every book's items, as the page does.
 
 ### 6. Try it
 

@@ -52,9 +52,12 @@ for n in numbers:
     main = page[page.find('<div class="maintext'):page.find('<p id="page-navigation"')]
     sec = {'text': [], 'choices': []}
     enemies = []
-    for m in re.finditer(r'<p(?: class="(\w+)")?>(.*?)</p>|<img[^>]+src="([^"]+)"', main, re.S):
+    # a list (what is on offer, what a body carries) is a paragraph per item; a signpost, one line
+    for m in re.finditer(r'<p(?: class="(\w+)")?>(.*?)</p>|<img[^>]+src="([^"]+)"|<div class="signpost">(.*?)</div>|<li>(.*?)</li>', main, re.S):
         cls, body, img = m.group(1), m.group(2), m.group(3)
-        if img:
+        if m.group(4) is not None or m.group(5) is not None:
+            sec['text'].append(('' if m.group(4) is not None else '– ') + plain(m.group(4) or m.group(5)))
+        elif img:
             sec['img'] = {'file': img, 'full': img.startswith('ill'), 'at': len(sec['text'])}
         elif cls == 'combat':
             c = re.match(r'(.+?):\s*COMBAT\s*SKILL\s*(\d+)\s*ENDURANCE\s*(\d+)', plain(body))

@@ -47,11 +47,26 @@
   /* 0 = no mind attack, 1 = Mindblast, 2 = Psi-surge */
   LW.mindPower = (hero) => (hero.series === 'magnakai' ? (LW.has(hero, 'psiSurge') ? 2 : 0) : LW.has(hero, 'mindblast') ? 1 : 0);
 
+  /* What a weapon adds: its own bonus (item.cs, the Sommerswerd's 8) and his skill with it. A Special
+     Item can be a weapon too; item.weapon lists the kinds it counts as for the skill. */
+  const weaponParts = (hero, w) => {
+    const it = LW.ITEMS[w] || {}, kinds = it.weapon || [w], parts = it.cs ? [{ label: it.name, n: it.cs }] : [];
+    if (hero.series === 'magnakai' && LW.has(hero, 'weaponmastery') && kinds.some((k) => (hero.mastery || []).includes(k))) parts.push({ label: 'Weaponmastery', n: 3 });
+    else if (hero.series !== 'magnakai' && hero.weaponskill && kinds.includes(hero.weaponskill)) parts.push({ label: 'Weaponskill', n: 2 });
+    return parts;
+  };
+  /* The weapon he fights with: whichever gives most. ctx.with: 'none' when the text has him fight
+     bare-handed, or an item id when only that weapon can harm the enemy. Null: unarmed. */
+  LW.armedWith = (hero, ctx = {}) => {
+    if (ctx.with === 'none') return null;
+    const all = [...hero.weapons, ...hero.special.filter((s) => LW.ITEMS[s] && LW.ITEMS[s].weapon)].filter((w) => !ctx.with || w === ctx.with);
+    const sum = (w) => weaponParts(hero, w).reduce((t, p) => t + p.n, 0);
+    return all.reduce((best, w) => (best == null || sum(w) > sum(best) ? w : best), null);
+  };
   LW.heroCS = (hero, ctx = {}) => {
-    const parts = [{ label: 'Base', n: hero.cs }];
-    if (!hero.weapons.length) parts.push({ label: 'Unarmed', n: -4 });
-    else if (hero.series === 'magnakai' && LW.has(hero, 'weaponmastery') && hero.weapons.some((w) => (hero.mastery || []).includes(w))) parts.push({ label: 'Weaponmastery', n: 3 });
-    else if (hero.series !== 'magnakai' && hero.weaponskill && hero.weapons.includes(hero.weaponskill)) parts.push({ label: 'Weaponskill', n: 2 });
+    const parts = [{ label: 'Base', n: hero.cs }], w = LW.armedWith(hero, ctx);
+    if (w) parts.push(...weaponParts(hero, w));
+    else parts.push({ label: ctx.with === 'none' ? 'Bare-handed' : 'Unarmed', n: -4 });
     const circles = LW.circlesOf(hero).reduce((t, c) => t + c.cs, 0);
     if (circles) parts.push({ label: 'Lore-circles', n: circles });
     if (ctx.psiSurge) parts.push({ label: 'Psi-surge', n: 4 });

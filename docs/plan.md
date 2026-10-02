@@ -59,6 +59,20 @@ Working and checked by playing in the browser:
 - Random Number medallion on the page; automatic gating of choices where the ranges are clean.
 - Combat on the page: plate, medallion commands, dial, round log, evasion, wounds.
 - Book 1 (Flight from the Dark) downloaded and imported: 350 sections, no broken links.
+- Book 2 (Fire on the Water) imported 2026-10-01 at the owner's word: 350 sections, 31 with combat,
+  20 auto and 7 free Random Number, 31 with discipline gates, 52 illustrated, 18 dead ends, 7 forced
+  Meals, 7 paragraphs of introduction; no broken links, none without a way on. Loads in the page;
+  not yet played. 16 kinds of enemy have no plate; no map places yet (it reads with every choice
+  on the page). Lists (shop wares, finds) and signposts were dropped by the importer until
+  2026-10-01; they are paragraphs now.
+- Items handled by the engine for Book 2 (2026-10-01): `items-02fotw.js`, 109 sections, 13 book
+  items with icons. New in the engine for it, all rules the text states: the Sommerswerd (+8 in
+  combat, Weaponskill with any sword counts, undead foes lose double), Special Items that fight
+  (the Magic Spear), fights only one weapon can win and bare-handed ones, Helghast mind drain per
+  round, shops (buy as often as you like), "choose any two", gold won or lost by a number, losing
+  every Special Item. The Seal of Hammerdal is given at section 1. Tried section by section on a
+  stand-in hero, not yet in a play-through. The inventory's "add by hand" lists the open book's
+  own items.
 - Battle plates made from the book's illustrations, restyled as sepia ink, shown whole with ruled
   frames cut away and every edge faded (2026-10-01). Enemies the book does not picture borrow
   another book's illustration or a free engraving (`assets/plates/plates.json`). Emblem fallback.
@@ -76,7 +90,7 @@ Working and checked by playing in the browser:
 Tested only against stand-in data, not real text:
 
 - Magnakai rules and carry-over (tested with copies of the demo chapter marked as other books).
-- The importer on any book other than Book 1.
+- The importer on books 3-12 (Book 2's report is clean; its sections not yet played).
 
 Not checked at all: a full play-through of Book 1; the phone layout; prototypes A-C after the
 changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the move to
@@ -84,29 +98,40 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
 
 ## Waiting on the owner
 
-- **Import books 2-12?** Downloaded on 2026-10-01 for their art (the owner said not to import yet).
-  Needed before Magnakai can be tested on real text.
+- **Book 2, readings to confirm** (left open or by hand until then):
+  - Hunting and Meals in the Wildlands. Section 346 says Hunting cannot be used for Meals on the
+    journey through the Wildlands; the engine applies that there only. Ragadorn and the coast road
+    to it (32, 37, 127, 148) still let Hunting off the Meal. Should they?
+  - Kinds the text does not give: Documents and Gold Ring made Special Items; Healing Potion,
+    Potion of Orange Liquid, Fur Blanket and Rope Backpack Items.
+  - Left ungated: 36 "if you have some Laumspur" (does a Laumspur Potion count?), 328 "if you have
+    ever been given a Crystal Star Pendant" (he may have lost it), 246 "if you do not have a pass".
+
+- **Import books 3-12?** Downloaded on 2026-10-01 for their art. Book 2 imported at the owner's
+  word; ask before each further one. Needed before Magnakai can be tested on real text.
 
 ## Next steps
 
-1. **Import books 2-12** once the owner says so, and read the importer's report for
+1. **Book 2: fight pictures** (step 7 below; its item table is done), the rest of its starting
+   kit (step 4), then its map places (step 6).
+2. **Import books 3-12** once the owner says so, and read the importer's report for
    every one. Fix whatever the reports show (broken links, sections with no way on, oddly low
    counts). Expect new phrasings for gates, Random Number and combat in later books.
-2. **Verify the rules against the books' rules pages**: the Combat Results Table, Lore-circle
+3. **Verify the rules against the books' rules pages**: the Combat Results Table, Lore-circle
    bonuses, Psi-surge cost and threshold, Weaponmastery, ranks, and whether Kai Disciplines keep
    their effects in Magnakai books. The importer could read the rules pages to make this checkable.
    Update the numbers and remove "(verify)" from the spec as each is confirmed.
-3. **Per-book starting equipment** and the discipline/equipment choices at the start of each book.
+4. **Per-book starting equipment** and the discipline/equipment choices at the start of each book.
    Today a new Magnakai character gets a simplified kit.
-4. **Play Book 1 through** and fix what the importer misread, and anything the item table missed
+5. **Play Book 1 through** and fix what the importer misread, and anything the item table missed
    or got wrong.
-5. **Map travel for books 2-12.** Book 1 has it. Each further book follows
+6. **Map travel for books 2-12.** Book 1 has it. Each further book follows
    docs/reference/map-places.md (made-up places by hand, tools to lay out and check them).
    Books 2-5 can use the Lastlands replica if their journeys stay on it; the Magnakai books need
    a replica of their own printed maps first. Book 1's sweep is clean (2026-10-01).
-6. **Items and fight pictures for books 2-12**, by docs/reference/items.md on importing each:
+7. **Items and fight pictures for books 2-12**, by docs/reference/items.md on importing each:
    the item table, and a plate-library entry for every enemy the importer lists "with none". Book 1
-   is done (2026-10-01). Check by eye which illustration each enemy borrows (`PLATE_FIXES`, and the
+   is done (2026-10-01); Book 2 has its item table, and 16 enemies with no picture. Check by eye which illustration each enemy borrows (`PLATE_FIXES`, and the
    library's generic soldier/robber entries).
 
 Smaller things noted along the way:

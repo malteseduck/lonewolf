@@ -34,7 +34,7 @@ Textures are generated at start-up in `main.js` and set as CSS variables: `--par
 | `mode` | Left page | Right page |
 |---|---|---|
 | `title` | `titleLeftHTML`: the mark (LONE, wolf's head, WOLF), the portrait as frontispiece (the ruins vignette without it), a motto, and the series as two rows of numeral medallions in scrollwork, lit where the open adventure has a save for that book, dim where not downloaded (`SERIES_TITLES`); a numeral begins or continues that book in the open adventure | `titleRightHTML`, one of two views on the bronze-framed plaques (medallion and a rod off to the clockwork). `adventuresHTML`: "Your adventures", one plaque per adventure (its numeral, the book last open, rank and section, or "Fell at"); the plaque resumes it (a fallen one opens its books instead), with "the books" and "forget" (asks first) under it; last, "A new adventure". `shelfHTML` (`shelf` true): that adventure's books, continue (with the saved section) / the story so far / start over / new character, and "all adventures" in the heading |
-| `story` | section text, illustration, arrival events (a by-hand reminder begins "By hand:"), "Found here" (`.finds`: each gift or find as a small medallion with its icon, "take it", "yours" once taken, or dimmed when the other of an `or` pair was taken; touching one takes it or toasts why not), Random Number medallion, choices or an action medallion | the chosen panel |
+| `story` | section text, illustration, arrival events (a by-hand reminder begins "By hand:"), "Found here" (`.finds`: each gift or find as a small medallion with its icon, "take it", "yours" once taken, or dimmed when the other of an `or` pair was taken, or the share of a "choose two"; a shop's wares read "buy it: N Gold Crowns" under "For sale"; touching one takes or buys it, or toasts why not), Random Number medallion, choices or an action medallion | the chosen panel |
 | `battle` | first paragraph of the section, then the fight's record line by line | the fight |
 
 ## Left page in story mode (`leftHTML`, `storyText`, `mountRnt`)
@@ -96,7 +96,8 @@ left. `updateBattle` redraws the gauges each round.
   standard items, else the item's own `glyph` from its book's item table, else a pouch or pendant
   by kind; gold and a found Backpack have their own.
   "Add an item by hand" (`adding`) swaps the worn kit for `pickerHTML()`: rows of small medallions
-  (weapons, Backpack Items, Special Items) that add on a touch and stay open, with "+" medallions
+  (weapons, Backpack Items, Special Items, and "This book": the open book's own items from its item
+  table) that add on a touch and stay open, with "+" medallions
   for something else, which ask for a name on an inked line (`naming`; Enter adds, Escape cancels).
   The caption is hidden meanwhile; the picker's own line names whatever is under the pointer.
   Item glyphs are game-icons.net SVGs (`ITEM_GLYPH`); items typed in by hand get a pouch or a

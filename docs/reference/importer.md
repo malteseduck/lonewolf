@@ -35,6 +35,8 @@ It works on the contents of `<div class="maintext">`, in document order:
 | Markup | Becomes |
 |---|---|
 | `<p>` | a paragraph of `text` (tags stripped, entities decoded) |
+| `<li>` | a paragraph of its own, starting with a dash (lists of wares and finds) |
+| `<div class="signpost">` | a paragraph (a sign the story shows) |
 | `<p class="deadend">` | a paragraph, and `end: 'death'` |
 | `<p class="choice">` with `<a href="sectN.htm">` | a choice to N with the paragraph as its text |
 | `<p class="combat">` "Name: COMBAT SKILL n ENDURANCE m" | an enemy |

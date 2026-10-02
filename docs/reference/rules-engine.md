@@ -80,7 +80,8 @@ Adds `bow` and `quiver` to `LW.ITEMS`.
 | Lore-circles | `LW.CIRCLES`; `LW.circlesOf(hero)`; `settleCircles(hero)` adds circle Endurance once |
 | Discipline tests | `LW.has(hero, id)` checks both lists. `LW.owned(hero, series)`, `LW.rankOf`, `LW.rankCount` |
 | Series-dependent effects | `LW.heals`, `LW.hunts`, `LW.shielded`, `LW.mindPower` (0 none, 1 Mindblast, 2 Psi-surge) |
-| Combat Skill | `LW.heroCS(hero, ctx)` returns `{total, parts: [{label, n}]}`. `ctx`: `mindblast`, `psiSurge`, `enemy`, `csMod`, `csNote` |
+| Combat Skill | `LW.heroCS(hero, ctx)` returns `{total, parts: [{label, n}]}`. `ctx`: `mindblast`, `psiSurge`, `enemy`, `csMod`, `csNote`, `with` |
+| Weapon in hand | `LW.armedWith(hero, ctx)`: of his weapons and the Special Items that are weapons (`item.weapon`: the kinds it counts as), the one that adds most: its own `item.cs` (the Sommerswerd's 8) plus Weaponskill or Weaponmastery in any of its kinds. `ctx.with`: `'none'` (bare-handed, -4) or the one item that can harm this foe. Null: unarmed, -4 |
 | Carried character | `LW.Character.load()`, `.save(hero, book)`, `.clear()`, all on the storage key in `LW.Character.key` (the player points it at the open adventure's) |
 | Character dialog | `LW.UI.chooseCharacter(book, carry)` resolves to a hero. `carry` null = roll a new one |
 
@@ -97,8 +98,11 @@ Magnakai disciplines. That is an interpretation flagged in the spec.
 
 Implemented in `main.js` (`startBattle`, `battleAct`, `endBattle`), not in the
 shared engine. The fight's `csMod` applies unless the hero carries every item in `combat.unless`,
-or `combat.unarmed` is set and he has no weapon (the engine's -4 covers it). Per round: spin the dial, `LW.combatRound(B.ratio(), n)`, apply both losses, then
-2 EP for Psi-surge if it was active (dropping to Mindblast at 6 EP or less). Evade applies only
+or `combat.unarmed` is set and he has no weapon (the engine's -4 covers it). `combat.with` fixes
+the weapon (`B.weapon`, `LW.armedWith`). Per round: spin the dial, `LW.combatRound(B.ratio(), n)`,
+apply both losses (the foe's doubled when `combat.double`, or when it is `undead` and the weapon in
+hand has `undead`, as the Sommerswerd does), then the foe's `drain` in Endurance unless he is
+shielded, then 2 EP for Psi-surge if it was active (dropping to Mindblast at 6 EP or less). Evade applies only
 the hero's loss. The house rule that Laumspur can be drunk mid-fight lives here.
 
 Prototypes A and B have their own combat in `shared/battle.js`, and C in its `main.js`; those do
@@ -106,6 +110,7 @@ not know about Magnakai.
 
 ## Not implemented
 
-Bow and Arrow rules, Special Item limits, per-book starting kits, Grand Master rules, any rule the
+Bow and Arrow rules, Special Item limits, per-book starting kits (Book 2's Seal of Hammerdal is
+given at section 1 by its item table; the rest of its kit is by hand), Grand Master rules, any rule the
 importer leaves as text and no item table covers. Potions that help in a fight (Alether) are only
 described; their bonus is applied by hand.

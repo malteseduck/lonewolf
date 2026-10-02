@@ -23,7 +23,8 @@ require(path.join(ROOT, 'shared', 'core.js'));
 Object.assign(LW.ITEMS, { bow: { name: 'Bow', kind: 'weapon' }, quiver: { name: 'Quiver', kind: 'special' } }); // rules-series.js
 require(path.join(ROOT, 'data', 'projectaon', book, 'book.js'));
 const T = await import(pathToFileURL(file).href), B = LW.BOOKS[book], bad = [];
-LW.addItems(T.ITEMS);
+// every book's items are known in the page (an item from Book 1 can gate a choice in Book 2)
+for (const f of fs.readdirSync(ROOT).filter((f) => /^items-\w+\.js$/.test(f))) LW.addItems((await import(pathToFileURL(path.join(ROOT, f)).href)).ITEMS);
 
 const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'todo', 'need', 'fight']);
 const known = (id) => id === 'meal' || !!LW.ITEMS[id];
@@ -39,6 +40,7 @@ const losses = (list, where) => (list || []).forEach((t) => {
   if (t.item && !known(t.item)) bad.push(`${where}: unknown item ${t.item}`);
   if (t.weapons && !['all', 'one'].includes(t.weapons)) bad.push(`${where}: weapons must be 'all' or 'one'`);
   if (t.backpack && !['all', 'items'].includes(t.backpack)) bad.push(`${where}: backpack must be 'all' or 'items'`);
+  if (t.special && t.special !== 'all') bad.push(`${where}: special must be 'all'`);
 });
 for (const [id, x] of Object.entries(T.SECTIONS)) {
   const sec = B.sections[id];
@@ -48,10 +50,12 @@ for (const [id, x] of Object.entries(T.SECTIONS)) {
   (x.rolls || []).forEach((r, i) => { if (!sec.rnt) bad.push(`${id}: rolls, but the section draws no Random Number`); losses(r.take, `${id} rolls[${i}]`); });
   if (x.fight && !sec.combat) bad.push(`${id}: fight, but the section has no combat`);
   (x.fight && x.fight.unless || []).forEach((i) => { if (!known(i)) bad.push(`${id} fight: unknown item ${i}`); });
+  if (x.fight && x.fight.with && x.fight.with !== 'none' && !(LW.ITEMS[x.fight.with] && (LW.ITEMS[x.fight.with].kind === 'weapon' || LW.ITEMS[x.fight.with].weapon))) bad.push(`${id} fight: with ${x.fight.with}, which is not a weapon`);
+  (x.loot || []).forEach((l) => { if (l.pick && !l.or) bad.push(`${id} loot: pick without or`); });
   if (x.ep != null && x.ep !== 'full' && typeof x.ep !== 'number') bad.push(`${id}: ep must be a number or 'full'`);
   for (const [to, n] of Object.entries(x.need || {})) {
     if (!(sec.choices || []).some((c) => c.to === to)) bad.push(`${id}: need for a choice to ${to}, which it does not have`);
-    if (n.item && !known(n.item)) bad.push(`${id}: need for unknown item ${n.item}`);
+    if (n && n.item && !known(n.item)) bad.push(`${id}: need for unknown item ${n.item}`);
   }
 }
 console.log(bad.length ? bad.join('\n') : 'no errors');

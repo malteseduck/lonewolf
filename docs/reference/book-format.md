@@ -43,10 +43,10 @@ with it, choices that change location are made on the map; without it, every cho
 | `img` | `{file, full, at}` | imported: illustration file, whether it is a full-page plate, and the paragraph index it sits before |
 | `loc` | string | authored: key into `locations` |
 | `scene` | string | authored: which procedural ink scene to draw (`ruins`, `forest`, `hill`, `river`, `road`, `night`, `bridge`, `city`) |
-| `loot` | `[{item}\|{gold}\|{meal}\|{pack}]` | authored, or from an item table: things that can be taken here, one button each. `or`: a group of which only one may be taken |
+| `loot` | `[{item}\|{gold}\|{meal}\|{pack}]` | authored, or from an item table: things that can be taken here, one button each. `or`: a group of which only `pick` (default 1) may be taken. `cost`: a shop's price in Gold Crowns; bought as often as he likes |
 | `give` | same shape as `loot` | item table: handed over or pocketed with no choice; taken on arrival if it fits, otherwise left as a button |
-| `take` | `[{item}\|{gold: n\|'all'}\|{weapons: 'all'\|'one'}\|{backpack: 'items'\|'all'}]` | item table: lost outright on arrival. `weapons: 'one'` takes the only weapon, or asks the player to choose when there are two. `backpack: 'all'` loses the Backpack itself (`hero.noPack`) |
-| `rolls` | `[{range: [lo, hi], ep, take}]` | item table: what the Random Number drawn here does |
+| `take` | `[{item}\|{gold: n\|'all'}\|{weapons: 'all'\|'one'}\|{backpack: 'items'\|'all'}\|{special: 'all'}]` | item table: lost outright on arrival. `weapons: 'one'` takes the only weapon, or asks the player to choose when there are two. `backpack: 'all'` loses the Backpack itself (`hero.noPack`) |
+| `rolls` | `[{range: [lo, hi], ep, gold, take}]` | item table: what the Random Number drawn here does (`gold`: won, or lost when negative) |
 | `cs` | number | item table: COMBAT SKILL changed for good on arrival |
 | `todo` | string | item table: a by-hand reminder shown with the arrival events |
 | `ep` | number \| `'full'` | authored, or item table: Endurance change on arrival; `'full'` restores it to the maximum |
@@ -62,12 +62,17 @@ story sentence, the instruction in the next, and many are conditional. So each b
 read and written down by hand in `items-<code>.js` at the project root (Book 1: `items-01fftd.js`,
 52 sections, 2026-10-01), as its map places are. It exports `ITEMS` (the book's own items: `name`,
 `kind` (`weapon` | `backpack` | `special`), optionally `glyph` (an icon in `assets/icons/`), `heal`,
-`ep`, `about`) and `SECTIONS` (by section number: any of the fields above, plus `meal` where the
+`ep`, `about`, and for a Special Item that is also a weapon `weapon` (the kinds it counts as for
+Weaponskill), `cs` (what it adds in a fight) and `undead` (it doubles undead foes' losses)) and
+`SECTIONS` (by section number: any of the fields above, plus `meal` where the
 importer's pattern missed one, plus `need: {to: {item | gold, not, spend}}` to gate the choice
 leading to `to`, plus `fight` to correct what the importer read of the section's combat:
 `csMod`, `mindforce` (set on every enemy; blocked by Mindshield), `unless: [items]` (carrying all of
 them spares the `csMod`), `unarmed: true` (the `csMod` is the text's no-weapon penalty, so it is
-dropped when he has no weapon and the engine's own -4 applies)). `main.js` lays the table over the
+dropped when he has no weapon and the engine's own -4 applies), `with` (`'none'`: bare-handed;
+an item id: the only weapon that can harm this foe), `double` (the foe's losses are doubled),
+`undead` and `drain` (set on every enemy: undead; Endurance it costs him each round unless he is
+shielded)). A `need` of `null` clears a gate the importer set wrongly. `main.js` lays the table over the
 book (`applyItems`) when it is first opened. Where the text leaves the choice to the player (which
 weapon breaks, which item is stolen), the table gives a `todo`, not a guess. How to write one, and
 the tools: `items.md`.
@@ -102,6 +107,7 @@ how the books are written: draw first, then one choice per range.
   evade: { after, to },      // evasion allowed once `after` rounds have been fought; go to `to`
   to,                        // authored: section to continue to after winning. Imported books leave this out and show the section's choices
   csMod, csNote,             // adjustment to the hero's CS for this fight, and its label
+  // from an item table: unless, unarmed, with, double; enemies may carry undead, drain, mindforce
 }
 ```
 
