@@ -20,7 +20,8 @@ docs/                       spec, plan, reference
 shared/                     used by the player and the prototypes (classic scripts on a global LW)
   core.js                   rules data (Combat Results Table, Kai disciplines, items) and LW.Game, the book runner
   rules-series.js           per-series rules (Kai/Magnakai), Lore-circles, ranks, carried character, character dialog
-  book-demo.js              LW.BOOK_DEMO: the original 20-section demo chapter, with map locations
+  book-demo.js              LW.BOOK_DEMO: the original 20-section demo chapter, with map locations (prototypes only;
+                            the player dropped it, but MAPS.demo, its country, is still the fallback terrain)
   ui.js                     LW.UI helpers: el, esc, wait, toast, createHero (Kai only), pickRandom, chart; LW.sfx (blips)
   sfx-soft.js               replaces LW.sfx with noise/sine sounds and adds LW.drone (player only)
   ink.js                    ES module: procedural parchment, leather, wood, ink-wash scenes
@@ -48,7 +49,6 @@ data/reference/             git-ignored. Reference images fetched for the owner:
 
 ```
 shared/core.js              defines LW, LW.Game, Kai rules
-shared/book-demo.js         LW.BOOK_DEMO
 data/projectaon/index.js    document.writes a <script> for each imported book -> LW.BOOKS[code]
 shared/ui.js                LW.UI, LW.sfx
 shared/sfx-soft.js          overrides LW.sfx
@@ -57,7 +57,7 @@ main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js (whi
 ```
 
 Order matters: `rules-series.js` overrides functions defined in `core.js` and needs `LW.UI`.
-If `data/projectaon/index.js` is missing the page still runs with the demo only (one 404).
+If `data/projectaon/index.js` is missing the page still loads (one 404), with nothing to play.
 
 Paths to imported books (`index.js`'s script tags, each book's `assets`) are written by the
 importer relative to the project root, where `index.html` sits. Move the page and the importer
@@ -82,7 +82,11 @@ must change with it.
 The player keeps its own view state in module variables in `main.js`:
 `mode` (`title` | `story` | `battle`), `panel` (`kai` | `pack` | `map`), `sel` (selected item or
 discipline), `B` (the fight in progress, or null), `busy` (input lock during animations),
-`mapScan` (show the printed map instead of the journey map).
+`mapScan` (show the printed map instead of the journey map), `shelf` (the title page shows the open
+adventure's books rather than the list of adventures), `forgetting` (the adventure whose "forget" is
+asking to be confirmed), `adv` (the adventures, as stored in `lw-adventures`).
+
+`book` and `game` are null until a book is opened.
 
 Rendering is whole-page: `render()` rebuilds the left page (`leftHTML`) and the right page
 (`renderRight`) from state. The map node and the fight node are built once and re-attached.
@@ -92,16 +96,24 @@ All clicks are handled by one delegated listener on `#book` reading `data-*` att
 
 All in `localStorage`, every access wrapped in try/catch.
 
+Play is kept in **adventures**: separate games, each with its own save for every book and its own
+carried character. `<n>` below is the adventure's id, `1`, `2`, ...; a new one takes the highest id
+plus one. Forgetting an adventure removes every `lw-a<n>-*` key.
+
 | Key | Holds |
 |---|---|
-| `lw-save` | the player's save for the demo chapter: `{s, history}` |
-| `lw-save-<code>` | the player's save for an imported book, e.g. `lw-save-01fftd` |
-| `lw-book` | id of the last book opened, to resume on load |
-| `lw-character` | the carried character: `{hero, from, fromTitle, completed: [codes]}` |
+| `lw-adventures` | `{list: [{id, book}], at}`: the adventures, the last book each had open, and the one open now (resumed on load) |
+| `lw-a<n>-save-<code>` | adventure n's save for a book: `{s, history}`, e.g. `lw-a1-save-01fftd` |
+| `lw-a<n>-character` | adventure n's carried character: `{hero, from, fromTitle, completed: [codes]}` |
 | `lw-sound` | `on` or `off` |
 | `lw-proto-book`, `lw-proto-map`, `lw-proto-3d` | saves for prototypes A, B, C |
 
-Every page is the same origin on localhost, so they share this storage.
+Before adventures, saves were `lw-save-<code>`, `lw-character` and `lw-book` (and `lw-save` for the
+demo chapter). On the first load without `lw-adventures`, `loadAdventures()` in `main.js` moves
+the first three into adventure 1. An old `lw-save` is left where it is, unused.
+
+Every page is the same origin on localhost, so they share this storage. Each device and browser
+has its own: a game on the iPad is not the one on the PC.
 
 ## Console hook
 

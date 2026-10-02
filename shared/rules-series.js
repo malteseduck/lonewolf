@@ -67,14 +67,14 @@
   }
 
   /* ---------- the character who is carried between books ---------- */
-  const KEY = 'lw-character';
   LW.Character = {
-    load() { try { return JSON.parse(localStorage.getItem(KEY)); } catch (e) { return null; } },
+    key: 'lw-character', // the player keeps one per adventure and points this at the open one
+    load() { try { return JSON.parse(localStorage.getItem(this.key)); } catch (e) { return null; } },
     save(hero, book) {
       const old = this.load(), done = new Set((old && old.completed) || []); done.add(book.id);
-      try { localStorage.setItem(KEY, JSON.stringify({ hero, from: book.id, fromTitle: book.title, completed: [...done] })); } catch (e) { /* not kept */ }
+      try { localStorage.setItem(this.key, JSON.stringify({ hero, from: book.id, fromTitle: book.title, completed: [...done] })); } catch (e) { /* not kept */ }
     },
-    clear() { try { localStorage.removeItem(KEY); } catch (e) { /* nothing kept */ } },
+    clear() { try { localStorage.removeItem(this.key); } catch (e) { /* nothing kept */ } },
   };
 
   /* ---------- one dialog for a new character or a returning one ----------

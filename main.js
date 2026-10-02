@@ -1,22 +1,65 @@
 /* Lone Wolf: a flat book in the manner of Lone Wolf HD.
    Left page: the story. Right page: a panel (Kai Disciplines, inventory, map, or the fight).
-   Plays the built-in demo chapter, or a full book imported by tools/import_projectaon.py. */
+   Plays the books imported by tools/import_projectaon.py. */
 import * as Ink from './shared/ink.js';
 import { drawCreature, setArt, setEmblem, newWound, drawHero, heroFromArt, portraitFromArt, drawFrame, drawSheet, drawBanner, drawCrest, gearSVG } from './plates.js';
 import { MAPS, LASTLANDS, mapCanvas, loadStamps, stampsLoaded, printedCanvas, replicaModel, replicaCanvas, placeBook, along } from './maps.js';
 
 const LW = window.LW;
-const BOOKS = Object.assign({ demo: LW.BOOK_DEMO }, LW.BOOKS || {});
-let book = LW.BOOK_DEMO, L = book.locations || {}, game = new LW.Game(book, 'lw-save');
+const BOOKS = Object.assign({}, LW.BOOKS || {});
+
+/* ---------- adventures ----------
+   Each adventure is a game of its own: a save for every book, and the Lone Wolf it carries between
+   them. lw-adventures lists them, which one is open, and the last book each had open. */
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* no storage: play on */ } },
+  del(k) { try { localStorage.removeItem(k); } catch (e) { /* nothing to remove */ } },
+  keys() { try { return Object.keys(localStorage); } catch (e) { return []; } },
+};
+const saveKey = (a, id) => `lw-a${a}-save-${id}`, charKey = (a) => `lw-a${a}-character`;
+function loadAdventures() {
+  let a = null;
+  try { a = JSON.parse(store.get('lw-adventures')); } catch (e) { /* made below */ }
+  if (a && a.list) return a;
+  // first run since there were adventures: the saves already made become the first one
+  a = { list: [], at: null };
+  const old = store.keys().filter((k) => k.startsWith('lw-save-')).map((k) => k.slice(8));
+  if (old.length || store.get('lw-character')) {
+    const move = (from, to) => { const v = store.get(from); if (v != null) { store.set(to, v); store.del(from); } };
+    old.forEach((id) => move('lw-save-' + id, saveKey(1, id)));
+    move('lw-character', charKey(1));
+    a.list.push({ id: '1', book: store.get('lw-book') }); a.at = '1';
+  }
+  store.del('lw-book');
+  store.set('lw-adventures', JSON.stringify(a));
+  return a;
+}
+const adv = loadAdventures();
+const keepAdventures = () => store.set('lw-adventures', JSON.stringify(adv));
+const adventure = () => adv.list.find((a) => a.id === adv.at) || null;
+function useAdventure(id) { adv.at = id; keepAdventures(); LW.Character.key = charKey(id); }
+function newAdventure() { const id = String(Math.max(0, ...adv.list.map((a) => +a.id)) + 1); adv.list.push({ id, book: null }); useAdventure(id); }
+function forgetAdventure(id) {
+  store.keys().filter((k) => k.startsWith(`lw-a${id}-`)).forEach(store.del);
+  adv.list = adv.list.filter((a) => a.id !== id);
+  if (adv.at === id) adv.at = null;
+  keepAdventures();
+}
+if (adventure()) useAdventure(adv.at);
+const advName = (id) => `Adventure ${ROMAN[id - 1] || id}`;
+const carriedBy = (a) => { try { return JSON.parse(store.get(charKey(a))); } catch (e) { return null; } };
+
+let book = null, L = {}, game = null;
 function useBook(id) {
-  book = BOOKS[id] || LW.BOOK_DEMO; placeBook(book); L = book.locations || {};
-  game = new LW.Game(book, id === 'demo' ? 'lw-save' : 'lw-save-' + id);
-  try { localStorage.setItem('lw-book', id); } catch (e) { /* not remembered */ }
+  if (!adventure()) newAdventure();
+  book = BOOKS[id]; placeBook(book); L = book.locations || {};
+  game = new LW.Game(book, saveKey(adv.at, id));
+  adventure().book = id; keepAdventures();
 }
 const asset = (f) => (book.assets || '') + f;
-/* the built-in demo chapter (a real book can have places on the map too, so that is no test) */
-const isDemo = () => book === LW.BOOK_DEMO;
-const hasSave = (id) => { try { return !!localStorage.getItem(id === 'demo' ? 'lw-save' : 'lw-save-' + id); } catch (e) { return false; } };
+const saved = (id, a = adv.at) => { try { return JSON.parse(store.get(saveKey(a, id))); } catch (e) { return null; } };
+const hasSave = (id, a) => !!(saved(id, a) || {}).s;
 
 const { esc, el, wait } = LW.UI;
 const $ = (s) => document.querySelector(s);
@@ -137,8 +180,8 @@ function storyText(sec) {
 /* the series as tools/import_projectaon.py knows it, so books not yet downloaded can show on the shelf */
 const SERIES_TITLES = ['Flight from the Dark', 'Fire on the Water', 'The Caverns of Kalte', 'The Chasm of Doom', 'Shadow on the Sand', 'The Kingdoms of Terror',
   'Castle Death', 'The Jungle of Horrors', 'The Cauldron of Fear', 'The Dungeons of Torgar', 'The Prisoners of Time', 'The Masters of Darkness'];
-const bookIds = () => Object.keys(BOOKS).filter((id) => id !== 'demo').sort((a, b) => (BOOKS[a].number || 0) - (BOOKS[b].number || 0));
-const savedAt = (id) => { try { return JSON.parse(localStorage.getItem(id === 'demo' ? 'lw-save' : 'lw-save-' + id)).s.at; } catch (e) { return null; } };
+const bookIds = () => Object.keys(BOOKS).sort((a, b) => (BOOKS[a].number || 0) - (BOOKS[b].number || 0));
+const savedAt = (id) => (hasSave(id) ? saved(id).s.at : null);
 /* engraved scrollwork either side of a row of medallions: a hairline that curls at each end, with leaves */
 const SCROLL = `<svg class="scrollwork" viewBox="0 0 120 24" preserveAspectRatio="none" aria-hidden="true"><path d="M2 12.6C14 12.4 30 9.200 46 9.600 64 10 78 15 96 14.400 104 14.100 110 12.400 112 10.200 113.400 8.600 112.600 6.600 110.800 6.700 109 6.800 108.600 8.900 110 9.600 108.200 9 108.400 7.600 109.800 7.400 111.400 7.200 112.200 9 111.200 10.600 109 13.600 103 15.600 96 15.800 78 16.400 64 11.400 46 11 30 10.600 14 13.800 2 13.400Z"/><path d="M40 9.800C37 6.400 32 5.600 29.400 7.400 32.600 7.200 36 8 40 9.800ZM58 11.600C61.600 15 66.400 16 69.400 14.600 66 14.400 62.400 13.400 58 11.600ZM76 14.400C79 11.600 83.600 10.800 86.600 12 83.400 12.400 80 13.200 76 14.400Z"/></svg>`;
 function titleLeftHTML() {
@@ -158,19 +201,38 @@ function titleLeftHTML() {
     ${band('The Kai', 1, 5)}${band('The Magnakai', 6, 12)}
   </div>`;
 }
-function titleRightHTML() {
-  const kept = LW.Character.load(), can = (id) => kept && id !== 'demo' && !kept.completed.includes(id);
-  const plaque = (id, num, name, emblem) => {
-    const at = hasSave(id) && savedAt(id);
+/* the right page of the title spread: every adventure, or the books of the one chosen (shelf) */
+let shelf = false, forgetting = null;
+const roman = (n) => `<span class="roman">${ROMAN[n - 1] || n}</span>`;
+function titleRightHTML() { return shelf && adventure() ? shelfHTML() : adventuresHTML(); }
+function adventuresHTML() {
+  const plaque = (a) => {
+    const b = a.book && BOOKS[a.book], sv = b && saved(a.book, a.id), kept = carriedBy(a.id), at = sv && sv.s && sv.s.at;
+    const hero = at ? sv.s.hero : kept && kept.hero, rank = hero ? LW.rankOf(hero) || 'Kai Lord' : '';
+    const where = at ? `${hero.ep > 0 ? 'Continue at' : 'Fell at'} section ${at}` : kept ? `Waits after ${kept.fromTitle}` : 'Choose a book';
+    const more = forgetting === a.id
+      ? `<span>Forget this adventure?</span><button type="button" class="inkbtn" data-forget="${a.id}" data-sure>forget it</button><button type="button" class="inkbtn" data-forget="">keep it</button>`
+      : `<button type="button" class="inkbtn" data-shelf="${a.id}">the books</button><button type="button" class="inkbtn" data-forget="${a.id}">forget</button>`;
+    return `<div class="plaq ${at ? 'going' : ''}"><button type="button" class="plaqmain" data-adv="${a.id}">
+        <span class="med">${roman(+a.id)}</span><span class="plaqtext"><b>${esc(b ? b.title : advName(a.id))}</b><i>${esc((rank ? rank + '. ' : '') + where)}</i></span></button>
+      <span class="plaqmore">${more}</span></div>`;
+  };
+  return `<div class="shelfpage">${ruled('Your adventures')}
+    <div class="plaqs">${adv.list.map(plaque).join('')}
+      <div class="plaq"><button type="button" class="plaqmain" data-advnew><span class="med">${glyph('wolf-head')}</span><span class="plaqtext"><b>A new adventure</b><i>Another game, with a Lone Wolf of its own</i></span></button></div></div></div>`;
+}
+function shelfHTML() {
+  const kept = LW.Character.load(), can = (id) => kept && !kept.completed.includes(id);
+  const plaque = (id) => {
+    const at = savedAt(id), b = BOOKS[id];
     return `<div class="plaq ${at ? 'going' : ''}"><button type="button" class="plaqmain" data-book="${id}">
-        <span class="med">${emblem}</span><span class="plaqtext"><b>${esc(name)}</b><i>${at ? `Continue at section ${esc(String(at))}` : num ? `Book ${num} · begin` : 'Begin'}</i></span></button>
+        <span class="med">${roman(b.number)}</span><span class="plaqtext"><b>${esc(b.title)}</b><i>${at ? `Continue at section ${esc(String(at))}` : `Book ${b.number} · begin`}</i></span></button>
       <span class="plaqmore">${at ? `<button type="button" class="inkbtn" data-book="${id}" data-fresh>start over</button>` : ''}${can(id) ? `<button type="button" class="inkbtn" data-book="${id}" data-anew>new character</button>` : ''}</span></div>`;
   };
   const ids = bookIds();
-  return `<div class="shelfpage">${ruled('Choose your book')}
-    ${kept ? `<p class="kept">Your Lone Wolf, ${esc(LW.rankOf(kept.hero) || 'Kai Lord')}, waits after <i>${esc(kept.fromTitle)}</i>. A book not yet finished begins with him.</p>` : ''}
-    <div class="plaqs">${ids.map((id) => plaque(id, BOOKS[id].number, BOOKS[id].title, `<span class="roman">${ROMAN[BOOKS[id].number - 1] || BOOKS[id].number}</span>`)).join('')}
-      ${plaque('demo', 0, 'Demo chapter, with map travel', ROSE)}</div>
+  return `<div class="shelfpage">${ruled(`${advName(adv.at)} <button type="button" class="inkbtn" data-shelf="">all adventures</button>`)}
+    ${kept ? `<p class="kept">Your Lone Wolf, ${esc(LW.rankOf(kept.hero) || 'Kai Lord')}, waits after <i>${esc(kept.fromTitle)}</i>. A book not yet finished begins with him.</p>` : '<p class="kept">Choose your book.</p>'}
+    <div class="plaqs">${ids.map(plaque).join('')}</div>
     ${ids.length < 12 ? `<p class="kept">${12 - ids.length} more books wait on the shelf: tools/fetch_projectaon.py downloads them.</p>` : ''}</div>`;
 }
 function leftHTML() {
@@ -197,8 +259,8 @@ function leftHTML() {
   if (isDead()) h += `<div class="finis dead"><h2>Your adventure ends here</h2><p>The last of the Kai has fallen.</p><button type="button" class="seal" data-new>Begin again</button></div>`;
   else if (game.combatPending) h += `<div class="compass"><div class="orn"><button type="button" class="med" data-fight aria-label="Begin the fight">${glyph('crossed-swords')}</button></div><span>Draw your weapon.</span></div>`;
   else if (sec.end) {
-    const next = !isDemo() && Object.keys(BOOKS).find((k) => BOOKS[k].number === book.number + 1);
-    h += `<div class="finis"><h2>${isDemo() ? 'Here the demo ends' : 'Your quest is fulfilled'}</h2><p>You came through in ${game.s.trail.length} sections.${isDemo() ? '' : ' Your Lone Wolf is kept for the next book.'}</p>${
+    const next = Object.keys(BOOKS).find((k) => BOOKS[k].number === book.number + 1);
+    h += `<div class="finis"><h2>Your quest is fulfilled</h2><p>You came through in ${game.s.trail.length} sections. Your Lone Wolf is kept for the next book.</p>${
       next ? `<button type="button" class="seal" data-book="${next}" data-fresh>On to ${esc(BOOKS[next].title)}</button>` : '<button type="button" class="seal" data-new>Back to the title page</button>'}</div>`;
   }
   else {
@@ -305,7 +367,7 @@ function pickerHTML() {
     ${naming ? `<input id="itemname" class="pickname" placeholder="Name it, then press Enter" aria-label="Item name" data-prefix="${naming}">` : '<p class="pickname">Touch an item to add it.</p>'}</div>`;
 }
 
-/* the demo map is built once and moved in and out of the panel */
+/* the travel map is built once and moved in and out of the panel */
 const mapNode = el('div', 'mapview');
 mapNode.innerHTML = `<div class="mapinner"><canvas width="2000" height="1400"></canvas>
   <svg class="lines" viewBox="0 0 1000 700" aria-hidden="true"><g class="ways"></g><polyline class="routeback"></polyline><polyline class="route"></polyline></svg>
@@ -415,7 +477,7 @@ const pct = (p) => `left:${p.x / 10}%;top:${p.y / 7}%`;
    Otherwise a road offered on the map says no more than the choice in the book does. */
 const told = (k) => L[k].known !== false || game.s.trail.some((t) => book.sections[t.id].loc === k);
 function updateMap() {
-  showTerrain(MAPS[book.id] ? book.id : 'demo');
+  showTerrain(MAPS[book.id] ? book.id : 'demo'); // a book with places but no map of its own gets the old demo country
   const here = game.section.loc, locs = [], rd = mode === 'story' && !isDead() ? roads() : [];
   game.s.trail.forEach((t) => { const k = book.sections[t.id].loc; if (locs[locs.length - 1] !== k) locs.push(k); });
   const line = locs.map((k) => `${L[k].x},${L[k].y}`).join(' ');
@@ -532,7 +594,7 @@ function renderRight() {
 }
 function render() {
   // reaching the end of a real book keeps the character for the next one
-  if (mode === 'story' && !isDemo() && game.section.end === 'victory' && !game.dead) LW.Character.save(game.hero, book);
+  if (mode === 'story' && game.section.end === 'victory' && !game.dead) LW.Character.save(game.hero, book);
   renderLeft(); renderRight();
 }
 
@@ -697,7 +759,16 @@ bookEl.addEventListener('click', (e) => {
   const d = t.dataset;
   if (d.cmd) return void battleAct(d.cmd);
   if (busy) return;
+  if (mode === 'title' && !('forget' in d)) forgetting = null;
   if (d.book) guard(() => begin(d.book, 'fresh' in d, 'anew' in d));
+  else if (d.adv) {
+    useAdventure(d.adv);
+    const b = adventure().book, alive = b && BOOKS[b] && hasSave(b) && saved(b).s.hero.ep > 0; // a fallen one goes to the books, to start over
+    if (alive) guard(() => begin(b)); else { shelf = true; LW.sfx('select'); render(); }
+  }
+  else if ('advnew' in d) { newAdventure(); shelf = true; LW.sfx('select'); render(); }
+  else if ('shelf' in d) { if (d.shelf) useAdventure(d.shelf); shelf = !!d.shelf; LW.sfx('select'); render(); }
+  else if ('forget' in d) { if ('sure' in d) forgetAdventure(d.forget); forgetting = 'sure' in d ? null : d.forget || null; LW.sfx('select'); renderRight(); }
   else if (d.panel) { panel = d.panel; sel = null; adding = false; naming = null; LW.sfx('select'); render(); }
   else if (d.adding) { adding = d.adding === 'open'; naming = null; LW.sfx('select'); renderRight(); }
   else if (d.add) {
@@ -712,7 +783,7 @@ bookEl.addEventListener('click', (e) => {
   else if (d.choice != null) guard(() => choose(+d.choice));
   else if ('fight' in d) guard(startBattle);
   else if ('endbattle' in d) guard(endBattle);
-  else if ('new' in d || 'home' in d) { LW.sfx('select'); toTitle(); }
+  else if ('new' in d || 'home' in d) { LW.sfx('select'); toTitle('new' in d); }
   else if ('scan' in d) { mapScan = !mapScan; renderRight(); }
   else if (d.zoom) zoomBy(d.zoom === 'in' ? 1.5 : 1 / 1.5);
 });
@@ -758,13 +829,14 @@ pr.addEventListener('wheel', (e) => {
 }, { passive: false });
 pr.addEventListener('pointerover', (e) => { const c = e.target.closest('.roads .choice'); pr.querySelectorAll('.dest').forEach((d) => d.classList.toggle('hot', !!c && d.dataset.choice === c.dataset.choice)); });
 
-function toTitle() { B = null; mode = 'title'; render(); }
+/* toShelf: back to this adventure's books (after a death or an ending) rather than the list of adventures */
+function toTitle(toShelf) { B = null; mode = 'title'; shelf = !!toShelf; forgetting = null; render(); }
 /* fresh = ignore this book's save. anew = roll a new character even though one is being carried. */
 async function begin(id, fresh, anew) {
   useBook(id);
   if (!fresh && !anew && game.load()) { mode = 'story'; panel = roads().length ? 'map' : 'kai'; sel = null; return turn(render); }
   game.clear();
-  const kept = LW.Character.load(), carry = !anew && kept && id !== 'demo' && !kept.completed.includes(id) ? kept : null;
+  const kept = LW.Character.load(), carry = !anew && kept && !kept.completed.includes(id) ? kept : null;
   const hero = await LW.UI.chooseCharacter(book, carry);
   game.start(hero); mode = 'story'; panel = 'kai'; sel = null;
   await turn(render);
@@ -805,8 +877,7 @@ fetch('art/manifest.json').then((r) => r.json()).then((m) => {
 window.__lw = { get game() { return game; }, render: () => render(), BOOKS, begin }; // for poking at a section from the console
 
 document.fonts.ready.then(() => {
-  let last = null;
-  try { last = localStorage.getItem('lw-book'); } catch (e) { /* no memory */ }
+  const last = adventure() && adventure().book;
   if (last && BOOKS[last] && hasSave(last)) { useBook(last); if (game.load()) { mode = 'story'; if (roads().length) panel = 'map'; } }
   render();
 });

@@ -66,7 +66,7 @@ Adds `bow` and `quiver` to `LW.ITEMS`.
 | Discipline tests | `LW.has(hero, id)` checks both lists. `LW.owned(hero, series)`, `LW.rankOf`, `LW.rankCount` |
 | Series-dependent effects | `LW.heals`, `LW.hunts`, `LW.shielded`, `LW.mindPower` (0 none, 1 Mindblast, 2 Psi-surge) |
 | Combat Skill | `LW.heroCS(hero, ctx)` returns `{total, parts: [{label, n}]}`. `ctx`: `mindblast`, `psiSurge`, `enemy`, `csMod`, `csNote` |
-| Carried character | `LW.Character.load()`, `.save(hero, book)`, `.clear()` |
+| Carried character | `LW.Character.load()`, `.save(hero, book)`, `.clear()`, all on the storage key in `LW.Character.key` (the player points it at the open adventure's) |
 | Character dialog | `LW.UI.chooseCharacter(book, carry)` resolves to a hero. `carry` null = roll a new one |
 
 `chooseCharacter` rules: a new character picks `first` disciplines of the book's series; a

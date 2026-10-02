@@ -33,7 +33,7 @@ Textures are generated at start-up in `main.js` and set as CSS variables: `--par
 
 | `mode` | Left page | Right page |
 |---|---|---|
-| `title` | `titleLeftHTML`: the mark (LONE, wolf's head, WOLF), the portrait as frontispiece (the ruins vignette without it), a motto, and the series as two rows of numeral medallions in scrollwork, lit where a book has a save, dim where not downloaded (`SERIES_TITLES`) | `titleRightHTML`: "Choose your book", each imported book and the demo as a bronze-framed plaque with its medallion and a rod off to the clockwork; continue (with the saved section) / start over / new character |
+| `title` | `titleLeftHTML`: the mark (LONE, wolf's head, WOLF), the portrait as frontispiece (the ruins vignette without it), a motto, and the series as two rows of numeral medallions in scrollwork, lit where the open adventure has a save for that book, dim where not downloaded (`SERIES_TITLES`); a numeral begins or continues that book in the open adventure | `titleRightHTML`, one of two views on the bronze-framed plaques (medallion and a rod off to the clockwork). `adventuresHTML`: "Your adventures", one plaque per adventure (its numeral, the book last open, rank and section, or "Fell at"); the plaque resumes it (a fallen one opens its books instead), with "the books" and "forget" (asks first) under it; last, "A new adventure". `shelfHTML` (`shelf` true): that adventure's books, continue (with the saved section) / start over / new character, and "all adventures" in the heading |
 | `story` | section text, illustration, arrival events, loot, Random Number medallion, choices or an action medallion | the chosen panel |
 | `battle` | first paragraph of the section, then the fight's record line by line | the fight |
 

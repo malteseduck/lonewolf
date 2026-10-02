@@ -214,9 +214,16 @@ hand.
 
 ## 7. Persistence
 
+- Several games can be kept going at once (owner's request, 2026-10-01). Each **adventure** is one
+  game: its own save for every book and its own carried character. The title page lists them; a
+  new one can be begun and an old one forgotten (after asking).
 - Progress in each book is saved automatically on every change and resumed on return.
-- Each book keeps its own save. The carried character is kept separately from any one book.
-- Starting a book over never touches another book's save or the carried character.
+- Within an adventure each book keeps its own save. The carried character is kept separately from
+  any one book.
+- Starting a book over never touches another book's save, the carried character, or another
+  adventure.
+- The demo chapter is not offered by the player (owner's request, 2026-10-01). It stays in the
+  repository for the prototypes.
 
 ## 8. Tools
 

@@ -21,7 +21,7 @@ In `shared/`:
 
 - `core.js`: rules (Combat Results Table, disciplines, inventory limits, meals, healing) and the book runner with save and rewind
 - `rules-series.js`: what differs between the Kai and Magnakai series
-- `book-demo.js`: the demo chapter, 20 sections, in the data format the importer targets
+- `book-demo.js`: the demo chapter, 20 sections, in the data format the importer targets (prototypes only)
 - `ui.js`, `sfx-soft.js`, `shared.css`: Random Number Table, character creation, Action Chart, sound
 - `ink.js`: procedural parchment, leather and ink-wash scenes
 - `battle.js`, `art.js`, `flow.js`: used by prototypes A and B only
@@ -46,6 +46,9 @@ ranks, Lore-circle bonuses, Weaponmastery, Psi-surge, and which discipline heals
 imported book names its series. Finishing a real book saves the character; the next book you start
 begins with that character (scores, disciplines, weapons, pack, gold) plus the new discipline it has
 earned. "new character" on the title page rolls a fresh one instead.
+
+Several games can run at once: each adventure on the title page has its own saves and its own
+Lone Wolf. Saves live in the browser, so each device and browser keeps its own.
 
 The Magnakai numbers were written from memory. Check them against the books' rules pages.
 Bow shots, Arrows and each book's starting kit are still applied by hand.

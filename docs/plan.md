@@ -1,7 +1,7 @@
 # Plan and state
 
 Working notes: where the project stands and what comes next. Rough; to be refined with the owner.
-Last updated 2026-09-30.
+Last updated 2026-10-01.
 
 ## How we got here
 
@@ -35,7 +35,10 @@ Decisions the owner has made:
 
 Working and checked by playing in the browser:
 
-- Title page listing the demo chapter and imported books, with continue / start over / new character.
+- Adventures (save slots, 2026-10-01): several games at once, each with its own book saves and
+  carried character; listed on the title page, with a new one and forget. The demo chapter is no
+  longer offered. Older saves move into adventure I on first load.
+- Title page: the adventures, then an adventure's imported books, with continue / start over / new character.
 - Story page: frame, script text, drop cap, illustrations in place, arrival events, choices.
 - Panels: Kai, laid out like the HD character sheet (ink portrait from the owner's screenshot,
   ruled ledgers, a framed grid of every discipline with drawn game-icons glyphs), inventory (likewise

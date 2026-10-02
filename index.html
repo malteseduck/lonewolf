@@ -120,6 +120,8 @@ body { background: var(--void) var(--wood, none) center / 820px; color: var(--bo
 .plaqtext i { font: 400 1em/1.1 var(--script); color: #b9ab8c; }
 .plaqmore { display: flex; gap: 1.2em; padding-left: 2.4em; font-size: 0.95em; }
 .plaqmore:empty { display: none; }
+.plaqmore > span { color: var(--ink-dim); }
+.shelfpage h4.ruled .inkbtn { font: 400 0.75em var(--script); margin-left: 0.6em; }
 .rounds { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.15em; font-size: 1.15em; color: var(--ink-dim); }
 .rounds li:last-child { color: var(--ink); font-weight: 700; }
 
@@ -400,7 +402,6 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 </div>
 
 <script src="shared/core.js"></script>
-<script src="shared/book-demo.js"></script>
 <!-- Imported books (optional, git-ignored). Run tools/fetch_projectaon.py then tools/import_projectaon.py. -->
 <script src="data/projectaon/index.js"></script>
 <script src="shared/ui.js"></script>
