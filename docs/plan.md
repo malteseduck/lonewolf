@@ -140,6 +140,20 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
    the item table (in the Magnakai books, mark ambushes and bow shots: the engine applies them only there), and a plate-library entry for every enemy the importer lists "with none". Book 1
    is done (2026-10-01); Book 2 has its item table, and 16 enemies with no picture. Check by eye which illustration each enemy borrows (`PLATE_FIXES`, and the
    library's generic soldier/robber entries).
+6. **Redraw the town plans from the Sommerlund City Maps** (owner, 2026-10-02). The owner's copies
+   of the campaign's preview images are in git-ignored `art/reference/sommerlund-city-maps/`:
+   Holmgard (and a larger King's Reach detail), Anskaven, Toran, Tyso, Moytura, Ruanon,
+   Silvershore, the Kai Monastery's plans, the country, the Sommer Isles. First redraw Book 2's
+   Holmgard harbour plan (`CITIES.holmgard` in city.js, invented so far) on the King's Reach: the
+   harbour, the rivers coming in, the bridges, the citadel by the water. Keep the Good Cheer Inn,
+   the stairs, the quay and the ship where section 1's run of sections needs them, and re-check
+   Book 2's places on it. Then, as each book is mapped, use a reference wherever its journey walks
+   a town's streets (candidates, to confirm from the text: Toran, Ruanon, Moytura, the Kai Monastery).
+   Towns with no reference (Ragadorn, Port Bax, Hammerdal and the Magnakai books' cities) are made
+   up from the book. Both ways are in docs/reference/map-places.md, "Drawing a town plan": take only
+   the layout from a reference, draw it in our own sepia style, and use only the books' names.
+   The campaign funded a later Mattioli map of Ragadorn (and Helgedad): look for it before making
+   Ragadorn up. Varetta and Barrakeesh were stretch goals that were not reached.
 
 Smaller things noted along the way:
 

@@ -87,7 +87,7 @@ export const AT = {
 - **Town plans:** a run of sections in one city's streets (Book 2's start in Holmgard's harbour)
   gets a town plan as its leg (`city: 'name'`, `at: [x, y]`, view `[0, 0, 1000, 700]`): add the
   plan to `CITIES` in `city.js` (interface.md, "Town plans") and give its places positions in the
-  plan's own grid.
+  plan's own grid. How to draw one: "Drawing a town plan" below.
 - **Water and land:** put sea places in water and the rest on land, as the replica reads them. In
   the page: `(await import('/maps.js')).replicaModel(img).land[y * W + x]` (1 land, 0 water) with
   `img` Book 1's printed map; Book 2's were all checked so. A town printed on the coast may read
@@ -182,6 +182,56 @@ When a place needs something drawn that the map lacks:
 
 Afterwards, run the checker and the sweep again. Commit when both are clean and the look-through
 is done. Note in docs/plan.md which places are guesses worth checking in play.
+
+## Drawing a town plan
+
+A town plan (`CITIES` in `city.js`) is drawn by hand on the leg's 1000x700 grid. Either it is
+redrawn from a reference, or it is made up from the book.
+
+**References.** The owner keeps the Sommerlund City Maps (Mattioli and Dever) in git-ignored
+`art/reference/sommerlund-city-maps/`: Holmgard (with a larger detail of the King's Reach),
+Anskaven, Toran, Tyso, Moytura, Ruanon, Silvershore and the Kai Monastery's floor plans, plus the
+country and the Sommer Isles. Their sources are in `SOURCES.txt` there. They are commercial art for
+personal reference, so take only the town's layout from them:
+
+- Take the shape: the wall's outline and where its gates are, the water (coast, harbour, moles,
+  rivers and where they enter), the bridges, the main avenues from the gates to the centre, the
+  squares, the citadel or keep, and the few landmarks the book's text needs. Read these by eye into
+  the 1000x700 grid, cropping to the part the book walks through. Holmgard's harbour is the King's
+  Reach, not the whole city.
+- Draw it in our own style, not theirs. Their maps are coloured bird's-eye pictures (red roofs,
+  houses seen from the side). Ours stay sepia ink only, with roofs seen from above (`cityCanvas`),
+  and every landmark is a `buildings.js` drawing. Never trace, cut or embed the images, or load
+  them in the player.
+- Names in the committed code are the books' own (the inn, the quay, the Green Sceptre), or plain
+  descriptions. Do not copy the posters' street and district labels.
+- What to borrow from them as practice: how dense the blocks are (houses tight along every street,
+  yards inside each block), lanes that radiate from the gates to a central square, towers spaced
+  evenly along the wall with round ones at the corners, fields and orchards in strips outside, and
+  the roads that leave each gate towards the next town.
+- Note in the plan's comment in `city.js` which reference it follows, and what is still made up.
+
+**A town of our own** (no reference: Ragadorn, Port Bax, Hammerdal, Varetta, Barrakeesh and so on):
+
+1. **Read the town's sections** and list every spot the text names or implies, and how they relate:
+   by the gate, on the quay, across the river, uphill from the market. That list is the plan's
+   brief. Anything the text does not need is background.
+2. **Site.** Take it from the replica and the printed map: coast, river, hill or pass. The gates go
+   where the roads leave towards the neighbouring places on the book's other legs, so the town
+   joins the journey.
+3. **Character.** Take it from the people who built it. The references show Sommlending towns as a
+   curtain wall round a polygon with round towers: Toran and Tyso irregular and radial, Moytura a
+   military grid, Ruanon a double wall around a mining town. Elsewhere, follow the book's own
+   illustrations of the town and its text (Vassagonia's domes and walls, Ragadorn's squalor), and
+   add any building it needs to `buildings.js` first (step 7).
+4. **Skeleton before houses:** water, then the wall and its gates, then two to four main streets
+   from the gates to a centre (a square, a market, the citadel's precinct), then the lanes. Keep
+   the `open` ground for squares and precincts. `cityCanvas` fills everything else with houses, so
+   the streets alone decide how the town reads.
+5. **Places last.** Put the places on the plan, with the panel's reach in mind (about a third of the
+   view across), and run the checker and the sweep as for any leg.
+6. **Say what is invented.** Mark the plan "Not surveyed" in its comment, and in docs/plan.md list
+   the spots worth checking in play.
 
 ## What is automated, and why not more
 
