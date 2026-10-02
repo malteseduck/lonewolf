@@ -17,6 +17,7 @@ The data model `LW.Game` plays. `shared/book-demo.js` is a hand-written example;
   assets: 'data/projectaon/01fftd/',      // prefix for image files
   map: 'map.png',          // the book's printed map
   bonusItem: true,         // Book 1 only: one extra starting item by Random Number
+  intro: ['...'],          // "The Story So Far" as paragraphs, shown before section 1 of a new game. Absent or empty: none
   // authored books
   locations: { key: {x, y, name} },       // 1000x700 map coordinates. Presence turns on map travel
 }

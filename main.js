@@ -149,6 +149,7 @@ let mode = 'title';          // title | story | battle
 let panel = 'kai';           // kai | pack | map
 let sel = null;              // what the caption under a panel describes
 let busy = false, gearTurn = 0, B = null, mapScan = false, mapShown = null;
+let intro = false;           // a new game shows the book's introduction before section 1
 let armed = null;            // steps back to the past place on the map whose "Go back here" is showing
 const REWIND = 3;            // how many sections back a rewind reaches
 
@@ -265,6 +266,9 @@ function shelfHTML() {
 }
 function leftHTML() {
   if (mode === 'title') return titleLeftHTML();
+  if (intro) return `<div class="badge"><div class="med" style="--s:3.300em">${glyph('wolf-head')}</div></div><div class="story"><div class="scroll" id="scroll">
+      <span class="eyebrow lead">The story so far</span><div class="text">${book.intro.map((p, i) => `<p class="${i ? '' : 'first'}">${esc(p)}</p>`).join('')}</div></div>
+      <div class="finis"><button type="button" class="seal" data-intro>Begin</button></div></div>`;
   const sec = game.section, id = game.s.at;
   const badge = `<div class="badge"><div class="med" style="--s:3.300em"><span style="font:400 1em var(--title)">${esc(id)}</span></div></div>`;
 
@@ -884,6 +888,7 @@ bookEl.addEventListener('click', (e) => {
   else if (d.loot != null) { const err = game.takeLoot(/^\d+$/.test(d.loot) ? +d.loot : d.loot); if (err) LW.UI.toast(err); else LW.sfx('select'); render(); }
   else if ('drink' in d) { if (game.usePotion(d.drink || 'potion')) { LW.sfx('heal'); sel = null; render(); } }
   else if (d.remove) { game.removeItem(d.remove); sel = null; render(); }
+  else if ('intro' in d) { intro = false; guard(() => turn(render)); }
   else if (d.choice != null) guard(() => choose(+d.choice));
   else if ('fight' in d) guard(startBattle);
   else if ('endbattle' in d) guard(endBattle);
@@ -934,15 +939,16 @@ pr.addEventListener('wheel', (e) => {
 pr.addEventListener('pointerover', (e) => { const c = e.target.closest('.roads .choice'); pr.querySelectorAll('.dest').forEach((d) => d.classList.toggle('hot', !!c && d.dataset.choice === c.dataset.choice)); });
 
 /* toShelf: back to this adventure's books (after a death or an ending) rather than the list of adventures */
-function toTitle(toShelf) { B = null; mode = 'title'; shelf = !!toShelf; forgetting = null; render(); }
+function toTitle(toShelf) { B = null; mode = 'title'; intro = false; shelf = !!toShelf; forgetting = null; render(); }
 /* fresh = ignore this book's save. anew = roll a new character even though one is being carried. */
 async function begin(id, fresh, anew) {
   useBook(id);
+  intro = false;
   if (!fresh && !anew && game.load()) { mode = 'story'; panel = roads().length ? 'map' : 'kai'; sel = null; return turn(render); }
   game.clear();
   const kept = LW.Character.load(), carry = !anew && kept && !kept.completed.includes(id) ? kept : null;
   const hero = await LW.UI.chooseCharacter(book, carry);
-  game.start(hero); mode = 'story'; panel = 'kai'; sel = null;
+  game.start(hero); mode = 'story'; panel = 'kai'; sel = null; intro = !!(book.intro && book.intro.length);
   await turn(render);
   if (hero.found) LW.UI.toast(`In the ruins you also find: ${hero.found === 'meals' ? 'two Meals' : hero.found === 'gold' ? '12 Gold Crowns' : LW.itemName(hero.found)}.`);
   else if (hero.simpleKit) LW.UI.toast('You start with a Sword, a Meal and some gold. Add the rest of the book\u2019s starting kit by hand.');

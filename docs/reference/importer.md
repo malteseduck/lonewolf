@@ -60,8 +60,14 @@ Heuristics layered on top, all by regular expression:
   an entry in `PLATE_FIXES` (checked by eye, Book 1 only so far); otherwise none, and the player
   looks the name up in `assets/plates/plates.json` at play time (see interface.md, Art pipeline).
 
+It also reads `tssf.htm` ("The Story So Far") into `intro`: every `<p>` in
+`<div class="frontmatter">` except the ones holding a link (the last only points on to the game
+rules). Checked on all twelve downloaded books (2026-10-01): 4 to 10 paragraphs each, no markup
+beyond inline `<i>` and `<cite>`.
+
 The report it prints is the check that a book imported sanely: section count, combats, auto and
-free Random Number sections, gates, illustrations, dead ends, forced Meals, kinds of enemy (with
+free Random Number sections, gates, illustrations, dead ends, forced Meals, paragraphs of
+introduction (0 means `tssf.htm` is missing), kinds of enemy (with
 a plate from the book, from the plate library, and with none, named: add those to
 `plates.json`), broken links, and sections with no way on and no ending. The last two should be
 empty.
@@ -79,5 +85,5 @@ These stay as text; the player applies them with the by-hand controls.
 ## Book 1 result (for comparison when changing the importer)
 
 350 sections, 29 with combat, 17 auto and 4 free Random Number sections, 30 with discipline gates,
-0 rank gates, 59 illustrated, 16 dead ends, 5 forced Meals, 24 kinds of enemy (15 with a plate from
+0 rank gates, 59 illustrated, 16 dead ends, 5 forced Meals, 7 paragraphs of introduction, 24 kinds of enemy (15 with a plate from
 the book, 9 from the plate library, 0 with none), no broken links.

@@ -39,6 +39,10 @@ Textures are generated at start-up in `main.js` and set as CSS variables: `--par
 
 ## Left page in story mode (`leftHTML`, `storyText`, `mountRnt`)
 
+- **Introduction**: a new game of a book with `intro` opens on it (`intro` true), not on section
+  1: the wolf's head in the badge, "The story so far" over the paragraphs (drop capital, scrolling),
+  and a "Begin" seal (`data-intro`) that turns the page to section 1. Section 1 is already the
+  saved place, so reloading or leaving for the title page skips it. Continuing a save never shows it.
 - Section number in a medallion (`.badge`).
 - Paragraphs in `.text`, the first with a drop capital. The illustration is placed before the
   paragraph index in `sec.img.at` (imported) or after the first paragraph (demo vignette).

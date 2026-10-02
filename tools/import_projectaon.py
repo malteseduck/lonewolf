@@ -143,8 +143,16 @@ for sec in sections.values():
             if art:
                 e['art'] = art
 
+# "The Story So Far", shown before section 1. Its last paragraph only points on to the game rules.
+intro = []
+tssf = os.path.join(src, 'tssf.htm')
+if os.path.exists(tssf):
+    page = open(tssf, encoding='utf-8', errors='replace').read()
+    front = page[page.find('<div class="frontmatter">'):page.find('</article')]
+    intro = [plain(p) for p in re.findall(r'<p[^>]*>(.*?)</p>', front, re.S) if 'href=' not in p and plain(p)]
+
 out = {'id': book, 'number': number, 'series': series, 'title': title, 'subtitle': 'Project Aon edition, imported for personal use',
-       'start': '1', 'assets': f'data/projectaon/{book}/', 'map': 'map.png', 'bonusItem': book == '01fftd', 'sections': sections}
+       'start': '1', 'assets': f'data/projectaon/{book}/', 'map': 'map.png', 'bonusItem': book == '01fftd', 'intro': intro, 'sections': sections}
 with open(os.path.join(src, 'book.js'), 'w', encoding='utf-8') as f:
     f.write('(window.LW = window.LW || {}).BOOKS = Object.assign(window.LW.BOOKS || {}, ' + json.dumps({book: out}, ensure_ascii=False) + ');\n')
 
@@ -158,7 +166,8 @@ print(f'{title} ({series}):', len(sections), 'sections;', sum('combat' in s for 
       sum(s.get('rnt') == 'auto' for s in secs), 'auto random,', sum(s.get('rnt') == 'free' for s in secs), 'free random;',
       sum(any('disc' in c.get('need', {}) for c in s['choices']) for s in secs), 'with discipline gates;',
       sum(any('rank' in c.get('need', {}) for c in s['choices']) for s in secs), 'with rank gates;',
-      sum('img' in s for s in secs), 'illustrated;', sum(s.get('end') == 'death' for s in secs), 'dead ends;', sum('meal' in s for s in secs), 'forced meals')
+      sum('img' in s for s in secs), 'illustrated;', sum(s.get('end') == 'death' for s in secs), 'dead ends;', sum('meal' in s for s in secs), 'forced meals;',
+      len(intro), 'paragraphs of introduction' + ('' if intro else ' (none: is tssf.htm downloaded?)'))
 foes = {e['name']: e.get('art') for s in secs for e in s.get('combat', {}).get('enemies', [])}
 # the rest are pictured at play time from assets/plates/plates.json, if an entry matches
 library = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'assets', 'plates', 'plates.json'), encoding='utf-8'))['plates']
