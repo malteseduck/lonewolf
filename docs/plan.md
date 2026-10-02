@@ -50,7 +50,9 @@ Working and checked by playing in the browser:
 - Random Number medallion on the page; automatic gating of choices where the ranges are clean.
 - Combat on the page: plate, medallion commands, dial, round log, evasion, wounds.
 - Book 1 (Flight from the Dark) downloaded and imported: 350 sections, no broken links.
-- Battle plates made from the book's illustrations, restyled as sepia ink. Emblem fallback.
+- Battle plates made from the book's illustrations, restyled as sepia ink, shown whole with ruled
+  frames cut away and every edge faded (2026-10-01). Enemies the book does not picture borrow
+  another book's illustration or a free engraving (`assets/plates/plates.json`). Emblem fallback.
 - LWHD-style sepia maps stamped from engraved CC0 symbols (Widman): the demo's country (with
   travel), and a redrawn, zoomable replica of the Lastlands read from Book 1's printed map, with
   extra detail for central Sommerlund from the Maps of Magnamund. Book 1's journey is a view of it,
@@ -73,12 +75,12 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
 
 ## Waiting on the owner
 
-- **Download books 2-12?** Asked, not yet answered. About 4 MB each from Project Aon. Needed
-  before Magnakai can be tested on real text.
+- **Import books 2-12?** Downloaded on 2026-10-01 for their art (the owner said not to import yet).
+  Needed before Magnakai can be tested on real text.
 
 ## Next steps
 
-1. **Get the go-ahead and fetch books 2-12**, import each, and read the importer's report for
+1. **Import books 2-12** once the owner says so, and read the importer's report for
    every one. Fix whatever the reports show (broken links, sections with no way on, oddly low
    counts). Expect new phrasings for gates, Random Number and combat in later books.
 2. **Verify the rules against the books' rules pages**: the Combat Results Table, Lore-circle
@@ -93,8 +95,10 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
    docs/reference/map-places.md (made-up places by hand, tools to lay out and check them).
    Books 2-5 can use the Lastlands replica if their journeys stay on it; the Magnakai books need
    a replica of their own printed maps first. Book 1's sweep is clean (2026-10-01).
-6. **Enemy plates for unpictured enemies**, and a check by eye of which illustration each enemy
-   borrows in books 2-12 (`PLATE_FIXES`).
+6. **Enemy plates for books 2-12.** Book 1 is done (2026-10-01): every enemy has a picture, from
+   the book or from `assets/plates/plates.json`. On importing each further book, add a library
+   entry for every enemy its report lists "with none", and check by eye which illustration each
+   enemy borrows (`PLATE_FIXES`, and the library's generic soldier/robber entries).
 
 Smaller things noted along the way:
 

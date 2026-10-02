@@ -1,0 +1,12 @@
+{
+  "_readme": "Pictures for fights whose section has no illustration of its own. The first entry whose match (a regular expression, case ignored) is found in the enemy's name is used, so put the narrower ones first. src is relative to the project root: files in assets/plates/ are free to redistribute (sources in README.txt); files under data/projectaon/ are Project Aon illustrations on the owner's machine only, borrowed from another book, and files under art/ are pictures the owner supplied for personal use (git-ignored); a missing one falls back to the drawn emblem. crop, if given, is the part of the picture to use, [x, y, w, h] as fractions. See docs/reference/interface.md, Art pipeline.",
+  "plates": [
+    { "match": "crypt spawn", "src": "data/projectaon/05sots/ill14.png" },
+    { "match": "bodyguard", "src": "data/projectaon/06tkot/ill3.png" },
+    { "match": "robber|thug|bandit|thie[fv]|brigand|cutthroat|footpad", "src": "data/projectaon/02fotw/ill16.png", "crop": [0, 0.15, 1, 0.73] },
+    { "match": "soldier|leader|warrior|guard|sentry|captain|sergeant|knight|mercenar", "src": "data/projectaon/04tcod/ill1.png" },
+    { "match": "bear", "src": "assets/plates/grizzly-brehm.png" },
+    { "match": "winged serpent", "src": "art/winged-serpent.png" },
+    { "match": "viper|snake|serpent", "src": "assets/plates/water-snake.jpg" }
+  ]
+}

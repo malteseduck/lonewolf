@@ -42,6 +42,12 @@ Textures are generated at start-up in `main.js` and set as CSS variables: `--par
 - Section number in a medallion (`.badge`).
 - Paragraphs in `.text`, the first with a drop capital. The illustration is placed before the
   paragraph index in `sec.img.at` (imported) or after the first paragraph (demo vignette).
+  Full-page illustrations (`ill*`) are `.vignette.full`, 56% of the column wide. The books' small
+  pictures (`small*`) come as 386x150 strips with the drawing often filling half of it or less, so
+  `trimSmall()` (after each `renderLeft`) cuts each to its drawing plus a 3% margin (cached as a data
+  URL) and `.vignette.small` shows it 7.5em high, never wider than the column. Hidden until cut.
+  Checked on every illustrated section of Book 1 (2026-10-01): small ones 195px high, full ones
+  about 243x425, in a 1274x914 window.
 - `.scroll` holds the text and scrolls if the section is long. What follows is pinned below it.
 - `#dialslot`: for `rnt` sections the Random Number medallion is mounted here by `mountRnt()`.
   `makeDial()` builds it: a 4.6em medallion whose bronze bezel is engraved 0-9 and turns, while
@@ -271,13 +277,28 @@ attack; `item` drinks Laumspur. When `B.over` is set the left page shows the out
 
 - `Ink.parchment`, `leather`, `inkScene(name, w, h)`: procedural textures and ink-wash vignettes.
 - `inkPlate(img)`: takes a black-on-white illustration, upscales it, maps darkness to alpha in a
-  sepia ink colour, and feathers the edges with a blurred irregular mask. Cached per image URL.
-  Needs a same-origin image.
+  sepia ink colour. Steps: `img.crop` (fractions) picks part of the picture; an old scan's toned
+  paper is lifted to white (the brightest 5% of pixels taken as paper, lift capped at 1.6); a fine
+  grey drawing has its greys deepened until the middle of its ink is at 80% strength, to sit
+  beside the books' solid pen work; `frameOf` finds a ruled frame round the picture (a thin band,
+  ink along at least 40% of the middle of its length, clearly darker than the strip inside it,
+  within the outer 12%) and cuts inside it. No fade at the edges: the owner wants each picture
+  whole, as drawn, with only its ruled frame removed (2026-10-01). Cached per URL and crop. Needs a
+  same-origin image. Scaled to about 1100px wide either way.
 - `drawCreature(canvas, kind, scene, t, fx, img)`: draws the plate. With `img` (or an entry from
-  `art/manifest.json`) it draws the inked illustration top-aligned, showing about 80% of its
-  height. Without, it draws a procedural silhouette (`kraan`, `giak`, `vordak`) or the crossed-
-  swords `emblem`: the crossed-swords glyph (handed over by `setEmblem` once main.js has fetched
-  it) over a blot of wash, or a plain ring and blades until then.
+  `art/manifest.json`) it draws the whole inked illustration, fitted to 94% of the width and 80%
+  of the height, under the enemy's name. Without, it draws a procedural silhouette (`kraan`,
+  `giak`, `vordak`) or the crossed-swords `emblem`: the crossed-swords glyph (handed over by
+  `setEmblem` once main.js has fetched it) over a blot of wash, or a plain ring and blades until then.
+- Which picture (`nextFoe` in main.js): the enemy's own `art` (its section's illustration, or one
+  the importer borrowed from the same book), else the first entry of `assets/plates/plates.json`
+  whose `match` is found in its name (`PLATES`; `__lw.plates` in the console), else the drawn
+  sprite. Library entries are free engravings in `assets/plates/` (sources in its README.txt),
+  pictures the owner supplied in git-ignored `art/` (Winged Serpent), or Project Aon
+  illustrations from another downloaded book, by path under `data/projectaon/` (plain human
+  enemies only: another book's special creature would be seen twice).
+- The shaded bands behind the enemy's name and the controls are `::before` layers faded out at
+  the sides too, so no straight edge shows over the plate.
 - The fight's command medallions use glyphs too: Strike shows the weapon in hand (`itemGlyph`),
   Mindblast/Psi-surge a brain or psychic waves (lit while in use), Laumspur the potion, Evade a
   running man.

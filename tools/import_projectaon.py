@@ -160,7 +160,12 @@ print(f'{title} ({series}):', len(sections), 'sections;', sum('combat' in s for 
       sum(any('rank' in c.get('need', {}) for c in s['choices']) for s in secs), 'with rank gates;',
       sum('img' in s for s in secs), 'illustrated;', sum(s.get('end') == 'death' for s in secs), 'dead ends;', sum('meal' in s for s in secs), 'forced meals')
 foes = {e['name']: e.get('art') for s in secs for e in s.get('combat', {}).get('enemies', [])}
-print(len(foes), 'kinds of enemy,', sum(1 for a in foes.values() if a), 'with a plate')
+# the rest are pictured at play time from assets/plates/plates.json, if an entry matches
+library = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'assets', 'plates', 'plates.json'), encoding='utf-8'))['plates']
+borrowed = {n: next((p['src'] for p in library if re.search(p['match'], n, re.I)), None) for n, a in foes.items() if not a}
+bare = sorted(n for n, src in borrowed.items() if not src)
+print(len(foes), 'kinds of enemy:', sum(1 for a in foes.values() if a), 'with a plate from the book,', len(borrowed) - len(bare), 'from the plate library,',
+      len(bare), 'with none' + (': ' + ', '.join(bare) + ' (add them to assets/plates/plates.json)' if bare else ''))
 broken = [(k, c['to']) for k, s in sections.items() for c in s['choices'] if c['to'] not in sections]
 print('broken links:', broken, '| no way on and no ending:', [k for k, s in sections.items() if not s['choices'] and 'end' not in s])
 print('books loaded by index.js:', have)

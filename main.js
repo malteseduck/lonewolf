@@ -174,7 +174,8 @@ function makeDial(onIdleClick) {
 
 /* ---------- left page ---------- */
 function storyText(sec) {
-  const pic = sec.img ? `<img class="vignette ${sec.img.full ? 'full' : ''}" src="${asset(sec.img.file)}" alt="">` : sec.scene ? `<img class="vignette" src="${vignette(sec.scene)}" alt="">` : '';
+  const pic = sec.img ? (sec.img.full ? `<img class="vignette full" src="${asset(sec.img.file)}" alt="">` : `<img class="vignette small" data-trim src="${asset(sec.img.file)}" alt="">`)
+    : sec.scene ? `<img class="vignette" src="${vignette(sec.scene)}" alt="">` : '';
   const at = sec.img ? Math.min(sec.img.at, sec.text.length) : 1;
   return sec.text.map((p, i) => `${i === at ? pic : ''}<p class="${i ? '' : 'first'}">${esc(p)}</p>`).join('') + (at >= sec.text.length ? pic : '');
 }
@@ -295,7 +296,39 @@ function mountRnt() {
   else note.textContent = 'Touch the medallion for your Random Number.';
   slot.append(dial.el, note);
 }
-function renderLeft() { pl.innerHTML = leftHTML(); mountRnt(); }
+function renderLeft() { pl.innerHTML = leftHTML(); mountRnt(); trimSmall(); }
+/* The books' small pictures sit in a wide strip of blank paper, some filling less than half of it,
+   which drawn at the column's width left the drawing tiny. Each is cut to its drawing (with a little
+   paper round it) and shown at one height (CSS .vignette.small). Hidden until cut, so it does not jump. */
+const trimmed = new Map();
+function trimSmall() {
+  pl.querySelectorAll('img[data-trim]').forEach((img) => {
+    const src = img.getAttribute('src'), done = (url) => { img.src = url; img.removeAttribute('data-trim'); };
+    if (trimmed.has(src)) return void trimmed.get(src).then(done);
+    const p = new Promise((resolve) => {
+      const im = new Image();
+      im.onload = () => {
+        try {
+          const w = im.naturalWidth, h = im.naturalHeight, c = Ink.canvas(w, h), x = c.getContext('2d');
+          x.drawImage(im, 0, 0);
+          const d = x.getImageData(0, 0, w, h).data;
+          let l = w, t = h, r = -1, b = -1;
+          for (let y = 0; y < h; y++) for (let i = 0; i < w; i++) {
+            const k = (y * w + i) * 4;
+            if (d[k + 3] > 40 && d[k] * 0.3 + d[k + 1] * 0.59 + d[k + 2] * 0.11 < 200) { if (i < l) l = i; if (i > r) r = i; if (y < t) t = y; if (y > b) b = y; }
+          }
+          if (r < 0) return resolve(src);
+          const m = Math.round(h * 0.03); l = Math.max(0, l - m); t = Math.max(0, t - m); r = Math.min(w - 1, r + m); b = Math.min(h - 1, b + m);
+          const o = Ink.canvas(r - l + 1, b - t + 1); o.getContext('2d').drawImage(c, l, t, r - l + 1, b - t + 1, 0, 0, r - l + 1, b - t + 1);
+          resolve(o.toDataURL());
+        } catch (e) { resolve(src); }
+      };
+      im.onerror = () => resolve(src);
+      im.src = src;
+    });
+    trimmed.set(src, p); p.then(done);
+  });
+}
 
 /* ---------- right page ---------- */
 function captionHTML() {
@@ -699,8 +732,13 @@ async function startBattle() {
 function nextFoe() {
   B.i++; B.foe = Object.assign({}, B.c.enemies[B.i]); B.foe.max = B.foe.ep;
   B.fx.dead = 0; B.fx.wounds = []; B.img = null;
-  if (B.foe.art) { const file = B.foe.art, im = new Image(); im.onload = () => { if (B && B.foe.art === file) B.img = im; }; im.src = asset(file); }
+  // the section's own illustration, else one from the plate library, else the drawn emblem
+  const foe = B.foe, lib = !foe.art && PLATES.find((p) => p.re.test(foe.name)), src = foe.art ? asset(foe.art) : lib && lib.src;
+  if (src) { const im = new Image(); im.crop = lib && lib.crop; im.onload = () => { if (B && B.foe === foe) B.img = im; }; im.src = src; }
 }
+/* assets/plates/plates.json: pictures for enemies the book does not picture */
+let PLATES = [];
+fetch('assets/plates/plates.json').then((r) => r.json()).then((j) => { PLATES = j.plates.map((p) => Object.assign({ re: new RegExp(p.match, 'i') }, p)); }).catch(() => {});
 function updateBattle() {
   const hero = game.hero, foe = B.foe, q = (k) => B.node.querySelector(`[data-b=${k}]`), r = B.ratio();
   q('name').textContent = foe.name;
@@ -907,7 +945,7 @@ fetch('art/manifest.json').then((r) => r.json()).then((m) => {
   }
 }).catch(() => {});
 
-window.__lw = { get game() { return game; }, render: () => render(), BOOKS, begin }; // for poking at a section from the console
+window.__lw = { get game() { return game; }, render: () => render(), BOOKS, begin, get plates() { return PLATES; } }; // for poking at a section from the console
 
 document.fonts.ready.then(() => {
   const last = adventure() && adventure().book;

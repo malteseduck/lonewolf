@@ -107,30 +107,79 @@ CREATURES.emblem = (x) => {
 const bgCache = {}, ART = {};
 /* A supplied illustration replaces the drawn creature of that kind. */
 export function setArt(kind, img) { ART[kind] = img; }
-/* Turn a black-on-white illustration into page ink: sepia line on clear ground, edges feathered
-   so the picture sinks into the parchment instead of sitting on it as a white rectangle. */
+/* Turn a black-on-white illustration into page ink: sepia line on clear ground, so the picture
+   sits in the parchment instead of on it as a white rectangle.
+   img.crop, if set, is the part to use, [x, y, w, h] as fractions of the image (a web engraving's
+   caption or plate number). A ruled frame drawn round the picture is found and cut away. */
 const inked = new Map();
 export function inkPlate(img) {
-  if (inked.has(img.src)) return inked.get(img.src);
-  const S = Math.max(1, Math.min(3, 1100 / img.width)), w = Math.round(img.width * S), h = Math.round(img.height * S);
-  const c = Ink.canvas(w, h), x = c.getContext('2d');
-  x.imageSmoothingQuality = 'high'; x.drawImage(img, 0, 0, w, h);
+  const key = img.src + (img.crop || '');
+  if (inked.has(key)) return inked.get(key);
+  const [cx, cy, cw, ch] = (img.crop || [0, 0, 1, 1]).map((f, i) => f * (i % 2 ? img.naturalHeight : img.naturalWidth));
+  const S = Math.min(3, 1100 / cw);
+  let w = Math.round(cw * S), h = Math.round(ch * S), c = Ink.canvas(w, h), x = c.getContext('2d');
+  x.imageSmoothingQuality = 'high'; x.drawImage(img, cx, cy, cw, ch, 0, 0, w, h);
   try {
-    const d = x.getImageData(0, 0, w, h), p = d.data;
-    for (let i = 0; i < p.length; i += 4) {
-      const lum = p[i] * 0.3 + p[i + 1] * 0.59 + p[i + 2] * 0.11;
+    const d = x.getImageData(0, 0, w, h), p = d.data, A = new Float32Array(w * h);
+    // an old scan's paper is grey or yellowed: take its tone (the brightest 5%, so a dark plate with
+    // little bare paper is not washed out) as white
+    const hist = new Uint32Array(256);
+    for (let i = 0; i < p.length; i += 16) hist[Math.round(p[i] * 0.3 + p[i + 1] * 0.59 + p[i + 2] * 0.11)]++;
+    let paper = 255;
+    for (let v = 255, n = 0, all = p.length / 16; v >= 0; v--) if ((n += hist[v]) >= all * 0.05) { paper = v; break; }
+    const lift = Math.min(1.6, 245 / Math.max(1, paper));
+    for (let i = 0, j = 0; i < p.length; i += 4, j++) {
+      const lum = (p[i] * 0.3 + p[i + 1] * 0.59 + p[i + 2] * 0.11) * lift;
       let a = Math.max(0, Math.min(1, (225 - lum) / 150)); a = a * a * (3 - 2 * a);
-      p[i] = 46; p[i + 1] = 30; p[i + 2] = 18; p[i + 3] = (p[i + 3] / 255) * a * 240;
+      A[j] = (p[i + 3] / 255) * a;
+    }
+    // a fine, grey drawing beside the books' solid pen work looks faint: if the middle of its ink is
+    // below 80% strength, deepen its greys until it is
+    const inkHist = new Uint32Array(101); let inkN = 0;
+    for (let j = 0; j < A.length; j += 3) if (A[j] > 0.08) { inkHist[Math.round(A[j] * 100)]++; inkN++; }
+    let mid = 1; for (let v = 0, n = 0; v <= 100; v++) if ((n += inkHist[v]) >= inkN / 2) { mid = Math.max(0.05, v / 100); break; }
+    const deepen = mid < 0.8 ? Math.log(0.8) / Math.log(mid) : 1;
+    for (let i = 0, j = 0; i < p.length; i += 4, j++) {
+      if (deepen !== 1) A[j] = Math.pow(A[j], deepen);
+      p[i] = 46; p[i + 1] = 30; p[i + 2] = 18; p[i + 3] = A[j] * 240;
     }
     x.putImageData(d, 0, 0);
+    const [l, t, r, b] = frameOf(A, w, h);
+    if (l || t || r < w || b < h) {
+      const k = Ink.canvas(r - l, b - t); k.getContext('2d').drawImage(c, l, t, r - l, b - t, 0, 0, r - l, b - t);
+      c = k; x = c.getContext('2d'); w = r - l; h = b - t;
+    }
   } catch (e) { /* cross-origin image: leave it as drawn */ }
-  const m = Ink.canvas(w, h), mx = m.getContext('2d'), r = Ink.seeded(w + h), e = w * 0.07;
-  mx.filter = `blur(${Math.round(w * 0.035)}px)`; mx.fillStyle = '#000';
-  mx.fillRect(e, e, w - e * 2, h - e * 2);
-  for (let i = 0; i < 46; i++) { const side = i % 4, t = r(); mx.beginPath(); mx.arc(side === 0 ? e : side === 1 ? w - e : t * w, side === 2 ? e : side === 3 ? h - e : t * h, e * (0.5 + r() * 0.9), 0, Math.PI * 2); mx.fill(); }
-  x.globalCompositeOperation = 'destination-in'; x.drawImage(m, 0, 0);
-  inked.set(img.src, c);
+  // no fade at the edges: the owner wants the whole picture as drawn, only without its ruled frame
+  inked.set(key, c);
   return c;
+}
+/* The box inside a ruled frame, from the ink's alpha (A, w x h). On each side, looking in from the
+   edge across the outer 12%: a rule is a thin band (at most 1.5% deep) with ink along at least
+   40% of its length (the art breaks it), clearly darker than the strip just inside it. The cut goes
+   a little past the innermost rule. A dark mass at the edge (a night sky) is not thin, so it stays. */
+function frameOf(A, w, h) {
+  const rowInk = (y) => { let s = 0; for (let i = Math.round(w * 0.2); i < w * 0.8; i++) s += A[y * w + i] > 0.5; return s / (w * 0.6); };
+  const colInk = (xx) => { let s = 0; for (let i = Math.round(h * 0.2); i < h * 0.8; i++) s += A[i * w + xx] > 0.5; return s / (h * 0.6); };
+  // measured along the middle 60%, so a figure that breaks the frame near a corner does not hide it
+  const inner = (measure, len) => {
+    const memo = [], ink = (i) => memo[i] ?? (memo[i] = measure(i));
+    const band = Math.round(len * 0.12), thin = Math.max(3, len * 0.015), pad = Math.round(len * 0.012) + 2;
+    let cut = 0;
+    for (let i = 0; i < band; i++) {
+      if (ink(i) < 0.4) continue;
+      let j = i, top = 0;
+      while (j < band && ink(j) >= 0.4) top = Math.max(top, ink(j++));
+      if (j - i <= thin) {
+        let inside = 0; for (let k = j; k < j + thin; k++) inside += ink(k) / thin;
+        if (top - inside >= 0.25) cut = j + pad;
+      }
+      i = j;
+    }
+    return cut;
+  };
+  const t = inner(rowInk, h), b = inner((i) => rowInk(h - 1 - i), h), l = inner(colInk, w), r = inner((i) => colInk(w - 1 - i), w);
+  return [l, t, w - r, h - b];
 }
 
 /* One still plate for the fight. The canvas fills the whole panel; the controls sit over its foot.
@@ -147,9 +196,9 @@ export function drawCreature(cv, kind, scene, t, fx, img) {
   x.translate(w / 2 + (Math.random() - 0.5) * fx.hit * 22 * u, cy + fx.dead * 70 * u + (Math.random() - 0.5) * fx.hit * 14 * u);
   x.scale(1 + fx.lunge * 0.1, 1 + fx.lunge * 0.1); x.globalAlpha = 1 - fx.dead;
   if (art) {
-    // show most of the picture, top-aligned; what is cropped lies under the controls
-    const pl = inkPlate(art), sc = Math.min((w * 0.98) / pl.width, h / (pl.height * 0.8));
-    x.drawImage(pl, (-pl.width * sc) / 2, -cy + h * 0.005, pl.width * sc, pl.height * sc);
+    // the whole picture, a little smaller than the panel, between the name above and the controls below
+    const pl = inkPlate(art), sc = Math.min((w * 0.94) / pl.width, (h * 0.8) / pl.height);
+    x.drawImage(pl, (-pl.width * sc) / 2, -cy + h * 0.03, pl.width * sc, pl.height * sc);
   } else {
     const s = u * (kind === 'kraan' ? 1.05 : 1.2);
     x.save(); x.scale(s, s);

@@ -15,6 +15,8 @@ buildings.js                ES module: the map's towns and buildings as vector p
 art/manifest.json           optional pictures in art/: enemy sprites, the map figure, the Kai panel portrait
 assets/map/                 widman.png + widman.json: engraved map symbols (CC0), built by tools/build_map_atlas.py
 assets/icons/               discipline glyphs from game-icons.net (CC BY 3.0, credited in README.txt)
+assets/plates/              plates.json: pictures for enemies their book does not picture; free engravings
+                            from Wikimedia Commons (credited in README.txt)
 CLAUDE.md, README.md
 docs/                       spec, plan, reference
 shared/                     used by the player and the prototypes (classic scripts on a global LW)

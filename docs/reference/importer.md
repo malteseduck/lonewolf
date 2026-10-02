@@ -57,12 +57,14 @@ Heuristics layered on top, all by regular expression:
 - **Victory**: the highest-numbered section.
 - **Enemy plates**: an enemy uses the full-page illustration of its own section if there is one;
   otherwise one from a section where the same kind of enemy is both fought and pictured; otherwise
-  an entry in `PLATE_FIXES` (checked by eye, Book 1 only so far); otherwise none, and the interface
-  draws an emblem.
+  an entry in `PLATE_FIXES` (checked by eye, Book 1 only so far); otherwise none, and the player
+  looks the name up in `assets/plates/plates.json` at play time (see interface.md, Art pipeline).
 
 The report it prints is the check that a book imported sanely: section count, combats, auto and
-free Random Number sections, gates, illustrations, dead ends, forced Meals, enemies with a plate,
-broken links, and sections with no way on and no ending. The last two should be empty.
+free Random Number sections, gates, illustrations, dead ends, forced Meals, kinds of enemy (with
+a plate from the book, from the plate library, and with none, named: add those to
+`plates.json`), broken links, and sections with no way on and no ending. The last two should be
+empty.
 
 It ends with the book's map places, from `tools/check_places.py`: either that the book has no
 `places-<code>.js` yet (it reads without travel on the map; docs/reference/map-places.md says how
@@ -77,5 +79,5 @@ These stay as text; the player applies them with the by-hand controls.
 ## Book 1 result (for comparison when changing the importer)
 
 350 sections, 29 with combat, 17 auto and 4 free Random Number sections, 30 with discipline gates,
-0 rank gates, 59 illustrated, 16 dead ends, 5 forced Meals, 24 kinds of enemy of which 15 have a
-plate, no broken links.
+0 rank gates, 59 illustrated, 16 dead ends, 5 forced Meals, 24 kinds of enemy (15 with a plate from
+the book, 9 from the plate library, 0 with none), no broken links.

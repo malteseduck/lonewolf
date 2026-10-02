@@ -59,6 +59,9 @@ body { background: var(--void) var(--wood, none) center / 820px; color: var(--bo
 .text p.first::first-letter { float: left; font: 400 3.1em/0.86 var(--title); padding: 0.04em 0.1em 0 0; color: var(--ink); }
 .vignette.full { width: 56%; opacity: 0.9; -webkit-mask-image: radial-gradient(ellipse 74% 72% at 50% 50%, #000 76%, transparent 100%); mask-image: radial-gradient(ellipse 74% 72% at 50% 50%, #000 76%, transparent 100%); }
 .vignette { display: block; width: 72%; margin: 0.1em auto; mix-blend-mode: multiply; }
+/* the books' small pictures, cut to the drawing (trimSmall): one height, never wider than the column */
+.vignette.small { width: auto; max-width: 100%; height: 7.5em; object-fit: contain; }
+.vignette.small[data-trim] { visibility: hidden; }
 .events { list-style: none; margin: 0; padding: 0; font-size: 1.15em; color: #31503a; }
 .block { border-top: 1px solid var(--ink-faint); padding-top: 0.4em; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.1em 1.2em; font-size: 1.15em; }
 .eyebrow { width: 100%; font: 400 0.62em var(--title); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-dim); }
@@ -279,8 +282,12 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 .foebar small { font-size: 0.7em; color: var(--ink-dim); white-space: nowrap; font-variant-numeric: lining-nums; }
 .fight { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: space-between; }
 .fight canvas { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: multiply; }
-.fight .foebar { position: relative; padding: 0.15em 0.2em 1.4em; background: linear-gradient(rgba(178, 154, 112, 0.95) 40%, rgba(178, 154, 112, 0)); }
-.fight .cmds { position: relative; padding-top: 3em; background: linear-gradient(rgba(178, 154, 112, 0), rgba(176, 152, 110, 0.95) 48%); }
+.fight .foebar { position: relative; isolation: isolate; padding: 0.15em 0.2em 1.4em; }
+.fight .cmds { position: relative; isolation: isolate; padding-top: 3em; }
+/* the shade that keeps the name and the controls legible over the plate, faded out at the sides too */
+.fight .foebar::before, .fight .cmds::before { content: ''; position: absolute; inset: 0 -1em; z-index: -1; -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); }
+.fight .foebar::before { background: linear-gradient(rgba(178, 154, 112, 0.95) 40%, rgba(178, 154, 112, 0)); }
+.fight .cmds::before { background: linear-gradient(rgba(178, 154, 112, 0), rgba(176, 152, 110, 0.95) 48%); }
 .cmds .medcap .med { --s: 5.4em; }
 .cmds { display: flex; align-items: flex-end; justify-content: center; gap: 0.7em; }
 /* The Random Number: a medallion like the others, its bronze bezel engraved 0-9. The bezel turns;

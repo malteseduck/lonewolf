@@ -47,8 +47,10 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
   `data/projectaon/` (git-ignored) and nowhere else. Do not paste section text into code,
   comments, docs, commit messages or chat. When inspecting imported data, print counts and ids,
   not prose.
-- **Downloading a book needs the owner's go-ahead for that download.** Books 2-12 have not been
-  fetched. Ask, naming the books and rough size, before running `tools/fetch_projectaon.py`.
+- **Downloading a book needs the owner's go-ahead for that download.** Books 1-12 are fetched
+  (2-12 on 2026-10-01, for their art; not imported yet). Ask, naming the books and rough size,
+  before running `tools/fetch_projectaon.py` for any other. Importing a book is a separate step;
+  ask before importing 2-12 too.
 - **No real-time 3D, no pixel art, no bright flat colour.** See spec section 6.6.
 - **Automate only what is certain.** If a rule cannot be read reliably from the text, leave it as
   text and rely on the by-hand controls (spec principle 2 and 3).
