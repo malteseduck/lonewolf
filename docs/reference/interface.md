@@ -49,6 +49,10 @@ Textures are generated at start-up in `main.js` and set as CSS variables: `--par
   The same medallion sits among the fight's commands.
 - Then one of: death panel, the crossed-swords medallion ("Draw your weapon"), the ending panel,
   or a compass medallion (if map roads are open) plus the list of on-page choices.
+  The death panel (death in a fight, or a death section) offers to go back: a seal for the section
+  before, ink links for the ones before that (`game.backs()`, at most `REWIND` = 3), then "begin
+  again". Going back (`goBack(k)`, `data-back`) turns the page to that section as it stood when its
+  choice was made, Random Number undrawn.
 - `shown(text)` strips "turn to N" from a choice; if nothing meaningful is left it shows "Continue".
 
 ## Right-page panels (`renderRight`)
@@ -84,6 +88,11 @@ left. `updateBattle` redraws the gauges each round.
 - **map**: three cases, plus "The whole map" (the zoomable replica) for any book whose spec is one.
   - Book has `locations` (the demo, and Book 1 through `placeBook`): `updateMap()`. Destinations for the current choices are lit rings, named only when `told(k)`: the place is in the book's `KNOWN` list (named on its printed map) or he has been there, so the map gives away no more than the choice does;
     the same choices are listed under the map. Picking one walks the figure there, then turns the page.
+    Places passed in the last `REWIND` sections (other than where he stands; `backPlaces()`) are
+    `.mk.back`: the dot in a fine ink ring, and touchable. Under the map, `backHTML()` names them
+    ("Go back to ..."); touching one there or on the map arms it (`armed`, red dot) and the line asks
+    "Go back to X, n sections ago, and choose again?" with "Go back" (`data-back`) and "stay". Any
+    other touch disarms it.
     The list under the map is filled before `updateMap()` pans, since it takes height from the map
     and the pan is in pixels. It centres on the middle of the figure's and the roads' spread (not
     their average, which pushed a lone far road off). Any name that would fall off the view, a

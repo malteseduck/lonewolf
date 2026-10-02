@@ -126,6 +126,7 @@
       this.saveKey = saveKey;
       this.s = null;
       this.history = []; // JSON snapshots, one per step, for rewinding
+      this.keep = Infinity; // how many of them to keep
     }
     get hero() { return this.s.hero; }
     get section() { return this.book.sections[this.s.at]; }
@@ -139,6 +140,7 @@
 
     go(id, via) {
       if (this.s.at !== null) this.history.push(JSON.stringify(this.s));
+      this.trim();
       const sec = this.book.sections[id];
       const hero = this.s.hero;
       const events = [];
@@ -292,6 +294,18 @@
       this.history.length = n;
       this.save();
     }
+    /* Go back k steps along the trail, to where that section's choice was made, as things stood
+       when it was made. Its Random Number may be drawn again, or a death could not be undone. */
+    back(k) {
+      const n = this.history.length - k;
+      if (k < 1 || n < 0) return;
+      this.rewind(n);
+      this.s.rolled = null; this.s.events = [];
+      this.save();
+    }
+    /* how far back() can go: the section k steps back, for k = 1 up */
+    backs() { const t = this.s.trail; return this.history.map((_, i) => ({ k: i + 1, id: t[t.length - 2 - i].id })); }
+    trim() { if (this.history.length > this.keep) this.history.splice(0, this.history.length - this.keep); }
 
     save() {
       try { localStorage.setItem(this.saveKey, JSON.stringify({ s: this.s, history: this.history })); } catch (e) { /* no storage: play on */ }
@@ -299,7 +313,7 @@
     load() {
       try {
         const raw = JSON.parse(localStorage.getItem(this.saveKey));
-        if (raw && raw.s && this.book.sections[raw.s.at]) { this.s = raw.s; this.history = raw.history || []; return true; }
+        if (raw && raw.s && this.book.sections[raw.s.at]) { this.s = raw.s; this.history = raw.history || []; this.trim(); return true; }
       } catch (e) { /* fall through */ }
       return false;
     }

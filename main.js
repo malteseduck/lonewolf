@@ -54,7 +54,7 @@ let book = null, L = {}, game = null;
 function useBook(id) {
   if (!adventure()) newAdventure();
   book = BOOKS[id]; placeBook(book); L = book.locations || {};
-  game = new LW.Game(book, saveKey(adv.at, id));
+  game = new LW.Game(book, saveKey(adv.at, id)); game.keep = REWIND;
   adventure().book = id; keepAdventures();
 }
 const asset = (f) => (book.assets || '') + f;
@@ -124,6 +124,8 @@ let mode = 'title';          // title | story | battle
 let panel = 'kai';           // kai | pack | map
 let sel = null;              // what the caption under a panel describes
 let busy = false, gearTurn = 0, B = null, mapScan = false, mapShown = null;
+let armed = null;            // steps back to the past place on the map whose "Go back here" is showing
+const REWIND = 3;            // how many sections back a rewind reaches
 
 const isDead = () => game.dead || game.section.end === 'death';
 const destLoc = (c) => {
@@ -256,7 +258,12 @@ function leftHTML() {
   if (game.combatPending && !isDead()) h += `<div class="block"><span class="eyebrow">You must fight</span>${sec.combat.enemies.map((f) => `<div class="foeline"><span>${esc(f.name)}</span><i>Combat Skill ${f.cs}, Endurance ${f.ep}</i></div>`).join('')}</div>`;
   h += '</div><div class="dialslot" id="dialslot"></div>';
 
-  if (isDead()) h += `<div class="finis dead"><h2>Your adventure ends here</h2><p>The last of the Kai has fallen.</p><button type="button" class="seal" data-new>Begin again</button></div>`;
+  if (isDead()) {
+    const bk = game.backs();
+    h += `<div class="finis dead"><h2>Your adventure ends here</h2><p>The last of the Kai has fallen.${bk.length ? ' Yet you may turn back a page or two.' : ''}</p>${
+      bk.map(({ k, id }, i) => `<button type="button" class="${i ? 'inkbtn' : 'seal'}" data-back="${k}">${i ? 'or to' : 'Back to'} section ${esc(id)}</button>`).join('')}${
+      bk.length ? '<button type="button" class="inkbtn" data-new>or begin again</button>' : '<button type="button" class="seal" data-new>Begin again</button>'}</div>`;
+  }
   else if (game.combatPending) h += `<div class="compass"><div class="orn"><button type="button" class="med" data-fight aria-label="Begin the fight">${glyph('crossed-swords')}</button></div><span>Draw your weapon.</span></div>`;
   else if (sec.end) {
     const next = Object.keys(BOOKS).find((k) => BOOKS[k].number === book.number + 1);
@@ -476,6 +483,20 @@ const pct = (p) => `left:${p.x / 10}%;top:${p.y / 7}%`;
 /* whether the map may name a place: one he knows before he gets there, or one he has been to.
    Otherwise a road offered on the map says no more than the choice in the book does. */
 const told = (k) => L[k].known !== false || game.s.trail.some((t) => book.sections[t.id].loc === k);
+/* places passed in the last few sections, which the map lets him go back to: {loc: steps back to the nearest} */
+function backPlaces() {
+  const reach = {}, here = game.section.loc;
+  if (mode === 'story') game.backs().forEach(({ k, id }) => { const l = book.sections[id].loc; if (l !== here && !(l in reach)) reach[l] = k; });
+  return reach;
+}
+/* under the map: the places he may go back to, or, once one is touched, the question */
+function backHTML() {
+  const reach = backPlaces(), locs = Object.keys(reach);
+  if (!locs.length) return '';
+  const at = locs.find((l) => reach[l] === armed);
+  if (at) return `<p class="maphint goback">Go back to ${esc(L[at].name)}, ${armed === 1 ? 'a section' : `${armed} sections`} ago, and choose again? <button type="button" class="seal" data-back="${armed}">Go back</button> <button type="button" class="inkbtn" data-arm="${armed}">stay</button></p>`;
+  return `<p class="maphint goback">Go back to ${locs.map((l) => `<button type="button" class="inkbtn" data-arm="${reach[l]}">${esc(L[l].name)}</button>`).join(' or ')}</p>`;
+}
 function updateMap() {
   showTerrain(MAPS[book.id] ? book.id : 'demo'); // a book with places but no map of its own gets the old demo country
   const here = game.section.loc, locs = [], rd = mode === 'story' && !isDead() ? roads() : [];
@@ -484,11 +505,13 @@ function updateMap() {
   mapNode.querySelector('.route').setAttribute('points', line); mapNode.querySelector('.routeback').setAttribute('points', line);
   mapNode.querySelector('.ways').innerHTML = [...new Set(rd.map((r) => r.loc))].map((k) => `<line x1="${L[here].x}" y1="${L[here].y}" x2="${L[k].x}" y2="${L[k].y}"/>`).join('');
   const destLocs = new Set(rd.map((r) => r.loc));
+  const reach = backPlaces();
   let h = '';
   for (const k in L) {
     if (destLocs.has(k)) continue;
     const named = MAPS[book.id] && MAPS[book.id].replica && LASTLANDS.places.some((p) => p[0] === L[k].name); // the map already prints it
-    if (locs.includes(k) && k !== here) h += `<div class="mk" style="${pct(L[k])}"><i></i>${named ? '' : `<span>${esc(L[k].name)}</span>`}</div>`;
+    if (k in reach) h += `<div class="mk back ${armed === reach[k] ? 'armed' : ''}" style="${pct(L[k])}"><button type="button" data-arm="${reach[k]}" aria-label="${esc(L[k].name)}: go back here?"><i></i></button>${named ? '' : `<span>${esc(L[k].name)}</span>`}</div>`;
+    else if (locs.includes(k) && k !== here) h += `<div class="mk" style="${pct(L[k])}"><i></i>${named ? '' : `<span>${esc(L[k].name)}</span>`}</div>`;
     else if (k === 'holmgard' && k !== here) h += `<div class="mk goal" style="${pct(L[k])}"><i></i>${named ? '' : `<span>${esc(L[k].name)}</span>`}</div>`;
   }
   destLocs.forEach((k) => {
@@ -587,8 +610,8 @@ function renderRight() {
     host.append(mapNode, hint);
     // the hint first: it takes height from the map, and the map pans by its size
     const rd = mode === 'story' && !isDead() ? roads() : [];
-    hint.innerHTML = rd.length ? `<ul class="roads">${rd.map((r) => `<li><button type="button" class="choice" data-choice="${r.i}" ${r.c.enabled ? '' : 'disabled'}><span>${esc(shown(r.c.text))}<em>${esc(r.c.enabled ? (told(r.loc) ? L[r.loc].name : '') : r.c.why)}</em></span></button></li>`).join('')}</ul>${whole ? `<p class="maphint">${whole}</p>` : ''}`
-      : `<p class="maphint">${isDead() ? 'Your road ends here.' : game.section.end ? 'Your journey is over.' : game.combatPending ? 'There is no leaving until the fight is settled.' : 'No road is open yet. The story continues in the book.'}${whole}</p>`;
+    hint.innerHTML = (rd.length ? `<ul class="roads">${rd.map((r) => `<li><button type="button" class="choice" data-choice="${r.i}" ${r.c.enabled ? '' : 'disabled'}><span>${esc(shown(r.c.text))}<em>${esc(r.c.enabled ? (told(r.loc) ? L[r.loc].name : '') : r.c.why)}</em></span></button></li>`).join('')}</ul>${whole ? `<p class="maphint">${whole}</p>` : ''}`
+      : `<p class="maphint">${isDead() ? 'Your road ends here.' : game.section.end ? 'Your journey is over.' : game.combatPending ? 'There is no leaving until the fight is settled.' : 'No road is open yet. The story continues in the book.'}${whole}</p>`) + backHTML();
     updateMap();
   } else host.innerHTML = panel === 'kai' ? kaiHTML() : packHTML();
 }
@@ -633,6 +656,13 @@ async function choose(i) {
   game.choose(c, to);
   sel = null;
   await turn(() => { if (panel === 'map' && book.locations && !roads().length) panel = 'kai'; render(); });
+}
+/* back k sections, to make that choice again */
+async function goBack(k) {
+  game.back(k);
+  sel = null; armed = null; mode = 'story';
+  LW.sfx('select');
+  await turn(() => { if (panel === 'map' && !roads().length) panel = 'kai'; render(); });
 }
 
 /* ---------- combat, on the page ---------- */
@@ -760,6 +790,9 @@ bookEl.addEventListener('click', (e) => {
   if (d.cmd) return void battleAct(d.cmd);
   if (busy) return;
   if (mode === 'title' && !('forget' in d)) forgetting = null;
+  if (!('arm' in d)) armed = null;
+  if (d.arm) { armed = armed === +d.arm ? null : +d.arm; LW.sfx('select'); return void renderRight(); }
+  if (d.back) return void guard(() => goBack(+d.back));
   if (d.book) guard(() => begin(d.book, 'fresh' in d, 'anew' in d));
   else if (d.adv) {
     useAdventure(d.adv);

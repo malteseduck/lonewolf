@@ -124,6 +124,11 @@ and must be checked against the rules pages of the books.
 - A section shows its text and illustration, then resolves in this order: arrival effects
   (forced Meal, healing), combat if any, Random Number if any, then choices.
 - A section with no choices is an ending: death, or completion of the book.
+- **Going back** (owner's request, 2026-10-01): the player may go back up to three sections, to
+  where a choice was made, and make it again. Everything returns to how it stood then; a Random
+  Number may be drawn again. It is offered on death (in a fight or in a death section), and at
+  any time on the map, by touching a place passed in those sections. Going back uses up the
+  steps; moving on earns them back.
 - Choices read as the book wrote them, with page references removed. A choice that was only a
   page reference reads "Continue".
 

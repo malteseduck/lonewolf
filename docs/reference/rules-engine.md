@@ -53,6 +53,12 @@ Item ids are keys of `LW.ITEMS`, or `pack:Name` / `spec:Name` for items typed in
   `usePotion()`, `dropWeapon(id)`. `addItem` returns an error string when a limit is hit.
   Special Items with an `ep` value raise and lower `epMax` as they are added and removed.
 - `rewind(n)`, `save()`, `load()`, `clear()`.
+- `history` holds one snapshot of `s` per step, taken as a choice is made (so it is that section
+  with its fight won, loot taken and by-hand changes). `keep` caps how many are kept (Infinity by
+  default; the player sets 3, which also stops saves growing with every section). `trim()` applies it.
+- `back(k)`: back k steps; that section as it stood when its choice was made, with `rolled` and
+  `events` cleared so the Random Number can be drawn again. Going back uses up those steps: only
+  moving on again earns them back. `backs()` lists `{k, id}` for each step reachable.
 
 ## rules-series.js
 

@@ -77,14 +77,16 @@ must change with it.
 | `fought` | `{sectionId: true}` for combats already won |
 | `looted` | `{sectionId:index: true}` for demo loot already taken |
 
-`game.history` is an array of JSON snapshots of `s`, one per step, used by `rewind(n)` (prototype B).
+`game.history` is an array of JSON snapshots of `s`, one per step, used by `rewind(n)` (prototype B)
+and `back(k)` (the player, which keeps only the last `REWIND` = 3: `game.keep`).
 
 The player keeps its own view state in module variables in `main.js`:
 `mode` (`title` | `story` | `battle`), `panel` (`kai` | `pack` | `map`), `sel` (selected item or
 discipline), `B` (the fight in progress, or null), `busy` (input lock during animations),
 `mapScan` (show the printed map instead of the journey map), `shelf` (the title page shows the open
 adventure's books rather than the list of adventures), `forgetting` (the adventure whose "forget" is
-asking to be confirmed), `adv` (the adventures, as stored in `lw-adventures`).
+asking to be confirmed), `adv` (the adventures, as stored in `lw-adventures`), `armed` (steps back
+to the past place on the map whose "go back" question is showing).
 
 `book` and `game` are null until a book is opened.
 

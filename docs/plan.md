@@ -38,6 +38,9 @@ Working and checked by playing in the browser:
 - Adventures (save slots, 2026-10-01): several games at once, each with its own book saves and
   carried character; listed on the title page, with a new one and forget. The demo chapter is no
   longer offered. Older saves move into adventure I on first load.
+- Going back up to three sections (2026-10-01): on the death panel, and on the map by touching a
+  place passed lately. Saves keep only those three snapshots now. Not offered where the recent
+  sections were all at the one place and he is alive (the map has nothing to touch).
 - Title page: the adventures, then an adventure's imported books, with continue / start over / new character.
 - Story page: frame, script text, drop cap, illustrations in place, arrival events, choices.
 - Panels: Kai, laid out like the HD character sheet (ink portrait from the owner's screenshot,
