@@ -178,7 +178,8 @@
       this.s.rolled = null;
       this.s.trail.push({ id, via });
 
-      if (sec.ep) {
+      if (sec.ep === 'full') { if (hero.ep < hero.epMax) { hero.ep = hero.epMax; events.push('Your ENDURANCE is restored in full.'); } }
+      else if (sec.ep) {
         hero.ep = Math.min(hero.epMax, hero.ep + sec.ep);
         events.push(sec.ep < 0 ? `You lose ${-sec.ep} ENDURANCE.` : `You regain ${sec.ep} ENDURANCE.`);
       }

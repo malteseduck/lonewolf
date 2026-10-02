@@ -42,6 +42,10 @@ tools/
   layout_places.js          lays out the places not fixed by hand (node)
   map_sweep.js              in the browser console: every section shown on the map and checked
                             (the four above: docs/reference/map-places.md)
+  item_sections.py          lists the sections that may give, take or need items; writes them to read
+  check_items.mjs           checks items-<code>.js against the book (node)
+  fetch_icons.py            fetches game-icons.net glyphs into assets/icons/, background removed
+                            (the three above: docs/reference/items.md)
 data/projectaon/            git-ignored. Downloaded pages and images, generated book.js files, index.js;
                             maps/: sheets 1-2 of Project Aon's Maps of Magnamund (reference for LASTLANDS.detail)
 data/reference/             git-ignored. Reference images fetched for the owner: a fan-made world map of

@@ -38,10 +38,12 @@ Working and checked by playing in the browser:
 - Adventures (save slots, 2026-10-01): several games at once, each with its own book saves and
   carried character; listed on the title page, with a new one and forget. The demo chapter is no
   longer offered. Older saves move into adventure I on first load.
-- Items handled by the engine for Book 1 (2026-10-01): `items-01fftd.js`, read by hand: 52
-  sections give, offer, take or gate items, gold, Meals or Endurance; 12 book items with their own
-  icons (game-icons.net). Tested on a stand-in hero, not yet in a play-through. Books 2-12 each
-  need their own table when imported.
+- Items handled by the engine for Book 1 (2026-10-01): `items-01fftd.js`, read by hand: 61
+  sections give, offer, take or gate items, gold, Meals or Endurance, or correct a misread fight
+  (the Vordaks' -2 is now Mindforce, which Mindshield blocks; the Burrowcrawler's darkness is spared
+  by a Torch and Tinderbox); 12 book items with their own icons (game-icons.net). Tested on a
+  stand-in hero, not yet in a play-through. The procedure and its tools are in
+  docs/reference/items.md; books 2-12 each need a table when imported.
 - Going back up to three sections (2026-10-01): on the death panel, and on the map by touching a
   place passed lately. Saves keep only those three snapshots now. Not offered where the recent
   sections were all at the one place and he is alive (the map has nothing to touch).
@@ -99,10 +101,10 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
    docs/reference/map-places.md (made-up places by hand, tools to lay out and check them).
    Books 2-5 can use the Lastlands replica if their journeys stay on it; the Magnakai books need
    a replica of their own printed maps first. Book 1's sweep is clean (2026-10-01).
-6. **Enemy plates for books 2-12.** Book 1 is done (2026-10-01): every enemy has a picture, from
-   the book or from `assets/plates/plates.json`. On importing each further book, add a library
-   entry for every enemy its report lists "with none", and check by eye which illustration each
-   enemy borrows (`PLATE_FIXES`, and the library's generic soldier/robber entries).
+6. **Items and fight pictures for books 2-12**, by docs/reference/items.md on importing each:
+   the item table, and a plate-library entry for every enemy the importer lists "with none". Book 1
+   is done (2026-10-01). Check by eye which illustration each enemy borrows (`PLATE_FIXES`, and the
+   library's generic soldier/robber entries).
 
 Smaller things noted along the way:
 

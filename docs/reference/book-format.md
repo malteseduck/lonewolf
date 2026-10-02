@@ -48,7 +48,7 @@ with it, choices that change location are made on the map; without it, every cho
 | `rolls` | `[{range: [lo, hi], ep, take}]` | item table: what the Random Number drawn here does |
 | `cs` | number | item table: COMBAT SKILL changed for good on arrival |
 | `todo` | string | item table: a by-hand reminder shown with the arrival events |
-| `ep` | number | authored, or item table: Endurance change on arrival |
+| `ep` | number \| `'full'` | authored, or item table: Endurance change on arrival; `'full'` restores it to the maximum |
 | `lose` | `{meal: 1}` | authored: something lost on arrival |
 
 `give`, `take`, `cs`, `todo` and gains through `give` happen once per section in a playthrough
@@ -63,9 +63,13 @@ read and written down by hand in `items-<code>.js` at the project root (Book 1: 
 `kind` (`weapon` | `backpack` | `special`), optionally `glyph` (an icon in `assets/icons/`), `heal`,
 `ep`, `about`) and `SECTIONS` (by section number: any of the fields above, plus `meal` where the
 importer's pattern missed one, plus `need: {to: {item | gold, not, spend}}` to gate the choice
-leading to `to`). `main.js` lays the table over the book (`applyItems`) when it is first opened.
-Where the text leaves the choice to the player (which weapon breaks, which item is stolen), the
-table gives a `todo`, not a guess.
+leading to `to`, plus `fight` to correct what the importer read of the section's combat:
+`csMod`, `mindforce` (set on every enemy; blocked by Mindshield), `unless: [items]` (carrying all of
+them spares the `csMod`), `unarmed: true` (the `csMod` is the text's no-weapon penalty, so it is
+dropped when he has no weapon and the engine's own -4 applies)). `main.js` lays the table over the
+book (`applyItems`) when it is first opened. Where the text leaves the choice to the player (which
+weapon breaks, which item is stolen), the table gives a `todo`, not a guess. How to write one, and
+the tools: `items.md`.
 
 ## Choice
 

@@ -216,7 +216,8 @@ hand.
 - Fought on the book's pages, not in a separate 3D scene.
 - Every fight has a picture (owner's request, 2026-10-01). Where the book has none, one is borrowed:
   another book's illustration of a plain human enemy (soldiers, guards, robbers; never another
-  book's special creature or set-piece fight), a free old engraving of what is described, or a
+  book's special creature or set-piece fight, unless it is the very same creature: Book 1's Crypt
+  Spawn uses Book 5's, accepted by the owner 2026-10-01), a free old engraving of what is described, or a
   picture the owner supplies. The picture is shown whole, as drawn, a little smaller than the
   panel; a ruled frame line round it is removed, and the edges are not faded.
 - The enemy is a still plate filling the panel: the book's own illustration where one exists,

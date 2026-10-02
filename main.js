@@ -22,8 +22,13 @@ function applyItems(b) {
   for (const [id, x] of Object.entries(t.SECTIONS)) {
     const sec = b.sections[id];
     if (!sec) continue;
-    const { need, ...rest } = x;
+    const { need, fight, ...rest } = x;
     Object.assign(sec, rest);
+    if (fight && sec.combat) {
+      const { mindforce, ...f } = fight;
+      Object.assign(sec.combat, f);
+      if (mindforce) sec.combat.enemies.forEach((e) => { e.mindforce = mindforce; });
+    }
     for (const [to, n] of Object.entries(need || {})) sec.choices.filter((c) => c.to === to).forEach((c) => { c.need = Object.assign({}, c.need, n); });
   }
 }
@@ -727,6 +732,10 @@ const tween = (ms, fn) => new Promise((res) => { if (still) { fn(1); return res(
 
 async function startBattle() {
   const sec = game.section, c = sec.combat, hero = game.hero;
+  // the fight's own adjustment, unless he carries what the text says spares him it (a torch), or
+  // it is the text's "unarmed" penalty and he has no weapon anyway (heroCS already counts that)
+  const spared = (c.unless || []).length && c.unless.every((i) => LW.hasItem(hero, i));
+  const csMod = spared || (c.unarmed && !hero.weapons.length) ? 0 : c.csMod;
   const node = el('div', 'fight');
   node.innerHTML = `<canvas width="600" height="800"></canvas><div class="foebar"><span data-b="name"></span><div class="bar"><i></i></div><small data-b="stats"></small></div><div class="cmds" data-b="cmds"></div>`;
   const dial = makeDial();
@@ -734,11 +743,12 @@ async function startBattle() {
   B = { c, i: -1, foe: null, img: null, power: LW.mindPower(hero), mind: LW.mindPower(hero) ? 1 : 0, rounds: 0, log: [], over: null, lock: false, scene: sec.scene, node, dial,
     fx: { lunge: 0, hit: 0, dead: 0, wounds: [] },
     blasting() { return this.foe.immune ? 0 : this.mind; },
-    cs() { return LW.heroCS(hero, { mindblast: this.blasting() === 1, psiSurge: this.blasting() === 2, enemy: this.foe, csMod: c.csMod, csNote: c.csNote }).total; },
+    cs() { return LW.heroCS(hero, { mindblast: this.blasting() === 1, psiSurge: this.blasting() === 2, enemy: this.foe, csMod, csNote: c.csNote }).total; },
     ratio() { return this.cs() - this.foe.cs; } };
   nextFoe();
   if (B.foe.mindforce) B.log.push(LW.shielded(hero) ? 'Its will breaks against your Mindshield.' : `Its will presses on yours: Combat Skill less ${B.foe.mindforce}.`);
-  if (c.csMod) B.log.push(`${c.csNote}: Combat Skill ${c.csMod > 0 ? 'plus' : 'less'} ${Math.abs(c.csMod)}.`);
+  if (csMod) B.log.push(`${c.csNote}: Combat Skill ${csMod > 0 ? 'plus' : 'less'} ${Math.abs(csMod)}.`);
+  else if (spared) B.log.push(`Your ${c.unless.map(LW.itemName).join(' and ')} spare you the penalty.`);
   mode = 'battle'; LW.sfx('battle');
   await turn(render);
   updateBattle();

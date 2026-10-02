@@ -9,6 +9,8 @@
      meal   a Meal the importer's pattern missed
      todo   what is the player's own choice, as a reminder
      need   choices that open only with an item or gold: {to: {item | gold, not, spend}}
+     fight  corrections to what the importer read of a fight: csMod, mindforce (blocked by
+            Mindshield), unless (items that spare the csMod), unarmed (csMod is the no-weapon penalty)
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {
   vordakGem: { name: 'Vordak Gem', kind: 'backpack', glyph: 'cut-diamond', about: 'A large gem that burns to the touch.' },
@@ -27,6 +29,9 @@ export const ITEMS = {
 
 export const SECTIONS = {
   9: { need: { 236: { item: 'vordakGem' } } },
+  // the Vordaks' -2 is their Mindforce, which Mindshield blocks; the importer read it as a flat -2
+  29: { fight: { csMod: 0, mindforce: 2 } },
+  34: { fight: { csMod: 0, mindforce: 2 } },
   12: { need: { 262: { gold: 10, spend: true } } },
   15: { loot: [{ item: 'sword' }] },
   20: { loot: [{ pack: true }, { meal: 2 }, { item: 'dagger' }] },
@@ -42,12 +47,14 @@ export const SECTIONS = {
   137: { give: [{ item: 'tombGems' }] },
   144: { ep: -2, todo: 'one item is stolen from your Backpack: drop the one you choose. If you have no Backpack Items, you lose a weapon instead.' },
   146: { ep: -3 },
+  148: { loot: [{ item: 'warhammer' }] },
   158: { ep: -6, rolls: [{ range: [6, 9], ep: -4 }] },
   161: { give: [{ item: 'goldenKey' }] },
   162: { take: [{ weapons: 'all' }, { backpack: 'all' }] },
   164: { loot: [{ item: 'alether' }] },
   166: { ep: -4 },
   168: { meal: true },
+  170: { fight: { unless: ['torch', 'tinderbox'] } },
   173: { need: { 158: { item: 'silverKey' }, 259: { item: 'silverKey', not: true } } },
   174: { take: [{ weapons: 'all' }, { backpack: 'all' }] },
   // the food is found and eaten in the same breath, so it is put in the pack before the Meal is due
@@ -58,14 +65,17 @@ export const SECTIONS = {
   199: { loot: [{ meal: 1 }] },
   203: { ep: -10 },
   205: { take: [{ weapons: 'all' }, { backpack: 'items' }] },
+  212: { ep: 'full' },
   236: { ep: -6, cs: -1, take: [{ item: 'vordakGem' }] },
   243: { loot: [{ item: 'mace' }] },
   255: { loot: [{ item: 'sword' }] },
+  260: { fight: { unarmed: true } },
   263: { loot: [{ gold: 3 }] },
   267: { loot: [{ item: 'message' }, { item: 'dagger' }] },
   269: { give: [{ gold: 10 }] },
   274: { take: [{ weapons: 'all' }] },
   277: { take: [{ weapons: 'one' }] },
+  283: { fight: { csMod: 0, mindforce: 2 }, todo: 'you surprised him: add 2 to your COMBAT SKILL for the first round only. The engine does not.' },
   290: { loot: [{ item: 'quarterstaff' }] },
   291: { loot: [{ gold: 6 }, { item: 'dagger', or: 'weapon' }, { item: 'spear', or: 'weapon' }] },
   294: { take: [{ weapons: 'all' }, { backpack: 'all' }] },
@@ -76,6 +86,8 @@ export const SECTIONS = {
   313: { ep: -1 },
   315: { loot: [{ gold: 6 }, { item: 'soap' }] },
   319: { loot: [{ item: 'dagger' }, { gold: 20 }] },
+  320: { ep: -2 },
+  342: { fight: { csMod: 0, mindforce: 2 } },
   346: { loot: [{ item: 'spear' }] },
   347: { loot: [{ item: 'shortSword' }, { item: 'tinderbox' }, { item: 'torch' }] },
   349: { give: [{ item: 'crystalStar' }] },

@@ -96,7 +96,8 @@ Magnakai disciplines. That is an interpretation flagged in the spec.
 ## Combat procedure
 
 Implemented in `main.js` (`startBattle`, `battleAct`, `endBattle`), not in the
-shared engine. Per round: spin the dial, `LW.combatRound(B.ratio(), n)`, apply both losses, then
+shared engine. The fight's `csMod` applies unless the hero carries every item in `combat.unless`,
+or `combat.unarmed` is set and he has no weapon (the engine's -4 covers it). Per round: spin the dial, `LW.combatRound(B.ratio(), n)`, apply both losses, then
 2 EP for Psi-surge if it was active (dropping to Mindblast at 6 EP or less). Evade applies only
 the hero's loss. The house rule that Laumspur can be drunk mid-fight lives here.
 

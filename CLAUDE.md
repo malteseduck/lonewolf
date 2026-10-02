@@ -71,8 +71,9 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
 - **A book's travel on the map** is made by hand, step by step, in `docs/reference/map-places.md`.
   The importer reports where a book stands on it; follow it for every new book.
 - **A book's items** (what each section gives, takes, or needs) are read and written by hand in
-  `items-<code>.js`, like its places; see "Item tables" in `docs/reference/book-format.md`. Where
-  the text leaves the choice to the player, write a `todo`, never a guess.
+  `items-<code>.js`, like its places, following `docs/reference/items.md`. Where the text leaves
+  the choice to the player, write a `todo`, never a guess. Every fight needs a picture: the same
+  page says where to find one.
 - **Map symbols** look engraved, like the Widman set: sepia ink only, no colour, no rim. For a
   new map feature, first reuse what exists: a Widman stamp (`mountain range forest tree`; its settlement stamps do
   not match the official icons) or a building in `buildings.js` (`castle monastery tower keep house
@@ -106,6 +107,7 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
 | `docs/reference/importer.md` | The downloader and importer: what is parsed and how |
 | `docs/reference/interface.md` | The interface: pages, panels, map, combat, art pipeline |
 | `docs/reference/map-places.md` | The procedure for putting a book on the map: places, layout, checks |
+| `docs/reference/items.md` | The procedure for a book's item table and its fight pictures: reading, icons, checks |
 | `docs/plan.md` | State of the work, decisions made, what is waiting on the owner, next steps. **Read this first in a new session.** |
 
 Keep them current: a change to behaviour updates the matching reference file in the same piece of
