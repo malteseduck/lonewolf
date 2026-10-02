@@ -119,6 +119,15 @@ and must be checked against the rules pages of the books.
   with no Meal the character loses 3 Endurance.
 - A Laumspur potion restores 4 Endurance, never above the maximum.
 
+### 4.5a Items the story gives and takes
+
+Owner's request (2026-10-01): where the text adds or removes an item, gold, a Meal or Endurance,
+the engine does it. What he is handed is added on arrival; what he may take is one touch per
+item, each with its own icon; what he loses outright is crossed off; choices that need an item or
+gold open only when he has it, and paying takes the gold. These are read from each book by hand,
+not guessed by the importer (principle 2). Where the book leaves the decision to the player
+(which weapon breaks, which item is stolen), a reminder is shown and the by-hand controls do it.
+
 ### 4.6 Section flow
 
 - A section shows its text and illustration, then resolves in this order: arrival effects

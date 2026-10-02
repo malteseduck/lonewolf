@@ -70,6 +70,9 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
   only restyled at runtime. Downloading a new asset pack needs the owner's go-ahead.
 - **A book's travel on the map** is made by hand, step by step, in `docs/reference/map-places.md`.
   The importer reports where a book stands on it; follow it for every new book.
+- **A book's items** (what each section gives, takes, or needs) are read and written by hand in
+  `items-<code>.js`, like its places; see "Item tables" in `docs/reference/book-format.md`. Where
+  the text leaves the choice to the player, write a `todo`, never a guess.
 - **Map symbols** look engraved, like the Widman set: sepia ink only, no colour, no rim. For a
   new map feature, first reuse what exists: a Widman stamp (`mountain range forest tree`; its settlement stamps do
   not match the official icons) or a building in `buildings.js` (`castle monastery tower keep house

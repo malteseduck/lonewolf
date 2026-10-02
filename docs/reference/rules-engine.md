@@ -20,12 +20,16 @@ Magnakai and overrides some functions).
   meals: 0,                  // Meals count toward the 8 Backpack slots
   special: [...],
   gold: 0,                   // max 50
+  noPack: true,              // the Backpack itself is lost: no Backpack Items or Meals until one is found
   found, simpleKit,          // transient flags used for a toast after creation
 }
 ```
 
 Item ids are keys of `LW.ITEMS`, or `pack:Name` / `spec:Name` for items typed in by hand.
-`LW.itemName(id)` and `LW.itemKind(id)` handle both.
+`LW.itemName(id)` and `LW.itemKind(id)` handle both. A book's own items join `LW.ITEMS` through
+`LW.addItems` (from its item table). `LW.putItem(hero, id)` puts one where it belongs, or returns why
+it does not fit (two weapons, eight Backpack slots, no Backpack); `LW.dropItem(hero, id)` takes one
+away; both handle Special Items' Endurance. `LW.hasItem(hero, id)` checks any list.
 
 ## core.js
 
@@ -41,17 +45,22 @@ Item ids are keys of `LW.ITEMS`, or `pack:Name` / `spec:Name` for items typed in
 `Game` methods:
 
 - `start(hero)`, `go(id, via)`: move to a section. `go` applies arrival effects in order:
-  `sec.ep`, `sec.lose`, forced Meal (hunting exempts, else eat, else -3 EP), then +1 EP healing if
-  the section has no combat. It resets `s.rolled` and saves.
+  `sec.ep`; once per section, `arrive(sec)` (`sec.cs`, the losses in `sec.take` through `lose()`,
+  the gifts in `sec.give` through `takeLoot`, `sec.todo` as a "By hand:" event); `sec.lose`; forced
+  Meal (hunting exempts, else eat, else -3 EP), then +1 EP healing if the section has no combat.
+  Gifts come before the Meal so food found in the passage can be eaten. It resets `s.rolled` and saves.
 - `combatPending`: the section has combat not yet won. `wonCombat()` marks it won.
 - `choices()`: the choices with `enabled` and `why` filled in. Returns none while dead, at an
-  ending, or while combat is pending. Applies `need.disc`, `need.rank`, `need.item`, the
-  `rnt: 'auto'` gate, and hides `evade` choices in sections that have combat. For authored combat
-  with `to`, returns a single "Continue".
-- `setRolled(n)`, `resolveRandom(choice, roll)` (authored `choice.random`), `choose(choice, to)`.
-- Inventory: `loot()`, `takeLoot(i)`, `addItem(id)`, `removeItem(id)`, `adjust('ep'|'gold', by)`,
-  `usePotion()`, `dropWeapon(id)`. `addItem` returns an error string when a limit is hit.
-  Special Items with an `ep` value raise and lower `epMax` as they are added and removed.
+  ending, or while combat is pending. Applies `need.disc`, `need.rank`, `need.item` (with `not`),
+  `need.gold`, the `rnt: 'auto'` gate, and hides `evade` choices in sections that have combat. For
+  authored combat with `to`, returns a single "Continue". `choose` pays `need.spend` items or gold.
+- `setRolled(n)` (also applies the matching `sec.rolls` entry, once), `resolveRandom(choice, roll)`
+  (authored `choice.random`), `choose(choice, to)`.
+- Inventory: `loot()` (gifts and finds, `i` = `'give0'` or `0`, with `taken` and `closed` for an
+  `or` group already used), `takeLoot(i)`, `addItem(id)`, `removeItem(id)`, `adjust('ep'|'gold', by)`,
+  `usePotion(id)` (anything with `heal`), `dropWeapon(id)`. `takeLoot` and `addItem` return an error
+  string when a limit is hit. Special Items with an `ep` value raise and lower `epMax` as they are
+  added and removed.
 - `rewind(n)`, `save()`, `load()`, `clear()`.
 - `history` holds one snapshot of `s` per step, taken as a choice is made (so it is that section
   with its fight won, loot taken and by-hand changes). `keep` caps how many are kept (Infinity by
@@ -97,4 +106,5 @@ not know about Magnakai.
 ## Not implemented
 
 Bow and Arrow rules, Special Item limits, per-book starting kits, Grand Master rules, any rule the
-importer leaves as text.
+importer leaves as text and no item table covers. Potions that help in a fight (Alether) are only
+described; their bonus is applied by hand.

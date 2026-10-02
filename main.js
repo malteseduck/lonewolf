@@ -5,8 +5,28 @@ import * as Ink from './shared/ink.js';
 import { drawCreature, setArt, setEmblem, newWound, drawHero, heroFromArt, portraitFromArt, drawFrame, drawSheet, drawBanner, drawCrest, gearSVG } from './plates.js';
 import { MAPS, LASTLANDS, mapCanvas, loadStamps, stampsLoaded, printedCanvas, replicaModel, replicaCanvas, placeBook, along } from './maps.js';
 
+import * as ITEMS_01 from './items-01fftd.js';
+
 const LW = window.LW;
 const BOOKS = Object.assign({}, LW.BOOKS || {});
+
+/* Each book's hand-made item table (items-<code>.js) is laid over its sections the first time the
+   book is opened. Every book's items are known from the start, so a Lone Wolf carried on from one
+   book still shows what he took from it. */
+const ITEM_TABLES = { '01fftd': ITEMS_01 };
+Object.values(ITEM_TABLES).forEach((t) => LW.addItems(t.ITEMS));
+function applyItems(b) {
+  const t = ITEM_TABLES[b.id];
+  if (!t || b.itemsApplied) return;
+  b.itemsApplied = true;
+  for (const [id, x] of Object.entries(t.SECTIONS)) {
+    const sec = b.sections[id];
+    if (!sec) continue;
+    const { need, ...rest } = x;
+    Object.assign(sec, rest);
+    for (const [to, n] of Object.entries(need || {})) sec.choices.filter((c) => c.to === to).forEach((c) => { c.need = Object.assign({}, c.need, n); });
+  }
+}
 
 /* ---------- adventures ----------
    Each adventure is a game of its own: a save for every book, and the Lone Wolf it carries between
@@ -53,7 +73,7 @@ const carriedBy = (a) => { try { return JSON.parse(store.get(charKey(a))); } cat
 let book = null, L = {}, game = null;
 function useBook(id) {
   if (!adventure()) newAdventure();
-  book = BOOKS[id]; placeBook(book); L = book.locations || {};
+  book = BOOKS[id]; placeBook(book); applyItems(book); L = book.locations || {};
   game = new LW.Game(book, saveKey(adv.at, id)); game.keep = REWIND;
   adventure().book = id; keepAdventures();
 }
@@ -82,7 +102,7 @@ const TAB_ART = { kai: glyph('wolf-head'), pack: glyph('locked-chest'), map: ROS
 /* items, drawn the same way; anything typed in by hand gets a pouch or a pendant by its kind */
 const ITEM_GLYPH = { dagger: 'plain-dagger', spear: 'barbed-spear', mace: 'mace-head', shortSword: 'gladius', warhammer: 'warhammer', sword: 'pointy-sword', axe: 'battle-axe', quarterstaff: 'wizard-staff', broadsword: 'two-handed-sword',
   bow: 'pocket-bow', quiver: 'quiver', potion: 'health-potion', meal: 'meal', map: 'treasure-map', helmet: 'visored-helm', chainmail: 'mail-shirt' };
-const itemGlyph = (id) => glyph(ITEM_GLYPH[id] || (LW.itemKind(id) === 'special' ? 'gem-pendant' : LW.itemKind(id) === 'weapon' ? 'pointy-sword' : 'swap-bag'));
+const itemGlyph = (id) => glyph(ITEM_GLYPH[id] || (LW.ITEMS[id] && LW.ITEMS[id].glyph) || (id === 'gold' ? 'two-coins' : id === 'pack' ? 'backpack' : LW.itemKind(id) === 'special' ? 'gem-pendant' : LW.itemKind(id) === 'weapon' ? 'pointy-sword' : 'swap-bag'));
 
 /* ---------- materials, drawn once ---------- */
 const root = document.documentElement.style;
@@ -255,7 +275,9 @@ function leftHTML() {
   let h = `${badge}<div class="story"><div class="scroll" id="scroll"><div class="text">${storyText(sec)}</div>`;
   if (game.s.events.length) h += `<ul class="events">${game.s.events.map((e) => `<li>${esc(e)}</li>`).join('')}</ul>`;
   const loot = game.loot();
-  if (loot.length && !isDead()) h += `<div class="block"><span class="eyebrow">You may take</span>${loot.map((l) => `<button type="button" class="inkbtn" data-loot="${l.i}" ${l.taken ? 'disabled' : ''}>${esc(l.label)}${l.taken ? ' (taken)' : ''}</button>`).join('')}</div>`;
+  // what is found here: each a medallion to touch to take it; things handed over come already taken
+  if (loot.length && !isDead()) h += `<div class="block finds"><span class="eyebrow">Found here</span>${loot.map((l) => `<button type="button" class="find ${l.taken ? 'got' : ''}" data-loot="${l.i}" ${l.taken || l.closed ? 'disabled' : ''}>
+      <span class="med ${l.taken ? 'lit' : ''}">${itemGlyph(l.item)}</span><span>${esc(l.label)}<i>${l.taken ? 'yours' : l.closed ? 'you took the other' : 'take it'}</i></span></button>`).join('')}</div>`;
   if (game.combatPending && !isDead()) h += `<div class="block"><span class="eyebrow">You must fight</span>${sec.combat.enemies.map((f) => `<div class="foeline"><span>${esc(f.name)}</span><i>Combat Skill ${f.cs}, Endurance ${f.ep}</i></div>`).join('')}</div>`;
   h += '</div><div class="dialslot" id="dialslot"></div>';
 
@@ -290,7 +312,7 @@ function mountRnt() {
     busy = true;
     const n = await dial.spin();
     game.setRolled(n); busy = false;
-    renderLeft();
+    render(); // what the number did may show on either page
   });
   if (game.s.rolled != null) { dial.show(game.s.rolled); note.textContent = `You drew ${game.s.rolled}.`; }
   else note.textContent = 'Touch the medallion for your Random Number.';
@@ -339,10 +361,11 @@ function captionHTML() {
     return `<div><h3>${esc(d.name)}${extra}</h3><p>${esc(d.blurb)}${mastered}${LW.has(h, id) ? '' : ' <i>Not yet learned.</i>'}</p></div>`;
   }
   if (sel && sel.kind === 'weapon' && h.weapons.includes(id)) return `<div><h3>${esc(LW.itemName(id))}</h3><p>${h.weaponskill === id ? 'Your mastered weapon: +2 Combat Skill.' : 'A weapon. You may carry two.'}</p></div>${drop()}`;
-  if (sel && sel.kind === 'pack' && id === 'potion' && h.backpack.includes(id)) return `<div><h3>Laumspur Potion</h3><p>Restores 4 Endurance.</p></div><button type="button" class="seal" data-drink ${h.ep >= h.epMax ? 'disabled' : ''}>Drink</button>${drop()}`;
-  if (sel && sel.kind === 'pack' && h.backpack.includes(id)) return `<div><h3>${esc(LW.itemName(id))}</h3><p>A Backpack Item.</p></div>${drop()}`;
+  const it = LW.ITEMS[id] || {}, about = it.about ? ` ${esc(it.about)}` : '';
+  if (sel && sel.kind === 'pack' && it.heal && h.backpack.includes(id)) return `<div><h3>${esc(it.name)}</h3><p>Restores ${it.heal} Endurance.${id === 'potion' ? '' : about}</p></div><button type="button" class="seal" data-drink="${esc(id)}" ${h.ep >= h.epMax ? 'disabled' : ''}>${id === 'potion' ? 'Drink' : 'Eat'}</button>${drop()}`;
+  if (sel && sel.kind === 'pack' && h.backpack.includes(id)) return `<div><h3>${esc(LW.itemName(id))}</h3><p>A Backpack Item.${about}</p></div>${drop()}`;
   if (sel && sel.kind === 'meal' && h.meals) return `<div><h3>Meal</h3><p>Eaten when the story calls for it. Go hungry and you lose 3 Endurance.</p></div>${drop('Eat')}`;
-  if (sel && sel.kind === 'special' && h.special.includes(id)) return `<div><h3>${esc(LW.itemName(id))}</h3><p>A Special Item${LW.ITEMS[id] && LW.ITEMS[id].ep ? `: +${LW.ITEMS[id].ep} Endurance while you carry it` : ''}.</p></div>${drop()}`;
+  if (sel && sel.kind === 'special' && h.special.includes(id)) return `<div><h3>${esc(LW.itemName(id))}</h3><p>A Special Item${it.ep ? `: +${it.ep} Endurance while you carry it` : ''}.${about}</p></div>${drop()}`;
   return `<div><p>${panel === 'kai' ? 'Touch a medallion to read what the discipline does.' : 'Touch an item to see what it is for.'}</p></div>`;
 }
 const stepper = (field) => `<span class="step"><button type="button" data-adj="${field}:-1" aria-label="Less">&minus;</button><button type="button" data-adj="${field}:1" aria-label="More">+</button></span>`;
@@ -387,7 +410,7 @@ function packHTML() {
       <div class="worn"><span class="head">${worn('helmet')}</span>${weapon(h.weapons[0])}<span class="body">${worn('chainmail')}</span>${weapon(h.weapons[1])}</div>
       <div class="specials">${others.join('')}</div></div>`;
   return `${kit}
-    ${ruled(`Backpack <small>${h.backpack.length + h.meals} of ${LW.MAX_BACKPACK}</small>`)}
+    ${ruled(h.noPack ? 'Backpack <small>lost: find another to carry anything</small>' : `Backpack <small>${h.backpack.length + h.meals} of ${LW.MAX_BACKPACK}</small>`)}
     <div class="bag"><span class="disc lit">${glyph('knapsack')}</span><div class="pack">${cells.map((c) => `<div class="cell">${c}</div>`).join('')}</div></div>
     <div class="ledger"><span class="purse">${glyph('two-coins')}<b>${h.gold}</b> Gold Crowns ${stepper('gold')}</span>
       ${adding ? '' : '<button type="button" class="inkbtn" data-adding="open">Add an item by hand</button>'}</div>
@@ -848,8 +871,8 @@ bookEl.addEventListener('click', (e) => {
   }
   else if (d.sel) { const [kind, id] = d.sel.split('|'); sel = { kind, id }; LW.sfx('select'); renderRight(); }
   else if (d.adj) { const [field, by] = d.adj.split(':'); game.adjust(field, +by); render(); }
-  else if (d.loot != null) { const err = game.takeLoot(+d.loot); if (err) LW.UI.toast(err); else LW.sfx('select'); render(); }
-  else if ('drink' in d) { if (game.usePotion()) { LW.sfx('heal'); render(); } }
+  else if (d.loot != null) { const err = game.takeLoot(/^\d+$/.test(d.loot) ? +d.loot : d.loot); if (err) LW.UI.toast(err); else LW.sfx('select'); render(); }
+  else if ('drink' in d) { if (game.usePotion(d.drink || 'potion')) { LW.sfx('heal'); sel = null; render(); } }
   else if (d.remove) { game.removeItem(d.remove); sel = null; render(); }
   else if (d.choice != null) guard(() => choose(+d.choice));
   else if ('fight' in d) guard(startBattle);

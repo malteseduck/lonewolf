@@ -34,7 +34,7 @@ Textures are generated at start-up in `main.js` and set as CSS variables: `--par
 | `mode` | Left page | Right page |
 |---|---|---|
 | `title` | `titleLeftHTML`: the mark (LONE, wolf's head, WOLF), the portrait as frontispiece (the ruins vignette without it), a motto, and the series as two rows of numeral medallions in scrollwork, lit where the open adventure has a save for that book, dim where not downloaded (`SERIES_TITLES`); a numeral begins or continues that book in the open adventure | `titleRightHTML`, one of two views on the bronze-framed plaques (medallion and a rod off to the clockwork). `adventuresHTML`: "Your adventures", one plaque per adventure (its numeral, the book last open, rank and section, or "Fell at"); the plaque resumes it (a fallen one opens its books instead), with "the books" and "forget" (asks first) under it; last, "A new adventure". `shelfHTML` (`shelf` true): that adventure's books, continue (with the saved section) / start over / new character, and "all adventures" in the heading |
-| `story` | section text, illustration, arrival events, loot, Random Number medallion, choices or an action medallion | the chosen panel |
+| `story` | section text, illustration, arrival events (a by-hand reminder begins "By hand:"), "Found here" (`.finds`: each gift or find as a small medallion with its icon, "take it", "yours" once taken, or dimmed when the other of an `or` pair was taken; touching one takes it or toasts why not), Random Number medallion, choices or an action medallion | the chosen panel |
 | `battle` | first paragraph of the section, then the fight's record line by line | the fight |
 
 ## Left page in story mode (`leftHTML`, `storyText`, `mountRnt`)
@@ -84,7 +84,11 @@ left. `updateBattle` redraws the gauges each round.
   slots he wears (helmet above, the two weapons either side of the chainmail; a mastered weapon is
   lit), the other Special Items in a row beneath (at least four slots, empty ones as bare rings);
   then a ruled "Backpack" heading, a knapsack medallion beside eight dark tiles (one per Meal or
-  item); a ledger (gold -/+, "Add an item by hand"); and the caption with Drink / Drop / Eat.
+  item); a ledger (gold -/+, "Add an item by hand"); and the caption with Drink / Drop / Eat. With
+  the Backpack lost (`hero.noPack`) its heading says so. The caption gives a book item's `about`;
+  anything with `heal` can be drunk (the potion) or eaten (Laumspur herb). Icons: `ITEM_GLYPH` for the
+  standard items, else the item's own `glyph` from its book's item table, else a pouch or pendant
+  by kind; gold and a found Backpack have their own.
   "Add an item by hand" (`adding`) swaps the worn kit for `pickerHTML()`: rows of small medallions
   (weapons, Backpack Items, Special Items) that add on a touch and stay open, with "+" medallions
   for something else, which ask for a name on an inked line (`naming`; Enter adds, Escape cancels).

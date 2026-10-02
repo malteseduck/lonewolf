@@ -69,6 +69,36 @@
   LW.WEAPONS = Object.keys(LW.ITEMS).filter((k) => LW.ITEMS[k].kind === 'weapon');
   LW.MAX_WEAPONS = 2;
   LW.MAX_BACKPACK = 8;
+  /* A book's own items (name, kind, and optionally heal, ep, glyph, about) join the list. */
+  LW.addItems = (items) => {
+    Object.assign(LW.ITEMS, items);
+    LW.WEAPONS = Object.keys(LW.ITEMS).filter((k) => LW.ITEMS[k].kind === 'weapon');
+  };
+  const listOf = (hero, id) => ({ weapon: hero.weapons, backpack: hero.backpack, special: hero.special }[LW.itemKind(id)]);
+  LW.hasItem = (hero, id) => (id === 'meal' ? hero.meals > 0 : listOf(hero, id).includes(id));
+  /* Put an item where it belongs. Returns why it does not fit, or null. hero.noPack: the Backpack
+     itself is lost, so nothing that goes in it can be carried until another is found. */
+  LW.putItem = (hero, id) => {
+    const kind = id === 'meal' ? 'backpack' : LW.itemKind(id);
+    if (kind === 'weapon' && hero.weapons.length >= LW.MAX_WEAPONS) return 'You can carry only two weapons. Drop one first.';
+    if (kind === 'backpack' && hero.noPack) return 'You have no Backpack to carry it in.';
+    if (kind === 'backpack' && hero.backpack.length + hero.meals >= LW.MAX_BACKPACK) return 'Your backpack is full.';
+    if (id === 'meal') hero.meals += 1;
+    else listOf(hero, id).push(id);
+    const ep = kind === 'special' && LW.ITEMS[id] && LW.ITEMS[id].ep;
+    if (ep) { hero.ep += ep; hero.epMax += ep; }
+    return null;
+  };
+  /* Take one away, with any Endurance it gave. Returns whether he had it. */
+  LW.dropItem = (hero, id) => {
+    if (id === 'meal') { if (!hero.meals) return false; hero.meals -= 1; return true; }
+    const list = listOf(hero, id), i = list.indexOf(id);
+    if (i < 0) return false;
+    list.splice(i, 1);
+    const ep = list === hero.special && LW.ITEMS[id] && LW.ITEMS[id].ep;
+    if (ep) { hero.epMax -= ep; hero.ep = Math.min(hero.ep, hero.epMax); }
+    return true;
+  };
 
   LW.makeHero = ({ csRoll, epRoll, disciplines, bonusItem }) => {
     const hero = {
@@ -152,6 +182,8 @@
         hero.ep = Math.min(hero.epMax, hero.ep + sec.ep);
         events.push(sec.ep < 0 ? `You lose ${-sec.ep} ENDURANCE.` : `You regain ${sec.ep} ENDURANCE.`);
       }
+      // what the section gives and takes away, once only (before any Meal, so food found here can be eaten)
+      if (!this.s.looted[id + ':arrive']) { this.s.looted[id + ':arrive'] = true; this.arrive(sec, events); }
       if (sec.lose && sec.lose.meal && hero.meals > 0) {
         hero.meals -= 1;
         events.push('A Meal is lost from your pack.');
@@ -167,6 +199,38 @@
       }
       this.s.events = events;
       this.save();
+    }
+
+    /* sec.take: losses the text states outright. sec.give: things he is handed or pockets without a
+       choice, taken now (anything that does not fit stays on the page to take later). sec.todo:
+       what the text leaves to the player, shown as a reminder. */
+    arrive(sec, events) {
+      const hero = this.s.hero;
+      if (sec.cs) { hero.cs += sec.cs; events.push(`Your COMBAT SKILL is ${sec.cs < 0 ? 'reduced' : 'raised'} by ${Math.abs(sec.cs)} for good.`); }
+      this.lose(sec.take, events);
+      (sec.give || []).forEach((g, i) => {
+        const err = this.takeLoot('give' + i), label = err && this.loot().find((l) => l.i === 'give' + i).label;
+        if (err) events.push(`${label[0].toUpperCase() + label.slice(1)}: left here for now. ${err}`);
+      });
+      if (sec.todo) events.push('By hand: ' + sec.todo);
+    }
+    lose(take, events) {
+      const hero = this.s.hero, name = LW.itemName;
+      for (const t of take || []) {
+        if (t.item) { if (LW.dropItem(hero, t.item)) events.push(`The ${name(t.item)} is gone.`); }
+        else if (t.gold != null) { const n = t.gold === 'all' ? hero.gold : Math.min(hero.gold, t.gold); if (n) { hero.gold -= n; events.push(`You lose ${n} Gold Crowns.`); } }
+        else if (t.weapons === 'all') { if (hero.weapons.length) { hero.weapons = []; events.push('Your weapons are gone.'); } }
+        else if (t.weapons === 'one') {
+          if (hero.weapons.length === 1) events.push(`Your ${name(hero.weapons.pop())} is lost.`);
+          else if (hero.weapons.length > 1) events.push('By hand: one weapon of your choice is lost. Drop it in the inventory.');
+        }
+        else if (t.backpack) {
+          if (hero.backpack.length || hero.meals) events.push(t.backpack === 'all' ? 'Your Backpack and all in it are gone.' : 'Everything in your Backpack is gone.');
+          else if (t.backpack === 'all' && !hero.noPack) events.push('Your Backpack is gone.');
+          hero.backpack = []; hero.meals = 0;
+          if (t.backpack === 'all') hero.noPack = true;
+        }
+      }
     }
 
     /* Combat blocks the way on until it is won. */
@@ -193,9 +257,11 @@
           enabled = false; why = `Needs ${LW.DISCIPLINES[c.need.disc].name}`;
         }
         if (c.need && c.need.rank && LW.rankCount(hero) < c.need.rank) { enabled = false; why = 'Needs a higher rank'; }
-        if (c.need && c.need.item && !hero.backpack.includes(c.need.item)) {
-          enabled = false; why = `Needs ${LW.ITEMS[c.need.item].name}`;
+        if (c.need && c.need.item && !c.need.not && !LW.hasItem(hero, c.need.item)) {
+          enabled = false; why = `Needs ${LW.itemName(c.need.item)}`;
         }
+        if (c.need && c.need.item && c.need.not && LW.hasItem(hero, c.need.item)) { enabled = false; why = `You have the ${LW.itemName(c.need.item)}`; }
+        if (c.need && c.need.gold && hero.gold < c.need.gold) { enabled = false; why = `Needs ${c.need.gold} Gold Crowns`; }
         return Object.assign({}, c, { enabled, why });
       });
     }
@@ -213,59 +279,59 @@
 
     choose(choice, to) {
       const hero = this.s.hero;
-      if (choice.need && choice.need.item && choice.need.spend) {
-        hero.backpack.splice(hero.backpack.indexOf(choice.need.item), 1);
-      }
+      if (choice.need && choice.need.item && choice.need.spend) LW.dropItem(hero, choice.need.item);
+      if (choice.need && choice.need.gold && choice.need.spend) hero.gold -= choice.need.gold;
       this.go(to || choice.to, choice.text);
     }
 
+    /* What can be taken here: the section's gifts (sec.give, taken on arrival if they fit) and its
+       finds (sec.loot). Each is {gold: n} | {meal: n} | {item: id} | {pack: true} (a Backpack), and
+       may carry or: a name shared by finds of which only one may be taken. i is 'give0' or 0. */
     loot() {
-      const sec = this.section;
-      return (sec.loot || []).map((l, i) => {
-        const taken = !!this.s.looted[this.s.at + ':' + i];
-        const label = l.gold ? `${l.gold} Gold Crowns` : l.meal ? (l.meal > 1 ? `${l.meal} Meals` : 'a Meal') : LW.ITEMS[l.item].name;
-        return { i, label, taken };
+      const sec = this.section, all = [...(sec.give || []).map((l, n) => [l, 'give' + n]), ...(sec.loot || []).map((l, n) => [l, n])];
+      const got = (i) => !!this.s.looted[this.s.at + ':' + i];
+      return all.map(([l, i]) => {
+        const label = l.gold ? `${l.gold} Gold Crowns` : l.meal ? (l.meal > 1 ? `${l.meal} Meals` : 'a Meal') : l.pack ? 'a Backpack' : LW.itemName(l.item);
+        const other = l.or && all.some(([m, j]) => j !== i && m.or === l.or && got(j));
+        return { i, label, taken: got(i), closed: other, item: l.item || (l.meal ? 'meal' : l.gold ? 'gold' : 'pack') };
       });
     }
-    /* Returns an error string when the item will not fit. */
+    /* Returns an error string when it cannot be taken. */
     takeLoot(i) {
-      const l = this.section.loot[i];
-      const hero = this.s.hero;
+      const sec = this.section, l = String(i).startsWith('give') ? sec.give[+String(i).slice(4)] : sec.loot[i];
+      const hero = this.s.hero, key = this.s.at + ':' + i;
+      if (!l || this.s.looted[key]) return null;
+      if (l.or && this.loot().some((o) => o.i !== i && o.taken && (String(o.i).startsWith('give') ? sec.give[+String(o.i).slice(4)] : sec.loot[o.i]).or === l.or)) return 'You may take only one of these.';
       if (l.gold) hero.gold = Math.min(50, hero.gold + l.gold);
-      else if (l.meal) hero.meals += l.meal;
-      else {
-        const item = LW.ITEMS[l.item];
-        if (item.kind === 'weapon') {
-          if (hero.weapons.length >= LW.MAX_WEAPONS) return 'You can carry only two weapons. Drop one first.';
-          hero.weapons.push(l.item);
-        } else if (item.kind === 'backpack') {
-          if (hero.backpack.length + hero.meals >= LW.MAX_BACKPACK) return 'Your backpack is full.';
-          hero.backpack.push(l.item);
-        } else hero.special.push(l.item);
-      }
-      this.s.looted[this.s.at + ':' + i] = true;
+      else if (l.pack) hero.noPack = false;
+      else if (l.meal) {
+        if (hero.noPack) return 'You have no Backpack to carry it in.';
+        const room = LW.MAX_BACKPACK - hero.backpack.length - hero.meals;
+        if (room < l.meal) return room ? `Your backpack has room for only ${room}.` : 'Your backpack is full.';
+        hero.meals += l.meal;
+      } else { const err = LW.putItem(hero, l.item); if (err) return err; }
+      this.s.looted[key] = true;
       this.save();
       return null;
     }
-    setRolled(n) { this.s.rolled = n; this.save(); }
-    /* By-hand bookkeeping, for rules the importer leaves as text. */
-    addItem(id) {
-      const hero = this.s.hero, kind = LW.itemKind(id);
-      if (id === 'meal') { if (hero.backpack.length + hero.meals >= LW.MAX_BACKPACK) return 'Your backpack is full.'; hero.meals += 1; }
-      else if (kind === 'weapon') { if (hero.weapons.length >= LW.MAX_WEAPONS) return 'You can carry only two weapons. Drop one first.'; hero.weapons.push(id); }
-      else if (kind === 'backpack') { if (hero.backpack.length + hero.meals >= LW.MAX_BACKPACK) return 'Your backpack is full.'; hero.backpack.push(id); }
-      else { hero.special.push(id); const ep = LW.ITEMS[id] && LW.ITEMS[id].ep; if (ep) { hero.ep += ep; hero.epMax += ep; } }
-      this.save(); return null;
-    }
-    removeItem(id) {
-      const hero = this.s.hero;
-      if (id === 'meal') hero.meals = Math.max(0, hero.meals - 1);
-      else for (const list of [hero.weapons, hero.backpack, hero.special]) {
-        const i = list.indexOf(id);
-        if (i >= 0) { list.splice(i, 1); const ep = list === hero.special && LW.ITEMS[id] && LW.ITEMS[id].ep; if (ep) { hero.epMax -= ep; hero.ep = Math.min(hero.ep, hero.epMax); } break; }
+    /* sec.rolls: what the number drawn here does to him, where the text says so outright. */
+    setRolled(n) {
+      this.s.rolled = n;
+      const hero = this.s.hero, r = (this.section.rolls || []).find((x) => n >= x.range[0] && n <= x.range[1]);
+      if (r && !this.s.looted[this.s.at + ':rolled']) {
+        this.s.looted[this.s.at + ':rolled'] = true;
+        if (r.ep) { hero.ep = Math.max(0, Math.min(hero.epMax, hero.ep + r.ep)); this.s.events.push(r.ep < 0 ? `You lose ${-r.ep} ENDURANCE.` : `You regain ${r.ep} ENDURANCE.`); }
+        this.lose(r.take, this.s.events);
       }
       this.save();
     }
+    /* By-hand bookkeeping, for rules the importer leaves as text. */
+    addItem(id) {
+      const err = LW.putItem(this.s.hero, id);
+      if (!err) this.save();
+      return err;
+    }
+    removeItem(id) { LW.dropItem(this.s.hero, id); this.save(); }
     adjust(field, by) {
       const hero = this.s.hero;
       if (field === 'ep') hero.ep = Math.max(0, Math.min(hero.epMax, hero.ep + by));
@@ -277,12 +343,12 @@
       w.splice(w.indexOf(id), 1);
       this.save();
     }
-    usePotion() {
-      const hero = this.s.hero;
-      const i = hero.backpack.indexOf('potion');
-      if (i < 0 || hero.ep >= hero.epMax) return false;
-      hero.backpack.splice(i, 1);
-      hero.ep = Math.min(hero.epMax, hero.ep + LW.ITEMS.potion.heal);
+    /* Drink or eat anything that heals (Laumspur Potion, the herb). */
+    usePotion(id = 'potion') {
+      const hero = this.s.hero, heal = LW.ITEMS[id] && LW.ITEMS[id].heal;
+      if (!heal || !hero.backpack.includes(id) || hero.ep >= hero.epMax) return false;
+      LW.dropItem(hero, id);
+      hero.ep = Math.min(hero.epMax, hero.ep + heal);
       this.save();
       return true;
     }

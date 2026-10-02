@@ -42,9 +42,30 @@ with it, choices that change location are made on the map; without it, every cho
 | `img` | `{file, full, at}` | imported: illustration file, whether it is a full-page plate, and the paragraph index it sits before |
 | `loc` | string | authored: key into `locations` |
 | `scene` | string | authored: which procedural ink scene to draw (`ruins`, `forest`, `hill`, `river`, `road`, `night`, `bridge`, `city`) |
-| `loot` | `[{item}\|{gold}\|{meal}]` | authored: things that can be taken here |
-| `ep` | number | authored: Endurance change on arrival |
+| `loot` | `[{item}\|{gold}\|{meal}\|{pack}]` | authored, or from an item table: things that can be taken here, one button each. `or`: a group of which only one may be taken |
+| `give` | same shape as `loot` | item table: handed over or pocketed with no choice; taken on arrival if it fits, otherwise left as a button |
+| `take` | `[{item}\|{gold: n\|'all'}\|{weapons: 'all'\|'one'}\|{backpack: 'items'\|'all'}]` | item table: lost outright on arrival. `weapons: 'one'` takes the only weapon, or asks the player to choose when there are two. `backpack: 'all'` loses the Backpack itself (`hero.noPack`) |
+| `rolls` | `[{range: [lo, hi], ep, take}]` | item table: what the Random Number drawn here does |
+| `cs` | number | item table: COMBAT SKILL changed for good on arrival |
+| `todo` | string | item table: a by-hand reminder shown with the arrival events |
+| `ep` | number | authored, or item table: Endurance change on arrival |
 | `lose` | `{meal: 1}` | authored: something lost on arrival |
+
+`give`, `take`, `cs`, `todo` and gains through `give` happen once per section in a playthrough
+(`s.looted[id + ':arrive']`); `ep` and Meals on every arrival.
+
+### Item tables
+
+The importer cannot read reliably what a passage gives or takes away: the item's name is in the
+story sentence, the instruction in the next, and many are conditional. So each book's items are
+read and written down by hand in `items-<code>.js` at the project root (Book 1: `items-01fftd.js`,
+52 sections, 2026-10-01), as its map places are. It exports `ITEMS` (the book's own items: `name`,
+`kind` (`weapon` | `backpack` | `special`), optionally `glyph` (an icon in `assets/icons/`), `heal`,
+`ep`, `about`) and `SECTIONS` (by section number: any of the fields above, plus `meal` where the
+importer's pattern missed one, plus `need: {to: {item | gold, not, spend}}` to gate the choice
+leading to `to`). `main.js` lays the table over the book (`applyItems`) when it is first opened.
+Where the text leaves the choice to the player (which weapon breaks, which item is stolen), the
+table gives a `todo`, not a guess.
 
 ## Choice
 
@@ -54,7 +75,8 @@ with it, choices that change location are made on the map; without it, every cho
 | `to` | target section id |
 | `need.disc` | discipline id required |
 | `need.rank` | minimum number of disciplines in the book's series |
-| `need.item`, `need.spend` | authored: Backpack Item required, and whether choosing consumes it |
+| `need.item`, `need.spend` | authored or item table: item required (any kind), and whether choosing consumes it. `need.not`: open only without it |
+| `need.gold`, `need.spend` | item table: Gold Crowns required, and whether choosing pays them |
 | `range` | `[lo, hi]`: imported, in `rnt: 'auto'` sections: the Random Numbers that lead here |
 | `evade` | true: imported: this choice is the way out of the section's combat. Hidden from the list; used by the Evade control |
 | `random` | authored only: `{table: [[upTo, to], ...], mod: [{disc, plus}]}`. The choice itself draws a number and the table picks the target |

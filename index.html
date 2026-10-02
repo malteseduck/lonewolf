@@ -64,6 +64,14 @@ body { background: var(--void) var(--wood, none) center / 820px; color: var(--bo
 .vignette.small[data-trim] { visibility: hidden; }
 .events { list-style: none; margin: 0; padding: 0; font-size: 1.15em; color: #31503a; }
 .block { border-top: 1px solid var(--ink-faint); padding-top: 0.4em; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.1em 1.2em; font-size: 1.15em; }
+.finds { align-items: center; gap: 0.45em 1.1em; }
+.find { display: flex; align-items: center; gap: 0.45em; padding: 0; border: 0; background: none; color: var(--ink); font: inherit; font-weight: 700; text-align: left; line-height: 1.1; }
+.find .med { --s: 2.2em; }
+.find > span:last-child { display: flex; flex-direction: column; }
+.find i { font-size: 0.72em; font-weight: 400; color: var(--ink-dim); }
+.find:hover:not(:disabled) .med, .find:focus-visible .med { filter: brightness(1.25); }
+.find:focus-visible { outline: none; }
+.find:disabled:not(.got) { opacity: 0.45; }
 .eyebrow { width: 100%; font: 400 0.62em var(--title); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-dim); }
 .inkbtn { border: 0; background: none; padding: 0; font: inherit; font-weight: 700; color: var(--ink); text-decoration: none; }
 .inkbtn:hover:not(:disabled), .inkbtn:focus-visible { color: var(--blood); outline: none; }

@@ -38,6 +38,10 @@ Working and checked by playing in the browser:
 - Adventures (save slots, 2026-10-01): several games at once, each with its own book saves and
   carried character; listed on the title page, with a new one and forget. The demo chapter is no
   longer offered. Older saves move into adventure I on first load.
+- Items handled by the engine for Book 1 (2026-10-01): `items-01fftd.js`, read by hand: 52
+  sections give, offer, take or gate items, gold, Meals or Endurance; 12 book items with their own
+  icons (game-icons.net). Tested on a stand-in hero, not yet in a play-through. Books 2-12 each
+  need their own table when imported.
 - Going back up to three sections (2026-10-01): on the death panel, and on the map by touching a
   place passed lately. Saves keep only those three snapshots now. Not offered where the recent
   sections were all at the one place and he is alive (the map has nothing to touch).
@@ -89,8 +93,8 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
    Update the numbers and remove "(verify)" from the spec as each is confirmed.
 3. **Per-book starting equipment** and the discipline/equipment choices at the start of each book.
    Today a new Magnakai character gets a simplified kit.
-4. **Play Book 1 through** and fix what the importer misread. Decide how much item handling to
-   automate (pick-ups are the most frequent by-hand step).
+4. **Play Book 1 through** and fix what the importer misread, and anything the item table missed
+   or got wrong.
 5. **Map travel for books 2-12.** Book 1 has it. Each further book follows
    docs/reference/map-places.md (made-up places by hand, tools to lay out and check them).
    Books 2-5 can use the Lastlands replica if their journeys stay on it; the Magnakai books need
