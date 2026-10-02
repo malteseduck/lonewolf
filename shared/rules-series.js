@@ -1,6 +1,6 @@
 /* Rules that differ between series (Kai, Magnakai), and the character who walks from book to book.
-   Load after core.js and ui.js. The Magnakai numbers here are from memory: check them against
-   the rules pages of the books before relying on them. */
+   Load after core.js and ui.js. The numbers are the books' own (docs/reference/rules-books.md,
+   checked against the rules pages 2026-10-02). */
 (function () {
   const LW = window.LW, { el, esc, wait } = LW.UI;
 
@@ -25,7 +25,7 @@
     kai: { name: 'Kai', list: ids('kai'), first: 5, field: 'disciplines',
       ranks: ['', 'Novice', 'Intuite', 'Doan', 'Acolyte', 'Initiate', 'Aspirant', 'Guardian', 'Warmarn', 'Savant', 'Master'] },
     magnakai: { name: 'Magnakai', list: ids('magnakai'), first: 3, field: 'magnakai',
-      ranks: ['', '', '', 'Kai Master Superior', 'Primate', 'Tutelary', 'Principalin', 'Mentora', 'Scion-kai', 'Archmaster', 'Kai Grand Master'] },
+      ranks: ['', 'Kai Master', 'Kai Master Senior', 'Kai Master Superior', 'Primate', 'Tutelary', 'Principalin', 'Mentora', 'Scion-kai', 'Archmaster', 'Kai Grand Master'] },
   };
   LW.CIRCLES = [
     { name: 'Circle of Fire', needs: ['weaponmastery', 'huntmastery'], cs: 1, ep: 2 },
@@ -109,7 +109,7 @@
         <p class="lwo-eyebrow">${esc(book.title)}</p>
         <h2>${hero ? 'Your Lone Wolf returns' : 'Your Action Chart'}</h2>
         <p class="lwo-note">${hero
-          ? `Carried on from ${esc(carry.fromTitle || 'the last book')}: your scores, disciplines, weapons, pack and gold. ${pick ? `Choose ${pick === 1 ? 'one new' : pick} ${S.name} Discipline${pick === 1 ? '' : 's'}.` : 'You have mastered every discipline of this series.'}`
+          ? `Carried on from ${esc(carry.fromTitle || 'the last book')}: your scores, disciplines, weapons, Special Items and gold; the Backpack starts empty. ${pick ? `Choose ${pick === 1 ? 'one new' : pick} ${S.name} Discipline${pick === 1 ? '' : 's'}.` : 'You have mastered every discipline of this series.'}`
           : `Roll your two scores, then choose ${S.first} ${S.name} Disciplines.`}</p>
         <div class="hero-rolls">
           <button type="button" class="hero-roll" data-roll="cs" ${hero ? 'disabled' : ''}><span>Combat Skill</span><b>${hero ? hero.cs : '10 + ?'}</b></button>
@@ -174,9 +174,11 @@
             out = LW.makeHero({ csRoll: rolls.cs, epRoll: rolls.ep, disciplines: series === 'kai' ? [...picked] : LW.SERIES.kai.list.slice(), bonusItem: book.bonusItem });
             if (series !== 'kai') { out.weaponskill = null; out.weapons = ['sword']; out.gold = 10 + LW.rand10(); out.simpleKit = true; }
           }
+          // the books carry over Weapons, Special Items and gold, not what was in the Backpack
+          if (hero) { out.backpack = []; out.meals = 0; out.noPack = false; }
           out.series = series;
           out[S.field] = [...owned, ...picked];
-          if (series === 'kai' && picked.has('weaponskill') && !out.weaponskill) out.weaponskill = LW.WEAPONS[Math.floor(Math.random() * LW.WEAPONS.length)];
+          if (series === 'kai' && picked.has('weaponskill') && !out.weaponskill) out.weaponskill = LW.WEAPONSKILL_TABLE[LW.rand10()];
           out.mastery = [...oldMastery, ...weapons];
           settleCircles(out);
           out.ep = out.epMax; delete out.found;

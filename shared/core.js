@@ -7,7 +7,7 @@
   /* ---------- Combat Results Table ----------
      Columns: combat ratio <=-11, -10/-9, ... 0 ... +9/+10, >=+11.
      Each cell is "enemy loss/Lone Wolf loss"; K = killed outright.
-     Typed in from memory: check against the book when the importer lands. */
+     Checked cell by cell against the table printed in Book 1 (the same in Books 1-12), 2026-10-02. */
   const CRT_ROWS = {
     1: '0/K 0/K 0/8 0/6 1/6 2/5 3/5 4/5 5/4 6/4 7/4 8/3 9/3',
     2: '0/K 0/8 0/7 1/6 2/5 3/5 4/4 5/4 6/3 7/3 8/3 9/3 10/2',
@@ -101,6 +101,8 @@
     return true;
   };
 
+  /* Weaponskill's weapon, by Random Number, as the Kai books' table has it (the Sword twice, no Bow) */
+  LW.WEAPONSKILL_TABLE = ['dagger', 'spear', 'mace', 'shortSword', 'warhammer', 'sword', 'axe', 'sword', 'quarterstaff', 'broadsword'];
   LW.makeHero = ({ csRoll, epRoll, disciplines, bonusItem }) => {
     const hero = {
       name: 'Lone Wolf',
@@ -116,7 +118,7 @@
       gold: LW.rand10(),
     };
     if (hero.disciplines.includes('weaponskill')) {
-      hero.weaponskill = LW.WEAPONS[Math.floor(Math.random() * LW.WEAPONS.length)];
+      hero.weaponskill = LW.WEAPONSKILL_TABLE[LW.rand10()];
     }
     if (bonusItem) {
       // the one extra thing found in the ruins, by Random Number

@@ -12,9 +12,10 @@ import json, math, os, re, sys
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 # what the map can draw for a place (places-01fftd.js says so too): buildings.js, or drawn by maps.js
 SYMBOLS = {'house', 'tower', 'keep', 'temple', 'obelisk', 'bridge', 'castle', 'monastery',
-           'stream', 'hill', 'tree', 'wood', 'lake', 'marsh'}
+           'stream', 'hill', 'tree', 'wood', 'lake', 'marsh', 'ship'}
 ENTRY = re.compile(r'''(\w+):\s*\[\s*("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')\s*,\s*('(\w+)'|null)\s*,\s*(-?[\d.]+|null)\s*,\s*(-?[\d.]+|null)\s*\]''')
 AT_ENTRY = re.compile(r'(\w+):\s*\[([\d,\s]*)\]')
+LEG_ENTRY = re.compile(r"(\w+):\s*\{[^{}]*?view:\s*\[([^\]]*)\][^{}]*?places:\s*\[([^\]]*)\]")
 
 
 def block(src, name):
@@ -34,6 +35,9 @@ def read_places(book):
     at = {m.group(1): [int(n) for n in re.findall(r'\d+', m.group(2))] for m in AT_ENTRY.finditer(block(src, 'AT') or '')}
     known = re.search(r'export const KNOWN\s*=\s*\[(.*?)\]', src, re.S)
     at['__known__'] = re.findall(r"'(\w+)'", known.group(1)) if known else None
+    # a journey across much of the map is shown in legs, each a view of its own: {leg: (view, [places])}
+    at['__legs__'] = {m.group(1): ([float(v) for v in m.group(2).split(',')], re.findall(r"'(\w+)'", m.group(3)))
+                      for m in LEG_ENTRY.finditer(block(src, 'LEGS') or '')} or None
     return places, at
 
 
@@ -57,6 +61,21 @@ def check(book, sections):
         return 0
     problems = []
     known = at.pop('__known__', None)
+    legs = at.pop('__legs__', None)
+    leg_of = {}
+    for leg, (view, keys) in (legs or {}).items():
+        if len(view) != 4 or abs(view[2] / view[3] - 10 / 7) > 0.01:
+            problems.append(f'leg {leg}: view must be [x, y, w, h] with w:h = 10:7')
+        for k in keys:
+            if k in leg_of:
+                problems.append(f'{k} is in legs {leg_of[k]} and {leg}')
+            leg_of[k] = leg
+            if k not in places:
+                problems.append(f'leg {leg} has {k}, which PLACES does not')
+            elif None not in places[k][2:] and not (view[0] <= places[k][2] <= view[0] + view[2] and view[1] <= places[k][3] <= view[1] + view[3]):
+                problems.append(f'{k} lies outside the view of its leg {leg}')
+    if legs:
+        problems += [f'{k} is in no leg' for k in places if k not in leg_of]
     if known is None:
         problems.append('no KNOWN list: say which places the printed map names (step 3)')
     else:
@@ -83,7 +102,7 @@ def check(book, sections):
         if x is None or y is None:
             problems.append(f'{k} ({name}) has no position yet: lay it out (tools/layout_places.js)')
     close = [(a, b) for a in places for b in places if a < b and None not in places[a][2:] and None not in places[b][2:]
-             and math.dist(places[a][2:], places[b][2:]) < 3]
+             and math.dist(places[a][2:], places[b][2:]) < 3 and leg_of.get(a) == leg_of.get(b)]
     for a, b in close:
         problems.append(f'{a} and {b} are on top of each other ({places[a][2:]} / {places[b][2:]})')
     # moves between places, longest first: the layout keeps these short, so a long one is a place to review
@@ -91,9 +110,9 @@ def check(book, sections):
     for s, sec in sections.items():
         for t in outs(sec):
             a, b = where.get(s), where.get(t)
-            if a and b and a != b and None not in places[a][2:] and None not in places[b][2:]:
+            if a and b and a != b and None not in places[a][2:] and None not in places[b][2:] and leg_of.get(a) == leg_of.get(b):
                 jumps[tuple(sorted((a, b)))] = math.dist(places[a][2:], places[b][2:])
-    print(f'  {len(places)} places, {len(where)} of {len(sections)} sections placed, {len(jumps)} routes between places')
+    print(f'  {len(places)} places{f" in {len(legs)} legs" if legs else ""}, {len(where)} of {len(sections)} sections placed, {len(jumps)} routes between places')
     for p in problems:
         print('  PROBLEM:', p)
     if jumps:

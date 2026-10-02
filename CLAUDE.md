@@ -54,7 +54,9 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
 - **No real-time 3D, no pixel art, no bright flat colour.** See spec section 6.6.
 - **Automate only what is certain.** If a rule cannot be read reliably from the text, leave it as
   text and rely on the by-hand controls (spec principle 2 and 3).
-- Numbers marked "(verify)" in the spec are from memory. Do not present them as checked.
+- **The books' rules** are in `docs/reference/rules-books.md`, read from their rules pages (in our
+  words, numbers as printed). Check a rule there before implementing it, and keep its Engine column
+  true when the engine changes.
 
 ## Conventions
 
@@ -70,6 +72,9 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
   only restyled at runtime. Downloading a new asset pack needs the owner's go-ahead.
 - **A book's travel on the map** is made by hand, step by step, in `docs/reference/map-places.md`.
   The importer reports where a book stands on it; follow it for every new book.
+- **Each book has its own map.** What a book adds (rivers, places, symbols, a town plan) goes in its
+  own `MAPS` entry and places file, never in the shared `LASTLANDS` data the other books draw from.
+  After changing shared map code, check the other books' maps still paint the same.
 - **A book's items** (what each section gives, takes, or needs) are read and written by hand in
   `items-<code>.js`, like its places, following `docs/reference/items.md`. Where the text leaves
   the choice to the player, write a `todo`, never a guess. Every fight needs a picture: the same
@@ -108,6 +113,7 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
 | `docs/reference/interface.md` | The interface: pages, panels, map, combat, art pipeline |
 | `docs/reference/map-places.md` | The procedure for putting a book on the map: places, layout, checks |
 | `docs/reference/items.md` | The procedure for a book's item table and its fight pictures: reading, icons, checks |
+| `docs/reference/rules-books.md` | The books' rules: common, Kai, Magnakai, and an addendum per book; what the engine applies |
 | `docs/plan.md` | State of the work, decisions made, what is waiting on the owner, next steps. **Read this first in a new session.** |
 
 Keep them current: a change to behaviour updates the matching reference file in the same piece of

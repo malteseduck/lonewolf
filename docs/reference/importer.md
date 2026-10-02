@@ -14,8 +14,12 @@ Fetching a book is a download: get the owner's go-ahead first (see `CLAUDE.md`).
 
 Source: `https://www.projectaon.org/en/xhtml/lw/<code>/`.
 
-Fetches `license.htm`, `tssf.htm`, `map.htm`, then `sect1.htm`, `sect2.htm`, ... until a section
-is missing, then every image referenced inside those pages' `<article>`, plus `map.png`.
+Fetches `license.htm`, `tssf.htm`, `map.htm`, the rules pages (`RULES`: game rules, disciplines,
+equipment, combat, levels, Lore-circles, improved disciplines, Kai wisdom, the combat summary, the
+two tables, errata, footnotes; a Kai book has no Lore-circle or improved-discipline page), then
+`sect1.htm`, `sect2.htm`, ... until a section is missing, then every image referenced inside those
+pages' `<article>`, plus `map.png`. `--rules` fetches only the rules pages, for a book already
+downloaded (all twelve were, 2026-10-02, for docs/reference/rules-books.md).
 Skips files already on disk, waits 0.15 s between requests, retries three times.
 Prints section count, image count and total size.
 

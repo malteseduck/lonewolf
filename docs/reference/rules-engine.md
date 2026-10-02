@@ -12,7 +12,7 @@ Magnakai and overrides some functions).
   disciplines: [...],        // Kai discipline ids
   magnakai: [...],           // Magnakai discipline ids (absent until the character enters that series)
   series: 'kai'|'magnakai',  // the ruleset of the book being played; set when a book is started
-  weaponskill: 'sword'|null, // Kai Weaponskill weapon
+  weaponskill: 'sword'|null, // Kai Weaponskill weapon, drawn from LW.WEAPONSKILL_TABLE (the books' table)
   had: [ids],               // every item he has ever been given (LW.putItem), for "if you have ever been given"
   mastery: [...],            // Magnakai Weaponmastery weapons
   circleEp: 0,               // Endurance already granted by Lore-circles
@@ -37,7 +37,7 @@ away; both handle Special Items' Endurance. `LW.hasItem(hero, id)` checks any li
 | What | Where |
 |---|---|
 | Random Number | `LW.rand10()` |
-| Combat Results Table | `CRT_ROWS` -> `LW.CRT`; `LW.crtColumn(ratio)`; `LW.combatRound(ratio, roll)` returns `{enemy, hero}` losses, `Infinity` for a kill |
+| Combat Results Table | `CRT_ROWS` -> `LW.CRT`; `LW.crtColumn(ratio)`; `LW.combatRound(ratio, roll)` returns `{enemy, hero}` losses, `Infinity` for a kill. Checked against the books' table (2026-10-02) |
 | Kai disciplines, items, limits | `LW.DISCIPLINES`, `LW.ITEMS`, `LW.WEAPONS`, `LW.MAX_WEAPONS`, `LW.MAX_BACKPACK` |
 | New Kai character | `LW.makeHero({csRoll, epRoll, disciplines, bonusItem})`. Axe, one Meal, the map, gold = Random Number; Book 1's bonus item table |
 | Default hooks | `LW.has`, `LW.heals`, `LW.hunts`, `LW.rankCount`, `LW.heroCS` (all replaced by `rules-series.js` when it is loaded) |
@@ -110,6 +110,8 @@ Prototypes A and B have their own combat in `shared/battle.js`, and C in its `ma
 not know about Magnakai.
 
 ## Not implemented
+
+The books' rules the engine does not apply are marked in rules-books.md (Engine column).
 
 Bow and Arrow rules, Special Item limits, per-book starting kits (Book 2's Seal of Hammerdal is
 given at section 1 by its item table; the rest of its kit is by hand), Grand Master rules, any rule the

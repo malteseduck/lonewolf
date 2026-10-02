@@ -36,7 +36,7 @@ async function stage(id, ms) {
   if (!document.getElementById('sweep-still')) document.head.insertAdjacentHTML('beforeend', '<style id="sweep-still">.mapinner,.pawn{transition:none!important}</style>');
   pathTo = pathTo || routes();
   const G = g(), p = pathTo(id) || [String(G.book.start || '1'), id];
-  G.s.trail = p.map((k) => ({ id: k, via: null })); G.s.at = id; G.s.fought = {}; G.s.rolled = null; G.s.events = []; G.hero.ep = G.hero.epMax;
+  G.s.trail = p.map((k) => ({ id: k, via: null })); G.s.at = id; G.history = []; // a real game's snapshots would not match the faked trail G.s.fought = {}; G.s.rolled = null; G.s.events = []; G.hero.ep = G.hero.epMax;
   window.__lw.render();
   if (!document.querySelector('#panel .mapview')) { document.querySelector('[data-panel="map"]').click(); }
   await wait(ms);

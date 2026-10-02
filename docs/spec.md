@@ -43,8 +43,9 @@ The owner is the only user. Nothing here is published or released.
 
 ## 4. Game rules
 
-These are the rules the engine must implement. Numbers marked (verify) were written from memory
-and must be checked against the rules pages of the books.
+These are the rules the engine must implement. Every number here was checked against the books'
+rules pages (2026-10-02); docs/reference/rules-books.md has them all, book by book, with what the
+engine does and does not apply.
 
 ### 4.1 Character
 
@@ -54,15 +55,16 @@ and must be checked against the rules pages of the books.
 - **Gold Crowns**: at most 50.
 - **Weapons**: at most 2.
 - **Backpack**: at most 8 items. Meals are Backpack Items.
-- **Special Items**: no limit in the Kai series. Some raise maximum Endurance while carried
+- **Special Items**: no limit until Book 8, then at most 12. Some raise maximum Endurance while carried
   (Helmet +2, Chainmail Waistcoat +4); dropping the item removes the bonus.
 
 ### 4.2 Disciplines
 
-- **Kai series**: ten Kai Disciplines. A new character chooses five. Each completed Kai book adds
+- **Kai series**: ten Kai Disciplines. A new character chooses five, at whichever book he starts.
+  A character carried on adds one for each book completed (six in Book 2, seven in Book 3, ...).
+- **Magnakai series**: ten Magnakai Disciplines. A character entering the series (new, or carried
+  from Book 5) holds all ten Kai Disciplines and chooses three. Each completed Magnakai book adds
   one.
-- **Magnakai series**: ten Magnakai Disciplines. A character entering the series chooses three.
-  Each completed Magnakai book adds one.
 - Rank is a name for the number of disciplines held in the current series.
 - A discipline can gate a choice ("if you have the Kai Discipline of..."). The gate opens only if
   the character has it. A rank can gate a choice the same way.
@@ -72,19 +74,20 @@ and must be checked against the rules pages of the books.
   | +1 Endurance on entering a section with no combat | Healing | Curing |
   | No Meal needed when the text demands one | Hunting | Huntmastery |
   | Immune to enemy mind attacks | Mindshield | Psi-screen |
-  | Mind attack in combat | Mindblast: +2 CS | Psi-surge: +4 CS for 2 EP a round, or Mindblast +2 free (verify) |
-  | Weapon bonus | Weaponskill: +2 CS with one weapon | Weaponmastery: +3 CS with mastered weapons; three chosen at first, one more per later book (verify) |
-- **Lore-circles** (Magnakai): holding every discipline of a circle grants a permanent bonus
-  (verify all four):
+  | Mind attack in combat | Mindblast: +2 CS | Psi-surge: +4 CS for 2 EP a round, or Mindblast +2 free |
+  | Weapon bonus | Weaponskill: +2 CS with one weapon | Weaponmastery: +3 CS with mastered weapons; three chosen at first, one more per later book |
+- **Lore-circles** (Magnakai): holding every discipline of a circle grants a permanent bonus:
   | Circle | Disciplines | CS | EP |
   |---|---|---|---|
   | Fire | Weaponmastery, Huntmastery | +1 | +2 |
   | Light | Animal Control, Curing | 0 | +3 |
   | Solaris | Invisibility, Huntmastery, Pathsmanship | +1 | +3 |
   | Spirit | Psi-surge, Psi-screen, Nexus, Divination | +3 | +3 |
-- Psi-surge cannot be used when Endurance is 6 or less (verify).
-- In a Magnakai book only Magnakai Disciplines have mechanical effect. (This is an interpretation.
-  Verify against the Magnakai rules; if Kai Disciplines keep their effects, change it.)
+- Psi-surge cannot be used when Endurance is 6 or less.
+- In a Magnakai book only Magnakai Disciplines have mechanical effect (Book 6 restates the Kai
+  effects as Magnakai ones: Weaponmastery for weapons, Huntmastery for Meals).
+- From Book 7, ranks improve some disciplines (rules-books.md, "Improved Disciplines"); those with
+  numbers (Tutelary and later) are not applied yet.
 
 ### 4.3 Combat
 
@@ -143,8 +146,9 @@ not guessed by the importer (principle 2). Where the book leaves the decision to
 
 ### 4.7 Carrying a character between books
 
-- Completing a book saves the character: scores, disciplines of every series, weapons, pack,
-  Special Items, gold, mastered weapons.
+- Completing a book saves the character: scores, disciplines of every series, weapons, Special
+  Items, gold, mastered weapons. As the books' rules say, the Backpack's contents and Meals do not
+  carry over: the next book starts with an empty Backpack (owner's decision, 2026-10-02).
 - Starting a book that the saved character has not completed uses that character **by default**.
   Endurance is restored to maximum and the character chooses the discipline(s) it has earned.
 - The player can always choose to roll a new character for any book instead.
@@ -261,7 +265,8 @@ hand.
 
 ## 10. Open questions
 
-- Verify every number marked (verify) and the Combat Results Table against the books.
+- Apply the improved disciplines with numbers, the Bow, the Special Item limit and each book's
+  starting kit (rules-books.md marks each as not yet in the engine).
 - Whether Kai Disciplines keep their effects inside Magnakai books.
 - Bow and Arrow rules, and the Special Item limit in later books.
 - Per-book starting equipment.

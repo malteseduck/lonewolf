@@ -5,7 +5,9 @@
 import * as Ink from './shared/ink.js';
 import { analyse, worldTerrain, toPath, toLine } from './replica.js';
 import { drawBuilding } from './buildings.js';
+import { CITIES, cityCanvas } from './city.js';
 import { PLACES as BOOK1_PLACES, AT as BOOK1_AT, KNOWN as BOOK1_KNOWN } from './places-01fftd.js';
+import { PLACES as BOOK2_PLACES, AT as BOOK2_AT, KNOWN as BOOK2_KNOWN, LEGS as BOOK2_LEGS } from './places-02fotw.js';
 
 const INK = '38,26,16', PAPER = '226,212,176';
 const ink = (a) => `rgba(${INK},${a})`;
@@ -110,9 +112,32 @@ export const MAPS = {
     replica: true,
     view: BOOK1_VIEW, places: BOOK1_PLACES, at: BOOK1_AT, known: BOOK1_KNOWN,
     trail: BOOK1_TRAIL, route: onView(BOOK1_VIEW, BOOK1_TRAIL),
-    start: 'Kai Monastery', goal: 'Holmgard',
+    start: 'Kai Monastery', goal: 'Holmgard', goalAt: 'holmgard',
+  },
+  /* Book 2 crosses most of the Lastlands, so it travels in legs, each its own close view
+     (places-02fotw.js); the map turns to a leg's view when he arrives in it */
+  '02fotw': {
+    replica: true,
+    view: [180, 380, 780, 546], places: BOOK2_PLACES, at: BOOK2_AT, known: BOOK2_KNOWN, legs: BOOK2_LEGS,
+    // Book 2's own addition to the Lastlands: the channel of the Rymerift, from the coast by Port Bax
+    // south to the Rymerift itself, for its bridges to stand on
+    rivers: [[[692, 583], [697, 592], [703, 601], [707, 610], [710, 620], [709, 630], [714, 640], [721, 650], [727, 660], [731, 672], [734, 685], [738, 697]]],
+    trail: [[222, 520], [404, 488], [520, 500], [497, 568], [660, 607], [711, 577], [845, 525], [918, 487]],
+    start: 'Holmgard', goal: 'Hammerdal and home', goalAt: 'hammerdal',
   },
 };
+/* each leg of a book is a map of its own, painted for its view: MAPS['02fotw/sea']. A leg with a
+   city is a town plan (city.js) whose places are in the plan's own 1000x700 grid; on the whole map
+   they all stand at the leg's spot (at, in the printed map's pixels). */
+for (const id of Object.keys(MAPS)) {
+  const legs = MAPS[id].legs || {}, inTown = new Set();
+  for (const [leg, { view, places, city }] of Object.entries(legs)) {
+    const own = Object.fromEntries(places.map((k) => [k, MAPS[id].places[k]]));
+    MAPS[`${id}/${leg}`] = city ? { city, view: [0, 0, 1000, 700], places: own } : { replica: true, view, places: own, rivers: MAPS[id].rivers };
+    if (city) places.forEach((k) => inTown.add(k));
+  }
+  MAPS[id].wholePlaces = Object.fromEntries(Object.entries(MAPS[id].places || {}).filter(([k]) => !inTown.has(k)));
+}
 
 /* which building (buildings.js) and how tall a landmark in a spec is drawn with. Minor places (a
    cairn, a wagon) get none: the map's own place markers show them once visited. */
@@ -153,7 +178,12 @@ export function placeBook(book) {
   const m = MAPS[book.id];
   if (!m || !m.places || book.locations) return;
   book.locations = {};
-  for (const k in m.places) { const [name, , x, y] = m.places[k], [[gx, gy]] = onView(m.view, [[x, y]]); book.locations[k] = { x: gx, y: gy, name, known: !m.known || m.known.includes(k) }; }
+  const legOf = {};
+  for (const leg in m.legs || {}) m.legs[leg].places.forEach((k) => { legOf[k] = leg; });
+  for (const k in m.places) {
+    const [name, , x, y] = m.places[k], leg = legOf[k], L = leg && m.legs[leg], [[gx, gy]] = L && L.city ? [[x, y]] : onView(L ? L.view : m.view, [[x, y]]);
+    book.locations[k] = { x: gx, y: gy, name, known: !m.known || m.known.includes(k), map: leg ? `${book.id}/${leg}` : book.id, printed: L && L.city ? L.at : [x, y] };
+  }
   for (const k in m.at) m.at[k].forEach((s) => { if (book.sections[s]) book.sections[s].loc = k; });
 }
 
@@ -219,18 +249,23 @@ export function replicaModel(img, world) {
    keep roughly their own size on screen, so zooming in shows more of them, not bigger ones.
    extra: a book's own places ([name, symbol, x, y]); when given, they replace the Magnamund detail. */
 const sheets = {};
-export function replicaCanvas(model, view, W, H, extra) {
-  const [vx, vy, vw] = view, z = W / vw, R = LASTLANDS, cv = Ink.canvas(W, H), x = cv.getContext('2d');
+/* out: the canvas is painted out times the size: the drawing is laid out for W x H and scaled onto
+   it, so a smaller canvas looks the same, only with fewer pixels to paint */
+export function replicaCanvas(model, view, W, H, extra, out = 1, own = {}) {
+  // own: what one book adds to the shared Lastlands for itself (own.rivers), so the others are untouched
+  const rivers = [...LASTLANDS.rivers, ...(own.rivers || [])];
+  const [vx, vy, vw] = view, z = W / vw, R = LASTLANDS, cv = Ink.canvas(Math.round(W * out), Math.round(H * out)), x = cv.getContext('2d');
   const r = Ink.seeded(Math.round(vx * 7 + vy * 13 + vw * 3));
   const P = ([px, py]) => [(px - vx) * z, (py - vy) * z];
-  const toMap = () => x.setTransform(z, 0, 0, z, -vx * z, -vy * z), toCanvas = () => x.setTransform(1, 0, 0, 1, 0, 0);
+  const toMap = () => x.setTransform(z * out, 0, 0, z * out, -vx * z * out, -vy * z * out), toCanvas = () => x.setTransform(out, 0, 0, out, 0, 0);
   const D = z >= 6 && !extra && R.detail, dt = D && fit(D.anchors);
   const places = [...R.places, ...(D ? D.places.map(([n, k, px, py]) => [n, k, ...dt([px, py])]) : [])];
   const roads = [...R.roads, ...(D ? D.roads.map((l) => l.map(dt)) : [])];
   const k = Math.max(1.1, Math.min(2, 1 + 0.3 * Math.log2(z))); // symbol scale
 
-  const pk = W + 'x' + H; // the same sheet every repaint of this size
-  x.drawImage(sheets[pk] || (sheets[pk] = Ink.parchment(W, H, false, true)), 0, 0);
+  const pk = cv.width + 'x' + cv.height; // the same sheet every repaint of this size
+  x.drawImage(sheets[pk] || (sheets[pk] = Ink.parchment(cv.width, cv.height, false, true)), 0, 0);
+  toCanvas();
   x.fillStyle = 'rgba(84,56,26,0.2)'; x.fillRect(0, 0, W, H);
   x.lineCap = 'round'; // square-ended washes read as pale blocks on open ground
   for (let i = 0; i < 140; i++) {
@@ -247,7 +282,7 @@ export function replicaCanvas(model, view, W, H, extra) {
   x.save(); x.clip(sea, 'evenodd');
   for (let i = 6; i >= 1; i--) { x.strokeStyle = ink(0.05); x.lineWidth = (i * 14) / z; x.stroke(land); }
   const ripples = [];
-  for (let i = 0; i < 400; i++) { const cx = r() * W, cy = r() * H; if (x.isPointInPath(sea, cx, cy, 'evenodd')) ripples.push([cx, cy]); }
+  for (let i = 0; i < 400; i++) { const cx = r() * W, cy = r() * H; if (x.isPointInPath(sea, cx * out, cy * out, 'evenodd')) ripples.push([cx, cy]); }
   x.restore();
   toCanvas();
   ripples.forEach(([cx, cy]) => { x.strokeStyle = r() < 0.5 ? `rgba(${PAPER},0.22)` : ink(0.22); x.lineWidth = 1.6; x.beginPath(); x.moveTo(cx, cy); x.quadraticCurveTo(cx + 12, cy - 5, cx + 24, cy); x.stroke(); });
@@ -266,7 +301,7 @@ export function replicaCanvas(model, view, W, H, extra) {
   (extra || []).forEach(([, kind, px, py]) => {
     if (kind !== 'bridge' && kind !== 'stream') return;
     let best = null;
-    R.rivers.forEach((l) => l.forEach((p, i) => { if (!i) return; const q = nearest([px, py], l[i - 1], p), d = Math.hypot(q[0] - px, q[1] - py); if (!best || d < best[2]) best = [...q, d]; }));
+    rivers.forEach((l) => l.forEach((p, i) => { if (!i) return; const q = nearest([px, py], l[i - 1], p), d = Math.hypot(q[0] - px, q[1] - py); if (!best || d < best[2]) best = [...q, d]; }));
     if (best[2] < 4) return;
     const [tx, ty] = best[2] < 30 ? best : [px + 1, py + 12], d = Math.hypot(tx - px, ty - py), ux = (tx - px) / d, uy = (ty - py) / d;
     // it winds: a gentle swing either side of the straight line, through the spot itself
@@ -277,8 +312,8 @@ export function replicaCanvas(model, view, W, H, extra) {
     }
     brooks.push(pts);
   });
-  [...R.rivers, ...brooks].forEach((l, i) => {
-    const p = toLine([l]), w = i < R.rivers.length ? rw : rw * 0.5;
+  [...rivers, ...brooks].forEach((l, i) => {
+    const p = toLine([l]), w = i < rivers.length ? rw : rw * 0.5;
     x.lineCap = 'round'; x.lineJoin = 'round';
     x.strokeStyle = ink(0.85); x.lineWidth = (w + 4) / z; x.stroke(p);
     x.strokeStyle = `rgb(${PAPER})`; x.lineWidth = w / z; x.stroke(p);
@@ -286,7 +321,7 @@ export function replicaCanvas(model, view, W, H, extra) {
   });
 
   // land symbols on a jittered screen grid, read from the terrain the printed map shows there
-  const roadPaths = roads.map((l) => toLine([l])), riverPaths = [...R.rivers, ...brooks].map((l) => toLine([l]));
+  const roadPaths = roads.map((l) => toLine([l])), riverPaths = [...rivers, ...brooks].map((l) => toLine([l]));
   const spots = [...places, ...(extra || []).filter((e) => e[1])].map(([, , px, py]) => P([px, py])), items = [], tufts = [];
   // Where roads and rivers run, 44 px wide on screen, drawn once into a quarter-size mask and
   // looked up per spot: testing every path with isPointInStroke for every grid cell took seconds
@@ -415,10 +450,16 @@ export function printedCanvas(img, crop, w, h) {
 /* the painted map for a spec, or null until the symbols (loadStamps) and, for a replica, the
    book's printed map (img) have loaded */
 const cache = {};
-export function mapCanvas(id, img, world) {
-  if (cache[id]) return cache[id];
+/* out: how much of the 3200x2240 a replica or town plan is laid out for is actually painted (the
+   panel shows it 1.8 times its own height, so on most screens far less is needed) */
+export function mapCanvas(id, img, world, out = 1) {
+  const key = id + '@' + out;
+  if (cache[key]) return cache[key];
   if (!stampsLoaded()) return null;
-  if (MAPS[id].replica) return img ? (cache[id] = replicaCanvas(replicaModel(img, world), MAPS[id].view, 3200, 2240, MAPS[id].places && Object.values(MAPS[id].places))) : null; // shown 1.8 times larger
+  // one painting per map: a painting at another size is dropped (each is tens of megabytes)
+  Object.keys(cache).forEach((k) => { if (k.startsWith(id + '@')) delete cache[k]; });
+  if (MAPS[id].city) return (cache[key] = cityCanvas(CITIES[MAPS[id].city], Math.round(3200 * out), Math.round(2240 * out), Object.values(MAPS[id].places), { pick: (kind, r) => STAMPS[kind][Math.floor(r() * STAMPS[kind].length)], put: (x, st, px, py, s) => stamp(x, st, px, py, s, 0) }));
+  if (MAPS[id].replica) return img ? (cache[key] = replicaCanvas(replicaModel(img, world), MAPS[id].view, 3200, 2240, MAPS[id].places && Object.values(MAPS[id].places), out, { rivers: MAPS[id].rivers })) : null;
   const m = MAPS[id], cv = Ink.canvas(2000, 1400), x = cv.getContext('2d'), r = Ink.seeded(id.length * 131 + 11);
   const pick = (kind) => STAMPS[kind][Math.floor(r() * STAMPS[kind].length)];
   x.drawImage(Ink.parchment(cv.width, cv.height, false, true), 0, 0);
@@ -509,7 +550,7 @@ export function mapCanvas(id, img, world) {
   const g = x.createRadialGradient(500, 350, 260, 500, 350, 640);
   g.addColorStop(0, 'rgba(40,24,10,0)'); g.addColorStop(1, 'rgba(40,24,10,0.5)'); x.fillStyle = g; x.fillRect(0, 0, 1000, 700);
   x.restore();
-  return (cache[id] = cv);
+  return (cache[key] = cv);
 }
 
 /* a point part-way along a polyline, 0..1 */

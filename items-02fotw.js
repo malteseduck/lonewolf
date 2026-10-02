@@ -48,7 +48,8 @@ export const SECTIONS = {
   27: { ep: 2 },
   29: { ep: -2 },
   30: { fight: { undead: true } },
-  31: { ep: 6 },
+  // a footnote: without a Backpack, Rhygar supplies one
+  31: { ep: 6, loot: [{ pack: true }] },
   // the Wildlands: Hunting finds nothing there (346 says so; the owner applied it to Ragadorn and its road)
   32: { noHunt: true },
   36: { need: { 145: { item: ['laumspurHerb', 'potion', 'rendalimPotion'], spend: true } } },
@@ -142,6 +143,9 @@ export const SECTIONS = {
   274: { loot: [{ item: 'sword' }, { gold: 6 }, { item: 'mace' }] },
   276: { todo: 'when the contest is over, put your ENDURANCE back to what it was before it.' },
   283: { loot: shop([['sword', 4], ['dagger', 2], ['broadsword', 6], ['spear', 5], ['meal', 2], ['goldRing', 8], ['blanket', 3], ['pack', 1]]) },
+  // footnotes: without the Seal he leaves the alchemist's at once; the refused food needs a Meal in its place
+  289: { need: { 165: { item: 'seal' } } },
+  290: { meal: true },
   298: { fight: { csMod: 0, with: 'none' } },
   299: { need: { 102: { item: 'magicSpear' } } },
   301: { loot: [{ gold: 3 }, { item: 'dagger' }, { item: 'dagger' }, { item: 'dagger' }, { item: 'shortSword' }] },
@@ -153,7 +157,8 @@ export const SECTIONS = {
   308: { todo: 'play Portholes with the medallion: 3 Gold Crowns a throw, 6 won when you beat both. Settle your gold by hand.' },
   313: { ep: -4, take: [{ item: 'magicSpear' }] },
   321: { todo: 'unless you have food in your Backpack, lose 2 ENDURANCE.' },
-  327: { loot: [{ item: 'papers', cost: 6 }] },
+  // a footnote: the boy takes whatever gold he has, even none
+  327: { loot: [{ item: 'papers' }], todo: 'the papers cost 6 Gold Crowns, or all you have if that is less: pay him by hand.' },
   328: { need: { 113: { item: 'crystalStar', ever: true } } },
   329: { give: [{ gold: 10 }] },
   330: { ep: -5 },

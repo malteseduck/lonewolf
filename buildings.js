@@ -143,6 +143,39 @@ const BUILDINGS = {
       T.line([[-46, -14], [-34, -22], [0, -26], [34, -22], [46, -14]], false, 0.8);
     },
   },
+  /* a caravel at anchor, from the side: planked hull, castles fore and aft, three masts with their
+     sails furled on the yards, the rigging run to bow and stern, ripples under her */
+  ship: {
+    h: 74,
+    draw(T) {
+      for (const [y, a, b] of [[2, -40, 40], [5, -30, 34], [-1, -46, 22]]) T.line([[a, y], [(a + b) / 2 - 8, y - 1.2], [(a + b) / 2 + 8, y + 0.8], [b, y]], false, 0.45);
+      // masts and yards first, so the hull covers their feet
+      [[-20, -50], [2, -64], [24, -46]].forEach(([c, top]) => {
+        T.line([[c, -14], [c, top]], false, 0.9);
+        [[top + 8, 13], [top + 22, 17]].forEach(([y, half]) => {
+          if (y > -18) return;
+          T.line([[c - half, y], [c + half, y]], false, 0.7);
+          const furl = [[c - half + 2, y], [c - half + 4, y + 3.2], [c + half - 4, y + 3.2], [c + half - 2, y]]; T.shape(furl, LIT, 0.6);
+        });
+      });
+      // rigging: stays from the mast heads to bow and stern
+      T.line([[2, -64], [-46, -22]], false, 0.4); T.line([[-20, -50], [-50, -20]], false, 0.4); T.line([[2, -64], [40, -30]], false, 0.4); T.line([[24, -46], [44, -30]], false, 0.4);
+      T.flag(2, -64);
+      // the hull: a lit side, its lower strakes in shade, and the planking
+      const hull = [[-50, -20], [-42, -8], [-26, -1], [24, 0], [38, -8], [44, -28], [30, -24], [-24, -18]];
+      T.shape(hull, LIT);
+      const low = [[-42, -8], [-26, -1], [24, 0], [38, -8], [40, -12], [-36, -11]]; T.fill(low, SHADE); T.hatch(low, 2.2, 0.1);
+      [[-14, 4], [-9, 5]].forEach(([y, k]) => T.line([[-46, y], [-28, y + k * 0.9], [20, y + k], [40, y - 3]], false, 0.45));
+      T.line(hull, true);
+      // castles at the stern and the bow
+      const aft = [[22, -23], [44, -28], [46, -38], [22, -33]]; T.shape(aft, LIT); T.hatch([[36, -26], [44, -28], [46, -38], [36, -36]], 2.2);
+      [[28, -27], [34, -29], [40, -30]].forEach(([c, y]) => T.shape([[c - 1.6, y], [c + 1.6, y], [c + 1.6, y - 3], [c - 1.6, y - 3]], DARK, 0.5));
+      T.shape([[-50, -20], [-36, -18], [-37, -25], [-50, -27]], LIT);
+      T.line([[-50, -27], [-62, -33]], false, 0.8); // the bowsprit
+      // gunports along the side
+      [-18, -8, 2, 12].forEach((c) => T.shape([[c - 1.6, -10], [c + 1.6, -10], [c + 1.6, -13], [c - 1.6, -13]], DARK, 0.5));
+    },
+  },
   monastery: {
     h: 112,
     draw(T) {

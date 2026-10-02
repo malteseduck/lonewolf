@@ -214,6 +214,58 @@ a winding brook of their own that runs through the spot into the nearest river; 
 forest clumps for places the story calls woods where the printed map shows open country; names appear once visited or offered. When a book has its own places, the Magnamund detail
 layer is left out.
 
+### Book 2's places and legs (`places-02fotw.js`)
+
+Made the same way (46 places, all set by hand), but Book 2 crosses most of the map: Holmgard's
+harbour, the voyage east, Ragadorn, the coach road, the border forest and the Rymerift, Port Bax, the Tarnalin
+and Hammerdal, and home by sea. One view of all that would put its places a few pixels apart, so
+the journey is cut into **legs** (`LEGS`: a name, a 10:7 `view`, its places): Holmgard (a town
+plan, below), the voyage, the Wildlands, the border of Durenor, Durenor, and the voyage home. Each leg is a map of its own
+(`MAPS['02fotw/sea']`, built from `MAPS['02fotw'].legs` in maps.js) and every location carries
+the `map` it belongs to (`placeBook`). In `updateMap` the leg of the place he stands at decides the
+map shown; only its places are marked and only the trail within it is drawn. A choice that leads
+into another leg is a road off the map (`destLoc` returns null), so it stays on the page, and the
+map turns to the new leg when he arrives. The Holmgulf appears twice (`holmgulf` and `homebound`),
+once in each voyage. Sea places are set in water and
+land places on land by the replica's own reading (`replicaModel(img).land`); the Rymerift's
+channel is drawn for the bridges to stand on. It is Book 2's own (`MAPS['02fotw'].rivers`, passed to
+`replicaCanvas` as `own`): what one book adds to the shared Lastlands stays in that book's entry, so
+the other books' maps are untouched (Book 1's was checked pixel for pixel against the version
+before Book 2, 2026-10-02). The goal ring is
+`MAPS[id].goalAt` (Book 1 Holmgard, Book 2 Hammerdal).
+
+A passed place out of the view keeps its name beside it, off the view; only a place in view has
+its name tucked back inside the edge (otherwise the names of a long trail stack at the edge).
+
+Each leg (and Book 1's one view) is laid out for 3200x2240 but painted only as large as the panel
+shows it: `paintScale()` in main.js measures the right-hand panel (not the map itself, whose height
+changes with the roads listed under it; the picture is 1.8 times that, at the screen's pixel
+density up to 2) and `mapCanvas(id, img, world, out)` paints that
+fraction, in eighths, by scaling the layout onto a smaller canvas (`replicaCanvas`'s `out`; a town
+plan is simply painted smaller), so it looks the same with fewer pixels. Each leg keeps one painting, at
+the latest size (each is tens of megabytes); a resize that changes the size repaints. `paintAhead()`, after every render in story
+mode, paints the legs the section's choices lead into, one at a time when the page is idle, at the
+size the map was last shown at (not before a map has been shown). In a hidden pane the browser
+holds back image decoding, so no map paints there at all until the pane is shown.
+
+### Town plans (`city.js`)
+
+Where a book wanders a city's streets, a leg can be a plan of the town instead of a view of the
+Lastlands: `city: 'holmgard'` on the leg, `at:` its spot on the printed map (where its places stand
+on "The whole map"), and its places in the plan's own 1000x700 grid. `CITIES` holds each plan, laid
+out by hand: the sea and its coast, the quays, moles, river and bridges, the walls and gates, the
+lanes (widest first), open ground kept clear, the citadel, landmarks and moored boats.
+`cityCanvas` paints it: fields and trees outside the walls, the sea and the river as dark water,
+the lanes pale between inked edges, then every house as a small roof seen from above (a lit slope
+with sparse strokes, a hatched one, a ridge along its lane, a soft shadow), packed on a loose grid
+off the lanes, water and open ground, with yards and the odd tree; then the walls with towers, and
+everything that stands up (the citadel on its hill, towers, a temple, the ships, the places'
+own symbols) as the engraved buildings of `buildings.js`, back to front. The look follows the
+owner's sample (the town clusters of the Sorcery! maps), kept in sepia ink. Book 2's Holmgard
+harbour quarter is the one plan so far: the square by the quay, the Good Cheer Inn, the stairs
+behind it, the quay, and the Green Sceptre at anchor in the basin (`ship`, a caravel drawn for it
+in `buildings.js`). Not surveyed: the books give no plan of the city.
+
 ### Buildings (`buildings.js`)
 
 Towns and buildings on the replica are vector drawings modelled on the icons of the official Maps

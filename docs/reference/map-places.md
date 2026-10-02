@@ -79,6 +79,19 @@ export const AT = {
   every other place at `null, null`.
 - The file is ours (code and our own names), so it is committed. Put a header comment on it saying
   so, as Book 1's has.
+- **Legs**, for a journey across much of the map (Book 2): `export const LEGS = { key: { name, view:
+  [x, y, w, h], places: [...] } }`, every place in exactly one leg and inside its view. A road
+  between legs stays on the page. Keep each route within its leg short against the view's width:
+  the panel shows about a third of a view across, and the sweep flags a route that does not fit.
+  A place met twice in different legs (Holmgard at both ends) is two places.
+- **Town plans:** a run of sections in one city's streets (Book 2's start in Holmgard's harbour)
+  gets a town plan as its leg (`city: 'name'`, `at: [x, y]`, view `[0, 0, 1000, 700]`): add the
+  plan to `CITIES` in `city.js` (interface.md, "Town plans") and give its places positions in the
+  plan's own grid.
+- **Water and land:** put sea places in water and the rest on land, as the replica reads them. In
+  the page: `(await import('/maps.js')).replicaModel(img).land[y * W + x]` (1 land, 0 water) with
+  `img` Book 1's printed map; Book 2's were all checked so. A town printed on the coast may read
+  as water at its own spot: move the place a few pixels onto land.
 
 ### 4. Lay out the rest
 
@@ -136,8 +149,15 @@ the start, opens the map, and reports:
 - a destination ring out of view, or cut by the edge;
 - a destination's name cut off.
 
-It backs up every `lw-*` save first and restores them at the end. Reload the page before playing
-on. Book 1 takes under a minute.
+It backs up every `lw-*` save first and restores them at the end, but only from when it starts:
+a game begun just before (to open the book) stays. Switch storage writes off first
+(`Storage.prototype.setItem = () => {}`) and the owner's saves are never touched. Reload the page
+before playing on. Book 1 takes under a minute; a sweep run longer than the console tool allows
+can be started with `.then()` and its result read later. In a hidden pane animations never end, so
+the page stays "busy": finish them with `document.getAnimations()` (skip the endless ones); and
+images are not decoded there, so maps do not paint until the pane is shown. The sweep can run on
+the owner's own game (it clears the game's rewind history, which would not match its faked trail),
+but switch storage writes off first.
 
 Then look, by eye, at a section in each place with `show()`. Check that the symbol is there and
 fits what the passage describes, and that the route from the last place looks like a sensible

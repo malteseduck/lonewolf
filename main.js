@@ -160,7 +160,8 @@ const destLoc = (c) => {
   if (!book.locations) return null;
   const here = game.section.loc, tos = c.random ? c.random.table.map((row) => row[1]) : [c.to];
   const locs = [...new Set(tos.map((t) => book.sections[t].loc))];
-  return locs.length === 1 && locs[0] !== here ? locs[0] : null;
+  // a road into another leg of the journey (another view of the map) stays on the page
+  return locs.length === 1 && locs[0] !== here && L[locs[0]].map === L[here].map ? locs[0] : null;
 };
 /* the book's own page references mean nothing here */
 const shown = (t) => {
@@ -450,16 +451,45 @@ mapNode.innerHTML = `<div class="mapinner"><canvas width="2000" height="1400"></
   <svg class="lines" viewBox="0 0 1000 700" aria-hidden="true"><g class="ways"></g><polyline class="routeback"></polyline><polyline class="route"></polyline></svg>
   <div class="marks"></div>
   ${heroHTML()}</div>`;
+/* A replica or town plan is laid out for 3200x2240 and shown 1.8 times the map's height: paint
+   only as many pixels as that takes on this screen, in eighths so small resizes reuse a painting.
+   Measured on the whole panel, not the map, whose height changes with the list of roads under it
+   (which would repaint the leg at nearly every section). */
+function paintScale() {
+  const h = ($('#panel') || mapNode).clientHeight || 620, need = h * 1.8 * (10 / 7) * Math.min(2, devicePixelRatio || 1);
+  return Math.min(1, Math.max(0.25, Math.ceil((need / 3200) * 8) / 8));
+}
 function showTerrain(id) {
-  if (mapShown === id) return;
+  const out = paintScale(), key = id + '@' + out;
+  if (mapShown === key) return;
   const world = MAPS[id].replica && worldMap();
   if (world === null) return void (mapShown = null); // painted once it has loaded or failed
-  const cv = mapNode.querySelector('canvas'), x = cv.getContext('2d'), map = mapCanvas(id, MAPS[id].replica && lastlands(), world);
+  const cv = mapNode.querySelector('canvas'), x = cv.getContext('2d'), map = mapCanvas(id, MAPS[id].replica && lastlands(), world, out);
   x.clearRect(0, 0, cv.width, cv.height);
   if (!map) return void ((mapShown = null), loadStamps().then(() => { if (panel === 'map') renderRight(); })); // painted once the symbols and image arrive
   if (cv.width !== map.width) { cv.width = map.width; cv.height = map.height; }
-  x.drawImage(map, 0, 0); mapShown = id;
-  mapNode.classList.toggle('deep', !!MAPS[id].replica); // a replica is looked at closer, and pans both ways
+  x.drawImage(map, 0, 0); mapShown = key; shownOut = out;
+  mapNode.classList.toggle('deep', !!(MAPS[id].replica || MAPS[id].city)); // a replica or a town plan is looked at closer, and pans both ways
+}
+/* While he reads, paint the legs his choices lead into, one at a time when the page is idle, so
+   arriving in a new leg does not stop the page while it is drawn. */
+let aheadTimer = 0, shownOut = null; // the size the map was last painted at
+function paintAhead() {
+  clearTimeout(aheadTimer);
+  if (!book.locations || mode !== 'story' || !shownOut) return; // no map seen yet: nothing to guess a size from
+  const here = L[game.section.loc] && L[game.section.loc].map, out = shownOut;
+  const next = [...new Set((game.section.choices || []).map((c) => book.sections[c.to] && L[book.sections[c.to].loc]).filter(Boolean).map((l) => l.map))].filter((id) => id && id !== here && MAPS[id]);
+  const step = () => {
+    const id = next.shift();
+    if (!id || !stampsLoaded()) return;
+    const world = MAPS[id].replica && worldMap();
+    // the printed map and the world map may still be on their way (a town plan needs neither): try again shortly
+    if (world === null || (MAPS[id].replica && !lastlands())) { next.unshift(id); aheadTimer = setTimeout(idle, 1000); return; }
+    mapCanvas(id, MAPS[id].replica && lastlands(), world, out);
+    if (next.length) aheadTimer = setTimeout(idle, 400);
+  };
+  const idle = () => (window.requestIdleCallback ? requestIdleCallback(step, { timeout: 4000 }) : step());
+  aheadTimer = setTimeout(idle, 1200); // after the page has turned
 }
 /* Book 1's printed map, which the Lastlands replica is read from: the image, null while it
    loads (the panel redraws then), or undefined if Book 1 is not imported */
@@ -503,14 +533,14 @@ function drawZoom() {
   if (!box || !img) return;
   if (!stampsLoaded()) return void loadStamps().then(() => { if (panel === 'map') renderRight(); });
   const dpr = Math.min(2, devicePixelRatio || 1), W = Math.round(box.clientWidth * dpr), H = Math.round(box.clientHeight * dpr), [fx, fy, fw, fh] = LASTLANDS.frame;
-  const m = MAPS[book.id], here = book.locations && m.places[game.section.loc], at = here ? [here[2], here[3]] : along(m.trail, progress()).pop();
+  const m = MAPS[book.id], here = book.locations && L[game.section.loc], at = here ? here.printed : along(m.trail, progress()).pop();
   if (!zoomV) { const w0 = fh * (W / H) * 0.5; zoomV = [at[0] - w0 / 2, at[1] - (w0 * H) / W / 2, w0]; }
   zoomV = fitView(zoomV, W / H);
   const w = zoomV[2], h = (w * H) / W;
   const cv = box.querySelector('canvas');
   clearTimeout(zoomLater); cv.style.transform = '';
   cv.width = W; cv.height = H;
-  cv.getContext('2d').drawImage(replicaCanvas(replicaModel(img, worldMap() || undefined), [zoomV[0], zoomV[1], w, h], W, H, m.places && Object.values(m.places)), 0, 0);
+  cv.getContext('2d').drawImage(replicaCanvas(replicaModel(img, worldMap() || undefined), [zoomV[0], zoomV[1], w, h], W, H, m.places && Object.values(m.wholePlaces || m.places), 1, { rivers: m.rivers }), 0, 0);
   drawnV = [zoomV[0], zoomV[1], w];
   const tok = box.querySelector('.pawn');
   tok.style.visibility = '';
@@ -556,7 +586,7 @@ const told = (k) => L[k].known !== false || game.s.trail.some((t) => book.sectio
 /* places passed in the last few sections, which the map lets him go back to: {loc: steps back to the nearest} */
 function backPlaces() {
   const reach = {}, here = game.section.loc;
-  if (mode === 'story') game.backs().forEach(({ k, id }) => { const l = book.sections[id].loc; if (l !== here && !(l in reach)) reach[l] = k; });
+  if (mode === 'story') game.backs().forEach(({ k, id }) => { const l = book.sections[id].loc; if (l !== here && !(l in reach) && L[l].map === L[here].map) reach[l] = k; });
   return reach;
 }
 /* under the map: the places he may go back to, or, once one is touched, the question */
@@ -568,9 +598,10 @@ function backHTML() {
   return `<p class="maphint goback">Go back to ${locs.map((l) => `<button type="button" class="inkbtn" data-arm="${reach[l]}">${esc(L[l].name)}</button>`).join(' or ')}</p>`;
 }
 function updateMap() {
-  showTerrain(MAPS[book.id] ? book.id : 'demo'); // a book with places but no map of its own gets the old demo country
-  const here = game.section.loc, locs = [], rd = mode === 'story' && !isDead() ? roads() : [];
-  game.s.trail.forEach((t) => { const k = book.sections[t.id].loc; if (locs[locs.length - 1] !== k) locs.push(k); });
+  const here = game.section.loc, locs = [], rd = mode === 'story' && !isDead() ? roads() : [], leg = L[here].map;
+  showTerrain(leg || (MAPS[book.id] ? book.id : 'demo')); // a book with places but no map of its own gets the old demo country
+  // the way he came, as far as it lies on this leg's view
+  game.s.trail.forEach((t) => { const k = book.sections[t.id].loc; if (locs[locs.length - 1] !== k && L[k].map === leg) locs.push(k); });
   const line = locs.map((k) => `${L[k].x},${L[k].y}`).join(' ');
   mapNode.querySelector('.route').setAttribute('points', line); mapNode.querySelector('.routeback').setAttribute('points', line);
   mapNode.querySelector('.ways').innerHTML = [...new Set(rd.map((r) => r.loc))].map((k) => `<line x1="${L[here].x}" y1="${L[here].y}" x2="${L[k].x}" y2="${L[k].y}"/>`).join('');
@@ -578,11 +609,11 @@ function updateMap() {
   const reach = backPlaces();
   let h = '';
   for (const k in L) {
-    if (destLocs.has(k)) continue;
+    if (destLocs.has(k) || L[k].map !== leg) continue;
     const named = MAPS[book.id] && MAPS[book.id].replica && LASTLANDS.places.some((p) => p[0] === L[k].name); // the map already prints it
     if (k in reach) h += `<div class="mk back ${armed === reach[k] ? 'armed' : ''}" style="${pct(L[k])}"><button type="button" data-arm="${reach[k]}" aria-label="${esc(L[k].name)}: go back here?"><i></i></button>${named ? '' : `<span>${esc(L[k].name)}</span>`}</div>`;
     else if (locs.includes(k) && k !== here) h += `<div class="mk" style="${pct(L[k])}"><i></i>${named ? '' : `<span>${esc(L[k].name)}</span>`}</div>`;
-    else if (k === 'holmgard' && k !== here) h += `<div class="mk goal" style="${pct(L[k])}"><i></i>${named ? '' : `<span>${esc(L[k].name)}</span>`}</div>`;
+    else if (k === (MAPS[book.id] || {}).goalAt && k !== here) h += `<div class="mk goal" style="${pct(L[k])}"><i></i>${named ? '' : `<span>${esc(L[k].name)}</span>`}</div>`;
   }
   destLocs.forEach((k) => {
     const opts = rd.filter((r) => r.loc === k), r = opts.find((o) => o.c.enabled) || opts[0];
@@ -600,6 +631,7 @@ function updateMap() {
   mapNode.querySelectorAll('.dest, .mk').forEach((d) => {
     const b = d.querySelector('b, span');
     if (!b || !b.textContent) return;
+    if (tx + d.offsetLeft < 0 || tx + d.offsetLeft > vw || ty + d.offsetTop < 0 || ty + d.offsetTop > vh) return; // a place out of view keeps its name with it
     const x0 = tx + d.offsetLeft - d.offsetWidth / 2 + b.offsetLeft, y0 = ty + d.offsetTop - d.offsetHeight / 2 + b.offsetTop; // .dest is centred by a transform
     const dx = Math.max(0, -x0) - Math.max(0, x0 + b.offsetWidth - vw), dy = y0 < 0 ? d.offsetHeight - b.offsetTop : y0 + b.offsetHeight > vh ? vh - y0 - b.offsetHeight : 0;
     if (dx || dy) b.style.transform = `translate(${dx}px, ${dy}px)`;
@@ -690,6 +722,7 @@ function render() {
   // reaching the end of a real book keeps the character for the next one
   if (mode === 'story' && game.section.end === 'victory' && !game.dead) LW.Character.save(game.hero, book);
   renderLeft(); renderRight();
+  if (mode === 'story') paintAhead();
 }
 
 /* the left page lifts away and the gear turns a notch */

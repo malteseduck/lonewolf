@@ -29,7 +29,9 @@ Decisions the owner has made:
   goes into the repository.
 - The clockwork gear should not take space from the pages.
 - A single choice that is only a page reference reads "Continue".
-- Carry-over between books: support both, default to continuing the same character.
+- Carry-over between books: support both, default to continuing the same character. Carried over:
+  scores, disciplines, Weapons, Special Items and gold, not the Backpack's contents (as the books
+  say; 2026-10-02).
 - Book 2's readings (2026-10-01): Hunting does not excuse a Meal anywhere in the Wildlands, Ragadorn
   and its coast road included (32, 37, 127, 148, 346). Documents and the Gold Ring are Special
   Items; the Healing Potion, Potion of Orange Liquid, Fur Blanket and Rope Backpack Items. "Some
@@ -67,8 +69,7 @@ Working and checked by playing in the browser:
 - Book 2 (Fire on the Water) imported 2026-10-01 at the owner's word: 350 sections, 31 with combat,
   20 auto and 7 free Random Number, 31 with discipline gates, 52 illustrated, 18 dead ends, 7 forced
   Meals, 7 paragraphs of introduction; no broken links, none without a way on. Loads in the page;
-  not yet played. 16 kinds of enemy have no plate; no map places yet (it reads with every choice
-  on the page). Lists (shop wares, finds) and signposts were dropped by the importer until
+  not yet played. 16 kinds of enemy have no plate. Lists (shop wares, finds) and signposts were dropped by the importer until
   2026-10-01; they are paragraphs now.
 - Items handled by the engine for Book 2 (2026-10-01): `items-02fotw.js`, 109 sections, 13 book
   items with icons. New in the engine for it, all rules the text states: the Sommerswerd (+8 in
@@ -88,6 +89,13 @@ Working and checked by playing in the browser:
   (`places-01fftd.js`).
   Lone Wolf is a sepia figure over a bronze arrow that walks between places, cut out at load from
   a Lone Wolf HD screenshot the owner keeps in `art/`.
+- Book 2 travels on the map (2026-10-02): 46 made-up places in six legs, each a close view of its
+  own, since the journey crosses most of the Lastlands (`places-02fotw.js`). It begins on a drawn
+  plan of Holmgard's harbour (city.js, after the owner's Sorcery! sample): the inn, the quay, the
+  ship at anchor. Every section placed;
+  the checker and the sweep are clean for Books 1 and 2; sea places are in water and land places on
+  land by the replica's reading. The Rymerift's channel is drawn on Book 2's map only. Looked at by
+  eye in each leg, not yet played.
 - Series rules: Kai and Magnakai disciplines, ranks, Lore-circles, Weaponmastery, Psi-surge.
 - Character carry-over between books.
 - Docs: spec, reference, CLAUDE.md.
@@ -109,23 +117,27 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
 
 ## Next steps
 
-1. **Book 2: fight pictures** (step 7 below; its item table is done), the rest of its starting
-   kit (step 4), then its map places (step 6).
+1. **Book 2: fight pictures** (step 7 below; its item table and map places are done), and the rest
+   of its starting kit (step 4).
 2. **Import books 3-12** once the owner says so, and read the importer's report for
    every one. Fix whatever the reports show (broken links, sections with no way on, oddly low
    counts). Expect new phrasings for gates, Random Number and combat in later books.
-3. **Verify the rules against the books' rules pages**: the Combat Results Table, Lore-circle
-   bonuses, Psi-surge cost and threshold, Weaponmastery, ranks, and whether Kai Disciplines keep
-   their effects in Magnakai books. The importer could read the rules pages to make this checkable.
-   Update the numbers and remove "(verify)" from the spec as each is confirmed.
+3. **The rules the engine does not apply yet**, from docs/reference/rules-books.md (done
+   2026-10-02: every rule read from the books' rules pages; the Combat Results Table, Lore-circles
+   and ranks checked; Weaponskill now drawn from the books' table; the spec's "(verify)" marks
+   settled): the improved disciplines with numbers (Tutelary on), the Bow and Arrows, the Shield and
+   other kit items the engine lacks (Padded Leather Waistcoat, Special Rations, Lantern, Fireseeds),
+   the 12 Special Item limit, safekeeping, and Huntmastery's ambush rule.
 4. **Per-book starting equipment** and the discipline/equipment choices at the start of each book.
-   Today a new Magnakai character gets a simplified kit.
+   Today a new Magnakai character gets a simplified kit. Each book's kit and choices are now listed
+   in rules-books.md ("Book addenda").
 5. **Play Book 1 through** and fix what the importer misread, and anything the item table missed
    or got wrong.
 6. **Map travel for books 2-12.** Book 1 has it. Each further book follows
    docs/reference/map-places.md (made-up places by hand, tools to lay out and check them).
    Books 2-5 can use the Lastlands replica if their journeys stay on it; the Magnakai books need
-   a replica of their own printed maps first. Book 1's sweep is clean (2026-10-01).
+   a replica of their own printed maps first. Book 1's sweep is clean (2026-10-01); Book 2 is done
+   (2026-10-02), in legs.
 7. **Items and fight pictures for books 2-12**, by docs/reference/items.md on importing each:
    the item table, and a plate-library entry for every enemy the importer lists "with none". Book 1
    is done (2026-10-01); Book 2 has its item table, and 16 enemies with no picture. Check by eye which illustration each enemy borrows (`PLATE_FIXES`, and the
@@ -144,4 +156,9 @@ Smaller things noted along the way:
   the map on 2026-09-30 (no errors, every destination in view); Alema, the river bank and the barge
   were moved onto their water then. Books 2-5 use the same
   map and could reuse it; Magnakai books need their own.
+- Book 2's map: places worth a look in play are the border cluster between Gorn Cove and Port Bax
+  (nine made-up places in a small corner of the printed map), the Tarnalin's insides, and the
+  Ragadorn districts. Each leg is now painted at the size shown and the next one ahead
+  of time (2026-10-02); not yet timed in a visible pane. Holmgard's plan is invented (no plan exists): check it
+  reads as the harbour section 1 describes.
 - Delete `prototypes/` (and `shared/art.js`, `battle.js`, `flow.js`) once the owner is sure.
