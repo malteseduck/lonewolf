@@ -96,6 +96,10 @@ Working and checked by playing in the browser:
   the checker and the sweep are clean for Books 1 and 2; sea places are in water and land places on
   land by the replica's reading. The Rymerift's channel is drawn on Book 2's map only. Looked at by
   eye in each leg, not yet played.
+- Town plans keep their buildings clear (2026-10-02): houses stay out from under every building
+  that stands up, and `cityClashes` checks landmarks and place symbols against the lanes and the
+  water (Holmgard's temple and the Good Cheer Inn were moved off lanes). References for redrawing
+  the plans are gathered (step 1 below), and CLAUDE.md allows Hogenburg and Donia symbols.
 - Series rules: Kai and Magnakai disciplines, ranks, Lore-circles, Weaponmastery, Psi-surge.
 - Character carry-over between books.
 - Every rule in docs/reference/rules-books.md (2026-10-02): each book's starting kit as a second
@@ -122,30 +126,18 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
 
 - **Import books 3-12?** Downloaded on 2026-10-01 for their art. Book 2 imported at the owner's
   word; ask before each further one. Needed before Magnakai can be tested on real text.
+- **Full-size fan maps** (optional): the Project Aon forum's attachments need a login. If the owner
+  saves them into `art/reference/projectaon-forum-maps/`, they replace the thumbnails there.
 
 ## Next steps
 
-1. **Book 2: fight pictures** (step 5 below; its item table, map places and starting kit are done).
-2. **Import books 3-12** once the owner says so, and read the importer's report for
-   every one. Fix whatever the reports show (broken links, sections with no way on, oddly low
-   counts). Expect new phrasings for gates, Random Number and combat in later books.
-3. **Play Book 1 through** and fix what the importer misread, and anything the item table missed
-   or got wrong.
-4. **Map travel for books 2-12.** Book 1 has it. Each further book follows
-   docs/reference/map-places.md (made-up places by hand, tools to lay out and check them).
-   Books 2-5 can use the Lastlands replica if their journeys stay on it; the Magnakai books need
-   a replica of their own printed maps first. Book 1's sweep is clean (2026-10-01); Book 2 is done
-   (2026-10-02), in legs.
-5. **Items and fight pictures for books 2-12**, by docs/reference/items.md on importing each:
-   the item table (in the Magnakai books, mark ambushes and bow shots: the engine applies them only there), and a plate-library entry for every enemy the importer lists "with none". Book 1
-   is done (2026-10-01); Book 2 has its item table, and 16 enemies with no picture. Check by eye which illustration each enemy borrows (`PLATE_FIXES`, and the
-   library's generic soldier/robber entries).
-6. **Town plans: zoomed-in views of the towns the books walk through** (owner, 2026-10-02). How to
+1. **Draw every town plan for Books 1 and 2** (owner, 2026-10-02: first in line): zoomed-in views
+   of the towns the books walk through, in the order below. How to
    draw one, from a reference or from the book alone: docs/reference/map-places.md, "Drawing a town
    plan". Take only the layout from a reference, draw it in our own sepia style, and use only the
    books' names. Every plan starts by reading its run of sections: list the spots they need and how
    they connect, and confirm he really moves about the town, before drawing. Each plan is a leg of
-   its own (`city:`), with its places re-laid on it, then the checker and the sweep. The section
+   its own (`city:`), with its places re-laid on it, then `cityClashes`, the checker and the sweep. The section
    counts below are how many of our places files put in that town today.
 
    The references, all git-ignored, each folder with a SOURCES.txt:
@@ -188,30 +180,38 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
       gives way into: likely two views, the surface and the depths. Confirm against the text.
    Not worth one: Book 2's Hammerdal (7 sections, 3 more at the barricade).
 
-   Symbols for the plans: three CC0 packs by K. M. Alexander (the maker of the Widman set) are
-   unpacked in git-ignored `data/reference/symbol-packs/` (SOURCES.txt there; owner's go-ahead
-   2026-10-02). Hogenburg is the one for town plans: engraved gates, towers, wall runs and
-   corners, castles on hills, chapels, fountains and blocks of houses, close to `buildings.js` in
-   look. Donia has church and town skylines and star forts for the country maps. Walser is
-   conventional map signs (a circle with a tower, its ruins a circle and a stroke) and fits our
-   pictorial maps least: probably unused. Before using any: pick the symbols, check each by eye beside the engraved art
-   already there (as Widman's settlement stamps were, and failed), tone them to our sepia, copy the
-   chosen ones into `assets/map/` with a README. CLAUDE.md's "Map symbols" rule now allows Hogenburg
-   and Donia (owner, 2026-10-02); Walser is not allowed.
+   Symbols for the plans: choose from the Hogenburg pack (gates, towers, wall runs and corners,
+   castles, chapels, fountains, blocks of houses) in git-ignored `data/reference/symbol-packs/`,
+   and Donia's forts and skylines for the country maps, by "Map symbols: adding one" in
+   docs/reference/interface.md. Walser is not allowed.
 
-   Later books, as each is mapped: use a Mattioli map wherever the journey walks a town's streets
-   (candidates, to confirm from the text: Toran, Ruanon, Moytura, the Kai Monastery), the fan map
-   for Book 5's Ikaresh, and the other fan maps (Ikaya, the Maaken Mines, Barrakeesh Palace and the
-   sewers, Kazan-Oud) to check how those legs' places sit. Towns with no reference (most of the
-   Magnakai books' cities) are made up from the book. Varetta and Barrakeesh were stretch goals of
-   the Mattioli campaign that were not reached.
+2. **Book 2's fight pictures**: 16 enemies have no picture. Give each a plate-library entry
+   (docs/reference/items.md), and check by eye which illustration each enemy borrows (`PLATE_FIXES`,
+   and the library's generic soldier and robber entries).
+3. **Import books 3-12** once the owner says so, and read the importer's report for
+   every one. Fix whatever the reports show (broken links, sections with no way on, oddly low
+   counts). Expect new phrasings for gates, Random Number and combat in later books.
+4. **Play Book 1 through** and fix what the importer misread, and anything the item table missed
+   or got wrong.
+5. **For each of books 3-12, once imported**:
+   - **map travel**, by docs/reference/map-places.md (made-up places by hand, tools to lay out and
+     check them). Books 3-5 can use the Lastlands replica if their journeys stay on it; the
+     Magnakai books need a replica of their own printed maps first;
+   - **items and fight pictures**, by docs/reference/items.md: the item table (in the Magnakai
+     books, mark ambushes and bow shots: the engine applies them only there), and a plate-library
+     entry for every enemy the importer lists "with none";
+   - **town plans**: use a Mattioli map wherever the journey walks a town's streets
+     (candidates, to confirm from the text: Toran, Ruanon, Moytura, the Kai Monastery), the fan map
+     for Book 5's Ikaresh, and the other fan maps (Ikaya, the Maaken Mines, Barrakeesh Palace and the
+     sewers, Kazan-Oud) to check how those legs' places sit. Towns with no reference (most of the
+     Magnakai books' cities) are made up from the book. Varetta and Barrakeesh were stretch goals of
+     the Mattioli campaign that were not reached.
 
 Smaller things noted along the way:
 
 - The full map sweep on Book 2 froze the page for over ten minutes on 2026-10-02 (painting a town
   plan takes about 0.1 s, so the hold-up is elsewhere, likely the replica legs). Find out which
   leg before the next full sweep; until then, sweep a book's sections in short runs (`from`).
-
 - Title page gets crowded with twelve books.
 - `data/reference/magnamund-world-goodwin.png` (a fan-made world map, git-ignored) is there to
   lay out maps for the Magnakai books, whose printed maps cover other parts of Magnamund.
@@ -223,7 +223,6 @@ Smaller things noted along the way:
   map and could reuse it; Magnakai books need their own.
 - Book 2's map: places worth a look in play are the border cluster between Gorn Cove and Port Bax
   (nine made-up places in a small corner of the printed map), the Tarnalin's insides, and the
-  Ragadorn districts. Each leg is now painted at the size shown and the next one ahead
-  of time (2026-10-02); not yet timed in a visible pane. Holmgard's plan is invented (no plan exists): check it
-  reads as the harbour section 1 describes.
+  Ragadorn districts (until its town plan, step 1). Each leg is now painted at the size shown and
+  the next one ahead of time (2026-10-02); not yet timed in a visible pane.
 - Delete `prototypes/` (and `shared/art.js`, `battle.js`, `flow.js`) once the owner is sure.
