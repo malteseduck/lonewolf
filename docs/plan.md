@@ -86,7 +86,8 @@ Smaller things noted along the way:
   bandit leader, section 233, may suit the hooded swordsman too).
 - The guards followed the same day, from drawings the owner supplied: the Watchtower Guard (helm, by
   a tower), the two Bridge Guards and the Border Guard (Durenese, spears, gold) have one each; the six
-  Town Guards of section 296 share a picture of six guards together.
+  Town Guards of section 296 share a picture of six guards together. The Zombie Crew has a horde drawing of the owner's; the
+  Zombie Captain keeps Book 2's own picture, which shows him.
 - Offline on the iPad works (2026-10-03, docs/reference/offline.md): Tailscale serves the player at
   `https://maltesepc.tail20dd6b.ts.net/` (`tailscale serve --bg 8765`, tailnet only); the iPad's
   Home Screen copy played with no connection. `tools/serve.py` must run on the PC for it to sync.

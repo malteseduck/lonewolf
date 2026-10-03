@@ -6,6 +6,7 @@
     { "match": "priest", "book": "02fotw", "src": "data/projectaon/02fotw/ill15.png", "crop": [0.585, 0.37, 0.39, 0.27] },
     { "match": "viveka", "book": "02fotw", "src": "data/projectaon/02fotw/ill15.png", "crop": [0.075, 0.695, 0.41, 0.29] },
     { "match": "helghast", "book": "02fotw", "src": "data/projectaon/02fotw/ill8.png" },
+    { "match": "zombie crew", "book": "02fotw", "src": "art/plates/zombie-horde-lines.png", "crop": [0, 0.05, 1, 0.95] },
     { "match": "zombie", "book": "02fotw", "src": "data/projectaon/02fotw/ill2.png" },
     { "match": "knight of the white mountain", "book": "02fotw", "src": "data/projectaon/02fotw/ill17.png" },
     { "match": "watchtower guard", "book": "02fotw", "src": "art/plates/guard-sword-shield-tower.png", "crop": [0.02, 0.02, 0.96, 0.76] },
