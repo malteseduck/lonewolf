@@ -87,6 +87,10 @@ body { background: var(--void) var(--wood, none) center / 820px; color: var(--bo
 .choice:disabled { color: var(--ink-dim); font-weight: 400; }
 .choice:disabled::before { background: none; box-shadow: 0 0 0 0.08em var(--ink-faint); }
 .choice em { font: 400 0.52em var(--title); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); margin-left: 0.6em; white-space: nowrap; }
+/* a puzzle's answer: the reader writes the section number on the rule, as on paper */
+.puzzle { display: flex; align-items: baseline; gap: 0.8em; padding-top: 0.45em; font: 700 1.2em/1.25 var(--script); color: var(--ink); }
+.puzzle input { width: 3.2em; margin-left: 0.4em; padding: 0 0.1em; border: 0; border-bottom: 0.06em solid var(--ink); background: none; color: var(--ink); font: inherit; text-align: center; color-scheme: light; }
+.puzzle input:focus { outline: none; border-bottom-color: var(--blood); }
 .finis { text-align: center; border-top: 3px double var(--ink-faint); padding-top: 0.6em; display: flex; flex-direction: column; align-items: center; gap: 0.3em; }
 .finis h2 { margin: 0; font: 400 2em/1.1 var(--cap); }
 .finis.dead h2 { color: var(--blood); }

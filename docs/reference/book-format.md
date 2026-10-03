@@ -36,9 +36,11 @@ with it, choices that change location are made on the map; without it, every cho
 |---|---|---|
 | `text` | string[] | paragraphs, plain text |
 | `choices` | Choice[] | ways on. Empty for an ending |
-| `end` | `'death'` \| `'victory'` | set on endings |
+| `end` | `'death'` \| `'victory'` \| `'failed'` | set on endings. `failed`: the book's own ending short of death (a mission given up); played as a death |
 | `combat` | Combat | must be won (or evaded) before choices open |
-| `rnt` | `'auto'` \| `'free'` | the section calls for a Random Number. `auto`: the draw opens only the matching choice. `free`: the draw is shown and every choice stays open |
+| `rnt` | `'auto'` \| `'free'` | the section calls for a Random Number. `auto`: the draw opens only the matching choice (a choice with no `range`, the way taken instead of drawing, stays open). `free`: the draw is shown and every choice stays open |
+| `rntMod` | `[{plus, ...condition}]` | imported: what the text adds to the number (minus: takes away) when he meets the condition (see Conditions below); `{plus, each: 'magnakai', over}` adds `plus` for every Magnakai Discipline beyond the first `over`. The ranges are for the total |
+| `puzzle` | true | imported: the text sets a puzzle whose answer is a section number; the page offers "Turn to section" |
 | `meal` | true | a Meal must be eaten on arrival |
 | `noHunt` | true | item table: Hunting does not excuse that Meal (Book 2's Wildlands) |
 | `bowShot` | true | from an item table's `bowShot: {to: [lo, hi]}`: the Random Number is a bow shot. It needs a Bow and an Arrow, spends the Arrow, and has `LW.bowShot`'s bonus added; the ranges (set on the choices, `rnt` made `auto`) are for the total. A choice with no range stays open without shooting |
@@ -87,7 +89,8 @@ the tools: `items.md`.
 |---|---|
 | `text` | the choice as written. The page strips page references for display and shows "Continue" if nothing else is left |
 | `to` | target section id |
-| `need.disc` | discipline id required |
+| `need.disc` | discipline id required; a list: any of them (all with `need.every`) |
+| `need.circle` | imported: Lore-circles he must have completed, by name (`'Circle of Fire'`) |
 | `need.rank` | minimum number of disciplines in the book's series |
 | `need.item`, `need.spend` | authored or item table: item required (any kind), and whether choosing consumes it. A list: any of them will do (and the first held is spent). `need.not`: open only without it (without any of them). `need.ever`: having once been given it is enough (`hero.had`) |
 | `need.gold`, `need.spend` | item table: Gold Crowns required, and whether choosing pays them |
@@ -106,16 +109,26 @@ how the books are written: draw first, then one choice per range.
   enemies: [{ name, cs, ep,
               sprite,        // 'kraan' | 'giak' | 'vordak' | 'emblem': which drawn plate to use if there is no art
               art,           // imported: illustration file to use as the plate
-              immune,        // true: mind attacks have no effect
+              immune,        // true: mind attacks have no effect; 'mindblast': Mindblast has none, Psi-surge works
+              drain,         // imported too where the text says so: Endurance lost each round unless shielded (Mindshield, Psi-screen)
               mindforce }],  // authored: CS penalty the enemy inflicts unless the hero is shielded
-  evade: { after, to },      // evasion allowed once `after` rounds have been fought; go to `to`
+  evade: { after, to, within }, // evasion allowed once `after` rounds have been fought (and, with within, before that many are); go to `to`
   to,                        // authored: section to continue to after winning. Imported books leave this out and show the section's choices
   csMod, csNote,             // adjustment to the hero's CS for this fight, and its label
+  csIf, csUnless,           // imported: a Condition (below). The csMod is given only if he meets csIf, and spared if he meets csUnless
   // from an item table: unless, unarmed, with, double, ambush; enemies may carry undead, drain, mindforce
 }
 ```
 
 Enemies are fought in order, one at a time.
+
+## Conditions
+
+The importer writes what a rule depends on as `{disc, every, rank, circle, ep}`, any of them:
+`disc` a discipline id or a list (any of them, or all with `every: true`), `rank` the number of
+disciplines of the book's series, `circle` a list of Lore-circle names (all needed), `ep` `[lo, hi]`
+his Endurance at the moment. `LW.meets(hero, cond)` tests one, `LW.condName(cond)` names it. Used
+by `need` on choices, `rntMod` and the fight's `csIf` / `csUnless`.
 
 ## Ids
 

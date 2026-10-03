@@ -49,7 +49,7 @@ Decide each section by what the text says, outright:
   "or lose 3" (that is `meal`), and not a loss tied to a Random Number (that is `rolls`).
 - **rolls**: what a number drawn in the section does, where the text says so in the section itself
   rather than in choices ("if 0-6, the Kraan has ripped away your Backpack").
-- **meal**: a forced Meal the importer missed (it reads only "must (now) eat a Meal").
+- **meal**: a forced Meal the importer missed (it reads "must (also) (now) eat a Meal" and "Unless you eat a Meal now").
 - **need**: gates on the choice to a section: `{item}`, `{item, not: true}` ("if you do not
   possess"), `{gold, spend: true}` (paying).
 - **fight**: where the importer misread a fight's Combat Skill adjustment: `mindforce` for an
@@ -57,7 +57,10 @@ Decide each section by what the text says, outright:
   an item spares (the Burrowcrawler's darkness and a Torch with Tinderbox), `unarmed: true` when the
   penalty is the text's "you are unarmed" (the engine already gives -4 with no weapon), `ambush:
   true` when the `csMod` is what a surprise attack or ambush costs (Huntmastery spares it; mark
-  these in every Magnakai book).
+  these in every Magnakai book). Since 2026-10-03 the importer reads a whole-fight change given or
+  spared by a discipline itself (`csIf`, `csUnless`) and leaves as text any for some rounds only,
+  "instead of" a normal bonus, or from a weapon's or item's power: check those sections, and give
+  the `csMod` here where it is certain.
 - **bowShot** (Magnakai books): a Random Number that is a bow shot, `{to: [lo, hi]}` for each
   choice it decides, with the ranges of the total as the text gives them (use 99 for "or
   higher"). Leave out the choice for having no Bow. The engine adds Weaponmastery and spends the

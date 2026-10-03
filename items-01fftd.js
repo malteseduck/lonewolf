@@ -54,7 +54,7 @@ export const SECTIONS = {
   164: { loot: [{ item: 'alether' }] },
   166: { ep: -4 },
   168: { meal: true },
-  170: { fight: { unless: ['torch', 'tinderbox'] } },
+  170: { fight: { csMod: -3, csNote: 'As the text says', unless: ['torch', 'tinderbox'] } },
   173: { need: { 158: { item: 'silverKey' }, 259: { item: 'silverKey', not: true } } },
   174: { take: [{ weapons: 'all' }, { backpack: 'all' }] },
   // the food is found and eaten in the same breath, so it is put in the pack before the Meal is due

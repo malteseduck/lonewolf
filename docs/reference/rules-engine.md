@@ -46,6 +46,7 @@ Item (`LW.specialLimit`, which reads `LW.bookNumber`, set by the player in `useB
 | Kai disciplines, items, limits | `LW.DISCIPLINES`, `LW.ITEMS` (with the kit items: `shield` has `fightCs: 2`, `leatherWaistcoat` `ep: 2`, each book's map), `LW.WEAPONS`, `LW.MAX_WEAPONS`, `LW.MAX_BACKPACK`, `LW.MAX_ARROWS`, `LW.bookNumber`, `LW.specialLimit(hero)` |
 | New Kai character | `LW.makeHero({csRoll, epRoll, disciplines, bonusItem})`. Book 1's kit: Axe, one Meal, the map, gold = Random Number; Book 1's bonus item table. For a later book the dialog empties it and gives that book's kit |
 | Default hooks | `LW.has`, `LW.heals`, `LW.hunts`, `LW.rankCount`, `LW.heroCS` (all replaced by `rules-series.js` when it is loaded) |
+| Imported conditions | `LW.meets(hero, cond)`, `LW.condName(cond)`: disciplines (any, or all), rank, Lore-circles, Endurance now (book-format.md, Conditions) |
 | Book runner | `class Game` |
 
 `Game` methods:
@@ -58,13 +59,17 @@ Item (`LW.specialLimit`, which reads `LW.bookNumber`, set by the player in `useB
   Gifts come before the Meal so food found in the passage can be eaten. It resets `s.rolled` and saves.
 - `combatPending`: the section has combat not yet won. `wonCombat()` marks it won.
 - `choices()`: the choices with `enabled` and `why` filled in. Returns none while dead, at an
-  ending, or while combat is pending. Applies `need.disc`, `need.rank`, `need.item` (with `not`),
-  `need.gold`, the `rnt: 'auto'` gate, and hides `evade` choices in sections that have combat. For
-  authored combat with `to`, returns a single "Continue". `choose` pays `need.spend` items or gold.
-  In a bow shot only the choices with a range wait for the draw.
+  ending, or while combat is pending. Applies `need.disc` (one, or a list: any, or all with
+  `every`), `need.circle`, `need.rank`, `need.item` (with `not`), `need.gold`, the `rnt: 'auto'`
+  gate, and hides `evade` choices in sections that have combat. For authored combat with `to`,
+  returns a single "Continue". `choose` pays `need.spend` items or gold. Only the choices with a
+  range wait for the draw: in a bow shot the others are for not shooting, elsewhere the way taken
+  instead of drawing ("If you have Sixth Sense, ...; otherwise pick a number").
 - `setRolled(n)` (also applies the matching `sec.rolls` entry, once). In a `bowShot` section it
   returns why he cannot shoot, or spends an Arrow and sets `s.rolled` to the total with
-  `LW.bowShot`'s bonus (`s.drawn` the number, `s.shot` the parts); `shot()` says which.
+  `LW.bowShot`'s bonus (`s.drawn` the number, `s.shot` the parts); `shot()` says which. The text's
+  own bonuses (`sec.rntMod`, through `bonuses()`: those whose condition he meets, a per-discipline
+  one counted) are added the same way, after the bow's.
   `resolveRandom(choice, roll)`
   (authored `choice.random`), `choose(choice, to)`.
 - Inventory: `loot()` (gifts and finds, `i` = `'give0'` or `0`, with `taken` and `closed` for an
@@ -126,6 +131,9 @@ hand has `undead`, as the Sommerswerd does), then the foe's `drain` in Endurance
 shielded, then Psi-surge's cost if it was active (dropping to Mindblast at its floor; `LW.psi`).
 Evade applies only the hero's loss. The house rule that Laumspur can be drunk mid-fight lives here,
 and an Archmaster's Curing (`cure`). Huntmastery drops a `combat.ambush` fight's negative `csMod`.
+The importer's `csIf` / `csUnless` give or spare the `csMod` by `LW.meets`. A foe `immune: true`
+ignores every mind attack; `immune: 'mindblast'` only Mindblast (Psi-surge, and so the +4, still
+tells). `evade.within` closes evasion once that many rounds are fought.
 
 Prototypes A and B have their own combat in `shared/battle.js`, and C in its `main.js`; those do
 not know about Magnakai.

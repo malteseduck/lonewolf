@@ -58,6 +58,8 @@ Textures are generated at start-up in `main.js` and set as CSS variables: `--par
 - `#dialslot`: for `rnt` sections the Random Number medallion is mounted here by `mountRnt()`.
   In a bow shot (`bowShot`) the line under it says what the shot costs, or why he cannot shoot
   (a toast if touched), and afterwards shows the sum: the number drawn, each bonus, the total.
+  The same sum is shown for a section whose text adds to the number (`rntMod`: "You drew 5, +2
+  Animal Control: 7.").
   `makeDial()` builds it: a 4.6em medallion whose bronze bezel is engraved 0-9 and turns, while
   the black face shuffles digits, then shows the drawn one under the notch at the top, glowing.
   The same medallion sits among the fight's commands.
@@ -66,7 +68,11 @@ Textures are generated at start-up in `main.js` and set as CSS variables: `--par
   The death panel (death in a fight, or a death section) offers to go back: a seal for the section
   before, ink links for the ones before that (`game.backs()`, at most `REWIND` = 3), then "begin
   again". Going back (`goBack(k)`, `data-back`) turns the page to that section as it stood when its
-  choice was made, Random Number undrawn.
+  choice was made, Random Number undrawn. A book's ending short of death (`end: 'failed'`) gets the
+  same panel, reading "Your mission has failed".
+- A puzzle section (`puzzle`: the answer is a section number) adds, under its choices, "Turn to
+  section" with a box for the number and "turn" (Enter works too); a number the book does not have
+  is toasted. `turnTo()`.
 - `shown(text)` strips "turn to N" from a choice; if nothing meaningful is left it shows "Continue".
 
 ## Right-page panels (`renderRight`)
@@ -398,7 +404,11 @@ wound marks, the lunge scale and the death fade change.
 attack (Psi-surge's numbers from `LW.psi`: an Archmaster's are +6, 1 a round, not at 4 or less);
 `item` drinks Laumspur; `cure` (an Archmaster with Curing, once a book, `LW.canCure`; the
 medallion is dim above 6 Endurance) restores 20 without costing a round. A fight marked `ambush`
-loses its `csMod` for a Magnakai hero with Huntmastery, and says so in the log. When `B.over` is set the left page shows the outcome and a
+loses its `csMod` for a Magnakai hero with Huntmastery, and says so in the log; so does one whose
+`csUnless` he meets, and a `csIf` bonus he does not meet is not given (the log names the discipline).
+A foe `immune: 'mindblast'` takes Psi-surge but not Mindblast (the mind medallion reads "as
+Mindblast: no effect"); `deaf(foe)` is a foe no mind attack of his can touch. Evade is shut, "too
+late", once `evade.within` rounds are fought. When `B.over` is set the left page shows the outcome and a
 "Turn the page" button, which calls `endBattle` to move the story on.
 
 ## Art pipeline (`plates.js`, `shared/ink.js`)

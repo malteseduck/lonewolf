@@ -158,7 +158,7 @@ let intro = false;           // the book's introduction is showing: 'new' before
 let armed = null;            // steps back to the past place on the map whose "Go back here" is showing
 const REWIND = 3;            // how many sections back a rewind reaches
 
-const isDead = () => game.dead || game.section.end === 'death';
+const isDead = () => game.dead || game.section.end === 'death' || game.section.end === 'failed'; // failed: the book's own ending short of death
 const destLoc = (c) => {
   if (!book.locations) return null;
   const here = game.section.loc, tos = c.random ? c.random.table.map((row) => row[1]) : [c.to];
@@ -300,7 +300,7 @@ function leftHTML() {
 
   if (isDead()) {
     const bk = game.backs();
-    h += `<div class="finis dead"><h2>Your adventure ends here</h2><p>The last of the Kai has fallen.${bk.length ? ' Yet you may turn back a page or two.' : ''}</p>${
+    h += `<div class="finis dead"><h2>Your adventure ends here</h2><p>${!game.dead && sec.end === 'failed' ? 'Your mission has failed.' : 'The last of the Kai has fallen.'}${bk.length ? ' Yet you may turn back a page or two.' : ''}</p>${
       bk.map(({ k, id }, i) => `<button type="button" class="${i ? 'inkbtn' : 'seal'}" data-back="${k}">${i ? 'or to' : 'Back to'} section ${esc(id)}</button>`).join('')}${
       bk.length ? '<button type="button" class="inkbtn" data-new>or begin again</button>' : '<button type="button" class="seal" data-new>Begin again</button>'}</div>`;
   }
@@ -315,7 +315,9 @@ function leftHTML() {
     if (rd.length) h += `<div class="compass"><div class="orn"><button type="button" class="med" data-panel="map" aria-label="Open the map">${ROSE}</button></div><span>${rd.length === 1 ? 'A road lies open.' : `${rd.length} roads lie open.`} Choose on the map.</span></div>`;
     const local = ch.map((c, i) => ({ c, i })).filter(({ c }) => !destLoc(c));
     if (local.length) h += `<ul class="choices">${local.map(({ c, i }) => `<li><button type="button" class="choice" data-choice="${i}" ${c.enabled ? '' : 'disabled'}><span>${esc(shown(c.text))}${
-      c.enabled ? (c.need && c.need.disc ? `<em>${esc(LW.DISCIPLINES[c.need.disc].name)}</em>` : c.random ? '<em>Random Number</em>' : '') : `<em>${esc(c.why)}</em>`}</span></button></li>`).join('')}</ul>`;
+      c.enabled ? (c.need && (c.need.disc || c.need.circle) ? `<em>${esc(LW.condName({ disc: c.need.disc, every: c.need.every, circle: c.need.circle }))}</em>` : c.random ? '<em>Random Number</em>' : '') : `<em>${esc(c.why)}</em>`}</span></button></li>`).join('')}</ul>`;
+    // a puzzle's answer is a section number, which the book leaves the reader to turn to
+    if (sec.puzzle) h += `<div class="puzzle"><label>Turn to section <input id="puzzleto" inputmode="numeric" autocomplete="off" aria-label="Section number"></label><button type="button" class="inkbtn" data-puzzle>turn</button></div>`;
   }
   return h + '</div>';
 }
@@ -334,7 +336,7 @@ function mountRnt() {
     render(); // what the number did may show on either page
   });
   // a bow shot shows its sum: "You drew 4, +3 Weaponmastery with Bow: 7."
-  const plus = (game.s.shot || []).map((p) => `, +${p.n} ${p.label}`).join(''), drawn = game.s.drawn != null ? game.s.drawn : game.s.rolled;
+  const plus = (game.s.shot || []).map((p) => `, ${p.n < 0 ? '−' : '+'}${Math.abs(p.n)} ${p.label}`).join(''), drawn = game.s.drawn != null ? game.s.drawn : game.s.rolled;
   if (game.s.rolled != null) { dial.show(drawn); note.textContent = plus ? `You drew ${drawn}${plus}: ${game.s.rolled}.` : `You drew ${drawn}.`; }
   else note.textContent = shot ? shot.why || `Touch the medallion to shoot. It spends an Arrow (${game.hero.arrows} left).` : 'Touch the medallion for your Random Number.';
   slot.append(dial.el, note);
@@ -800,22 +802,27 @@ async function startBattle() {
   const spared = (c.unless || []).length && c.unless.every((i) => LW.hasItem(hero, i));
   // Huntmastery: what a surprise attack or ambush costs (combat.ambush) is not lost
   const ambush = c.ambush && c.csMod < 0 && hero.series === 'magnakai' && LW.has(hero, 'huntmastery');
-  const csMod = spared || ambush || (c.unarmed && !LW.armedWith(hero)) ? 0 : c.csMod;
+  // the text's own conditions: "if you have Animal Control, add 2" (csIf), "unless you have Mindshield, deduct 2" (csUnless)
+  const missed = c.csIf && !LW.meets(hero, c.csIf), excused = c.csUnless && LW.meets(hero, c.csUnless);
+  const csMod = spared || ambush || missed || excused || (c.unarmed && !LW.armedWith(hero)) ? 0 : c.csMod;
+  const note = c.csIf ? LW.condName(c.csIf) : c.csNote; // a discipline's bonus is named after it
   const node = el('div', 'fight');
   node.innerHTML = `<canvas width="600" height="800"></canvas><div class="foebar"><span data-b="name"></span><div class="bar"><i></i></div><small data-b="stats"></small></div><div class="cmds" data-b="cmds"></div>`;
   const dial = makeDial();
   // mind: 0 at rest, 1 Mindblast, 2 Psi-surge. power is the most this character can do.
   B = { c, i: -1, foe: null, img: null, power: LW.mindPower(hero), mind: LW.mindPower(hero) ? 1 : 0, rounds: 0, log: [], over: null, lock: false, scene: sec.scene, node, dial,
     fx: { lunge: 0, hit: 0, dead: 0, wounds: [] },
-    blasting() { return this.foe.immune ? 0 : this.mind; },
-    cs() { return LW.heroCS(hero, { mindblast: this.blasting() === 1, psiSurge: this.blasting() === 2, enemy: this.foe, csMod, csNote: c.csNote, with: c.with }).total; },
+    // immune: true, to every attack of the mind; 'mindblast', to Mindblast only (Psi-surge still tells)
+    blasting() { return this.foe.immune === true || (this.foe.immune && this.mind === 1) ? 0 : this.mind; },
+    cs() { return LW.heroCS(hero, { mindblast: this.blasting() === 1, psiSurge: this.blasting() === 2, enemy: this.foe, csMod, csNote: note, with: c.with }).total; },
     weapon: LW.armedWith(hero, { with: c.with }),
     ratio() { return this.cs() - this.foe.cs; } };
   nextFoe();
   if (B.foe.mindforce) B.log.push(LW.shielded(hero) ? 'Its will breaks against your Mindshield.' : `Its will presses on yours: Combat Skill less ${B.foe.mindforce}.`);
-  if (csMod) B.log.push(`${c.csNote}: Combat Skill ${csMod > 0 ? 'plus' : 'less'} ${Math.abs(csMod)}.`);
+  if (csMod) B.log.push(`${note}: Combat Skill ${csMod > 0 ? 'plus' : 'less'} ${Math.abs(csMod)}.`);
   else if (spared) B.log.push(`Your ${c.unless.map(LW.itemName).join(' and ')} spare you the penalty.`);
   else if (ambush) B.log.push('Huntmastery: the ambush does not catch you off guard.');
+  else if (excused && c.csMod) B.log.push(`${LW.condName(c.csUnless)}: you are spared the penalty.`);
   if (c.with === 'none') B.log.push('You fight bare-handed.');
   else if (c.with) B.log.push(B.weapon ? `Only your ${LW.itemName(c.with)} can harm it.` : `Only the ${LW.itemName(c.with)} can harm it, and you do not have it.`);
   if (B.weapon && LW.ITEMS[B.weapon] && LW.ITEMS[B.weapon].cs) B.log.push(`You fight with the ${LW.itemName(B.weapon)}.`);
@@ -832,6 +839,8 @@ async function startBattle() {
     requestAnimationFrame(loop);
   })();
 }
+/* the foe no mind attack of his can touch: immune to all, or to Mindblast when that is all he has */
+const deaf = (foe) => foe.immune === true || (!!foe.immune && B.power === 1);
 function nextFoe() {
   B.i++; B.foe = Object.assign({}, B.c.enemies[B.i]); B.foe.max = B.foe.ep;
   B.fx.dead = 0; B.fx.wounds = []; B.img = null;
@@ -847,14 +856,14 @@ function updateBattle() {
   q('name').textContent = foe.name;
   B.node.querySelector('.bar i').style.width = Math.max(0, (foe.ep / foe.max) * 100) + '%';
   q('stats').textContent = `CS ${foe.cs} · EP ${Math.max(0, foe.ep)} · Ratio ${r > 0 ? '+' : ''}${r}`;
-  const ev = B.c.evade, evadeOpen = ev && B.rounds >= ev.after, locked = B.lock || B.over;
+  const ev = B.c.evade, evadeOpen = ev && B.rounds >= ev.after && !(ev.within && B.rounds >= ev.within), locked = B.lock || B.over; // within: only in the first rounds
   const med = (id, ic, label, note, off, extra = '') => `<div class="medcap"><button type="button" class="med ${extra}" data-cmd="${id}" ${locked || off ? 'disabled' : ''} aria-label="${label}">${ic}</button>${label}<small>${note}</small></div>`;
   const n = hero.backpack.filter((b) => b === 'potion').length, psi = LW.psi(hero);
   const left = med('fight', B.weapon ? itemGlyph(B.weapon) : glyph('crossed-swords'), 'Strike', 'spin to attack')
-    + (B.power ? med('mind', glyph(B.power === 2 ? 'psychic-waves' : 'brainstorm'), B.power === 2 ? 'Psi-surge' : 'Mindblast', foe.immune ? 'no effect' : ['at rest', B.power === 2 ? `as Mindblast, +${psi.blast}` : 'focused, +2', `+${psi.surge}, costs ${psi.cost} a round`][B.blasting()], false, B.blasting() ? 'lit' : '') : '');
+    + (B.power ? med('mind', glyph(B.power === 2 ? 'psychic-waves' : 'brainstorm'), B.power === 2 ? 'Psi-surge' : 'Mindblast', deaf(foe) ? 'no effect' : foe.immune && B.mind === 1 ? 'as Mindblast: no effect' : ['at rest', B.power === 2 ? `as Mindblast, +${psi.blast}` : 'focused, +2', `+${psi.surge}, costs ${psi.cost} a round`][B.mind], false, B.blasting() ? 'lit' : '') : '');
   const right = (n ? med('item', itemGlyph('potion'), 'Laumspur', `${n} left`, hero.ep >= hero.epMax) : '')
     + (LW.canCure(hero, book.id) ? med('cure', glyph('healing'), 'Curing', hero.ep <= 6 ? '20 back, once a book' : 'at 6 or less', hero.ep > 6) : '')
-    + (ev ? med('evade', glyph('run'), 'Evade', evadeOpen ? 'take one blow' : `after round ${ev.after}`, !evadeOpen) : '');
+    + (ev ? med('evade', glyph('run'), 'Evade', evadeOpen ? 'take one blow' : ev.within && B.rounds >= ev.within ? 'too late' : `after round ${ev.after}`, !evadeOpen) : '');
   const cmds = q('cmds');
   cmds.innerHTML = left + '<span data-dial></span>' + right;
   cmds.querySelector('[data-dial]').replaceWith(B.dial.el);
@@ -873,11 +882,11 @@ async function battleAct(id) {
   const hero = game.hero, foe = B.foe;
   B.lock = true; updateBattle();
   if (id === 'mind') {
-    if (foe.immune) B.log.push(`${foe.name} is immune to attacks of the mind.`);
+    if (deaf(foe)) B.log.push(`${foe.name} is immune to ${foe.immune === true ? 'attacks of the mind' : 'Mindblast'}.`);
     else {
       B.mind = (B.mind + 1) % (B.power + 1);
       if (B.mind === 2 && hero.ep <= LW.psi(hero).floor) { B.mind = 0; B.log.push('You are too weak to Psi-surge.'); }
-      else B.log.push(['You let your mind rest.', 'You gather your will to a point: Mindblast.', `You loose the full Psi-surge. It will cost you ${LW.psi(hero).cost} Endurance a round.`][B.mind]);
+      else B.log.push(['You let your mind rest.', foe.immune ? `You gather your will to a point: Mindblast, to which ${foe.name} is immune.` : 'You gather your will to a point: Mindblast.', `You loose the full Psi-surge. It will cost you ${LW.psi(hero).cost} Endurance a round.`][B.mind]);
     }
   } else if (id === 'cure') {
     const back = Math.min(20, hero.epMax - hero.ep);
@@ -968,12 +977,21 @@ bookEl.addEventListener('click', (e) => {
   else if (d.remove) { game.removeItem(d.remove); sel = null; render(); }
   else if ('intro' in d) { intro = false; guard(() => turn(render)); }
   else if (d.choice != null) guard(() => choose(+d.choice));
+  else if ('puzzle' in d) turnTo();
   else if ('fight' in d) guard(startBattle);
   else if ('endbattle' in d) guard(endBattle);
   else if ('new' in d || 'home' in d) { LW.sfx('select'); toTitle('new' in d); }
   else if ('scan' in d) { mapScan = !mapScan; renderRight(); }
   else if (d.zoom) zoomBy(d.zoom === 'in' ? 1.5 : 1 / 1.5);
 });
+/* a puzzle answered: the section the reader worked out, if the book has one */
+function turnTo() {
+  const box = $('#puzzleto'), to = box && box.value.trim();
+  if (!to) return;
+  if (!/^\d+$/.test(to) || !book.sections[to]) return void LW.UI.toast(`There is no section ${to}.`);
+  guard(async () => { game.choose({ text: 'Turn to the section you worked out' }, to); sel = null; await turn(render); });
+}
+bookEl.addEventListener('keydown', (e) => { if (e.target.id === 'puzzleto' && e.key === 'Enter') turnTo(); });
 function addItem(id) { const err = game.addItem(id); if (err) LW.UI.toast(err); else LW.sfx('select'); render(); }
 pr.addEventListener('keydown', (e) => {
   if (e.target.id !== 'itemname' || (e.key !== 'Enter' && e.key !== 'Escape')) return;

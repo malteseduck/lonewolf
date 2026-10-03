@@ -119,7 +119,7 @@ books begin), 6 Aspirant, 7 Guardian, 8 Warmarn (or Journeyman), 9 Savant, 10 Ma
 | Invisibility | Hide even in the open; mask heat and scent; pass as a native | gates only |
 | Huntmastery | No Meal ever needed, desert and wasteland included; **ignores the extra COMBAT SKILL lost to a surprise attack or ambush** | yes; the ambush where the item table marks a fight `ambush` |
 | Pathsmanship | Right path, foreign writing, tracks, traps, always knows north | gates only |
-| Psi-surge | +4 COMBAT SKILL at 2 ENDURANCE a round; or Mindblast, +2 at no cost (not both); not at 6 ENDURANCE or less; not on immune enemies | yes (`LW.psi`) |
+| Psi-surge | +4 COMBAT SKILL at 2 ENDURANCE a round; or Mindblast, +2 at no cost (not both); not at 6 ENDURANCE or less; not on immune enemies | yes (`LW.psi`); a foe the text makes immune to Mindblast "but not Psi-surge" still takes Psi-surge (`immune: 'mindblast'`) |
 | Psi-screen | No ENDURANCE lost to Mindforce; resists illusion and hypnosis | yes (`shielded`) |
 | Nexus | Withstands heat and cold; moves objects | gates only |
 | Divination | Senses danger, hidden enemies, intentions; telepathy | gates only |

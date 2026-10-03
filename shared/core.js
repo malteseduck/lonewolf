@@ -162,6 +162,18 @@
   LW.heals = (hero) => LW.has(hero, 'healing') && 'Healing';
   LW.hunts = (hero) => LW.has(hero, 'hunting') && 'Hunting';
   LW.rankCount = (hero) => hero.disciplines.length;
+  /* An imported condition, {disc: id | [ids] (any of them; all with every), rank, circle: [names] (all), ep: [lo, hi] (his Endurance now)}:
+     whether he meets it, and what it reads as. The functions are looked up late: rules-series.js replaces them. */
+  LW.meets = (hero, c) => {
+    const ds = c.disc ? [].concat(c.disc) : [];
+    if (ds.length && !(c.every ? ds.every((d) => LW.has(hero, d)) : ds.some((d) => LW.has(hero, d)))) return false;
+    if (c.rank && LW.rankCount(hero) < c.rank) return false;
+    if (c.ep && (hero.ep < c.ep[0] || hero.ep > c.ep[1])) return false;
+    const circles = c.circle && LW.circlesOf ? LW.circlesOf(hero).map((x) => x.name) : [];
+    return !(c.circle && !c.circle.every((n) => circles.includes(n)));
+  };
+  LW.condName = (c) => [c.disc && [].concat(c.disc).map((d) => (LW.DISCIPLINES[d] || { name: d }).name).join(c.every ? ' and ' : ' or '),
+    c.rank && 'your rank', c.circle && c.circle.join(' and '), c.ep && 'your Endurance', c.each && 'your Magnakai Disciplines'].filter(Boolean).join(', ');
 
   /* COMBAT SKILL with every modifier spelled out, so the UI can show its working. */
   LW.heroCS = (hero, ctx = {}) => {
@@ -284,13 +296,14 @@
       const fought = !!sec.combat, rolled = this.s.rolled;
       return (sec.choices || []).filter((c) => !(fought && c.evade)).map((c) => {
         let enabled = true, why = '';
-        // in a bow shot, a choice with no range (no Bow, or not shooting) is open without the draw
-        if (sec.rnt === 'auto' && (c.range || !sec.bowShot)) {
+        // a choice with no range is open without the draw: in a bow shot, not shooting; elsewhere, the
+        // way taken instead of drawing ("If you have Sixth Sense, ...; otherwise pick a number")
+        if (sec.rnt === 'auto' && c.range) {
           if (rolled == null) { enabled = false; why = 'Spin the medallion first'; }
-          else if (c.range && (rolled < c.range[0] || rolled > c.range[1])) { enabled = false; why = `You drew ${rolled}`; }
+          else if (rolled < c.range[0] || rolled > c.range[1]) { enabled = false; why = `You drew ${rolled}`; }
         }
-        if (c.need && c.need.disc && !LW.has(hero, c.need.disc)) {
-          enabled = false; why = `Needs ${LW.DISCIPLINES[c.need.disc].name}`;
+        if (c.need && (c.need.disc || c.need.circle) && !LW.meets(hero, { disc: c.need.disc, every: c.need.every, circle: c.need.circle })) {
+          enabled = false; why = `Needs ${LW.condName({ disc: c.need.disc, every: c.need.every, circle: c.need.circle })}`;
         }
         if (c.need && c.need.rank && LW.rankCount(hero) < c.need.rank) { enabled = false; why = 'Needs a higher rank'; }
         // need.item: one id, or a list of which any will do; ever: having once been given it is enough
@@ -363,13 +376,19 @@
        won (gold), and what is lost (take). sec.bowShot: the draw is a shot, which spends an Arrow and
        has his skill with the bow added (LW.bowShot); s.rolled is then the total, s.drawn the number. */
     shot() { return this.section.bowShot && LW.bowShot ? LW.bowShot(this.s.hero) : null; }
+    /* sec.rntMod: what the text adds to the number for a discipline, rank or Lore-circle he has */
+    bonuses() {
+      const hero = this.s.hero, times = (m) => (m.each ? Math.max(0, (LW.owned ? LW.owned(hero, m.each) : []).length - (m.over || 0)) : 1); // each: per Magnakai Discipline, over the first `over`
+      return (this.section.rntMod || []).filter((m) => LW.meets(hero, m) && times(m)).map((m) => ({ label: LW.condName(m), n: m.plus * times(m) }));
+    }
     setRolled(n) {
       const shot = this.shot();
       if (shot && shot.why) return shot.why;
       if (shot) this.s.hero.arrows -= 1;
-      this.s.shot = shot ? shot.parts : null;
+      const parts = [...(shot ? shot.parts : []), ...this.bonuses()];
+      this.s.shot = parts.length ? parts : null;
       this.s.drawn = n;
-      this.s.rolled = n + (shot ? shot.plus : 0);
+      this.s.rolled = n + parts.reduce((t, p) => t + p.n, 0);
       n = this.s.rolled;
       const hero = this.s.hero, r = (this.section.rolls || []).find((x) => n >= x.range[0] && n <= x.range[1]);
       if (r && !this.s.looted[this.s.at + ':rolled']) {
