@@ -267,6 +267,8 @@ const vignette = (scene) => vignettes[scene] || (vignettes[scene] = Ink.inkScene
 /* ---------- state ---------- */
 let mode = 'title';          // title | story | battle
 let panel = 'kai';           // kai | pack | map
+let onMap = false;           // he chose the map: it gives way to the Kai sheet while no road is open (a fight, a draw), and comes back once one is
+const settlePanel = () => { if (onMap && mode === 'story') panel = book.locations && roads().length ? 'map' : 'kai'; else if (panel === 'map' && !roads().length) panel = 'kai'; };
 let sel = null;              // what the caption under a panel describes
 let busy = false, gearTurn = 0, B = null, mapScan = false, mapShown = null;
 let intro = false;           // the book's introduction is showing: 'new' before section 1 of a new game, 'again' when re-read from the shelf
@@ -453,7 +455,7 @@ function mountRnt() {
     busy = true;
     const n = await dial.spin();
     game.setRolled(n); busy = false;
-    render(); // what the number did may show on either page
+    settlePanel(); render(); // what the number did may show on either page; a road it opens brings the map back
   });
   // a bow shot shows its sum: "You drew 4, +3 Weaponmastery with Bow: 7."
   const plus = (game.s.shot || []).map((p) => `, ${p.n < 0 ? '−' : '+'}${Math.abs(p.n)} ${p.label}`).join(''), drawn = game.s.drawn != null ? game.s.drawn : game.s.rolled;
@@ -926,14 +928,14 @@ async function choose(i) {
   }
   game.choose(c, to);
   sel = null;
-  await turn(() => { if (panel === 'map' && book.locations && !roads().length) panel = 'kai'; render(); });
+  await turn(() => { settlePanel(); render(); });
 }
 /* back k sections, to make that choice again */
 async function goBack(k) {
   game.back(k);
   sel = null; armed = null; mode = 'story';
   LW.sfx('select');
-  await turn(() => { if (panel === 'map' && !roads().length) panel = 'kai'; render(); });
+  await turn(() => { settlePanel(); render(); });
 }
 
 /* ---------- combat, on the page ---------- */
@@ -1092,7 +1094,7 @@ async function endBattle() {
   if (out === 'win') { game.wonCombat(); if (c.to) game.go(c.to, 'The fight is won'); }
   else if (out === 'evade') game.go(c.evade.to, 'You break away from the fight');
   else game.save();
-  B = null; mode = 'story'; sel = null;
+  B = null; mode = 'story'; sel = null; settlePanel();
   await turn(render);
 }
 
@@ -1124,7 +1126,7 @@ bookEl.addEventListener('click', (e) => {
   else if (d.backup) backupAdventure(d.backup);
   else if ('rename' in d) { renaming = d.rename || null; LW.sfx('select'); renderRight(); const box = $('#advname'); if (box) { box.focus(); box.select(); } }
   else if ('forget' in d) { if ('sure' in d) forgetAdventure(d.forget); forgetting = 'sure' in d ? null : d.forget || null; LW.sfx('select'); renderRight(); }
-  else if (d.panel) { panel = d.panel; sel = null; adding = false; naming = null; LW.sfx('select'); render(); }
+  else if (d.panel) { panel = d.panel; onMap = d.panel === 'map'; sel = null; adding = false; naming = null; LW.sfx('select'); render(); }
   else if (d.adding) { adding = d.adding === 'open'; naming = null; LW.sfx('select'); renderRight(); }
   else if (d.add) {
     if (!d.add.startsWith('other:')) return void addItem(d.add);
@@ -1208,7 +1210,7 @@ function toTitle(toShelf) { B = null; mode = 'title'; intro = false; shelf = !!t
 async function begin(id, fresh, anew, reread) {
   useBook(id);
   intro = false;
-  if (!fresh && !anew && game.load()) { mode = 'story'; panel = roads().length ? 'map' : 'kai'; sel = null; if (reread && book.intro && book.intro.length) intro = 'again'; return turn(render); }
+  if (!fresh && !anew && game.load()) { mode = 'story'; panel = roads().length ? 'map' : 'kai'; onMap = panel === 'map'; sel = null; if (reread && book.intro && book.intro.length) intro = 'again'; return turn(render); }
   game.clear();
   const kept = LW.Character.load(), carry = !anew && kept && !kept.completed.includes(id) ? kept : null;
   const hero = await LW.UI.chooseCharacter(book, carry);
@@ -1274,6 +1276,6 @@ window.__lw = { get game() { return game; }, render: () => render(), BOOKS, begi
 
 document.fonts.ready.then(() => {
   const last = adventure() && adventure().book;
-  if (last && BOOKS[last] && hasSave(last)) { useBook(last); if (game.load()) { mode = 'story'; if (roads().length) panel = 'map'; } }
+  if (last && BOOKS[last] && hasSave(last)) { useBook(last); if (game.load()) { mode = 'story'; if (roads().length) { panel = 'map'; onMap = true; } } }
   render();
 });

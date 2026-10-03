@@ -8,7 +8,11 @@ Last updated 2026-10-03.
 Where each book stands, step by step: `docs/book-checklist.md`.
 
 1. **Play Book 1 through** and fix what the importer misread, and anything the item table missed
-   or got wrong.
+   or got wrong. A mechanical sweep ran 2026-10-03 (all 350 sections, three runs with test
+   characters, both checkers): no errors, no unmarked dead end, every fight and draw works; it
+   found one fault, fixed (the right page did not return to the map once a fight or a draw was
+   over). Not yet done: reading the text against what the importer made of it (gates, combat
+   changes, draws) and a run that reaches the end; the three runs all died early.
 2. **Books 3-12, one book at a time**, in order (2.1 to 2.10). Finish one book before starting
    the next. Each book gets the same three pieces of work (see "Work for each book" below): map
    travel, items and fight pictures, and town plans. All ten were imported on 2026-10-03, and each
