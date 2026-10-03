@@ -263,15 +263,26 @@ button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background:
 
 /* inventory */
 /* inventory, after the HD equipment sheet */
-.kit { position: relative; flex: 1; min-height: 9.5em; display: flex; flex-direction: column; justify-content: center; gap: 0.5em; }
-.kit img { position: absolute; left: 50%; top: 50%; width: 120%; max-height: 120%; object-fit: contain; transform: translate(-50%, -54%); opacity: 0.7; pointer-events: none; }
-.worn { position: relative; display: grid; grid-template-columns: repeat(3, auto); grid-template-rows: auto auto; justify-content: center; align-items: center; gap: 0 1.1em; }
-.worn .head { grid-column: 2; grid-row: 1; justify-self: center; margin-bottom: -0.2em; }
-.worn > .disc { grid-row: 2; --s: 3.6em; }
-.worn .body { grid-column: 2; grid-row: 2; }
-.worn .body .disc { --s: 4.4em; }
-.specials { position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4em 0.7em; }
-.specials .disc { --s: 2.7em; }
+.kit { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 0.1em; }
+/* his figure, faint, as the warrior sketch behind the HD paper doll */
+.kit img { position: absolute; left: 50%; top: 40%; height: 92%; width: auto; max-width: 100%; object-fit: contain; transform: translate(-50%, -50%); opacity: 0.42; pointer-events: none; }
+.doll { position: relative; display: grid; grid-template-columns: repeat(3, auto); justify-content: center; align-items: center; gap: 0 0.9em; }
+.doll > span { display: grid; place-items: center; }
+.doll .sh .disc { --s: 2.7em; }
+.doll .sh { align-self: end; }
+.doll .head .disc { --s: 2.9em; }
+.doll .wl .disc, .doll .wr .disc { --s: 3.5em; }
+.doll .body .disc { --s: 4.2em; }
+.doll .belt { grid-column: 2; display: flex; gap: 0.5em; }
+.doll .belt .disc { --s: 2.5em; }
+.doll .belt .disc::after, .doll .sh .disc::after { display: none; }
+/* the HD sheet's scrolled rule, a curl at each end and a lozenge in the middle */
+.flourish { flex: none; height: 0.75em; margin: 0.15em 1.2em; }
+.flourish svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.flourish path { fill: none; stroke: var(--ink-dim); stroke-width: 1.1; vector-effect: non-scaling-stroke; }
+.flourish path.gem { fill: var(--ink-dim); }
+.specials { position: relative; flex: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35em 0.75em; }
+.specials .disc { --s: 2.4em; }
 .disc.item .glyph i { background: linear-gradient(var(--silver-hi), var(--silver) 55%, var(--silver-lo)); }
 .disc.item.lit .glyph i { background: radial-gradient(circle at 50% 45%, var(--glyph) 45%, #f3d6a0 80%, var(--ember)); }
 /* an empty slot: the ring alone, open to whatever lies under it */
@@ -285,8 +296,8 @@ button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background:
 .bag > .disc { --s: 3.4em; }
 .pack { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.25em; padding: 0.3em; background: var(--enamel); box-shadow: 0 0 0 0.08em var(--pewter-lo), 0 0 0 0.16em var(--enamel-lo), 0 0.15em 0.4em rgba(0, 0, 0, 0.4); }
 /* each tile: dark leather with an engraved inner line, as the HD Backpack grid */
-.pack .cell { display: grid; place-items: center; padding: 0.25em; background: radial-gradient(circle, #3b2b21, #22170f 75%); box-shadow: inset 0 0 0 0.06em rgba(138, 123, 100, 0.55), inset 0 0 0 0.16em #1a110b, inset 0 0 0 0.22em rgba(138, 123, 100, 0.25); }
-.pack .disc { --s: 2.9em; }
+.pack .cell { display: grid; place-items: center; padding: 0.18em; background: radial-gradient(circle, #3b2b21, #22170f 75%); box-shadow: inset 0 0 0 0.06em rgba(138, 123, 100, 0.55), inset 0 0 0 0.16em #1a110b, inset 0 0 0 0.22em rgba(138, 123, 100, 0.25); }
+.pack .disc { --s: 2.5em; }
 /* adding by hand: rows of small medallions where the worn kit was */
 .picker { flex: 1 0 auto; display: flex; flex-direction: column; gap: 0.35em; }
 .picker h4.ruled .inkbtn { font: 400 0.75em var(--script); margin-left: 0.6em; }
@@ -300,7 +311,7 @@ button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background:
 input.pickname { width: calc(100% - 5.7em); padding: 0 0.1em; border: 0; border-bottom: 1px solid var(--ink); background: none; color: var(--ink); font: 700 1.05em var(--script); color-scheme: light; }
 input.pickname:focus { outline: none; border-bottom-color: var(--blood); }
 input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
-.purse { display: inline-flex; align-items: center; gap: 0.3em; font: 400 0.9em var(--title); }
+.purse { display: inline-flex; align-items: center; gap: 0.3em; font: 400 0.9em var(--title); white-space: nowrap; }
 .purse b { font-weight: 400; font-size: 1.3em; font-variant-numeric: lining-nums; }
 .purse .glyph { width: 1.4em; height: 1.4em; }
 .purse .glyph i { background: linear-gradient(var(--bronze-hi), var(--bronze) 55%, var(--bronze-lo)); }
@@ -358,8 +369,8 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 .step { display: inline-flex; gap: 0.2em; margin-left: 0.4em; vertical-align: middle; }
 .step button { width: 1.5em; height: 1.5em; padding: 0; border: 1px solid var(--ink-faint); border-radius: 50%; background: rgba(51, 35, 26, 0.08); color: var(--ink); font: 400 0.8em/1 var(--title); }
 .step button:hover { background: var(--ink); color: var(--page); }
-.ledger { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.4em 1em; font-size: 1.05em; }
-.ledger .inkbtn { font-size: 1.05em; }
+.ledger { display: flex; align-items: center; justify-content: space-between; gap: 0.4em 1em; font-size: 1.05em; }
+.ledger .inkbtn { font-size: 0.95em; white-space: nowrap; }
 .maphint { margin: 0; text-align: center; font-size: 1.1em; color: var(--ink-dim); }
 .roads { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.1em; }
 .roads .choice { font-size: 1.08em; }

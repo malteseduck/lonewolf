@@ -96,10 +96,11 @@ left. `updateBattle` redraws the gauges each round.
     Glyphs are game-icons.net SVGs in `assets/icons/` (`DISC_GLYPH`), used as CSS masks so they
     can take the ivory fill and ember glow.
   - `.caption` explains the selected discipline, and says when it is not learned.
-- **pack** (`packHTML`), after the HD equipment sheet: in `.kit`, the portrait faint behind the
-  slots he wears (helmet above, the two weapons either side of the chainmail; a mastered weapon is
-  lit), the other Special Items in a row beneath (at least four slots, empty ones as bare rings);
-  then a ruled "Backpack" heading, a knapsack medallion beside eight dark tiles (one per Meal or
+- **pack** (`packHTML`), after the HD equipment sheet: in `.kit`, his full-length figure (the map's)
+  faint behind a paper doll of slots: the helmet between two shoulder slots, the two weapons either
+  side of the chainmail (a mastered weapon is lit), two belt slots below; the first four other
+  Special Items fill the shoulder and belt slots, the rest a row of five rings (more in fives) under
+  a scrolled rule (`flourish`); empty slots are bare rings. Then a ruled "Backpack" heading, a knapsack medallion beside eight dark tiles (one per Meal or
   item); a ledger (gold -/+, "Add an item by hand"); and the caption with Drink / Drop / Eat. The
   Quiver's caption counts its Arrows, with -/+ (`adjust('arrows')`); with nothing selected the
   caption lists what is kept at the Kai Monastery (`hero.stored`, `hero.storedGold`). With

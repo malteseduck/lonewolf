@@ -537,9 +537,11 @@ function kaiHTML() {
     <div class="discs">${rows.map((r) => `<div class="drow">${r.map(disc).join(`<span class="linkwrap">${bar}</span>`)}</div>`).join('')}</div>
     <div class="caption">${captionHTML()}</div>`;
 }
-/* Inventory, after the HD equipment sheet: his likeness faint behind the slots he wears (helmet
-   above, weapons either side of the chest), the other Special Items in a row beneath, then the
-   Backpack as a grid of tiles beside its own medallion */
+/* Inventory, after the HD equipment sheet: his figure faint behind a paper doll of slots (helmet
+   between two shoulder slots, weapons either side of the chest, two at the belt; Special Items fill
+   the shoulder and belt slots), a row of five more for further Special Items under a flourish,
+   then the Backpack as a grid of tiles beside its own medallion */
+const flourish = '<div class="flourish" aria-hidden="true"><svg viewBox="0 0 200 12" preserveAspectRatio="none"><path d="M4 6c0-3 4-3 4 0s-3 3-4 1M8 6h84M108 6h84M196 6c0-3-4-3-4 0s3 3 4 1"/><path class="gem" d="M100 2l4 4-4 4-4-4z"/></svg></div>';
 function packHTML() {
   const h = game.hero, cells = [], on = (kind, id) => (sel && sel.kind === kind && sel.id === id ? 'sel' : '');
   const slot = (kind, id, extra = '') => `<button type="button" class="disc item ${on(kind, id)} ${extra}" data-sel="${kind}|${esc(id)}" aria-label="${esc(LW.itemName(id))}">${itemGlyph(id)}</button>`;
@@ -548,13 +550,17 @@ function packHTML() {
   const skilled = (w) => h.weaponskill === w || (h.series === 'magnakai' && LW.has(h, 'weaponmastery') && (h.mastery || []).includes(w));
   const weapon = (w) => (w ? slot('weapon', w, skilled(w) ? 'lit' : '') : empty('Weapon'));
   const others = h.special.filter((s) => s !== 'helmet' && s !== 'chainmail').map((s) => slot('special', s));
-  while (others.length < 4) others.push(empty());
+  const around = others.slice(0, 4), rest = others.slice(4);
+  while (around.length < 4) around.push(empty('Special Item'));
+  while (rest.length < 5 || rest.length % 5) rest.push(empty('Special Item'));
   for (let i = 0; i < h.meals; i++) cells.push(`<button type="button" class="disc item ${on('meal', 'meal')}" data-sel="meal|meal" aria-label="Meal">${itemGlyph('meal')}</button>`);
   h.backpack.forEach((b) => cells.push(slot('pack', b)));
   while (cells.length < LW.MAX_BACKPACK) cells.push(empty());
-  const kit = adding ? pickerHTML() : `<div class="kit">${portraitURL ? `<img src="${portraitURL}" alt="">` : ''}
-      <div class="worn"><span class="head">${worn('helmet')}</span>${weapon(h.weapons[0])}<span class="body">${worn('chainmail')}</span>${weapon(h.weapons[1])}</div>
-      <div class="specials">${others.join('')}</div></div>`;
+  const kit = adding ? pickerHTML() : `<div class="kit">${heroURL ? `<img src="${heroURL}" alt="">` : ''}
+      <div class="doll"><span class="sh l">${around[0]}</span><span class="head">${worn('helmet')}</span><span class="sh r">${around[1]}</span>
+        <span class="wl">${weapon(h.weapons[0])}</span><span class="body">${worn('chainmail')}</span><span class="wr">${weapon(h.weapons[1])}</span>
+        <span class="belt">${around[2]}${around[3]}</span></div>
+      ${flourish}<div class="specials">${rest.join('')}</div></div>`;
   return `${kit}
     ${ruled(h.noPack ? 'Backpack <small>lost: find another to carry anything</small>' : `Backpack <small>${h.backpack.length + h.meals} of ${LW.MAX_BACKPACK}</small>`)}
     <div class="bag"><span class="disc lit">${glyph('knapsack')}</span><div class="pack">${cells.map((c) => `<div class="cell">${c}</div>`).join('')}</div></div>
