@@ -77,15 +77,9 @@ function forgetAdventure(id) {
 }
 if (adventure()) useAdventure(adv.at);
 const advName = (id) => (adv.list.find((a) => a.id === id) || {}).name || `Adventure ${ROMAN[id - 1] || id}`;
-/* backups: an adventure's whole state (its list entry and every lw-a<n>-* key) written as JSON to a
-   "backups" folder, as <name>.<yyyy>.<mm>.<dd>.json. A page cannot write to disk by itself, so the
-   owner picks the folder once (the browser's File System Access API) and its handle is kept in
-   IndexedDB; a browser without that API downloads the file instead. */
-const HANDLES = { db: null,
-  open() { return this.db || (this.db = new Promise((ok, no) => { const r = indexedDB.open('lw-handles', 1); r.onupgradeneeded = () => r.result.createObjectStore('h'); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); })); },
-  async get(k) { const db = await this.open(); return new Promise((ok) => { const r = db.transaction('h').objectStore('h').get(k); r.onsuccess = () => ok(r.result || null); r.onerror = () => ok(null); }); },
-  async set(k, v) { const db = await this.open(); return new Promise((ok) => { const t = db.transaction('h', 'readwrite'); t.objectStore('h').put(v, k); t.oncomplete = ok; t.onerror = ok; }); },
-};
+/* backups: an adventure's whole state (its list entry and every lw-a<n>-* key) as JSON, named
+   <name>.<yyyy>.<mm>.<dd>.json. tools/serve.py keeps them in the project's backups/ folder (a page
+   cannot write to disk by itself); served any other way, the file is downloaded instead. */
 function backupOf(id) {
   const a = adv.list.find((x) => x.id === id), keys = {};
   store.keys().filter((k) => k.startsWith(`lw-a${id}-`)).sort().forEach((k) => { const v = store.get(k); try { keys[k] = JSON.parse(v); } catch (e) { keys[k] = v; } });
@@ -93,61 +87,32 @@ function backupOf(id) {
 }
 function backupName(id) {
   const d = new Date(), two = (n) => String(n).padStart(2, '0');
-  const name = advName(id).replace(/[\\/:*?"<>|\x00-\x1f]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/\.+$/, '') || `adventure ${id}`;
+  const name = advName(id).replace(/[\\/:*?"<>|\x00-\x1f]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/^\.+|\.+$/g, '') || `adventure ${id}`;
   return `${name}.${d.getFullYear()}.${two(d.getMonth() + 1)}.${two(d.getDate())}.json`;
-}
-async function backupsFolder() {
-  let dir = await HANDLES.get('backups').catch(() => null);
-  if (dir && (await dir.queryPermission({ mode: 'readwrite' })) !== 'granted' && (await dir.requestPermission({ mode: 'readwrite' })) !== 'granted') dir = null;
-  if (!dir) {
-    LW.UI.toast('Choose the backups folder (or the folder to make it in)');
-    dir = await window.showDirectoryPicker({ id: 'lw-backups', mode: 'readwrite' });
-    if (dir.name !== 'backups') dir = await dir.getDirectoryHandle('backups', { create: true });
-    await HANDLES.set('backups', dir);
-  }
-  return dir;
 }
 async function backupAdventure(id) {
   const name = backupName(id), text = JSON.stringify(backupOf(id), null, 2);
   try {
-    if (!window.showDirectoryPicker) {
-      const a = el('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' })); a.download = name;
-      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-      return void LW.UI.toast(`Downloaded ${name}`);
-    }
-    const dir = await backupsFolder(), w = await (await dir.getFileHandle(name, { create: true })).createWritable();
-    await w.write(text); await w.close();
-    LW.sfx('select'); LW.UI.toast(`Backed up to ${dir.name}/${name}`);
-  } catch (e) {
-    if (e && e.name === 'AbortError') return; // the owner closed the folder picker
-    LW.UI.toast(`The backup failed: ${(e && e.message) || e}`);
-  }
+    const r = await fetch(`api/backups/${encodeURIComponent(name)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: text });
+    if (r.ok) { LW.sfx('select'); return void LW.UI.toast(`Backed up to backups/${name}`); }
+    if (r.status !== 404 && r.status !== 405 && r.status !== 501) return void LW.UI.toast(`The backup failed: ${((await r.json().catch(() => ({}))).error) || r.status}`);
+  } catch (e) { /* no server to keep it: download it below */ }
+  const a = el('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' })); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  LW.UI.toast(`Downloaded ${name} (tools/serve.py would keep it in backups/)`);
 }
-/* restoring: an adventure's own "restore" puts a backup back in its place (after asking, since its
-   present state is lost); the one under "A new adventure" makes the backup a new adventure.
-   The picker opens in the backups folder when the browser can, else it is a plain file input. */
-async function pickBackup() {
-  if (window.showOpenFilePicker) {
-    // the folder the backups went to; an id would win over it with wherever the last picker was left
-    const startIn = await HANDLES.get('backups').catch(() => null);
-    const [h] = await window.showOpenFilePicker({ ...(startIn ? { startIn } : { id: 'lw-backups' }), types: [{ description: 'Adventure backup', accept: { 'application/json': ['.json'] } }] });
-    return h.getFile();
-  }
-  return new Promise((ok, no) => {
-    const i = el('input'); i.type = 'file'; i.accept = '.json,application/json';
-    i.onchange = () => (i.files[0] ? ok(i.files[0]) : no(new DOMException('', 'AbortError')));
-    i.oncancel = () => no(new DOMException('', 'AbortError'));
-    i.click();
-  });
-}
-async function readBackup() {
-  const file = await pickBackup();
+
+/* restoring: "restore" lists the backups on the plaque to choose from (or "other file" for one kept
+   elsewhere). An adventure's own restore replaces its state; the one under "A new adventure" makes
+   the backup a new adventure, so nothing kept is overwritten. `restoring` is {id ('' for a new one),
+   files (the backups listed, or null), chosen (a file read from disk, waiting to be confirmed)}. */
+function parseBackup(text, file) {
   let b = null;
-  try { b = JSON.parse(await file.text()); } catch (e) { /* told below */ }
-  if (!b || b.kind !== 'lone-wolf adventure backup' || b.version !== 1 || !b.adventure || !b.keys || typeof b.keys !== 'object') throw new Error(`${file.name} is not an adventure backup`);
+  try { b = JSON.parse(text); } catch (e) { /* told below */ }
+  if (!b || b.kind !== 'lone-wolf adventure backup' || b.version !== 1 || !b.adventure || !b.keys || typeof b.keys !== 'object') throw new Error(`${file} is not an adventure backup`);
   const from = `lw-a${b.adventure.id}-`;
-  if (Object.keys(b.keys).some((k) => !k.startsWith(from))) throw new Error(`${file.name} holds keys of another adventure`);
-  return { file: file.name, b, from };
+  if (Object.keys(b.keys).some((k) => !k.startsWith(from))) throw new Error(`${file} holds keys of another adventure`);
+  return { file, b, from };
 }
 function putBackup(a, { b, from }) {
   store.keys().filter((k) => k.startsWith(`lw-a${a.id}-`)).forEach(store.del);
@@ -156,20 +121,44 @@ function putBackup(a, { b, from }) {
   if (b.adventure.name) a.name = String(b.adventure.name).slice(0, 40);
   keepAdventures();
 }
-const restoreFailed = (e) => { if (!e || e.name !== 'AbortError') LW.UI.toast(`Nothing restored: ${(e && e.message) || e}`); }; // AbortError: the picker was closed
-async function restoreAdventure(id) {
-  try {
-    const r = await readBackup();
-    if (id) { restoring = { id, ...r }; LW.sfx('select'); return void renderRight(); } // asked on the plaque
-    newAdventure(); putBackup(adventure(), r); shelf = false; LW.sfx('select'); render();
-    LW.UI.toast(`Restored ${r.file} as ${advName(adv.at)}`);
-  } catch (e) { restoreFailed(e); }
+const restoreFailed = (e) => LW.UI.toast(`Nothing restored: ${(e && e.message) || e}`);
+async function openRestore(id) {
+  let files = null;
+  try { const r = await fetch('api/backups', { cache: 'no-store' }); if (r.ok) files = (await r.json()).map((f) => f.name); } catch (e) { /* not served by tools/serve.py */ }
+  if (files && files.length) { restoring = { id, files, chosen: null }; LW.sfx('select'); return void renderRight(); }
+  restoring = { id, files: null, chosen: null };
+  restoreFromDisk();
 }
-function restoreInto(id) {
-  const a = adv.list.find((x) => x.id === id), r = restoring;
-  restoring = null;
-  if (a && r && r.id === id) { putBackup(a, r); LW.sfx('select'); LW.UI.toast(`Restored ${r.file} to ${advName(id)}`); }
-  renderRight();
+function restoreFromDisk() {
+  const i = el('input'); i.type = 'file'; i.accept = '.json,application/json';
+  i.onchange = async () => {
+    const f = i.files[0]; if (!f || !restoring) return;
+    try { restoring.chosen = parseBackup(await f.text(), f.name); LW.sfx('select'); renderRight(); } catch (e) { restoring = null; restoreFailed(e); renderRight(); }
+  };
+  i.click();
+}
+async function restoreGo() {
+  const r = restoring; if (!r) return;
+  try {
+    let got = r.chosen;
+    if (!got) {
+      const name = ($('#restorefile') || {}).value; if (!name) return;
+      const res = await fetch(`api/backups/${encodeURIComponent(name)}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`${name} could not be read`);
+      got = parseBackup(await res.text(), name);
+    }
+    restoring = null;
+    if (r.id) { const a = adv.list.find((x) => x.id === r.id); if (!a) return void renderRight(); putBackup(a, got); }
+    else { newAdventure(); putBackup(adventure(), got); }
+    LW.sfx('select'); render();
+    LW.UI.toast(`Restored ${got.file} ${r.id ? 'to' : 'as'} ${advName(r.id || adv.at)}`);
+  } catch (e) { restoring = null; restoreFailed(e); renderRight(); }
+}
+function restoreRow(id) {
+  const r = restoring, go = id ? 'replace it' : 'restore it';
+  if (r.chosen) return `<span>${id ? 'Replace it with' : 'Restore'} ${esc(r.chosen.file)}?</span><button type="button" class="inkbtn" data-restorego>${go}</button><button type="button" class="inkbtn" data-restorecancel>keep it</button>`;
+  return `<select id="restorefile" class="restorefile" aria-label="Backup to restore">${r.files.map((f) => `<option>${esc(f)}</option>`).join('')}</select>
+    <button type="button" class="inkbtn" data-restorego>${go}</button><button type="button" class="inkbtn" data-restoredisk>other file</button><button type="button" class="inkbtn" data-restorecancel>cancel</button>`;
 }
 const carriedBy = (a) => { try { return JSON.parse(store.get(charKey(a))); } catch (e) { return null; } };
 
@@ -339,8 +328,8 @@ function adventuresHTML() {
     const b = a.book && BOOKS[a.book], sv = b && saved(a.book, a.id), kept = carriedBy(a.id), at = sv && sv.s && sv.s.at;
     const hero = at ? sv.s.hero : kept && kept.hero, rank = hero ? LW.rankOf(hero) || 'Kai Lord' : '';
     const where = at ? `${hero.ep > 0 ? 'Continue at' : 'Fell at'} section ${at}` : kept ? `Waits after ${kept.fromTitle}` : 'Choose a book';
-    const more = restoring && restoring.id === a.id
-      ? `<span>Replace it with ${esc(restoring.file)}?</span><button type="button" class="inkbtn" data-restoreto="${a.id}">replace it</button><button type="button" class="inkbtn" data-restoreto="">keep it</button>`
+    const more = restoring && restoring.id === a.id && (restoring.files || restoring.chosen)
+      ? restoreRow(a.id)
       : forgetting === a.id
       ? `<span>Forget this adventure?</span><button type="button" class="inkbtn" data-forget="${a.id}" data-sure>forget it</button><button type="button" class="inkbtn" data-forget="">keep it</button>`
       : renaming === a.id
@@ -353,7 +342,7 @@ function adventuresHTML() {
   return `<div class="shelfpage">${ruled('Your adventures')}
     <div class="plaqs">${adv.list.map(plaque).join('')}
       <div class="plaq"><button type="button" class="plaqmain" data-advnew><span class="med">${glyph('wolf-head')}</span><span class="plaqtext"><b>A new adventure</b><i>Another game, with a Lone Wolf of its own</i></span></button>
-        <span class="plaqmore"><button type="button" class="inkbtn" data-restore>restore</button></span></div></div></div>`;
+        <span class="plaqmore">${restoring && !restoring.id && (restoring.files || restoring.chosen) ? restoreRow('') : '<button type="button" class="inkbtn" data-restore>restore</button>'}</span></div></div></div>`;
 }
 function shelfHTML() {
   const kept = LW.Character.load(), can = (id) => kept && !kept.completed.includes(id);
@@ -1052,7 +1041,7 @@ bookEl.addEventListener('click', (e) => {
   if (busy) return;
   if (mode === 'title' && !('forget' in d)) forgetting = null;
   if (mode === 'title' && !('rename' in d)) renaming = null;
-  if (mode === 'title' && !('restoreto' in d)) restoring = null;
+  if (mode === 'title' && !('restorego' in d || 'restoredisk' in d)) restoring = null;
   if (!('arm' in d)) armed = null;
   if (d.arm) { armed = armed === +d.arm ? null : +d.arm; LW.sfx('select'); return void renderRight(); }
   if (d.back) return void guard(() => goBack(+d.back));
@@ -1062,8 +1051,10 @@ bookEl.addEventListener('click', (e) => {
     const b = adventure().book, alive = b && BOOKS[b] && hasSave(b) && saved(b).s.hero.ep > 0; // a fallen one goes to the books, to start over
     if (alive) guard(() => begin(b)); else { shelf = true; LW.sfx('select'); render(); }
   }
-  else if ('restore' in d) restoreAdventure(d.restore);
-  else if ('restoreto' in d) { if (d.restoreto) restoreInto(d.restoreto); else { restoring = null; LW.sfx('select'); renderRight(); } }
+  else if ('restore' in d) openRestore(d.restore);
+  else if ('restorego' in d) restoreGo();
+  else if ('restoredisk' in d) restoreFromDisk();
+  else if ('restorecancel' in d) { LW.sfx('select'); renderRight(); } // restoring was cleared above
   else if ('advnew' in d) { newAdventure(); shelf = true; LW.sfx('select'); render(); }
   else if ('shelf' in d) { if (d.shelf) useAdventure(d.shelf); shelf = !!d.shelf; LW.sfx('select'); render(); }
   else if (d.backup) backupAdventure(d.backup);

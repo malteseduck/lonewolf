@@ -4,9 +4,12 @@ A personal-use player for the Lone Wolf gamebooks: a flat book after *Lone Wolf 
 Framed story page on the left, a panel on the right (Kai Disciplines, inventory, map, combat).
 Combat is on the page with medallion controls. No build step. Serve the folder and open it:
 
-    python -m http.server 8765 --bind 127.0.0.1
+    python tools/serve.py
 
 then go to http://localhost:8765/. It must be served, not opened as a file: `main.js` is an ES module.
+`tools/serve.py` is `python -m http.server 8765 --bind 127.0.0.1` plus somewhere to keep backups:
+an adventure's "backup" writes `backups/<name>.<date>.json`, and "restore" lists them. Served any
+other way, backups are downloaded instead. `--bind 0.0.0.0` serves it to other devices at home.
 
 | | |
 |---|---|

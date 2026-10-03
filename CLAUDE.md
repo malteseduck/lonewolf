@@ -16,10 +16,11 @@ not extend them. `shared/` is used by all of them, so check A-C still load after
 ## Run it
 
 ```sh
-python -m http.server 8765 --bind 127.0.0.1
+python tools/serve.py
 ```
 
-Then open http://localhost:8765/. `.claude/launch.json` has the same
+Then open http://localhost:8765/. It is `http.server` plus the backups API (`backups/`, git-ignored;
+see Storage in `docs/reference/architecture.md`). `.claude/launch.json` has the same
 server as `lone-wolf` for the preview tools. It must be served: `main.js` is an ES module.
 
 There are no automated tests and no linter. `node --check <file>` catches syntax errors, but on

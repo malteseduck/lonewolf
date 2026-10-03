@@ -6,3 +6,4 @@ art/*
 data/reference/
 # the owner's adventure backups (written by the page's "backup" button): personal, never committed
 backups/
+__pycache__/

@@ -52,7 +52,7 @@ data/projectaon/            git-ignored. Downloaded pages and images, generated 
                             maps/: sheets 1-2 of Project Aon's Maps of Magnamund (reference for LASTLANDS.detail)
 data/reference/             git-ignored. Reference images fetched for the owner: a fan-made world map of
                             Magnamund (4658x5234, World Anvil); SOURCES.txt says where each came from
-.claude/launch.json         local server definition (python http.server on 8765)
+.claude/launch.json         local server definition (tools/serve.py on 8765)
 ```
 
 ## Load order
@@ -95,7 +95,7 @@ The player keeps its own view state in module variables in `main.js`:
 discipline), `B` (the fight in progress, or null), `busy` (input lock during animations),
 `mapScan` (show the printed map instead of the journey map), `shelf` (the title page shows the open
 adventure's books rather than the list of adventures), `forgetting` (the adventure whose "forget" is
-asking to be confirmed), `renaming` (the adventure whose name box is open), `restoring` (a backup read and waiting for "replace it"), `adv` (the adventures, as stored in `lw-adventures`), `armed` (steps back
+asking to be confirmed), `renaming` (the adventure whose name box is open), `restoring` (the restore row open on a plaque: `{id, files, chosen}`), `adv` (the adventures, as stored in `lw-adventures`), `armed` (steps back
 to the past place on the map whose "go back" question is showing).
 
 `book` and `game` are null until a book is opened.
@@ -115,22 +115,21 @@ plus one. Forgetting an adventure removes every `lw-a<n>-*` key.
 **Backups.** An adventure's "backup" button (`backupAdventure` in `main.js`) writes its whole state
 as JSON: `{kind: 'lone-wolf adventure backup', version: 1, made, adventure: {id, book, name?}, keys:
 {<every lw-a<n>-* key>: its parsed value}}`, named `<name>.<yyyy>.<mm>.<dd>.json` (the adventure's
-name, or "Adventure II"; a second backup the same day replaces the first). It goes into a folder
-called `backups`: the first time, the browser asks for a folder (File System Access API, Chromium
-browsers); picking any other folder makes `backups` inside it. The folder's handle is kept in
-IndexedDB (`lw-handles`, key `backups`), so later backups go straight there, though the browser may
-ask again for permission after a reload. Without that API the file is downloaded instead. The
-project's own `backups/` is git-ignored.
+name, or "Adventure II"; a second backup the same day replaces the first). A page cannot write to
+disk, so `tools/serve.py` does it: the page POSTs to `api/backups/<name>` and the server writes
+`backups/<name>` in the project (git-ignored), with no dialog. Served any other way (plain
+`http.server`, which answers a POST with 501), the file is downloaded instead.
 
-**Restore** (`restoreAdventure`) reads such a file. An adventure's own "restore" asks on its plaque
-("Replace it with <file>?"), then `putBackup` removes that adventure's `lw-a<n>-*` keys and writes
-the backup's in their place; the "restore" under "A new adventure" makes it a new adventure with
-the next id instead, so nothing already kept is overwritten. Either way each `lw-a<old>-*` key is
-written as `lw-a<n>-*` (a value kept as a string goes back as it is, anything else as JSON), the
-last book comes from the backup, and its name too when it has one. The file picker (`showOpenFilePicker`) opens in the
-backups folder once a backup has chosen it (its stored handle as `startIn`; before that, wherever
-the last picker was left), else it is a plain file input. A file that is not a
-version-1 backup, or that holds another adventure's keys, is refused with a toast.
+**Restore** (`openRestore`) lists the backups from `GET api/backups` (newest first) in a drop-down on
+the plaque, with "replace it" (or "restore it"), "other file" (a file input, for a backup kept
+elsewhere; asks "Replace it with <file>?") and "cancel". With no server list, or none kept, it goes
+straight to the file input. An adventure's own "restore" replaces it: `putBackup` removes that
+adventure's `lw-a<n>-*` keys and writes the backup's in their place. The "restore" under "A new
+adventure" makes it a new adventure with the next id instead, so nothing already kept is
+overwritten. Either way each `lw-a<old>-*` key is written as `lw-a<n>-*` (a value kept as a string
+goes back as it is, anything else as JSON), the last book comes from the backup, and its name too
+when it has one. A file that is not a version-1 backup, or that holds another adventure's keys, is
+refused with a toast.
 
 | Key | Holds |
 |---|---|
