@@ -102,7 +102,12 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
 
 - **Shell heredocs have silently truncated files here** when the content contained certain quote
   patterns. Write files with the Write tool, or write a patch script to the scratchpad and run it.
-- The local server sometimes resets a connection on first load. Reload before debugging.
+- Python's server in its default HTTP/1.0 mode cut files over ~510 KB short on Windows (the old
+  "connection reset on first load"). `tools/serve.py` speaks HTTP/1.1, which fixes it; plain
+  `python -m http.server` still has it.
+- Over HTTPS (Tailscale) or at an address with `?offline`, the page is served by the service worker's
+  copy and changes appear only after its sync and a reload (docs/reference/offline.md). On
+  `http://localhost:8765/` there is no service worker.
 - The browser console keeps errors from earlier page loads. Confirm an error is current before
   chasing it.
 - Re-run `python tools/import_projectaon.py <book>` after changing the importer; the page loads
@@ -119,6 +124,7 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
 | `docs/reference/importer.md` | The downloader and importer: what is parsed and how |
 | `docs/reference/interface.md` | The interface: pages, panels, map, combat, art pipeline |
 | `docs/reference/map-places.md` | The procedure for putting a book on the map: places, layout, checks |
+| `docs/reference/offline.md` | Playing offline on the iPad: Tailscale setup, the service worker, updates |
 | `docs/reference/items.md` | The procedure for a book's item table and its fight pictures: reading, icons, checks |
 | `docs/reference/rules-books.md` | The books' rules: common, Kai, Magnakai, and an addendum per book; what the engine applies |
 | `docs/plan.md` | State of the work, decisions made, what is waiting on the owner, next steps. **Read this first in a new session.** |

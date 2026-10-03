@@ -4,8 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lone Wolf: The Tome</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almendra+Display&family=Charm:wght@400;700&family=Metamorphous&display=swap">
+<meta name="theme-color" content="#0a0706">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lone Wolf">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/app/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/fonts/fonts.css">
 <link rel="stylesheet" href="shared/shared.css">
 <style>
 /* Layout, after Lone Wolf HD: the story is written on a framed left page; the right page is a darker
@@ -36,6 +42,9 @@ body { background: var(--void) var(--wood, none) center / 820px; color: var(--bo
 .top { position: fixed; z-index: 6; left: 18px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 20px; font: 400 0.72rem var(--title); letter-spacing: 0.14em; text-transform: uppercase; }
 .top a, .top button { color: #a89878; background: none; border: 0; padding: 0; font: inherit; letter-spacing: inherit; text-transform: inherit; text-decoration: none; text-shadow: 0 1px 3px #000; }
 .top a:hover, .top button:hover { color: #fff; }
+.top #offline { color: var(--o-dim); cursor: default; }
+.top #offline.act { color: var(--ember); cursor: pointer; }
+.top #offline.act:hover { color: #fff; }
 
 /* ---------- the book ---------- */
 .book { position: relative; width: var(--bw); aspect-ratio: 1.4; font-size: calc(var(--bw) / 59); transition: opacity 0.45s; z-index: 1; }
@@ -423,6 +432,7 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
   <a href="prototypes/index.html">Prototypes</a>
   <button type="button" id="btn-sound">Sound on</button>
   <button type="button" id="btn-new">New game</button>
+  <button type="button" id="offline" hidden></button>
 </nav>
 <div class="stage">
   <div class="book" id="book">

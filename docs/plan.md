@@ -104,6 +104,10 @@ Smaller things noted along the way:
 
 ## Waiting on the owner
 
+- **Offline on the iPad** (built and tested on the PC 2026-10-03, docs/reference/offline.md): the owner
+  sets up Tailscale on the PC and iPad and runs `tailscale serve --bg 8765`, then adds the page to
+  the iPad's Home Screen. Not yet tried on the iPad itself.
+
 - **Full-size fan maps** (optional): the Project Aon forum's attachments need a login. If the owner
   saves them into `art/reference/projectaon-forum-maps/`, they replace the thumbnails there.
 

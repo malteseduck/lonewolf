@@ -16,9 +16,13 @@ city.js                     ES module: paints a town plan or a crypt (cityCanvas
 items-01fftd.js             ES module: Book 1's items and what each section gives, takes or gates, by hand
                             (docs/reference/book-format.md, "Item tables")
 buildings.js                ES module: the map's towns and buildings as vector pen-and-wash drawings
+sw.js                       service worker: the offline copy (docs/reference/offline.md)
+manifest.webmanifest        the Home Screen app: name, colours, icons (assets/app/)
 art/manifest.json           optional pictures in art/: enemy sprites, the map figure, the Kai panel portrait
 assets/map/                 widman.png + widman.json: engraved map symbols (CC0), built by tools/build_map_atlas.py
 assets/icons/               discipline glyphs from game-icons.net (CC BY 3.0, credited in README.txt)
+assets/fonts/               the page's three fonts and fonts.css, from Google Fonts (SIL OFL, licences beside them)
+assets/app/                 the Home Screen icon (README.txt says how it was made)
 assets/plates/              plates.json: pictures for enemies their book does not picture; free engravings
                             from Wikimedia Commons (credited in README.txt)
 CLAUDE.md, README.md
@@ -36,6 +40,7 @@ prototypes/                 earlier experiments, kept working, not developed
   index.html                chooser page for the three
   a-book/, b-map/, c-3d/    load ../../shared
 tools/
+  serve.py                  the local server: static files, backups/ (api/backups), the offline list (api/offline)
   fetch_projectaon.py       downloads one book into data/projectaon/<code>/
   import_projectaon.py      converts it to data/projectaon/<code>/book.js and rewrites data/projectaon/index.js
   build_map_atlas.py        packs the downloaded Widman symbol pack into assets/map/widman.png
@@ -118,7 +123,12 @@ as JSON: `{kind: 'lone-wolf adventure backup', version: 1, made, adventure: {id,
 name, or "Adventure II"; a second backup the same day replaces the first). A page cannot write to
 disk, so `tools/serve.py` does it: the page POSTs to `api/backups/<name>` and the server writes
 `backups/<name>` in the project (git-ignored), with no dialog. Served any other way (plain
-`http.server`, which answers a POST with 501), the file is downloaded instead.
+`http.server`, which answers a POST with 501), the file is downloaded instead. With the PC out of
+reach (no answer within 20 s) the backup waits in `lw-pending-backups`, and `flushBackups` sends it
+when the PC answers again (a sync reaching it, or the device coming online).
+
+The offline copy keeps its files in the Cache API, not localStorage: see
+`docs/reference/offline.md`.
 
 **Restore** (`openRestore`) lists the backups from `GET api/backups` (newest first) in a drop-down on
 the plaque, with "replace it" (or "restore it"), "other file" (a file input, for a backup kept
@@ -137,6 +147,7 @@ refused with a toast.
 | `lw-a<n>-save-<code>` | adventure n's save for a book: `{s, history}`, e.g. `lw-a1-save-01fftd` |
 | `lw-a<n>-character` | adventure n's carried character: `{hero, from, fromTitle, completed: [codes]}` |
 | `lw-sound` | `on` or `off` |
+| `lw-pending-backups` | backups made with the PC out of reach, waiting to be sent: `[{name, text}]` |
 | `lw-proto-book`, `lw-proto-map`, `lw-proto-3d` | saves for prototypes A, B, C |
 
 Before adventures, saves were `lw-save-<code>`, `lw-character` and `lw-book` (and `lw-save` for the

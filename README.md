@@ -9,7 +9,8 @@ Combat is on the page with medallion controls. No build step. Serve the folder a
 then go to http://localhost:8765/. It must be served, not opened as a file: `main.js` is an ES module.
 `tools/serve.py` is `python -m http.server 8765 --bind 127.0.0.1` plus somewhere to keep backups:
 an adventure's "backup" writes `backups/<name>.<date>.json`, and "restore" lists them. Served any
-other way, backups are downloaded instead. `--bind 0.0.0.0` serves it to other devices at home.
+other way, backups are downloaded instead. `--bind 0.0.0.0` serves it to other devices at home. To play offline on an iPad and sync with the
+PC when in reach, see `docs/reference/offline.md` (Tailscale).
 
 | | |
 |---|---|

@@ -8,13 +8,21 @@ Static files as `python -m http.server` serves them, from the project root, plus
     GET  /api/backups/<name>   one backup's JSON
     POST /api/backups/<name>   write a backup (JSON body, up to 5 MB)
 
+    GET  /api/offline          what the offline copy holds: {version, files: {path: hash}}
+
 A page cannot write to disk by itself; this lets the "backup" button do it without a dialog.
 Names are plain file names ending in .json: no folders, so nothing outside backups/ is touched.
+
+/api/offline is read by sw.js, which keeps a copy of every file listed so the player runs with no
+connection (see docs/reference/offline.md). A file whose hash changes is fetched again; `version`
+changes whenever any file does.
 """
 import argparse
+import hashlib
 import json
 import os
 import re
+import threading
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import unquote
@@ -24,8 +32,60 @@ BACKUPS = os.path.join(ROOT, 'backups')
 MAX = 5 * 1024 * 1024
 NAME = re.compile(r'^[^\\/:*?"<>|\x00-\x1f]{1,120}\.json$')
 
+# What the offline copy holds: the player and everything it loads. Project Aon's section pages and
+# the importer's notes stay behind (the page reads book.js and the images), as do the prototypes,
+# docs, tools and the reference images.
+OFFLINE_FILES = ['index.html', 'manifest.webmanifest']
+OFFLINE_DIRS = ['shared', 'assets', 'art', 'data/projectaon']
+OFFLINE_SKIP_DIRS = {'art/reference', '__pycache__'}
+OFFLINE_SKIP_EXT = {'.htm', '.html', '.txt', '.md', '.py', '.pyc'}
+_hashes, _hash_lock = {}, threading.Lock()
+
+
+def _hash(rel):
+    """sha1 of a file, remembered while its size and time stay the same."""
+    st = os.stat(os.path.join(ROOT, rel))
+    key = (st.st_size, st.st_mtime_ns)
+    with _hash_lock:
+        got = _hashes.get(rel)
+        if got and got[0] == key:
+            return got[1]
+    h = hashlib.sha1()
+    with open(os.path.join(ROOT, rel), 'rb') as f:
+        for chunk in iter(lambda: f.read(1 << 16), b''):
+            h.update(chunk)
+    with _hash_lock:
+        _hashes[rel] = (key, h.hexdigest()[:16])
+    return _hashes[rel][1]
+
+
+def offline_list():
+    rels = [f for f in OFFLINE_FILES if os.path.isfile(os.path.join(ROOT, f))]
+    rels += [e.name for e in os.scandir(ROOT) if e.is_file() and e.name.endswith('.js') and e.name != 'sw.js']
+    for top in OFFLINE_DIRS:
+        for dirpath, dirnames, filenames in os.walk(os.path.join(ROOT, top)):
+            rel_dir = os.path.relpath(dirpath, ROOT).replace(os.sep, '/')
+            dirnames[:] = [d for d in dirnames if not d.startswith('.') and d not in OFFLINE_SKIP_DIRS
+                           and f'{rel_dir}/{d}' not in OFFLINE_SKIP_DIRS]
+            for f in filenames:
+                if not f.startswith('.') and os.path.splitext(f)[1].lower() not in OFFLINE_SKIP_EXT:
+                    rels.append(f'{rel_dir}/{f}')
+    files = {r: _hash(r) for r in sorted(set(rels))}
+    version = hashlib.sha1(json.dumps(files, sort_keys=True).encode()).hexdigest()[:16]
+    return {'version': version, 'files': files}
+
 
 class Handler(SimpleHTTPRequestHandler):
+    # HTTP/1.0 closes the connection after each file, and on Windows that close cut files over about
+    # 510 KB short whenever the browser had asked to keep the connection (the "reset on first load")
+    protocol_version = 'HTTP/1.1'
+    extensions_map = {**SimpleHTTPRequestHandler.extensions_map, '.webmanifest': 'application/manifest+json',
+                      '.woff2': 'font/woff2', '.js': 'text/javascript', '.mjs': 'text/javascript'}
+
+    def end_headers(self):
+        if self.path.split('?', 1)[0] == '/sw.js':
+            self.send_header('Cache-Control', 'no-cache')  # so a new service worker is seen at once
+        super().end_headers()
     def _json(self, code, body):
         data = json.dumps(body).encode('utf-8')
         self.send_response(code)
@@ -42,6 +102,8 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         path = self.path.split('?', 1)[0]
+        if path == '/api/offline':
+            return self._json(200, offline_list())
         if path in ('/api/backups', '/api/backups/'):
             os.makedirs(BACKUPS, exist_ok=True)
             files = [e for e in os.scandir(BACKUPS) if e.is_file() and NAME.match(e.name)]
@@ -91,6 +153,9 @@ def main():
     p.add_argument('port', nargs='?', type=int, default=8765)
     p.add_argument('--bind', default='127.0.0.1')
     a = p.parse_args()
+    # the default queue of 5 waiting connections overflows when a page (or the offline copy) asks for
+    # many files at once, and Windows answers the overflow with a reset
+    ThreadingHTTPServer.request_queue_size = 128
     server = ThreadingHTTPServer((a.bind, a.port), partial(Handler, directory=ROOT))
     print(f'Serving {ROOT} on http://{a.bind}:{a.port}/ (backups in {BACKUPS})', flush=True)
     try:

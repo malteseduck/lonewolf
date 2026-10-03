@@ -9,7 +9,8 @@
 body
   svg#gear            bronze clockwork, fixed, mostly off the right edge; turns a notch per page turn
   .shade, .glow       vignette and the warm light from the left
-  nav.top             Prototypes / Sound / New game (bottom-left)
+  nav.top             Prototypes / Sound / New game (bottom-left), then #offline: how the offline copy
+                      stands (docs/reference/offline.md); "Update ready: reload" reloads when touched
   .stage > .book#book > .spread
       section#pl.page.left        the story page (ornate frame via ::before)
       .edges                      the stacked page edges between the two pages

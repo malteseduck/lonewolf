@@ -90,13 +90,40 @@ function backupName(id) {
   const name = advName(id).replace(/[\\/:*?"<>|\x00-\x1f]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/^\.+|\.+$/g, '') || `adventure ${id}`;
   return `${name}.${d.getFullYear()}.${two(d.getMonth() + 1)}.${two(d.getDate())}.json`;
 }
+// a call to the PC, given up after a while: over Tailscale a PC that is off can leave a request hanging
+function api(path, opts = {}, ms = 8000) {
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), ms);
+  return fetch(path, { cache: 'no-store', ...opts, signal: ctl.signal }).finally(() => clearTimeout(t));
+}
+const postBackup = (name, text) => api(`api/backups/${encodeURIComponent(name)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: text }, 20000);
+/* backups made with the PC out of reach wait here (lw-pending-backups: [{name, text}]) and are sent
+   when it is next in reach; a newer one of the same name replaces the one waiting */
+const pending = () => { try { return JSON.parse(store.get('lw-pending-backups')) || []; } catch (e) { return []; } };
+const keepPending = (list) => (list.length ? store.set('lw-pending-backups', JSON.stringify(list)) : store.del('lw-pending-backups'));
+let flushing = false;
+async function flushBackups() {
+  if (flushing || !pending().length) return;
+  flushing = true;
+  let sent = 0;
+  try {
+    for (const b of pending()) {
+      const r = await postBackup(b.name, b.text).catch(() => null);
+      if (!r || !r.ok) break;
+      keepPending(pending().filter((x) => x.name !== b.name || x.text !== b.text)); sent++;
+    }
+  } finally { flushing = false; }
+  if (sent) LW.UI.toast(`${sent} waiting backup${sent > 1 ? 's' : ''} sent to the PC`);
+}
 async function backupAdventure(id) {
   const name = backupName(id), text = JSON.stringify(backupOf(id), null, 2);
-  try {
-    const r = await fetch(`api/backups/${encodeURIComponent(name)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: text });
-    if (r.ok) { LW.sfx('select'); return void LW.UI.toast(`Backed up to backups/${name}`); }
-    if (r.status !== 404 && r.status !== 405 && r.status !== 501) return void LW.UI.toast(`The backup failed: ${((await r.json().catch(() => ({}))).error) || r.status}`);
-  } catch (e) { /* no server to keep it: download it below */ }
+  let r = null;
+  try { r = await postBackup(name, text); } catch (e) { /* out of reach */ }
+  if (r && r.ok) { LW.sfx('select'); return void LW.UI.toast(`Backed up to backups/${name}`); }
+  if (r && r.status !== 404 && r.status !== 405 && r.status !== 501) return void LW.UI.toast(`The backup failed: ${((await r.json().catch(() => ({}))).error) || r.status}`);
+  if (!r) { // the PC is out of reach: keep it here until it is back
+    keepPending([...pending().filter((x) => x.name !== name), { name, text }]);
+    LW.sfx('select'); return void LW.UI.toast(`Backup kept here: it goes to the PC when it is in reach`);
+  }
   const a = el('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' })); a.download = name;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   LW.UI.toast(`Downloaded ${name} (tools/serve.py would keep it in backups/)`);
@@ -124,7 +151,7 @@ function putBackup(a, { b, from }) {
 const restoreFailed = (e) => LW.UI.toast(`Nothing restored: ${(e && e.message) || e}`);
 async function openRestore(id) {
   let files = null;
-  try { const r = await fetch('api/backups', { cache: 'no-store' }); if (r.ok) files = (await r.json()).map((f) => f.name); } catch (e) { /* not served by tools/serve.py */ }
+  try { const r = await api('api/backups', {}, 5000); if (r.ok) files = (await r.json()).map((f) => f.name); } catch (e) { /* out of reach, or not served by tools/serve.py */ }
   if (files && files.length) { restoring = { id, files, chosen: null }; LW.sfx('select'); return void renderRight(); }
   restoring = { id, files: null, chosen: null };
   restoreFromDisk();
@@ -143,7 +170,7 @@ async function restoreGo() {
     let got = r.chosen;
     if (!got) {
       const name = ($('#restorefile') || {}).value; if (!name) return;
-      const res = await fetch(`api/backups/${encodeURIComponent(name)}`, { cache: 'no-store' });
+      const res = await api(`api/backups/${encodeURIComponent(name)}`);
       if (!res.ok) throw new Error(`${name} could not be read`);
       got = parseBackup(await res.text(), name);
     }
@@ -1182,6 +1209,32 @@ fetch('art/manifest.json').then((r) => r.json()).then((m) => {
     im.src = 'art/' + m.portrait.src;
   }
 }).catch(() => {});
+
+/* the offline copy (sw.js, docs/reference/offline.md): kept over https, as Tailscale serves it, or on
+   any address given ?offline (to try it at home). The bar at the foot says how it stands. */
+const offlineBtn = $('#offline');
+function offlineSay(m) {
+  const t = m.state === 'syncing' ? (m.total ? `Saving for offline ${m.done || 0} / ${m.total}` : 'Saving for offline')
+    : m.state === 'update-ready' ? 'Update ready: reload'
+    : m.state === 'ready' ? (m.reach === false ? 'Offline: playing the saved copy' : 'Ready offline')
+    : m.failed ? 'Offline copy not finished: it carries on next time' : m.reach === false ? 'Offline: not saved yet' : '';
+  offlineBtn.hidden = !t; offlineBtn.textContent = t;
+  offlineBtn.classList.toggle('act', m.state === 'update-ready');
+}
+offlineBtn.addEventListener('click', () => { if (offlineBtn.classList.contains('act')) location.reload(); });
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || /[?&]offline\b/.test(location.search))) {
+  navigator.serviceWorker.addEventListener('message', (e) => {
+    if (!e.data || e.data.lw !== 'offline') return;
+    offlineSay(e.data);
+    if (e.data.reach) flushBackups(); // the PC answered: send what waited
+  });
+  const ask = (what) => navigator.serviceWorker.ready.then((reg) => reg.active && reg.active.postMessage(what));
+  navigator.serviceWorker.register('sw.js').then(() => ask('sync')).catch((e) => offlineSay({ failed: String(e) }));
+  window.addEventListener('online', () => ask('sync'));
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') ask('sync'); });
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+} else flushBackups();
+window.addEventListener('online', flushBackups);
 
 window.__lw = { get game() { return game; }, render: () => render(), BOOKS, begin, get plates() { return PLATES; } }; // for poking at a section from the console
 
