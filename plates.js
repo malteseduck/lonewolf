@@ -110,10 +110,12 @@ export function setArt(kind, img) { ART[kind] = img; }
 /* Turn a black-on-white illustration into page ink: sepia line on clear ground, so the picture
    sits in the parchment instead of on it as a white rectangle.
    img.crop, if set, is the part to use, [x, y, w, h] as fractions of the image (a web engraving's
-   caption or plate number). A ruled frame drawn round the picture is found and cut away. */
+   caption or plate number). A ruled frame drawn round the picture is found and cut away.
+   img.levels, if set, is [black, white]: the tones (0-255, after the paper lift) that become full ink
+   and bare paper. A painting needs it: its mid-tones would otherwise all turn to solid ink. */
 const inked = new Map();
 export function inkPlate(img) {
-  const key = img.src + (img.crop || '');
+  const key = img.src + (img.crop || '') + (img.levels || '');
   if (inked.has(key)) return inked.get(key);
   const [cx, cy, cw, ch] = (img.crop || [0, 0, 1, 1]).map((f, i) => f * (i % 2 ? img.naturalHeight : img.naturalWidth));
   const S = Math.min(3, 1100 / cw);
@@ -130,7 +132,8 @@ export function inkPlate(img) {
     const lift = Math.min(1.6, 245 / Math.max(1, paper));
     for (let i = 0, j = 0; i < p.length; i += 4, j++) {
       const lum = (p[i] * 0.3 + p[i + 1] * 0.59 + p[i + 2] * 0.11) * lift;
-      let a = Math.max(0, Math.min(1, (225 - lum) / 150)); a = a * a * (3 - 2 * a);
+      const [lo, hi] = img.levels || [75, 225];
+      let a = Math.max(0, Math.min(1, (hi - lum) / (hi - lo))); a = a * a * (3 - 2 * a);
       A[j] = (p[i + 3] / 255) * a;
     }
     // a fine, grey drawing beside the books' solid pen work looks faint: if the middle of its ink is
@@ -138,7 +141,7 @@ export function inkPlate(img) {
     const inkHist = new Uint32Array(101); let inkN = 0;
     for (let j = 0; j < A.length; j += 3) if (A[j] > 0.08) { inkHist[Math.round(A[j] * 100)]++; inkN++; }
     let mid = 1; for (let v = 0, n = 0; v <= 100; v++) if ((n += inkHist[v]) >= inkN / 2) { mid = Math.max(0.05, v / 100); break; }
-    const deepen = mid < 0.8 ? Math.log(0.8) / Math.log(mid) : 1;
+    const deepen = mid < 0.8 && !img.levels ? Math.log(0.8) / Math.log(mid) : 1; // levels set by hand are left as set
     for (let i = 0, j = 0; i < p.length; i += 4, j++) {
       if (deepen !== 1) A[j] = Math.pow(A[j], deepen);
       p[i] = 46; p[i + 1] = 30; p[i + 2] = 18; p[i + 3] = A[j] * 240;

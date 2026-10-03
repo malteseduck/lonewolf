@@ -1,5 +1,5 @@
 {
-  "_readme": "Pictures for fights whose section has no illustration of its own. The first entry whose match (a regular expression, case ignored) is found in the enemy's name is used, so put the narrower ones first. book, if given, limits an entry to that book (its own characters, or a stand-in that would be wrong elsewhere); book entries go first. src is relative to the project root: files in assets/plates/ are free to redistribute (sources in README.txt); files under data/projectaon/ are Project Aon illustrations on the owner's machine only, from the same book or borrowed from another, and files under art/ are pictures the owner supplied for personal use (git-ignored); a missing one falls back to the drawn emblem. crop, if given, is the part of the picture to use, [x, y, w, h] as fractions. See docs/reference/interface.md, Art pipeline, and docs/reference/items.md, Fight pictures.",
+  "_readme": "Pictures for fights whose section has no illustration of its own. The first entry whose match (a regular expression, case ignored) is found in the enemy's name is used, so put the narrower ones first. book, if given, limits an entry to that book (its own characters, or a stand-in that would be wrong elsewhere); book entries go first. src is relative to the project root: files in assets/plates/ are free to redistribute (sources in README.txt); files under data/projectaon/ are Project Aon illustrations on the owner's machine only, from the same book or borrowed from another, and files under art/ are pictures the owner supplied for personal use (git-ignored); a missing one falls back to the drawn emblem. crop, if given, is the part of the picture to use, [x, y, w, h] as fractions. levels, if given, is [black, white] (0-255): the tones that become full ink and bare paper, for a painting whose mid-tones would otherwise all turn to solid ink. See docs/reference/interface.md, Art pipeline, and docs/reference/items.md, Fight pictures.",
   "plates": [
     { "match": "dorier|ganon", "book": "02fotw", "src": "data/projectaon/02fotw/ill15.png", "crop": [0.01, 0.045, 0.98, 0.27] },
     { "match": "halvorc", "book": "02fotw", "src": "data/projectaon/02fotw/ill15.png", "crop": [0.075, 0.37, 0.41, 0.27] },
@@ -8,6 +8,16 @@
     { "match": "helghast", "book": "02fotw", "src": "data/projectaon/02fotw/ill8.png" },
     { "match": "zombie", "book": "02fotw", "src": "data/projectaon/02fotw/ill2.png" },
     { "match": "knight of the white mountain", "book": "02fotw", "src": "data/projectaon/02fotw/ill17.png" },
+    { "match": "watchtower guard", "book": "02fotw", "src": "art/plates/guard-sword-shield-tower.png", "crop": [0.02, 0.02, 0.96, 0.76] },
+    { "match": "bridge guard 1", "book": "02fotw", "src": "art/plates/guard-halberdier-plate.webp", "crop": [0.1, 0.02, 0.68, 0.8] },
+    { "match": "bridge guard 2", "book": "02fotw", "src": "art/plates/guard-halberd-portcullis.png", "crop": [0.33, 0.3, 0.6, 0.6] },
+    { "match": "border guard", "book": "02fotw", "src": "art/plates/guard-gold-trim-painted.png", "crop": [0.06, 0.0, 0.9, 0.82], "levels": [0, 110] },
+    { "match": "town guard sergeant", "book": "02fotw", "src": "art/plates/guard-veteran-pencil.webp", "crop": [0.05, 0.06, 0.77, 0.92] },
+    { "match": "town guard corporal", "book": "02fotw", "src": "art/plates/guard-sword-shield-tower.png", "crop": [0.02, 0.02, 0.96, 0.76] },
+    { "match": "town guard 1", "book": "02fotw", "src": "art/plates/guard-halberd-portcullis.png", "crop": [0.33, 0.3, 0.6, 0.6] },
+    { "match": "town guard 2", "book": "02fotw", "src": "art/plates/guard-halberdier-plate.webp", "crop": [0.1, 0.02, 0.68, 0.8] },
+    { "match": "town guard 3", "book": "02fotw", "src": "art/plates/guard-gold-trim-painted.png", "crop": [0.06, 0.0, 0.9, 0.82], "levels": [0, 110] },
+    { "match": "town guard 4", "book": "02fotw", "src": "art/plates/guard-veteran-pencil.webp", "crop": [0.05, 0.06, 0.77, 0.92] },
     { "match": "guard", "book": "02fotw", "src": "data/projectaon/09tcof/ill18.png" },
     { "match": "sailor", "book": "02fotw", "src": "data/projectaon/06tkot/ill6.png" },
     { "match": "villager", "book": "02fotw", "src": "data/projectaon/08tjoh/ill11.png" },

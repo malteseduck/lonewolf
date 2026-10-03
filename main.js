@@ -966,7 +966,7 @@ function nextFoe() {
   B.fx.dead = 0; B.fx.wounds = []; B.img = null;
   // the section's own illustration, else one from the plate library (an entry with a book is for that book only), else the drawn emblem
   const foe = B.foe, lib = !foe.art && PLATES.find((p) => (!p.book || p.book === book.id) && p.re.test(foe.name)), src = foe.art ? asset(foe.art) : lib && lib.src;
-  if (src) { const im = new Image(); im.crop = lib && lib.crop; im.onload = () => { if (B && B.foe === foe) B.img = im; }; im.src = src; }
+  if (src) { const im = new Image(); im.crop = lib && lib.crop; im.levels = lib && lib.levels; im.onload = () => { if (B && B.foe === foe) B.img = im; }; im.src = src; }
 }
 /* assets/plates/plates.json: pictures for enemies the book does not picture */
 let PLATES = [];

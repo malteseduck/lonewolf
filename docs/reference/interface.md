@@ -418,12 +418,14 @@ late", once `evade.within` rounds are fought. When `B.over` is set the left page
 - `Ink.parchment`, `leather`, `inkScene(name, w, h)`: procedural textures and ink-wash vignettes.
 - `inkPlate(img)`: takes a black-on-white illustration, upscales it, maps darkness to alpha in a
   sepia ink colour. Steps: `img.crop` (fractions) picks part of the picture; an old scan's toned
-  paper is lifted to white (the brightest 5% of pixels taken as paper, lift capped at 1.6); a fine
+  paper is lifted to white (the brightest 5% of pixels taken as paper, lift capped at 1.6); tones
+  from 75 down to 225 become ink, or the plate entry's own `levels` [black, white] (for a painting,
+  whose mid-tones would otherwise all turn solid; such a picture is not deepened); a fine
   grey drawing has its greys deepened until the middle of its ink is at 80% strength, to sit
   beside the books' solid pen work; `frameOf` finds a ruled frame round the picture (a thin band,
   ink along at least 40% of the middle of its length, clearly darker than the strip inside it,
   within the outer 12%) and cuts inside it. No fade at the edges: the owner wants each picture
-  whole, as drawn, with only its ruled frame removed (2026-10-01). Cached per URL and crop. Needs a
+  whole, as drawn, with only its ruled frame removed (2026-10-01). Cached per URL, crop and levels. Needs a
   same-origin image. Scaled to about 1100px wide either way.
 - `drawCreature(canvas, kind, scene, t, fx, img, floor)`: draws the plate. With `img` (or an entry
   from `art/manifest.json`) it draws the whole inked illustration, fitted to 94% of the width and to
