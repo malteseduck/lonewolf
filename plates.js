@@ -383,65 +383,6 @@ function outlined(c, r = 4) {
   return out;
 }
 
-/* Without the owner's picture: a painted stand-in. Light from the upper left; every shape gets a
-   gradient, an ink outline and a rim of light. */
-export function drawHero(w = 300, h = 460) {
-  const c = Ink.canvas(w, h), x = c.getContext('2d'), OUT = '#120b06';
-  const shape = (pts, fill) => {
-    x.beginPath(); x.moveTo(pts[0][0], pts[0][1]);
-    for (let i = 1; i < pts.length; i++) {
-      const p = pts[i];
-      if (p.length === 4) x.quadraticCurveTo(p[0], p[1], p[2], p[3]); else x.lineTo(p[0], p[1]);
-    }
-    x.closePath(); x.fillStyle = fill; x.fill(); x.lineJoin = 'round'; x.lineWidth = 3; x.strokeStyle = OUT; x.stroke();
-  };
-  const grad = (x0, y0, x1, y1, stops) => { const g = x.createLinearGradient(x0, y0, x1, y1); stops.forEach(([o, col]) => g.addColorStop(o, col)); return g; };
-  const stroke = (pts, wid, col) => { x.beginPath(); x.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) { const p = pts[i]; if (p.length === 4) x.quadraticCurveTo(p[0], p[1], p[2], p[3]); else x.lineTo(p[0], p[1]); } x.lineWidth = wid; x.strokeStyle = col; x.lineCap = 'round'; x.stroke(); };
-
-  pointer(x);
-
-  // cloak behind, falling to a ragged hem
-  shape([[104, 160], [66, 230, 58, 330], [50, 392], [80, 398, 96, 392], [120, 402, 150, 398], [182, 404, 204, 394], [226, 400, 248, 392], [246, 300, 234, 236], [214, 170, 196, 160]],
-    grad(50, 0, 250, 0, [[0, '#4f7556'], [0.45, '#2e4a35'], [1, '#14231a']]));
-  // boots
-  shape([[124, 352], [146, 352], [148, 398], [116, 400], [118, 384]], grad(116, 0, 150, 0, [[0, '#6b4a2c'], [1, '#2c1c0e']]));
-  shape([[158, 352], [180, 352], [186, 384], [190, 398], [156, 398]], grad(156, 0, 190, 0, [[0, '#5a3d22'], [1, '#22150a']]));
-  // tunic and belt
-  shape([[124, 176], [176, 176], [186, 356], [116, 356]], grad(116, 0, 186, 0, [[0, '#7a6040'], [0.5, '#56412a'], [1, '#2e2216']]));
-  stroke([[132, 200], [128, 340]], 2, 'rgba(255,230,190,0.18)');
-  shape([[118, 254], [182, 254], [183, 268], [117, 268]], '#2a1a0c');
-  shape([[143, 252], [157, 252], [157, 270], [143, 270]], grad(143, 252, 157, 270, [[0, '#f0d58c'], [1, '#8a6a2a']]));
-  // cloak front flaps
-  shape([[104, 160], [130, 176], [124, 290, 112, 396], [80, 398], [80, 300, 92, 230]], grad(80, 0, 130, 0, [[0, '#5d8763'], [1, '#2c4632']]));
-  shape([[196, 160], [172, 176], [178, 290, 194, 394], [232, 394], [226, 290, 214, 220]], grad(172, 0, 232, 0, [[0, '#2f4b36'], [1, '#15241a']]));
-  stroke([[96, 240], [88, 320, 90, 380]], 2, 'rgba(10,20,12,0.55)'); stroke([[208, 230], [214, 320, 218, 380]], 2, 'rgba(6,12,8,0.6)');
-  stroke([[100, 176], [84, 260, 84, 380]], 2.5, 'rgba(220,240,200,0.28)');
-  // sword arm: sleeve, hand, and the blade held point-down
-  shape([[104, 168], [120, 186], [114, 248, 104, 290], [86, 288], [88, 230, 92, 190]], grad(86, 0, 120, 0, [[0, '#5d8763'], [1, '#2a4430']]));
-  shape([[57, 392], [92, 302], [100, 305], [63, 395]], grad(57, 0, 100, 0, [[0, '#f4f2ea'], [0.5, '#a9adb2'], [1, '#55595f']]));
-  shape([[78, 296], [112, 306], [110, 313], [76, 303]], grad(76, 296, 112, 313, [[0, '#f0d58c'], [1, '#7a5a20']]));
-  x.beginPath(); x.ellipse(96, 293, 9, 8, 0.3, 0, Math.PI * 2); x.fillStyle = '#c99a72'; x.fill(); x.lineWidth = 2.5; x.strokeStyle = OUT; x.stroke();
-  shape([[98, 270], [104, 272], [101, 288], [95, 286]], '#3a2410');
-  x.beginPath(); x.arc(102, 266, 5, 0, Math.PI * 2); x.fillStyle = '#d9b868'; x.fill(); x.lineWidth = 2; x.strokeStyle = OUT; x.stroke();
-  // mantle over the shoulders
-  shape([[100, 150], [150, 178, 200, 150], [210, 184], [150, 214, 92, 186]], grad(92, 0, 210, 0, [[0, '#6b956f'], [0.5, '#3c5e43'], [1, '#1b2e21']]));
-  x.beginPath(); x.arc(150, 196, 7, 0, Math.PI * 2); x.fillStyle = '#d9b868'; x.fill(); x.lineWidth = 2; x.strokeStyle = OUT; x.stroke();
-  // hood, the face in its shadow
-  shape([[150, 58], [192, 82, 200, 140], [194, 172], [150, 186, 106, 172], [100, 140], [108, 82, 150, 58]], grad(100, 60, 200, 180, [[0, '#71a076'], [0.5, '#3a5c41'], [1, '#17271c']]));
-  x.beginPath(); x.ellipse(152, 132, 22, 30, 0, 0, Math.PI * 2); x.fillStyle = '#0d0805'; x.fill();
-  const face = x.createLinearGradient(0, 112, 0, 160); face.addColorStop(0, 'rgba(120,80,56,0)'); face.addColorStop(0.45, '#8a6248'); face.addColorStop(1, '#c4946c');
-  x.beginPath(); x.ellipse(153, 142, 15, 18, 0, 0, Math.PI * 2); x.fillStyle = face; x.fill();
-  stroke([[146, 152], [153, 155], [160, 152]], 1.5, 'rgba(40,20,10,0.7)');
-  stroke([[116, 96], [106, 130, 110, 160]], 3, 'rgba(225,245,210,0.35)');
-  stroke([[150, 64], [150, 100]], 1.5, 'rgba(10,20,12,0.4)');
-
-  // a little grain over the paint
-  x.globalCompositeOperation = 'source-atop';
-  const r = Ink.seeded(77);
-  for (let i = 0; i < 900; i++) { x.fillStyle = r() < 0.5 ? 'rgba(255,240,210,0.05)' : 'rgba(0,0,0,0.07)'; x.fillRect(r() * w, r() * h, 2, 2); }
-  return outlined(c);
-}
-
 /* ---------- Ornate ink frame for the story page, after the HD book ---------- */
 /* A spiral that winds inwards from (cx, cy) + r0 at angle a0, the way an engraver ends a tendril */
 function curl(x, cx, cy, r0, a0, turns, dir) {

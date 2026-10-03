@@ -2,7 +2,7 @@
    Left page: the story. Right page: a panel (Kai Disciplines, inventory, map, or the fight).
    Plays the books imported by tools/import_projectaon.py. */
 import * as Ink from './shared/ink.js';
-import { drawCreature, setArt, setEmblem, newWound, drawHero, heroFromArt, portraitFromArt, drawFrame, drawSheet, drawBanner, drawCrest, gearSVG } from './plates.js';
+import { drawCreature, setArt, setEmblem, newWound, heroFromArt, portraitFromArt, drawFrame, drawSheet, drawBanner, drawCrest, gearSVG } from './plates.js';
 import { MAPS, LASTLANDS, mapCanvas, loadStamps, stampsLoaded, printedCanvas, replicaModel, replicaCanvas, placeBook, along } from './maps.js';
 
 import * as ITEMS_01 from './items-01fftd.js';
@@ -245,10 +245,9 @@ root.setProperty('--wood', `linear-gradient(rgba(10,7,6,0.55), rgba(10,7,6,0.55)
 }
 gear.innerHTML = gearSVG();
 let portraitURL = null; // Lone Wolf's likeness over the Kai panel, if the owner has a picture of him (art/manifest.json "portrait")
-let portraitKnown = false; // until art/manifest.json has been read, the title page shows no frontispiece rather than the stand-in
 /* Lone Wolf on the maps: the owner's picture of him cut out, toned sepia, over a pointer (art/manifest.json
-   "hero": {src, crop}, or a file already cut out), else a painted stand-in. Nothing is shown until it is
-   known which, so the stand-in never flashes up before his picture. */
+   "hero": {src, crop}, or a file already cut out). Without one, only the marker under him shows (the
+   owner wants no stand-in drawing). */
 let heroURL = null;
 const heroHTML = () => `<div class="pawn"><img ${heroURL ? `src="${heroURL}"` : 'hidden'} alt="Lone Wolf"></div>`;
 function setHero(url) {
@@ -347,7 +346,7 @@ function titleLeftHTML() {
   return `<div class="titlepage">
     <div class="maker">A solo adventure in Magnamund</div>
     <h1 class="mark"><span>Lone</span><span class="wolfmark">${glyph('wolf-head')}</span><span>Wolf</span></h1>
-    <div class="frontis">${portraitURL ? `<img src="${portraitURL}" alt="">` : portraitKnown ? `<img src="${vignette('ruins')}" alt="">` : ''}</div>
+    <div class="frontis">${portraitURL ? `<img src="${portraitURL}" alt="">` : ''}</div>
     <p class="motto">The monastery burns. The Kai are gone.<br>One remains.</p>
     ${band('The Kai', 1, 5)}${band('The Magnakai', 6, 12)}
   </div>`;
@@ -1201,23 +1200,20 @@ fetch('assets/icons/crossed-swords.svg').then((r) => r.text()).then((t) => {
 }).catch(() => {});
 
 /* optional illustrations dropped into art/ */
-const standIn = () => setHero(drawHero().toDataURL());
-const portraitDone = () => { portraitKnown = true; if (mode === 'title') renderLeft(); else if (mode === 'story' && panel === 'kai') renderRight(); };
+const portraitDone = () => { if (mode === 'title') renderLeft(); else if (mode === 'story' && panel === 'kai') renderRight(); };
 fetch('art/manifest.json').then((r) => r.json()).then((m) => {
   for (const kind in m.enemies || {}) { const im = new Image(); im.onload = () => setArt(kind, im); im.src = 'art/' + m.enemies[kind]; }
   if (m.hero) {
     const im = new Image();
     im.onload = () => setHero(m.hero.crop ? heroFromArt(im, m.hero.crop, m.hero.outline).toDataURL() : im.src);
-    im.onerror = standIn;
     im.src = 'art/' + (m.hero.src || m.hero);
-  } else standIn();
+  }
   if (m.portrait) {
     const im = new Image();
     im.onload = () => { portraitURL = portraitFromArt(im, m.portrait.crop, m.portrait.fade).toDataURL(); portraitDone(); };
-    im.onerror = portraitDone;
     im.src = 'art/' + m.portrait.src;
-  } else portraitDone();
-}).catch(() => { standIn(); portraitDone(); });
+  }
+}).catch(() => {});
 
 /* the offline copy (sw.js, docs/reference/offline.md): kept over https, as Tailscale serves it, or on
    any address given ?offline (to try it at home). The corner at the top right says how it stands. */
