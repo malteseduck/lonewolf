@@ -89,7 +89,7 @@ body { background: var(--void) var(--wood, none) center / 820px; color: var(--bo
 .foeline { width: 100%; display: flex; justify-content: space-between; gap: 1em; font-weight: 700; }
 .foeline i { font-weight: 400; color: var(--ink-dim); }
 .choices { list-style: none; margin: 0; padding: 0.55em 0 0; border-top: 3px double var(--ink-faint); display: flex; flex-direction: column; gap: 0.25em; }
-.choice { width: 100%; display: grid; grid-template-columns: 1.5em minmax(0, 1fr); align-items: start; border: 0; background: none; padding: 0.1em 0; text-align: left; font: 700 1.2em/1.25 var(--script); color: var(--ink); }
+.choice { width: 100%; display: grid; grid-template-columns: 1.5em minmax(0, 1fr); align-items: start; border: 0; background: none; padding: 0.1em 0; text-align: left; font: 700 1em/1.25 var(--script); color: var(--ink); }
 .choice::before { content: ''; width: 0.62em; height: 0.62em; margin-top: 0.32em; border-radius: 50%; background: radial-gradient(circle at 35% 30%, var(--bronze-hi), var(--bronze) 45%, var(--bronze-lo)); box-shadow: 0 0 0 0.1em var(--ink); }
 .choice:hover:not(:disabled) span, .choice:focus-visible span { color: var(--blood); }
 .choice:focus-visible { outline: none; }
@@ -380,10 +380,10 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 .step button { width: 1.5em; height: 1.5em; padding: 0; border: 1px solid var(--ink-faint); border-radius: 50%; background: rgba(51, 35, 26, 0.08); color: var(--ink); font: 400 0.8em/1 var(--title); }
 .step button:hover { background: var(--ink); color: var(--page); }
 .ledger { display: flex; align-items: center; justify-content: space-between; gap: 0.4em 1em; font-size: 1.05em; }
-.ledger .inkbtn { font-size: 0.95em; white-space: nowrap; }
+.ledger .inkbtn { font-size: 0.78em; white-space: nowrap; }
 .maphint { margin: 0; text-align: center; font-size: 1.1em; color: var(--ink-dim); }
 .roads { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.1em; }
-.roads .choice { font-size: 1.08em; }
+.roads .choice { font-size: 0.92em; }
 .mapinner canvas { filter: none; }
 /* the place's name on a ribbon with scrolled ends (drawBanner), its ends kept whole by border-image */
 .place { min-width: 0; height: 2.6em; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0.95em 0.6em 0; font: 400 1em/1.2 var(--title); color: var(--ink); text-align: center;
