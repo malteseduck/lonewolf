@@ -11,8 +11,12 @@ Where each book stands, step by step: `docs/book-checklist.md`.
    or got wrong. A mechanical sweep ran 2026-10-03 (all 350 sections, three runs with test
    characters, both checkers): no errors, no unmarked dead end, every fight and draw works; it
    found one fault, fixed (the right page did not return to the map once a fight or a draw was
-   over). Not yet done: reading the text against what the importer made of it (gates, combat
-   changes, draws) and a run that reaches the end; the three runs all died early.
+   over). Then (same day) every gate, fight and draw was read against the text: fixed 43 (evade
+   only after three rounds: an importer fix, which also corrected Book 7's 301), 88 (the Healing
+   choice ungated) and 203 (the way on follows his Endurance: `need.ep`). Left to the player, as
+   the engine keeps no count of them: kill within four rounds (231, 339), lost no Endurance in the
+   fight (227). A run reached 350 in 27 sections. Done; the owner's own play-through is checklist
+   step 14.
 2. **Books 3-12, one book at a time**, in order (2.1 to 2.10). Finish one book before starting
    the next. Each book gets the same three pieces of work (see "Work for each book" below): map
    travel, items and fight pictures, and town plans. All ten were imported on 2026-10-03, and each

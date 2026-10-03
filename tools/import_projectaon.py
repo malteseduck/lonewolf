@@ -351,7 +351,7 @@ for n in numbers:
         ev = next((c for c in sec['choices'] if c.get('evade')), None)
         if ev:
             t = ev['text'] + ' ' + whole
-            a = re.search(r'after (?:the )?(?:first )?(\w+) rounds?', t)  # "after two rounds", "after the first round"
+            a = re.search(r'after (?:the )?(?:first )?(\w+) rounds?', t, re.I)  # "after two rounds", "After the first round"
             u = re.search(r'evade[^.]*until the (?:beginning|start) of the (second|third|fourth|fifth) round', t)
             after = 0
             if a:
