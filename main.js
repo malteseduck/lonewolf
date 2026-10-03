@@ -248,7 +248,7 @@ let portraitURL = null; // Lone Wolf's likeness over the Kai panel, if the owner
 /* Lone Wolf on the maps: the owner's picture of him cut out, toned sepia, over a pointer (art/manifest.json
    "hero": {src, crop}, or a file already cut out). Without one, only the marker under him shows (the
    owner wants no stand-in drawing). */
-let heroURL = null;
+let heroURL = null, dollURL = null; // dollURL: the same figure without pointer or feet, behind the inventory's slots
 const heroHTML = () => `<div class="pawn"><img ${heroURL ? `src="${heroURL}"` : 'hidden'} alt="Lone Wolf"></div>`;
 function setHero(url) {
   heroURL = url;
@@ -541,7 +541,26 @@ function kaiHTML() {
    between two shoulder slots, weapons either side of the chest, two at the belt; Special Items fill
    the shoulder and belt slots), a row of five more for further Special Items under a flourish,
    then the Backpack as a grid of tiles beside its own medallion */
-const flourish = '<div class="flourish" aria-hidden="true"><svg viewBox="0 0 200 12" preserveAspectRatio="none"><path d="M4 6c0-3 4-3 4 0s-3 3-4 1M8 6h84M108 6h84M196 6c0-3-4-3-4 0s3 3 4 1"/><path class="gem" d="M100 2l4 4-4 4-4-4z"/></svg></div>';
+const flourish = '<div class="flourish" aria-hidden="true"><svg viewBox="0 0 240 16" preserveAspectRatio="xMidYMid meet">'
+  + '<path d="M110 8H44C34 8 30 13 24 12.5 18 12 17.5 5.5 22.5 4.5 26.5 3.8 28 8 25 9 23 9.6 21.8 8 22.8 7M130 8h66c10 0 14 5 20 4.5 6-.5 6.5-7 1.5-8-4-.7-5.5 3.5-2.5 4.5 2 .6 3.2-1 2.2-2"/>'
+  + '<path d="M78 8c3-4.5 9-5.5 13-3.5-4 .8-7 2.2-9 3.5M162 8c-3-4.5-9-5.5-13-3.5 4 .8 7 2.2 9 3.5M58 8c2 2.6 6 3.2 9 2-3-.4-5.5-1-7-2M182 8c-2 2.6-6 3.2-9 2 3-.4 5.5-1 7-2"/>'
+  + '<path class="gem" d="M120 3l5 5-5 5-5-5z"/></svg></div>';
+/* The HD Backpack's ironwork, drawn over the grid: each tile a square with a scrolled curl in every
+   corner, diamond studs where the squares meet, a double frame, and a sweep of scroll off each
+   corner. In units of 100 a tile; stretched to the grid, the strokes keep their width. */
+function packLattice(cols, rows) {
+  const W = cols * 100, H = rows * 100, out = [];
+  const corner = 'M9 31C9 17 17 9 31 9C37 9 39 14 35 16 32 17.5 30 15 32 13.5M9 31C9 37 14 39 16 35 17.5 32 15 30 13.5 32';
+  for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+    const x = i * 100, y = j * 100;
+    out.push(`<rect class="sq" x="${x + 4}" y="${y + 4}" width="92" height="92"/>`);
+    for (const r of [0, 90, 180, 270]) out.push(`<path class="curl" transform="translate(${x} ${y}) rotate(${r} 50 50)" d="${corner}"/>`);
+  }
+  for (let j = 0; j <= rows; j++) for (let i = 0; i <= cols; i++) if (i % cols || j % rows) out.push(`<path class="stud" d="M${i * 100} ${j * 100 - 7}l7 7-7 7-7-7z"/>`);
+  const sweep = 'M0 0C-14 0-22-6-30-14-36-20-44-20-46-13-47.5-8-42-5-39-9';
+  const ends = [[0, 0, 1, -1], [W, 0, -1, -1], [0, H, 1, 1], [W, H, -1, 1]].map(([x, y, sx, sy]) => `<path class="sweep" transform="translate(${x} ${y}) scale(${sx} ${-sy})" d="${sweep}"/>`);
+  return `<svg class="lattice" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><rect class="frame" x="-3" y="-3" width="${W + 6}" height="${H + 6}"/><rect class="frame in" x="1" y="1" width="${W - 2}" height="${H - 2}"/>${out.join('')}${ends.join('')}</svg>`;
+}
 function packHTML() {
   const h = game.hero, cells = [], on = (kind, id) => (sel && sel.kind === kind && sel.id === id ? 'sel' : '');
   const slot = (kind, id, extra = '') => `<button type="button" class="disc item ${on(kind, id)} ${extra}" data-sel="${kind}|${esc(id)}" aria-label="${esc(LW.itemName(id))}">${itemGlyph(id)}</button>`;
@@ -556,14 +575,14 @@ function packHTML() {
   for (let i = 0; i < h.meals; i++) cells.push(`<button type="button" class="disc item ${on('meal', 'meal')}" data-sel="meal|meal" aria-label="Meal">${itemGlyph('meal')}</button>`);
   h.backpack.forEach((b) => cells.push(slot('pack', b)));
   while (cells.length < LW.MAX_BACKPACK) cells.push(empty());
-  const kit = adding ? pickerHTML() : `<div class="kit">${heroURL ? `<img src="${heroURL}" alt="">` : ''}
+  const kit = adding ? pickerHTML() : `<div class="kit">${dollURL ? `<img src="${dollURL}" alt="">` : ''}
       <div class="doll"><span class="sh l">${around[0]}</span><span class="head">${worn('helmet')}</span><span class="sh r">${around[1]}</span>
         <span class="wl">${weapon(h.weapons[0])}</span><span class="body">${worn('chainmail')}</span><span class="wr">${weapon(h.weapons[1])}</span>
         <span class="belt">${around[2]}${around[3]}</span></div>
       ${flourish}<div class="specials">${rest.join('')}</div></div>`;
   return `${kit}
     ${ruled(h.noPack ? 'Backpack <small>lost: find another to carry anything</small>' : `Backpack <small>${h.backpack.length + h.meals} of ${LW.MAX_BACKPACK}</small>`)}
-    <div class="bag"><span class="disc lit">${glyph('knapsack')}</span><div class="pack">${cells.map((c) => `<div class="cell">${c}</div>`).join('')}</div></div>
+    <div class="bag"><span class="disc lit">${glyph('knapsack')}</span><div class="pack">${cells.map((c) => `<div class="cell">${c}</div>`).join('')}${packLattice(4, Math.ceil(cells.length / 4))}</div></div>
     <div class="ledger"><span class="purse">${glyph('two-coins')}<b>${h.gold}</b> Gold Crowns ${stepper('gold')}</span>
       ${adding ? '' : '<button type="button" class="inkbtn" data-adding="open">Add an item by hand</button>'}</div>
     ${adding ? '' : `<div class="caption">${captionHTML()}</div>`}`; // while picking, the picker's own line names things
@@ -1211,7 +1230,11 @@ fetch('art/manifest.json').then((r) => r.json()).then((m) => {
   for (const kind in m.enemies || {}) { const im = new Image(); im.onload = () => setArt(kind, im); im.src = 'art/' + m.enemies[kind]; }
   if (m.hero) {
     const im = new Image();
-    im.onload = () => setHero(m.hero.crop ? heroFromArt(im, m.hero.crop, m.hero.outline).toDataURL() : im.src);
+    im.onload = () => {
+      setHero(m.hero.crop ? heroFromArt(im, m.hero.crop, m.hero.outline).toDataURL() : im.src);
+      dollURL = m.hero.crop ? heroFromArt(im, m.hero.crop, m.hero.outline, true).toDataURL() : im.src;
+      if (mode === 'story' && panel === 'pack') renderRight();
+    };
     im.src = 'art/' + (m.hero.src || m.hero);
   }
   if (m.portrait) {

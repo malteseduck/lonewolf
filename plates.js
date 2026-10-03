@@ -241,8 +241,8 @@ function pointer(x) {
    the figure), tone it to sepia like the maps, and stand it on the pointer. The ground is
    flood-filled in from the crop's edges through pixels that are mid-toned, greyish and close in
    colour to their neighbour; the figure's outline stops the fill. Made at load from the owner's
-   own image; never stored. */
-export function heroFromArt(img, crop, outline) {
+   own image; never stored. bare: no pointer and no feet, for the inventory's paper doll. */
+export function heroFromArt(img, crop, outline, bare = false) {
   const [cx, cy, W, H] = crop, cut = Ink.canvas(W, H), x = cut.getContext('2d', { willReadFrequently: true });
   x.drawImage(img, cx, cy, W, H, 0, 0, W, H);
   const d = x.getImageData(0, 0, W, H), p = d.data, N = W * H, bg = new Uint8Array(N), stack = [];
@@ -341,8 +341,9 @@ export function heroFromArt(img, crop, outline) {
   for (let i = (bottom - Math.round((bottom - top) * 0.12)) * W; i < (bottom + 1) * W; i++) if (!bg[i]) { left = Math.min(left, i % W); right = Math.max(right, i % W); }
   x.putImageData(d, 0, 0);
 
-  const fig = Ink.canvas(300, 460), f = fig.getContext('2d'), s = 340 / (bottom - top), fx = right >= left ? (left + right) / 2 : W / 2;
-  pointer(f);
+  // bare stops a little above the soles (the lowest tenth of him: boots and feet)
+  const fig = Ink.canvas(300, bare ? 376 : 460), f = fig.getContext('2d'), s = 340 / (bottom - top), fx = right >= left ? (left + right) / 2 : W / 2;
+  if (!bare) pointer(f);
   f.drawImage(cut, 150 - fx * s, 410 - bottom * s, W * s, H * s);
   return outlined(fig);
 }

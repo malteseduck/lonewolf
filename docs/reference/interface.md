@@ -100,8 +100,10 @@ left. `updateBattle` redraws the gauges each round.
   faint behind a paper doll of slots: the helmet between two shoulder slots, the two weapons either
   side of the chainmail (a mastered weapon is lit), two belt slots below; the first four other
   Special Items fill the shoulder and belt slots, the rest a row of five rings (more in fives) under
-  a scrolled rule (`flourish`); empty slots are bare rings. Then a ruled "Backpack" heading, a knapsack medallion beside eight dark tiles (one per Meal or
-  item); a ledger (gold -/+, "Add an item by hand"); and the caption with Drink / Drop / Eat. The
+  a scrolled rule (`flourish`); empty slots are bare rings. The figure is `dollURL`: the map's figure
+  cut again by `heroFromArt(..., bare)`, without the pointer and above the feet. Then a ruled "Backpack" heading, a knapsack medallion beside eight dark square tiles (one per Meal or
+  item) under the HD sheet's ironwork (`packLattice`: a curl in each tile's corners, diamond studs
+  where they meet, a double frame, a scroll off each corner); a ledger (gold -/+, "Add an item by hand"); and the caption with Drink / Drop / Eat. The
   Quiver's caption counts its Arrows, with -/+ (`adjust('arrows')`); with nothing selected the
   caption lists what is kept at the Kai Monastery (`hero.stored`, `hero.storedGold`). With
   the Backpack lost (`hero.noPack`) its heading says so. The caption gives a book item's `about`;
