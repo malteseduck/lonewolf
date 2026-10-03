@@ -82,9 +82,14 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
 - **Map symbols** look engraved, like the Widman set: sepia ink only, no colour, no rim. For a
   new map feature, first reuse what exists: a Widman stamp (`mountain range forest tree`; its settlement stamps do
   not match the official icons) or a building in `buildings.js` (`castle monastery tower keep house
-  temple obelisk bridge`). If neither fits, add a vector drawing to `buildings.js` the same way (see
-  "Map symbols" in `docs/reference/interface.md`). Never cut symbols out of map images: at their
-  resolution they come out blurred and carry stray colour.
+  temple obelisk bridge`). Two more CC0 engraved sets by the same maker are allowed (owner,
+  2026-10-02): **Hogenburg** for town plans (gates, towers, wall runs, castles, chapels, fountains,
+  blocks of houses) and **Donia** for the country maps (forts, churches, village and town
+  skylines). Their packs wait in git-ignored `data/reference/symbol-packs/`; a symbol is used only
+  once copied into `assets/map/` with a README, toned to the map's sepia and checked by eye beside
+  the art already there. No other symbol sets. If nothing fits, add a vector drawing to
+  `buildings.js` the same way (see "Map symbols" in `docs/reference/interface.md`). Never cut
+  symbols out of map images: at their resolution they come out blurred and carry stray colour.
 - Art borrowed for personal use (Lone Wolf HD screenshots and the like) lives in `art/`, which is
   git-ignored except `art/manifest.json`. Reference images (fan maps) live in git-ignored
   `data/reference/`, with their sources in `SOURCES.txt`. Never move either anywhere committed.

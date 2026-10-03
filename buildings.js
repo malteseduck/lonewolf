@@ -225,6 +225,20 @@ const BUILDINGS = {
 };
 export const BUILDING_KINDS = Object.keys(BUILDINGS);
 
+/* What a building covers, as fractions of its height from where it stands: [left, right, top,
+   bottom] (top negative). Measured once per kind from a drawing, so a town plan can keep its
+   houses out from under it. */
+const boxes = {};
+export function buildingBox(kind) {
+  if (boxes[kind] || !BUILDINGS[kind]) return boxes[kind] || null;
+  const H = 200, cv = Ink.canvas(800, 400), x = cv.getContext('2d');
+  drawBuilding(x, kind, 400, 300, H);
+  const d = x.getImageData(0, 0, 800, 400).data;
+  let l = 800, r = -1, t = 400, b = -1;
+  for (let y = 0; y < 400; y++) for (let i = 0; i < 800; i++) if (d[(y * 800 + i) * 4 + 3] > 40) { if (i < l) l = i; if (i > r) r = i; if (y < t) t = y; if (y > b) b = y; }
+  return (boxes[kind] = r < 0 ? [0, 0, 0, 0] : [(l - 400) / H, (r - 400) / H, (t - 300) / H, (b - 300) / H]);
+}
+
 /* Draw a building standing on (cx, cy), height canvas pixels tall. seed varies the hand. */
 export function drawBuilding(x, kind, cx, cy, height, seed = 1) {
   const B = BUILDINGS[kind];

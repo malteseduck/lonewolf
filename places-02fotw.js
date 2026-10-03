@@ -8,7 +8,7 @@
    city.js), its places in the plan's own grid and at: its spot on the printed map. */
 export const PLACES = {
   // Holmgard's harbour, on the town plan (city.js): these are in the plan's own 1000x700 grid
-  quaysquare: ['Square by the quay', null, 514, 460], inn: ['Good Cheer Inn', 'house', 462, 490],
+  quaysquare: ['Square by the quay', null, 514, 460], inn: ['Good Cheer Inn', 'house', 484, 502],
   backstairs: ['Stairs behind the inn', null, 398, 530], quay: ['The quay', null, 630, 424],
   ship: ['The Green Sceptre', 'ship', 640, 300],
   // the voyage east

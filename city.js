@@ -5,7 +5,7 @@
    other, packed along lanes; the landmarks (the citadel, towers, ships) stand up among them as the
    engraved buildings of buildings.js. Nothing here is a plain shape: every edge is inked by hand. */
 import * as Ink from './shared/ink.js';
-import { drawBuilding } from './buildings.js';
+import { drawBuilding, buildingBox } from './buildings.js';
 
 const INK = '38,26,16', PAPER = '226,212,176';
 const ink = (a) => `rgba(${INK},${a})`;
@@ -42,12 +42,53 @@ export const CITIES = {
     // ground kept clear of houses: the square, the citadel's hill, a market by the east gate
     open: [[514, 456, 26], [236, 490, 70], [860, 500, 22]],
     citadel: [236, 500],
-    landmarks: [['tower', 404, 600, 34], ['temple', 720, 612, 34], ['tower', 820, 430, 30], ['keep', 360, 380, 30]],
+    landmarks: [['tower', 404, 600, 34], ['temple', 756, 616, 34], ['tower', 820, 430, 30], ['keep', 360, 380, 30]],
     boats: [[470, 372], [560, 404], [700, 372], [750, 330], [430, 334]],
     labels: [['Holmgard', 160, 140, 34, 0], ['The Holmgulf', 640, 90, 22, 0, 'sea'], ['River', 650, 610, 12, -1.3, 'soft']],
     compass: [920, 110],
   },
 };
+
+/* Everything on a plan that stands up, as [kind, x, y, height, role]: the citadel, landmarks, the
+   wall's towers and gates, bridges, the moles' towers, moored boats, and the places' own symbols. */
+function standing(c, places, r) {
+  const [hx, hy] = c.citadel;
+  return [['castle', hx, hy, 96, 'citadel'], ...c.landmarks.map((l) => [...l, 'landmark']),
+    ...c.wall.slice(1, -1).map(([px, py]) => ['tower', px, py + 6, 22, 'wall']), ...c.gates.map(([px, py]) => ['keep', px, py + 8, 28, 'gate']),
+    ...c.bridges.map(([px, py]) => ['bridge', px, py + 5, 12, 'bridge']), ...c.moles.map((m) => ['tower', m[m.length - 1][0], m[m.length - 1][1] + 4, 30, 'mole']),
+    ...c.boats.map(([px, py]) => ['ship', px, py, 12 + r() * 4, 'boat']),
+    ...places.filter(([, sym]) => sym).map(([name, sym, px, py]) => [sym, px, py + (sym === 'ship' ? 0 : 6), sym === 'ship' ? 32 : sym === 'house' ? 26 : 30, 'place', name])];
+}
+/* the ground a building covers on the plan: [left, right, top, bottom] */
+function cover([kind, px, py, h]) {
+  const [l, rt, t, b] = buildingBox(kind) || [-0.4, 0.4, -1, 0];
+  return [px + l * h, px + rt * h, py + t * h, py + b * h];
+}
+/* Buildings that stand where they should not: a landmark, the citadel or a place's symbol whose
+   footing is on a lane, the river or the water, or two such buildings overlapping. Gates, bridges,
+   wall and mole towers and boats stand on those by design. For checking a plan by hand:
+   (await import('/city.js')).cityClashes('holmgard', places). Returns lines of text. */
+export function cityClashes(id, places = []) {
+  const c = CITIES[id], x = Ink.canvas(1000, 700).getContext('2d'), out = [];
+  const streets = c.streets.map((s) => smooth(s)), river = smooth(c.river), sea = new Path2D();
+  sea.moveTo(0, 0); sea.lineTo(1000, 0); smooth([c.sea[2], ...c.sea.slice(3)], false, sea); sea.closePath();
+  const items = standing(c, places, () => 0.5).filter((t) => ['citadel', 'landmark', 'place'].includes(t[4]) && t[0] !== 'ship');
+  const name = (t) => (t[5] ? `${t[5]} (${t[0]})` : `${t[4]} ${t[0]} at ${t[1]},${t[2]}`);
+  items.forEach((t) => {
+    const [l, rt, , b] = cover(t), foot = [];
+    // the footing: the lowest fifth of what it covers, sampled along and across
+    for (let i = 0; i <= 8; i++) for (let j = 0; j <= 2; j++) foot.push([l + ((rt - l) * i) / 8, b - ((b - cover(t)[2]) * 0.2 * j) / 2]);
+    x.lineWidth = 9;
+    if (foot.some(([px, py]) => streets.some((p) => x.isPointInStroke(p, px, py)))) out.push(`${name(t)} stands on a lane`);
+    x.lineWidth = 12;
+    if (foot.some(([px, py]) => x.isPointInStroke(river, px, py) || x.isPointInPath(sea, px, py))) out.push(`${name(t)} stands in the water`);
+  });
+  items.forEach((a, i) => items.slice(i + 1).forEach((b) => {
+    const [al, ar, at, ab] = cover(a), [bl, br, bt, bb] = cover(b);
+    if (al < br && bl < ar && at < bb && bt < ab) out.push(`${name(a)} overlaps ${name(b)}`);
+  }));
+  return out;
+}
 
 /* points of a polyline smoothed into a path, through the midpoints; into: carry on an outline */
 function smooth(pts, closed, into) {
@@ -155,9 +196,13 @@ export function cityCanvas(c, W, H, places, stamps) {
     x.save(); x.setLineDash([1.2, 3.2]); x.strokeStyle = ink(0.55); x.lineWidth = 7; x.stroke(p); x.restore();
   });
 
-  // the houses: a loose grid inside the walls, each kept off the lanes, the water and open ground
+  // everything that stands up (drawn last), known now so the houses keep out from under it
+  const [hx, hy] = c.citadel, tall = standing(c, places, r), under = tall.map(cover);
+  // the houses: a loose grid inside the walls, each kept off the lanes, the water, open ground and
+  // the buildings that stand up
   const houses = [], gardens = [], wallLine = smooth(c.wall);
   const clear = (px, py) => {
+    if (under.some(([l, rt, t, b]) => px > l - 7 && px < rt + 7 && py > t - 4 && py < b + 6)) return false;
     x.lineWidth = 15;
     if (streets.some((p) => x.isPointInStroke(p, px * k, py * k))) return false;
     x.lineWidth = 22;
@@ -182,12 +227,7 @@ export function cityCanvas(c, W, H, places, stamps) {
   x.save(); x.setLineDash([2, 2.4]); x.strokeStyle = ink(0.7); x.lineWidth = 2; x.stroke(wall); x.restore();
 
   // the citadel's hill, then everything that stands up, back to front
-  const [hx, hy] = c.citadel;
   for (let i = 0; i < 9; i++) { const a = (i / 9) * Math.PI * 2, d = 38 + r() * 20; stamps.put(x, stamps.pick('mountain', r), hx + Math.cos(a) * d, hy + 20 + Math.sin(a) * d * 0.45, 0.5 + r() * 0.25); }
-  const tall = [['castle', hx, hy, 96], ...c.landmarks, ...c.wall.slice(1, -1).map(([px, py]) => ['tower', px, py + 6, 22]), ...c.gates.map(([px, py]) => ['keep', px, py + 8, 28]),
-    ...c.bridges.map(([px, py]) => ['bridge', px, py + 5, 12]), ...c.moles.map((m) => ['tower', m[m.length - 1][0], m[m.length - 1][1] + 4, 30]),
-    ...c.boats.map(([px, py]) => ['ship', px, py, 12 + r() * 4]),
-    ...places.filter(([, sym]) => sym).map(([, sym, px, py]) => [sym, px, py + (sym === 'ship' ? 0 : 6), sym === 'ship' ? 32 : sym === 'house' ? 26 : 30])];
   tall.sort((a, b) => a[2] - b[2]).forEach(([kind, px, py, h]) => drawBuilding(x, kind, px, py, h, px * 0.37 + py));
 
   x.textAlign = 'center';

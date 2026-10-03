@@ -157,6 +157,7 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
      do). They show Book 1's country, Ragadorn, Ikaya, the Maaken Mines, Ikaresh, Barrakeesh Palace
      and its sewer, the Tekaro sewers and Kazan-Oud. Where a fan map and the text disagree, the text
      wins.
+   - `art/reference/jogbrogzin/`: Jog Brogzin's Graveyard of the Ancients (Book 1), 800 px.
    - `art/reference/other-maps/`: "Port Brax" from the Low Fantasy Gaming RPG, a stand-in for Port
      Bax.
 
@@ -181,9 +182,22 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
       and draw none of its own landmarks or names.
    5. **Book 2, Gorn Cove**, if the reading bears it out (42 sections on 2 places, the cove and the
       village street): a small plan of a fishing village rather than a city.
-   6. **Book 1, the Graveyard of the Ancients**, if the reading bears it out (29 sections on one
-      place): a site plan rather than a town, drawn the same way.
+   6. **Book 1, the Graveyard of the Ancients** (29 sections on one place): a site plan rather than
+      a town, drawn the same way. Jog Brogzin's isometric map of it (`art/reference/jogbrogzin/`)
+      shows the crypts and tomb above ground and the passages and chambers below that the ground
+      gives way into: likely two views, the surface and the depths. Confirm against the text.
    Not worth one: Book 2's Hammerdal (7 sections, 3 more at the barricade).
+
+   Symbols for the plans: three CC0 packs by K. M. Alexander (the maker of the Widman set) are
+   unpacked in git-ignored `data/reference/symbol-packs/` (SOURCES.txt there; owner's go-ahead
+   2026-10-02). Hogenburg is the one for town plans: engraved gates, towers, wall runs and
+   corners, castles on hills, chapels, fountains and blocks of houses, close to `buildings.js` in
+   look. Donia has church and town skylines and star forts for the country maps. Walser is
+   conventional map signs (a circle with a tower, its ruins a circle and a stroke) and fits our
+   pictorial maps least: probably unused. Before using any: pick the symbols, check each by eye beside the engraved art
+   already there (as Widman's settlement stamps were, and failed), tone them to our sepia, copy the
+   chosen ones into `assets/map/` with a README. CLAUDE.md's "Map symbols" rule now allows Hogenburg
+   and Donia (owner, 2026-10-02); Walser is not allowed.
 
    Later books, as each is mapped: use a Mattioli map wherever the journey walks a town's streets
    (candidates, to confirm from the text: Toran, Ruanon, Moytura, the Kai Monastery), the fan map
@@ -193,6 +207,10 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
    the Mattioli campaign that were not reached.
 
 Smaller things noted along the way:
+
+- The full map sweep on Book 2 froze the page for over ten minutes on 2026-10-02 (painting a town
+  plan takes about 0.1 s, so the hold-up is elsewhere, likely the replica legs). Find out which
+  leg before the next full sweep; until then, sweep a book's sections in short runs (`from`).
 
 - Title page gets crowded with twelve books.
 - `data/reference/magnamund-world-goodwin.png` (a fan-made world map, git-ignored) is there to

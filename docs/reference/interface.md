@@ -262,13 +262,17 @@ lanes (widest first), open ground kept clear, the citadel, landmarks and moored 
 `cityCanvas` paints it: fields and trees outside the walls, the sea and the river as dark water,
 the lanes pale between inked edges, then every house as a small roof seen from above (a lit slope
 with sparse strokes, a hatched one, a ridge along its lane, a soft shadow), packed on a loose grid
-off the lanes, water and open ground, with yards and the odd tree; then the walls with towers, and
+off the lanes, water and open ground, and out from under every building that stands up (each one's
+ground measured once from its drawing, `buildingBox` in buildings.js), with yards and the odd tree; then the walls with towers, and
 everything that stands up (the citadel on its hill, towers, a temple, the ships, the places'
 own symbols) as the engraved buildings of `buildings.js`, back to front. The look follows the
 owner's sample (the town clusters of the Sorcery! maps), kept in sepia ink. Book 2's Holmgard
 harbour quarter is the one plan so far: the square by the quay, the Good Cheer Inn, the stairs
 behind it, the quay, and the Green Sceptre at anchor in the basin (`ship`, a caravel drawn for it
 in `buildings.js`). Not surveyed: the books give no plan of the city.
+`cityClashes(id, places)` lists any landmark, citadel or place symbol whose footing is on a lane
+or in the water, or that overlaps another (gates, bridges, wall towers and boats stand there by
+design). Holmgard's is clean (2026-10-02, after moving the temple and the inn off their lanes).
 
 ### Buildings (`buildings.js`)
 
@@ -293,7 +297,21 @@ Reuse before drawing. In order:
    `pick(r, kind)` and draw it with `stamp(x, st, cx, cy, s, 0)`. Halo 0: map symbols get no rim.
 2. **A building in `buildings.js`**: `castle monastery tower keep house temple obelisk bridge`, drawn with
    `drawBuilding(x, kind, cx, cy, height, seed)`. A book's places name one as their symbol.
-3. **A new vector drawing** in `buildings.js`, added to `BUILDINGS` as `{h, draw(T)}`:
+3. **A Hogenburg or Donia symbol** (K. M. Alexander's CC0 packs, as Widman; owner's go-ahead
+   2026-10-02). Hogenburg is for town plans: gates, towers, wall runs and corners, castles on
+   hills, chapels, fountains, blocks and rows of houses. Donia is for the country maps: star forts
+   from above, churches, village and town skylines (heavier ink than Widman: check it at the
+   journey zoom). The whole packs are in git-ignored `data/reference/symbol-packs/` (contact sheets
+   there) for choosing. To use one:
+   - copy only the chosen PNGs into `assets/map/<pack>/`, with a README naming the pack, its
+     source URL and its CC0 licence, as `WIDMAN-README.txt` does;
+   - tone them to the map's ink as `loadStamps` does Widman's (black to sepia, no rim);
+   - in a town plan, give it a footprint like a building's, so `cityCanvas` keeps houses out from
+     under it and `cityClashes` keeps it off the lanes and the water;
+   - check it beside the engraved art already on the map at the journey zoom and zoomed out, as
+     for a new drawing (below). Widman's settlement stamps failed this check: so may these.
+   No other symbol sets without the owner's word.
+4. **A new vector drawing** in `buildings.js`, added to `BUILDINGS` as `{h, draw(T)}`:
    - Model it on the matching icon in the official Maps of Magnamund (sheet 1's inset,
      `data/projectaon/maps/01-detail.jpg`, is the best reference). Look at it; do not slice it.
    - Units: ground at y = 0, up is negative, about 50-110 tall; set `h` to the full height.

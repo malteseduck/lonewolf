@@ -172,8 +172,9 @@ walk. Book 1's look-through found:
 
 When a place needs something drawn that the map lacks:
 
-1. **Reuse first.** Use a Widman stamp (`mountain`, `range`, `forest`, `tree`) or a building from
-   `buildings.js`.
+1. **Reuse first.** Use a Widman stamp (`mountain`, `range`, `forest`, `tree`), a building from
+   `buildings.js`, or a Hogenburg (town plans) or Donia (country maps) symbol, following "Map
+   symbols: adding one" in docs/reference/interface.md.
 2. **Otherwise draw a new vector building** in `buildings.js`, following "Map symbols: adding one"
    in docs/reference/interface.md: model it on the official map's icon, in ink only, engraved.
    Never cut symbols out of map images.
@@ -239,8 +240,11 @@ bones only, as a fan map is):
    from the gates to a centre (a square, a market, the citadel's precinct), then the lanes. Keep
    the `open` ground for squares and precincts. `cityCanvas` fills everything else with houses, so
    the streets alone decide how the town reads.
-5. **Places last.** Put the places on the plan, with the panel's reach in mind (about a third of the
-   view across), and run the checker and the sweep as for any leg.
+5. **Places last.** Put the places on the plan, and the landmarks, each on open ground: never on a
+   lane, a bridge's river or the water, and not on top of another building. In the page,
+   `(await import('/city.js')).cityClashes('<plan>', places)` must come back empty; the houses keep
+   clear of every building by themselves. Keep the panel's reach in mind (about a third of the view
+   across), and run the checker and the sweep as for any leg.
 6. **Say what is invented.** Mark the plan "Not surveyed" in its comment, and in docs/plan.md list
    the spots worth checking in play.
 
