@@ -103,6 +103,11 @@ Smaller things noted along the way:
   Giaks and a row of them, Helghast, Gourgaz, Prince Pelethar), ready for plate entries in later
   books. The flyer is copied to `art/plates/` so the iPad gets it. Book 2's two Szalls (a breed of
   Giak) now use two of its Giaks, so no Book 2 enemy is left on a stand-in.
+- Book 1's fight pictures, reviewed with the owner 2026-10-03: the Vordak now uses the bestiary's
+  Vordak (an `over` entry, since his sections' own plate is the Kraan's). Proposed and not yet
+  answered: the bestiary Doomwolf for Doomwolf 1-4; the Citadel Giaks for Giak, Giak 1, Giak 2 and
+  Giaks; the Citadel Guard Officer, Guard and the spare veteran for the Leader and Soldiers of
+  section 180 (now Book 4's turbaned warrior); the spare masked rogue for the Robber.
 - Offline on the iPad works (2026-10-03, docs/reference/offline.md): Tailscale serves the player at
   `https://maltesepc.tail20dd6b.ts.net/` (`tailscale serve --bg 8765`, tailnet only); the iPad's
   Home Screen copy played with no connection. `tools/serve.py` must run on the PC for it to sync.

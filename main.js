@@ -964,8 +964,10 @@ const deaf = (foe) => foe.immune === true || (!!foe.immune && B.power === 1);
 function nextFoe() {
   B.i++; B.foe = Object.assign({}, B.c.enemies[B.i]); B.foe.max = B.foe.ep;
   B.fx.dead = 0; B.fx.wounds = []; B.img = null;
-  // the section's own illustration, else one from the plate library (an entry with a book is for that book only), else the drawn emblem
-  const foe = B.foe, lib = !foe.art && PLATES.find((p) => (!p.book || p.book === book.id) && p.re.test(foe.name)), src = foe.art ? asset(foe.art) : lib && lib.src;
+  // the section's own illustration, else one from the plate library (an entry with a book is for that book only), else the drawn emblem;
+  // a library entry marked over is the owner's choice and wins even over the section's own
+  const foe = B.foe, fits = (p) => (!p.book || p.book === book.id) && p.re.test(foe.name);
+  const lib = PLATES.find((p) => p.over && fits(p)) || (!foe.art && PLATES.find(fits)), src = lib && (lib.over || !foe.art) ? lib.src : foe.art ? asset(foe.art) : null;
   if (src) { const im = new Image(); im.crop = lib && lib.crop; im.levels = lib && lib.levels; im.onload = () => { if (B && B.foe === foe) B.img = im; }; im.src = src; }
 }
 /* assets/plates/plates.json: pictures for enemies the book does not picture */

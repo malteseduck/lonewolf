@@ -434,8 +434,9 @@ late", once `evade.within` rounds are fought. When `B.over` is set the left page
   medallions and the dial), so the picture never runs under them. Without, it draws a procedural silhouette (`kraan`,
   `giak`, `vordak`) or the crossed-swords `emblem`: the crossed-swords glyph (handed over by
   `setEmblem` once main.js has fetched it) over a blot of wash, or a plain ring and blades until then.
-- Which picture (`nextFoe` in main.js): the enemy's own `art` (its section's illustration, or one
-  the importer borrowed from the same book), else the first entry of `assets/plates/plates.json`
+- Which picture (`nextFoe` in main.js): a library entry marked `over` (the owner preferred another
+  picture to the book's own; Book 1's Vordak), else the enemy's own `art` (its section's
+  illustration, or one the importer borrowed from the same book), else the first entry of `assets/plates/plates.json`
   whose `match` is found in its name and whose `book`, if it has one, is the open book (`PLATES`;
   `__lw.plates` in the console), else the drawn
   sprite. Library entries are free engravings in `assets/plates/` (sources in its README.txt),
