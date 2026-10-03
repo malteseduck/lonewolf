@@ -96,6 +96,35 @@ export const LASTLANDS = {
   },
 };
 
+/* Kalte as printed in Book 3 (1024x776), redrawn the same way. Its snow is left white like the sea,
+   so the land is found from points on it (land) instead of from the sea. Its ice shelves and the
+   pack ice read as water; their names stand on them. */
+export const KALTE = {
+  book: '03tcok',
+  frame: [90, 34, 636, 706],
+  cover: [[380, 505, 300, 185, 'sea'], [175, 510, 105, 100, 'sea'], [585, 415, 120, 50, 'sea']],
+  land: [[230, 200], [500, 60], [180, 330], [620, 230], [345, 375]],
+  as: { forest: 'pale', waste: 'mountain' },
+  places: [['Ljuk', 'fort', 250, 285], ['Ikaya', 'city', 440, 62], ['Anskaven', 'town', 117, 712], ['Lof', 'town', 612, 712]],
+  roads: [],
+  rivers: [],
+  labels: [
+    ['The Kaltersee', 150, 480, 10, 0, 'sea'], ['Ljuk Sound', 272, 348, 7, 0, 'sea'], ['Limit of Winter Pack Ice', 392, 478, 6, -0.05, 'sea'],
+    ['Ljuk Ice Shelf', 320, 300, 5, 0, 'sea'], ['Kliu Ice Shelf', 540, 290, 5, -0.35, 'sea'], ['Drigga Ice Shelf', 690, 190, 5, -1.2, 'sea'],
+    ['Hrod Ice Shelf', 100, 120, 5, -1.57, 'sea'], ['The Uncharted Void', 570, 45, 7, 0, 'land'],
+    ['Hrod Range', 225, 88, 8, 0.35, 'land'], ['Storm Giant Pass', 322, 135, 6, -0.1, 'land'], ['Viad Mountains', 318, 168, 6, 0, 'land'],
+    ['Hrod Basin', 250, 196, 7, 0, 'land'], ['Myjavik Mountains', 565, 132, 7, -0.2, 'land'], ['Kliu Range', 540, 218, 6, -0.35, 'land'],
+    ['Viad Glacier', 423, 185, 5, -1.3, 'land'], ['Cloudmaker Mtn', 380, 212, 4, 0, 'land'], ['Ljuk Range', 120, 275, 5, 0.8, 'land'],
+    ['The Rock', 300, 276, 4, 0, 'land'], ['Gyem Island', 412, 287, 4, 0, 'land'], ['Halle Bluff', 418, 340, 5, -0.3, 'land'],
+    ['Krie', 420, 370, 5, 0, 'land'], ['Tola', 345, 388, 5, 0, 'land'],
+    ['Thet', 230, 712, 5, 0, 'land'], ['Egen', 265, 722, 5, 0, 'land'], ['Broka', 315, 686, 5, 0, 'land'],
+  ],
+};
+LASTLANDS.book = '01fftd';
+/* the printed map a replica is read from: replica true is the Lastlands, a name one of these */
+const GEO = { kalte: KALTE };
+export const geoOf = (id) => (MAPS[id] && MAPS[id].replica && MAPS[id].replica !== true ? GEO[MAPS[id].replica] : LASTLANDS);
+
 export const MAPS = {
   /* the invented country of the demo chapter */
   demo: {
@@ -141,7 +170,7 @@ for (const id of Object.keys(MAPS)) {
   const marks = Object.fromEntries(Object.entries(legs).filter(([, l]) => l.city && l.mark).map(([leg, l]) => [`__${leg}`, [l.name, l.mark, ...l.at]]));
   for (const [leg, { view, places, city }] of Object.entries(legs)) {
     const own = Object.fromEntries(places.map((k) => [k, MAPS[id].places[k]]));
-    MAPS[`${id}/${leg}`] = city ? { city: `${id}/${city}`, view: [0, 0, 1000, 700], places: own } : { replica: true, view, places: own, marks, rivers: MAPS[id].rivers };
+    MAPS[`${id}/${leg}`] = city ? { city: `${id}/${city}`, view: [0, 0, 1000, 700], places: own } : { replica: MAPS[id].replica, view, places: own, marks, rivers: MAPS[id].rivers };
     if (city) places.forEach((k) => inTown.add(k));
   }
   MAPS[id].wholePlaces = Object.fromEntries([...Object.entries(MAPS[id].places || {}).filter(([k]) => !inTown.has(k)), ...Object.entries(marks)]);
@@ -252,14 +281,15 @@ function affine(pairs) {
 /* The replica's reading of the printed map, made once per image. With the world map (world), land
    the printed map leaves plain takes its hills, mountains and forest from the world map instead. */
 const models = {}, readings = {};
-export function replicaModel(img, world) {
+export function replicaModel(img, world, geo = LASTLANDS) {
+  if (!geo.world) world = undefined;
   const key = img.src + (world ? '+' + world.src : '');
   if (models[key]) return models[key];
   // the printed map is read once; the world map's terrain goes into copies of its grids
-  const base = readings[img.src] || (readings[img.src] = analyse(img, LASTLANDS));
+  const base = readings[img.src] || (readings[img.src] = analyse(img, geo));
   const m = world ? { ...base, mountain: base.mountain.slice(), hill: base.hill.slice(), forest: base.forest.slice() } : base;
   if (world) {
-    const S = LASTLANDS.world, t = worldTerrain(world, S.crop), toWorld = affine(S.anchors.map(([w, p]) => [p, w]));
+    const S = geo.world, t = worldTerrain(world, S.crop), toWorld = affine(S.anchors.map(([w, p]) => [p, w]));
     const [rx, ry, rw, rh] = S.region;
     for (let y = ry; y < ry + rh; y++) for (let x = rx; x < rx + rw; x++) {
       const i = y * m.W + x;
@@ -279,10 +309,10 @@ export function replicaModel(img, world) {
 const sheets = {};
 /* out: the canvas is painted out times the size: the drawing is laid out for W x H and scaled onto
    it, so a smaller canvas looks the same, only with fewer pixels to paint */
-export function replicaCanvas(model, view, W, H, extra, out = 1, own = {}) {
+export function replicaCanvas(model, view, W, H, extra, out = 1, own = {}, geo = LASTLANDS) {
   // own: what one book adds to the shared Lastlands for itself (own.rivers), so the others are untouched
-  const rivers = [...LASTLANDS.rivers, ...(own.rivers || [])];
-  const [vx, vy, vw] = view, z = W / vw, R = LASTLANDS, cv = Ink.canvas(Math.round(W * out), Math.round(H * out)), x = cv.getContext('2d');
+  const rivers = [...geo.rivers, ...(own.rivers || [])];
+  const [vx, vy, vw] = view, z = W / vw, R = geo, cv = Ink.canvas(Math.round(W * out), Math.round(H * out)), x = cv.getContext('2d');
   const r = Ink.seeded(Math.round(vx * 7 + vy * 13 + vw * 3));
   const P = ([px, py]) => [(px - vx) * z, (py - vy) * z];
   const toMap = () => x.setTransform(z * out, 0, 0, z * out, -vx * z * out, -vy * z * out), toCanvas = () => x.setTransform(out, 0, 0, out, 0, 0);
@@ -487,7 +517,7 @@ export function mapCanvas(id, img, world, out = 1) {
   // one painting per map: a painting at another size is dropped (each is tens of megabytes)
   Object.keys(cache).forEach((k) => { if (k.startsWith(id + '@')) delete cache[k]; });
   if (MAPS[id].city) return (cache[key] = cityCanvas(CITIES[MAPS[id].city], Math.round(3200 * out), Math.round(2240 * out), Object.values(MAPS[id].places), { pick: (kind, r) => STAMPS[kind][Math.floor(r() * STAMPS[kind].length)], put: (x, st, px, py, s) => stamp(x, st, px, py, s, 0) }));
-  if (MAPS[id].replica) return img ? (cache[key] = replicaCanvas(replicaModel(img, world), MAPS[id].view, 3200, 2240, MAPS[id].places && Object.values({ ...MAPS[id].places, ...MAPS[id].marks }), out, { rivers: MAPS[id].rivers })) : null;
+  if (MAPS[id].replica) return img ? (cache[key] = replicaCanvas(replicaModel(img, world, geoOf(id)), MAPS[id].view, 3200, 2240, MAPS[id].places && Object.values({ ...MAPS[id].places, ...MAPS[id].marks }), out, { rivers: MAPS[id].rivers }, geoOf(id))) : null;
   const m = MAPS[id], cv = Ink.canvas(2000, 1400), x = cv.getContext('2d'), r = Ink.seeded(id.length * 131 + 11);
   const pick = (kind) => STAMPS[kind][Math.floor(r() * STAMPS[kind].length)];
   x.drawImage(Ink.parchment(cv.width, cv.height, false, true), 0, 0);

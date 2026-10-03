@@ -65,29 +65,47 @@ export function analyse(img, spec) {
   x.drawImage(img, 0, 0);
   const d = x.getImageData(0, 0, W, H).data, cls = new Uint8Array(N);
   for (let i = 0; i < N; i++) cls[i] = classify(d[i * 4], d[i * 4 + 1], d[i * 4 + 2]);
+  // a map's own palette: spec.as re-reads a class as another ({ forest: 'pale' }: its grey-green
+  // glacier is no wood; { waste: 'mountain' }: its peaks are painted paler than Book 1's)
+  const as = Object.entries(spec.as || {}).map(([a, b]) => [C[a], C[b]]);
+  if (as.length) for (let i = 0; i < N; i++) for (const [a, b] of as) if (cls[i] === a) { cls[i] = b; break; }
   const [fx, fy, fw, fh] = spec.frame;
   for (let y = 0; y < H; y++) for (let x2 = 0; x2 < W; x2++) if (x2 < fx || y < fy || x2 >= fx + fw || y >= fy + fh) cls[y * W + x2] = C.none;
   (spec.cover || []).forEach(([bx, by, bw, bh, as]) => {
-    for (let y = by; y < by + bh; y++) for (let x2 = bx; x2 < bx + bw; x2++) cls[y * W + x2] = as === 'land' ? C.plain : C.pale;
+    for (let y = by; y < by + bh; y++) for (let x2 = bx; x2 < bx + bw; x2++) cls[y * W + x2] = as === 'land' ? C.plain : spec.land ? C.water : C.pale;
   });
   const isLand = (c) => c >= C.plain && c <= C.waste;
-
-  // The sea is everything not land that can be reached from open water. That leaves the ink of
-  // names, castles and mountains drawn on land as land.
-  const wet = new Uint8Array(N), stack = spec.sea.map(([sx, sy]) => sy * W + sx);
-  while (stack.length) {
-    const i = stack.pop();
-    if (wet[i] || cls[i] === C.none || isLand(cls[i])) continue;
-    wet[i] = 1;
-    const px = i % W;
-    if (px > 0) stack.push(i - 1);
-    if (px < W - 1) stack.push(i + 1);
-    if (i >= W) stack.push(i - W);
-    if (i < N - W) stack.push(i + W);
+  const flood = (from, stop) => {
+    const got = new Uint8Array(N), stack = from.map(([sx, sy]) => sy * W + sx);
+    while (stack.length) {
+      const i = stack.pop();
+      if (got[i] || cls[i] === C.none || stop(cls[i])) continue;
+      got[i] = 1;
+      const px = i % W;
+      if (px > 0) stack.push(i - 1);
+      if (px < W - 1) stack.push(i + 1);
+      if (i >= W) stack.push(i - W);
+      if (i < N - W) stack.push(i + W);
+    }
+    return got;
+  };
+  const land = new Float32Array(N);
+  if (spec.land) {
+    // A map that leaves its snow white, like the sea, and draws its coasts as blue lines: the land is
+    // what can be reached from points on it without crossing water. The ink of names and peaks on
+    // it is closed over by the blur.
+    // Land it colours (green shores) counts too.
+    const got = flood(spec.land, (c) => c === C.water);
+    for (let i = 0; i < N; i++) if (isLand(cls[i])) got[i] = 1;
+    const dry = density(got, W, H, (v) => v === 1, 3);
+    for (let i = 0; i < N; i++) land[i] = cls[i] === C.none ? 0 : dry[i];
+  } else {
+    // The sea is everything not land that can be reached from open water. That leaves the ink of
+    // names, castles and mountains drawn on land as land. Blurring it drops the thin rivers it
+    // flooded into.
+    const seaF = density(flood(spec.sea, isLand), W, H, (v) => v === 1, 3);
+    for (let i = 0; i < N; i++) land[i] = cls[i] === C.none ? 0 : 1 - seaF[i];
   }
-  // blurring the sea drops the thin rivers it flooded into
-  const seaF = density(wet, W, H, (v) => v === 1, 3), land = new Float32Array(N);
-  for (let i = 0; i < N; i++) land[i] = cls[i] === C.none ? 0 : 1 - seaF[i];
   const coast = contours(land, W, H, 0.5).filter((l) => area(l) > 40).map((l) => smooth(l, 2.5));
   const grid = (test, rad) => { const g = density(cls, W, H, test, rad); for (let i = 0; i < N; i++) if (land[i] < 0.5) g[i] = 0; return g; };
   return {

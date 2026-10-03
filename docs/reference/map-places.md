@@ -114,8 +114,16 @@ In `maps.js`, import the file and add a `MAPS['<book>']` entry like Book 1's:
 - `places`, `at`, `known`: the imports.
 - `trail` and `route`: the road shown as his way; `start` and `goal`: their names.
 
-A book whose travel leaves the Lastlands (the Magnakai books) needs a replica of its own map
-first. That is a bigger job, not covered here; see "Next steps" in docs/plan.md.
+A book whose travel leaves the Lastlands needs a replica of its own printed map: a geography
+object in `maps.js` like `LASTLANDS` (`KALTE`, Book 3's, is the second), registered in `GEO`, and
+`replica: '<name>'` in the book's `MAPS` entry (`geoOf(id)` finds it). It holds `book` (whose
+`map.png` is read), `frame`, `cover`, `places`, `roads`, `rivers`, `labels`, and either `sea`
+(points in open water, for a map that colours its land) or `land` (points on land, for one that
+leaves its snow white like the sea and draws its coasts as blue lines). `as` re-reads a colour
+class for that map's palette (Kalte: its grey-green glacier is not forest, its pale peaks are
+mountains). To read the coordinates, open the printed map and check the land mask by drawing
+`analyse(img, spec).land` over it in the page. `world` and `detail` (the fan world map's terrain,
+the Sommerlund inset) are the Lastlands' only.
 
 `placeBook` in `maps.js` then gives each section its place and the book its `locations`, which
 switches it to travel on the map.

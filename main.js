@@ -3,7 +3,7 @@
    Plays the books imported by tools/import_projectaon.py. */
 import * as Ink from './shared/ink.js';
 import { drawCreature, setArt, setEmblem, newWound, heroFromArt, portraitFromArt, drawFrame, drawSheet, drawBanner, drawCrest, gearSVG } from './plates.js';
-import { MAPS, LASTLANDS, mapCanvas, loadStamps, stampsLoaded, printedCanvas, replicaModel, replicaCanvas, placeBook, along } from './maps.js';
+import { MAPS, LASTLANDS, geoOf, mapCanvas, loadStamps, stampsLoaded, printedCanvas, replicaModel, replicaCanvas, placeBook, along } from './maps.js';
 
 import * as ITEMS_01 from './items-01fftd.js';
 import * as ITEMS_02 from './items-02fotw.js';
@@ -622,9 +622,9 @@ function paintScale() {
 function showTerrain(id) {
   const out = paintScale(), key = id + '@' + out;
   if (mapShown === key) return;
-  const world = MAPS[id].replica && worldMap();
+  const world = MAPS[id].replica && geoOf(id).world && worldMap();
   if (world === null) return void (mapShown = null); // painted once it has loaded or failed
-  const cv = mapNode.querySelector('canvas'), x = cv.getContext('2d'), map = mapCanvas(id, MAPS[id].replica && lastlands(), world, out);
+  const cv = mapNode.querySelector('canvas'), x = cv.getContext('2d'), map = mapCanvas(id, MAPS[id].replica && lastlands(id), world, out);
   x.clearRect(0, 0, cv.width, cv.height);
   // painted once the symbols arrive (the printed map's own onload redraws for the image). Asking
   // again when the symbols are already loaded would redraw at once and loop without end, freezing
@@ -645,19 +645,19 @@ function paintAhead() {
   const step = () => {
     const id = next.shift();
     if (!id || !stampsLoaded()) return;
-    const world = MAPS[id].replica && worldMap();
+    const world = MAPS[id].replica && geoOf(id).world && worldMap();
     // the printed map and the world map may still be on their way (a town plan needs neither): try again shortly
-    if (world === null || (MAPS[id].replica && !lastlands())) { next.unshift(id); aheadTimer = setTimeout(idle, 1000); return; }
-    mapCanvas(id, MAPS[id].replica && lastlands(), world, out);
+    if (world === null || (MAPS[id].replica && !lastlands(id))) { next.unshift(id); aheadTimer = setTimeout(idle, 1000); return; }
+    mapCanvas(id, MAPS[id].replica && lastlands(id), world, out);
     if (next.length) aheadTimer = setTimeout(idle, 400);
   };
   const idle = () => (window.requestIdleCallback ? requestIdleCallback(step, { timeout: 4000 }) : step());
   aheadTimer = setTimeout(idle, 1200); // after the page has turned
 }
-/* Book 1's printed map, which the Lastlands replica is read from: the image, null while it
-   loads (the panel redraws then), or undefined if Book 1 is not imported */
-function lastlands() {
-  const b = BOOKS['01fftd'];
+/* The printed map the replica of map id is read from (Book 1's for the Lastlands): the image, null
+   while it loads (the panel redraws then), or undefined if that book is not imported */
+function lastlands(id = book.id) {
+  const b = BOOKS[geoOf(id).book];
   if (!b) return undefined;
   const url = b.assets + b.map;
   if (!printed[url]) { const im = (printed[url] = new Image()); im.onload = () => { if (panel === 'map') renderRight(); }; im.src = url; }
@@ -695,7 +695,7 @@ function drawZoom() {
   const box = $('.mapview.zoomable'), img = lastlands();
   if (!box || !img) return;
   if (!stampsLoaded()) return void loadStamps().then(() => { if (panel === 'map') renderRight(); });
-  const dpr = Math.min(2, devicePixelRatio || 1), W = Math.round(box.clientWidth * dpr), H = Math.round(box.clientHeight * dpr), [fx, fy, fw, fh] = LASTLANDS.frame;
+  const dpr = Math.min(2, devicePixelRatio || 1), W = Math.round(box.clientWidth * dpr), H = Math.round(box.clientHeight * dpr), [fx, fy, fw, fh] = geoOf(book.id).frame;
   const m = MAPS[book.id], here = book.locations && L[game.section.loc], at = here ? here.printed : along(m.trail, progress()).pop();
   if (!zoomV) { const w0 = fh * (W / H) * 0.5; zoomV = [at[0] - w0 / 2, at[1] - (w0 * H) / W / 2, w0]; }
   zoomV = fitView(zoomV, W / H);
@@ -703,7 +703,7 @@ function drawZoom() {
   const cv = box.querySelector('canvas');
   clearTimeout(zoomLater); cv.style.transform = '';
   cv.width = W; cv.height = H;
-  cv.getContext('2d').drawImage(replicaCanvas(replicaModel(img, worldMap() || undefined), [zoomV[0], zoomV[1], w, h], W, H, m.places && Object.values(m.wholePlaces || m.places), 1, { rivers: m.rivers }), 0, 0);
+  cv.getContext('2d').drawImage(replicaCanvas(replicaModel(img, worldMap() || undefined, geoOf(book.id)), [zoomV[0], zoomV[1], w, h], W, H, m.places && Object.values(m.wholePlaces || m.places), 1, { rivers: m.rivers }, geoOf(book.id)), 0, 0);
   drawnV = [zoomV[0], zoomV[1], w];
   const tok = box.querySelector('.pawn');
   tok.style.visibility = '';
@@ -711,7 +711,7 @@ function drawZoom() {
 }
 /* a view kept within its zoom limits and on the map; ratio is the box's width over its height */
 function fitView([x, y, w0], ratio) {
-  const [fx, fy, fw, fh] = LASTLANDS.frame, w = Math.max(30, Math.min(fw, fh * ratio, w0)), h = w / ratio; // zoomed out, the frame's height fills the box
+  const [fx, fy, fw, fh] = geoOf(book.id).frame, w = Math.max(30, Math.min(fw, fh * ratio, w0)), h = w / ratio; // zoomed out, the frame's height fills the box
   const keep = (v, lo, span, size) => (size >= span ? lo + (span - size) / 2 : Math.max(lo, Math.min(lo + span - size, v)));
   return [keep(x, fx, fw, w), keep(y, fy, fh, h), w];
 }
@@ -773,7 +773,7 @@ function updateMap() {
   let h = '';
   for (const k in L) {
     if (destLocs.has(k) || L[k].map !== leg) continue;
-    const named = MAPS[book.id] && MAPS[book.id].replica && LASTLANDS.places.some((p) => p[0] === L[k].name); // the map already prints it
+    const named = MAPS[book.id] && MAPS[book.id].replica && geoOf(book.id).places.some((p) => p[0] === L[k].name); // the map already prints it
     if (k in reach) h += `<div class="mk back ${armed === reach[k] ? 'armed' : ''}" style="${pct(L[k])}"><button type="button" data-arm="${reach[k]}" aria-label="${esc(L[k].name)}: go back here?"><i></i></button>${named ? '' : `<span>${esc(L[k].name)}</span>`}</div>`;
     else if (locs.includes(k) && k !== here) h += `<div class="mk" style="${pct(L[k])}"><i></i>${named ? '' : `<span>${esc(L[k].name)}</span>`}</div>`;
     else if (k === (MAPS[book.id] || {}).goalAt && k !== here) h += `<div class="mk goal" style="${pct(L[k])}"><i></i>${named ? '' : `<span>${esc(L[k].name)}</span>`}</div>`;
