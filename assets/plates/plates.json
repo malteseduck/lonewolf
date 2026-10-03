@@ -8,7 +8,7 @@
     { "match": "helghast", "book": "02fotw", "src": "data/projectaon/02fotw/ill8.png" },
     { "match": "zombie crew", "book": "02fotw", "src": "art/plates/zombie-horde-lines.png", "crop": [0, 0.05, 1, 0.95] },
     { "match": "zombie", "book": "02fotw", "src": "data/projectaon/02fotw/ill2.png" },
-    { "match": "knight of the white mountain", "book": "02fotw", "src": "data/projectaon/02fotw/ill17.png" },
+    { "match": "knight of the white mountain", "book": "02fotw", "src": "art/plates/knight-shield-pencil.webp", "crop": [0.05, 0.14, 0.92, 0.56] },
     { "match": "watchtower guard", "book": "02fotw", "src": "art/plates/guard-sword-shield-tower.png", "crop": [0.02, 0.02, 0.96, 0.76] },
     { "match": "bridge guard 1", "book": "02fotw", "src": "art/plates/guard-halberdier-plate.webp", "crop": [0.1, 0.02, 0.68, 0.8] },
     { "match": "bridge guard 2", "book": "02fotw", "src": "art/plates/guard-halberd-portcullis.png", "crop": [0.33, 0.3, 0.6, 0.6] },
