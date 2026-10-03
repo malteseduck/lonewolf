@@ -42,6 +42,19 @@ __lw.begin(id, fresh, anew)
 `__lw.game.go('17'); __lw.render()` jumps to a section. Using this overwrites the owner's save for
 that book, so clear the keys you dirtied afterwards (see `docs/reference/architecture.md`) and say so.
 
+## Saving tokens: hand menial work to a Sonnet subagent
+
+The owner pays for every token. Work that needs no judgement goes to a subagent on the cheaper
+model (Agent tool, `model: "sonnet"`), not to the main model: running the importer or a checker and
+reporting its figures, re-importing books after an importer change, copying or renaming files,
+downloading files the owner has already approved, `node --check` / `py_compile` runs, applying an
+edit already decided down to the exact text, measuring image sizes or crops by script, git
+add/commit of finished work. Give it the exact commands, paths and what to report back, and the
+hard rules below that touch the task (no book prose in output, no downloads not approved). Keep on
+the main model: deciding what to change, reading the books' rules, design and layout, judging
+pictures by eye, and anything the owner is waiting to discuss. Do not split a small step off when
+explaining it would cost more than doing it.
+
 ## Hard rules
 
 - **No book content in the repository or in your output.** Project Aon's text and images live in
