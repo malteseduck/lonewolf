@@ -96,6 +96,13 @@ Smaller things noted along the way:
   Vordak and a Doomwolf. To cut each one out as a fight picture (Book 1 has all four; later books
   have more): the page is photographed at an angle with text wrapped round the drawings, so each
   needs a careful crop, and the shadowed paper a levels setting.
+- Citadel's 1980s Lone Wolf miniature catalogues, downloaded 2026-10-03 at the owner's word, in
+  `art/reference/citadel-c41/` (12 scans; personal use, the site says not to copy; SOURCES.txt).
+  Only the Dec 1984 flyer is line drawings: `cutouts.json` there gives crops for 14 of its figures
+  (Vordak, Bandit, Vonotar, Young Thaumaturgist, Lone Wolf, Citadel Guard, Guard Officer, three
+  Giaks and a row of them, Helghast, Gourgaz, Prince Pelethar), ready for plate entries in later
+  books. The flyer is copied to `art/plates/` so the iPad gets it. Book 2's two Szalls (a breed of
+  Giak) now use two of its Giaks, so no Book 2 enemy is left on a stand-in.
 - Offline on the iPad works (2026-10-03, docs/reference/offline.md): Tailscale serves the player at
   `https://maltesepc.tail20dd6b.ts.net/` (`tailscale serve --bg 8765`, tailnet only); the iPad's
   Home Screen copy played with no connection. `tools/serve.py` must run on the PC for it to sync.
