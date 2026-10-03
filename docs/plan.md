@@ -140,20 +140,57 @@ changes to `shared/core.js` and `shared/ui.js` (they were loaded once after the 
    the item table (in the Magnakai books, mark ambushes and bow shots: the engine applies them only there), and a plate-library entry for every enemy the importer lists "with none". Book 1
    is done (2026-10-01); Book 2 has its item table, and 16 enemies with no picture. Check by eye which illustration each enemy borrows (`PLATE_FIXES`, and the
    library's generic soldier/robber entries).
-6. **Redraw the town plans from the Sommerlund City Maps** (owner, 2026-10-02). The owner's copies
-   of the campaign's preview images are in git-ignored `art/reference/sommerlund-city-maps/`:
-   Holmgard (and a larger King's Reach detail), Anskaven, Toran, Tyso, Moytura, Ruanon,
-   Silvershore, the Kai Monastery's plans, the country, the Sommer Isles. First redraw Book 2's
-   Holmgard harbour plan (`CITIES.holmgard` in city.js, invented so far) on the King's Reach: the
-   harbour, the rivers coming in, the bridges, the citadel by the water. Keep the Good Cheer Inn,
-   the stairs, the quay and the ship where section 1's run of sections needs them, and re-check
-   Book 2's places on it. Then, as each book is mapped, use a reference wherever its journey walks
-   a town's streets (candidates, to confirm from the text: Toran, Ruanon, Moytura, the Kai Monastery).
-   Towns with no reference (Ragadorn, Port Bax, Hammerdal and the Magnakai books' cities) are made
-   up from the book. Both ways are in docs/reference/map-places.md, "Drawing a town plan": take only
-   the layout from a reference, draw it in our own sepia style, and use only the books' names.
-   The campaign funded a later Mattioli map of Ragadorn (and Helgedad): look for it before making
-   Ragadorn up. Varetta and Barrakeesh were stretch goals that were not reached.
+6. **Town plans: zoomed-in views of the towns the books walk through** (owner, 2026-10-02). How to
+   draw one, from a reference or from the book alone: docs/reference/map-places.md, "Drawing a town
+   plan". Take only the layout from a reference, draw it in our own sepia style, and use only the
+   books' names. Every plan starts by reading its run of sections: list the spots they need and how
+   they connect, and confirm he really moves about the town, before drawing. Each plan is a leg of
+   its own (`city:`), with its places re-laid on it, then the checker and the sweep. The section
+   counts below are how many of our places files put in that town today.
+
+   The references, all git-ignored, each folder with a SOURCES.txt:
+   - `art/reference/sommerlund-city-maps/`: the Sommerlund City Maps (Mattioli and Dever, preview
+     size): Holmgard (and a larger King's Reach detail), Anskaven, Toran, Tyso, Moytura, Ruanon,
+     Silvershore, the Kai Monastery's plans, the country, the Sommer Isles.
+   - `art/reference/projectaon-forum-maps/`: fan maps from the Project Aon forum, drawn from the
+     books' text, thumbnails only (the full-size images need a forum login, which the owner has to
+     do). They show Book 1's country, Ragadorn, Ikaya, the Maaken Mines, Ikaresh, Barrakeesh Palace
+     and its sewer, the Tekaro sewers and Kazan-Oud. Where a fan map and the text disagree, the text
+     wins.
+   - `art/reference/other-maps/`: "Port Brax" from the Low Fantasy Gaming RPG, a stand-in for Port
+     Bax.
+
+   In this order:
+   1. **Book 2, Holmgard harbour**: redraw `CITIES.holmgard` (made up so far) on the King's Reach
+      from the Mattioli map and its detail: the harbour, the rivers coming in, the bridges, the
+      citadel by the water. Keep the Good Cheer Inn, the stairs behind it, the quay and the ship
+      where Book 2's opening sections need them, and re-check its five places.
+   2. **Book 2, Ragadorn** (about 74 sections, now on 4 places: West Ragadorn, the waterfront with
+      45 of them, the coach station, the road out). Use the fan map: two walled halves either side
+      of the river, a bridge between them, gates towards Port Bax and Holmgard, and its numbered
+      places of interest. Mattioli's Ragadorn was funded as a later map: if it can be found, prefer
+      it. The coast road, the shrine and the bridge outside stay on the Wildlands leg.
+   3. **Book 1, Holmgard** (36 sections on one place): the end of the book, getting through the
+      besieged city to the citadel. Use the whole Mattioli map: the walls and gates, the way in, the
+      streets to the citadel. A plan of the whole city, not the harbour, so `CITIES` gets a second
+      Holmgard (Book 2's harbour plan stays as it is).
+   4. **Book 2, Port Bax** (17 sections on one place). No Magnamund map exists: use Port Brax for
+      its bones only: a walled harbour behind two moles with a round fort, an inner wall closing off
+      one quarter (the naval quarter the Red Pass opens), the town climbing from the quays. Fit the
+      book's spots to it (the gate the coach road reaches, the passes, the documents, the harbour)
+      and draw none of its own landmarks or names.
+   5. **Book 2, Gorn Cove**, if the reading bears it out (42 sections on 2 places, the cove and the
+      village street): a small plan of a fishing village rather than a city.
+   6. **Book 1, the Graveyard of the Ancients**, if the reading bears it out (29 sections on one
+      place): a site plan rather than a town, drawn the same way.
+   Not worth one: Book 2's Hammerdal (7 sections, 3 more at the barricade).
+
+   Later books, as each is mapped: use a Mattioli map wherever the journey walks a town's streets
+   (candidates, to confirm from the text: Toran, Ruanon, Moytura, the Kai Monastery), the fan map
+   for Book 5's Ikaresh, and the other fan maps (Ikaya, the Maaken Mines, Barrakeesh Palace and the
+   sewers, Kazan-Oud) to check how those legs' places sit. Towns with no reference (most of the
+   Magnakai books' cities) are made up from the book. Varetta and Barrakeesh were stretch goals of
+   the Mattioli campaign that were not reached.
 
 Smaller things noted along the way:
 

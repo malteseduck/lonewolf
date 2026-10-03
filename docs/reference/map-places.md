@@ -211,7 +211,18 @@ personal reference, so take only the town's layout from them:
   the roads that leave each gate towards the next town.
 - Note in the plan's comment in `city.js` which reference it follows, and what is still made up.
 
-**A town of our own** (no reference: Ragadorn, Port Bax, Hammerdal, Varetta, Barrakeesh and so on):
+**Fan maps.** `art/reference/projectaon-forum-maps/` holds screenshots of fan maps from the Project
+Aon forum, drawn from the books' text (sources and contents in its `SOURCES.txt`). Two are towns,
+Book 2's Ragadorn and Book 5's Ikaresh, each with a numbered list of the places the book visits.
+The others are a fortress, mines and sewers (Ikaya, the Maaken Mines, Barrakeesh Palace and its
+sewer, the Tekaro sewers, Kazan-Oud) and Book 1's country. They are thumbnails, good for layout
+only. Treat them as the fans' readings of the text: where the text and the map disagree, the text
+wins. The same rules apply as for the posters: layout only, our own style, the books' names. For
+the places that are not towns, use them to check how a leg's places sit, not to make a town plan.
+
+**A town of our own** (no reference: Hammerdal, Varetta, Barrakeesh's streets and so on;
+Book 2's Port Bax has a stand-in from another game in `art/reference/other-maps/`, used for its
+bones only, as a fan map is):
 
 1. **Read the town's sections** and list every spot the text names or implies, and how they relate:
    by the gate, on the quay, across the river, uphill from the market. That list is the plan's
