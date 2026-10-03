@@ -91,6 +91,11 @@ Smaller things noted along the way:
   mob, a sword among them) have one owner-supplied drawing each; three more of theirs (two painted
   peasants, a spearman) are spare in `art/plates/`. The Sailor has the owner's drawing
   of a sailor on deck, and the Knight of the White Mountain one of a knight with sword and shield.
+- Saved for later, 2026-10-03: `art/reference/bestiary/gourgaz-zlanbeast-vordak-doomwolf.webp`, the
+  owner's photo of a printed bestiary spread with ink drawings of a Gourgaz, a Zlanbeast (Kraan), a
+  Vordak and a Doomwolf. To cut each one out as a fight picture (Book 1 has all four; later books
+  have more): the page is photographed at an angle with text wrapped round the drawings, so each
+  needs a careful crop, and the shadowed paper a levels setting.
 - Offline on the iPad works (2026-10-03, docs/reference/offline.md): Tailscale serves the player at
   `https://maltesepc.tail20dd6b.ts.net/` (`tailscale serve --bg 8765`, tailnet only); the iPad's
   Home Screen copy played with no connection. `tools/serve.py` must run on the PC for it to sync.
