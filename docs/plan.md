@@ -5,58 +5,53 @@ Last updated 2026-10-03.
 
 ## Next steps
 
-1. **Show the owner Book 2's fight pictures** (done 2026-10-02, see "State of the player"), and
-   change any they dislike. Open questions for them: the Szalls show Book 1's Giak (the book calls
-   Szalls a breed of Giak, and no downloaded book pictures one); the Sailor, Villagers, Trickster
-   and guards borrow other books' plain humans (Books 6, 8, 5, 9); the Knight of the White Mountain
-   uses Book 2's own Tarnalin knight, who is met later as a friend.
-2. **Play Book 1 through** and fix what the importer misread, and anything the item table missed
+1. **Play Book 1 through** and fix what the importer misread, and anything the item table missed
    or got wrong.
-3. **Books 3-12, one book at a time**, in order (3.1 to 3.10). Finish one book before starting
+2. **Books 3-12, one book at a time**, in order (2.1 to 2.10). Finish one book before starting
    the next. Each book gets the same three pieces of work (see "Work for each book" below): map
    travel, items and fight pictures, and town plans. All ten were imported on 2026-10-03, and each
    report has no broken links and no section without a way on (figures in
    docs/reference/importer.md, Results). None has a places file, an item table or town plans yet,
    so all ten read without travel on the map.
 
-   - **3.1 Book 3, The Caverns of Kalte.** Map: the Lastlands replica, if the journey stays on it.
+   - **2.1 Book 3, The Caverns of Kalte.** Map: the Lastlands replica, if the journey stays on it.
      Fight pictures: 14 of 17 kinds of enemy have none. Random Number left free: 6 (2 changed by a
      weapon in hand or an oil, 4 count by the number). Also: 1 failed ending (61); the sledge food
      is left to the text. Fan map to check against: Ikaya.
-   - **3.2 Book 4, The Chasm of Doom.** Map: the Lastlands replica, if the journey stays on it.
+   - **2.2 Book 4, The Chasm of Doom.** Map: the Lastlands replica, if the journey stays on it.
      Fight pictures: 5 of 32 have none. Random Number left free: 4 (one on the condition "Hunting,
      or a rank", one on a Pick or Shovel, 2 count by the number). Fan map to check against: the
      Maaken Mines.
-   - **3.3 Book 5, Shadow on the Sand.** Map: the Lastlands replica, if the journey stays on it.
+   - **2.3 Book 5, Shadow on the Sand.** Map: the Lastlands replica, if the journey stays on it.
      Fight pictures: 8 of 28 have none. Random Number left free: 5 (one on a lost arm, one against
      COMBAT SKILL, one inside a fight, 2 count by the number). Also: 2 puzzles (58, 331), which use
      the "Turn to section" box. Town plan: Ikaresh, from its fan map. Fan maps to check against:
      Barrakeesh Palace and the sewers. Barrakeesh has no Mattioli map (a stretch goal of that
      campaign that was not reached).
-   - **3.4 Book 6, The Kingdoms of Terror.** Map: needs a replica of the book's own printed map
+   - **2.4 Book 6, The Kingdoms of Terror.** Map: needs a replica of the book's own printed map
      first. Fight pictures: 10 of 21 have none. Random Number left free: 14 (6 bow shots, using
      Weaponmastery with Bow, one of them a three-number draw; one on a shield; one a tournament; 6
      count by the number). Also: mark bow shots and ambushes in the item table. Varetta has no
      Mattioli map (a stretch goal not reached), so it is made up from the book.
-   - **3.5 Book 7, Castle Death.** Map: needs a replica of its own printed map first. Fight
+   - **2.5 Book 7, Castle Death.** Map: needs a replica of its own printed map first. Fight
      pictures: 14 of 23 have none. Random Number left free: 8 (4 bow shots, or a Lore-circle beside
      one; 4 count by the number). Also: 2 puzzles; mark bow shots and ambushes. Fan map to check
      against: Kazan-Oud.
-   - **3.6 Book 8, The Jungle of Horrors.** Map: needs a replica of its own printed map first.
+   - **2.6 Book 8, The Jungle of Horrors.** Map: needs a replica of its own printed map first.
      Fight pictures: 12 of 21 have none. Random Number left free: 3 (2 bow shots, 1 counts by the
      number). Also: 4 puzzles; mark bow shots and ambushes.
-   - **3.7 Book 9, The Cauldron of Fear.** Map: needs a replica of its own printed map first.
+   - **2.7 Book 9, The Cauldron of Fear.** Map: needs a replica of its own printed map first.
      Fight pictures: 7 of 28 have none. Random Number left free: 7 (bow or dagger throws, one with
      a Bow choice; 2 count by the number). Also: 3 puzzles; the Psychic Ring's +8 (214) is left as
      text, so check it against the engine's own weapon bonus; mark bow shots and ambushes.
-   - **3.8 Book 10, The Dungeons of Torgar.** Map: needs a replica of its own printed map first.
+   - **2.8 Book 10, The Dungeons of Torgar.** Map: needs a replica of its own printed map first.
      Fight pictures: 15 of 30 have none. Random Number left free: 8 ("missile bonuses", a weapon in
      hand, 4 count by the number). Also: mark bow shots and ambushes.
-   - **3.9 Book 11, The Prisoners of Time.** Map: needs a replica of its own printed map first.
+   - **2.9 Book 11, The Prisoners of Time.** Map: needs a replica of its own printed map first.
      Fight pictures: 18 of 25 have none. Random Number left free: 10 ("missile bonuses", a Rope, 4
      count by the number). Also: the Ironheart Broadsword's +8 (204) is left as text, so check it
      against the engine's own weapon bonus; mark bow shots and ambushes.
-   - **3.10 Book 12, The Masters of Darkness.** Map: needs a replica of its own printed map first.
+   - **2.10 Book 12, The Masters of Darkness.** Map: needs a replica of its own printed map first.
      Fight pictures: 20 of 39 have none. Random Number left free: 10 ("bow-skill bonuses", a rope, 4
      count by the number). Also: Helshezag's and a weapon's increased power (88, 133) are left as
      text, so check them against the engine's own weapon bonus; mark bow shots and ambushes.
@@ -83,6 +78,12 @@ Last updated 2026-10-03.
 
 Smaller things noted along the way:
 
+- Book 2's fight pictures were shown to the owner on 2026-10-03 (all 35 on one sheet). They asked
+  only for new thieves: the Street Thief Leader, 1 and 2 and the Trickster now use ink drawings the
+  owner supplied, in git-ignored `art/plates/` (personal use; plates.json points at them, and a
+  checkout without them falls back to the drawn emblem). Four more of theirs wait there for later
+  books' fights: a grey masked rogue with daggers, an elf swordsman, two swordswomen (Book 4's hooded
+  bandit leader, section 233, may suit the hooded swordsman too).
 - Offline on the iPad works (2026-10-03, docs/reference/offline.md): Tailscale serves the player at
   `https://maltesepc.tail20dd6b.ts.net/` (`tailscale serve --bg 8765`, tailnet only); the iPad's
   Home Screen copy played with no connection. `tools/serve.py` must run on the PC for it to sync.
