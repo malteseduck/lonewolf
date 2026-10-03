@@ -127,8 +127,9 @@ project's own `backups/` is git-ignored.
 the backup's in their place; the "restore" under "A new adventure" makes it a new adventure with
 the next id instead, so nothing already kept is overwritten. Either way each `lw-a<old>-*` key is
 written as `lw-a<n>-*` (a value kept as a string goes back as it is, anything else as JSON), the
-last book comes from the backup, and its name too when it has one. The file picker opens in the backups folder
-when the browser can (`showOpenFilePicker`), else it is a plain file input. A file that is not a
+last book comes from the backup, and its name too when it has one. The file picker (`showOpenFilePicker`) opens in the
+backups folder once a backup has chosen it (its stored handle as `startIn`; before that, wherever
+the last picker was left), else it is a plain file input. A file that is not a
 version-1 backup, or that holds another adventure's keys, is refused with a toast.
 
 | Key | Holds |

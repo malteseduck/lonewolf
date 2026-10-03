@@ -128,8 +128,9 @@ async function backupAdventure(id) {
    The picker opens in the backups folder when the browser can, else it is a plain file input. */
 async function pickBackup() {
   if (window.showOpenFilePicker) {
+    // the folder the backups went to; an id would win over it with wherever the last picker was left
     const startIn = await HANDLES.get('backups').catch(() => null);
-    const [h] = await window.showOpenFilePicker({ id: 'lw-backups', ...(startIn ? { startIn } : {}), types: [{ description: 'Adventure backup', accept: { 'application/json': ['.json'] } }] });
+    const [h] = await window.showOpenFilePicker({ ...(startIn ? { startIn } : { id: 'lw-backups' }), types: [{ description: 'Adventure backup', accept: { 'application/json': ['.json'] } }] });
     return h.getFile();
   }
   return new Promise((ok, no) => {
