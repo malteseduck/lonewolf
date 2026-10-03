@@ -119,8 +119,8 @@ plus one. Forgetting an adventure removes every `lw-a<n>-*` key.
 
 **Backups.** An adventure's "backup" button (`backupAdventure` in `main.js`) writes its whole state
 as JSON: `{kind: 'lone-wolf adventure backup', version: 1, made, adventure: {id, book, name?}, keys:
-{<every lw-a<n>-* key>: its parsed value}}`, named `<name>.<yyyy>.<mm>.<dd>.json` (the adventure's
-name, or "Adventure II"; a second backup the same day replaces the first). A page cannot write to
+{<every lw-a<n>-* key>: its parsed value}}`, named `<name>.<yyyy>.<mm>.<dd>.<hh>.<mm>.json` (the adventure's
+name, or "Adventure II"; local time, 24-hour; a second backup in the same minute replaces the first). A page cannot write to
 disk, so `tools/serve.py` does it: the page POSTs to `api/backups/<name>` and the server writes
 `backups/<name>` in the project (git-ignored), with no dialog. Served any other way (plain
 `http.server`, which answers a POST with 501), the file is downloaded instead. With the PC out of

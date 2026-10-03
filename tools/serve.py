@@ -83,8 +83,10 @@ class Handler(SimpleHTTPRequestHandler):
                       '.woff2': 'font/woff2', '.js': 'text/javascript', '.mjs': 'text/javascript'}
 
     def end_headers(self):
-        if self.path.split('?', 1)[0] == '/sw.js':
-            self.send_header('Cache-Control', 'no-cache')  # so a new service worker is seen at once
+        # browsers check every file is current (a cheap 304 when it is): without this they keep a
+        # changed main.js for a while on a guess. The offline copy (sw.js) does its own keeping.
+        if not self.path.startswith('/api/'):
+            self.send_header('Cache-Control', 'no-cache')
         super().end_headers()
     def _json(self, code, body):
         data = json.dumps(body).encode('utf-8')

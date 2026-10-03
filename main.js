@@ -78,7 +78,7 @@ function forgetAdventure(id) {
 if (adventure()) useAdventure(adv.at);
 const advName = (id) => (adv.list.find((a) => a.id === id) || {}).name || `Adventure ${ROMAN[id - 1] || id}`;
 /* backups: an adventure's whole state (its list entry and every lw-a<n>-* key) as JSON, named
-   <name>.<yyyy>.<mm>.<dd>.json. tools/serve.py keeps them in the project's backups/ folder (a page
+   <name>.<yyyy>.<mm>.<dd>.<hh>.<mm>.json (local time, 24-hour). tools/serve.py keeps them in the project's backups/ folder (a page
    cannot write to disk by itself); served any other way, the file is downloaded instead. */
 function backupOf(id) {
   const a = adv.list.find((x) => x.id === id), keys = {};
@@ -88,7 +88,7 @@ function backupOf(id) {
 function backupName(id) {
   const d = new Date(), two = (n) => String(n).padStart(2, '0');
   const name = advName(id).replace(/[\\/:*?"<>|\x00-\x1f]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/^\.+|\.+$/g, '') || `adventure ${id}`;
-  return `${name}.${d.getFullYear()}.${two(d.getMonth() + 1)}.${two(d.getDate())}.json`;
+  return `${name}.${d.getFullYear()}.${two(d.getMonth() + 1)}.${two(d.getDate())}.${two(d.getHours())}.${two(d.getMinutes())}.json`;
 }
 // a call to the PC, given up after a while: over Tailscale a PC that is off can leave a request hanging
 function api(path, opts = {}, ms = 8000) {
