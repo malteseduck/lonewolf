@@ -124,7 +124,8 @@ class for that map's palette (Kalte: its grey-green glacier is read as `glacier`
 pale peaks are mountains). A frozen map sets `snow: true`: snow drifts instead of trees and grass on
 open ground, the land a paler sheet, the glacier drawn as flow lines along `flow` (an angle) with
 crevasses, `shelves` (ice shelves, outlined by hand: their tint is too close to the coast's line to
-read) painted as cracked ice, and `pack` (`{ width, line }`) a band of floes on the sea. To read the coordinates, open the printed map and check the land mask by drawing
+read) cut out of the land and painted as cracked ice, and `pack` (`{ width, line }`) the band of
+packed floes on the sea. `as` entries are `[from, to, box?]`, the first that applies. To read the coordinates, open the printed map and check the land mask by drawing
 `analyse(img, spec).land` over it in the page. `world` and `detail` (the fan world map's terrain,
 the Sommerlund inset) are the Lastlands' only.
 

@@ -7,7 +7,7 @@
    Hrod Basin, up the Viad Glacier and into the Myjavik Mountains, then below the ice (the caverns)
    and inside Ikaya. The caverns and the fortress are places in a close view, not town plans: their
    rooms are laid out by the routes between them and are Not surveyed, only what the passages let
-   us say. The ice shelves are painted as ice over whatever the replica reads under them. */
+   us say. The ice shelves are no land in the replica (KALTE.shelves): places on them stand on the ice. */
 export const PLACES = {
   // the voyage and the Ljuk ice shelf
   cardonal: ['Aboard the Cardonal', null, 298, 350],

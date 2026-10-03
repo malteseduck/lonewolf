@@ -65,10 +65,13 @@ export function analyse(img, spec) {
   x.drawImage(img, 0, 0);
   const d = x.getImageData(0, 0, W, H).data, cls = new Uint8Array(N);
   for (let i = 0; i < N; i++) cls[i] = classify(d[i * 4], d[i * 4 + 1], d[i * 4 + 2]);
-  // a map's own palette: spec.as re-reads a class as another ({ forest: 'glacier' }: its grey-green
-  // glacier is no wood; { waste: 'mountain' }: its peaks are painted paler than Book 1's)
-  const as = Object.entries(spec.as || {}).map(([a, b]) => [C[a], C[b]]);
-  if (as.length) for (let i = 0; i < N; i++) for (const [a, b] of as) if (cls[i] === a) { cls[i] = b; break; }
+  // a map's own palette: spec.as re-reads a class as another, [from, to, box?], the first that applies
+  // (Kalte: its grey-green glacier is no wood, its peaks are painted paler than Book 1's)
+  const as = (spec.as || []).map(([a, b, box]) => [C[a], C[b], box]);
+  if (as.length) for (let i = 0; i < N; i++) {
+    const px = i % W, py = (i / W) | 0;
+    for (const [a, b, box] of as) if (cls[i] === a && (!box || (px >= box[0] && py >= box[1] && px < box[0] + box[2] && py < box[1] + box[3]))) { cls[i] = b; break; }
+  }
   const [fx, fy, fw, fh] = spec.frame;
   for (let y = 0; y < H; y++) for (let x2 = 0; x2 < W; x2++) if (x2 < fx || y < fy || x2 >= fx + fw || y >= fy + fh) cls[y * W + x2] = C.none;
   (spec.cover || []).forEach(([bx, by, bw, bh, as]) => {
@@ -95,6 +98,14 @@ export function analyse(img, spec) {
     // what can be reached from points on it without crossing water. The ink of names and peaks on
     // it is closed over by the blur.
     // Land it colours (green shores) counts too.
+    // Ice shelves, outlined by hand (spec.shelves), are no land: their tint is too pale to stop it.
+    if (spec.shelves) {
+      const sc = document.createElement('canvas'); sc.width = W; sc.height = H;
+      const sx = sc.getContext('2d', { willReadFrequently: true }); sx.fillStyle = '#000';
+      spec.shelves.forEach((p) => { sx.beginPath(); p.forEach(([px, py], i) => (i ? sx.lineTo(px, py) : sx.moveTo(px, py))); sx.fill(); });
+      const sd = sx.getImageData(0, 0, W, H).data;
+      for (let i = 0; i < N; i++) if (sd[i * 4 + 3] > 127) cls[i] = C.water;
+    }
     const got = flood(spec.land, (c) => c === C.water);
     for (let i = 0; i < N; i++) if (isLand(cls[i])) got[i] = 1;
     const dry = density(got, W, H, (v) => v === 1, 3);

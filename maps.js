@@ -101,25 +101,27 @@ export const LASTLANDS = {
 };
 
 /* Kalte as printed in Book 3 (1024x776), redrawn the same way. Its snow is left white like the sea,
-   so the land is found from points on it (land) instead of from the sea. Its ice shelves and the
-   pack ice read as water; their names stand on them. */
+   so the land is found from points on it (land) instead of from the sea. Its ice shelves, outlined
+   by hand, are cut out of the land and painted as ice; the pack ice is a band drawn along its line. */
 export const KALTE = {
   book: '03tcok',
   frame: [90, 34, 636, 706],
   cover: [[380, 505, 300, 185, 'sea'], [175, 510, 105, 100, 'sea'], [585, 415, 120, 50, 'sea']],
-  land: [[230, 200], [500, 60], [180, 330], [620, 230], [345, 375]],
-  as: { forest: 'glacier', waste: 'mountain' },
+  land: [[230, 200], [500, 60], [180, 330], [620, 230], [345, 375], [140, 152]],
+  // the grey-green of the glacier is no wood, nor is the same tint on the ice elsewhere in the north,
+  // nor the green of the islands in the south (open ground)
+  as: [['forest', 'glacier', [370, 80, 110, 200]], ['forest', 'pale', [90, 34, 636, 520]], ['forest', 'plain'], ['waste', 'mountain']],
   // a frozen land: snow drifts on open ground, no trees or grass; the glacier's flow runs this way
   snow: true, flow: -1.35,
-  // the ice shelves, outlined as printed (the Ljuk shelf's bay reads as land, so they are painted over
-  // whatever lies under them), and the limit of the winter pack ice, a band of floes this wide
+  // the ice shelves, outlined from the printed map's tint, and the limit of the winter pack ice, a band
+  // of floes this wide along its middle
   shelves: [
     [[258, 268], [290, 262], [330, 264], [370, 266], [410, 268], [450, 262], [472, 258], [470, 280], [440, 288], [400, 292], [350, 296], [300, 300], [262, 296]],
-    [[470, 296], [520, 284], [570, 266], [620, 252], [650, 242], [656, 252], [630, 264], [582, 280], [530, 296], [478, 308]],
-    [[646, 236], [664, 214], [682, 188], [700, 160], [714, 136], [726, 126], [726, 146], [712, 176], [696, 206], [678, 234], [658, 252]],
-    [[90, 52], [112, 52], [110, 120], [108, 200], [90, 206]],
+    [[480, 318], [495, 305], [520, 284], [545, 270], [570, 266], [600, 268], [624, 256], [638, 244], [644, 260], [630, 272], [606, 284], [576, 282], [551, 286], [526, 300], [501, 321], [486, 334]],
+    [[638, 244], [648, 222], [660, 200], [672, 180], [684, 158], [696, 138], [708, 131], [726, 124], [740, 138], [722, 145], [710, 152], [698, 172], [686, 194], [674, 214], [662, 236], [652, 258]],
+    [[96, 64], [110, 64], [120, 100], [120, 140], [114, 180], [106, 212], [90, 212], [90, 72]],
   ],
-  pack: { width: 26, line: [[90, 330], [140, 370], [190, 400], [240, 422], [290, 438], [340, 448], [390, 455], [440, 456], [490, 447], [540, 425], [590, 395], [640, 365], [690, 338], [726, 320]] },
+  pack: { width: 28, line: [[90, 348], [120, 368], [145, 388], [170, 402], [195, 412], [220, 426], [245, 443], [270, 451], [295, 456], [320, 458], [345, 457], [370, 462], [395, 468], [420, 468], [445, 466], [470, 459], [495, 442], [520, 430], [545, 418], [570, 404], [595, 390], [620, 355], [645, 338], [670, 327], [695, 327], [726, 314]] },
   places: [['Ljuk', 'fort', 250, 285], ['Ikaya', 'city', 440, 62], ['Anskaven', 'town', 117, 712], ['Lof', 'town', 612, 712]],
   roads: [],
   rivers: [],
@@ -361,19 +363,28 @@ function snowAndIce(x, R, land, sea, z) {
     x.strokeStyle = ink(0.8); x.lineWidth = 1.8 / z; x.stroke(p);
   });
   x.save(); x.clip(sea, 'evenodd');
-  // the pack ice: floes strewn along the line, across its width
+  // the pack ice, as printed: a band of packed floes between two broken edges
   const pk = R.pack;
-  if (pk) pk.line.forEach(([ax, ay], i) => {
-    if (!i) return;
-    const [bx, by] = pk.line[i - 1], d = Math.hypot(ax - bx, ay - by), nx = -(ay - by) / d, ny = (ax - bx) / d;
-    for (let t = 0; t < d; t += 4.5) {
-      const off = (q() - 0.5) * pk.width, cx = bx + ((ax - bx) * t) / d + nx * off, cy = by + ((ay - by) * t) / d + ny * off, rad = 1.6 + q() * 2.6, n = 5 + Math.floor(q() * 3), a0 = q() * 6;
-      const f = new Path2D();
-      for (let j = 0; j < n; j++) { const a = a0 + (j / n) * Math.PI * 2, rr = rad * (0.65 + q() * 0.5); if (j) f.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr * 0.8); else f.moveTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr * 0.8); }
-      f.closePath();
-      x.fillStyle = `rgba(${PAPER},0.72)`; x.fill(f); x.strokeStyle = ink(0.7); x.lineWidth = 1.1 / z; x.stroke(f);
+  if (pk) {
+    const L = pk.line, half = pk.width / 2, edges = [[], []];
+    L.forEach(([px, py], i) => { // each point's normal: the average of its two sides'
+      const [ax, ay] = L[Math.max(0, i - 1)], [bx, by] = L[Math.min(L.length - 1, i + 1)], d = Math.hypot(bx - ax, by - ay), nx = -(by - ay) / d, ny = (bx - ax) / d;
+      const w = half * (0.8 + q() * 0.4);
+      edges[0].push([px + nx * w, py + ny * w]); edges[1].push([px - nx * w, py - ny * w]);
+    });
+    const wave = (pts) => { const p = new Path2D(); pts.forEach(([px, py], i) => (i ? p.lineTo(px + (q() - 0.5) * 2, py + (q() - 0.5) * 2) : p.moveTo(px, py))); return p; };
+    const fine = (pts) => pts.flatMap(([ax, ay], i) => { if (!i) return [[ax, ay]]; const [bx, by] = pts[i - 1], m = Math.max(1, Math.round(Math.hypot(ax - bx, ay - by) / 3)); return Array.from({ length: m }, (_, j) => [bx + ((ax - bx) * (j + 1)) / m, by + ((ay - by) * (j + 1)) / m]); });
+    const [e0, e1] = edges.map(fine), band = new Path2D(); [...e0, ...e1.slice().reverse()].forEach(([px, py], i) => (i ? band.lineTo(px, py) : band.moveTo(px, py))); band.closePath();
+    x.fillStyle = `rgba(${PAPER},0.5)`; x.fill(band);
+    // the floes: joints across the band, each kinked once, every few pixels along it
+    x.strokeStyle = ink(0.72); x.lineWidth = 1.2 / z;
+    for (let i = 0; i < Math.min(e0.length, e1.length); i += 1 + (q() < 0.5)) {
+      const [ax, ay] = e0[i], [bx, by] = e1[Math.min(e1.length - 1, i + (q() < 0.5 ? 1 : 0))], t = 0.3 + q() * 0.4;
+      x.beginPath(); x.moveTo(ax, ay); x.lineTo(ax + (bx - ax) * t + (q() - 0.5) * 3, ay + (by - ay) * t + (q() - 0.5) * 3); x.lineTo(bx, by); x.stroke();
+      if (q() < 0.4) { const [cx, cy] = [ax + (bx - ax) * 0.5, ay + (by - ay) * 0.5], [dx, dy] = e0[Math.min(e0.length - 1, i + 2)]; x.beginPath(); x.moveTo(cx, cy); x.lineTo((cx + dx + bx) / 3, (cy + dy + by) / 3); x.stroke(); }
     }
-  });
+    x.strokeStyle = ink(0.8); x.lineWidth = 1.6 / z; [e0, e1].forEach((e) => x.stroke(wave(e)));
+  }
   x.restore();
 }
 
@@ -550,11 +561,12 @@ export function replicaCanvas(model, view, W, H, extra, out = 1, own = {}, geo =
     x.lineWidth = size * 0.3; x.strokeStyle = `rgba(${PAPER},0.9)`; x.strokeText(name, cx, cy + size * 1.25); x.fillStyle = ink(0.95); x.fillText(name, cx, cy + size * 1.25);
   });
   R.labels.forEach(([text, px, py, size, rot, kind]) => {
-    const [cx, cy] = P([px, py]), s = Math.max(16, Math.min(110, size * z));
+    const [cx, cy] = P([px, py]), s = Math.max(R.snow ? 22 : 16, Math.min(110, size * z * (R.snow ? 1.2 : 1)));
     x.save(); x.translate(cx, cy); x.rotate(rot);
     x.font = `${kind === 'sea' ? 'italic ' : ''}${s}px ${kind === 'sea' ? "'Charm', cursive" : "'Metamorphous', serif"}`;
     if ('letterSpacing' in x) x.letterSpacing = kind === 'land' ? `${s * 0.25}px` : '0px';
-    x.fillStyle = ink(kind === 'sea' ? 0.55 : 0.4); x.fillText(kind === 'land' ? text.toUpperCase() : text, 0, 0); x.restore();
+    // on a frozen map the sea is the dark part: its names in paper, the land's in firmer ink
+    x.fillStyle = R.snow ? (kind === 'sea' ? `rgba(${PAPER},0.85)` : ink(0.65)) : ink(kind === 'sea' ? 0.55 : 0.4); x.fillText(kind === 'land' ? text.toUpperCase() : text, 0, 0); x.restore();
   });
 
   // border and a burnt edge
