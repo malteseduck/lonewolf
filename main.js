@@ -945,12 +945,17 @@ async function startBattle() {
   await turn(render);
   updateBattle();
   const cv = node.querySelector('canvas');
-  B.fit = () => { const r = node.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = Math.max(200, Math.round(r.width * dpr)); cv.height = Math.max(200, Math.round(r.height * dpr)); };
+  B.fit = () => {
+    const r = node.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = Math.max(200, Math.round(r.width * dpr)); cv.height = Math.max(200, Math.round(r.height * dpr));
+    // the picture keeps above the controls, wherever the layout puts them
+    const tops = [...B.node.querySelectorAll('[data-cmd], .dial')].map((n) => n.getBoundingClientRect().top).filter((y) => y > r.top);
+    B.floor = tops.length && r.height ? Math.min(0.83, (Math.min(...tops) - r.top) / r.height) : 0.83;
+  };
   B.fit();
   (function loop() {
     if (!B || B.node !== node) return;
     B.fx.hit *= 0.86; B.fx.wounds.forEach((w) => { w.k += 0.14; });
-    drawCreature(cv, B.foe.sprite, B.scene, 0.4, B.fx, B.img); // a still plate: only wounds and the lunge move
+    drawCreature(cv, B.foe.sprite, B.scene, 0.4, B.fx, B.img, B.floor); // a still plate: only wounds and the lunge move
     requestAnimationFrame(loop);
   })();
 }

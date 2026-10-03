@@ -425,9 +425,11 @@ late", once `evade.within` rounds are fought. When `B.over` is set the left page
   within the outer 12%) and cuts inside it. No fade at the edges: the owner wants each picture
   whole, as drawn, with only its ruled frame removed (2026-10-01). Cached per URL and crop. Needs a
   same-origin image. Scaled to about 1100px wide either way.
-- `drawCreature(canvas, kind, scene, t, fx, img)`: draws the plate. With `img` (or an entry from
-  `art/manifest.json`) it draws the whole inked illustration, fitted to 94% of the width and 80%
-  of the height, under the enemy's name. Without, it draws a procedural silhouette (`kraan`,
+- `drawCreature(canvas, kind, scene, t, fx, img, floor)`: draws the plate. With `img` (or an entry
+  from `art/manifest.json`) it draws the whole inked illustration, fitted to 94% of the width and to
+  the room between the enemy's name and the controls, and centred in that room. `floor` is where the
+  controls begin, as a fraction of the canvas height: `B.fit` in main.js measures it (the top of the
+  medallions and the dial), so the picture never runs under them. Without, it draws a procedural silhouette (`kraan`,
   `giak`, `vordak`) or the crossed-swords `emblem`: the crossed-swords glyph (handed over by
   `setEmblem` once main.js has fetched it) over a blot of wash, or a plain ring and blades until then.
 - Which picture (`nextFoe` in main.js): the enemy's own `art` (its section's illustration, or one

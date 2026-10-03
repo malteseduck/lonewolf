@@ -184,7 +184,8 @@ function frameOf(A, w, h) {
 
 /* One still plate for the fight. The canvas fills the whole panel; the controls sit over its foot.
    fx: {lunge, hit, dead, wounds:[{x1,y1,x2,y2,k,spots}]} */
-export function drawCreature(cv, kind, scene, t, fx, img) {
+/* floor: where the fight's controls begin, as a fraction of the canvas height (the picture stays above) */
+export function drawCreature(cv, kind, scene, t, fx, img, floor = 0.83) {
   const x = cv.getContext('2d'), w = cv.width, h = cv.height, u = w / 900, cy = h * 0.4;
   x.clearRect(0, 0, w, h);
   const art = img || ART[kind];
@@ -196,9 +197,9 @@ export function drawCreature(cv, kind, scene, t, fx, img) {
   x.translate(w / 2 + (Math.random() - 0.5) * fx.hit * 22 * u, cy + fx.dead * 70 * u + (Math.random() - 0.5) * fx.hit * 14 * u);
   x.scale(1 + fx.lunge * 0.1, 1 + fx.lunge * 0.1); x.globalAlpha = 1 - fx.dead;
   if (art) {
-    // the whole picture, a little smaller than the panel, between the name above and the controls below
-    const pl = inkPlate(art), sc = Math.min((w * 0.94) / pl.width, (h * 0.8) / pl.height);
-    x.drawImage(pl, (-pl.width * sc) / 2, -cy + h * 0.03, pl.width * sc, pl.height * sc);
+    // the whole picture, a little smaller than the panel, centred between the name above and the controls below
+    const room = Math.max(0.3, floor - 0.06), pl = inkPlate(art), sc = Math.min((w * 0.94) / pl.width, (h * room) / pl.height);
+    x.drawImage(pl, (-pl.width * sc) / 2, -cy + h * 0.03 + (h * room - pl.height * sc) / 2, pl.width * sc, pl.height * sc);
   } else {
     const s = u * (kind === 'kraan' ? 1.05 : 1.2);
     x.save(); x.scale(s, s);
