@@ -245,10 +245,16 @@ root.setProperty('--wood', `linear-gradient(rgba(10,7,6,0.55), rgba(10,7,6,0.55)
 }
 gear.innerHTML = gearSVG();
 let portraitURL = null; // Lone Wolf's likeness over the Kai panel, if the owner has a picture of him (art/manifest.json "portrait")
+let portraitKnown = false; // until art/manifest.json has been read, the title page shows no frontispiece rather than the stand-in
 /* Lone Wolf on the maps: the owner's picture of him cut out, toned sepia, over a pointer (art/manifest.json
-   "hero": {src, crop}, or a file already cut out), else a painted stand-in */
-let heroURL = drawHero().toDataURL();
-const heroHTML = () => `<div class="pawn"><img src="${heroURL}" alt="Lone Wolf"></div>`;
+   "hero": {src, crop}, or a file already cut out), else a painted stand-in. Nothing is shown until it is
+   known which, so the stand-in never flashes up before his picture. */
+let heroURL = null;
+const heroHTML = () => `<div class="pawn"><img ${heroURL ? `src="${heroURL}"` : 'hidden'} alt="Lone Wolf"></div>`;
+function setHero(url) {
+  heroURL = url;
+  [...document.querySelectorAll('.pawn img'), mapNode.querySelector('.pawn img')].forEach((n) => { n.src = heroURL; n.hidden = false; }); // the map node may be out of the page
+}
 /* move the figure; while it slides to a new spot it walks (a bob and a sway, in CSS) */
 function place(tok, left, top) {
   if (tok.style.left && (tok.style.left !== left || tok.style.top !== top)) {
@@ -341,7 +347,7 @@ function titleLeftHTML() {
   return `<div class="titlepage">
     <div class="maker">A solo adventure in Magnamund</div>
     <h1 class="mark"><span>Lone</span><span class="wolfmark">${glyph('wolf-head')}</span><span>Wolf</span></h1>
-    <div class="frontis">${portraitURL ? `<img src="${portraitURL}" alt="">` : `<img src="${vignette('ruins')}" alt="">`}</div>
+    <div class="frontis">${portraitURL ? `<img src="${portraitURL}" alt="">` : portraitKnown ? `<img src="${vignette('ruins')}" alt="">` : ''}</div>
     <p class="motto">The monastery burns. The Kai are gone.<br>One remains.</p>
     ${band('The Kai', 1, 5)}${band('The Magnakai', 6, 12)}
   </div>`;
@@ -1195,22 +1201,23 @@ fetch('assets/icons/crossed-swords.svg').then((r) => r.text()).then((t) => {
 }).catch(() => {});
 
 /* optional illustrations dropped into art/ */
+const standIn = () => setHero(drawHero().toDataURL());
+const portraitDone = () => { portraitKnown = true; if (mode === 'title') renderLeft(); else if (mode === 'story' && panel === 'kai') renderRight(); };
 fetch('art/manifest.json').then((r) => r.json()).then((m) => {
   for (const kind in m.enemies || {}) { const im = new Image(); im.onload = () => setArt(kind, im); im.src = 'art/' + m.enemies[kind]; }
   if (m.hero) {
     const im = new Image();
-    im.onload = () => {
-      heroURL = m.hero.crop ? heroFromArt(im, m.hero.crop, m.hero.outline).toDataURL() : im.src;
-      [...document.querySelectorAll('.pawn img'), mapNode.querySelector('.pawn img')].forEach((n) => { n.src = heroURL; }); // the map node may be out of the page
-    };
+    im.onload = () => setHero(m.hero.crop ? heroFromArt(im, m.hero.crop, m.hero.outline).toDataURL() : im.src);
+    im.onerror = standIn;
     im.src = 'art/' + (m.hero.src || m.hero);
-  }
+  } else standIn();
   if (m.portrait) {
     const im = new Image();
-    im.onload = () => { portraitURL = portraitFromArt(im, m.portrait.crop, m.portrait.fade).toDataURL(); if (mode === 'title') renderLeft(); else if (mode === 'story' && panel === 'kai') renderRight(); };
+    im.onload = () => { portraitURL = portraitFromArt(im, m.portrait.crop, m.portrait.fade).toDataURL(); portraitDone(); };
+    im.onerror = portraitDone;
     im.src = 'art/' + m.portrait.src;
-  }
-}).catch(() => {});
+  } else portraitDone();
+}).catch(() => { standIn(); portraitDone(); });
 
 /* the offline copy (sw.js, docs/reference/offline.md): kept over https, as Tailscale serves it, or on
    any address given ?offline (to try it at home). The corner at the top right says how it stands. */
