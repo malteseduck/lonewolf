@@ -8,6 +8,7 @@ import { drawBuilding } from './buildings.js';
 import { CITIES, cityCanvas } from './city.js';
 import { PLACES as BOOK1_PLACES, AT as BOOK1_AT, KNOWN as BOOK1_KNOWN, LEGS as BOOK1_LEGS } from './places-01fftd.js';
 import { PLACES as BOOK2_PLACES, AT as BOOK2_AT, KNOWN as BOOK2_KNOWN, LEGS as BOOK2_LEGS } from './places-02fotw.js';
+import { PLACES as BOOK3_PLACES, AT as BOOK3_AT, KNOWN as BOOK3_KNOWN, LEGS as BOOK3_LEGS } from './places-03tcok.js';
 import { TOWNS as BOOK1_TOWNS } from './towns-01fftd.js';
 import { TOWNS as BOOK2_TOWNS } from './towns-02fotw.js';
 
@@ -22,6 +23,9 @@ const onView = (v, pts) => pts.map(([px, py]) => [((px - v[0]) / v[2]) * 1000, (
 const BOOK1_VIEW = [125, 446, 110, 77];
 /* the road the figure walks in Book 1, in the printed map's pixels */
 const BOOK1_TRAIL = [[168, 466], [176, 478], [186, 490], [198, 501], [211, 511], [222, 519]];
+/* Book 3's whole-journey view of the Kalte replica, and the road across it, in its printed pixels */
+const BOOK3_VIEW = [90, 34, 636, 445];
+const BOOK3_TRAIL = [[298, 350], [306, 301], [413, 277], [441, 246], [402, 201], [432, 150], [438, 110], [432, 100]];
 
 /* The Lastlands as printed in Book 1, redrawn. replica.js reads the coast and the terrain from
    the owner's copy of that map; the rest is set here by hand. All in that image's pixels
@@ -104,7 +108,18 @@ export const KALTE = {
   frame: [90, 34, 636, 706],
   cover: [[380, 505, 300, 185, 'sea'], [175, 510, 105, 100, 'sea'], [585, 415, 120, 50, 'sea']],
   land: [[230, 200], [500, 60], [180, 330], [620, 230], [345, 375]],
-  as: { forest: 'pale', waste: 'mountain' },
+  as: { forest: 'glacier', waste: 'mountain' },
+  // a frozen land: snow drifts on open ground, no trees or grass; the glacier's flow runs this way
+  snow: true, flow: -1.35,
+  // the ice shelves, outlined as printed (the Ljuk shelf's bay reads as land, so they are painted over
+  // whatever lies under them), and the limit of the winter pack ice, a band of floes this wide
+  shelves: [
+    [[258, 268], [290, 262], [330, 264], [370, 266], [410, 268], [450, 262], [472, 258], [470, 280], [440, 288], [400, 292], [350, 296], [300, 300], [262, 296]],
+    [[470, 296], [520, 284], [570, 266], [620, 252], [650, 242], [656, 252], [630, 264], [582, 280], [530, 296], [478, 308]],
+    [[646, 236], [664, 214], [682, 188], [700, 160], [714, 136], [726, 126], [726, 146], [712, 176], [696, 206], [678, 234], [658, 252]],
+    [[90, 52], [112, 52], [110, 120], [108, 200], [90, 206]],
+  ],
+  pack: { width: 26, line: [[90, 330], [140, 370], [190, 400], [240, 422], [290, 438], [340, 448], [390, 455], [440, 456], [490, 447], [540, 425], [590, 395], [640, 365], [690, 338], [726, 320]] },
   places: [['Ljuk', 'fort', 250, 285], ['Ikaya', 'city', 440, 62], ['Anskaven', 'town', 117, 712], ['Lof', 'town', 612, 712]],
   roads: [],
   rivers: [],
@@ -158,6 +173,15 @@ export const MAPS = {
     rivers: [[[692, 583], [697, 592], [703, 601], [707, 610], [710, 620], [709, 630], [714, 640], [721, 650], [727, 660], [731, 672], [734, 685], [738, 697]]],
     trail: [[222, 520], [404, 488], [520, 500], [497, 568], [660, 607], [711, 577], [845, 525], [918, 487]],
     start: 'Holmgard', goal: 'Hammerdal and home', goalAt: 'hammerdal',
+  },
+  /* Book 3 is set on Kalte, off the Lastlands, so it uses the replica of its own printed map
+     (KALTE). Like Book 2 it travels in legs, each a close view (places-03tcok.js): the ice shelf,
+     the Hrod Basin, the Viad Glacier, the caverns below it, and Ikaya itself. */
+  '03tcok': {
+    replica: 'kalte',
+    view: BOOK3_VIEW, places: BOOK3_PLACES, at: BOOK3_AT, known: BOOK3_KNOWN, legs: BOOK3_LEGS,
+    trail: BOOK3_TRAIL, route: onView(BOOK3_VIEW, BOOK3_TRAIL),
+    start: 'Anskaven', goal: 'Ikaya', goalAt: 'f_throne',
   },
 };
 /* each leg of a book is a map of its own, painted for its view: MAPS['02fotw/sea']. A leg with a
@@ -303,6 +327,56 @@ export function replicaModel(img, world, geo = LASTLANDS) {
   return (models[key] = m);
 }
 
+/* whether point (px, py) lies inside polygon poly (ray casting) */
+const inside = (poly, px, py) => poly.reduce((v, [ax, ay], i) => { const [bx, by] = poly[(i + 1) % poly.length]; return (ay > py) !== (by > py) && px < ax + ((py - ay) * (bx - ax)) / (by - ay) ? !v : v; }, false);
+
+/* A frozen map (geo.snow), in the printed map's pixels: the land a paler sheet of snow; the ice
+   shelves pale over the dark sea, edged in broken ink and crossed by cracks; the pack ice a band of
+   floes. Its own fixed seed, so the ice does not shift as the view repaints. */
+function snowAndIce(x, R, land, sea, z) {
+  const q = Ink.seeded(31);
+  x.fillStyle = `rgba(${PAPER},0.3)`; x.fill(land);
+  // a hand-drawn outline: each side broken into short wavering steps
+  const jag = (pts) => {
+    const p = new Path2D();
+    pts.forEach(([ax, ay], i) => {
+      const [bx, by] = pts[(i + 1) % pts.length], m = Math.max(1, Math.round(Math.hypot(bx - ax, by - ay) / 3));
+      for (let j = 0; j < m; j++) { const px = ax + ((bx - ax) * j) / m + (q() - 0.5) * 1.6, py = ay + ((by - ay) * j) / m + (q() - 0.5) * 1.6; if (i || j) p.lineTo(px, py); else p.moveTo(px, py); }
+    });
+    p.closePath();
+    return p;
+  };
+  (R.shelves || []).forEach((poly) => {
+    const p = jag(poly), xs = poly.map((v) => v[0]), ys = poly.map((v) => v[1]), [x0, y0, x1, y1] = [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)];
+    x.fillStyle = `rgba(${PAPER},0.62)`; x.fill(p);
+    x.save(); x.clip(p);
+    x.strokeStyle = ink(0.32); x.lineWidth = 1.1 / z;
+    for (let i = 0; i < ((x1 - x0) * (y1 - y0)) / 70; i++) { // cracks, a few short kinked runs
+      let cx = x0 + q() * (x1 - x0), cy = y0 + q() * (y1 - y0), a = q() * Math.PI * 2;
+      x.beginPath(); x.moveTo(cx, cy);
+      for (let j = 0; j < 3; j++) { a += (q() - 0.5) * 1.4; const l = 2 + q() * 4; cx += Math.cos(a) * l; cy += Math.sin(a) * l; x.lineTo(cx, cy); }
+      x.stroke();
+    }
+    x.restore();
+    x.strokeStyle = ink(0.8); x.lineWidth = 1.8 / z; x.stroke(p);
+  });
+  x.save(); x.clip(sea, 'evenodd');
+  // the pack ice: floes strewn along the line, across its width
+  const pk = R.pack;
+  if (pk) pk.line.forEach(([ax, ay], i) => {
+    if (!i) return;
+    const [bx, by] = pk.line[i - 1], d = Math.hypot(ax - bx, ay - by), nx = -(ay - by) / d, ny = (ax - bx) / d;
+    for (let t = 0; t < d; t += 4.5) {
+      const off = (q() - 0.5) * pk.width, cx = bx + ((ax - bx) * t) / d + nx * off, cy = by + ((ay - by) * t) / d + ny * off, rad = 1.6 + q() * 2.6, n = 5 + Math.floor(q() * 3), a0 = q() * 6;
+      const f = new Path2D();
+      for (let j = 0; j < n; j++) { const a = a0 + (j / n) * Math.PI * 2, rr = rad * (0.65 + q() * 0.5); if (j) f.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr * 0.8); else f.moveTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr * 0.8); }
+      f.closePath();
+      x.fillStyle = `rgba(${PAPER},0.72)`; x.fill(f); x.strokeStyle = ink(0.7); x.lineWidth = 1.1 / z; x.stroke(f);
+    }
+  });
+  x.restore();
+}
+
 /* Paint the replica: view is [x, y, w, h] in the printed map's pixels, W x H the canvas. Symbols
    keep roughly their own size on screen, so zooming in shows more of them, not bigger ones.
    extra: a book's own places ([name, symbol, x, y]); when given, they replace the Magnamund detail. */
@@ -346,6 +420,7 @@ export function replicaCanvas(model, view, W, H, extra, out = 1, own = {}, geo =
   ripples.forEach(([cx, cy]) => { x.strokeStyle = r() < 0.5 ? `rgba(${PAPER},0.22)` : ink(0.22); x.lineWidth = 1.6; x.beginPath(); x.moveTo(cx, cy); x.quadraticCurveTo(cx + 12, cy - 5, cx + 24, cy); x.stroke(); });
   toMap();
   x.strokeStyle = ink(0.9); x.lineWidth = 2.6 / z; x.stroke(land);
+  if (R.snow) snowAndIce(x, R, land, sea, z);
   if (D) D.lakes.forEach(([px, py, rx, ry]) => {
     const [cx, cy] = dt([px, py]); x.beginPath(); x.ellipse(cx, cy, rx * dt.scale, ry * dt.scale, 0, 0, Math.PI * 2);
     x.fillStyle = ink(0.24); x.fill(); x.strokeStyle = ink(0.85); x.lineWidth = 2.2 / z; x.stroke();
@@ -380,7 +455,7 @@ export function replicaCanvas(model, view, W, H, extra, out = 1, own = {}, geo =
 
   // land symbols on a jittered screen grid, read from the terrain the printed map shows there
   const roadPaths = roads.map((l) => toLine([l])), riverPaths = [...rivers, ...brooks].map((l) => toLine([l]));
-  const spots = [...places, ...(extra || []).filter((e) => e[1])].map(([, , px, py]) => P([px, py])), items = [], tufts = [];
+  const spots = [...places, ...(extra || []).filter((e) => e[1])].map(([, , px, py]) => P([px, py])), items = [], tufts = [], flows = [], drifts = [];
   // Where roads and rivers run, 44 px wide on screen, drawn once into a quarter-size mask and
   // looked up per spot: testing every path with isPointInStroke for every grid cell took seconds
   // a repaint and froze the page while zooming.
@@ -401,7 +476,10 @@ export function replicaCanvas(model, view, W, H, extra, out = 1, own = {}, geo =
     if (m > 0.2 && roll < 0.45) { const big = r() < 0.3; st = pick(r, big ? 'range' : 'mountain'); s = (big ? 1.1 + r() * 0.4 : 1.5 + r() * 0.6) * k * 0.8; }
     else if (f > 0.03 && roll < Math.min(0.6, f * 5)) { const clump = f > 0.09 && r() < 0.3; st = pick(r, clump ? 'forest' : 'tree'); s = (clump ? 0.8 + r() * 0.3 : 1.2 + r() * 0.4) * k * 0.8; }
     else if (h > 0.15 && roll < 0.35) { st = pick(r, 'mountain', 90); s = (1 + r() * 0.3) * k * 0.7; }
-    // open country is not left bare: a lone tree now and then, and tufts of grass
+    // a glacier: its flow, ridged and crevassed
+    else if (R.snow && model.glacier[i] > 0.12 && !(R.shelves || []).some((poly) => inside(poly, mx, my))) { if (roll < 0.85 && !onLine(jx, jy)) flows.push([jx, jy]); }
+    // open country is not left bare: a lone tree now and then, and tufts of grass; on snow, drifts
+    else if (R.snow) { if (roll < 0.22 && clear(jx, jy)) drifts.push([jx, jy]); }
     else if (z >= 4 && roll < 0.025) { st = pick(r, 'tree'); s = (1 + r() * 0.3) * k * 0.7; }
     else if (z >= 4 && roll < 0.3 && clear(jx, jy)) tufts.push([jx, jy]);
     if (st && clear(jx, jy)) items.push([jy, st, jx, jy, s]);
@@ -409,6 +487,21 @@ export function replicaCanvas(model, view, W, H, extra, out = 1, own = {}, geo =
   toCanvas();
   x.strokeStyle = ink(0.45); x.lineWidth = 1.4; x.lineCap = 'round';
   tufts.forEach(([px, py]) => { for (let j = -1; j <= 1; j++) { x.beginPath(); x.moveTo(px + j * 3, py); x.lineTo(px + j * 5 + (r() - 0.5) * 3, py - 6 - r() * 5); x.stroke(); } });
+  // a drift: a low ridge of snow, shaded under its crest and lit along it
+  drifts.forEach(([px, py]) => {
+    const w = 9 + r() * 8, lift = 3 + r() * 3;
+    x.strokeStyle = ink(0.42); x.lineWidth = 1.3; x.beginPath(); x.moveTo(px - w, py); x.quadraticCurveTo(px - w * 0.2, py - lift, px + w, py + 1); x.stroke();
+    x.strokeStyle = `rgba(${PAPER},0.7)`; x.beginPath(); x.moveTo(px - w * 0.8, py - 2); x.quadraticCurveTo(px - w * 0.2, py - lift - 2, px + w * 0.7, py - 1); x.stroke();
+    if (r() < 0.5) { x.strokeStyle = ink(0.3); x.beginPath(); x.moveTo(px - w * 0.4, py + 5); x.quadraticCurveTo(px + w * 0.2, py + 5 - lift * 0.6, px + w * 0.9, py + 6); x.stroke(); }
+  });
+  // the glacier's flow: paired lines along it, and crevasses across
+  const fa = R.flow || 0, ux = Math.cos(fa), uy = Math.sin(fa);
+  flows.forEach(([px, py]) => {
+    const l = 12 + r() * 10, bend = (r() - 0.5) * 4;
+    x.strokeStyle = ink(0.4); x.lineWidth = 1.1;
+    for (const o of [-2.5, 2.5]) { x.beginPath(); x.moveTo(px - ux * l - uy * o, py - uy * l + ux * o); x.quadraticCurveTo(px - uy * (o + bend), py + ux * (o + bend), px + ux * l - uy * o, py + uy * l + ux * o); x.stroke(); }
+    if (r() < 0.35) { x.strokeStyle = ink(0.6); x.lineWidth = 1.4; const c = (r() - 0.5) * l; x.beginPath(); x.moveTo(px + ux * c - uy * 6, py + uy * c + ux * 6); x.lineTo(px + ux * c + uy * 6, py + uy * c - ux * 6); x.stroke(); }
+  });
   items.sort((a, b) => a[0] - b[0]).forEach(([, st, px, py, s]) => stamp(x, st, px, py, s * 2, 0));
 
   // roads over the land, white dashes on a dark bed

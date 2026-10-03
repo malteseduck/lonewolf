@@ -6,7 +6,7 @@
    from the image is stored. */
 
 /* each pixel of the printed map sorted into a terrain class by its colour */
-const C = { none: 0, ink: 1, pale: 2, water: 3, plain: 4, forest: 5, hill: 6, mountain: 7, waste: 8, red: 9 };
+const C = { none: 0, ink: 1, pale: 2, water: 3, plain: 4, forest: 5, hill: 6, mountain: 7, waste: 8, red: 9, glacier: 10 }; // glacier: only by a map's `as`
 function classify(r, g, b) {
   const mx = Math.max(r, g, b), mn = Math.min(r, g, b), v = mx / 255, s = mx ? (mx - mn) / mx : 0;
   let h = 0;
@@ -65,7 +65,7 @@ export function analyse(img, spec) {
   x.drawImage(img, 0, 0);
   const d = x.getImageData(0, 0, W, H).data, cls = new Uint8Array(N);
   for (let i = 0; i < N; i++) cls[i] = classify(d[i * 4], d[i * 4 + 1], d[i * 4 + 2]);
-  // a map's own palette: spec.as re-reads a class as another ({ forest: 'pale' }: its grey-green
+  // a map's own palette: spec.as re-reads a class as another ({ forest: 'glacier' }: its grey-green
   // glacier is no wood; { waste: 'mountain' }: its peaks are painted paler than Book 1's)
   const as = Object.entries(spec.as || {}).map(([a, b]) => [C[a], C[b]]);
   if (as.length) for (let i = 0; i < N; i++) for (const [a, b] of as) if (cls[i] === a) { cls[i] = b; break; }
@@ -111,6 +111,7 @@ export function analyse(img, spec) {
   return {
     W, H, coast, land,
     mountain: grid((c) => c === C.mountain, 6), forest: grid((c) => c === C.forest, 9), hill: grid((c) => c === C.hill, 6),
+    glacier: grid((c) => c === C.glacier, 4),
   };
 }
 

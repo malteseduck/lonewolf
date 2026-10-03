@@ -120,8 +120,11 @@ object in `maps.js` like `LASTLANDS` (`KALTE`, Book 3's, is the second), registe
 `map.png` is read), `frame`, `cover`, `places`, `roads`, `rivers`, `labels`, and either `sea`
 (points in open water, for a map that colours its land) or `land` (points on land, for one that
 leaves its snow white like the sea and draws its coasts as blue lines). `as` re-reads a colour
-class for that map's palette (Kalte: its grey-green glacier is not forest, its pale peaks are
-mountains). To read the coordinates, open the printed map and check the land mask by drawing
+class for that map's palette (Kalte: its grey-green glacier is read as `glacier`, not forest; its
+pale peaks are mountains). A frozen map sets `snow: true`: snow drifts instead of trees and grass on
+open ground, the land a paler sheet, the glacier drawn as flow lines along `flow` (an angle) with
+crevasses, `shelves` (ice shelves, outlined by hand: their tint is too close to the coast's line to
+read) painted as cracked ice, and `pack` (`{ width, line }`) a band of floes on the sea. To read the coordinates, open the printed map and check the land mask by drawing
 `analyse(img, spec).land` over it in the page. `world` and `detail` (the fan world map's terrain,
 the Sommerlund inset) are the Lastlands' only.
 
