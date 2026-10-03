@@ -138,6 +138,11 @@ Smaller things noted along the way:
 - Book 2's map: places worth a look in play are the border cluster between Gorn Cove and Port Bax
   (nine made-up places in a small corner of the printed map) and the Tarnalin's insides. Each leg is now painted at the size shown and
   the next one ahead of time (2026-10-02); not yet timed in a visible pane.
+- Book 2 test-played 2026-10-03: every gate, fight and draw read against the text (one fault: 160's
+  discipline choices were open to all, fixed in the importer), all 350 sections stepped through, a
+  run reached 350. Left open, harmlessly: "if you have no money / do not have it" routes.
+- Both books: a click on a choice while the map walk is still moving is ignored, and the last
+  section's choices linger a moment as the next comes in. Harmless; smooth over if the owner minds.
 - Delete `prototypes/` (and `shared/art.js`, `battle.js`, `flow.js`) once the owner is sure.
 
 ## Waiting on the owner
