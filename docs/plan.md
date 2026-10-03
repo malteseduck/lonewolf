@@ -89,7 +89,8 @@ Smaller things noted along the way:
   Town Guards of section 296 share a picture of six guards together. The Zombie Crew has a horde drawing of the owner's; the
   Zombie Captain keeps Book 2's own picture, which shows him. The three Villagers of section 90 (an angry
   mob, a sword among them) have one owner-supplied drawing each; three more of theirs (two painted
-  peasants, a spearman) are spare in `art/plates/`.
+  peasants, a spearman) are spare in `art/plates/`. The Sailor has the owner's drawing
+  of a sailor on deck.
 - Offline on the iPad works (2026-10-03, docs/reference/offline.md): Tailscale serves the player at
   `https://maltesepc.tail20dd6b.ts.net/` (`tailscale serve --bg 8765`, tailnet only); the iPad's
   Home Screen copy played with no connection. `tools/serve.py` must run on the PC for it to sync.
