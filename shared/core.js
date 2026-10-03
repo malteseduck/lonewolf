@@ -305,6 +305,7 @@
         if (c.need && (c.need.disc || c.need.circle) && !LW.meets(hero, { disc: c.need.disc, every: c.need.every, circle: c.need.circle })) {
           enabled = false; why = `Needs ${LW.condName({ disc: c.need.disc, every: c.need.every, circle: c.need.circle })}`;
         }
+        if (c.need && c.need.ep && !LW.meets(hero, { ep: c.need.ep })) { enabled = false; why = `Your ENDURANCE is ${hero.ep}`; }
         if (c.need && c.need.rank && LW.rankCount(hero) < c.need.rank) { enabled = false; why = 'Needs a higher rank'; }
         // need.item: one id, or a list of which any will do; ever: having once been given it is enough
         const ids = c.need && c.need.item ? [].concat(c.need.item) : [], held = ids.filter((i) => LW.hasItem(hero, i) || (c.need.ever && (hero.had || []).includes(i)));

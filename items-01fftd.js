@@ -40,6 +40,8 @@ export const SECTIONS = {
   37: { meal: true },
   62: { give: [{ gold: 28 }], loot: [{ meal: 3 }, { item: 'sword' }] },
   76: { ep: -2, give: [{ item: 'vordakGem' }] },
+  // the Healing choice is worded "possess and wish to use ... on him", which the importer's pattern misses
+  88: { need: { 216: { disc: 'healing' } } },
   94: { give: [{ gold: 16 }] },
   113: { give: [{ item: 'laumspurHerb' }, { item: 'laumspurHerb' }] },
   119: { ep: -2 },
@@ -63,7 +65,8 @@ export const SECTIONS = {
   193: { loot: [{ item: 'scroll' }] },
   197: { loot: [{ item: 'shortSword' }, { gold: 6 }] },
   199: { loot: [{ meal: 1 }] },
-  203: { ep: -10 },
+  // the way on depends on the Endurance left after the loss
+  203: { ep: -10, need: { 80: { ep: [10, 999] }, 344: { ep: [-999, 9] } } },
   205: { take: [{ weapons: 'all' }, { backpack: 'items' }] },
   212: { ep: 'full' },
   236: { ep: -6, cs: -1, take: [{ item: 'vordakGem' }] },

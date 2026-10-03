@@ -93,6 +93,7 @@ the tools: `items.md`.
 | `need.circle` | imported: Lore-circles he must have completed, by name (`'Circle of Fire'`) |
 | `need.rank` | minimum number of disciplines in the book's series |
 | `need.item`, `need.spend` | authored or item table: item required (any kind), and whether choosing consumes it. A list: any of them will do (and the first held is spent). `need.not`: open only without it (without any of them). `need.ever`: having once been given it is enough (`hero.had`) |
+| `need.ep` | item table: `[lo, hi]`, open only while his ENDURANCE is in that range (checked after the section's own `ep` change) |
 | `need.gold`, `need.spend` | item table: Gold Crowns required, and whether choosing pays them |
 | `range` | `[lo, hi]`: imported, in `rnt: 'auto'` sections: the Random Numbers that lead here |
 | `evade` | true: imported: this choice is the way out of the section's combat. Hidden from the list; used by the Evade control |
