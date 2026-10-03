@@ -140,6 +140,7 @@ explaining it would cost more than doing it.
 | `docs/reference/offline.md` | Playing offline on the iPad: Tailscale setup, the service worker, updates |
 | `docs/reference/items.md` | The procedure for a book's item table and its fight pictures: reading, icons, checks |
 | `docs/reference/rules-books.md` | The books' rules: common, Kai, Magnakai, and an addendum per book; what the engine applies |
+| `docs/book-checklist.md` | Every step each book goes through, ticked as done. **Check it before starting work on a book; tick a step when it is finished.** |
 | `docs/plan.md` | State of the work, decisions made, what is waiting on the owner, next steps. **Read this first in a new session.** |
 
 Keep them current: a change to behaviour updates the matching reference file in the same piece of

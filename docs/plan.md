@@ -5,6 +5,8 @@ Last updated 2026-10-03.
 
 ## Next steps
 
+Where each book stands, step by step: `docs/book-checklist.md`.
+
 1. **Play Book 1 through** and fix what the importer misread, and anything the item table missed
    or got wrong.
 2. **Books 3-12, one book at a time**, in order (2.1 to 2.10). Finish one book before starting
