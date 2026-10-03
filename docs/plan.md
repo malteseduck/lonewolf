@@ -104,9 +104,10 @@ Smaller things noted along the way:
 
 ## Waiting on the owner
 
-- **Offline on the iPad** (built and tested on the PC 2026-10-03, docs/reference/offline.md): the owner
-  sets up Tailscale on the PC and iPad and runs `tailscale serve --bg 8765`, then adds the page to
-  the iPad's Home Screen. Not yet tried on the iPad itself.
+- **Offline on the iPad** (docs/reference/offline.md): Tailscale set up 2026-10-03, and
+  `tailscale serve --bg 8765` makes the player `https://maltesepc.tail20dd6b.ts.net/` (tailnet only).
+  The iPad downloaded the offline copy the same day; the owner still to confirm it plays with no
+  connection from the Home Screen icon.
 
 - **Full-size fan maps** (optional): the Project Aon forum's attachments need a login. If the owner
   saves them into `art/reference/projectaon-forum-maps/`, they replace the thumbnails there.
