@@ -83,6 +83,9 @@ Last updated 2026-10-03.
 
 Smaller things noted along the way:
 
+- Offline on the iPad works (2026-10-03, docs/reference/offline.md): Tailscale serves the player at
+  `https://maltesepc.tail20dd6b.ts.net/` (`tailscale serve --bg 8765`, tailnet only); the iPad's
+  Home Screen copy played with no connection. `tools/serve.py` must run on the PC for it to sync.
 - The page froze twice on 2026-10-02 (a full map sweep, then switching books). Found and fixed:
   `showTerrain` asked for a repaint "once the stamps are loaded" when the printed map was what was
   missing, and the stamps already were, so it looped without yielding. Since the fix the full
@@ -103,11 +106,6 @@ Smaller things noted along the way:
 - Delete `prototypes/` (and `shared/art.js`, `battle.js`, `flow.js`) once the owner is sure.
 
 ## Waiting on the owner
-
-- **Offline on the iPad** (docs/reference/offline.md): Tailscale set up 2026-10-03, and
-  `tailscale serve --bg 8765` makes the player `https://maltesepc.tail20dd6b.ts.net/` (tailnet only).
-  The iPad downloaded the offline copy the same day; the owner still to confirm it plays with no
-  connection from the Home Screen icon.
 
 - **Full-size fan maps** (optional): the Project Aon forum's attachments need a login. If the owner
   saves them into `art/reference/projectaon-forum-maps/`, they replace the thumbnails there.
