@@ -76,7 +76,7 @@ function forgetAdventure(id) {
   keepAdventures();
 }
 if (adventure()) useAdventure(adv.at);
-const advName = (id) => `Adventure ${ROMAN[id - 1] || id}`;
+const advName = (id) => (adv.list.find((a) => a.id === id) || {}).name || `Adventure ${ROMAN[id - 1] || id}`;
 const carriedBy = (a) => { try { return JSON.parse(store.get(charKey(a))); } catch (e) { return null; } };
 
 let book = null, L = {}, game = null;
@@ -237,7 +237,7 @@ function titleLeftHTML() {
   </div>`;
 }
 /* the right page of the title spread: every adventure, or the books of the one chosen (shelf) */
-let shelf = false, forgetting = null;
+let shelf = false, forgetting = null, renaming = null;
 const roman = (n) => `<span class="roman">${ROMAN[n - 1] || n}</span>`;
 function titleRightHTML() { return shelf && adventure() ? shelfHTML() : adventuresHTML(); }
 function adventuresHTML() {
@@ -247,9 +247,11 @@ function adventuresHTML() {
     const where = at ? `${hero.ep > 0 ? 'Continue at' : 'Fell at'} section ${at}` : kept ? `Waits after ${kept.fromTitle}` : 'Choose a book';
     const more = forgetting === a.id
       ? `<span>Forget this adventure?</span><button type="button" class="inkbtn" data-forget="${a.id}" data-sure>forget it</button><button type="button" class="inkbtn" data-forget="">keep it</button>`
-      : `<button type="button" class="inkbtn" data-shelf="${a.id}">the books</button><button type="button" class="inkbtn" data-forget="${a.id}">forget</button>`;
+      : renaming === a.id
+      ? `<input id="advname" class="advname" maxlength="40" value="${esc(a.name || '')}" placeholder="Name it, then press Enter" aria-label="Adventure name" data-for="${a.id}">`
+      : `<button type="button" class="inkbtn" data-shelf="${a.id}">the books</button><button type="button" class="inkbtn" data-rename="${a.id}">${a.name ? 'rename' : 'name'}</button><button type="button" class="inkbtn" data-forget="${a.id}">forget</button>`;
     return `<div class="plaq ${at ? 'going' : ''}"><button type="button" class="plaqmain" data-adv="${a.id}">
-        <span class="med">${roman(+a.id)}</span><span class="plaqtext"><b>${esc(b ? b.title : advName(a.id))}</b><i>${esc((rank ? rank + '. ' : '') + where)}</i></span></button>
+        <span class="med">${roman(+a.id)}</span><span class="plaqtext"><b>${esc(a.name || (b ? b.title : advName(a.id)))}</b><i>${esc((a.name && b ? b.title + '. ' : '') + (rank ? rank + '. ' : '') + where)}</i></span></button>
       <span class="plaqmore">${more}</span></div>`;
   };
   return `<div class="shelfpage">${ruled('Your adventures')}
@@ -952,6 +954,7 @@ bookEl.addEventListener('click', (e) => {
   if (d.cmd) return void battleAct(d.cmd);
   if (busy) return;
   if (mode === 'title' && !('forget' in d)) forgetting = null;
+  if (mode === 'title' && !('rename' in d)) renaming = null;
   if (!('arm' in d)) armed = null;
   if (d.arm) { armed = armed === +d.arm ? null : +d.arm; LW.sfx('select'); return void renderRight(); }
   if (d.back) return void guard(() => goBack(+d.back));
@@ -963,6 +966,7 @@ bookEl.addEventListener('click', (e) => {
   }
   else if ('advnew' in d) { newAdventure(); shelf = true; LW.sfx('select'); render(); }
   else if ('shelf' in d) { if (d.shelf) useAdventure(d.shelf); shelf = !!d.shelf; LW.sfx('select'); render(); }
+  else if ('rename' in d) { renaming = d.rename || null; LW.sfx('select'); renderRight(); const box = $('#advname'); if (box) { box.focus(); box.select(); } }
   else if ('forget' in d) { if ('sure' in d) forgetAdventure(d.forget); forgetting = 'sure' in d ? null : d.forget || null; LW.sfx('select'); renderRight(); }
   else if (d.panel) { panel = d.panel; sel = null; adding = false; naming = null; LW.sfx('select'); render(); }
   else if (d.adding) { adding = d.adding === 'open'; naming = null; LW.sfx('select'); renderRight(); }
@@ -992,6 +996,13 @@ function turnTo() {
   guard(async () => { game.choose({ text: 'Turn to the section you worked out' }, to); sel = null; await turn(render); });
 }
 bookEl.addEventListener('keydown', (e) => { if (e.target.id === 'puzzleto' && e.key === 'Enter') turnTo(); });
+// an adventure's name is the owner's own label: Enter keeps it (empty clears it), Escape leaves it as it was
+bookEl.addEventListener('keydown', (e) => {
+  if (e.target.id !== 'advname' || (e.key !== 'Enter' && e.key !== 'Escape')) return;
+  const a = adv.list.find((x) => x.id === e.target.dataset.for);
+  if (a && e.key === 'Enter') { const name = e.target.value.trim(); if (name) a.name = name; else delete a.name; keepAdventures(); }
+  renaming = null; LW.sfx('select'); renderRight();
+});
 function addItem(id) { const err = game.addItem(id); if (err) LW.UI.toast(err); else LW.sfx('select'); render(); }
 pr.addEventListener('keydown', (e) => {
   if (e.target.id !== 'itemname' || (e.key !== 'Enter' && e.key !== 'Escape')) return;

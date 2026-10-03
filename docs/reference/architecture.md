@@ -95,7 +95,7 @@ The player keeps its own view state in module variables in `main.js`:
 discipline), `B` (the fight in progress, or null), `busy` (input lock during animations),
 `mapScan` (show the printed map instead of the journey map), `shelf` (the title page shows the open
 adventure's books rather than the list of adventures), `forgetting` (the adventure whose "forget" is
-asking to be confirmed), `adv` (the adventures, as stored in `lw-adventures`), `armed` (steps back
+asking to be confirmed), `renaming` (the adventure whose name box is open), `adv` (the adventures, as stored in `lw-adventures`), `armed` (steps back
 to the past place on the map whose "go back" question is showing).
 
 `book` and `game` are null until a book is opened.
@@ -114,7 +114,7 @@ plus one. Forgetting an adventure removes every `lw-a<n>-*` key.
 
 | Key | Holds |
 |---|---|
-| `lw-adventures` | `{list: [{id, book}], at}`: the adventures, the last book each had open, and the one open now (resumed on load) |
+| `lw-adventures` | `{list: [{id, book, name?}], at}`: the adventures, the last book each had open, the name the owner gave it (optional), and the one open now (resumed on load) |
 | `lw-a<n>-save-<code>` | adventure n's save for a book: `{s, history}`, e.g. `lw-a1-save-01fftd` |
 | `lw-a<n>-character` | adventure n's carried character: `{hero, from, fromTitle, completed: [codes]}` |
 | `lw-sound` | `on` or `off` |
