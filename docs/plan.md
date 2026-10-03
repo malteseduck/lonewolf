@@ -84,9 +84,9 @@ Smaller things noted along the way:
   checkout without them falls back to the drawn emblem). Four more of theirs wait there for later
   books' fights: a grey masked rogue with daggers, an elf swordsman, two swordswomen (Book 4's hooded
   bandit leader, section 233, may suit the hooded swordsman too).
-- The guards followed the same day: Book 2's eleven guards (Watchtower, Bridge, Border, the Town Guard
-  sergeant, corporal and four men) now share five drawings the owner supplied, matched by what the
-  text gives (the Watchtower Guard's helm and tower, the Durenese guards' spears and gold).
+- The guards followed the same day, from drawings the owner supplied: the Watchtower Guard (helm, by
+  a tower), the two Bridge Guards and the Border Guard (Durenese, spears, gold) have one each; the six
+  Town Guards of section 296 share a picture of six guards together.
 - Offline on the iPad works (2026-10-03, docs/reference/offline.md): Tailscale serves the player at
   `https://maltesepc.tail20dd6b.ts.net/` (`tailscale serve --bg 8765`, tailnet only); the iPad's
   Home Screen copy played with no connection. `tools/serve.py` must run on the PC for it to sync.
