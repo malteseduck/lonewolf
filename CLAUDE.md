@@ -8,7 +8,7 @@ Read `docs/spec.md` before changing behaviour. It is the statement of intent.
 
 ## What is live
 
-The player is the page at the project root: `index.html`, `main.js`, `plates.js`, `maps.js`
+The player is the page at the project root: `index.html`, `main.js`, `plates.js`, `maps.js` (and `map-*.js`)
 (it began as "prototype D", the Tome). `prototypes/` holds three earlier experiments the owner
 rejected (A and B "feel like kid games", C is 3D, which is not wanted). Leave them working but do
 not extend them. `shared/` is used by all of them, so check A-C still load after changing it.
@@ -89,7 +89,9 @@ explaining it would cost more than doing it.
 - **Each book has its own map.** What a book adds (rivers, places, symbols, a town plan) goes in its
   own `MAPS` entry, places file and towns file (`towns-<book>.js`), never in the shared `LASTLANDS`
   data the other books draw from.
-  After changing shared map code, check the other books' maps still paint the same.
+  Each printed map redrawn has its own file, `map-<name>.js` (data and painter); a change to one map's
+  look goes there and touches no other. After changing shared map code (`map-common.js`), check every
+  map still paints the same (compare the canvases before and after).
 - **A book's items** (what each section gives, takes, or needs) are read and written by hand in
   `items-<code>.js`, like its places, following `docs/reference/items.md`. Where the text leaves
   the choice to the player, write a `todo`, never a guess. Every fight needs a picture: the same

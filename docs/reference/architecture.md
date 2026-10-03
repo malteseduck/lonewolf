@@ -8,7 +8,10 @@ How the code is laid out today. Intent lives in `docs/spec.md`.
 index.html                  the player: markup, all CSS, script tags
 main.js                     ES module: state, rendering, input, combat, title page
 plates.js                   ES module: ink creatures, inkPlate (restyles an illustration), figure, frame, gear
-maps.js                     ES module: map specs, the Lastlands data, the stamp painters
+maps.js                     ES module: map specs (MAPS), which replica each book uses, the demo map's painter
+map-common.js               ES module: what the replicas share: ink, stamps, buildings, replicaModel, the painting steps
+map-lastlands.js            ES module: the Lastlands (Books 1-2): its data and its own painter
+map-kalte.js                ES module: Kalte (Book 3): its data and its own painter (snow, ice shelves, pack ice, glacier)
 replica.js                  ES module: reads a printed map into coast outlines and terrain grids
 places-01fftd.js            ES module: Book 1's made-up places and which sections happen at each
 towns-01fftd.js             ES module: Book 1's town plans (Holmgard, the Graveyard's crypt), by hand; Book 2 likewise
@@ -68,7 +71,8 @@ data/projectaon/index.js    document.writes a <script> for each imported book ->
 shared/ui.js                LW.UI, LW.sfx
 shared/sfx-soft.js          overrides LW.sfx
 shared/rules-series.js      adds Magnakai, overrides LW.has and LW.heroCS, adds LW.Character, LW.UI.chooseCharacter, LW.KITS
-main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js (which imports ./replica.js)
+main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js (which imports map-lastlands.js and map-kalte.js, each
+                            importing map-common.js, which imports ./replica.js)
 ```
 
 Order matters: `rules-series.js` overrides functions defined in `core.js` and needs `LW.UI`.

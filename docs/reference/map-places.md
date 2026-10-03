@@ -114,16 +114,16 @@ In `maps.js`, import the file and add a `MAPS['<book>']` entry like Book 1's:
 - `places`, `at`, `known`: the imports.
 - `trail` and `route`: the road shown as his way; `start` and `goal`: their names.
 
-A book whose travel leaves the Lastlands needs a replica of its own printed map: a geography
-object in `maps.js` like `LASTLANDS` (`KALTE`, Book 3's, is the second), registered in `GEO`, and
+A book whose travel leaves the Lastlands needs a replica of its own printed map, in a file of its
+own, `map-<name>.js`, like `map-kalte.js` (Book 3's): a geography object like `LASTLANDS` and its
+own `paint`, both registered in `maps.js` (`GEO`, `PAINT`), and
 `replica: '<name>'` in the book's `MAPS` entry (`geoOf(id)` finds it). It holds `book` (whose
 `map.png` is read), `frame`, `cover`, `places`, `roads`, `rivers`, `labels`, and either `sea`
 (points in open water, for a map that colours its land) or `land` (points on land, for one that
 leaves its snow white like the sea and draws its coasts as blue lines). `as` re-reads a colour
 class for that map's palette (Kalte: its grey-green glacier is read as `glacier`, not forest; its
 pale peaks are mountains). A frozen map sets `snow: true`: snow drifts instead of trees and grass on
-open ground, the land a paler sheet, the glacier drawn as flow lines along `flow` (an angle) with
-crevasses, `shelves` (ice shelves, outlined by hand: their tint is too close to the coast's line to
+open ground, the land a paler sheet, the glacier hatched across with nothing standing on it, `shelves` (ice shelves, outlined by hand: their tint is too close to the coast's line to
 read) cut out of the land and painted as cracked ice, and `pack` (`{ width, line }`) the band of
 packed floes on the sea. `as` entries are `[from, to, box?]`, the first that applies. To read the coordinates, open the printed map and check the land mask by drawing
 `analyse(img, spec).land` over it in the page. `world` and `detail` (the fan world map's terrain,

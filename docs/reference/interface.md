@@ -172,7 +172,15 @@ SVG laid over the canvas in `.mapinner`, which is translated to keep the figure 
 
 `MAPS.demo` is the invented country of the demo, a drawn spec.
 
-### The Lastlands replica (`replica.js`, `LASTLANDS` and `replicaCanvas` in `maps.js`)
+### The Lastlands replica (`replica.js`, `map-lastlands.js`, `map-common.js`)
+
+Each printed map redrawn has its own file, `map-<name>.js`, holding its data (`LASTLANDS`, `KALTE`)
+and its own `paint`. `replicaCanvas` (maps.js) hands a view to the painter of the book's map. The
+painters are built from shared steps in `map-common.js` (`begin`, `paintSea`, `paintRivers`,
+`landGrid`, `paintRoads`, `paintOwnPlaces`, `paintPlaces`, `paintLabels`, `finish`) with their own
+terrain, ice and label ink between them, so tuning one map leaves the others as they were. A change
+to a shared step reaches every map: compare each before and after.
+
 
 The printed map is about 1000 px wide, so cropping and enlarging it blurs. Instead it is redrawn.
 `analyse(img, LASTLANDS)` (replica.js) reads the owner's copy once per session (~0.3 s):
