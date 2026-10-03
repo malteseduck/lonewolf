@@ -1,0 +1,5 @@
+{
+  "fountain": ["Fountain_1.png", "Fountain_3.png", "Fountain_13.png"],
+  "tomb": ["Sepulchres_1.png", "Sepulchres_2.png", "Sepulchres_3.png", "Sepulchres_4.png", "Sepulchres_5.png", "Sepulchres_6.png", "Sepulchres_7.png", "Sepulchres_8.png", "Sepulchres_9.png"],
+  "monument": ["Monuments_2.png"]
+}

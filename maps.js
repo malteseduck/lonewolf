@@ -6,8 +6,13 @@ import * as Ink from './shared/ink.js';
 import { analyse, worldTerrain, toPath, toLine } from './replica.js';
 import { drawBuilding } from './buildings.js';
 import { CITIES, cityCanvas } from './city.js';
-import { PLACES as BOOK1_PLACES, AT as BOOK1_AT, KNOWN as BOOK1_KNOWN } from './places-01fftd.js';
+import { PLACES as BOOK1_PLACES, AT as BOOK1_AT, KNOWN as BOOK1_KNOWN, LEGS as BOOK1_LEGS } from './places-01fftd.js';
 import { PLACES as BOOK2_PLACES, AT as BOOK2_AT, KNOWN as BOOK2_KNOWN, LEGS as BOOK2_LEGS } from './places-02fotw.js';
+import { TOWNS as BOOK1_TOWNS } from './towns-01fftd.js';
+import { TOWNS as BOOK2_TOWNS } from './towns-02fotw.js';
+
+/* each book's town plans, under its own code so no two books share one: CITIES['02fotw/holmgard'] */
+Object.entries({ '01fftd': BOOK1_TOWNS, '02fotw': BOOK2_TOWNS }).forEach(([b, t]) => Object.entries(t).forEach(([k, v]) => { CITIES[`${b}/${k}`] = v; }));
 
 const INK = '38,26,16', PAPER = '226,212,176';
 const ink = (a) => `rgba(${INK},${a})`;
@@ -110,9 +115,9 @@ export const MAPS = {
      with made-up places for the story to move between (places-01fftd.js) */
   '01fftd': {
     replica: true,
-    view: BOOK1_VIEW, places: BOOK1_PLACES, at: BOOK1_AT, known: BOOK1_KNOWN,
+    view: BOOK1_VIEW, places: BOOK1_PLACES, at: BOOK1_AT, known: BOOK1_KNOWN, legs: BOOK1_LEGS,
     trail: BOOK1_TRAIL, route: onView(BOOK1_VIEW, BOOK1_TRAIL),
-    start: 'Kai Monastery', goal: 'Holmgard', goalAt: 'holmgard',
+    start: 'Kai Monastery', goal: 'Holmgard', goalAt: 'fieldworks',
   },
   /* Book 2 crosses most of the Lastlands, so it travels in legs, each its own close view
      (places-02fotw.js); the map turns to a leg's view when he arrives in it */
@@ -131,12 +136,15 @@ export const MAPS = {
    they all stand at the leg's spot (at, in the printed map's pixels). */
 for (const id of Object.keys(MAPS)) {
   const legs = MAPS[id].legs || {}, inTown = new Set();
+  // a town plan's own mark (mark: a building) stands at its spot on the views of the Lastlands, so a
+  // place with a plan of its own (the Graveyard) does not vanish from the country around it
+  const marks = Object.fromEntries(Object.entries(legs).filter(([, l]) => l.city && l.mark).map(([leg, l]) => [`__${leg}`, [l.name, l.mark, ...l.at]]));
   for (const [leg, { view, places, city }] of Object.entries(legs)) {
     const own = Object.fromEntries(places.map((k) => [k, MAPS[id].places[k]]));
-    MAPS[`${id}/${leg}`] = city ? { city, view: [0, 0, 1000, 700], places: own } : { replica: true, view, places: own, rivers: MAPS[id].rivers };
+    MAPS[`${id}/${leg}`] = city ? { city: `${id}/${city}`, view: [0, 0, 1000, 700], places: own } : { replica: true, view, places: own, marks, rivers: MAPS[id].rivers };
     if (city) places.forEach((k) => inTown.add(k));
   }
-  MAPS[id].wholePlaces = Object.fromEntries(Object.entries(MAPS[id].places || {}).filter(([k]) => !inTown.has(k)));
+  MAPS[id].wholePlaces = Object.fromEntries([...Object.entries(MAPS[id].places || {}).filter(([k]) => !inTown.has(k)), ...Object.entries(marks)]);
 }
 
 /* which building (buildings.js) and how tall a landmark in a spec is drawn with. Minor places (a
@@ -146,14 +154,34 @@ const MARK_BUILDING = { city: ['castle', 58], town: ['tower', 40], ruins: ['keep
 const STAMPS = {};
 let sheet = null, loading = null;
 export const stampsLoaded = () => !!sheet;
+/* an image decoded off the page: unlike an <img>, it decodes even while the pane is hidden */
+const bitmap = (url) => fetch(url).then((r) => (r.ok ? r.blob() : Promise.reject(new Error(`${url}: ${r.status}`)))).then((b) => createImageBitmap(b));
 export function loadStamps() {
   if (loading) return loading;
-  const im = new Image();
-  im.src = 'assets/map/widman.png';
-  return (loading = Promise.all([fetch('assets/map/widman.json').then((r) => r.json()), im.decode()]).then(([index]) => {
+  let im;
+  return (loading = Promise.all([fetch('assets/map/widman.json').then((r) => r.json()), bitmap('assets/map/widman.png').then((b) => { im = b; }), loadHogenburg()]).then(([index]) => {
     for (const kind in index) STAMPS[kind] = index[kind].map(([x, y, w, h]) => ({ x, y, w, h }));
     sheet = { ink: tint(im, ink(0.95)), pale: tint(im, `rgb(${PAPER})`) };
   }));
+}
+/* the Hogenburg symbols the town plans use (assets/map/hogenburg, CC0), each its own image, toned
+   to the maps' ink: a stamp with its own src, drawn at its own size (s 2 = its pixels one to one) */
+function loadHogenburg() {
+  return fetch('assets/map/hogenburg/hogenburg.json').then((r) => r.json()).then((index) => Promise.all(Object.entries(index).map(([kind, files]) => Promise.all(files.map((f) => {
+    return bitmap('assets/map/hogenburg/' + f).then((im) => ({ x: 0, y: 0, w: im.width, h: im.height, src: tone(im) }));
+  })).then((list) => { STAMPS[kind] = list; }))));
+}
+/* an engraving toned by its darkness: black lines to the maps' ink, any white to their paper */
+function tone(im) {
+  const c = Ink.canvas(im.width, im.height), x = c.getContext('2d');
+  x.drawImage(im, 0, 0);
+  const d = x.getImageData(0, 0, c.width, c.height), p = d.data, [ir, ig, ib] = INK.split(',').map(Number), [pr, pg, pb] = PAPER.split(',').map(Number);
+  for (let i = 0; i < p.length; i += 4) {
+    const t = (p[i] * 0.3 + p[i + 1] * 0.59 + p[i + 2] * 0.11) / 255;
+    p[i] = ir + (pr - ir) * t; p[i + 1] = ig + (pg - ig) * t; p[i + 2] = ib + (pb - ib) * t;
+  }
+  x.putImageData(d, 0, 0);
+  return c;
 }
 /* black engraving -> sepia ink, or -> paper for the halo that lifts a symbol off the washes */
 function tint(im, col) {
@@ -163,8 +191,8 @@ function tint(im, col) {
 }
 /* a stamp sits on its foot: (px, py) is the middle of its base line, s scales its own pixels */
 function stamp(x, st, px, py, s, halo) {
-  const w = st.w * s / 2, h = st.h * s / 2, put = (src) => x.drawImage(src, st.x, st.y, st.w, st.h, px - w / 2, py - h, w, h);
-  if (halo) {
+  const w = st.w * s / 2, h = st.h * s / 2, put = (src) => x.drawImage(st.src || src, st.x, st.y, st.w, st.h, px - w / 2, py - h, w, h);
+  if (halo && !st.src) {
     x.save(); x.shadowColor = `rgba(${PAPER},0.95)`; x.shadowBlur = halo;
     put(sheet.pale); put(sheet.pale);
     x.restore();
@@ -459,7 +487,7 @@ export function mapCanvas(id, img, world, out = 1) {
   // one painting per map: a painting at another size is dropped (each is tens of megabytes)
   Object.keys(cache).forEach((k) => { if (k.startsWith(id + '@')) delete cache[k]; });
   if (MAPS[id].city) return (cache[key] = cityCanvas(CITIES[MAPS[id].city], Math.round(3200 * out), Math.round(2240 * out), Object.values(MAPS[id].places), { pick: (kind, r) => STAMPS[kind][Math.floor(r() * STAMPS[kind].length)], put: (x, st, px, py, s) => stamp(x, st, px, py, s, 0) }));
-  if (MAPS[id].replica) return img ? (cache[key] = replicaCanvas(replicaModel(img, world), MAPS[id].view, 3200, 2240, MAPS[id].places && Object.values(MAPS[id].places), out, { rivers: MAPS[id].rivers })) : null;
+  if (MAPS[id].replica) return img ? (cache[key] = replicaCanvas(replicaModel(img, world), MAPS[id].view, 3200, 2240, MAPS[id].places && Object.values({ ...MAPS[id].places, ...MAPS[id].marks }), out, { rivers: MAPS[id].rivers })) : null;
   const m = MAPS[id], cv = Ink.canvas(2000, 1400), x = cv.getContext('2d'), r = Ink.seeded(id.length * 131 + 11);
   const pick = (kind) => STAMPS[kind][Math.floor(r() * STAMPS[kind].length)];
   x.drawImage(Ink.parchment(cv.width, cv.height, false, true), 0, 0);

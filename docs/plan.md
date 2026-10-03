@@ -5,76 +5,23 @@ Last updated 2026-10-02.
 
 ## Next steps
 
-1. **Draw every town plan for Books 1 and 2** (owner, 2026-10-02: first in line): zoomed-in views
-   of the towns the books walk through, in the order below. How to
-   draw one, from a reference or from the book alone: docs/reference/map-places.md, "Drawing a town
-   plan". Take only the layout from a reference, draw it in our own sepia style, and use only the
-   books' names. Every plan starts by reading its run of sections: list the spots they need and how
-   they connect, and confirm he really moves about the town, before drawing. Each plan is a leg of
-   its own (`city:`), with its places re-laid on it, then `cityClashes`, the checker and the sweep. The section
-   counts below are how many of our places files put in that town today.
-
-   The references, all git-ignored, each folder with a SOURCES.txt:
-   - `art/reference/sommerlund-city-maps/`: the Sommerlund City Maps (Mattioli and Dever, preview
-     size): Holmgard (and a larger King's Reach detail), Anskaven, Toran, Tyso, Moytura, Ruanon,
-     Silvershore, the Kai Monastery's plans, the country, the Sommer Isles.
-   - `art/reference/projectaon-forum-maps/`: fan maps from the Project Aon forum, drawn from the
-     books' text, thumbnails only (the full-size images need a forum login, which the owner has to
-     do). They show Book 1's country, Ragadorn, Ikaya, the Maaken Mines, Ikaresh, Barrakeesh Palace
-     and its sewer, the Tekaro sewers and Kazan-Oud. Where a fan map and the text disagree, the text
-     wins.
-   - `art/reference/jogbrogzin/`: Jog Brogzin's Graveyard of the Ancients (Book 1), 800 px.
-   - `art/reference/other-maps/`: "Port Brax" from the Low Fantasy Gaming RPG, a stand-in for Port
-     Bax.
-
-   In this order:
-   1. **Book 2, Holmgard harbour**: redraw `CITIES.holmgard` (made up so far) on the King's Reach
-      from the Mattioli map and its detail: the harbour, the rivers coming in, the bridges, the
-      citadel by the water. Keep the Good Cheer Inn, the stairs behind it, the quay and the ship
-      where Book 2's opening sections need them, and re-check its five places.
-   2. **Book 2, Ragadorn** (about 74 sections, now on 4 places: West Ragadorn, the waterfront with
-      45 of them, the coach station, the road out). Use the fan map: two walled halves either side
-      of the river, a bridge between them, gates towards Port Bax and Holmgard, and its numbered
-      places of interest. Mattioli's Ragadorn was funded as a later map: if it can be found, prefer
-      it. The coast road, the shrine and the bridge outside stay on the Wildlands leg.
-   3. **Book 1, Holmgard** (36 sections on one place): the end of the book, getting through the
-      besieged city to the citadel. Use the whole Mattioli map: the walls and gates, the way in, the
-      streets to the citadel. A plan of the whole city, not the harbour, so `CITIES` gets a second
-      Holmgard (Book 2's harbour plan stays as it is).
-   4. **Book 2, Port Bax** (17 sections on one place). No Magnamund map exists: use Port Brax for
-      its bones only: a walled harbour behind two moles with a round fort, an inner wall closing off
-      one quarter (the naval quarter the Red Pass opens), the town climbing from the quays. Fit the
-      book's spots to it (the gate the coach road reaches, the passes, the documents, the harbour)
-      and draw none of its own landmarks or names.
-   5. **Book 2, Gorn Cove**, if the reading bears it out (42 sections on 2 places, the cove and the
-      village street): a small plan of a fishing village rather than a city.
-   6. **Book 1, the Graveyard of the Ancients** (29 sections on one place): a site plan rather than
-      a town, drawn the same way. Jog Brogzin's isometric map of it (`art/reference/jogbrogzin/`)
-      shows the crypts and tomb above ground and the passages and chambers below that the ground
-      gives way into: likely two views, the surface and the depths. Confirm against the text.
-   Not worth one: Book 2's Hammerdal (7 sections, 3 more at the barricade).
-
-   Symbols for the plans: choose from the Hogenburg pack (gates, towers, wall runs and corners,
-   castles, chapels, fountains, blocks of houses) in git-ignored `data/reference/symbol-packs/`,
-   and Donia's forts and skylines for the country maps, by "Map symbols: adding one" in
-   docs/reference/interface.md. Walser is not allowed.
-
-2. **Book 2's fight pictures**: 16 enemies have no picture. Give each a plate-library entry
+1. **Book 2's fight pictures**: 16 enemies have no picture. Give each a plate-library entry
    (docs/reference/items.md), and check by eye which illustration each enemy borrows (`PLATE_FIXES`,
    and the library's generic soldier and robber entries).
-3. **Import books 3-12** once the owner says so, and read the importer's report for
+2. **Import books 3-12** once the owner says so, and read the importer's report for
    every one. Fix whatever the reports show (broken links, sections with no way on, oddly low
    counts). Expect new phrasings for gates, Random Number and combat in later books.
-4. **Play Book 1 through** and fix what the importer misread, and anything the item table missed
+3. **Play Book 1 through** and fix what the importer misread, and anything the item table missed
    or got wrong.
-5. **For each of books 3-12, once imported**:
+4. **For each of books 3-12, once imported**:
    - **map travel**, by docs/reference/map-places.md (made-up places by hand, tools to lay out and
      check them). Books 3-5 can use the Lastlands replica if their journeys stay on it; the
      Magnakai books need a replica of their own printed maps first;
    - **items and fight pictures**, by docs/reference/items.md: the item table (in the Magnakai
      books, mark ambushes and bow shots: the engine applies them only there), and a plate-library
      entry for every enemy the importer lists "with none";
-   - **town plans**: use a Mattioli map wherever the journey walks a town's streets
+   - **town plans**, by docs/reference/map-places.md, "Drawing a town plan" (the references, all
+     git-ignored, are listed there): use a Mattioli map wherever the journey walks a town's streets
      (candidates, to confirm from the text: Toran, Ruanon, Moytura, the Kai Monastery), the fan map
      for Book 5's Ikaresh, and the other fan maps (Ikaya, the Maaken Mines, Barrakeesh Palace and the
      sewers, Kazan-Oud) to check how those legs' places sit. Towns with no reference (most of the
@@ -83,9 +30,13 @@ Last updated 2026-10-02.
 
 Smaller things noted along the way:
 
-- The full map sweep on Book 2 froze the page for over ten minutes on 2026-10-02 (painting a town
-  plan takes about 0.1 s, so the hold-up is elsewhere, likely the replica legs). Find out which
-  leg before the next full sweep; until then, sweep a book's sections in short runs (`from`).
+- The page froze twice on 2026-10-02 (a full map sweep, then switching books). Found and fixed:
+  `showTerrain` asked for a repaint "once the stamps are loaded" when the printed map was what was
+  missing, and the stamps already were, so it looped without yielding. Since the fix the full
+  sweep runs clean on both books (350 sections each, no problems).
+- Town plans to look at in play: Ragadorn's and Gorn Cove's long runs across town (the view steps
+  back to show them); the labels of the square and the Good Cheer Inn, which sit close; whether
+  the Graveyard's crypt reads as the book describes it.
 - Title page gets crowded with twelve books.
 - `data/reference/magnamund-world-goodwin.png` (a fan-made world map, git-ignored) is there to
   lay out maps for the Magnakai books, whose printed maps cover other parts of Magnamund.
@@ -96,8 +47,7 @@ Smaller things noted along the way:
   were moved onto their water then. Books 2-5 use the same
   map and could reuse it; Magnakai books need their own.
 - Book 2's map: places worth a look in play are the border cluster between Gorn Cove and Port Bax
-  (nine made-up places in a small corner of the printed map), the Tarnalin's insides, and the
-  Ragadorn districts (until its town plan, step 1). Each leg is now painted at the size shown and
+  (nine made-up places in a small corner of the printed map) and the Tarnalin's insides. Each leg is now painted at the size shown and
   the next one ahead of time (2026-10-02); not yet timed in a visible pane.
 - Delete `prototypes/` (and `shared/art.js`, `battle.js`, `flow.js`) once the owner is sure.
 
@@ -201,10 +151,17 @@ Working and checked by playing in the browser:
   the checker and the sweep are clean for Books 1 and 2; sea places are in water and land places on
   land by the replica's reading. The Rymerift's channel is drawn on Book 2's map only. Looked at by
   eye in each leg, not yet played.
-- Town plans keep their buildings clear (2026-10-02): houses stay out from under every building
-  that stands up, and `cityClashes` checks landmarks and place symbols against the lanes and the
-  water (Holmgard's temple and the Good Cheer Inn were moved off lanes). References for redrawing
-  the plans are gathered (step 1 of the next steps), and CLAUDE.md allows Hogenburg and Donia symbols.
+- Town plans for Books 1 and 2 (2026-10-02), each a leg of its own, drawn by hand in
+  `towns-<book>.js` from the books' text and the references in docs/reference/map-places.md
+  ("Drawing a town plan"): Book 1's Holmgard (the whole city, from the Sommerlund City Maps' layout)
+  and the Graveyard of the Ancients (a crypt plan: its rooms and passages under the necropolis);
+  Book 2's Holmgard harbour (redrawn on the King's Reach), Ragadorn (after the fan map: two walled
+  halves and the one bridge, 23 places for its streets), Gorn Cove (a village on its cove) and Port
+  Bax (on Port Brax's bones: the harbour, the naval quadrant's wall and Red Gate, the castle). Book
+  1 now travels in legs too (the Lastlands, then the two plans). Houses keep out from under every
+  building; `cityClashes` is clean on every plan; every town section was checked in the panel
+  (figure and rings in view; the view steps back for a road across town). Hogenburg's fountains,
+  sepulchres and a monument are in use (`assets/map/hogenburg`). Not yet played.
 - Series rules: Kai and Magnakai disciplines, ranks, Lore-circles, Weaponmastery, Psi-surge.
 - Character carry-over between books.
 - Every rule in docs/reference/rules-books.md (2026-10-02): each book's starting kit as a second

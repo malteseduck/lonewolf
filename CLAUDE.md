@@ -73,7 +73,8 @@ that book, so clear the keys you dirtied afterwards (see `docs/reference/archite
 - **A book's travel on the map** is made by hand, step by step, in `docs/reference/map-places.md`.
   The importer reports where a book stands on it; follow it for every new book.
 - **Each book has its own map.** What a book adds (rivers, places, symbols, a town plan) goes in its
-  own `MAPS` entry and places file, never in the shared `LASTLANDS` data the other books draw from.
+  own `MAPS` entry, places file and towns file (`towns-<book>.js`), never in the shared `LASTLANDS`
+  data the other books draw from.
   After changing shared map code, check the other books' maps still paint the same.
 - **A book's items** (what each section gives, takes, or needs) are read and written by hand in
   `items-<code>.js`, like its places, following `docs/reference/items.md`. Where the text leaves

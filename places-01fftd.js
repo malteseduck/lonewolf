@@ -34,14 +34,31 @@ export const PLACES = {
   vordakglade: ['Glade', null, 199, 514], highwaysign: ['Highway signpost', null, 208, 496],
   overlook: ['Ridge above Holmgard', 'hill', 205, 502], cottages: ['Cottages', 'house', 213, 508],
   banditbridge: ['Footbridge on the highway', 'bridge', 216, 512], riverbank: ['River bank', null, 204, 519],
-  barge: ['Riverside wreck', null, 211, 519], graveyard: ['Graveyard of the Ancients', 'obelisk', 200, 506],
-  fieldworks: ['Fieldworks', 'keep', 217, 516], holmgard: ['Holmgard', null, 222, 520],
+  barge: ['Riverside wreck', null, 211, 519], 
+  fieldworks: ['Fieldworks', 'keep', 217, 516],
+  // Holmgard, on its town plan (towns-01fftd.js): these are in the plan's own 1000x700 grid
+  hcgate: ['Main gate', null, 430, 630], hcwatch: ['Main watchtower', 'tower', 474, 622], hcstreet: ['Main street', null, 404, 544],
+  hcalley: ['Dark alleyway', null, 344, 556], hcshop: ['Green door', 'house', 298, 582], hcroofs: ['Rooftops', null, 330, 500],
+  hccitgate: ['Citadel gate', null, 362, 462], hceast: ['East side of the citadel', null, 446, 352], hcguild: ['Guildhall', 'temple', 528, 444],
+  hccourt: ['Citadel courtyard', null, 334, 414], hcpalace: ['The palace', null, 330, 330],
+  // the Graveyard of the Ancients and the tombs beneath it, on its own plan
+  gyedge: ['Edge of the necropolis', null, 100, 96], gyweed: ['Between two pillars', null, 247, 134], gytomb: ['Underground tomb', null, 212, 252],
+  gyjunction: ['Crossing of corridors', null, 470, 228], gynorth: ['Corridor turning east', null, 540, 176], gyskulls: ['Hall of skulls', null, 648, 206],
+  gythrone: ['Chamber of the throne', null, 600, 446], gyslope: ['Sloping passage', null, 806, 512], gydoor: ['Hall of the great door', null, 840, 386],
 };
 
 /* places named on the book's printed map: the map always shows their names. Any other place it
    names only once he has been there, so a road offered on it says no more than the choice in the
    book does. */
-export const KNOWN = ['kai', 'raumas', 'fogwood', 'alema', 'graveyard', 'holmgard'];
+/* Book 1 travels on one view of the Lastlands, and on two plans of its own (towns-01fftd.js) for
+   the city and the Graveyard; a plan's mark stands at its spot on the Lastlands */
+export const LEGS = {
+  country: { name: 'The Lastlands', view: [125, 446, 110, 77], places: ['kai', 'ravenoak', 'undergrowth', 'raumas', 'ambushrun', 'rockyhill', 'foothill', 'logcabin', 'treehouse', 'lostwoods', 'tunnel', 'twisting', 'gallowbrush', 'fogwood', 'redstranger', 'streamwash', 'kraanpath', 'prints', 'fallentree', 'watchtower', 'refugeeclearing', 'boulderhill', 'druidcave', 'skeleton', 'icystream', 'soldiers', 'smallbridge', 'benchclearing', 'swordclearing', 'burntcabin', 'mossyhut', 'woundedsoldier', 'stonebridge', 'refugeeroad', 'farmhouse', 'caravan', 'sparsewood', 'alema', 'signpost', 'meadow', 'roadambush', 'deepforest', 'lakeshack', 'marsh', 'ridgeway', 'cabinstable', 'vordakglade', 'highwaysign', 'overlook', 'cottages', 'banditbridge', 'riverbank', 'barge', 'fieldworks'] },
+  holmgard: { name: 'Holmgard', city: 'holmgard', at: [222, 520], view: [0, 0, 1000, 700], places: ['hcgate', 'hcwatch', 'hcstreet', 'hcalley', 'hcshop', 'hcroofs', 'hccitgate', 'hceast', 'hcguild', 'hccourt', 'hcpalace'] },
+  graveyard: { name: 'Graveyard of the Ancients', city: 'graveyard', at: [200, 506], mark: 'obelisk', view: [0, 0, 1000, 700], places: ['gyedge', 'gyweed', 'gytomb', 'gyjunction', 'gynorth', 'gyskulls', 'gythrone', 'gyslope', 'gydoor'] },
+};
+
+export const KNOWN = ['kai', 'raumas', 'fogwood', 'alema', 'fieldworks', 'hcgate', 'hccitgate', 'gyedge'];
 
 /* which sections happen at each place (section numbers only) */
 export const AT = {
@@ -71,7 +88,25 @@ export const AT = {
   cottages: [251, 10, 115, 150, 177, 160, 286], banditbridge: [83, 45, 205, 180, 232, 22, 181, 62, 145],
   riverbank: [135, 4, 223, 75, 175, 218, 41, 182, 116, 260, 156, 294, 245, 163, 174],
   barge: [190, 20, 321, 273, 230, 179, 51, 221],
-  graveyard: [102, 329, 284, 71, 242, 9, 236, 166, 65, 292, 104, 26, 100, 133, 266, 161, 257, 209, 249, 169, 107, 137, 23, 87, 326, 337, 151, 317, 219],
   fieldworks: [61, 268, 288, 318],
-  holmgard: [129, 3, 144, 63, 269, 314, 341, 98, 310, 37, 282, 289, 11, 139, 66, 350, 91, 198, 152, 49, 231, 339, 94, 203, 80, 344, 60, 7, 25, 108, 217, 196, 332, 210, 212, 165],
+  hcgate: [129],
+  hcwatch: [3, 196],
+  hcstreet: [63, 144, 269],
+  hcalley: [217],
+  hcshop: [49, 60, 80, 91, 94, 152, 198, 203, 231, 339, 344],
+  hcroofs: [7, 25, 108],
+  hccitgate: [98, 314],
+  hceast: [37, 282, 289],
+  hcguild: [210, 310, 341],
+  hccourt: [11, 66, 139],
+  hcpalace: [165, 212, 332, 350],
+  gyedge: [102, 329],
+  gyweed: [284],
+  gytomb: [9, 65, 71, 166, 236, 242, 292],
+  gyjunction: [104],
+  gynorth: [26],
+  gyskulls: [107, 137, 169, 249],
+  gythrone: [100, 133, 161, 257, 266],
+  gyslope: [209],
+  gydoor: [23, 87, 151, 219, 317, 326, 337],
 };

@@ -476,7 +476,10 @@ function showTerrain(id) {
   if (world === null) return void (mapShown = null); // painted once it has loaded or failed
   const cv = mapNode.querySelector('canvas'), x = cv.getContext('2d'), map = mapCanvas(id, MAPS[id].replica && lastlands(), world, out);
   x.clearRect(0, 0, cv.width, cv.height);
-  if (!map) return void ((mapShown = null), loadStamps().then(() => { if (panel === 'map') renderRight(); })); // painted once the symbols and image arrive
+  // painted once the symbols arrive (the printed map's own onload redraws for the image). Asking
+  // again when the symbols are already loaded would redraw at once and loop without end, freezing
+  // the page before the image could ever load.
+  if (!map) { mapShown = null; if (!stampsLoaded()) loadStamps().then(() => { if (panel === 'map') renderRight(); }); return; }
   if (cv.width !== map.width) { cv.width = map.width; cv.height = map.height; }
   x.drawImage(map, 0, 0); mapShown = key; shownOut = out;
   mapNode.classList.toggle('deep', !!(MAPS[id].replica || MAPS[id].city)); // a replica or a town plan is looked at closer, and pans both ways
@@ -633,8 +636,15 @@ function updateMap() {
   place(pawn, L[here].x / 10 + '%', L[here].y / 7 + '%');
   // keep the figure and the open roads in view
   // the middle of their spread, not their average: an average drifts towards the side with more roads and pushes a lone far one off
-  const pts = [L[here], ...[...destLocs].map((k) => L[k])], xs = pts.map((p) => p.x), ys = pts.map((p) => p.y);
+  // the figure stands above its spot: its head counts too
+  const pts = [L[here], { x: L[here].x, y: L[here].y - 55 }, ...[...destLocs].map((k) => L[k])], xs = pts.map((p) => p.x), ys = pts.map((p) => p.y);
   const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+  // a close view (a replica or a town plan) steps back when a road runs further than it shows, so
+  // every ring stays in view; a margin keeps the rings and their names off the edge
+  if (mapNode.classList.contains('deep')) {
+    const span = (lo, hi) => hi - lo + 150, fit = Math.min(1, (mapNode.clientWidth / mapNode.clientHeight) * 700 / 1.8 / span(Math.min(...xs), Math.max(...xs)), 700 / 1.8 / span(Math.min(...ys), Math.max(...ys)));
+    mapInner.style.height = fit < 1 ? `${Math.max(70, 180 * fit)}%` : '';
+  } else mapInner.style.height = '';
   const [tx, ty] = panTo(cx, cy);
   // a name that would fall off the view's edge (a road's, or a place passed) is tucked back in; at the top, under its ring
   const vw = mapNode.clientWidth, vh = mapNode.clientHeight;

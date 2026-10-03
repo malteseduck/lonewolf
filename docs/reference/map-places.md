@@ -86,7 +86,7 @@ export const AT = {
   A place met twice in different legs (Holmgard at both ends) is two places.
 - **Town plans:** a run of sections in one city's streets (Book 2's start in Holmgard's harbour)
   gets a town plan as its leg (`city: 'name'`, `at: [x, y]`, view `[0, 0, 1000, 700]`): add the
-  plan to `CITIES` in `city.js` (interface.md, "Town plans") and give its places positions in the
+  plan to the book's own `towns-<book>.js` (interface.md, "Town plans") and give its places positions in the
   plan's own grid. How to draw one: "Drawing a town plan" below.
 - **Water and land:** put sea places in water and the rest on land, as the replica reads them. In
   the page: `(await import('/maps.js')).replicaModel(img).land[y * W + x]` (1 land, 0 water) with
@@ -186,7 +186,7 @@ is done. Note in docs/plan.md which places are guesses worth checking in play.
 
 ## Drawing a town plan
 
-A town plan (`CITIES` in `city.js`) is drawn by hand on the leg's 1000x700 grid. Either it is
+A town plan (`TOWNS` in the book's `towns-<book>.js`; a crypt is one too) is drawn by hand on the leg's 1000x700 grid. Either it is
 redrawn from a reference, or it is made up from the book.
 
 **References.** The owner keeps the Sommerlund City Maps (Mattioli and Dever) in git-ignored
@@ -210,7 +210,7 @@ personal reference, so take only the town's layout from them:
   yards inside each block), lanes that radiate from the gates to a central square, towers spaced
   evenly along the wall with round ones at the corners, fields and orchards in strips outside, and
   the roads that leave each gate towards the next town.
-- Note in the plan's comment in `city.js` which reference it follows, and what is still made up.
+- Note in the plan's comment in `towns-<book>.js` which reference it follows, and what is still made up.
 
 **Fan maps.** `art/reference/projectaon-forum-maps/` holds screenshots of fan maps from the Project
 Aon forum, drawn from the books' text (sources and contents in its `SOURCES.txt`). Two are towns,
@@ -220,6 +220,8 @@ sewer, the Tekaro sewers, Kazan-Oud) and Book 1's country. They are thumbnails, 
 only. Treat them as the fans' readings of the text: where the text and the map disagree, the text
 wins. The same rules apply as for the posters: layout only, our own style, the books' names. For
 the places that are not towns, use them to check how a leg's places sit, not to make a town plan.
+Jog Brogzin's map of Book 1's Graveyard of the Ancients is in `art/reference/jogbrogzin/`. A later
+Mattioli map of Ragadorn was funded by the same campaign: if it turns up, prefer it to the fan map.
 
 **A town of our own** (no reference: Hammerdal, Varetta, Barrakeesh's streets and so on;
 Book 2's Port Bax has a stand-in from another game in `art/reference/other-maps/`, used for its
@@ -242,7 +244,8 @@ bones only, as a fan map is):
    the streets alone decide how the town reads.
 5. **Places last.** Put the places on the plan, and the landmarks, each on open ground: never on a
    lane, a bridge's river or the water, and not on top of another building. In the page,
-   `(await import('/city.js')).cityClashes('<plan>', places)` must come back empty; the houses keep
+   `(await import('/city.js')).cityClashes('<book>/<plan>', places)` must come back empty (load `maps.js`
+   first; the places as `Object.values(MAPS['<book>/<leg>'].places)`); the houses keep
    clear of every building by themselves. Keep the panel's reach in mind (about a third of the view
    across), and run the checker and the sweep as for any leg.
 6. **Say what is invented.** Mark the plan "Not surveyed" in its comment, and in docs/plan.md list

@@ -11,6 +11,8 @@ plates.js                   ES module: ink creatures, inkPlate (restyles an illu
 maps.js                     ES module: map specs, the Lastlands data, the stamp painters
 replica.js                  ES module: reads a printed map into coast outlines and terrain grids
 places-01fftd.js            ES module: Book 1's made-up places and which sections happen at each
+towns-01fftd.js             ES module: Book 1's town plans (Holmgard, the Graveyard's crypt), by hand; Book 2 likewise
+city.js                     ES module: paints a town plan or a crypt (cityCanvas) and checks it (cityClashes)
 items-01fftd.js             ES module: Book 1's items and what each section gives, takes or gates, by hand
                             (docs/reference/book-format.md, "Item tables")
 buildings.js                ES module: the map's towns and buildings as vector pen-and-wash drawings

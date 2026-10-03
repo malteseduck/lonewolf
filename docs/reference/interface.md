@@ -236,12 +236,13 @@ channel is drawn for the bridges to stand on. It is Book 2's own (`MAPS['02fotw'
 `replicaCanvas` as `own`): what one book adds to the shared Lastlands stays in that book's entry, so
 the other books' maps are untouched (Book 1's was checked pixel for pixel against the version
 before Book 2, 2026-10-02). The goal ring is
-`MAPS[id].goalAt` (Book 1 Holmgard, Book 2 Hammerdal).
+`MAPS[id].goalAt` (Book 1 the fieldworks before Holmgard, whose city is a plan of its own; Book 2
+Hammerdal).
 
 A passed place out of the view keeps its name beside it, off the view; only a place in view has
 its name tucked back inside the edge (otherwise the names of a long trail stack at the edge).
 
-Each leg (and Book 1's one view) is laid out for 3200x2240 but painted only as large as the panel
+Each leg is laid out for 3200x2240 but painted only as large as the panel
 shows it: `paintScale()` in main.js measures the right-hand panel (not the map itself, whose height
 changes with the roads listed under it; the picture is 1.8 times that, at the screen's pixel
 density up to 2) and `mapCanvas(id, img, world, out)` paints that
@@ -252,27 +253,62 @@ mode, paints the legs the section's choices lead into, one at a time when the pa
 size the map was last shown at (not before a map has been shown). In a hidden pane the browser
 holds back image decoding, so no map paints there at all until the pane is shown.
 
-### Town plans (`city.js`)
+### Town plans (`city.js`, `towns-<book>.js`)
 
-Where a book wanders a city's streets, a leg can be a plan of the town instead of a view of the
-Lastlands: `city: 'holmgard'` on the leg, `at:` its spot on the printed map (where its places stand
-on "The whole map"), and its places in the plan's own 1000x700 grid. `CITIES` holds each plan, laid
-out by hand: the sea and its coast, the quays, moles, river and bridges, the walls and gates, the
-lanes (widest first), open ground kept clear, the citadel, landmarks and moored boats.
-`cityCanvas` paints it: fields and trees outside the walls, the sea and the river as dark water,
-the lanes pale between inked edges, then every house as a small roof seen from above (a lit slope
-with sparse strokes, a hatched one, a ridge along its lane, a soft shadow), packed on a loose grid
-off the lanes, water and open ground, and out from under every building that stands up (each one's
-ground measured once from its drawing, `buildingBox` in buildings.js), with yards and the odd tree; then the walls with towers, and
-everything that stands up (the citadel on its hill, towers, a temple, the ships, the places'
-own symbols) as the engraved buildings of `buildings.js`, back to front. The look follows the
-owner's sample (the town clusters of the Sorcery! maps), kept in sepia ink. Book 2's Holmgard
-harbour quarter is the one plan so far: the square by the quay, the Good Cheer Inn, the stairs
-behind it, the quay, and the Green Sceptre at anchor in the basin (`ship`, a caravel drawn for it
-in `buildings.js`). Not surveyed: the books give no plan of the city.
-`cityClashes(id, places)` lists any landmark, citadel or place symbol whose footing is on a lane
-or in the water, or that overlaps another (gates, bridges, wall towers and boats stand there by
-design). Holmgard's is clean (2026-10-02, after moving the temple and the inn off their lanes).
+Where a book wanders a town's streets or a crypt's passages, a leg can be a plan of the place instead
+of a view of the Lastlands: `city: 'ragadorn'` on the leg, `at:` its spot on the printed map (where
+its places stand on "The whole map"), optionally `mark:` a building to stand at that spot on the
+Lastlands views (the Graveyard's obelisk; a town the printed map already shows needs none), and its
+places in the plan's own 1000x700 grid. Each book's plans are laid out by hand in its own
+`towns-<book>.js` (`TOWNS`); `maps.js` gathers them into `CITIES` under the book's code
+(`CITIES['02fotw/ragadorn']`), so no two books share a plan even when they visit the same city
+(Book 1's Holmgard is the whole city, Book 2's its harbour). Plans so far (2026-10-02): Book 1's
+Holmgard and the Graveyard of the Ancients; Book 2's Holmgard harbour, Ragadorn, Gorn Cove and Port
+Bax. How to draw one: docs/reference/map-places.md, "Drawing a town plan".
+
+A town's fields, all optional:
+
+| Field | What |
+|---|---|
+| `water` | closed outlines of the sea and harbours (smoothed); let a sea run past the frame's edge |
+| `rivers` | `{w, pts}` each: a river as a broad stroke with inked banks |
+| `walls` | `{pts, closed, towers, tower}` each: straight from tower to tower, a tower at every point between the ends (`towers: false` for none, `tower` its height); the first is the town wall |
+| `town` | closed outlines where houses may stand (default: inside the first wall); a town in two halves (Ragadorn) gives two |
+| `gates` | `[x, y, height]`: drawn as keeps; `bridges` likewise |
+| `streets`, `main` | lanes as point lists, the first `main` (default 4) wider |
+| `squares`, `clear` | `[x, y, r]`: paved squares, and ground kept clear without paving (a citadel's yard) |
+| `quays`, `moles` | dressed stone edges; breakwaters with a tower at the end |
+| `citadel` | `{x, y, h, hill}`: the castle, on a ring of engraved hills if `hill` |
+| `landmarks`, `boats`, `trees`, `woods` | buildings `[kind, x, y, h]`; moored ships; single trees (an avenue); clumps `[x, y, r]` |
+| `houses` | `{gap, skip, size, jitter}`: a village's sparser, looser hovels (Gorn Cove) |
+| `fields` | `false` for a city with no country in view |
+| `labels`, `compass`, `seed` | lettering, the compass rose, the hand's seed |
+
+`cityCanvas` paints a town: fields and trees outside it, the rivers and the sea as dark water, the
+lanes pale between inked edges, then every house as a small roof seen from above (a lit slope with
+sparse strokes, a hatched one, a ridge along its lane, a soft shadow), packed on a loose grid inside
+the town and off the lanes, the water, the walls, the squares and the places, and out from under
+every building that stands up (each one's ground measured once from its drawing, `buildingBox` in
+buildings.js), with yards and the odd tree; then the walls, and everything that stands up (the
+citadel, landmarks, wall towers, gates, bridges, ships, the places' own symbols) as the engraved
+buildings of `buildings.js`, back to front. The look follows the owner's sample (the town clusters
+of the Sorcery! maps), kept in sepia ink.
+
+A crypt (`kind: 'crypt'`) has `rooms` (corner points), `passages` (`{w, pts}`), `ground` (closed
+outlines of open ground above), `features` (`[kind, x, y, angle, scale]`: `sarcophagus throne
+serpent skulls stairs door portal portcullis pillar candle hole`, each drawn in ink), `landmarks`
+and `trees` on the ground. `cityCanvas` hatches the rock, cross-hatches it close along every wall,
+cuts the rooms and passages as paper with walls broken by hand and flagstones scored, scatters weeds
+on the open ground, and draws the features and what stands up.
+
+`cityClashes(id, places)` (`id` as in `CITIES`, after `maps.js` has loaded) lists, in a town, any
+landmark, citadel or place symbol whose footing is on a lane, a river or the water, or that overlaps
+another (gates, bridges, wall towers and boats stand there by design); in a crypt, any place left in
+the rock. Every plan's is clean (2026-10-02).
+
+On the map panel a close view (a replica or a town plan) shows the map at 1.8 times the panel's
+height; when the figure and the roads open from where he stands spread wider than that shows,
+`updateMap` steps the view back (`.mapinner`'s height, down to 70%) until every ring is in view.
 
 ### Buildings (`buildings.js`)
 
@@ -310,6 +346,10 @@ Reuse before drawing. In order:
      under it and `cityClashes` keeps it off the lanes and the water;
    - check it beside the engraved art already on the map at the journey zoom and zoomed out, as
      for a new drawing (below). Widman's settlement stamps failed this check: so may these.
+   In use (2026-10-02): Hogenburg's fountains, sepulchres and one monument, in
+   `assets/map/hogenburg/` (`hogenburg.json` by kind), loaded and toned by `loadHogenburg` in maps.js and
+   set on a plan as `symbols` (interface.md, "Town plans"). Stamp images are decoded with
+   `createImageBitmap`, which works in a hidden pane where an `<img>` does not.
    No other symbol sets without the owner's word.
 4. **A new vector drawing** in `buildings.js`, added to `BUILDINGS` as `{h, draw(T)}`:
    - Model it on the matching icon in the official Maps of Magnamund (sheet 1's inset,
