@@ -1179,12 +1179,7 @@ async function begin(id, fresh, anew, reread) {
   await turn(render);
   if (hero.found) LW.UI.toast(`In the ruins you also find: ${hero.found === 'meals' ? 'two Meals' : hero.found === 'gold' ? '12 Gold Crowns' : LW.itemName(hero.found)}.`);
 }
-const soundBtn = $('#btn-sound');
-const soundLabel = () => { soundBtn.textContent = LW.sound.on ? 'Sound on' : 'Sound off'; };
-soundBtn.addEventListener('click', () => { LW.setSound(!LW.sound.on); soundLabel(); LW.drone(); });
-$('#btn-new').addEventListener('click', () => { if (mode !== 'battle' && !busy) toTitle(); });
 window.addEventListener('resize', () => { if (B && B.fit) B.fit(); if (mode === 'story' && panel === 'map') renderRight(); });
-soundLabel();
 
 /* the crossed swords drawn on the plate of a foe with no picture */
 fetch('assets/icons/crossed-swords.svg').then((r) => r.text()).then((t) => {
@@ -1211,7 +1206,7 @@ fetch('art/manifest.json').then((r) => r.json()).then((m) => {
 }).catch(() => {});
 
 /* the offline copy (sw.js, docs/reference/offline.md): kept over https, as Tailscale serves it, or on
-   any address given ?offline (to try it at home). The bar at the foot says how it stands. */
+   any address given ?offline (to try it at home). The corner at the top right says how it stands. */
 const offlineBtn = $('#offline');
 function offlineSay(m) {
   const t = m.state === 'syncing' ? (m.total ? `Saving for offline ${m.done || 0} / ${m.total}` : 'Saving for offline')
