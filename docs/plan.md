@@ -24,7 +24,8 @@ Where each book stands, step by step: `docs/book-checklist.md`.
    docs/reference/importer.md, Results). None has a places file, an item table or town plans yet,
    so all ten read without travel on the map.
 
-   - **2.1 Book 3, The Caverns of Kalte.** Map: the Lastlands replica, if the journey stays on it.
+   - **2.1 Book 3, The Caverns of Kalte.** Map: needs a replica of its own printed map (the Icy
+     Wastes of Kalte): only the opening voyage is on the Lastlands replica (checked 2026-10-03).
      Fight pictures: 14 of 17 kinds of enemy have none. Random Number left free: 6 (2 changed by a
      weapon in hand or an oil, 4 count by the number). Also: 1 failed ending (61); the sledge food
      is left to the text. Fan map to check against: Ikaya.

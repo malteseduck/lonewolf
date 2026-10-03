@@ -7,6 +7,7 @@ import { MAPS, LASTLANDS, mapCanvas, loadStamps, stampsLoaded, printedCanvas, re
 
 import * as ITEMS_01 from './items-01fftd.js';
 import * as ITEMS_02 from './items-02fotw.js';
+import * as ITEMS_03 from './items-03tcok.js';
 
 const LW = window.LW;
 const BOOKS = Object.assign({}, LW.BOOKS || {});
@@ -14,7 +15,7 @@ const BOOKS = Object.assign({}, LW.BOOKS || {});
 /* Each book's hand-made item table (items-<code>.js) is laid over its sections the first time the
    book is opened. Every book's items are known from the start, so a Lone Wolf carried on from one
    book still shows what he took from it. */
-const ITEM_TABLES = { '01fftd': ITEMS_01, '02fotw': ITEMS_02 };
+const ITEM_TABLES = { '01fftd': ITEMS_01, '02fotw': ITEMS_02, '03tcok': ITEMS_03 };
 Object.values(ITEM_TABLES).forEach((t) => LW.addItems(t.ITEMS));
 function applyItems(b) {
   const t = ITEM_TABLES[b.id];

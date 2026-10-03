@@ -329,10 +329,15 @@ for n in numbers:
             c.pop('range', None)
     if enemies:
         combat = {'enemies': enemies}
+        # the sentence that grants immunity; when it names some of the enemies, only they are immune
+        said = next((x for x in re.split(r'(?<=\.)\s+', whole) if re.search(r'immune to (?:Mindblast|Psi-surge)', x, re.I)), '')
+        named = [e for e in enemies if re.sub(r'\s+\d+$', '', e['name']).lower() in said.lower()]
         for e in enemies:
+            if named and e not in named:
+                continue
             if re.search(r'immune to Mindblast[\s,(]*but not (?:to )?Psi-surge', whole):
                 e['immune'] = 'mindblast'  # Psi-surge still works
-            elif re.search(r'immune to (?:Mindblast|Psi-surge)', whole, re.I):
+            elif said:
                 e['immune'] = True
         cs = cs_rule(whole)
         if cs:
@@ -348,7 +353,9 @@ for n in numbers:
         if dr:
             for e in enemies:
                 e['drain'] = int(dr.group(1))
-        ev = next((c for c in sec['choices'] if c.get('evade')), None)
+        # the way out offered as such ("you may evade"), before one that only mentions evading
+        evs = [c for c in sec['choices'] if c.get('evade')]
+        ev = next((c for c in evs if re.search(r'\b(?:may|can|wish to|decide to|choose to) evade\b', c['text'], re.I)), evs[0] if evs else None)
         if ev:
             t = ev['text'] + ' ' + whole
             a = re.search(r'after (?:the )?(?:first )?(\w+) rounds?', t, re.I)  # "after two rounds", "After the first round"
