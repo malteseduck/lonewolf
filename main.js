@@ -344,7 +344,7 @@ function adventuresHTML() {
       ? `<span>Forget this adventure?</span><button type="button" class="inkbtn" data-forget="${a.id}" data-sure>forget it</button><button type="button" class="inkbtn" data-forget="">keep it</button>`
       : renaming === a.id
       ? `<input id="advname" class="advname" maxlength="40" value="${esc(a.name || '')}" placeholder="Name it, then press Enter" aria-label="Adventure name" data-for="${a.id}">`
-      : `<button type="button" class="inkbtn" data-shelf="${a.id}">the books</button><button type="button" class="inkbtn" data-rename="${a.id}">${a.name ? 'rename' : 'name'}</button><button type="button" class="inkbtn" data-backup="${a.id}">backup</button><button type="button" class="inkbtn" data-restore="${a.id}">restore</button><button type="button" class="inkbtn" data-forget="${a.id}">forget</button>`;
+      : `<button type="button" class="inkbtn" data-shelf="${a.id}">books</button><button type="button" class="inkbtn" data-rename="${a.id}">rename</button><button type="button" class="inkbtn" data-backup="${a.id}">backup</button><button type="button" class="inkbtn" data-restore="${a.id}">restore</button><button type="button" class="inkbtn" data-forget="${a.id}">forget</button>`;
     return `<div class="plaq ${at ? 'going' : ''}"><button type="button" class="plaqmain" data-adv="${a.id}">
         <span class="med">${roman(+a.id)}</span><span class="plaqtext"><b>${esc(a.name || (b ? b.title : advName(a.id)))}</b><i>${esc((a.name && b ? b.title + '. ' : '') + (rank ? rank + '. ' : '') + where)}</i></span></button>
       <span class="plaqmore">${more}</span></div>`;
