@@ -40,8 +40,6 @@ export const SECTIONS = {
   37: { meal: true },
   62: { give: [{ gold: 28 }], loot: [{ meal: 3 }, { item: 'sword' }] },
   76: { ep: -2, give: [{ item: 'vordakGem' }] },
-  // the Healing choice is worded "possess and wish to use ... on him", which the importer's pattern misses
-  88: { need: { 216: { disc: 'healing' } } },
   94: { give: [{ gold: 16 }] },
   113: { give: [{ item: 'laumspurHerb' }, { item: 'laumspurHerb' }] },
   119: { ep: -2 },

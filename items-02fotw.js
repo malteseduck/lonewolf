@@ -108,6 +108,8 @@ export const SECTIONS = {
   149: { need: { 223: { item: 'seal' } } },
   154: { ep: -2 },
   157: { fight: { unarmed: true } },
+  // the Weaponskill choice opens with the weapon he carries, so the importer leaves it ungated; the weapon is his to check
+  160: { need: { 255: { disc: 'weaponskill' } } },
   165: { take: [{ item: 'seal' }], give: [{ gold: 40 }] },
   168: { need: { 314: { gold: 1, spend: true } } },
   // reached only by turning down the food at the inn

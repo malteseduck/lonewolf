@@ -138,7 +138,7 @@ def gate(text):
         return got
     if re.search(r'\bor (?:if you )?(?:have|possess|reached|attained)\b', head):
         return None  # a discipline or a rank: either will do, which a gate cannot say
-    d = re.search(r'If you (?:have|possess|wish to use)[^.;]*?(?:Kai|Magnakai) Disciplines? (?:either |both )?(?:of )?((?:either |both )?[A-Za-z -]+?(?:\s*\(any weapon\))?)(?:,| to| you| turn|\.| \(|$)', head + '.')
+    d = re.search(r'If you (?:have|possess|wish to use|wish to demonstrate)[^.;]*?(?:Kai|Magnakai) Disciplines? (?:either |both )?(?:of )?((?:either |both )?[A-Za-z -]+?(?:\s*\(any weapon\))?)(?:,| to| on| you| turn|\.| \(|$)', head + '.')
     if d:
         got = disc_list(d.group(1))
         if not got:  # "of Hunting and wish to ...": the list stops at the first word that is not a discipline
