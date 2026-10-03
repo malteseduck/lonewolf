@@ -123,6 +123,41 @@ async function backupAdventure(id) {
     LW.UI.toast(`The backup failed: ${(e && e.message) || e}`);
   }
 }
+/* restoring a backup makes it a new adventure (the next id), so nothing already here is overwritten.
+   The picker opens in the backups folder when the browser can, else it is a plain file input. */
+async function pickBackup() {
+  if (window.showOpenFilePicker) {
+    const startIn = await HANDLES.get('backups').catch(() => null);
+    const [h] = await window.showOpenFilePicker({ id: 'lw-backups', ...(startIn ? { startIn } : {}), types: [{ description: 'Adventure backup', accept: { 'application/json': ['.json'] } }] });
+    return h.getFile();
+  }
+  return new Promise((ok, no) => {
+    const i = el('input'); i.type = 'file'; i.accept = '.json,application/json';
+    i.onchange = () => (i.files[0] ? ok(i.files[0]) : no(new DOMException('', 'AbortError')));
+    i.oncancel = () => no(new DOMException('', 'AbortError'));
+    i.click();
+  });
+}
+async function restoreAdventure() {
+  try {
+    const file = await pickBackup();
+    let b = null;
+    try { b = JSON.parse(await file.text()); } catch (e) { /* told below */ }
+    if (!b || b.kind !== 'lone-wolf adventure backup' || b.version !== 1 || !b.adventure || !b.keys || typeof b.keys !== 'object') throw new Error(`${file.name} is not an adventure backup`);
+    const from = `lw-a${b.adventure.id}-`, keys = Object.keys(b.keys);
+    if (keys.some((k) => !k.startsWith(from))) throw new Error(`${file.name} holds keys of another adventure`);
+    newAdventure(); // makes it the open one, with a fresh id
+    const a = adventure(), to = `lw-a${a.id}-`;
+    keys.forEach((k) => { const v = b.keys[k]; store.set(to + k.slice(from.length), typeof v === 'string' ? v : JSON.stringify(v)); });
+    if (b.adventure.book && BOOKS[b.adventure.book]) a.book = b.adventure.book;
+    if (b.adventure.name) a.name = String(b.adventure.name).slice(0, 40);
+    keepAdventures(); shelf = false; LW.sfx('select'); render();
+    LW.UI.toast(`Restored ${file.name} as ${advName(a.id)}`);
+  } catch (e) {
+    if (e && e.name === 'AbortError') return; // the owner closed the file picker
+    LW.UI.toast(`Nothing restored: ${(e && e.message) || e}`);
+  }
+}
 const carriedBy = (a) => { try { return JSON.parse(store.get(charKey(a))); } catch (e) { return null; } };
 
 let book = null, L = {}, game = null;
@@ -302,7 +337,8 @@ function adventuresHTML() {
   };
   return `<div class="shelfpage">${ruled('Your adventures')}
     <div class="plaqs">${adv.list.map(plaque).join('')}
-      <div class="plaq"><button type="button" class="plaqmain" data-advnew><span class="med">${glyph('wolf-head')}</span><span class="plaqtext"><b>A new adventure</b><i>Another game, with a Lone Wolf of its own</i></span></button></div></div></div>`;
+      <div class="plaq"><button type="button" class="plaqmain" data-advnew><span class="med">${glyph('wolf-head')}</span><span class="plaqtext"><b>A new adventure</b><i>Another game, with a Lone Wolf of its own</i></span></button>
+        <span class="plaqmore"><button type="button" class="inkbtn" data-restore>restore</button></span></div></div></div>`;
 }
 function shelfHTML() {
   const kept = LW.Character.load(), can = (id) => kept && !kept.completed.includes(id);
@@ -1010,6 +1046,7 @@ bookEl.addEventListener('click', (e) => {
     const b = adventure().book, alive = b && BOOKS[b] && hasSave(b) && saved(b).s.hero.ep > 0; // a fallen one goes to the books, to start over
     if (alive) guard(() => begin(b)); else { shelf = true; LW.sfx('select'); render(); }
   }
+  else if ('restore' in d) restoreAdventure();
   else if ('advnew' in d) { newAdventure(); shelf = true; LW.sfx('select'); render(); }
   else if ('shelf' in d) { if (d.shelf) useAdventure(d.shelf); shelf = !!d.shelf; LW.sfx('select'); render(); }
   else if (d.backup) backupAdventure(d.backup);

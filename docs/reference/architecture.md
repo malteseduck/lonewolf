@@ -120,7 +120,14 @@ called `backups`: the first time, the browser asks for a folder (File System Acc
 browsers); picking any other folder makes `backups` inside it. The folder's handle is kept in
 IndexedDB (`lw-handles`, key `backups`), so later backups go straight there, though the browser may
 ask again for permission after a reload. Without that API the file is downloaded instead. The
-project's own `backups/` is git-ignored. There is no restore yet.
+project's own `backups/` is git-ignored.
+
+**Restore** (`restoreAdventure`, the "restore" button under "A new adventure") reads such a file
+and makes it a new adventure with the next id, so nothing already kept is overwritten: each
+`lw-a<old>-*` key is written as `lw-a<new>-*` (a value kept as a string goes back as it is, anything
+else as JSON), and the book and name are carried over. The file picker opens in the backups folder
+when the browser can (`showOpenFilePicker`), else it is a plain file input. A file that is not a
+version-1 backup, or that holds another adventure's keys, is refused with a toast.
 
 | Key | Holds |
 |---|---|
