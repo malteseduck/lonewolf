@@ -77,6 +77,52 @@ function forgetAdventure(id) {
 }
 if (adventure()) useAdventure(adv.at);
 const advName = (id) => (adv.list.find((a) => a.id === id) || {}).name || `Adventure ${ROMAN[id - 1] || id}`;
+/* backups: an adventure's whole state (its list entry and every lw-a<n>-* key) written as JSON to a
+   "backups" folder, as <name>.<yyyy>.<mm>.<dd>.json. A page cannot write to disk by itself, so the
+   owner picks the folder once (the browser's File System Access API) and its handle is kept in
+   IndexedDB; a browser without that API downloads the file instead. */
+const HANDLES = { db: null,
+  open() { return this.db || (this.db = new Promise((ok, no) => { const r = indexedDB.open('lw-handles', 1); r.onupgradeneeded = () => r.result.createObjectStore('h'); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); })); },
+  async get(k) { const db = await this.open(); return new Promise((ok) => { const r = db.transaction('h').objectStore('h').get(k); r.onsuccess = () => ok(r.result || null); r.onerror = () => ok(null); }); },
+  async set(k, v) { const db = await this.open(); return new Promise((ok) => { const t = db.transaction('h', 'readwrite'); t.objectStore('h').put(v, k); t.oncomplete = ok; t.onerror = ok; }); },
+};
+function backupOf(id) {
+  const a = adv.list.find((x) => x.id === id), keys = {};
+  store.keys().filter((k) => k.startsWith(`lw-a${id}-`)).sort().forEach((k) => { const v = store.get(k); try { keys[k] = JSON.parse(v); } catch (e) { keys[k] = v; } });
+  return { kind: 'lone-wolf adventure backup', version: 1, made: new Date().toISOString(), adventure: { ...a }, keys };
+}
+function backupName(id) {
+  const d = new Date(), two = (n) => String(n).padStart(2, '0');
+  const name = advName(id).replace(/[\\/:*?"<>|\x00-\x1f]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/\.+$/, '') || `adventure ${id}`;
+  return `${name}.${d.getFullYear()}.${two(d.getMonth() + 1)}.${two(d.getDate())}.json`;
+}
+async function backupsFolder() {
+  let dir = await HANDLES.get('backups').catch(() => null);
+  if (dir && (await dir.queryPermission({ mode: 'readwrite' })) !== 'granted' && (await dir.requestPermission({ mode: 'readwrite' })) !== 'granted') dir = null;
+  if (!dir) {
+    LW.UI.toast('Choose the backups folder (or the folder to make it in)');
+    dir = await window.showDirectoryPicker({ id: 'lw-backups', mode: 'readwrite' });
+    if (dir.name !== 'backups') dir = await dir.getDirectoryHandle('backups', { create: true });
+    await HANDLES.set('backups', dir);
+  }
+  return dir;
+}
+async function backupAdventure(id) {
+  const name = backupName(id), text = JSON.stringify(backupOf(id), null, 2);
+  try {
+    if (!window.showDirectoryPicker) {
+      const a = el('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' })); a.download = name;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      return void LW.UI.toast(`Downloaded ${name}`);
+    }
+    const dir = await backupsFolder(), w = await (await dir.getFileHandle(name, { create: true })).createWritable();
+    await w.write(text); await w.close();
+    LW.sfx('select'); LW.UI.toast(`Backed up to ${dir.name}/${name}`);
+  } catch (e) {
+    if (e && e.name === 'AbortError') return; // the owner closed the folder picker
+    LW.UI.toast(`The backup failed: ${(e && e.message) || e}`);
+  }
+}
 const carriedBy = (a) => { try { return JSON.parse(store.get(charKey(a))); } catch (e) { return null; } };
 
 let book = null, L = {}, game = null;
@@ -249,7 +295,7 @@ function adventuresHTML() {
       ? `<span>Forget this adventure?</span><button type="button" class="inkbtn" data-forget="${a.id}" data-sure>forget it</button><button type="button" class="inkbtn" data-forget="">keep it</button>`
       : renaming === a.id
       ? `<input id="advname" class="advname" maxlength="40" value="${esc(a.name || '')}" placeholder="Name it, then press Enter" aria-label="Adventure name" data-for="${a.id}">`
-      : `<button type="button" class="inkbtn" data-shelf="${a.id}">the books</button><button type="button" class="inkbtn" data-rename="${a.id}">${a.name ? 'rename' : 'name'}</button><button type="button" class="inkbtn" data-forget="${a.id}">forget</button>`;
+      : `<button type="button" class="inkbtn" data-shelf="${a.id}">the books</button><button type="button" class="inkbtn" data-rename="${a.id}">${a.name ? 'rename' : 'name'}</button><button type="button" class="inkbtn" data-backup="${a.id}">backup</button><button type="button" class="inkbtn" data-forget="${a.id}">forget</button>`;
     return `<div class="plaq ${at ? 'going' : ''}"><button type="button" class="plaqmain" data-adv="${a.id}">
         <span class="med">${roman(+a.id)}</span><span class="plaqtext"><b>${esc(a.name || (b ? b.title : advName(a.id)))}</b><i>${esc((a.name && b ? b.title + '. ' : '') + (rank ? rank + '. ' : '') + where)}</i></span></button>
       <span class="plaqmore">${more}</span></div>`;
@@ -966,6 +1012,7 @@ bookEl.addEventListener('click', (e) => {
   }
   else if ('advnew' in d) { newAdventure(); shelf = true; LW.sfx('select'); render(); }
   else if ('shelf' in d) { if (d.shelf) useAdventure(d.shelf); shelf = !!d.shelf; LW.sfx('select'); render(); }
+  else if (d.backup) backupAdventure(d.backup);
   else if ('rename' in d) { renaming = d.rename || null; LW.sfx('select'); renderRight(); const box = $('#advname'); if (box) { box.focus(); box.select(); } }
   else if ('forget' in d) { if ('sure' in d) forgetAdventure(d.forget); forgetting = 'sure' in d ? null : d.forget || null; LW.sfx('select'); renderRight(); }
   else if (d.panel) { panel = d.panel; sel = null; adding = false; naming = null; LW.sfx('select'); render(); }

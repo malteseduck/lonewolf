@@ -112,6 +112,16 @@ Play is kept in **adventures**: separate games, each with its own save for every
 carried character. `<n>` below is the adventure's id, `1`, `2`, ...; a new one takes the highest id
 plus one. Forgetting an adventure removes every `lw-a<n>-*` key.
 
+**Backups.** An adventure's "backup" button (`backupAdventure` in `main.js`) writes its whole state
+as JSON: `{kind: 'lone-wolf adventure backup', version: 1, made, adventure: {id, book, name?}, keys:
+{<every lw-a<n>-* key>: its parsed value}}`, named `<name>.<yyyy>.<mm>.<dd>.json` (the adventure's
+name, or "Adventure II"; a second backup the same day replaces the first). It goes into a folder
+called `backups`: the first time, the browser asks for a folder (File System Access API, Chromium
+browsers); picking any other folder makes `backups` inside it. The folder's handle is kept in
+IndexedDB (`lw-handles`, key `backups`), so later backups go straight there, though the browser may
+ask again for permission after a reload. Without that API the file is downloaded instead. The
+project's own `backups/` is git-ignored. There is no restore yet.
+
 | Key | Holds |
 |---|---|
 | `lw-adventures` | `{list: [{id, book, name?}], at}`: the adventures, the last book each had open, the name the owner gave it (optional), and the one open now (resumed on load) |
