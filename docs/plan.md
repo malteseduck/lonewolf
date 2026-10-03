@@ -12,46 +12,74 @@ Last updated 2026-10-03.
    uses Book 2's own Tarnalin knight, who is met later as a friend.
 2. **Play Book 1 through** and fix what the importer misread, and anything the item table missed
    or got wrong.
-3. **For each of books 3-12** (imported 2026-10-03; what each report leaves is listed under
-   "Books 3-12: what is left" below):
-   - **map travel**, by docs/reference/map-places.md (made-up places by hand, tools to lay out and
-     check them). Books 3-5 can use the Lastlands replica if their journeys stay on it; the
-     Magnakai books need a replica of their own printed maps first;
-   - **items and fight pictures**, by docs/reference/items.md: the item table (in the Magnakai
-     books, mark ambushes and bow shots: the engine applies them only there), and a plate-library
-     entry for every enemy the importer lists "with none";
-   - **town plans**, by docs/reference/map-places.md, "Drawing a town plan" (the references, all
-     git-ignored, are listed there): use a Mattioli map wherever the journey walks a town's streets
-     (candidates, to confirm from the text: Toran, Ruanon, Moytura, the Kai Monastery), the fan map
-     for Book 5's Ikaresh, and the other fan maps (Ikaya, the Maaken Mines, Barrakeesh Palace and the
-     sewers, Kazan-Oud) to check how those legs' places sit. Towns with no reference (most of the
-     Magnakai books' cities) are made up from the book. Varetta and Barrakeesh were stretch goals of
-     the Mattioli campaign that were not reached.
+3. **Books 3-12, one book at a time**, in order (3.1 to 3.10). Finish one book before starting
+   the next. Each book gets the same three pieces of work (see "Work for each book" below): map
+   travel, items and fight pictures, and town plans. All ten were imported on 2026-10-03, and each
+   report has no broken links and no section without a way on (figures in
+   docs/reference/importer.md, Results). None has a places file, an item table or town plans yet,
+   so all ten read without travel on the map.
 
-### Books 3-12: what is left
+   - **3.1 Book 3, The Caverns of Kalte.** Map: the Lastlands replica, if the journey stays on it.
+     Fight pictures: 14 of 17 kinds of enemy have none. Random Number left free: 6 (2 changed by a
+     weapon in hand or an oil, 4 count by the number). Also: 1 failed ending (61); the sledge food
+     is left to the text. Fan map to check against: Ikaya.
+   - **3.2 Book 4, The Chasm of Doom.** Map: the Lastlands replica, if the journey stays on it.
+     Fight pictures: 5 of 32 have none. Random Number left free: 4 (one on the condition "Hunting,
+     or a rank", one on a Pick or Shovel, 2 count by the number). Fan map to check against: the
+     Maaken Mines.
+   - **3.3 Book 5, Shadow on the Sand.** Map: the Lastlands replica, if the journey stays on it.
+     Fight pictures: 8 of 28 have none. Random Number left free: 5 (one on a lost arm, one against
+     COMBAT SKILL, one inside a fight, 2 count by the number). Also: 2 puzzles (58, 331), which use
+     the "Turn to section" box. Town plan: Ikaresh, from its fan map. Fan maps to check against:
+     Barrakeesh Palace and the sewers. Barrakeesh has no Mattioli map (a stretch goal of that
+     campaign that was not reached).
+   - **3.4 Book 6, The Kingdoms of Terror.** Map: needs a replica of the book's own printed map
+     first. Fight pictures: 10 of 21 have none. Random Number left free: 14 (6 bow shots, using
+     Weaponmastery with Bow, one of them a three-number draw; one on a shield; one a tournament; 6
+     count by the number). Also: mark bow shots and ambushes in the item table. Varetta has no
+     Mattioli map (a stretch goal not reached), so it is made up from the book.
+   - **3.5 Book 7, Castle Death.** Map: needs a replica of its own printed map first. Fight
+     pictures: 14 of 23 have none. Random Number left free: 8 (4 bow shots, or a Lore-circle beside
+     one; 4 count by the number). Also: 2 puzzles; mark bow shots and ambushes. Fan map to check
+     against: Kazan-Oud.
+   - **3.6 Book 8, The Jungle of Horrors.** Map: needs a replica of its own printed map first.
+     Fight pictures: 12 of 21 have none. Random Number left free: 3 (2 bow shots, 1 counts by the
+     number). Also: 4 puzzles; mark bow shots and ambushes.
+   - **3.7 Book 9, The Cauldron of Fear.** Map: needs a replica of its own printed map first.
+     Fight pictures: 7 of 28 have none. Random Number left free: 7 (bow or dagger throws, one with
+     a Bow choice; 2 count by the number). Also: 3 puzzles; the Psychic Ring's +8 (214) is left as
+     text, so check it against the engine's own weapon bonus; mark bow shots and ambushes.
+   - **3.8 Book 10, The Dungeons of Torgar.** Map: needs a replica of its own printed map first.
+     Fight pictures: 15 of 30 have none. Random Number left free: 8 ("missile bonuses", a weapon in
+     hand, 4 count by the number). Also: mark bow shots and ambushes.
+   - **3.9 Book 11, The Prisoners of Time.** Map: needs a replica of its own printed map first.
+     Fight pictures: 18 of 25 have none. Random Number left free: 10 ("missile bonuses", a Rope, 4
+     count by the number). Also: the Ironheart Broadsword's +8 (204) is left as text, so check it
+     against the engine's own weapon bonus; mark bow shots and ambushes.
+   - **3.10 Book 12, The Masters of Darkness.** Map: needs a replica of its own printed map first.
+     Fight pictures: 20 of 39 have none. Random Number left free: 10 ("bow-skill bonuses", a rope, 4
+     count by the number). Also: Helshezag's and a weapon's increased power (88, 133) are left as
+     text, so check them against the engine's own weapon bonus; mark bow shots and ambushes.
 
-Imported 2026-10-03 at the owner's word; every report has no broken links and no section without
-a way on (figures in docs/reference/importer.md, Results). Each loads in the page, starts with a new
-character, and its sections render (checked through `__lw` with storage writes blocked). None has a
-places file, an item table or town plans yet: all ten read without travel on the map. For each,
-besides those three:
+### Work for each book
 
-| Book | Fight pictures: kinds of enemy with none | Random Number left free (for the item table) | Also |
-|---|---|---|---|
-| 3 | 14 of 17 | 6: 2 changed by a weapon in hand or an oil, 4 count by the number | 1 failed ending (61); sledge food is the text's |
-| 4 | 5 of 32 | 4: one condition "Hunting, or a rank", one a Pick or Shovel, 2 count by the number | |
-| 5 | 8 of 28 | 5: one a lost arm, one against COMBAT SKILL, one inside a fight, 2 count | 2 puzzles (58, 331: "Turn to section") |
-| 6 | 10 of 21 | 14: 6 bow shots (Weaponmastery with Bow; one a three-number draw), a shield, a tournament, 6 count | mark bow shots and ambushes |
-| 7 | 14 of 23 | 8: 4 bow shots or a Lore-circle beside one, 4 count | 2 puzzles |
-| 8 | 12 of 21 | 3: 2 bow shots, 1 counts | 4 puzzles |
-| 9 | 7 of 28 | 7: bow or dagger throws, 2 count, one with a Bow choice | 3 puzzles; the Psychic Ring's +8 (214) is left as text |
-| 10 | 15 of 30 | 8: "missile bonuses", a weapon in hand, 4 count | |
-| 11 | 18 of 25 | 10: "missile bonuses", a Rope, 4 count | the Ironheart Broadsword's +8 (204) is left as text |
-| 12 | 20 of 39 | 10: "bow-skill bonuses", a rope, 4 count | Helshezag's and a weapon's increased power (88, 133) left as text: check against the engine's own weapon bonus |
-
-"Count by the number": the draw gives gold or Endurance (write `rolls`), or plays a game. In
-every book, first-round penalties, unarmed opening rounds and doubled psychic bonuses are left as
-text; an item table can carry them (`todo`) or mark an `ambush`.
+- **Map travel**, by docs/reference/map-places.md (made-up places by hand, and tools to lay them
+  out and check them). Books 3-5 can use the Lastlands replica if their journeys stay on it. The
+  Magnakai books (6-12) need a replica of their own printed maps first.
+  `data/reference/magnamund-world-goodwin.png` (a fan-made world map, git-ignored) helps lay those
+  maps out.
+- **Items and fight pictures**, by docs/reference/items.md. Write the item table: in the Magnakai
+  books, mark ambushes and bow shots, because the engine applies them only there. Add a
+  plate-library entry for every enemy the importer lists "with none". The Random Number draws left
+  free go into the item table. "Count by the number" means the draw gives gold or Endurance (write
+  `rolls`) or plays a game. In every book, first-round penalties, unarmed opening rounds and
+  doubled psychic bonuses are left as text. The item table can carry them as a `todo`, or mark the
+  fight as an `ambush`.
+- **Town plans**, by docs/reference/map-places.md, "Drawing a town plan" (the references, all
+  git-ignored, are listed there). Use a Mattioli map wherever the journey walks a town's streets.
+  The candidates are Toran, Ruanon, Moytura and the Kai Monastery; confirm from the text which book
+  each belongs to. Use the fan maps named in each book's step to check how those legs' places sit.
+  Towns with no reference (most of the Magnakai books' cities) are made up from the book.
 
 Smaller things noted along the way:
 
@@ -63,8 +91,6 @@ Smaller things noted along the way:
   back to show them); the labels of the square and the Good Cheer Inn, which sit close; whether
   the Graveyard's crypt reads as the book describes it.
 - Title page gets crowded with twelve books.
-- `data/reference/magnamund-world-goodwin.png` (a fan-made world map, git-ignored) is there to
-  lay out maps for the Magnakai books, whose printed maps cover other parts of Magnamund.
 - Replica: the hand-placed rivers, roads and towns were read off the printed map by eye and are
   approximate. Book 1's places were laid out by a force layout: check them by playing, and move any
   that sit oddly (some horse-route places ended up east of the highway). All 350 sections were checked on
