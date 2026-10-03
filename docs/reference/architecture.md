@@ -95,7 +95,7 @@ The player keeps its own view state in module variables in `main.js`:
 discipline), `B` (the fight in progress, or null), `busy` (input lock during animations),
 `mapScan` (show the printed map instead of the journey map), `shelf` (the title page shows the open
 adventure's books rather than the list of adventures), `forgetting` (the adventure whose "forget" is
-asking to be confirmed), `renaming` (the adventure whose name box is open), `adv` (the adventures, as stored in `lw-adventures`), `armed` (steps back
+asking to be confirmed), `renaming` (the adventure whose name box is open), `restoring` (a backup read and waiting for "replace it"), `adv` (the adventures, as stored in `lw-adventures`), `armed` (steps back
 to the past place on the map whose "go back" question is showing).
 
 `book` and `game` are null until a book is opened.
@@ -122,10 +122,12 @@ IndexedDB (`lw-handles`, key `backups`), so later backups go straight there, tho
 ask again for permission after a reload. Without that API the file is downloaded instead. The
 project's own `backups/` is git-ignored.
 
-**Restore** (`restoreAdventure`, the "restore" button under "A new adventure") reads such a file
-and makes it a new adventure with the next id, so nothing already kept is overwritten: each
-`lw-a<old>-*` key is written as `lw-a<new>-*` (a value kept as a string goes back as it is, anything
-else as JSON), and the book and name are carried over. The file picker opens in the backups folder
+**Restore** (`restoreAdventure`) reads such a file. An adventure's own "restore" asks on its plaque
+("Replace it with <file>?"), then `putBackup` removes that adventure's `lw-a<n>-*` keys and writes
+the backup's in their place; the "restore" under "A new adventure" makes it a new adventure with
+the next id instead, so nothing already kept is overwritten. Either way each `lw-a<old>-*` key is
+written as `lw-a<n>-*` (a value kept as a string goes back as it is, anything else as JSON), the
+last book comes from the backup, and its name too when it has one. The file picker opens in the backups folder
 when the browser can (`showOpenFilePicker`), else it is a plain file input. A file that is not a
 version-1 backup, or that holds another adventure's keys, is refused with a toast.
 

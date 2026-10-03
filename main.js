@@ -123,7 +123,8 @@ async function backupAdventure(id) {
     LW.UI.toast(`The backup failed: ${(e && e.message) || e}`);
   }
 }
-/* restoring a backup makes it a new adventure (the next id), so nothing already here is overwritten.
+/* restoring: an adventure's own "restore" puts a backup back in its place (after asking, since its
+   present state is lost); the one under "A new adventure" makes the backup a new adventure.
    The picker opens in the backups folder when the browser can, else it is a plain file input. */
 async function pickBackup() {
   if (window.showOpenFilePicker) {
@@ -138,25 +139,36 @@ async function pickBackup() {
     i.click();
   });
 }
-async function restoreAdventure() {
+async function readBackup() {
+  const file = await pickBackup();
+  let b = null;
+  try { b = JSON.parse(await file.text()); } catch (e) { /* told below */ }
+  if (!b || b.kind !== 'lone-wolf adventure backup' || b.version !== 1 || !b.adventure || !b.keys || typeof b.keys !== 'object') throw new Error(`${file.name} is not an adventure backup`);
+  const from = `lw-a${b.adventure.id}-`;
+  if (Object.keys(b.keys).some((k) => !k.startsWith(from))) throw new Error(`${file.name} holds keys of another adventure`);
+  return { file: file.name, b, from };
+}
+function putBackup(a, { b, from }) {
+  store.keys().filter((k) => k.startsWith(`lw-a${a.id}-`)).forEach(store.del);
+  Object.entries(b.keys).forEach(([k, v]) => store.set(`lw-a${a.id}-` + k.slice(from.length), typeof v === 'string' ? v : JSON.stringify(v)));
+  a.book = b.adventure.book && BOOKS[b.adventure.book] ? b.adventure.book : null;
+  if (b.adventure.name) a.name = String(b.adventure.name).slice(0, 40);
+  keepAdventures();
+}
+const restoreFailed = (e) => { if (!e || e.name !== 'AbortError') LW.UI.toast(`Nothing restored: ${(e && e.message) || e}`); }; // AbortError: the picker was closed
+async function restoreAdventure(id) {
   try {
-    const file = await pickBackup();
-    let b = null;
-    try { b = JSON.parse(await file.text()); } catch (e) { /* told below */ }
-    if (!b || b.kind !== 'lone-wolf adventure backup' || b.version !== 1 || !b.adventure || !b.keys || typeof b.keys !== 'object') throw new Error(`${file.name} is not an adventure backup`);
-    const from = `lw-a${b.adventure.id}-`, keys = Object.keys(b.keys);
-    if (keys.some((k) => !k.startsWith(from))) throw new Error(`${file.name} holds keys of another adventure`);
-    newAdventure(); // makes it the open one, with a fresh id
-    const a = adventure(), to = `lw-a${a.id}-`;
-    keys.forEach((k) => { const v = b.keys[k]; store.set(to + k.slice(from.length), typeof v === 'string' ? v : JSON.stringify(v)); });
-    if (b.adventure.book && BOOKS[b.adventure.book]) a.book = b.adventure.book;
-    if (b.adventure.name) a.name = String(b.adventure.name).slice(0, 40);
-    keepAdventures(); shelf = false; LW.sfx('select'); render();
-    LW.UI.toast(`Restored ${file.name} as ${advName(a.id)}`);
-  } catch (e) {
-    if (e && e.name === 'AbortError') return; // the owner closed the file picker
-    LW.UI.toast(`Nothing restored: ${(e && e.message) || e}`);
-  }
+    const r = await readBackup();
+    if (id) { restoring = { id, ...r }; LW.sfx('select'); return void renderRight(); } // asked on the plaque
+    newAdventure(); putBackup(adventure(), r); shelf = false; LW.sfx('select'); render();
+    LW.UI.toast(`Restored ${r.file} as ${advName(adv.at)}`);
+  } catch (e) { restoreFailed(e); }
+}
+function restoreInto(id) {
+  const a = adv.list.find((x) => x.id === id), r = restoring;
+  restoring = null;
+  if (a && r && r.id === id) { putBackup(a, r); LW.sfx('select'); LW.UI.toast(`Restored ${r.file} to ${advName(id)}`); }
+  renderRight();
 }
 const carriedBy = (a) => { try { return JSON.parse(store.get(charKey(a))); } catch (e) { return null; } };
 
@@ -318,7 +330,7 @@ function titleLeftHTML() {
   </div>`;
 }
 /* the right page of the title spread: every adventure, or the books of the one chosen (shelf) */
-let shelf = false, forgetting = null, renaming = null;
+let shelf = false, forgetting = null, renaming = null, restoring = null;
 const roman = (n) => `<span class="roman">${ROMAN[n - 1] || n}</span>`;
 function titleRightHTML() { return shelf && adventure() ? shelfHTML() : adventuresHTML(); }
 function adventuresHTML() {
@@ -326,11 +338,13 @@ function adventuresHTML() {
     const b = a.book && BOOKS[a.book], sv = b && saved(a.book, a.id), kept = carriedBy(a.id), at = sv && sv.s && sv.s.at;
     const hero = at ? sv.s.hero : kept && kept.hero, rank = hero ? LW.rankOf(hero) || 'Kai Lord' : '';
     const where = at ? `${hero.ep > 0 ? 'Continue at' : 'Fell at'} section ${at}` : kept ? `Waits after ${kept.fromTitle}` : 'Choose a book';
-    const more = forgetting === a.id
+    const more = restoring && restoring.id === a.id
+      ? `<span>Replace it with ${esc(restoring.file)}?</span><button type="button" class="inkbtn" data-restoreto="${a.id}">replace it</button><button type="button" class="inkbtn" data-restoreto="">keep it</button>`
+      : forgetting === a.id
       ? `<span>Forget this adventure?</span><button type="button" class="inkbtn" data-forget="${a.id}" data-sure>forget it</button><button type="button" class="inkbtn" data-forget="">keep it</button>`
       : renaming === a.id
       ? `<input id="advname" class="advname" maxlength="40" value="${esc(a.name || '')}" placeholder="Name it, then press Enter" aria-label="Adventure name" data-for="${a.id}">`
-      : `<button type="button" class="inkbtn" data-shelf="${a.id}">the books</button><button type="button" class="inkbtn" data-rename="${a.id}">${a.name ? 'rename' : 'name'}</button><button type="button" class="inkbtn" data-backup="${a.id}">backup</button><button type="button" class="inkbtn" data-forget="${a.id}">forget</button>`;
+      : `<button type="button" class="inkbtn" data-shelf="${a.id}">the books</button><button type="button" class="inkbtn" data-rename="${a.id}">${a.name ? 'rename' : 'name'}</button><button type="button" class="inkbtn" data-backup="${a.id}">backup</button><button type="button" class="inkbtn" data-restore="${a.id}">restore</button><button type="button" class="inkbtn" data-forget="${a.id}">forget</button>`;
     return `<div class="plaq ${at ? 'going' : ''}"><button type="button" class="plaqmain" data-adv="${a.id}">
         <span class="med">${roman(+a.id)}</span><span class="plaqtext"><b>${esc(a.name || (b ? b.title : advName(a.id)))}</b><i>${esc((a.name && b ? b.title + '. ' : '') + (rank ? rank + '. ' : '') + where)}</i></span></button>
       <span class="plaqmore">${more}</span></div>`;
@@ -1037,6 +1051,7 @@ bookEl.addEventListener('click', (e) => {
   if (busy) return;
   if (mode === 'title' && !('forget' in d)) forgetting = null;
   if (mode === 'title' && !('rename' in d)) renaming = null;
+  if (mode === 'title' && !('restoreto' in d)) restoring = null;
   if (!('arm' in d)) armed = null;
   if (d.arm) { armed = armed === +d.arm ? null : +d.arm; LW.sfx('select'); return void renderRight(); }
   if (d.back) return void guard(() => goBack(+d.back));
@@ -1046,7 +1061,8 @@ bookEl.addEventListener('click', (e) => {
     const b = adventure().book, alive = b && BOOKS[b] && hasSave(b) && saved(b).s.hero.ep > 0; // a fallen one goes to the books, to start over
     if (alive) guard(() => begin(b)); else { shelf = true; LW.sfx('select'); render(); }
   }
-  else if ('restore' in d) restoreAdventure();
+  else if ('restore' in d) restoreAdventure(d.restore);
+  else if ('restoreto' in d) { if (d.restoreto) restoreInto(d.restoreto); else { restoring = null; LW.sfx('select'); renderRight(); } }
   else if ('advnew' in d) { newAdventure(); shelf = true; LW.sfx('select'); render(); }
   else if ('shelf' in d) { if (d.shelf) useAdventure(d.shelf); shelf = !!d.shelf; LW.sfx('select'); render(); }
   else if (d.backup) backupAdventure(d.backup);
@@ -1130,7 +1146,7 @@ pr.addEventListener('wheel', (e) => {
 pr.addEventListener('pointerover', (e) => { const c = e.target.closest('.roads .choice'); pr.querySelectorAll('.dest').forEach((d) => d.classList.toggle('hot', !!c && d.dataset.choice === c.dataset.choice)); });
 
 /* toShelf: back to this adventure's books (after a death or an ending) rather than the list of adventures */
-function toTitle(toShelf) { B = null; mode = 'title'; intro = false; shelf = !!toShelf; forgetting = null; render(); }
+function toTitle(toShelf) { B = null; mode = 'title'; intro = false; shelf = !!toShelf; forgetting = restoring = null; render(); }
 /* fresh = ignore this book's save. anew = roll a new character even though one is being carried.
    reread = open a saved game on the introduction. */
 async function begin(id, fresh, anew, reread) {
