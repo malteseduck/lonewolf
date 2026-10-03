@@ -420,11 +420,13 @@ loses its `csMod` for a Magnakai hero with Huntmastery, and says so in the log. 
   `setEmblem` once main.js has fetched it) over a blot of wash, or a plain ring and blades until then.
 - Which picture (`nextFoe` in main.js): the enemy's own `art` (its section's illustration, or one
   the importer borrowed from the same book), else the first entry of `assets/plates/plates.json`
-  whose `match` is found in its name (`PLATES`; `__lw.plates` in the console), else the drawn
+  whose `match` is found in its name and whose `book`, if it has one, is the open book (`PLATES`;
+  `__lw.plates` in the console), else the drawn
   sprite. Library entries are free engravings in `assets/plates/` (sources in its README.txt),
   pictures the owner supplied in git-ignored `art/` (Winged Serpent), or Project Aon
-  illustrations from another downloaded book, by path under `data/projectaon/` (plain human
-  enemies only: another book's special creature would be seen twice).
+  illustrations by path under `data/projectaon/`: the same book's, often cropped to one figure
+  (Book 2's portrait page), or another book's (plain human enemies only: another book's special
+  creature would be seen twice, the very same creature excepted).
 - The shaded bands behind the enemy's name and the controls are `::before` layers faded out at
   the sides too, so no straight edge shows over the plate.
 - The fight's command medallions use glyphs too: Strike shows the weapon in hand (`itemGlyph`),

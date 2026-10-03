@@ -3,7 +3,7 @@
 Two jobs done by hand for each imported book, after `docs/reference/map-places.md`'s steps 1-2
 (import, reading copy): the **item table**, so the engine gives, offers, takes and gates what the
 text says (spec 4.5a), and the **fight pictures**, so every fight has a plate (spec 6.5). Book 1
-has both (2026-10-01); Book 2 has its item table (2026-10-01), not yet its pictures. The field reference is in `book-format.md` ("Section", "Item tables").
+has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). The field reference is in `book-format.md` ("Section", "Item tables").
 
 Never put the book's text anywhere but `data/projectaon/`: tools print section numbers and
 counts, the table holds only the book's short item names, and everything else is in our words.
@@ -126,22 +126,31 @@ carried character).
 The importer gives a fight its section's full-page illustration, or one from another section of
 the same book where that enemy is fought and pictured (`PLATE_FIXES`). Its report then counts
 the enemies "with none". For each, add an entry to `assets/plates/plates.json` (first match on
-the enemy's name wins, so narrower ones first). Where to look, in order:
+the enemy's name wins, so narrower ones first). Give an entry `"book": "<code>"` when it is right
+for that book only (its own characters, a generic name such as "Priest" or "guard" given a
+stand-in that suits that book), and put book entries first. Where to look, in order:
 
 1. **The owner's own picture**, if they give one: copy it to git-ignored `art/` and point the
    entry there (Book 1's Winged Serpent).
-2. **Another downloaded book's illustration**, only for plain human enemies (soldiers, guards,
+2. **The same book's own illustrations**, also those outside fights: a page of portraits, or a
+   creature pictured where it is met but not fought. A `crop` cuts one figure out (Book 2's
+   council of travellers, cut from its portrait page). First look at every `ill*.png` of the book;
+   the small ones (`small*.png`) are too low to make a plate.
+3. **Another downloaded book's illustration**, only for plain human enemies (soldiers, guards,
    robbers, bodyguards), by path under `data/projectaon/`. Never another book's special creature
    or set-piece fight: the owner would meet the same picture twice. The exception is the very same
    creature (Book 1's Crypt Spawn uses Book 5's; the owner accepted it, 2026-10-01). To see which illustrations sit
    in which fights, list each book's sections that have both an `ill*.png` and a combat line
-   (section numbers, picture names and enemy names only).
-3. **A free old engraving** from Wikimedia Commons, public domain or CC BY: search with
+   (section numbers, picture names and enemy names only). Book 2's Giaks and Szalls (a breed of
+   Giak) use Book 1's Giak, cropped to the one on foot.
+4. **A free old engraving** from Wikimedia Commons, public domain or CC BY: search with
    `filetype:bitmap` (the Commons API answers the browser with `origin=*`), lay the thumbnails out
    in the page to compare, and prefer menacing over quaint (the owner turned down a cute bear).
    Save it to `assets/plates/`, shrink anything over about 1 MB, and credit it in
-   `assets/plates/README.txt`. A `crop` drops captions and plate numbers.
+   `assets/plates/README.txt`. A `crop` drops captions and plate numbers. Tonal prints (aquatints,
+   such as Goya's) come out as a dark blot: look for line work.
 
 Show the owner each new picture as it will look (render it with `drawCreature` in a background
-tab) before calling it done. Plates are drawn whole: only a ruled frame line round the picture is
+tab) before calling it done. The importer's report counts the library entries the book can use;
+after adding them, run it again and expect 0 "with none". Plates are drawn whole: only a ruled frame line round the picture is
 cut away, and the edges are not faded (owner's request).

@@ -74,8 +74,8 @@ beyond inline `<i>` and `<cite>`.
 The report it prints is the check that a book imported sanely: section count, combats, auto and
 free Random Number sections, gates, illustrations, dead ends, forced Meals, paragraphs of
 introduction (0 means `tssf.htm` is missing), kinds of enemy (with
-a plate from the book, from the plate library, and with none, named: add those to
-`plates.json`), broken links, and sections with no way on and no ending. The last two should be
+a plate from the book, from the plate library (entries for any book or for this one), and with
+none, named: add those to `plates.json`), broken links, and sections with no way on and no ending. The last two should be
 empty.
 
 It ends with the book's map places, from `tools/check_places.py`: either that the book has no

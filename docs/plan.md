@@ -5,9 +5,11 @@ Last updated 2026-10-02.
 
 ## Next steps
 
-1. **Book 2's fight pictures**: 16 enemies have no picture. Give each a plate-library entry
-   (docs/reference/items.md), and check by eye which illustration each enemy borrows (`PLATE_FIXES`,
-   and the library's generic soldier and robber entries).
+1. **Show the owner Book 2's fight pictures** (done 2026-10-02, see "State of the player"), and
+   change any they dislike. Open questions for them: the Szalls show Book 1's Giak (the book calls
+   Szalls a breed of Giak, and no downloaded book pictures one); the Sailor, Villagers, Trickster
+   and guards borrow other books' plain humans (Books 6, 8, 5, 9); the Knight of the White Mountain
+   uses Book 2's own Tarnalin knight, who is met later as a friend.
 2. **Import books 3-12** once the owner says so, and read the importer's report for
    every one. Fix whatever the reports show (broken links, sections with no way on, oddly low
    counts). Expect new phrasings for gates, Random Number and combat in later books.
@@ -137,6 +139,11 @@ Working and checked by playing in the browser:
 - Battle plates made from the book's illustrations, restyled as sepia ink, shown whole with ruled
   frames cut away and every edge faded (2026-10-01). Enemies the book does not picture borrow
   another book's illustration or a free engraving (`assets/plates/plates.json`). Emblem fallback.
+  Book 2 (2026-10-02): every enemy has a picture. Its council of travellers are cut from the book's
+  own portrait page, the Helghast and zombies use its own plates, and its guards, villagers, sailor
+  and card cheat borrow other books' plain humans; the Zombie Captain and the guards no longer show
+  Book 4's turbaned warrior. Library entries can be limited to one book (`book`). Not yet shown to
+  the owner.
 - LWHD-style sepia maps stamped from engraved CC0 symbols (Widman): the demo's country (with
   travel), and a redrawn, zoomable replica of the Lastlands read from Book 1's printed map, with
   extra detail for central Sommerlund from the Maps of Magnamund. Book 1's journey is a view of it,
