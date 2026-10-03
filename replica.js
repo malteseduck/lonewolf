@@ -108,6 +108,12 @@ export function analyse(img, spec) {
     }
     const got = flood(spec.land, (c) => c === C.water);
     for (let i = 0; i < N; i++) if (isLand(cls[i])) got[i] = 1;
+    // the coast's own blue line belongs to the land it rims, so the shore meets the ice shelves
+    for (let pass = 0; pass < 3; pass++) {
+      const add = [];
+      for (let i = W; i < N - W; i++) if (!got[i] && cls[i] === C.water && (got[i - 1] || got[i + 1] || got[i - W] || got[i + W])) add.push(i);
+      add.forEach((i) => (got[i] = 1));
+    }
     const dry = density(got, W, H, (v) => v === 1, 3);
     for (let i = 0; i < N; i++) land[i] = cls[i] === C.none ? 0 : dry[i];
   } else {
