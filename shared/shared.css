@@ -105,12 +105,34 @@ button:disabled { cursor: default; }
   .lwb-sprite canvas, .lwb.shake .lwb-screen, .lwb-opt::before { animation: none !important; }
 }
 
-/* Make the entire item picker panel scrollable */
+/* Make the entire item picker panel scrollable with a dynamic fade effect */
 .picker {
-  max-height: 290px;        /* Limits height so it never pushes the backpack down */
-  overflow-y: auto;          /* Enables vertical scrolling when content overflows */
+  max-height: 290px;         /* Limits height so it never pushes the backpack down */
+  overflow-y: auto;          /* Enables vertical scrolling */
   padding-right: 6px;
   margin-bottom: 15px;
+
+  /* Create the bottom fade out effect using a linear gradient mask */
+  mask-image: linear-gradient(to bottom, black calc(100% - 40px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 40px), transparent 100%);
+  
+  /* Link the mask directly to the container's active scrolling behavior */
+  mask-animation: fade-scroll linear both;
+  mask-timeline: scroll(self);
+  -webkit-mask-animation: fade-scroll linear both;
+  -webkit-mask-timeline: scroll(self);
+}
+
+/* Animation timeline rule: as you approach the bottom limit, clear the mask to solid black */
+@keyframes fade-scroll {
+  from {
+    mask-image: linear-gradient(to bottom, black calc(100% - 40px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 40px), transparent 100%);
+  }
+  to {
+    mask-image: linear-gradient(to bottom, black 100%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 100%, transparent 100%);
+  }
 }
 
 /* Custom scrollbar styling to fit the parchment/wood theme */
@@ -149,4 +171,19 @@ button:disabled { cursor: default; }
 
 .picker details[open] summary::before {
   transform: rotate(90deg);  /* Rotates arrow downwards when open */
+}
+/* Align the row labels to the top line instead of the middle */
+.pickrow {
+  display: flex !important;
+  align-items: flex-start !important; /* Shifts labels and item pools to top alignment */
+  margin-bottom: 20px;
+}
+
+/* Optional padding adjustment to line up text exactly with the circle button tops */
+.pickrow em {
+  padding-top: 14px; 
+  font-style: normal;
+  font-weight: bold;
+  color: #5a4225;
+  min-width: 90px; /* Adjust based on your text width needs */
 }
