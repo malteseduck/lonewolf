@@ -178,13 +178,30 @@
   /* COMBAT SKILL with every modifier spelled out, so the UI can show its working. */
   LW.heroCS = (hero, ctx = {}) => {
     const parts = [{ label: 'Base', n: hero.cs }];
-    if (!hero.weapons.length) parts.push({ label: 'Unarmed', n: -4 });
-    else if (hero.weaponskill && hero.weapons.includes(hero.weaponskill))
+    
+    if (!hero.weapons.length) {
+      parts.push({ label: 'Unarmed', n: -4 });
+    } else if (hero.weaponskill && hero.weapons.includes(hero.weaponskill)) {
       parts.push({ label: 'Weaponskill', n: 2 });
+    }
+    
+    // TWO-HANDED WEAPON RULE EXCLUSION
+    const wieldsSommerswerd = hero.special.includes('sommerswerd');
+    const hasShield = hero.weapons.includes('shield') || hero.backpack.includes('shield') || hero.special.includes('shield');
+    
+    if (wieldsSommerswerd && hasShield) {
+      // The Sommerswerd forces two-handed use, completely rendering a shield useless for defense.
+      parts.push({ label: 'Shield (Disabled by Sommerswerd)', n: 0 });
+    } else if (hasShield) {
+      // Standard shield handling if the legendary sword isn't active
+      parts.push({ label: 'Shield', n: 2 });
+    }
+
     if (ctx.mindblast) parts.push({ label: 'Mindblast', n: 2 });
     if (ctx.enemy && ctx.enemy.mindforce && !LW.has(hero, 'mindshield'))
       parts.push({ label: 'Mind attack', n: -ctx.enemy.mindforce });
     if (ctx.csMod) parts.push({ label: ctx.csNote || 'Circumstance', n: ctx.csMod });
+    
     return { total: parts.reduce((t, p) => t + p.n, 0), parts };
   };
 

@@ -964,7 +964,11 @@ async function startBattle() {
     blasting() { return this.foe.immune === true || (this.foe.immune && this.mind === 1) ? 0 : this.mind; },
     cs() { return LW.heroCS(hero, { mindblast: this.blasting() === 1, psiSurge: this.blasting() === 2, enemy: this.foe, csMod, csNote: note, with: c.with }).total; },
     weapon: LW.armedWith(hero, { with: c.with }),
-    ratio() { return this.cs() - this.foe.cs; } };
+    ratio() { 
+      const rawRatio = this.cs() - this.foe.cs;
+      // Hard cap the maximum advantage to prevent complete trivialization
+      return Math.min(10, rawRatio); 
+    } };
   nextFoe();
   if (B.foe.mindforce) B.log.push(LW.shielded(hero) ? 'Its will breaks against your Mindshield.' : `Its will presses on yours: Combat Skill less ${B.foe.mindforce}.`);
   if (csMod) B.log.push(`${note}: Combat Skill ${csMod > 0 ? 'plus' : 'less'} ${Math.abs(csMod)}.`);
