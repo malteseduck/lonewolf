@@ -104,3 +104,49 @@ button:disabled { cursor: default; }
 @media (prefers-reduced-motion: reduce) {
   .lwb-sprite canvas, .lwb.shake .lwb-screen, .lwb-opt::before { animation: none !important; }
 }
+
+/* Make the entire item picker panel scrollable */
+.picker {
+  max-height: 290px;        /* Limits height so it never pushes the backpack down */
+  overflow-y: auto;          /* Enables vertical scrolling when content overflows */
+  padding-right: 6px;
+  margin-bottom: 15px;
+}
+
+/* Custom scrollbar styling to fit the parchment/wood theme */
+.picker::-webkit-scrollbar {
+  width: 6px;
+}
+.picker::-webkit-scrollbar-thumb {
+  background: rgba(120, 88, 50, 0.4);
+  border-radius: 3px;
+}
+
+/* Collapsible Section Layout */
+.picker details {
+  margin-top: 10px;
+  border-top: 1px dashed rgba(120, 88, 50, 0.3);
+}
+
+.picker summary {
+  padding: 8px 0;
+  font-family: var(--title);  /* Matches your game font asset */
+  font-size: 0.9em;
+  color: #5a4225;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;          /* Removes default browser arrow */
+}
+
+/* Custom expandable indicator */
+.picker summary::before {
+  content: "► ";
+  font-size: 0.8em;
+  display: inline-block;
+  transition: transform 0.2s ease;
+  margin-right: 5px;
+}
+
+.picker details[open] summary::before {
+  transform: rotate(90deg);  /* Rotates arrow downwards when open */
+}

@@ -533,7 +533,7 @@ function kaiHTML() {
   for (let i = 0; i < list.length; i += 5) rows.push(list.slice(i, i + 5));
   return `<div class="likeness">${portraitURL ? `<img src="${portraitURL}" alt="">` : ''}
       <div class="who"><span class="disc lit">${glyph('wolf-head')}</span><h3>Lone Wolf</h3></div></div>
-    <div class="ledgers"><section>${ruled('Attributes')}${row('Combat Skill', cs.total)}${row('Endurance', `${stepper('ep')} ${Math.max(0, h.ep)}/${h.epMax}`)}${row('Meals', h.meals)}${row('Rank', esc(LW.rankOf(h) || 'Kai Lord'), true)}${
+    <div class="ledgers"><section>${ruled('Attributes')}${row('Combat Skill', `${stepper('cs')} ${cs.total}`)}${row('Endurance', `${stepper('ep')} ${Math.max(0, h.ep)}/${h.epMax}`)}${row('Meals', h.meals)}${row('Rank', esc(LW.rankOf(h) || 'Kai Lord'), true)}${
       series === 'magnakai' ? row('Lore-circles', circles.length ? esc(circles.map((c) => c.name.replace('Circle of ', '').replace('the ', '')).join(', ')) : 'none', true) : ''}</section>
       <section>${ruled('Combat Skill')}${cs.parts.map((p, i) => row(esc(p.label), i ? signed(p.n) : p.n)).join('')}
       ${ruled('Endurance')}${row('Base', h.epMax - epParts.reduce((t, p) => t + p.n, 0))}${epParts.map((p) => row(p.label, signed(p.n))).join('')}</section></div>
@@ -597,12 +597,34 @@ function pickerHTML() {
   const pick = (id) => `<button type="button" class="disc item" data-add="${id}" title="${esc(LW.itemName(id))}" aria-label="Add ${esc(LW.itemName(id))}">${itemGlyph(id)}</button>`;
   const other = (kind, g, label) => `<button type="button" class="disc item other ${naming === kind ? 'sel' : ''}" data-add="other:${kind}" title="${label}" aria-label="${label}">${glyph(g)}</button>`;
   const row = (name, discs) => `<div class="pickrow"><em>${name}</em><div>${discs}</div></div>`;
+  
+  const pastItems = [];
+  const currentNum = book.number || 0;
+  
+  Object.entries(ITEM_TABLES).forEach(([id, table]) => {
+    const tableBookNumber = BOOKS[id] ? BOOKS[id].number : 0;
+    if (tableBookNumber > 0 && tableBookNumber < currentNum && table.ITEMS) {
+      Object.keys(table.ITEMS).forEach((itemId) => {
+        if (LW.itemKind(itemId) === 'special' && !pastItems.includes(itemId) && (!ITEM_TABLES[book.id] || !ITEM_TABLES[book.id].ITEMS[itemId])) {
+          pastItems.push(itemId);
+        }
+      });
+    }
+  });
+
   return `<div class="picker">${ruled('Add an item <button type="button" class="inkbtn" data-adding="close">done</button>')}
     ${row('Weapons', LW.WEAPONS.map(pick).join(''))}
     ${row('Backpack', pick('meal') + pick('potion') + other('pack', 'swap-bag', 'Another Backpack Item'))}
     ${row('Special Items', pick('helmet') + pick('chainmail') + pick('map') + other('spec', 'gem-pendant', 'Another Special Item'))}
-    ${ITEM_TABLES[book.id] ? row('This book', Object.keys(ITEM_TABLES[book.id].ITEMS).map(pick).join('')) : ''}
-    ${naming ? `<input id="itemname" class="pickname" placeholder="Name it, then press Enter" aria-label="Item name" data-prefix="${naming}">` : '<p class="pickname">Touch an item to add it.</p>'}</div>`;
+    ${pastItems.length ? `
+      <details>
+        <summary>View Special Items from Past Books</summary>
+        <div style="padding-top: 10px;">
+          ${row('Past Items', pastItems.map(pick).join(''))}
+        </div>
+      </details>
+    ` : ''}
+    ${naming ? `<input id="itemname" class="pickname" placeholder="Name it, then press Enter" aria-label="Item name" data-prefix="\${naming}">` : '<p class="pickname">Touch an item to add it.</p>'}</div>`;
 }
 
 /* the travel map is built once and moved in and out of the panel */

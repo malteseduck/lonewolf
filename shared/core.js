@@ -427,6 +427,7 @@
     removeItem(id) { LW.dropItem(this.s.hero, id); this.save(); }
     adjust(field, by) {
       const hero = this.s.hero;
+      if (field === 'cs') hero.cs = Math.max(0, hero.cs + by);
       if (field === 'ep') hero.ep = Math.max(0, Math.min(hero.epMax, hero.ep + by));
       if (field === 'gold') hero.gold = Math.max(0, Math.min(50, hero.gold + by));
       if (field === 'arrows') hero.arrows = Math.max(0, Math.min(LW.MAX_ARROWS, (hero.arrows || 0) + by));
