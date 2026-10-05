@@ -59,32 +59,32 @@ export const MAPS = {
   },
   /* Book 1: the redrawn Lastlands, framed on the country between the Kai Monastery and Holmgard,
      with made-up places for the story to move between (places-01fftd.js) */
-  '01fftd': {
-    replica: true,
-    view: BOOK1_VIEW, places: BOOK1_PLACES, at: BOOK1_AT, known: BOOK1_KNOWN, legs: BOOK1_LEGS,
-    trail: BOOK1_TRAIL, route: onView(BOOK1_VIEW, BOOK1_TRAIL),
-    start: 'Kai Monastery', goal: 'Holmgard', goalAt: 'fieldworks',
-  },
-  /* Book 2 crosses most of the Lastlands, so it travels in legs, each its own close view
-     (places-02fotw.js); the map turns to a leg's view when he arrives in it */
-  '02fotw': {
-    replica: true,
-    view: [180, 380, 780, 546], places: BOOK2_PLACES, at: BOOK2_AT, known: BOOK2_KNOWN, legs: BOOK2_LEGS,
-    // Book 2's own addition to the Lastlands: the channel of the Rymerift, from the coast by Port Bax
-    // south to the Rymerift itself, for its bridges to stand on
-    rivers: [[[692, 583], [697, 592], [703, 601], [707, 610], [710, 620], [709, 630], [714, 640], [721, 650], [727, 660], [731, 672], [734, 685], [738, 697]]],
-    trail: [[222, 520], [404, 488], [520, 500], [497, 568], [660, 607], [711, 577], [845, 525], [918, 487]],
-    start: 'Holmgard', goal: 'Hammerdal and home', goalAt: 'hammerdal',
-  },
-  /* Book 3 is set on Kalte, off the Lastlands, so it uses the replica of its own printed map
-     (KALTE). Like Book 2 it travels in legs, each a close view (places-03tcok.js): the ice shelf,
-     the Hrod Basin, the Viad Glacier, the caverns below it, and Ikaya itself. */
-  '03tcok': {
-    replica: 'kalte',
-    view: BOOK3_VIEW, places: BOOK3_PLACES, at: BOOK3_AT, known: BOOK3_KNOWN, legs: BOOK3_LEGS,
-    trail: BOOK3_TRAIL, route: onView(BOOK3_VIEW, BOOK3_TRAIL),
-    start: 'Anskaven', goal: 'Ikaya', goalAt: 'f_throne',
-  },
+  // '01fftd': {
+  //   replica: true,
+  //   view: BOOK1_VIEW, places: BOOK1_PLACES, at: BOOK1_AT, known: BOOK1_KNOWN, legs: BOOK1_LEGS,
+  //   trail: BOOK1_TRAIL, route: onView(BOOK1_VIEW, BOOK1_TRAIL),
+  //   start: 'Kai Monastery', goal: 'Holmgard', goalAt: 'fieldworks',
+  // },
+  // /* Book 2 crosses most of the Lastlands, so it travels in legs, each its own close view
+  //    (places-02fotw.js); the map turns to a leg's view when he arrives in it */
+  // '02fotw': {
+  //   replica: true,
+  //   view: [180, 380, 780, 546], places: BOOK2_PLACES, at: BOOK2_AT, known: BOOK2_KNOWN, legs: BOOK2_LEGS,
+  //   // Book 2's own addition to the Lastlands: the channel of the Rymerift, from the coast by Port Bax
+  //   // south to the Rymerift itself, for its bridges to stand on
+  //   rivers: [[[692, 583], [697, 592], [703, 601], [707, 610], [710, 620], [709, 630], [714, 640], [721, 650], [727, 660], [731, 672], [734, 685], [738, 697]]],
+  //   trail: [[222, 520], [404, 488], [520, 500], [497, 568], [660, 607], [711, 577], [845, 525], [918, 487]],
+  //   start: 'Holmgard', goal: 'Hammerdal and home', goalAt: 'hammerdal',
+  // },
+  // /* Book 3 is set on Kalte, off the Lastlands, so it uses the replica of its own printed map
+  //    (KALTE). Like Book 2 it travels in legs, each a close view (places-03tcok.js): the ice shelf,
+  //    the Hrod Basin, the Viad Glacier, the caverns below it, and Ikaya itself. */
+  // '03tcok': {
+  //   replica: 'kalte',
+  //   view: BOOK3_VIEW, places: BOOK3_PLACES, at: BOOK3_AT, known: BOOK3_KNOWN, legs: BOOK3_LEGS,
+  //   trail: BOOK3_TRAIL, route: onView(BOOK3_VIEW, BOOK3_TRAIL),
+  //   start: 'Anskaven', goal: 'Ikaya', goalAt: 'f_throne',
+  // },
 };
 /* each leg of a book is a map of its own, painted for its view: MAPS['02fotw/sea']. A leg with a
    city is a town plan (city.js) whose places are in the plan's own 1000x700 grid; on the whole map
