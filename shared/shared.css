@@ -187,3 +187,11 @@ button:disabled { cursor: default; }
   color: #5a4225;
   min-width: 90px; /* Adjust based on your text width needs */
 }
+
+.mapview.scrolly canvas {
+    width: 250% !important;
+}
+
+.mapview::after {
+    box-shadow: none !important;
+}
