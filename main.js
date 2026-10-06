@@ -45,8 +45,8 @@ function applyItems(b) {
       Object.assign(sec.combat, f);
       sec.combat.enemies.forEach((e) => Object.assign(e, mindforce && { mindforce }, undead && { undead }, drain && { drain }));
     }
-    // a gate the importer set wrongly is cleared with null
-    for (const [to, n] of Object.entries(need || {})) sec.choices.filter((c) => c.to === to).forEach((c) => { if (n === null) delete c.need; else c.need = Object.assign({}, c.need, n); });
+    // a gate the importer set wrongly is cleared with null; an any-of gate replaces the importer's, which read one alternative as the whole
+    for (const [to, n] of Object.entries(need || {})) sec.choices.filter((c) => c.to === to).forEach((c) => { if (n === null) delete c.need; else c.need = n.any ? n : Object.assign({}, c.need, n); });
   }
 }
 
@@ -424,7 +424,7 @@ function leftHTML() {
   else {
     const local = game.choices().map((c, i) => ({ c, i }));
     if (local.length) h += `<ul class="choices">${local.map(({ c, i }) => `<li><button type="button" class="choice" data-choice="${i}" ${c.enabled ? '' : 'disabled'}><span>${esc(shown(c.text))}${
-      c.enabled ? (c.need && (c.need.disc || c.need.circle) ? `<em>${esc(LW.condName({ disc: c.need.disc, every: c.need.every, circle: c.need.circle }))}</em>` : c.random ? '<em>Random Number</em>' : '') : `<em>${esc(c.why)}</em>`}</span></button></li>`).join('')}</ul>`;
+      c.enabled ? (c.need && (c.need.disc || c.need.circle) ? `<em>${esc(LW.condName({ disc: c.need.disc, every: c.need.every, circle: c.need.circle }))}</em>` : c.need && c.need.any ? `<em>${esc(c.need.any.map(LW.condName).join(', or '))}</em>` : c.random ? '<em>Random Number</em>' : '') : `<em>${esc(c.why)}</em>`}</span></button></li>`).join('')}</ul>`;
     // a puzzle's answer is a section number, which the book leaves the reader to turn to
     if (sec.puzzle) h += `<div class="puzzle"><label>Turn to section <input id="puzzleto" inputmode="numeric" autocomplete="off" aria-label="Section number"></label><button type="button" class="inkbtn" data-puzzle>turn</button></div>`;
   }

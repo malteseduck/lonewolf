@@ -16,10 +16,11 @@ matching reference file. Not started; the owner picks which, and in what order.
 
 **Importer gaps** (the importer reads these wrongly or not at all)
 
-1. **"Discipline X or rank Y" choices** are read with one condition, or none: B11 301, 343; B12 188
-   (and B12 14, 77 to check). The item tables clear the wrong gate and leave a `todo`. Needs an
-   "any of these conditions" form in `need`, also across kinds (a discipline or an item: B7 90; a
-   discipline or six Disciplines: B3 289).
+1. **"Discipline X or rank Y" choices** (done 2026-10-05): `need.any`, a list of conditions any one of
+   which opens the choice (conditions may also hold `item`). The importer reads it when every
+   "or have/reached" part parses (B8 72, B12 188); the item tables carry the rest (B3 289, B7 90,
+   B11 301, 343), where the text has "or six Disciplines" or an item; there an `any` need replaces
+   the importer's gate whole. B12 14, 77 are a discipline and a rank together, read rightly.
 2. **Whole-fight bonuses on a condition the importer skips**: a completed Lore-circle (B7 45; B8 30,
    47, 183, 308; B11 341), a discipline (B6 71, Animal Control), a discipline at a rank (B8 339).
    The importer's `csIf` / `csUnless` should read them; failing that, allow `csIf` / `csUnless` in an
@@ -302,9 +303,7 @@ Working and checked by playing in the browser:
   fight change for the first round or two only (most ambushes are this, so few fights are marked
   `ambush`); a fight stopped after some rounds or at an Endurance; his own losses doubled or halved;
   a Lore-circle bonus in one fight; a gate needing two items together (a Torch and a Tinderbox) or an
-  Arrow; equipment taken away and handed back later (Books 5, 7, 9); Book 12's Kika. The importer
-  reads "Discipline X or the rank of Y" choices as one condition (Book 11 301 and 343, Book 12 188):
-  an importer fix.
+  Arrow; equipment taken away and handed back later (Books 5, 7, 9); Book 12's Kika. "Discipline X or the rank of Y" choices are now gated by `need.any` (2026-10-05).
 - Battle plates made from the book's illustrations, restyled as sepia ink, shown whole with ruled
   frames cut away and every edge faded (2026-10-01). Enemies the book does not picture borrow
   another book's illustration or a free engraving (`assets/plates/plates.json`). Emblem fallback.

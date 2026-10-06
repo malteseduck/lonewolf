@@ -46,7 +46,7 @@ Item (`LW.specialLimit`, which reads `LW.bookNumber`, set by the player in `useB
 | Kai disciplines, items, limits | `LW.DISCIPLINES`, `LW.ITEMS` (with the kit items: `shield` has `fightCs: 2`, `leatherWaistcoat` `ep: 2`, each book's map), `LW.WEAPONS`, `LW.MAX_WEAPONS`, `LW.MAX_BACKPACK`, `LW.MAX_ARROWS`, `LW.bookNumber`, `LW.specialLimit(hero)` |
 | New Kai character | `LW.makeHero({csRoll, epRoll, disciplines, bonusItem})`. Book 1's kit: Axe, one Meal, the map, gold = Random Number; Book 1's bonus item table. For a later book the dialog empties it and gives that book's kit |
 | Default hooks | `LW.has`, `LW.heals`, `LW.hunts`, `LW.rankCount`, `LW.heroCS` (all replaced by `rules-series.js` when it is loaded) |
-| Imported conditions | `LW.meets(hero, cond)`, `LW.condName(cond)`: disciplines (any, or all), rank, Lore-circles, Endurance now (book-format.md, Conditions) |
+| Imported conditions | `LW.meets(hero, cond)`, `LW.condName(cond)`: disciplines (any, or all), rank, Lore-circles, Endurance now, items held (any; item tables only) (book-format.md, Conditions). `need.any` is a list of them, any one opening the choice (checked in `choices()`) |
 | Book runner | `class Game` |
 
 `Game` methods:

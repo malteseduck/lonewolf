@@ -66,6 +66,7 @@ for (const [id, x] of Object.entries(T.SECTIONS)) {
   for (const [to, n] of Object.entries(x.need || {})) {
     if (!(sec.choices || []).some((c) => c.to === to)) bad.push(`${id}: need for a choice to ${to}, which it does not have`);
     [].concat(n && n.item || []).forEach((i) => { if (!known(i)) bad.push(`${id}: need for unknown item ${i}`); });
+    ((n && n.any) || []).forEach((m) => [].concat(m.item || []).forEach((i) => { if (!known(i)) bad.push(`${id}: need for unknown item ${i}`); }));
   }
 }
 console.log(bad.length ? bad.join('\n') : 'no errors');

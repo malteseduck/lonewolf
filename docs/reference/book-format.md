@@ -74,7 +74,7 @@ dropped when he has no weapon and the engine's own -4 applies), `with` (`'none'`
 an item id: the only weapon that can harm this foe), `double` (the foe's losses are doubled),
 `undead` and `drain` (set on every enemy: undead; Endurance it costs him each round unless he is
 shielded)), `ambush` (the `csMod` is a surprise attack's or ambush's, which Huntmastery spares);
-plus `bowShot` (above). A `need` of `null` clears a gate the importer set wrongly. `main.js` lays the table over the
+plus `bowShot` (above). A `need` of `null` clears a gate the importer set wrongly; a `need` with `any` replaces the importer's gate whole (other needs are merged into it). `main.js` lays the table over the
 book (`applyItems`) when it is first opened. Where the text leaves the choice to the player (which
 weapon breaks, which item is stolen), the table gives a `todo`, not a guess. How to write one, and
 the tools: `items.md`.
@@ -87,6 +87,7 @@ the tools: `items.md`.
 | `to` | target section id |
 | `need.disc` | discipline id required; a list: any of them (all with `need.every`) |
 | `need.circle` | imported: Lore-circles he must have completed, by name (`'Circle of Fire'`) |
+| `need.any` | imported or item table: a list of Conditions (below), any one of which opens the choice: `{any: [{disc: 'animalKinship'}, {rank: 6}]}`. A member may carry `item` |
 | `need.rank` | minimum number of disciplines in the book's series |
 | `need.item`, `need.spend` | authored or item table: item required (any kind), and whether choosing consumes it. A list: any of them will do (and the first held is spent). `need.not`: open only without it (without any of them). `need.ever`: having once been given it is enough (`hero.had`) |
 | `need.ep` | item table: `[lo, hi]`, open only while his ENDURANCE is in that range (checked after the section's own `ep` change) |
@@ -121,10 +122,10 @@ Enemies are fought in order, one at a time.
 
 ## Conditions
 
-The importer writes what a rule depends on as `{disc, every, rank, circle, ep}`, any of them:
+The importer writes what a rule depends on as `{disc, every, rank, circle, ep}`, any of them (the item tables also use `item`):
 `disc` a discipline id or a list (any of them, or all with `every: true`), `rank` the number of
 disciplines of the book's series, `circle` a list of Lore-circle names (all needed), `ep` `[lo, hi]`
-his Endurance at the moment. `LW.meets(hero, cond)` tests one, `LW.condName(cond)` names it. Used
+his Endurance at the moment, `item` an item id or a list (any held, via `LW.hasItem`; authored in item tables only). `LW.meets(hero, cond)` tests one, `LW.condName(cond)` names it. Used
 by `need` on choices, `rntMod` and the fight's `csIf` / `csUnless`.
 
 ## Ids

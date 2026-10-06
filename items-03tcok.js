@@ -138,7 +138,7 @@ export const SECTIONS = {
   282: { loot: [{ item: 'spear' }, { item: 'blueDisc' }] },
   // Hunting, Tracking or Animal Kinship (the importer read Hunting alone)
   275: { need: { 293: { disc: ['hunting', 'tracking', 'animalKinship'] } } },
-  289: { need: { 156: null }, todo: 'only with Animal Kinship, or with six or more Disciplines, may you turn to 156; otherwise return to 10.' },
+  289: { need: { 156: { any: [{ disc: 'animalKinship' }, { rank: 6 }] } } },
   // a Guardian (seven Disciplines) is sent to 341, so the others come here only with Sixth Sense
   290: { need: { 124: { disc: 'sixthSense' } } },
   294: { todo: 'after the six hours of labour eat two Meals or lose 6 ENDURANCE.' },

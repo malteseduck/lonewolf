@@ -137,7 +137,16 @@ def gate(text):
             got['disc'] = got['disc'][0]
         return got
     if re.search(r'\bor (?:if you )?(?:have|possess|reached|attained)\b', head):
-        return None  # a discipline or a rank: either will do, which a gate cannot say
+        # a discipline or a rank: any one will do. Every part must parse, or the choice stays open
+        m = re.match(r'If you (.+)', head.strip())
+        parts = re.split(r',?\s+or\s+(?:if you\s+)?(?=(?:have|possess|reached|attained|completed)\b)', m.group(1)) if m else []
+        got = [condition(p) for p in parts]
+        if len(parts) > 1 and all(got):
+            for g in got:
+                if len(g.get('disc', [])) == 1:
+                    g['disc'] = g['disc'][0]
+            return {'any': got}
+        return None
     d = re.search(r'If you (?:have|possess|wish to use|wish to demonstrate)[^.;]*?(?:Kai|Magnakai) Disciplines? (?:either |both )?(?:of )?((?:either |both )?[A-Za-z -]+?(?:\s*\(any weapon\))?)(?:,| to| on| you| turn|\.| \(|$)', head + '.')
     if d:
         got = disc_list(d.group(1))
@@ -421,6 +430,7 @@ print(f'{title} ({series}):', len(sections), 'sections;', sum('combat' in s for 
       sum(s.get('rnt') == 'free' for s in secs), 'free random;',
       sum(any('disc' in c.get('need', {}) for c in s['choices']) for s in secs), 'with discipline gates;',
       sum(any('rank' in c.get('need', {}) for c in s['choices']) for s in secs), 'with rank gates;',
+      sum(any('any' in c.get('need', {}) for c in s['choices']) for s in secs), 'with any-of gates;',
       sum(any('circle' in c.get('need', {}) for c in s['choices']) for s in secs), 'with Lore-circle gates;',
       sum('img' in s for s in secs), 'illustrated;', sum(s.get('end') == 'death' for s in secs), 'dead ends;',
       sum(s.get('end') == 'failed' for s in secs), 'failed endings;', sum('puzzle' in s for s in secs), 'puzzles;',

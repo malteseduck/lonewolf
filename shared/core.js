@@ -162,18 +162,19 @@
   LW.heals = (hero) => LW.has(hero, 'healing') && 'Healing';
   LW.hunts = (hero) => LW.has(hero, 'hunting') && 'Hunting';
   LW.rankCount = (hero) => hero.disciplines.length;
-  /* An imported condition, {disc: id | [ids] (any of them; all with every), rank, circle: [names] (all), ep: [lo, hi] (his Endurance now)}:
+  /* An imported condition, {disc: id | [ids] (any of them; all with every), rank, circle: [names] (all), ep: [lo, hi] (his Endurance now), item: id | [ids] (any held)}:
      whether he meets it, and what it reads as. The functions are looked up late: rules-series.js replaces them. */
   LW.meets = (hero, c) => {
     const ds = c.disc ? [].concat(c.disc) : [];
     if (ds.length && !(c.every ? ds.every((d) => LW.has(hero, d)) : ds.some((d) => LW.has(hero, d)))) return false;
     if (c.rank && LW.rankCount(hero) < c.rank) return false;
+    if (c.item && ![].concat(c.item).some((i) => LW.hasItem(hero, i))) return false;
     if (c.ep && (hero.ep < c.ep[0] || hero.ep > c.ep[1])) return false;
     const circles = c.circle && LW.circlesOf ? LW.circlesOf(hero).map((x) => x.name) : [];
     return !(c.circle && !c.circle.every((n) => circles.includes(n)));
   };
   LW.condName = (c) => [c.disc && [].concat(c.disc).map((d) => (LW.DISCIPLINES[d] || { name: d }).name).join(c.every ? ' and ' : ' or '),
-    c.rank && 'your rank', c.circle && c.circle.join(' and '), c.ep && 'your Endurance', c.each && 'your Magnakai Disciplines'].filter(Boolean).join(', ');
+    c.rank && 'your rank', c.circle && c.circle.join(' and '), c.item && [].concat(c.item).map(LW.itemName).join(' or '), c.ep && 'your Endurance', c.each && 'your Magnakai Disciplines'].filter(Boolean).join(', ');
 
   /* COMBAT SKILL with every modifier spelled out, so the UI can show its working. */
   LW.heroCS = (hero, ctx = {}) => {
@@ -322,6 +323,7 @@
         if (c.need && (c.need.disc || c.need.circle) && !LW.meets(hero, { disc: c.need.disc, every: c.need.every, circle: c.need.circle })) {
           enabled = false; why = `Needs ${LW.condName({ disc: c.need.disc, every: c.need.every, circle: c.need.circle })}`;
         }
+        if (c.need && c.need.any && !c.need.any.some((x) => LW.meets(hero, x))) { enabled = false; why = `Needs ${c.need.any.map(LW.condName).join(', or ')}`; }
         if (c.need && c.need.ep && !LW.meets(hero, { ep: c.need.ep })) { enabled = false; why = `Your ENDURANCE is ${hero.ep}`; }
         if (c.need && c.need.rank && LW.rankCount(hero) < c.need.rank) { enabled = false; why = 'Needs a higher rank'; }
         // need.item: one id, or a list of which any will do; ever: having once been given it is enough

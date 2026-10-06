@@ -128,7 +128,7 @@ export const SECTIONS = {
   298: { todo: 'unless you have Curing at the rank of Mentora or higher, add 2 to every ENDURANCE loss you take in this fight.' },
   // the number drawn is the loss (Huntmastery takes 2 off the number first)
   299: { rolls: [{ range: [0, 3], ep: -2 }, { range: [4, 6], ep: -3 }, { range: [7, 9], ep: -4 }], todo: 'with Huntmastery, take 2 off the number you drew before reading the loss: give back what you were over-charged.' },
-  301: { need: { 309: null }, todo: 'turn to the first way only with Pathsmanship at the rank of Scion-kai, or with Animal Control; otherwise take the other.' },
+  301: { need: { 309: { any: [{ disc: 'pathsmanship', rank: 8 }, { disc: 'animalControl' }] } } },
   310: { ep: -7 },
   312: { rolls: gain() },
   313: { todo: 'unless you have completed the Lore-circle of Solaris, lose 3 ENDURANCE.' },
@@ -140,6 +140,6 @@ export const SECTIONS = {
   333: { bowShot: { 45: [0, 4], 263: [5, 8], 287: [9, 99] } },
   338: { todo: 'you lose one Special Item of your choice, and the first and third items on your Backpack list: take them off by hand.' },
   341: { todo: 'with the Lore-circle of the Spirit, add 2 to your COMBAT SKILL for this fight.' },
-  343: { need: { 309: null }, todo: 'turn to the first way only with Pathsmanship at the rank of Scion-kai, or with Animal Control; otherwise take the other.' },
+  343: { need: { 309: { any: [{ disc: 'pathsmanship', rank: 8 }, { disc: 'animalControl' }] } } },
   344: { ep: -10 },
 };

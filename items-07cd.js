@@ -78,8 +78,7 @@ export const SECTIONS = {
   80: { loot: [{ item: 'spear' }, { item: 'shortSword' }, { item: 'shortSword' }, { item: 'axe' }, { item: 'dagger' }, { item: 'dagger' }, { item: 'mace' }, { gold: 6 }] },
   85: { rolls: loss(2), todo: 'with Huntmastery at the rank of Primate the loss is 2 less: give back up to 2 ENDURANCE.' },
   88: { ep: -2 },
-  // Nexus or the Amulet: the importer read Nexus alone
-  90: { need: { 24: null }, todo: 'only with Nexus or a Kazan-Oud Platinum Amulet may you turn to 24; without either take 324.' },
+  90: { need: { 24: { any: [{ disc: 'nexus' }, { item: 'platinumAmulet' }] } } },
   96: { give: [{ item: 'sword' }] },
   97: { need: { 10: fireseed, 317: sommerswerd, 331: { item: ['fireseed', 'sommerswerd'], not: true } } },
   103: { ep: -8, todo: 'with Nexus you lose only 6: give 2 back.' },

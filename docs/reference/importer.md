@@ -60,7 +60,7 @@ Heuristics layered on top, all by regular expression:
   less than 10"), joined by "and have ...". Anything else in it (an item, a weapon in hand, "or have
   reached") and the rule is not read. Written as in book-format.md, Conditions.
 - **Gates** (`gate()`): the choice's condition, up to its first comma or "turn to". Negative
-  phrasings ("if you do not have", "have yet to", "neither") and "X or a rank" are left open. A
+  phrasings ("if you do not have", "have yet to", "neither") are left open. "X, or have reached the rank of Y" (parts joined by "or (if you) have/possess/reached/attained") is split and each part read as a condition; if all parse, `need: {any: [...]}`, else the choice is left open. A
   looser reading still gates "If you wish to use the Kai Discipline of X ...".
 - **Random Number ranges** (`span()`): "0–4", "−2–+3" (the books' minus sign), "5 or more" / "or
   higher", "4 or less", "below 7", "above 6", or a single number. Not in a choice about ENDURANCE
