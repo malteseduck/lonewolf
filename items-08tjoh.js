@@ -41,7 +41,6 @@ const arrow = { arrows: 1 };
 // the number drawn is the loss, 0 counting as 10
 const loss = () => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => ({ range: [n, n], ep: -(n || 10) }));
 const sacks = [1, 2, 3, 4].map(() => ({ item: 'silverSack' }));
-const spirit = 'with the Lore-circle of the Spirit complete, add 2 to your COMBAT SKILL for this fight.';
 const potionUsed = 'the potion or herb you used on Paido is used up: remove it from your Backpack.';
 
 export const SECTIONS = {
@@ -56,7 +55,7 @@ export const SECTIONS = {
   34: { take: [{ item: 'meal' }] },
   39: { ep: -8, take: [arrow] },
   42: { loot: [{ item: 'alether' }, { item: 'potion' }, { item: 'broadsword' }, { item: 'quarterstaff' }, { item: 'rendalim' }, { item: 'oxydine' }] },
-  47: { give: [{ item: 'paidoSword' }], fight: { with: 'paidoSword', drain: 2 }, todo: spirit },
+  47: { give: [{ item: 'paidoSword' }], fight: { with: 'paidoSword', drain: 2 } },
   5: { need: { 324: bow } },
   36: { need: { 182: bow, 225: fireseed } },
   52: { todo: 'double every ENDURANCE point you lose in this fight (the bite is venomous), and triple what Mindblast or Psi-surge would add.' },
@@ -108,7 +107,7 @@ export const SECTIONS = {
   331: { todo: potionUsed },
   349: { todo: potionUsed },
   182: { take: [arrow] },
-  183: { give: [{ item: 'paidoSword' }], fight: { with: 'paidoSword', drain: 2 }, todo: spirit + ' Ignore the ENDURANCE the Helghast loses in the first round.' },
+  183: { give: [{ item: 'paidoSword' }], fight: { with: 'paidoSword', drain: 2 }, todo: 'ignore the ENDURANCE the Helghast loses in the first round.' },
   187: { take: [{ weapons: 'one' }], todo: 'the weapon you prodded the creature with is the one crushed.' },
   189: { need: { 287: sommerswerd, 13: { item: 'sommerswerd', not: true } } },
   191: { give: [{ item: 'vial8' }] },
@@ -152,8 +151,8 @@ export const SECTIONS = {
   298: { todo: 'unless you have Huntmastery, take 3 off your COMBAT SKILL for the first two rounds only.' },
   305: { need: { 164: bow } },
   306: { loot: [{ item: 'mapTharro8' }, { meal: 1 }, { item: 'axe' }] },
-  308: { fight: { with: 'sommerswerd', undead: true, drain: 2 }, todo: spirit },
-  30: { fight: { with: 'sommerswerd', undead: true, drain: 2 }, todo: spirit },
+  308: { fight: { with: 'sommerswerd', undead: true, drain: 2 } },
+  30: { fight: { with: 'sommerswerd', undead: true, drain: 2 } },
   310: { bowShot: { 184: [0, 8], 213: [9, 99] } },
   312: { loot: [{ item: 'giakScroll' }] },
   316: { need: { 139: { gold: 30, spend: true } } },
@@ -162,7 +161,6 @@ export const SECTIONS = {
   325: { ep: -3 },
   333: { fight: { mindforce: 2 } },
   337: { ep: -3 },
-  339: { todo: 'unless you have Nexus and the rank of Primate, take 8 off your COMBAT SKILL for this fight (the gas).' },
   341: { need: { 215: bow, 33: fireseed } },
   33: { take: [fireseed] },
   348: { need: { 29: { item: 'lodestone' }, 170: { item: 'lodestone', not: true } } },

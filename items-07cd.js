@@ -59,7 +59,6 @@ export const SECTIONS = {
   34: { need: { 347: { item: 'silverWhistle7' } } },
   42: { ep: -3, need: { 174: sommerswerd, 202: noSommerswerd } },
   44: { ep: -3 },
-  45: { todo: 'with the Lore-circle of Light complete, add 2 to your COMBAT SKILL for this fight.' },
   50: { take: spent },
   53: { ep: -5, need: { 157: fireseed } },
   // the Beastmen's packs
@@ -122,7 +121,8 @@ export const SECTIONS = {
   199: { loot: [{ gold: 6 }, { item: 'rope' }, { item: 'redRobe7' }] },
   206: { take: spent },
   208: { need: { 310: rope, 211: noRope } },
-  214: { todo: 'the door is fought as an enemy with the numbers printed there, as if unarmed (-4 COMBAT SKILL, none with Nexus). The ENDURANCE you lose is fatigue. You may stop at any time.' },
+  // the door is fought as if unarmed
+  214: { fight: { with: 'none' }, todo: 'with Nexus you lose no COMBAT SKILL for being bare-handed: add back what the Combat page takes off for it.' },
   219: { ep: -6, todo: 'take 4 off your COMBAT SKILL for the first two rounds only (your weapon is on the floor). ' + doubled },
   220: { loot: [{ item: 'axe' }, { item: 'dagger' }] },
   221: { todo: 'you cannot use a Bow in this fight. With Invisibility you may break off at any time without loss (turn to 70).' },

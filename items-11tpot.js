@@ -139,7 +139,6 @@ export const SECTIONS = {
   332: { rolls: [{ range: [0, 3], ep: -1 }, { range: [4, 6], ep: -2 }, { range: [7, 9], ep: -3 }], todo: 'with Huntmastery, take 2 off the number you drew before reading the loss: give back what you were over-charged.' },
   333: { bowShot: { 45: [0, 4], 263: [5, 8], 287: [9, 99] } },
   338: { todo: 'you lose one Special Item of your choice, and the first and third items on your Backpack list: take them off by hand.' },
-  341: { todo: 'with the Lore-circle of the Spirit, add 2 to your COMBAT SKILL for this fight.' },
   343: { need: { 309: { any: [{ disc: 'pathsmanship', rank: 8 }, { disc: 'animalControl' }] } } },
   344: { ep: -10 },
 };

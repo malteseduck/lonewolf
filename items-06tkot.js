@@ -92,7 +92,6 @@ export const SECTIONS = {
   62: { todo: 'you were right: add as many Gold Crowns as you staked to your gold.' },
   // the glass jar of spa water
   65: taunor,
-  71: { todo: 'with Animal Control you fight from the saddle: add 2 to your COMBAT SKILL for this fight.' },
   76: { todo: 'the mercenary buys only these, at: Sword 3, Dagger 1, Broadsword 6, Short Sword 2, Mace 3, Ruby Ring 10, Warhammer 5, Spear 4, Axe 2, Bow 5, Quarterstaff 2, Silver Brooch 7 Gold Crowns. You need 2 Crowns for the night. Adjust your things and gold by hand.' },
   78: { todo: 'break off the fight and turn to the next section as soon as Roark is down to 11 ENDURANCE or less (use the Turn to section box).' },
   85: { ep: -2, need: withBow('178', '39') },
@@ -121,7 +120,6 @@ export const SECTIONS = {
   145: { loot: [{ gold: 12 }, { item: 'rubyRing6' }] },
   153: { ep: -5, need: withBow('178', '39') },
   155: { todo: 'the first round is bare-handed: take 4 off your COMBAT SKILL for that round only, then you may draw a weapon. Evasion is allowed only after you survive 4 rounds, whatever the Evade control shows.' },
-  156: { todo: 'the door fights as an enemy with COMBAT SKILL 13 and 35 resistance: play it by the usual rules on the Combat page; the ENDURANCE you lose is your fatigue. You may stop at any time and go on along the sewer.' },
   157: { ep: 1, loot: [{ meal: 1 }, { meal: 1 }] },
   // the cellar: Gwynian gives the key, and the rest is for the taking
   158: { give: [{ item: 'smallSilverKey6' }], loot: [{ item: 'quarterstaff' }, { meal: 1 }, { meal: 1 }, { meal: 1 }, { item: 'mace' }, { item: 'brassWhistle6' }, { item: 'rope' }, { item: 'shortSword' }] },

@@ -60,7 +60,7 @@ def lines(s):
 
 
 def sentences(text):
-    return [s.strip() for s in re.split(r'(?<=[.!?])\s+', text) if s.strip()]
+    return [s.strip() for s in re.split(r'(?<!i\.e\.)(?<!e\.g\.)(?<=[.!?])\s+', text) if s.strip()]  # "(i.e. you possess ...)"
 
 
 def disc_list(s):
@@ -87,7 +87,7 @@ def condition(text):
         clause = clause.strip()
         d = re.fullmatch(r'(?:have|possess)(?: and wish to use)? (?:either |both )?(?:of )?the (?:Kai |Magnakai )?Disciplines? (?:either |both )?(?:of )?(.+)', clause)
         r = re.fullmatch(r'(?:have )?(?:also )?(?:reached|attained) the (?:Kai |Magnakai )?[Rr]ank of ([A-Za-z -]+?)(?: or (?:higher|above|more))?(?: \([^)]*\))?', clause)
-        c = re.fullmatch(r'(?:have )?completed the Lore-circles? of (.+)', clause)
+        c = re.fullmatch(r'(?:(?:have )?completed|possess) the (?:Magnakai )?Lore-circles? of (.+)', clause)
         e = re.fullmatch(r'your (?:current )?ENDURANCE(?: points?)?(?: point)? total is (?:now )?(.+)', clause)
         if e and 'ep' not in out:  # his Endurance as he draws: "less than 10", "20 or more"
             x = e.group(1)
@@ -243,13 +243,13 @@ def reach(mods):
 
 def cs_rule(whole):
     """The fight's COMBAT SKILL adjustment the text states for the whole fight: (n, csIf, csUnless),
-    the conditions being disciplines only. One limited to some rounds, or with any other condition, is
-    left to the text; so is a section with two."""
+    the conditions being disciplines, a rank and Lore-circles. One limited to some rounds, or with any
+    other condition, is left to the text; so is a section with two."""
     found = []
     for s in sentences(whole):
         if 'COMBAT SKILL' not in s:
             continue
-        m = (re.search(r'\b(add|increase)\b(?: your COMBAT SKILL by)? (\d+)(?: points?)?(?: to your COMBAT SKILL)?', s, re.I)
+        m = (re.search(r'\b(add|increase)\b(?: your COMBAT SKILL by)? (?:an additional |a further |an extra )?(\d+)(?: points?)?(?: to your COMBAT SKILL)?', s, re.I)
              or re.search(r'\b(deduct|subtract|reduce)\b(?: your COMBAT SKILL by)? (\d+)(?: points?)?(?: from your COMBAT SKILL)?', s, re.I))
         if not m or not re.search(r'(?:to|from) your COMBAT SKILL|your COMBAT SKILL by', s):
             continue
@@ -258,10 +258,11 @@ def cs_rule(whole):
         if re.search(r'\bround|instead of|\bpower\b|weapon|\bwield', s):
             return None
         n = int(m.group(2)) * (1 if m.group(1).lower() in ('add', 'increase') else -1)
-        u = re.search(r'\b[Uu]nless you ((?:have|possess) .+?)(?:,|\.?$)', s)
-        i = re.search(r'\b[Ii]f you (.+?),', s)
+        # the condition ends at a comma, or with none at "you may" ("If you have X you may add 2")
+        u = re.search(r'\b[Uu]nless you ((?:have|possess) .+?)(?:,| you (?:may|can|must)\b|\.?$)', s)
+        i = re.search(r'\b[Ii]f you (.+?)(?:,| you (?:may|can|must)\b)', s)
         cond = condition(u.group(1)) if u else condition(i.group(1)) if i else None
-        if (u or i) and (not cond or set(cond) - {'disc', 'every'}):
+        if (u or i) and (not cond or set(cond) - {'disc', 'every', 'rank', 'circle'}):
             return None
         if not (u or i) and re.search(r'\b(?:if|unless|when|while|whenever|should)\b', s, re.I):
             return None
@@ -287,7 +288,9 @@ for n in numbers:
         elif img:
             sec['img'] = {'file': img, 'full': img.startswith('ill'), 'at': len(sec['text'])}
         elif cls == 'combat':
-            c = re.match(r'(.+?):\s*COMBAT\s*SKILL\s*(\d+)\s*ENDURANCE\s*(\d+)', plain(body))
+            # a door fought as an enemy: "ENDURANCE (RESISTANCE points) 35". Not "(TARGET points)": a contest
+            # that leaves his Endurance alone, which the engine cannot play
+            c = re.match(r'(.+?):\s*COMBAT\s*SKILL\s*(\d+)\s*ENDURANCE\s*(?:\(\s*RESISTANCE points\s*\)\s*)?(\d+)', plain(body))
             if c:
                 enemies.append({'name': c.group(1).strip(), 'cs': int(c.group(2)), 'ep': int(c.group(3))})
         elif cls == 'choice' and re.search(r'href="sect\d+\.htm"', body):
@@ -300,7 +303,7 @@ for n in numbers:
                 r = span(text)
                 if r:
                     ch['range'] = r
-                if re.search(r'\bevade\b', text, re.I):
+                if re.search(r'\bevade\b|\bcease [‘\'"]?combat\b', text, re.I):  # a door's "cease 'combat' at any time"
                     ch['evade'] = True
                 sec['choices'].append(ch)
         else:

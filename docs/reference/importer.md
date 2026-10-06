@@ -47,7 +47,7 @@ It works on the contents of `<div class="maintext">`, in document order:
 | `<p class="choice">` with `<a href="sectN.htm">` | a choice to N with the paragraph as its text |
 | `<p class="choice">` with no section link | a paragraph; if the section has no other way on, `end: 'failed'` (Book 3's 61, a mission given up) |
 | `<p class="puzzle">` | a paragraph, and `puzzle: true`: the answer is a section number (Books 5, 7-9) |
-| `<p class="combat">` "Name: COMBAT SKILL n ENDURANCE m" | an enemy |
+| `<p class="combat">` "Name: COMBAT SKILL n ENDURANCE m" | an enemy; also "ENDURANCE (RESISTANCE points) m", a door fought as one (Book 6 156, Book 7 214). Not "(TARGET points)": Book 6's archery contest leaves his Endurance alone |
 | `<img src>` | `img`, `full` when the file name starts with `ill` |
 | a link to `random.htm` anywhere | the section needs a Random Number |
 
@@ -55,8 +55,8 @@ Heuristics layered on top, all by regular expression:
 
 - **Conditions** (`condition()`): the "If you ..." of a rule, read only when it is wholly made of
   disciplines ("of X", "of either X or Y" = any, "of X and Y" = all), a rank ("reached the Kai rank
-  of Guardian or higher", mapped to a discipline count), Lore-circles ("completed the Lore-circle
-  of Fire") and, for Random Number bonuses, his Endurance ("your current ENDURANCE point total is
+  of Guardian or higher", mapped to a discipline count), Lore-circles ("completed the (Magnakai) Lore-circle
+  of Fire", "possess the Lore-circle of ...") and, for Random Number bonuses, his Endurance ("your current ENDURANCE point total is
   less than 10"), joined by "and have ...". Anything else in it (an item, a weapon in hand, "or have
   reached") and the rule is not read. Written as in book-format.md, Conditions.
 - **Gates** (`gate()`): the choice's condition, up to its first comma or "turn to". Negative
@@ -73,7 +73,7 @@ Heuristics layered on top, all by regular expression:
 - **auto or free**: `auto` when the bonuses were all read, every total they can make is covered by
   exactly one choice's range, and every choice without a range is an "If you have / possess ..."
   taken instead of drawing. Otherwise `free`, and the ranges are dropped.
-- **Evasion**: a choice containing "evade" becomes the fight's evade exit; "after N rounds",
+- **Evasion**: a choice containing "evade" (or a door's "cease 'combat'") becomes the fight's evade exit; "after N rounds",
   "after the first round" and "until the beginning of the third round" set the wait; "in the first
   round of combat only" sets `within: 1`.
 - **Mind immunity**: "immune to Mindblast / Psi-surge" in the section; "immune to Mindblast (but
@@ -81,8 +81,9 @@ Heuristics layered on top, all by regular expression:
 - **Mind drain**: "Unless you possess the Discipline of Mindshield (Psi-screen in a Magnakai
   book), deduct N ENDURANCE points every round" sets each enemy's `drain`.
 - **Combat Skill adjustment** (`cs_rule()`): one sentence that adds to, deducts from or reduces
-  "your COMBAT SKILL" for the fight, taken as `csMod`, with "If you have X," as `csIf` and "unless
-  you have X" as `csUnless` (disciplines only). Left as text: a change for some rounds only, one
+  "your COMBAT SKILL" for the fight, taken as `csMod`, with "If you have X," (or "If you have X you may ...", no comma) as `csIf` and
+  "unless you have X" as `csUnless` (disciplines, a rank, Lore-circles). "add an additional / a
+  further / an extra N" counts. Sentences are not split after "i.e." or "e.g.". Left as text: a change for some rounds only, one
   "instead of" the engine's own bonus, one from a weapon's or item's power (its own bonus may count
   it), one with any other condition, and a section with two.
 - **Forced Meal**: "must (also) (now) eat a Meal", "Unless you eat a Meal now".

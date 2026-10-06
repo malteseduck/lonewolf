@@ -21,12 +21,14 @@ matching reference file. Not started; the owner picks which, and in what order.
    "or have/reached" part parses (B8 72, B12 188); the item tables carry the rest (B3 289, B7 90,
    B11 301, 343), where the text has "or six Disciplines" or an item; there an `any` need replaces
    the importer's gate whole. B12 14, 77 are a discipline and a rank together, read rightly.
-2. **Whole-fight bonuses on a condition the importer skips**: a completed Lore-circle (B7 45; B8 30,
-   47, 183, 308; B11 341), a discipline (B6 71, Animal Control), a discipline at a rank (B8 339).
-   The importer's `csIf` / `csUnless` should read them; failing that, allow `csIf` / `csUnless` in an
-   item table's `fight` (the checker rejects them today).
-3. **Fights the importer missed**: the doors fought as enemies (B6 156, B7 214), whose losses are
-   fatigue and which may be broken off at any time.
+2. **Whole-fight bonuses on a condition the importer skips** (done 2026-10-06): `cs_rule` now reads
+   Lore-circles and ranks in `csIf` / `csUnless`, a condition with no comma after it, "an additional
+   N", and "(i.e. ...)" inside the sentence. B6 71, B7 45, B8 30, 47, 183, 308, 339, B11 341; their
+   `todo`s are gone. B11 270 lost a misread +1 its item table already zeroed.
+3. **Fights the importer missed** (done 2026-10-06): the doors (B6 156, B7 214) are fights, with
+   "ENDURANCE (RESISTANCE points)" and "cease 'combat' at any time" read as evasion at any time. B7
+   214 fights bare-handed (`with: 'none'`); with Nexus the penalty is given back by hand (`todo`).
+   Neither door has a fight picture yet (emblem).
 
 **Engine changes** (most `todo`s first)
 
