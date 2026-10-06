@@ -3,7 +3,8 @@
 Two jobs done by hand for each imported book, after importing it and writing its reading copy
 (`tools/reading_copy.py`): the **item table**, so the engine gives, offers, takes and gates what the
 text says (spec 4.5a), and the **fight pictures**, so every fight has a plate (spec 6.5). Book 1
-has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). The field reference is in `book-format.md` ("Section", "Item tables").
+has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-12 have
+their tables (Book 3 2026-10-03, 4-12 2026-10-05). The field reference is in `book-format.md` ("Section", "Item tables").
 
 Never put the book's text anywhere but `data/projectaon/`: tools print section numbers and
 counts, the table holds only the book's short item names, and everything else is in our words.
@@ -78,6 +79,12 @@ Decide each section by what the text says, outright:
 - **starting equipment** is not in the item table: each book's kit is `LW.KITS` in
   `shared/rules-series.js`, from rules-books.md's addendum. A kit item the engine lacks goes in
   `LW.ITEMS` (core.js) or, if only that book has it, the book's `ITEMS`.
+
+Item ids are one list for every book (an item carried from one book is the same item in the
+next). An object met in several books (the Dagger of Vashna, the Silver Bow of Duadon, the Oede
+Herb) is defined once, in the first book that has it, and later tables use its id. A new item whose
+natural id is taken by a different object, or a generic one (a key, a blanket), gets the book
+number as a suffix (`silverKey3`, `blanket9`).
 
 Kinds: the text says "Special Item" or "Backpack Item" for most. Where it does not, keys, papers
 and things worn are `special`, other goods `backpack`; say so in the plan when unsure. Give a

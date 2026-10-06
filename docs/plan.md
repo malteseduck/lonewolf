@@ -19,7 +19,7 @@ Where each book stands, step by step: `docs/book-checklist.md`.
    the next. Each book gets the same work (see "Work for each book" below): items and fight
    pictures. All ten were imported on 2026-10-03, and each
    report has no broken links and no section without a way on (figures in
-   docs/reference/importer.md, Results). Book 3 has its item table; the others none yet.
+   docs/reference/importer.md, Results). Books 3-12 have their item tables (4-12 on 2026-10-05).
 
    - **2.1 Book 3, The Caverns of Kalte.** Fight pictures: 14 of 17 kinds of enemy have none. Random Number left free: 6 (2 changed by a
      weapon in hand or an oil, 4 count by the number). Also: 1 failed ending (61); the sledge food
@@ -193,6 +193,20 @@ Working and checked by playing in the browser:
   every Special Item. The Seal of Hammerdal comes with the starting kit. Tried section by section on a
   stand-in hero, not yet in a play-through. The inventory's "add by hand" lists the open book's
   own items.
+- Item tables for Books 4-12 (2026-10-05): `items-04tcod.js` to `items-12tmod.js`, written by one
+  agent per book and reviewed: every book `check_items.mjs` clean, registered in `ITEM_TABLES`, loaded
+  in the page with a stand-in hero (gifts, a bow shot, an Arrow spent, a herb gate). 90-121 sections
+  and 9-22 book items each; 18-46 `todo`s each. In review: one id per object across books (the
+  Dagger of Vashna, Silver Bow of Duadon, Oede Herb, Rendalim's Elixir, Gallowbrush and Onyx
+  Medallion were each defined twice; Book 3's key had taken Book 1's `silverKey`), and Arrow or
+  Torch counts the text does not give were made `todo`s or offered in full. Not yet played through.
+  What the engine cannot hold, left as `todo`s (candidates for engine work, the owner to choose): a
+  fight change for the first round or two only (most ambushes are this, so few fights are marked
+  `ambush`); a fight stopped after some rounds or at an Endurance; his own losses doubled or halved;
+  a Lore-circle bonus in one fight; a gate needing two items together (a Torch and a Tinderbox) or an
+  Arrow; equipment taken away and handed back later (Books 5, 7, 9); Book 12's Kika. The importer
+  reads "Discipline X or the rank of Y" choices as one condition (Book 11 301 and 343, Book 12 188):
+  an importer fix.
 - Battle plates made from the book's illustrations, restyled as sepia ink, shown whole with ruled
   frames cut away and every edge faded (2026-10-01). Enemies the book does not picture borrow
   another book's illustration or a free engraving (`assets/plates/plates.json`). Emblem fallback.

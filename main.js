@@ -8,6 +8,15 @@ import { printedCanvas } from './maps.js';
 import * as ITEMS_01 from './items-01fftd.js';
 import * as ITEMS_02 from './items-02fotw.js';
 import * as ITEMS_03 from './items-03tcok.js';
+import * as ITEMS_04 from './items-04tcod.js';
+import * as ITEMS_05 from './items-05sots.js';
+import * as ITEMS_06 from './items-06tkot.js';
+import * as ITEMS_07 from './items-07cd.js';
+import * as ITEMS_08 from './items-08tjoh.js';
+import * as ITEMS_09 from './items-09tcof.js';
+import * as ITEMS_10 from './items-10tdot.js';
+import * as ITEMS_11 from './items-11tpot.js';
+import * as ITEMS_12 from './items-12tmod.js';
 
 const LW = window.LW;
 const BOOKS = Object.assign({}, LW.BOOKS || {});
@@ -15,7 +24,10 @@ const BOOKS = Object.assign({}, LW.BOOKS || {});
 /* Each book's hand-made item table (items-<code>.js) is laid over its sections the first time the
    book is opened. Every book's items are known from the start, so a Lone Wolf carried on from one
    book still shows what he took from it. */
-const ITEM_TABLES = { '01fftd': ITEMS_01, '02fotw': ITEMS_02, '03tcok': ITEMS_03 };
+const ITEM_TABLES = {
+  '01fftd': ITEMS_01, '02fotw': ITEMS_02, '03tcok': ITEMS_03, '04tcod': ITEMS_04, '05sots': ITEMS_05, '06tkot': ITEMS_06,
+  '07cd': ITEMS_07, '08tjoh': ITEMS_08, '09tcof': ITEMS_09, '10tdot': ITEMS_10, '11tpot': ITEMS_11, '12tmod': ITEMS_12,
+};
 Object.values(ITEM_TABLES).forEach((t) => LW.addItems(t.ITEMS));
 function applyItems(b) {
   const t = ITEM_TABLES[b.id];
