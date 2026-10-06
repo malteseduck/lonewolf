@@ -148,9 +148,29 @@ Left to the player whatever the engine does: whether to sleep (B2 41), and the p
    - **2.10 Book 12, The Masters of Darkness.** Fight pictures: 20 of 39 have none. Random Number left free: 10 ("bow-skill bonuses", a rope, 4
      count by the number). Also: Helshezag's and a weapon's increased power (88, 133) are left as
      text, so check them against the engine's own weapon bonus; mark bow shots and ambushes.
-3. **Upscale the images** (later, owner's call 2026-10-06). The printed maps (now shown full
-   screen, zoomable) and the other Project Aon pictures are shown at their own resolution for now;
-   upscaling them is a separate piece of work, not started.
+3. **Upscale the printed maps** (owner's call 2026-10-06; checklist step 10). Tried on Book 4: a
+   generative upscale (Gemini) changed names and colours, so it is out. Real-ESRGAN
+   (`realesrgan-ncnn-vulkan`, model `realesrgan-x4plus`) keeps the map exactly, only sharper. Tiny
+   lettering keeps the ink smear the scan already has inside letters like P and A; no automatic fix
+   (tried, it broke other letters). Hand repair or a better scan only, on the owner's say. Per
+   book:
+   - Back up: copy `map.png` to `mapbak.png` in the same folder. If `mapbak.png` already exists
+     (Books 4, 6, 12), it is the original; do not overwrite it. In Book 4, `map.png` is Gemini's
+     version, not the original.
+   - Upscale `mapbak.png`: two 4x Real-ESRGAN passes, LANCZOS down to 3840 px wide, save as
+     `map-4k.webp` (Pillow quality 90, method 6). Book 4's trial: 1.3 MB, against 10.9 MB as PNG.
+     The tool is not in the repo yet; it was run from the scratchpad. Add it under `tools/` and
+     note it in `docs/reference/importer.md`.
+   - Code, once, before the first book uses it: the importer writes `map: 'map-4k.webp'` when that
+     file exists, else `map.png`. The browser shows WebP as it is; nothing else changes for the
+     format. But `scanOf` in `main.js` repaints the map onto a canvas at twice its own size, which
+     at 3840 px is 7680x5820, past the iPad's canvas limit. Cap that canvas instead of doubling,
+     and raise `MAP_ZOOM`, which assumes a ~1000 px source.
+   - Same change: the map modal opens *fitted*, showing the whole map, with parchment around it
+     (owner, 2026-10-06). Today `s0` is the cover scale, so it opens cropped at the sides and
+     cannot zoom out to see it all. Make the fit scale the least allowed, and let the pan clamp
+     centre the map on any axis where it is smaller than the view. Check it on the iPad.
+   - Other Project Aon pictures (illustrations, plates) stay at their own resolution for now.
 
 ### Work for each book
 
