@@ -608,7 +608,7 @@ function pickerHTML() {
         </div>
       </details>
     ` : ''}
-    ${naming ? `<input id="itemname" class="pickname" placeholder="Name it, then press Enter" aria-label="Item name" data-prefix="\${naming}">` : '<p class="pickname">Touch an item to add it.</p>'}</div>`;
+    ${naming ? `<input id="itemname" class="pickname" placeholder="Name it, then press Enter" aria-label="Item name" data-prefix="${naming}">` : '<p class="pickname">Touch an item to add it.</p>'}</div>`;
 }
 
 /* the current book's printed map, or null until it has loaded (the panel redraws then) */
@@ -916,11 +916,17 @@ bookEl.addEventListener('keydown', (e) => {
   renaming = null; renderRight();
 });
 function addItem(id) { const err = game.addItem(id); if (err) LW.UI.toast(err); render(); }
+/* a typed name that is a known item's (the Sommerswerd) adds that item, with its kind and powers;
+   the open book's own items first, where two books share a name */
+function knownItem(name) {
+  const n = name.toLowerCase(), own = ITEM_TABLES[book.id] ? Object.keys(ITEM_TABLES[book.id].ITEMS) : [];
+  return [...own, ...Object.keys(LW.ITEMS)].find((id) => (LW.ITEMS[id].name || '').toLowerCase() === n) || null;
+}
 pr.addEventListener('keydown', (e) => {
   if (e.target.id !== 'itemname' || (e.key !== 'Enter' && e.key !== 'Escape')) return;
   const name = e.key === 'Enter' && e.target.value.trim().replace(/[|"<>]/g, ''), prefix = e.target.dataset.prefix;
   naming = null;
-  if (name) addItem(`${prefix}:${name}`); else renderRight();
+  if (name) addItem(knownItem(name) || `${prefix}:${name}`); else renderRight();
 });
 /* the picker names whatever the pointer is over */
 pr.addEventListener('pointerover', (e) => {

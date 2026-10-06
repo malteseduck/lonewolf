@@ -110,9 +110,11 @@ left. `updateBattle` redraws the gauges each round.
   standard items, else the item's own `glyph` from its book's item table, else a pouch or pendant
   by kind; gold and a found Backpack have their own.
   "Add an item by hand" (`adding`) swaps the worn kit for `pickerHTML()`: rows of small medallions
-  (weapons, Backpack Items, Special Items, and "This book": the open book's own items from its item
-  table) that add on a touch and stay open, with "+" medallions
+  (weapons, Backpack Items, Special Items, and folded under "View Special Items from Past Books" the
+  Special Items of earlier books' item tables) that add on a touch and stay open, with "+" medallions
   for something else, which ask for a name on an inked line (`naming`; Enter adds, Escape cancels).
+  A typed name that is a known item's (`knownItem`: "Sommerswerd") adds that item, with its kind and
+  powers; any other becomes a plain Backpack or Special Item of that name.
   The caption is hidden meanwhile; the picker's own line names whatever is under the pointer.
   Item glyphs are game-icons.net SVGs (`ITEM_GLYPH`); items typed in by hand get a pouch or a
   pendant by their kind.
