@@ -170,6 +170,9 @@ Left to the player whatever the engine does: whether to sleep (B2 41), and the p
      (owner, 2026-10-06). Today `s0` is the cover scale, so it opens cropped at the sides and
      cannot zoom out to see it all. Make the fit scale the least allowed, and let the pan clamp
      centre the map on any axis where it is smaller than the view. Check it on the iPad.
+   - Same change: cap zoom-in at 3x the fitted scale (owner, 2026-10-06): enough to read the
+     smallest labels and see one area of the map, no more. Replaces `MAP_ZOOM`'s 4x over cover.
+     This is why 4K and not 2K: 2K is about the iPad's screen width, so it goes soft past 1x.
    - Other Project Aon pictures (illustrations, plates) stay at their own resolution for now.
 
 ### Work for each book
