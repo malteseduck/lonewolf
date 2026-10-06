@@ -23,7 +23,7 @@ The data model `LW.Game` plays. `shared/book-demo.js` is a hand-written example;
 }
 ```
 
-The player ignores `locations` and `loc`: every choice is made on the page, and the map panel
+The player ignores `locations` and `loc`: every choice is made on the page, and the map modal
 shows the book's printed map. Only the prototypes travel on a map.
 
 ## Section

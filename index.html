@@ -359,17 +359,24 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 .book.hurt .page.left { box-shadow: inset 0 0 5em rgba(150, 20, 10, 0.7); }
 @keyframes hurt { 20% { transform: translate(-0.6em, 0.25em) rotate(-0.4deg); } 45% { transform: translate(0.5em, -0.3em) rotate(0.3deg); } 70% { transform: translate(-0.3em, -0.1em); } }
 
-/* ---------- the map panel ---------- */
-.mapview { position: relative; flex: 1; min-height: 0; overflow: hidden; box-shadow: inset 0 0 0 1px var(--ink), inset 0 0 0 0.3em rgba(51, 35, 26, 0.25), inset 0 0 2.2em rgba(40, 24, 10, 0.75); }
+/* ---------- the map modal ---------- */
+/* over the whole window: the left page's parchment and vine frame, the map cut into it. --inset (the frame's band) is set by main.js */
+.mapmodal { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(10, 7, 6, 0.72), rgba(5, 3, 3, 0.94)); }
+.mapframe { position: relative; width: min(96vw, 1600px); height: min(94vh, 1100px); background: var(--parch-l) center / cover; box-shadow: 0 1.2em 3em rgba(0, 0, 0, 0.8); font-size: 16px; --inset: 30px; }
+.mapview { position: absolute; inset: var(--inset); overflow: hidden; cursor: grab; touch-action: none; user-select: none; background: var(--hide); box-shadow: inset 0 0 0 1px var(--ink); }
+.mapview.drag { cursor: grabbing; }
 .mapview::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 2.4em rgba(40, 24, 10, 0.7); }
-.mapview.scrolly { overflow: auto; cursor: grab; scrollbar-width: thin; scrollbar-color: var(--ink-faint) transparent; }
-.mapview.scrolly canvas { display: block; width: 130%; } /* the source is ~1000px: more zoom only blurs it */
+.mapborder { position: absolute; inset: 0; pointer-events: none; background: center / 100% 100% no-repeat; }
+.mapclose { position: absolute; right: -0.6em; top: -0.6em; --s: 3.2em; }
+.mapzoom { position: absolute; right: calc(var(--inset) + 0.8em); bottom: calc(var(--inset) + 0.8em); display: flex; flex-direction: column; gap: 0.5em; }
+.mapzoom .med { --s: 2.6em; font-size: 1.2em; }
+.mapclose .rose { width: 62%; height: 62%; }
 .step { display: inline-flex; gap: 0.2em; margin-left: 0.4em; vertical-align: middle; }
 .step button { width: 1.5em; height: 1.5em; padding: 0; border: 1px solid var(--ink-faint); border-radius: 50%; background: rgba(51, 35, 26, 0.08); color: var(--ink); font: 400 0.8em/1 var(--title); }
 .step button:hover { background: var(--ink); color: var(--page); }
 .ledger { display: flex; align-items: center; justify-content: space-between; gap: 0.4em 1em; font-size: 1.05em; }
 .ledger .inkbtn { font-size: 0.78em; white-space: nowrap; }
-.maphint { margin: 0; text-align: center; font-size: 1.1em; color: var(--ink-dim); }
+.maphint { position: absolute; inset: 0; margin: 0; display: grid; place-items: center; font-size: 1.4em; color: var(--ink-dim); }
 /* the place's name on a ribbon with scrolled ends (drawBanner), its ends kept whole by border-image */
 .place { min-width: 0; height: 2.6em; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0.95em 0.6em 0; font: 400 1em/1.2 var(--title); color: var(--ink); text-align: center;
   border: solid transparent; border-width: 0 3em; border-image: var(--banner) 0 160 fill / 0 3em / 0 stretch; background: var(--crest) center top / 8.2em 1em no-repeat; }

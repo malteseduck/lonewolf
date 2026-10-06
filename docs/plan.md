@@ -148,6 +148,9 @@ Left to the player whatever the engine does: whether to sleep (B2 41), and the p
    - **2.10 Book 12, The Masters of Darkness.** Fight pictures: 20 of 39 have none. Random Number left free: 10 ("bow-skill bonuses", a rope, 4
      count by the number). Also: Helshezag's and a weapon's increased power (88, 133) are left as
      text, so check them against the engine's own weapon bonus; mark bow shots and ambushes.
+3. **Upscale the images** (later, owner's call 2026-10-06). The printed maps (now shown full
+   screen, zoomable) and the other Project Aon pictures are shown at their own resolution for now;
+   upscaling them is a separate piece of work, not started.
 
 ### Work for each book
 

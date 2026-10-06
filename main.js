@@ -1,5 +1,5 @@
 /* Lone Wolf: a flat book in the manner of Lone Wolf HD.
-   Left page: the story. Right page: a panel (Kai Disciplines, inventory, map, or the fight).
+   Left page: the story. Right page: a panel (Kai Disciplines, inventory, or the fight); the map is a modal.
    Plays the books imported by tools/import_projectaon.py. */
 import * as Ink from './shared/ink.js';
 import { drawCreature, setArt, setEmblem, newWound, heroFromArt, portraitFromArt, drawFrame, drawSheet, drawBanner, drawCrest, gearSVG } from './plates.js';
@@ -266,7 +266,7 @@ const vignette = (scene) => vignettes[scene] || (vignettes[scene] = Ink.inkScene
 
 /* ---------- state ---------- */
 let mode = 'title';          // title | story | battle
-let panel = 'kai';           // kai | pack | map
+let panel = 'kai';           // kai | pack (the map is a modal, `M`)
 let sel = null;              // what the caption under a panel describes
 let busy = false, gearTurn = 0, B = null;
 let intro = false;           // the book's introduction is showing: 'new' before section 1 of a new game, 'again' when re-read from the shelf
@@ -611,15 +611,101 @@ function pickerHTML() {
     ${naming ? `<input id="itemname" class="pickname" placeholder="Name it, then press Enter" aria-label="Item name" data-prefix="${naming}">` : '<p class="pickname">Touch an item to add it.</p>'}</div>`;
 }
 
-/* the current book's printed map, or null until it has loaded (the panel redraws then) */
+/* the current book's printed map, or null until it has loaded (an open map modal starts then) */
 const printed = {};
 function printedMap() {
   const url = asset(book.map);
-  if (!printed[url]) { const im = (printed[url] = new Image()); im.onload = () => { if (panel === 'map') renderRight(); }; im.src = url; }
+  if (!printed[url]) { const im = (printed[url] = new Image()); im.onload = () => { if (M && M.ready) M.ready(); }; im.src = url; }
   return printed[url].complete && printed[url].naturalWidth ? printed[url] : null;
 }
 const scans = {};
 const scanOf = (img) => (scans[img.src] = scans[img.src] || printedCanvas(img, [0, 0, img.naturalWidth, img.naturalHeight], img.naturalWidth * 2, img.naturalHeight * 2));
+
+/* ---------- the map modal ----------
+   The printed map over the whole window, in a parchment frame like the left page's. The map is
+   laid out in image pixels and drawn at scale s (screen px per image px) by a CSS transform; the
+   canvas is scanOf's, not repainted. s0 is the scale at which it just covers the view (the least
+   allowed), and the pan is clamped so no edge shows. */
+let M = null; // the open modal's state, or null
+const MAP_ZOOM = 4; // most zoom over cover: the source is ~1000px, more only blurs it
+const CLOSE_X = `<svg class="rose" viewBox="-50 -50 100 100" aria-hidden="true"><g transform="rotate(45)"><path class="lt" d="M0 -40L9 -4L0 0Z"/><path class="dk" d="M0 -40L-9 -4L0 0Z"/><path class="lt" d="M0 40L-9 4L0 0Z"/><path class="dk" d="M0 40L9 4L0 0Z"/><path class="lt" d="M-40 0L-4 -9L0 0Z"/><path class="dk" d="M-40 0L-4 9L0 0Z"/><path class="lt" d="M40 0L4 9L0 0Z"/><path class="dk" d="M40 0L4 -9L0 0Z"/></g></svg>`;
+function openMap() {
+  if (M) return;
+  const opener = document.activeElement;
+  const el = document.createElement('div');
+  el.className = 'mapmodal'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'The map printed in the book');
+  el.innerHTML = `<div class="mapframe"><div class="mapview">${book.map ? '' : '<p class="maphint">This book has no map.</p>'}</div><div class="mapborder"></div>
+    ${book.map ? '<div class="mapzoom"><button type="button" class="med numeral" data-z="1" aria-label="Zoom in">+</button><button type="button" class="med numeral" data-z="-1" aria-label="Zoom out">&minus;</button></div>' : ''}
+    <button type="button" class="med mapclose" aria-label="Close the map" title="Close (Esc)">${CLOSE_X}</button></div>`;
+  document.body.append(el);
+  const frame = el.firstElementChild, view = frame.firstElementChild, border = view.nextElementSibling;
+  M = { el, view, s: 1, s0: 1, tx: 0, ty: 0, vw: 0, vh: 0, img: null, cv: null };
+  const ptrs = new Map(), at = (e) => { const r = view.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+
+  function fitFrame() { // the frame is drawn for this very size, so its band is never stretched
+    const W = frame.clientWidth, H = frame.clientHeight, f = Math.min(0.7, Math.max(0.4, W / 2000));
+    frame.style.setProperty('--inset', Math.round(66 * f) + 'px');
+    border.style.backgroundImage = `url(${drawFrame(Math.round(W / f), Math.round(H / f)).toDataURL()})`;
+    const r = view.getBoundingClientRect(); M.vw = r.width; M.vh = r.height;
+  }
+  function apply() {
+    const { img, s, vw, vh } = M, w = img.naturalWidth * s, h = img.naturalHeight * s;
+    M.tx = w <= vw ? (vw - w) / 2 : Math.min(0, Math.max(vw - w, M.tx));
+    M.ty = h <= vh ? (vh - h) / 2 : Math.min(0, Math.max(vh - h, M.ty));
+    M.cv.style.transform = `translate(${M.tx}px,${M.ty}px) scale(${s})`;
+  }
+  function zoomAt(p, ns) { // toward p, a point in the view
+    ns = Math.min(M.s0 * MAP_ZOOM, Math.max(M.s0, ns));
+    const k = ns / M.s; M.tx = p.x - (p.x - M.tx) * k; M.ty = p.y - (p.y - M.ty) * k; M.s = ns; apply();
+  }
+  M.ready = () => { // the image is here: show it filling the view
+    const im = M.img = printedMap(); if (!im || M.cv) return;
+    const cv = M.cv = scanOf(im);
+    cv.style.cssText = `position:absolute;left:0;top:0;width:${im.naturalWidth}px;height:${im.naturalHeight}px;transform-origin:0 0;`;
+    view.replaceChildren(cv);
+    M.s0 = M.s = Math.max(M.vw / im.naturalWidth, M.vh / im.naturalHeight); M.tx = M.ty = 0; apply();
+  };
+  const onResize = () => { // keep the same centre and the same zoom over cover
+    fitFrame(); if (!M.cv) return;
+    const im = M.img, cx = (M.vw / 2 - M.tx) / M.s, cy = (M.vh / 2 - M.ty) / M.s, zoom = M.s / M.s0;
+    M.s0 = Math.max(M.vw / im.naturalWidth, M.vh / im.naturalHeight); M.s = M.s0 * zoom;
+    M.tx = M.vw / 2 - cx * M.s; M.ty = M.vh / 2 - cy * M.s; apply();
+  };
+  fitFrame(); if (book.map && printedMap()) M.ready();
+
+  view.addEventListener('pointerdown', (e) => { if (!M.cv) return; view.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, at(e)); view.classList.add('drag'); e.preventDefault(); });
+  view.addEventListener('pointermove', (e) => {
+    const was = ptrs.get(e.pointerId); if (!was || !M.cv) return;
+    const now = at(e), o = [...ptrs.entries()].find(([id]) => id !== e.pointerId);
+    if (o) { // pinch: pan with the midpoint, zoom with the spread
+      const q = o[1], d0 = Math.hypot(was.x - q.x, was.y - q.y) || 1, d1 = Math.hypot(now.x - q.x, now.y - q.y);
+      const c0 = { x: (was.x + q.x) / 2, y: (was.y + q.y) / 2 }, c1 = { x: (now.x + q.x) / 2, y: (now.y + q.y) / 2 };
+      M.tx += c1.x - c0.x; M.ty += c1.y - c0.y; zoomAt(c1, M.s * d1 / d0);
+    } else { M.tx += now.x - was.x; M.ty += now.y - was.y; apply(); }
+    ptrs.set(e.pointerId, now);
+  });
+  for (const t of ['pointerup', 'pointercancel']) view.addEventListener(t, (e) => { ptrs.delete(e.pointerId); if (!ptrs.size) view.classList.remove('drag'); });
+  view.addEventListener('wheel', (e) => {
+    e.preventDefault(); if (!M.cv) return;
+    const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 400 : 1;
+    zoomAt(at(e), M.s * Math.exp(-e.deltaY * unit * (e.ctrlKey ? 0.01 : 0.0015)));
+  }, { passive: false });
+  const step = (dir) => { if (M.cv) zoomAt({ x: M.vw / 2, y: M.vh / 2 }, M.s * (dir > 0 ? 1.4 : 1 / 1.4)); };
+  const keys = (e) => {
+    if (e.key === 'Escape') { e.stopPropagation(); closeMap(); }
+    else if (e.key === '+' || e.key === '=') step(1);
+    else if (e.key === '-' || e.key === '_') step(-1);
+  };
+  window.addEventListener('keydown', keys, true);
+  window.addEventListener('resize', onResize);
+  el.addEventListener('click', (e) => {
+    if (e.target === el || e.target.closest('.mapclose')) closeMap();
+    else { const z = e.target.closest('[data-z]'); if (z) step(+z.dataset.z); }
+  });
+  M.close = () => { window.removeEventListener('keydown', keys, true); window.removeEventListener('resize', onResize); el.remove(); M = null; if (opener && opener.focus && document.contains(opener)) opener.focus(); };
+  frame.querySelector('.mapclose').focus();
+}
+function closeMap() { if (M) M.close(); }
 
 /* Combat Skill, Endurance and gold at the head of the right page, after the HD gold counter: each
    a dark window in a bronze frame with its medallion at one end. Endurance carries a thread of red
@@ -631,12 +717,12 @@ function gauges(cs, h) {
     + g('gold', glyph('two-coins'), 'Gold Crowns', String(h.gold));
 }
 function renderRight() {
-  const tabs = [['kai', 'Kai Disciplines'], ['pack', 'Inventory'], ['map', 'Map']];
+  const tabs = [['kai', 'Kai Disciplines'], ['pack', 'Inventory'], ['map', 'Map']]; // Map opens the modal, not a panel
   rtabs.hidden = mode !== 'story';
   rtabs.innerHTML = tabs.map(([id, label]) => `<button type="button" class="med" role="tab" aria-selected="${panel === id}" aria-label="${label}" data-panel="${id}">${TAB_ART[id]}</button>`).join('')
     + `<button type="button" class="med home" data-home aria-label="Back to the title page" title="Back to the title page">${glyph('return-arrow')}</button>`; // the HD return medallion: start over, or pick another book
   if (mode === 'title') { pr.innerHTML = titleRightHTML(); return; }
-  if (!game.s) return; // a new game is being set up (a map image that arrives meanwhile asks for a redraw)
+  if (!game.s) return; // a new game is being set up
   const h = game.hero, cs = B ? B.cs() : LW.heroCS(h).total;
   const place = mode === 'battle' ? 'Combat' : book.title;
   const head = `<div class="headrow"><div class="place">${esc(place)}</div>
@@ -644,11 +730,7 @@ function renderRight() {
   pr.innerHTML = head + '<div class="panel" id="panel"></div>';
   const host = $('#panel');
   if (mode === 'battle') host.append(B.node);
-  else if (panel === 'map') {
-    const img = book.map && printedMap();
-    host.innerHTML = `<div class="mapview scrolly" role="img" aria-label="The map printed in the book"></div><p class="maphint">${book.map ? 'The map printed in the book. Drag to look around.' : 'This book has no map.'}</p>`;
-    if (img) host.firstChild.append(scanOf(img));
-  } else host.innerHTML = panel === 'kai' ? kaiHTML() : packHTML();
+  else host.innerHTML = panel === 'kai' ? kaiHTML() : packHTML();
 }
 function render() {
   // reaching the end of a real book keeps the character for the next one
@@ -882,6 +964,7 @@ bookEl.addEventListener('click', (e) => {
   else if (d.backup) backupAdventure(d.backup);
   else if ('rename' in d) { renaming = d.rename || null; renderRight(); const box = $('#advname'); if (box) { box.focus(); box.select(); } }
   else if ('forget' in d) { if ('sure' in d) forgetAdventure(d.forget); forgetting = 'sure' in d ? null : d.forget || null; renderRight(); }
+  else if (d.panel === 'map') openMap();
   else if (d.panel) { panel = d.panel; sel = null; adding = false; naming = null; render(); }
   else if (d.adding) { adding = d.adding === 'open'; naming = null; renderRight(); }
   else if (d.add) {
@@ -933,18 +1016,6 @@ pr.addEventListener('pointerover', (e) => {
   const t = e.target.closest('[data-add]'), line = pr.querySelector('p.pickname');
   if (t && line) line.textContent = t.title;
 });
-/* drag the printed map around */
-let drag = null;
-pr.addEventListener('pointerdown', (e) => {
-  const v = e.target.closest('.mapview.scrolly');
-  if (v && !e.target.closest('button')) { drag = { v, x: e.clientX, y: e.clientY, l: v.scrollLeft, t: v.scrollTop }; e.preventDefault(); }
-});
-window.addEventListener('pointermove', (e) => {
-  if (!drag) return;
-  drag.v.scrollLeft = drag.l - (e.clientX - drag.x); drag.v.scrollTop = drag.t - (e.clientY - drag.y);
-});
-window.addEventListener('pointerup', () => { drag = null; });
-
 /* toShelf: back to this adventure's books (after a death or an ending) rather than the list of adventures */
 function toTitle(toShelf) { B = null; mode = 'title'; intro = false; shelf = !!toShelf; forgetting = restoring = null; render(); }
 /* fresh = ignore this book's save. anew = roll a new character even though one is being carried.

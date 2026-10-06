@@ -118,12 +118,26 @@ left. `updateBattle` redraws the gauges each round.
   The caption is hidden meanwhile; the picker's own line names whatever is under the pointer.
   Item glyphs are game-icons.net SVGs (`ITEM_GLYPH`); items typed in by hand get a pouch or a
   pendant by their kind.
-- **map**: the book's printed map, repainted by `printedCanvas`, draggable (`.mapview.scrolly`).
-  A book without one (`book.map` unset) says so. Every choice is made on the story page.
+- **map**: not a panel. Its tab medallion opens `openMap()`'s modal over the whole window (see "The map modal"
+  below); the right page stays as it was. A book without a map (`book.map` unset) gets the same modal
+  saying "This book has no map." Every choice is made on the story page.
 
-The book's printed map is loaded once per book by `printedMap()`, which returns null until the
-image has arrived and redraws the panel when it does. It is shown at 130% of the panel width: the
-source is about 1000 px wide, and more zoom only blurs it.
+## The map modal (`openMap` in main.js, `.mapmodal` in index.html)
+
+A dimmed backdrop and a `.mapframe` of the left page's parchment (`--parch-l`) with the vine frame over
+it (`drawFrame`, drawn for the frame's own size so its band is never stretched, thinner on a phone:
+`--inset` is the band's width). The map is cut into the frame (`.mapview`, dark leather ground, the old
+vignette) and the close and +/- controls are the bronze medallions (`.med`). Escape, a click on the
+backdrop, or the close medallion close it; `+` and `-` also zoom.
+
+The map is `scanOf`'s canvas (painted once per image, not repainted for the modal), laid out in image
+pixels and moved by one CSS transform `translate(tx, ty) scale(s)`. `s0` is the scale at which it just
+covers the view and is the least allowed; the most is 4 x `s0` (the source is about 1000 px). The pan is
+clamped so no edge shows. Drag (pointer events, so mouse, pen and touch), wheel (toward the cursor; a
+trackpad pinch arrives as ctrl+wheel), two-finger pinch (toward the midpoint, which also pans), and the
++/- medallions (toward the centre). On window resize the frame is redrawn and `s0` recomputed, keeping
+the centre and the zoom over cover. `printedMap()` loads the image once and starts an open modal when
+it arrives.
 
 ## The printed map (`maps.js`)
 
