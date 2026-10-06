@@ -1,0 +1,28 @@
+# Dependencies & Package Managers
+node_modules/
+bower_components/
+.npm/
+vendor/
+
+# Build Outputs, Artifacts & Caches
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+*.pyc
+__pycache__/
+
+# Version Control & IDE configs
+.git/
+.svn/
+.idea/
+.vscode/
+.opencode/
+
+# Logs, Databases & System files
+*.log
+*.sqlite
+.DS_Store
+Thumbs.db
