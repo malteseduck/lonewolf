@@ -106,16 +106,12 @@ then kinds of enemy (with a plate from the book, from the plate library (entries
 for this one), and with none, named: add those to `plates.json`), broken links, and sections with
 no way on and no ending (a puzzle counts as a way on). The last two should be empty.
 
-It ends with the book's map places, from `tools/check_places.py`: either that the book has no
-`places-<code>.js` yet (it reads without travel on the map; docs/reference/map-places.md says how
-to give it some), or what is wrong with the file and the longest routes between its places.
-
 ## What it does not read
 
 Item and gold pick-ups, losses, Endurance changes stated in prose, shops, conditional combat
 rules beyond the ones above (first-round penalties, unarmed rounds, doubled psychic bonuses), bow
 shots and their "missile bonuses", item or weapon conditions on a Random Number, gold or Endurance
-counted from the number, starting equipment, section locations for the map. These stay as text;
+counted from the number, starting equipment. These stay as text;
 the player applies them with the by-hand controls, or a book's item table does.
 
 ## Results (for comparison when changing the importer)

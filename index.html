@@ -189,8 +189,6 @@ button.med:disabled { opacity: 0.4; }
 .rose .dk { fill: var(--silver-lo); }
 .rose .ring { fill: none; stroke: var(--silver); stroke-width: 2.4; }
 .rtabs .med[aria-selected='true'] .glyph, .rtabs .med[aria-selected='true'] .rose { filter: drop-shadow(0 0 0.12em rgba(255, 225, 160, 0.9)) drop-shadow(0 0 0.3em rgba(240, 160, 64, 0.6)); }
-.rtabs .med.call { animation: call 1.5s ease-in-out infinite; }
-@keyframes call { 50% { box-shadow: 0 0 0 0.08em #140d08, 0 0 1.1em 0.3em rgba(255, 210, 120, 0.95); color: #fff; } }
 /* the head of the right page: Combat Skill, Endurance, gold as small gauges, after the HD gold counter */
 .gauges { flex: none; display: flex; align-items: center; gap: 0.5em; font-variant-numeric: lining-nums; }
 .gauge { position: relative; display: flex; align-items: center; height: 1.75em; padding: 0 0.6em 0 0; margin-left: 0.9em; border: 0.14em solid transparent; border-radius: 0.3em; color: var(--glyph);
@@ -363,28 +361,15 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 
 /* ---------- the map panel ---------- */
 .mapview { position: relative; flex: 1; min-height: 0; overflow: hidden; box-shadow: inset 0 0 0 1px var(--ink), inset 0 0 0 0.3em rgba(51, 35, 26, 0.25), inset 0 0 2.2em rgba(40, 24, 10, 0.75); }
-.mapinner { position: absolute; left: 0; top: 0; height: 100%; aspect-ratio: 1000 / 700; transition: transform 1.1s cubic-bezier(0.3, 0.1, 0.2, 1); }
-.mapview.deep .mapinner { height: 180%; }
-.mapinner canvas, .mapinner svg.lines { position: absolute; inset: 0; width: 100%; height: 100%; }
 .mapview::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 2.4em rgba(40, 24, 10, 0.7); }
 .mapview.scrolly { overflow: auto; cursor: grab; scrollbar-width: thin; scrollbar-color: var(--ink-faint) transparent; }
 .mapview.scrolly canvas { display: block; width: 130%; } /* the source is ~1000px: more zoom only blurs it */
-.mapview.zoomable { cursor: grab; touch-action: none; }
-.mapview.zoomable canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.mapview.zoomable .pawn { transition: none; }
-.zoomctl { position: absolute; right: 0.6em; bottom: 0.6em; display: flex; flex-direction: column; gap: 0.4em; z-index: 1; }
-.zoomctl .med { --s: 2.3em; font: 400 1.3em/1 var(--title); }
-.maphint .inkbtn { font-weight: 400; }
-.mk.ring i { width: 2.1em; height: 2.1em; background: rgba(255, 248, 228, 0.18); border: 0.18em solid #fff8e4; box-shadow: 0 0 0 0.08em var(--ink), inset 0 0 0 0.08em var(--ink), 0 0 0.8em rgba(255, 240, 200, 0.9); }
 .step { display: inline-flex; gap: 0.2em; margin-left: 0.4em; vertical-align: middle; }
 .step button { width: 1.5em; height: 1.5em; padding: 0; border: 1px solid var(--ink-faint); border-radius: 50%; background: rgba(51, 35, 26, 0.08); color: var(--ink); font: 400 0.8em/1 var(--title); }
 .step button:hover { background: var(--ink); color: var(--page); }
 .ledger { display: flex; align-items: center; justify-content: space-between; gap: 0.4em 1em; font-size: 1.05em; }
 .ledger .inkbtn { font-size: 0.78em; white-space: nowrap; }
 .maphint { margin: 0; text-align: center; font-size: 1.1em; color: var(--ink-dim); }
-.roads { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.1em; }
-.roads .choice { font-size: 0.92em; }
-.mapinner canvas { filter: none; }
 /* the place's name on a ribbon with scrolled ends (drawBanner), its ends kept whole by border-image */
 .place { min-width: 0; height: 2.6em; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0.95em 0.6em 0; font: 400 1em/1.2 var(--title); color: var(--ink); text-align: center;
   border: solid transparent; border-width: 0 3em; border-image: var(--banner) 0 160 fill / 0 3em / 0 stretch; background: var(--crest) center top / 8.2em 1em no-repeat; }
@@ -396,37 +381,6 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 .orn { display: flex; align-items: center; gap: 0.35em; }
 .orn::before, .orn::after { content: ''; width: 2.8em; height: 1.5em; background: var(--ink); opacity: 0.8; clip-path: polygon(0 50%, 100% 8%, 72% 50%, 100% 92%, 62% 62%, 40% 50%, 62% 38%); }
 .orn::after { transform: scaleX(-1); }
-.mk { position: absolute; transform: translate(-50%, -50%); display: grid; place-items: center; pointer-events: none; }
-.mk i { width: 0.7em; height: 0.7em; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 0.16em rgba(217, 203, 166, 0.9); }
-.mk span, .dest b { position: absolute; top: -1.75em; white-space: nowrap; font: 400 0.9em var(--title); letter-spacing: 0.04em; text-shadow: 0 0 0.3em #d9cba6, 0 0 0.3em #d9cba6, 0 0 0.5em #d9cba6, 0 0 0.6em #d9cba6; }
-.mk.goal i { visibility: hidden; }
-/* a place passed lately, which can be gone back to: the dot in a fine ink ring */
-.mk.back { pointer-events: auto; z-index: 1; }
-.mk.back > button:first-child { width: 1.8em; height: 1.8em; border: 0; padding: 0; border-radius: 50%; background: none; display: grid; place-items: center; }
-.mk.back > button:first-child::before { content: ''; position: absolute; width: 1.3em; height: 1.3em; border-radius: 50%; border: 0.1em solid var(--ink); opacity: 0.75; }
-.mk.back > button:first-child:hover i, .mk.back > button:first-child:focus-visible i, .mk.back.armed i { background: var(--blood); }
-.mk.back.armed > button:first-child::before { opacity: 1; border-color: var(--blood); }
-.mk.back > button:first-child:focus-visible { outline: none; }
-.maphint.goback .seal { font-size: 0.8em; padding: 0.2em 1.1em; }
-.dest { position: absolute; transform: translate(-50%, -50%); width: 2.4em; height: 2.4em; border: 0; padding: 0; border-radius: 50%; background: none; color: var(--blood); font: inherit; display: grid; place-items: center; }
-.dest::before { content: ''; position: absolute; inset: 0.3em; border-radius: 50%; border: 0.2em solid #fff8e4; background: rgba(255, 248, 228, 0.25); box-shadow: 0 0 0 0.08em var(--ink), inset 0 0 0 0.08em var(--ink), 0 0 0.8em rgba(255, 240, 200, 0.9); animation: ring 1.5s ease-in-out infinite; }
-.dest b { color: var(--ink); }
-.dest.hot::before { background: #fff8e4; }
-.dest em { position: absolute; top: 2.1em; width: 12em; font: 700 1.05em/1.15 var(--script); color: var(--ink); text-shadow: 0 0 0.3em #d9cba6, 0 0 0.3em #d9cba6, 0 0 0.6em #d9cba6, 0 0 0.7em #d9cba6; }
-.dest:hover::before, .dest:focus-visible::before { background: #fff8e4; }
-.dest:focus-visible { outline: none; }
-.dest:disabled b, .dest:disabled em { color: var(--ink-dim); }
-.dest:disabled::before { border-color: var(--ink-dim); border-style: dashed; background: none; animation: none; }
-@keyframes ring { 50% { transform: scale(1.35); opacity: 0.55; } }
-.pawn { position: absolute; width: 3em; height: 4.6em; transform: translate(-14%, -99%); /* stands just right of the spot, leaving its symbol in view */ transition: left 1s ease-in-out, top 1s ease-in-out; filter: drop-shadow(0.2em 0.35em 0.25em rgba(20, 10, 0, 0.55)); pointer-events: none; }
-/* Lone Wolf's token: his figure in a bronze-rimmed roundel on a pin, as on the HD maps */
-/* Lone Wolf on the map walks: lifted, bobbing and swaying while he slides */
-.pawn img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%; transform-origin: 50% 100%; }
-.pawn.walking img { animation: walk 0.34s ease-in-out infinite alternate; }
-@keyframes walk { from { transform: translateY(-0.12em) rotate(-5deg); } to { transform: translateY(-0.45em) rotate(5deg); } }
-.route { fill: none; stroke: #9c2216; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
-.routeback { fill: none; stroke: rgba(255, 248, 228, 0.9); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
-.ways line { stroke: #fff8e4; stroke-width: 2.2; stroke-dasharray: 3 6; stroke-linecap: round; filter: drop-shadow(0 0 1px #2a1a0e); }
 [hidden] { display: none !important; }
 .gone { opacity: 0; pointer-events: none; }
 
@@ -442,7 +396,7 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
   .maker { white-space: normal; letter-spacing: 0.2em; }
   .mark { font-size: 2.3em; }
 }
-@media (prefers-reduced-motion: reduce) { .rtabs .med.call, .dest::before, .book.hurt, .pawn.walking img { animation: none; } .pawn, .gear, .mapinner { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .book.hurt { animation: none; } .gear { transition: none; } }
 </style>
 </head>
 <body>

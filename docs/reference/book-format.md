@@ -19,16 +19,12 @@ The data model `LW.Game` plays. `shared/book-demo.js` is a hand-written example;
   bonusItem: true,         // Book 1 only: one extra starting item by Random Number
   intro: ['...'],          // "The Story So Far" as paragraphs, shown before section 1 of a new game. Absent or empty: none
   // authored books
-  locations: { key: {x, y, name} },       // 1000x700 map coordinates. Presence turns on map travel
+  locations: { key: {x, y, name} },       // 1000x700 map coordinates (prototypes only)
 }
 ```
 
-An imported book has no `locations` of its own; `placeBook` (maps.js) adds them, and each
-section's `loc`, from a hand-made places file when its map spec has one (Book 1:
-`places-01fftd.js`).
-
-`locations` is the switch between the two ways a book plays:
-with it, choices that change location are made on the map; without it, every choice is on the page.
+The player ignores `locations` and `loc`: every choice is made on the page, and the map panel
+shows the book's printed map. Only the prototypes travel on a map.
 
 ## Section
 
@@ -64,7 +60,7 @@ with it, choices that change location are made on the map; without it, every cho
 The importer cannot read reliably what a passage gives or takes away: the item's name is in the
 story sentence, the instruction in the next, and many are conditional. So each book's items are
 read and written down by hand in `items-<code>.js` at the project root (Book 1: `items-01fftd.js`,
-52 sections, 2026-10-01), as its map places are. It exports `ITEMS` (the book's own items: `name`,
+52 sections, 2026-10-01) It exports `ITEMS` (the book's own items: `name`,
 `kind` (`weapon` | `backpack` | `special`), optionally `glyph` (an icon in `assets/icons/`), `heal`,
 `ep`, `about`, `meal` (eaten when a Meal is due and he has none, healing its `heal`), `shot` (a bow of
 the book's own: what it adds to a shot), and for a Special Item that is also a weapon `weapon` (the kinds it counts as for

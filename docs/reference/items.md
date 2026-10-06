@@ -1,7 +1,7 @@
 # Putting a book's items and fight pictures in
 
-Two jobs done by hand for each imported book, after `docs/reference/map-places.md`'s steps 1-2
-(import, reading copy): the **item table**, so the engine gives, offers, takes and gates what the
+Two jobs done by hand for each imported book, after importing it and writing its reading copy
+(`tools/reading_copy.py`): the **item table**, so the engine gives, offers, takes and gates what the
 text says (spec 4.5a), and the **fight pictures**, so every fight has a plate (spec 6.5). Book 1
 has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). The field reference is in `book-format.md` ("Section", "Item tables").
 

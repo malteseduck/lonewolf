@@ -14,7 +14,7 @@ PC when in reach, see `docs/reference/offline.md` (Tailscale).
 
 | | |
 |---|---|
-| `index.html`, `main.js`, `plates.js`, `maps.js` | The player. Markup and CSS, the game loop and rendering, the ink art, the maps |
+| `index.html`, `main.js`, `plates.js`, `maps.js` | The player. Markup and CSS, the game loop and rendering, the ink art, the printed map's restyling |
 | `art/` | Optional enemy illustrations. List them in `art/manifest.json` to replace the drawn ones |
 | `shared/` | Rules and widgets, see below |
 | `tools/` | Downloader and importer for the Project Aon editions |

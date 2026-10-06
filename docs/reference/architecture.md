@@ -8,21 +8,12 @@ How the code is laid out today. Intent lives in `docs/spec.md`.
 index.html                  the player: markup, all CSS, script tags
 main.js                     ES module: state, rendering, input, combat, title page
 plates.js                   ES module: ink creatures, inkPlate (restyles an illustration), figure, frame, gear
-maps.js                     ES module: map specs (MAPS), which replica each book uses, the demo map's painter
-map-common.js               ES module: what the replicas share: ink, stamps, buildings, replicaModel, the painting steps
-map-lastlands.js            ES module: the Lastlands (Books 1-2): its data and its own painter
-map-kalte.js                ES module: Kalte (Book 3): its data and its own painter (snow, ice shelves, pack ice, glacier)
-replica.js                  ES module: reads a printed map into coast outlines and terrain grids
-places-01fftd.js            ES module: Book 1's made-up places and which sections happen at each
-towns-01fftd.js             ES module: Book 1's town plans (Holmgard, the Graveyard's crypt), by hand; Book 2 likewise
-city.js                     ES module: paints a town plan or a crypt (cityCanvas) and checks it (cityClashes)
+maps.js                     ES module: printedCanvas, the book's printed map repainted in sepia
 items-01fftd.js             ES module: Book 1's items and what each section gives, takes or gates, by hand
                             (docs/reference/book-format.md, "Item tables")
-buildings.js                ES module: the map's towns and buildings as vector pen-and-wash drawings
 sw.js                       service worker: the offline copy (docs/reference/offline.md)
 manifest.webmanifest        the Home Screen app: name, colours, icons (assets/app/)
-art/manifest.json           optional pictures in art/: enemy sprites, the map figure, the Kai panel portrait
-assets/map/                 widman.png + widman.json: engraved map symbols (CC0), built by tools/build_map_atlas.py
+art/manifest.json           optional pictures in art/: enemy sprites, Lone Wolf's figure (inventory), the Kai panel portrait
 assets/icons/               discipline glyphs from game-icons.net (CC BY 3.0, credited in README.txt)
 assets/fonts/               the page's three fonts and fonts.css, from Google Fonts (SIL OFL, licences beside them)
 assets/app/                 the Home Screen icon (README.txt says how it was made)
@@ -33,8 +24,7 @@ docs/                       spec, plan, reference
 shared/                     used by the player and the prototypes (classic scripts on a global LW)
   core.js                   rules data (Combat Results Table, Kai disciplines, items) and LW.Game, the book runner
   rules-series.js           per-series rules (Kai/Magnakai), Lore-circles, ranks, carried character, character dialog, starting kits
-  book-demo.js              LW.BOOK_DEMO: the original 20-section demo chapter, with map locations (prototypes only;
-                            the player dropped it, but MAPS.demo, its country, is still the fallback terrain)
+  book-demo.js              LW.BOOK_DEMO: the original 20-section demo chapter, with map locations (prototypes only)
   ui.js                     LW.UI helpers: el, esc, wait, toast, createHero (Kai only), pickRandom, chart; LW.sfx (blips)
   sfx-soft.js               replaces LW.sfx with noise/sine sounds and adds LW.drone (player only)
   ink.js                    ES module: procedural parchment, leather, wood, ink-wash scenes
@@ -46,20 +36,18 @@ tools/
   serve.py                  the local server: static files, backups/ (api/backups), the offline list (api/offline)
   fetch_projectaon.py       downloads one book into data/projectaon/<code>/
   import_projectaon.py      converts it to data/projectaon/<code>/book.js and rewrites data/projectaon/index.js
-  build_map_atlas.py        packs the downloaded Widman symbol pack into assets/map/widman.png
-  check_places.py           checks places-<code>.js against the book; run by the importer too
-  reading_copy.py           writes data/projectaon/<code>/reading.txt, the book as text to read when placing it
-  layout_places.js          lays out the places not fixed by hand (node)
-  map_sweep.js              in the browser console: every section shown on the map and checked
-                            (the four above: docs/reference/map-places.md)
+  reading_copy.py           writes data/projectaon/<code>/reading.txt, the book as text to read
   item_sections.py          lists the sections that may give, take or need items; writes them to read
   check_items.mjs           checks items-<code>.js against the book (node)
   fetch_icons.py            fetches game-icons.net glyphs into assets/icons/, background removed
-                            (the three above: docs/reference/items.md)
+                            (the four above: docs/reference/items.md)
 data/projectaon/            git-ignored. Downloaded pages and images, generated book.js files, index.js;
-                            maps/: sheets 1-2 of Project Aon's Maps of Magnamund (reference for LASTLANDS.detail)
+                            maps/: sheets 1-2 of Project Aon's Maps of Magnamund (reference only)
 data/reference/             git-ignored. Reference images fetched for the owner: a fan-made world map of
-                            Magnamund (4658x5234, World Anvil); SOURCES.txt says where each came from
+                            Magnamund (4658x5234, World Anvil); SOURCES.txt says where each came from;
+                            symbol-packs/: downloaded engraved symbol packs (Hogenburg, Donia, Walser; unused)
+art/reference/map-symbols/  git-ignored. Map symbols kept from the dropped custom maps; from-game/ holds
+                            the Widman sheet and Hogenburg symbols the game used, with their READMEs
 .claude/launch.json         local server definition (tools/serve.py on 8765)
 ```
 
@@ -71,8 +59,7 @@ data/projectaon/index.js    document.writes a <script> for each imported book ->
 shared/ui.js                LW.UI, LW.sfx
 shared/sfx-soft.js          overrides LW.sfx
 shared/rules-series.js      adds Magnakai, overrides LW.has and LW.heroCS, adds LW.Character, LW.UI.chooseCharacter, LW.KITS
-main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js (which imports map-lastlands.js and map-kalte.js, each
-                            importing map-common.js, which imports ./replica.js)
+main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js
 ```
 
 Order matters: `rules-series.js` overrides functions defined in `core.js` and needs `LW.UI`.
@@ -102,15 +89,14 @@ and `back(k)` (the player, which keeps only the last `REWIND` = 3: `game.keep`).
 The player keeps its own view state in module variables in `main.js`:
 `mode` (`title` | `story` | `battle`), `panel` (`kai` | `pack` | `map`), `sel` (selected item or
 discipline), `B` (the fight in progress, or null), `busy` (input lock during animations),
-`mapScan` (show the printed map instead of the journey map), `shelf` (the title page shows the open
+`shelf` (the title page shows the open
 adventure's books rather than the list of adventures), `forgetting` (the adventure whose "forget" is
-asking to be confirmed), `renaming` (the adventure whose name box is open), `restoring` (the restore row open on a plaque: `{id, files, chosen}`), `adv` (the adventures, as stored in `lw-adventures`), `armed` (steps back
-to the past place on the map whose "go back" question is showing).
+asking to be confirmed), `renaming` (the adventure whose name box is open), `restoring` (the restore row open on a plaque: `{id, files, chosen}`), `adv` (the adventures, as stored in `lw-adventures`).
 
 `book` and `game` are null until a book is opened.
 
 Rendering is whole-page: `render()` rebuilds the left page (`leftHTML`) and the right page
-(`renderRight`) from state. The map node and the fight node are built once and re-attached.
+(`renderRight`) from state. The fight node is built once and re-attached.
 All clicks are handled by one delegated listener on `#book` reading `data-*` attributes.
 
 ## Storage

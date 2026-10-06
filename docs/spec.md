@@ -140,8 +140,7 @@ not guessed by the importer (principle 2). Where the book leaves the decision to
 - A section with no choices is an ending: death, or completion of the book.
 - **Going back** (owner's request, 2026-10-01): the player may go back up to three sections, to
   where a choice was made, and make it again. Everything returns to how it stood then; a Random
-  Number may be drawn again. It is offered on death (in a fight or in a death section), and at
-  any time on the map, by touching a place passed in those sections. Going back uses up the
+  Number may be drawn again. It is offered on death (in a fight or in a death section). Going back uses up the
   steps; moving on earns them back.
 - Choices read as the book wrote them, with page references removed. A choice that was only a
   page reference reads "Continue".
@@ -201,23 +200,10 @@ hand.
 
 ### 6.4 Map
 
-- A sepia ink map in the style of Lone Wolf HD, built from image tiles: engraved mountains,
-  forests and settlements stamped onto parchment, with white dashed roads over them. Not plain
-  geometric shapes.
-- Every symbol on the map reads as one engraving: the same sepia ink, hatching for shade, the
-  paper showing through, no colour and no outline lifting it off the map. Buildings are vector
-  drawings in that manner, modelled on the official Maps of Magnamund icons, so they scale with
-  the zoom. Only things that are not part of the map (Lone Wolf's figure, the lit destination
-  rings) stand out from it.
-- The book's own printed map can be viewed too, repainted in sepia on the owner's machine
-  (personal use; never committed).
-- The player's route so far is drawn and a pawn marks the current position.
-- **Where a book has a location for each section**, choices that move to another place are made
-  on the map: reachable places light up and the player touches one. Choices that stay in place
-  remain on the story page. This is the preferred way to travel.
-- Where a book has no such data, the map shows progress along the journey and choices stay on
-  the page.
-- The map is more linear than Lone Wolf HD's: it offers the book's choices, not free roaming.
+- The map is the one printed in the book, repainted in sepia on the owner's machine (personal
+  use; never committed). The player drags it to look around.
+- No map is drawn or redrawn for a book (owner, 2026-10-05: the custom maps, made-up places and
+  travel on the map were dropped). Every choice is made on the story page.
 
 ### 6.5 Combat
 
@@ -269,4 +255,3 @@ hand.
 
 ## 10. Open questions
 
-- Location data for imported books, so map travel works in them as it does in the demo.
