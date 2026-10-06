@@ -183,16 +183,16 @@
         const key = btn.dataset.roll, base = key === 'cs' ? 10 : 20, out = btn.querySelector('b');
         if (rolls[key] != null) return;
         const n = LW.rand10(); rolls[key] = n;
-        if (!quick) for (let i = 0; i < 9; i++) { out.textContent = `${base} + ${LW.rand10()}`; LW.sfx('roll'); await wait(45); }
+        if (!quick) for (let i = 0; i < 9; i++) { out.textContent = `${base} + ${LW.rand10()}`; await wait(45); }
         out.textContent = `${base + n}`; btn.classList.add('rolled'); btn.disabled = true; refresh();
       };
       const any = (set, pool, n) => { const left = pool.filter((p) => !set.has(p)); while (set.size < n && left.length) set.add(left.splice(Math.floor(Math.random() * left.length), 1)[0]); };
       panel.addEventListener('click', (e) => {
         const r = e.target.closest('.hero-roll'); if (r) return void roll(r);
         const d = e.target.closest('.hero-disc');
-        if (d) { picked.has(d.dataset.id) ? picked.delete(d.dataset.id) : picked.size < pick && picked.add(d.dataset.id); LW.sfx('select'); return refresh(); }
+        if (d) { picked.has(d.dataset.id) ? picked.delete(d.dataset.id) : picked.size < pick && picked.add(d.dataset.id); return refresh(); }
         const w = e.target.closest('.hero-w');
-        if (w) { weapons.has(w.dataset.w) ? weapons.delete(w.dataset.w) : weapons.add(w.dataset.w); LW.sfx('select'); return refresh(); }
+        if (w) { weapons.has(w.dataset.w) ? weapons.delete(w.dataset.w) : weapons.add(w.dataset.w); return refresh(); }
         const a = e.target.closest('[data-act]'); if (!a) return;
         if (a.dataset.act === 'auto') {
           panel.querySelectorAll('.hero-roll:not(:disabled)').forEach((b) => roll(b, true));
@@ -335,7 +335,7 @@
           if (bank - draw) hero.storedGold = bank - draw; else delete hero.storedGold;
           panel.remove(); return resolve();
         } else return;
-        LW.sfx('select'); draw1();
+        draw1();
       });
       draw1();
     });

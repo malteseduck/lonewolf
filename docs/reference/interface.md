@@ -11,7 +11,7 @@ body
   .shade, .glow       vignette and the warm light from the left
   nav.top             #offline (top-right): how the offline copy stands (docs/reference/offline.md);
                       "Update ready: reload" reloads when touched. The title page is reached by the
-                      return medallion; sound keeps its last setting (lw-sound), with no switch
+                      return medallion. The player has no sound
   .stage > .book#book > .spread
       section#pl.page.left        the story page (ornate frame via ::before)
       .edges                      the stacked page edges between the two pages
@@ -220,9 +220,5 @@ late", once `evade.within` rounds are fought. When `B.over` is set the left page
 ## Page turn (`turn(update)`)
 
 Clones the left page, runs `update()` underneath, then rotates the clone away about its left edge
-and removes it. Also plays the page sound and turns the gear. Skipped under reduced motion.
+and removes it. Also turns the gear. Skipped under reduced motion.
 
-## Sound
-
-`shared/sfx-soft.js`: `LW.sfx(name)` with `select, roll, page, swing, hit, hurt, heal, battle,
-win, lose`; `LW.drone()` starts a low drone on first pointer input. `LW.setSound(bool)` persists.

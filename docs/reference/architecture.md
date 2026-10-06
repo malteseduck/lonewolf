@@ -25,8 +25,7 @@ shared/                     used by the player and the prototypes (classic scrip
   core.js                   rules data (Combat Results Table, Kai disciplines, items) and LW.Game, the book runner
   rules-series.js           per-series rules (Kai/Magnakai), Lore-circles, ranks, carried character, character dialog, starting kits
   book-demo.js              LW.BOOK_DEMO: the original 20-section demo chapter, with map locations (prototypes only)
-  ui.js                     LW.UI helpers: el, esc, wait, toast, createHero (Kai only), pickRandom, chart; LW.sfx (blips)
-  sfx-soft.js               replaces LW.sfx with noise/sine sounds and adds LW.drone (player only)
+  ui.js                     LW.UI helpers: el, esc, wait, toast, createHero (Kai only), pickRandom, chart; LW.sfx (blips, prototypes only)
   ink.js                    ES module: procedural parchment, leather, wood, ink-wash scenes
   art.js, battle.js, flow.js, shared.css   pixel sprites, Dragon Quest battle, shared flow: prototypes A and B only
 prototypes/                 earlier experiments, kept working, not developed
@@ -56,8 +55,7 @@ art/reference/map-symbols/  git-ignored. Map symbols kept from the dropped custo
 ```
 shared/core.js              defines LW, LW.Game, Kai rules
 data/projectaon/index.js    document.writes a <script> for each imported book -> LW.BOOKS[code]
-shared/ui.js                LW.UI, LW.sfx
-shared/sfx-soft.js          overrides LW.sfx
+shared/ui.js                LW.UI (LW.sfx blips: prototypes only)
 shared/rules-series.js      adds Magnakai, overrides LW.has and LW.heroCS, adds LW.Character, LW.UI.chooseCharacter, LW.KITS
 main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js
 ```
@@ -136,7 +134,6 @@ refused with a toast.
 | `lw-adventures` | `{list: [{id, book, name?}], at}`: the adventures, the last book each had open, the name the owner gave it (optional), and the one open now (resumed on load) |
 | `lw-a<n>-save-<code>` | adventure n's save for a book: `{s, history}`, e.g. `lw-a1-save-01fftd` |
 | `lw-a<n>-character` | adventure n's carried character: `{hero, from, fromTitle, completed: [codes]}` |
-| `lw-sound` | `on` or `off` |
 | `lw-pending-backups` | backups made with the PC out of reach, waiting to be sent: `[{name, text}]` |
 | `lw-proto-book`, `lw-proto-map`, `lw-proto-3d` | saves for prototypes A, B, C |
 

@@ -26,7 +26,7 @@ In `shared/`:
 - `core.js`: rules (Combat Results Table, disciplines, inventory limits, meals, healing) and the book runner with save and rewind
 - `rules-series.js`: what differs between the Kai and Magnakai series
 - `book-demo.js`: the demo chapter, 20 sections, in the data format the importer targets (prototypes only)
-- `ui.js`, `sfx-soft.js`, `shared.css`: Random Number Table, character creation, Action Chart, sound
+- `ui.js`, `shared.css`: Random Number Table, character creation, Action Chart
 - `ink.js`: procedural parchment, leather and ink-wash scenes
 - `battle.js`, `art.js`, `flow.js`: used by prototypes A and B only
 

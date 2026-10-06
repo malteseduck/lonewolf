@@ -119,11 +119,11 @@ async function backupAdventure(id) {
   const name = backupName(id), text = JSON.stringify(backupOf(id), null, 2);
   let r = null;
   try { r = await postBackup(name, text); } catch (e) { /* out of reach */ }
-  if (r && r.ok) { LW.sfx('select'); return void LW.UI.toast(`Backed up to backups/${name}`); }
+  if (r && r.ok) { return void LW.UI.toast(`Backed up to backups/${name}`); }
   if (r && r.status !== 404 && r.status !== 405 && r.status !== 501) return void LW.UI.toast(`The backup failed: ${((await r.json().catch(() => ({}))).error) || r.status}`);
   if (!r) { // the PC is out of reach: keep it here until it is back
     keepPending([...pending().filter((x) => x.name !== name), { name, text }]);
-    LW.sfx('select'); return void LW.UI.toast(`Backup kept here: it goes to the PC when it is in reach`);
+    return void LW.UI.toast(`Backup kept here: it goes to the PC when it is in reach`);
   }
   const a = el('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' })); a.download = name;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
@@ -153,7 +153,7 @@ const restoreFailed = (e) => LW.UI.toast(`Nothing restored: ${(e && e.message) |
 async function openRestore(id) {
   let files = null;
   try { const r = await api('api/backups', {}, 5000); if (r.ok) files = (await r.json()).map((f) => f.name); } catch (e) { /* out of reach, or not served by tools/serve.py */ }
-  if (files && files.length) { restoring = { id, files, chosen: null }; LW.sfx('select'); return void renderRight(); }
+  if (files && files.length) { restoring = { id, files, chosen: null }; return void renderRight(); }
   restoring = { id, files: null, chosen: null };
   restoreFromDisk();
 }
@@ -161,7 +161,7 @@ function restoreFromDisk() {
   const i = el('input'); i.type = 'file'; i.accept = '.json,application/json';
   i.onchange = async () => {
     const f = i.files[0]; if (!f || !restoring) return;
-    try { restoring.chosen = parseBackup(await f.text(), f.name); LW.sfx('select'); renderRight(); } catch (e) { restoring = null; restoreFailed(e); renderRight(); }
+    try { restoring.chosen = parseBackup(await f.text(), f.name); renderRight(); } catch (e) { restoring = null; restoreFailed(e); renderRight(); }
   };
   i.click();
 }
@@ -178,7 +178,7 @@ async function restoreGo() {
     restoring = null;
     if (r.id) { const a = adv.list.find((x) => x.id === r.id); if (!a) return void renderRight(); putBackup(a, got); }
     else { newAdventure(); putBackup(adventure(), got); }
-    LW.sfx('select'); render();
+    render();
     LW.UI.toast(`Restored ${got.file} ${r.id ? 'to' : 'as'} ${advName(r.id || adv.at)}`);
   } catch (e) { restoring = null; restoreFailed(e); renderRight(); }
 }
@@ -287,11 +287,11 @@ function makeDial(onIdleClick) {
       angle = Math.floor(from / 360) * 360 - 1080 - n * 36;
       hub.textContent = ''; ring.querySelectorAll('.hit').forEach((s) => s.classList.remove('hit'));
       hub.classList.add('shuffle');
-      const ticks = setInterval(() => { LW.sfx('roll'); hub.textContent = LW.rand10(); }, 70); // the face shuffles while the bezel turns
+      const ticks = setInterval(() => { hub.textContent = LW.rand10(); }, 70); // the face shuffles while the bezel turns
       anim = ring.animate([{ transform: `rotate(${from}deg)` }, { transform: `rotate(${angle}deg)` }], { duration: still ? 1 : 1500, easing: 'cubic-bezier(0.15, 0.6, 0.2, 1)', fill: 'forwards' });
       await anim.finished.catch(() => {});
       clearInterval(ticks); anim = null; hub.classList.remove('shuffle');
-      mark(n); LW.sfx('select');
+      mark(n);
       await wait(350);
       return n;
     },
@@ -571,10 +571,8 @@ function pickerHTML() {
   const pick = (id) => `<button type="button" class="disc item" data-add="${id}" title="${esc(LW.itemName(id))}" aria-label="Add ${esc(LW.itemName(id))}">${itemGlyph(id)}</button>`;
   const other = (kind, g, label) => `<button type="button" class="disc item other ${naming === kind ? 'sel' : ''}" data-add="other:${kind}" title="${label}" aria-label="${label}">${glyph(g)}</button>`;
   const row = (name, discs) => `<div class="pickrow"><em>${name}</em><div>${discs}</div></div>`;
-  
   const pastItems = [];
   const currentNum = book.number || 0;
-  
   Object.entries(ITEM_TABLES).forEach(([id, table]) => {
     const tableBookNumber = BOOKS[id] ? BOOKS[id].number : 0;
     if (tableBookNumber > 0 && tableBookNumber < currentNum && table.ITEMS) {
@@ -653,7 +651,6 @@ async function turn(update) {
   old.style.width = pl.offsetWidth + 'px'; old.style.height = pl.offsetHeight + 'px';
   pl.parentNode.appendChild(old);
   update();
-  LW.sfx('page');
   gearTurn -= 22.5; gear.style.transform = `rotate(${gearTurn}deg)`;
   if (!still) await old.animate([{ transform: 'rotateY(0deg)', opacity: 1, filter: 'brightness(1)' }, { transform: 'rotateY(-82deg)', opacity: 1, filter: 'brightness(0.55)', offset: 0.8 }, { transform: 'rotateY(-90deg)', opacity: 0, filter: 'brightness(0.4)' }], { duration: 750, easing: 'ease-in' }).finished.catch(() => {});
   old.remove();
@@ -681,7 +678,6 @@ async function choose(i) {
 async function goBack(k) {
   game.back(k);
   sel = null; mode = 'story';
-  LW.sfx('select');
   await turn(render);
 }
 
@@ -710,10 +706,10 @@ async function startBattle() {
     blasting() { return this.foe.immune === true || (this.foe.immune && this.mind === 1) ? 0 : this.mind; },
     cs() { return LW.heroCS(hero, { mindblast: this.blasting() === 1, psiSurge: this.blasting() === 2, enemy: this.foe, csMod, csNote: note, with: c.with }).total; },
     weapon: LW.armedWith(hero, { with: c.with }),
-    ratio() { 
+    ratio() {
       const rawRatio = this.cs() - this.foe.cs;
       // Hard cap the maximum advantage to prevent complete trivialization
-      return Math.min(10, rawRatio); 
+      return Math.min(10, rawRatio);
     } };
   nextFoe();
   if (B.foe.mindforce) B.log.push(LW.shielded(hero) ? 'Its will breaks against your Mindshield.' : `Its will presses on yours: Combat Skill less ${B.foe.mindforce}.`);
@@ -724,7 +720,7 @@ async function startBattle() {
   if (c.with === 'none') B.log.push('You fight bare-handed.');
   else if (c.with) B.log.push(B.weapon ? `Only your ${LW.itemName(c.with)} can harm it.` : `Only the ${LW.itemName(c.with)} can harm it, and you do not have it.`);
   if (B.weapon && LW.ITEMS[B.weapon] && LW.ITEMS[B.weapon].cs) B.log.push(`You fight with the ${LW.itemName(B.weapon)}.`);
-  mode = 'battle'; LW.sfx('battle');
+  mode = 'battle';
   await turn(render);
   updateBattle();
   const cv = node.querySelector('canvas');
@@ -779,7 +775,7 @@ function updateBattle() {
 }
 async function lunge(n) {
   await tween(200, (k) => { B.fx.lunge = k * k; });
-  if (n) { LW.sfx('hurt'); bookEl.classList.remove('hurt'); void bookEl.offsetWidth; bookEl.classList.add('hurt'); setTimeout(() => bookEl.classList.remove('hurt'), 420); }
+  if (n) { bookEl.classList.remove('hurt'); void bookEl.offsetWidth; bookEl.classList.add('hurt'); setTimeout(() => bookEl.classList.remove('hurt'), 420); }
   await tween(320, (k) => { B.fx.lunge = 1 - k; });
 }
 async function battleAct(id) {
@@ -796,10 +792,10 @@ async function battleAct(id) {
   } else if (id === 'cure') {
     const back = Math.min(20, hero.epMax - hero.ep);
     hero.ep += back; hero.cured = book.id;
-    LW.sfx('heal'); B.log.push(`Curing: you draw on your mastery and ${back} Endurance returns.`);
+    B.log.push(`Curing: you draw on your mastery and ${back} Endurance returns.`);
   } else if (id === 'item') {
     hero.backpack.splice(hero.backpack.indexOf('potion'), 1); hero.ep = Math.min(hero.epMax, hero.ep + 4);
-    LW.sfx('heal'); B.log.push('The Laumspur burns going down. 4 Endurance restored.');
+    B.log.push('The Laumspur burns going down. 4 Endurance restored.');
   } else {
     const n = await B.dial.spin(), res = LW.combatRound(B.ratio(), n);
     B.rounds++;
@@ -813,8 +809,8 @@ async function battleAct(id) {
       // the text's own doubling (a blow meant to stun), or an undead foe struck with a blade that doubles against them
       const twice = B.c.double || (foe.undead && LW.ITEMS[B.weapon] && LW.ITEMS[B.weapon].undead);
       const dealt = Math.min(res.enemy * (twice ? 2 : 1), foe.ep), taken = Math.min(res.hero, hero.ep);
-      LW.sfx('swing'); await wait(still ? 0 : 140);
-      if (dealt) { B.fx.wounds.push(newWound()); B.fx.hit = 1; LW.sfx('hit'); }
+      await wait(still ? 0 : 140);
+      if (dealt) { B.fx.wounds.push(newWound()); B.fx.hit = 1; }
       foe.ep -= dealt; updateBattle();
       await wait(still ? 0 : 480);
       if (foe.ep > 0 || taken) { await lunge(taken); hero.ep -= taken; }
@@ -837,7 +833,6 @@ async function battleAct(id) {
       }
     }
   }
-  if (B.over) LW.sfx(B.over === 'dead' ? 'lose' : B.over === 'win' ? 'win' : 'select');
   B.lock = false; updateBattle();
 }
 async function endBattle() {
@@ -864,34 +859,34 @@ bookEl.addEventListener('click', (e) => {
   else if (d.adv) {
     useAdventure(d.adv);
     const b = adventure().book, alive = b && BOOKS[b] && hasSave(b) && saved(b).s.hero.ep > 0; // a fallen one goes to the books, to start over
-    if (alive) guard(() => begin(b)); else { shelf = true; LW.sfx('select'); render(); }
+    if (alive) guard(() => begin(b)); else { shelf = true; render(); }
   }
   else if ('restore' in d) openRestore(d.restore);
   else if ('restorego' in d) restoreGo();
   else if ('restoredisk' in d) restoreFromDisk();
-  else if ('restorecancel' in d) { LW.sfx('select'); renderRight(); } // restoring was cleared above
-  else if ('advnew' in d) { newAdventure(); shelf = true; LW.sfx('select'); render(); }
-  else if ('shelf' in d) { if (d.shelf) useAdventure(d.shelf); shelf = !!d.shelf; LW.sfx('select'); render(); }
+  else if ('restorecancel' in d) { renderRight(); } // restoring was cleared above
+  else if ('advnew' in d) { newAdventure(); shelf = true; render(); }
+  else if ('shelf' in d) { if (d.shelf) useAdventure(d.shelf); shelf = !!d.shelf; render(); }
   else if (d.backup) backupAdventure(d.backup);
-  else if ('rename' in d) { renaming = d.rename || null; LW.sfx('select'); renderRight(); const box = $('#advname'); if (box) { box.focus(); box.select(); } }
-  else if ('forget' in d) { if ('sure' in d) forgetAdventure(d.forget); forgetting = 'sure' in d ? null : d.forget || null; LW.sfx('select'); renderRight(); }
-  else if (d.panel) { panel = d.panel; sel = null; adding = false; naming = null; LW.sfx('select'); render(); }
-  else if (d.adding) { adding = d.adding === 'open'; naming = null; LW.sfx('select'); renderRight(); }
+  else if ('rename' in d) { renaming = d.rename || null; renderRight(); const box = $('#advname'); if (box) { box.focus(); box.select(); } }
+  else if ('forget' in d) { if ('sure' in d) forgetAdventure(d.forget); forgetting = 'sure' in d ? null : d.forget || null; renderRight(); }
+  else if (d.panel) { panel = d.panel; sel = null; adding = false; naming = null; render(); }
+  else if (d.adding) { adding = d.adding === 'open'; naming = null; renderRight(); }
   else if (d.add) {
     if (!d.add.startsWith('other:')) return void addItem(d.add);
     naming = d.add.slice(6); renderRight(); $('#itemname').focus();
   }
-  else if (d.sel) { const [kind, id] = d.sel.split('|'); sel = { kind, id }; LW.sfx('select'); renderRight(); }
+  else if (d.sel) { const [kind, id] = d.sel.split('|'); sel = { kind, id }; renderRight(); }
   else if (d.adj) { const [field, by] = d.adj.split(':'); game.adjust(field, +by); render(); }
-  else if (d.loot != null) { const err = game.takeLoot(/^\d+$/.test(d.loot) ? +d.loot : d.loot); if (err) LW.UI.toast(err); else LW.sfx('select'); render(); }
-  else if ('drink' in d) { if (game.usePotion(d.drink || 'potion')) { LW.sfx('heal'); sel = null; render(); } }
+  else if (d.loot != null) { const err = game.takeLoot(/^\d+$/.test(d.loot) ? +d.loot : d.loot); if (err) LW.UI.toast(err); render(); }
+  else if ('drink' in d) { if (game.usePotion(d.drink || 'potion')) { sel = null; render(); } }
   else if (d.remove) { game.removeItem(d.remove); sel = null; render(); }
   else if ('intro' in d) { intro = false; guard(() => turn(render)); }
   else if (d.choice != null) guard(() => choose(+d.choice));
   else if ('puzzle' in d) turnTo();
   else if ('fight' in d) guard(startBattle);
   else if ('endbattle' in d) guard(endBattle);
-  else if ('new' in d || 'home' in d) { LW.sfx('select'); toTitle('new' in d); }
+  else if ('new' in d || 'home' in d) { toTitle('new' in d); }
 });
 /* a puzzle answered: the section the reader worked out, if the book has one */
 function turnTo() {
@@ -906,9 +901,9 @@ bookEl.addEventListener('keydown', (e) => {
   if (e.target.id !== 'advname' || (e.key !== 'Enter' && e.key !== 'Escape')) return;
   const a = adv.list.find((x) => x.id === e.target.dataset.for);
   if (a && e.key === 'Enter') { const name = e.target.value.trim(); if (name) a.name = name; else delete a.name; keepAdventures(); }
-  renaming = null; LW.sfx('select'); renderRight();
+  renaming = null; renderRight();
 });
-function addItem(id) { const err = game.addItem(id); if (err) LW.UI.toast(err); else LW.sfx('select'); render(); }
+function addItem(id) { const err = game.addItem(id); if (err) LW.UI.toast(err); render(); }
 pr.addEventListener('keydown', (e) => {
   if (e.target.id !== 'itemname' || (e.key !== 'Enter' && e.key !== 'Escape')) return;
   const name = e.key === 'Enter' && e.target.value.trim().replace(/[|"<>]/g, ''), prefix = e.target.dataset.prefix;

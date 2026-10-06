@@ -223,7 +223,7 @@ hand.
 ### 6.6 Feel
 
 - A page turn when the section changes.
-- Sound is low and physical: paper, a drone, dull impacts. No arcade tones. It can be turned off.
+- The player has no sound: no effects, music or audio settings. (The earlier prototypes keep their own blips.)
 - Nothing should read as a children's game: no bright flat colour, no cartoon shapes, no pixel art.
 
 ## 7. Persistence
