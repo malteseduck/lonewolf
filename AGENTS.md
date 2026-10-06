@@ -23,6 +23,16 @@ Then open http://localhost:8765/. It is `http.server` plus the backups API (`bac
 see Storage in `docs/reference/architecture.md`). `.claude/launch.json` has the same
 server as `lone-wolf` for the preview tools. It must be served: `main.js` is an ES module.
 
+To serve it to other devices on the home network (the "lan" server; `lone-wolf-lan` in
+`.claude/launch.json`):
+
+```sh
+python tools/serve.py 8765 --bind 0.0.0.0
+```
+
+Then open `http://<the PC's LAN address>:8765/` on the device (`ipconfig` shows it). Plain HTTP, so
+no service worker and no offline copy; for that, see `docs/reference/offline.md`.
+
 There are no automated tests and no linter. `node --check <file>` catches syntax errors, but on
 the root `.js` files it misses a `const` declared twice; copy the file to a `.mjs` name in the
 scratchpad and check that to catch it.
