@@ -10,7 +10,7 @@
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {
   baknarOil: { name: 'Baknar Oil', kind: 'special', glyph: 'round-bottom-flask', about: 'Rubbed into your skin for the rest of this adventure: it keeps out the cold. It takes no room.' },
-  silverKey: { name: 'Ornate Silver Key', kind: 'special', glyph: 'skeleton-key', about: 'From the stomach of a Crystal Frostwyrm. It opens a carved stone chest.' },
+  silverKey3: { name: 'Ornate Silver Key', kind: 'special', glyph: 'skeleton-key', about: 'From the stomach of a Crystal Frostwyrm. It opens a carved stone chest.' },
   boneSword: { name: 'Bone Sword', kind: 'special', glyph: 'pointy-sword', weapon: ['sword'], about: 'A sword set with teeth, taken from an Ice Barbarian. It fights as a sword.' },
   blueDisc: { name: 'Blue Stone Disc', kind: 'special', glyph: 'medal', about: 'The key to a door with a slot beside it.' },
   blueTriangle: { name: 'Blue Stone Triangle', kind: 'special', glyph: 'gem-pendant', about: 'Worn on a chain. It fits the recess that opens the fortress door.' },
@@ -54,7 +54,7 @@ export const SECTIONS = {
   38: { loot: [{ pack: true }, { item: 'rope' }] },
   43: { ep: -1 },
   44: { need: { 79: { item: 'blackGraveweed' }, 157: { item: 'greenGallowbrush' }, 270: { item: ['blackGraveweed', 'greenGallowbrush'], not: true } } },
-  45: { need: { 303: { item: 'silverKey' }, 15: { item: 'silverKey', not: true } } },
+  45: { need: { 303: { item: 'silverKey3' }, 15: { item: 'silverKey3', not: true } } },
   // the Backpack stays in the tent: he keeps his weapons, gold and Special Items
   49: { take: [{ backpack: 'all' }] },
   50: { need: { 139: { item: 'glowingCrystal' }, 189: { item: 'glowingCrystal', not: true } } },
@@ -134,7 +134,7 @@ export const SECTIONS = {
   263: { todo: 'the moment you lose any ENDURANCE here, stop and turn to the section the text names (use the Turn to section box).' },
   267: { take: [{ item: 'glowingCrystal' }] },
   272: { need: { 213: sommerswerd } },
-  280: { ep: -1, loot: [{ item: 'silverKey' }] },
+  280: { ep: -1, loot: [{ item: 'silverKey3' }] },
   282: { loot: [{ item: 'spear' }, { item: 'blueDisc' }] },
   // Hunting, Tracking or Animal Kinship (the importer read Hunting alone)
   275: { need: { 293: { disc: ['hunting', 'tracking', 'animalKinship'] } } },
@@ -146,7 +146,7 @@ export const SECTIONS = {
   296: { todo: 'only three rounds are fought before the guards collapse.' },
   298: { loot: [{ item: 'blueTriangle' }] },
   299: { todo: 'unless you used Mind Over Matter, lose 2 ENDURANCE.' },
-  303: { take: [{ item: 'silverKey' }] },
+  303: { take: [{ item: 'silverKey3' }] },
   304: { fight: { undead: true } },
   // he swaps it for the helmet he was wearing, if any
   308: { give: [{ item: 'silverHelm' }], take: [{ item: 'helmet' }] },
