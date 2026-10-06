@@ -7,6 +7,104 @@ Last updated 2026-10-05.
 
 Where each book stands, step by step: `docs/book-checklist.md`.
 
+### Engine work to retire the item tables' todos
+
+Every `todo` in `items-*.js` (2026-10-05: 334 across Books 1-12) is a rule the page leaves to the
+player. These are the changes that would let it apply them, the importer's gaps first. Sections
+are given as book/section; each change, when made, replaces the `todo`s it covers and updates the
+matching reference file. Not started; the owner picks which, and in what order.
+
+**Importer gaps** (the importer reads these wrongly or not at all)
+
+1. **"Discipline X or rank Y" choices** are read with one condition, or none: B11 301, 343; B12 188
+   (and B12 14, 77 to check). The item tables clear the wrong gate and leave a `todo`. Needs an
+   "any of these conditions" form in `need`, also across kinds (a discipline or an item: B7 90; a
+   discipline or six Disciplines: B3 289).
+2. **Whole-fight bonuses on a condition the importer skips**: a completed Lore-circle (B7 45; B8 30,
+   47, 183, 308; B11 341), a discipline (B6 71, Animal Control), a discipline at a rank (B8 339).
+   The importer's `csIf` / `csUnless` should read them; failing that, allow `csIf` / `csUnless` in an
+   item table's `fight` (the checker rejects them today).
+3. **Fights the importer missed**: the doors fought as enemies (B6 156, B7 214), whose losses are
+   fatigue and which may be broken off at any time.
+
+**Engine changes** (most `todo`s first)
+
+4. **Fight changes for some rounds only** (about 50): a COMBAT SKILL change for the first N rounds,
+   spared by a discipline (most ambushes and surprises; Huntmastery spares many); fighting unarmed
+   for the first N rounds; ignoring his own or the enemy's losses in the first N rounds. With it,
+   `ambush` can be marked where the penalty lasts only some rounds. B1 283; B2 7, 60, 270; B3 241,
+   260; B4 62, 147, 153; B5 4, 106, 119, 159, 280, 316, 393; B6 12, 114, 155, 254, 270; B7 19, 27,
+   219; B8 183, 251, 252, 298, 323; B9 46, 116, 148, 182, 285; B10 28, 251, 336; B11 10, 68, 77,
+   220, 256, 319; B12 5, 8, 16, 23, 32, 58, 83, 136, 224, 247, 259, 276, 292.
+5. **Losing items by the player's choice or by place in the list** (about 35): a prompt to pick N
+   Backpack Items, Special Items or a weapon to lose (with the text's fallback when he has none);
+   losses by position ("the second and fourth Backpack Items"); half his Meals or gold; the weapon
+   he used. B1 144, 307; B3 16, 18; B4 22; B5 19, 40, 270; B6 144, 166; B7 32, 131, 158; B8 178,
+   187, 258, 269, 331, 349; B9 91, 201, 235, 261, 273; B10 11, 43, 210, 265, 340; B11 12, 73, 179,
+   277, 338.
+6. **An ENDURANCE change unless (or if) he has something** (about 35): a discipline, a discipline
+   at a rank, a Lore-circle, an item, or having eaten; and a drawn loss made smaller by one. B2 69,
+   321; B3 27, 83, 129, 132, 150, 258, 299, 331; B5 264, 393; B6 171, 306; B7 26, 59, 85, 103, 104,
+   241, 284; B9 61, 291; B10 29, 166, 203, 233; B11 118, 217, 299, 313, 332; B12 172, 258.
+7. **Multiplied or extra losses in a fight** (about 25): his losses doubled, tripled, halved, or +1
+   or +2 a wound, unless he has a discipline (at a rank); a fixed loss every round (cold, a drain
+   the dice do not give, rounds underwater past a drawn count); the enemy's losses raised (an ally
+   striking, psychic attack doubled). B3 88, 180; B4 194, 234; B6 270; B7 76, 126, 178, 219, 233,
+   285, 301, 325; B8 52, 155, 159, 199; B9 82; B10 172; B11 34, 298; B12 55, 226, 268, 276.
+8. **The fight's length deciding the way on, or ending it** (about 30): won in N rounds or fewer
+   goes one way; only N rounds are fought; one round, decided by who lost more; stop when he loses
+   any ENDURANCE; break off when the enemy is down to N. B3 108, 138, 158, 263, 296; B4 36, 47, 56,
+   133, 193, 260, 333; B5 244, 357; B6 78, 201, 344; B8 257; B9 82, 104, 244; B10 41, 187, 286,
+   336, 349; B11 22, 97, 201, 206, 274.
+9. **Choices that need more than "any of these items"** (about 20): two items together (a Torch and
+   a Tinderbox, or a Lantern, or a Firesphere: the light-source gate; a Blowpipe and a Sleep Dart);
+   a count (4 Meals, 2 Arrows, 2 Backpack Items); any weapon of a kind (any sword; an edged weapon).
+   B4 117; B5 19, 313; B6 339; B7 16, 66, 107, 168, 258, 298, 348; B8 194, 214; B10 131, 256; B11
+   126, 168, 234, 260; B12 131.
+10. **Random Number changes the importer cannot express** (about 20): by an item carried (a Rope, a
+    Pick or Shovel), the weapon in his hand, a discipline at a rank, a Lore-circle, a dead arm; and
+    on a bow shot, a discipline's extra or a penalty without Weaponmastery. B3 86, 96; B4 35, 173;
+    B5 23; B6 170, 340; B7 175, 328; B9 215, 216, 239; B10 128; B11 244; B12 206, 324.
+11. **Wagers, stakes, selling and paying what he can** (about 25): a stake chosen by the player and
+    won or lost by the next section or a draw; selling weapons and goods to a shop; a price "or all
+    you have"; a price that depends on where he came from. B2 93, 238, 266, 308, 327; B3 152; B6 10,
+    17, 50, 62, 76, 98, 113, 123, 212, 220, 223, 245, 284; B9 115, 163, 204, 319; B10 218; B12 61,
+    225, 265, 314.
+12. **Psychic bonuses changed for one foe** (about 12): Mindblast or Psi-surge doubled, tripled, or
+    worth 4, or only partly blocked; mind fights with their own COMBAT SKILL (fixed 15; counted from
+    Disciplines and rings). B3 137; B5 64, 110; B8 52, 74; B10 81, 254; B11 270; B12 2, 102, 114,
+    264, 307.
+13. **Other whole-fight conditions** (about 15): a weapon's bonus against one foe (the Jewelled Mace,
+    the Dagger of Vashna and Helshezag against a Darklord, Gnaag's 12 in all); a penalty by weapon
+    kind; no Shield or no two-handed weapon; no Bow; no evading; no potion before the fight; an item
+    wrapped round the arm; fighting with a weapon not yet in the inventory; a bonus for having fought
+    a foe in an earlier book. B3 170, 328; B5 57, 253; B6 343; B7 76, 221, 257; B10 54, 304; B11 201;
+    B12 68, 75, 88, 133, 230.
+14. **Equipment taken away and given back later**: the page keeps what was taken and restores it.
+    B5 69 to 14, and the Sommerswerd 350 to 400; B7 264, 335 to 15; B9 170, 174, 312 to 54, 177, and
+    the pickpocket 155.
+15. **Lasting conditions**: losing 2 ENDURANCE a section until a Laumspur potion (B5 63); the dead arm
+    (no Shield, -3 until cured: B5 2, 162, 166); the korovax infection (B8 156); Adgana and its
+    addiction (B7 129, B12 145); COMBAT SKILL lower for this adventure only (B8 71); healing half
+    the ENDURANCE lost in a fight, or all with Healing (B2 240; B5 20, 135, 161); ENDURANCE put back
+    after a contest (B2 276).
+16. **Book 6's archery tournament**: Target points in place of ENDURANCE, a three-number draw, a
+    borrowed bow's penalty, a bow that breaks on a 0. B6 26, 214, 298, 340.
+17. **Other currencies**: Book 12's Kika (B12 43, 52, 79, 139, 202, 228, 271, 310, 322) and Book 9's
+    Lune (B9 163, 253).
+18. **Small item rules**: items with doses (B9 25; Book 8's Larnuma and Book 11's Silver Flask);
+    extra Meals the text asks for (B3 294; B9 11; B12 93's Gnallia heals 2); a Special Item outside
+    the limit of 12 (B10's Signet Ring); a Helmet and the Silver Helm not counting together (B7
+    148); an item that takes an Arrow's place in the Quiver (B12 187); a weapon the text does not
+    name (B11 8); a torch in hand (B4 79, 123); a Meal that may be bought on the spot (B2 346; B6 253,
+    307); swapping one item for another (B8 242); a draw that ends the adventure (B3 94).
+19. **Notes on the Action Chart**: a number to remember (B7 73, 183, 333) and things done in an
+    earlier book (B5 57; B9 142).
+
+Left to the player whatever the engine does: whether to sleep (B2 41), and the puzzles.
+
+### The rest
+
 1. **Play Book 1 through** and fix what the importer misread, and anything the item table missed
    or got wrong. A mechanical sweep ran 2026-10-03 (all 350 sections, three runs with test
    characters, both checkers): no errors, no unmarked dead end, every fight and draw works. Then (same day) every gate, fight and draw was read against the text: fixed 43 (evade
