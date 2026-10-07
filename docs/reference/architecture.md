@@ -40,6 +40,10 @@ tools/
   check_items.mjs           checks items-<code>.js against the book (node)
   fetch_icons.py            fetches game-icons.net glyphs into assets/icons/, background removed
                             (the four above: docs/reference/items.md)
+  map_upscale.py            Real-ESRGAN upscale of a printed map to a set width, saved as WebP or PNG
+  map_check.py              aligns a repainted map to the faithful one, flags colour and shape changes
+                            (both: docs/reference/map-upscale.md; Python in tools/.venv)
+  realesrgan/               git-ignored. Real-ESRGAN's Windows build, used by map_upscale.py
 data/projectaon/            git-ignored. Downloaded pages and images, generated book.js files, index.js;
                             maps/: sheets 1-2 of Project Aon's Maps of Magnamund (reference only)
 data/reference/             git-ignored. Reference images fetched for the owner: a fan-made world map of

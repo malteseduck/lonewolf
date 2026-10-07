@@ -134,6 +134,7 @@ explaining it would cost more than doing it.
 | `docs/reference/interface.md` | The interface: pages, panels, map, combat, art pipeline |
 | `docs/reference/offline.md` | Playing offline on the iPad: Tailscale setup, the service worker, updates |
 | `docs/reference/items.md` | The procedure for a book's item table and its fight pictures: reading, icons, checks |
+| `docs/reference/map-upscale.md` | Upscaling the printed maps: Gemini repaint, label list, checks, Real-ESRGAN to 4K WebP |
 | `docs/reference/rules-books.md` | The books' rules: common, Kai, Magnakai, and an addendum per book; what the engine applies |
 | `docs/book-checklist.md` | Every step each book goes through, ticked as done. **Check it before starting work on a book; tick a step when it is finished.** |
 | `docs/plan.md` | State of the work, decisions made, what is waiting on the owner, next steps. **Read this first in a new session.** |

@@ -21,7 +21,7 @@ under each step; what is left inside a step (counts, sections) is in `docs/plan.
 | 8. Played through with test characters; misreadings and item gaps fixed | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 9. The owner has played it and is happy | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | **Pictures** | | | | | | | | | | | | |
-| 10. Printed map backed up (`mapbak.png`), upscaled to 4K, saved as `map-4k.webp`, shown in the player | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 10. Printed map repainted, labels checked, `map-4k.webp` made and shown in the player | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 
 Books: 1 Flight from the Dark · 2 Fire on the Water · 3 The Caverns of Kalte · 4 The Chasm of Doom ·
 5 Shadow on the Sand · 6 The Kingdoms of Terror · 7 Castle Death · 8 The Jungle of Horrors ·
@@ -41,7 +41,7 @@ Darkness.
 7. A sheet of every enemy's picture in the browser (as done for Books 1 and 2); the owner picks
    changes, and may supply drawings (kept in git-ignored `art/plates/`).
 8-9. Play in the browser on a test address (`http://127.0.0.1:8765/`), never over the owner's saves.
-10. `docs/plan.md`, next step 3. Never overwrite an existing `mapbak.png`: it is the original.
+10. `docs/reference/map-upscale.md`. Never overwrite `map.png`: it is the original.
     Tick only once the player shows `map-4k.webp`, which needs that step's code change first.
 
 ## Notes

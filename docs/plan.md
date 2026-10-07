@@ -148,19 +148,22 @@ Left to the player whatever the engine does: whether to sleep (B2 41), and the p
    - **2.10 Book 12, The Masters of Darkness.** Fight pictures: 20 of 39 have none. Random Number left free: 10 ("bow-skill bonuses", a rope, 4
      count by the number). Also: Helshezag's and a weapon's increased power (88, 133) are left as
      text, so check them against the engine's own weapon bonus; mark bow shots and ambushes.
-3. **Upscale the printed maps** (owner's call 2026-10-06; checklist step 10). Tried on Book 4: a
-   generative upscale (Gemini) changed names and colours, so it is out. Real-ESRGAN
-   (`realesrgan-ncnn-vulkan`, model `realesrgan-x4plus`) keeps the map exactly, only sharper. Tiny
-   lettering keeps the ink smear the scan already has inside letters like P and A; no automatic fix
-   (tried, it broke other letters). Hand repair or a better scan only, on the owner's say. Per
-   book:
-   - Back up: copy `map.png` to `mapbak.png` in the same folder. If `mapbak.png` already exists
-     (Books 4, 6, 12), it is the original; do not overwrite it. In Book 4, `map.png` is Gemini's
-     version, not the original.
-   - Upscale `mapbak.png`: two 4x Real-ESRGAN passes, LANCZOS down to 3840 px wide, save as
-     `map-4k.webp` (Pillow quality 90, method 6). Book 4's trial: 1.3 MB, against 10.9 MB as PNG.
-     The tool is not in the repo yet; it was run from the scratchpad. Add it under `tools/` and
-     note it in `docs/reference/importer.md`.
+3. **Upscale the printed maps** (owner's call 2026-10-06; checklist step 10). The procedure is
+   `docs/reference/map-upscale.md`: Gemini repaints (the owner, in the free Gemini app), local tools
+   check the labels, colour and shapes, Real-ESRGAN takes the last good round to 4K WebP. Real-ESRGAN
+   alone was too flat for the owner, and local Stable Diffusion too weak; why is in that file.
+   - Done: `tools/map_upscale.py`, `tools/map_check.py`, Real-ESRGAN in `tools/realesrgan/`, a
+     comparison page in Book 4's folder. Book 4 has trial files there (`map-esrgan-*`,
+     `map-gemini-esrgan-4k.webp`, `map-repaint-2k-test1.png`). Delete them once Book 4 is done.
+   - Originals re-fetched from Project Aon for all 12 books (2026-10-06): `map.png` is the
+     original, and there is no `mapbak.png` (dropped: nothing overwrites `map.png` now). The owner's earlier Gemini versions are kept as
+     `map-gemini-0.png` in Books 1-6 and 12; use them as round 0 where they help.
+   - **Next, in a fresh session:** write `tools/map_labels.py` (EasyOCR drafts the label list
+     from `map-2k.png`; later matches a Gemini round's labels to it by position and lists what is
+     wrong, missing or added). Then Book 4: `map-2k.png`, the label list corrected by eye, the
+     first prompt for the owner.
+   - Owner to decide: delete the local Stable Diffusion models (`data/models/sd15`,
+     `controlnet-tile-sd15`, 3.4 GB), no longer needed. EasyOCR's (`data/models/easyocr`) stay.
    - Code, once, before the first book uses it: the importer writes `map: 'map-4k.webp'` when that
      file exists, else `map.png`. The browser shows WebP as it is; nothing else changes for the
      format. But `scanOf` in `main.js` repaints the map onto a canvas at twice its own size, which

@@ -10,5 +10,7 @@ __pycache__/
 # local Python tools for map-making (OpenCV, SAM 2, OWLv2) and their downloaded models: never committed
 tools/.venv/
 data/models/
+# Real-ESRGAN's Windows build (xinntao/Real-ESRGAN v0.2.5.0 release), for upscaling the printed maps
+tools/realesrgan/
 # npm packages for local tooling: reinstalled, never committed
 node_modules/
