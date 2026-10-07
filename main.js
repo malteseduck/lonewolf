@@ -619,15 +619,22 @@ function printedMap() {
   return printed[url].complete && printed[url].naturalWidth ? printed[url] : null;
 }
 const scans = {};
-const scanOf = (img) => (scans[img.src] = scans[img.src] || printedCanvas(img, [0, 0, img.naturalWidth, img.naturalHeight], img.naturalWidth * 2, img.naturalHeight * 2));
+// repainted at twice the scan's size for sharp ink, but no wider than SCAN_MAX: a 4K map doubled is
+// 7680 px, past the iPad's canvas limit (about 16.7 million pixels)
+const SCAN_MAX = 4096;
+const scanOf = (img) => {
+  const k = Math.min(2, SCAN_MAX / img.naturalWidth);
+  return (scans[img.src] = scans[img.src] || printedCanvas(img, [0, 0, img.naturalWidth, img.naturalHeight], Math.round(img.naturalWidth * k), Math.round(img.naturalHeight * k)));
+};
 
 /* ---------- the map modal ----------
    The printed map over the whole window, in a parchment frame like the left page's. The map is
    laid out in image pixels and drawn at scale s (screen px per image px) by a CSS transform; the
-   canvas is scanOf's, not repainted. s0 is the scale at which it just covers the view (the least
-   allowed), and the pan is clamped so no edge shows. */
+   canvas is scanOf's, not repainted. s0 is the scale at which the whole map fits the view (the
+   least allowed, and where it opens, with parchment round it); the pan is clamped so no edge
+   comes inside the view, and the map is centred on an axis where it is smaller than the view. */
 let M = null; // the open modal's state, or null
-const MAP_ZOOM = 4; // most zoom over cover: the source is ~1000px, more only blurs it
+const MAP_ZOOM = 3; // most zoom over fit (owner, 2026-10-06): enough for the smallest labels of a 4K map
 const CLOSE_X = `<svg class="rose" viewBox="-50 -50 100 100" aria-hidden="true"><g transform="rotate(45)"><path class="lt" d="M0 -40L9 -4L0 0Z"/><path class="dk" d="M0 -40L-9 -4L0 0Z"/><path class="lt" d="M0 40L-9 4L0 0Z"/><path class="dk" d="M0 40L9 4L0 0Z"/><path class="lt" d="M-40 0L-4 -9L0 0Z"/><path class="dk" d="M-40 0L-4 9L0 0Z"/><path class="lt" d="M40 0L4 9L0 0Z"/><path class="dk" d="M40 0L4 -9L0 0Z"/></g></svg>`;
 function openMap() {
   if (M) return;
@@ -658,17 +665,17 @@ function openMap() {
     ns = Math.min(M.s0 * MAP_ZOOM, Math.max(M.s0, ns));
     const k = ns / M.s; M.tx = p.x - (p.x - M.tx) * k; M.ty = p.y - (p.y - M.ty) * k; M.s = ns; apply();
   }
-  M.ready = () => { // the image is here: show it filling the view
+  M.ready = () => { // the image is here: show it whole
     const im = M.img = printedMap(); if (!im || M.cv) return;
     const cv = M.cv = scanOf(im);
     cv.style.cssText = `position:absolute;left:0;top:0;width:${im.naturalWidth}px;height:${im.naturalHeight}px;transform-origin:0 0;`;
     view.replaceChildren(cv);
-    M.s0 = M.s = Math.max(M.vw / im.naturalWidth, M.vh / im.naturalHeight); M.tx = M.ty = 0; apply();
+    M.s0 = M.s = Math.min(M.vw / im.naturalWidth, M.vh / im.naturalHeight); M.tx = M.ty = 0; apply();
   };
-  const onResize = () => { // keep the same centre and the same zoom over cover
+  const onResize = () => { // keep the same centre and the same zoom over fit
     fitFrame(); if (!M.cv) return;
     const im = M.img, cx = (M.vw / 2 - M.tx) / M.s, cy = (M.vh / 2 - M.ty) / M.s, zoom = M.s / M.s0;
-    M.s0 = Math.max(M.vw / im.naturalWidth, M.vh / im.naturalHeight); M.s = M.s0 * zoom;
+    M.s0 = Math.min(M.vw / im.naturalWidth, M.vh / im.naturalHeight); M.s = M.s0 * zoom;
     M.tx = M.vw / 2 - cx * M.s; M.ty = M.vh / 2 - cy * M.s; apply();
   };
   fitFrame(); if (book.map && printedMap()) M.ready();

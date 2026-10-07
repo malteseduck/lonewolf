@@ -1,0 +1,6 @@
+Fonts for tools/map_letter.py, which letters the map labels Gemini could not be trusted with.
+
+IM Fell English (IMFeENrm28P, IMFeENit28P, IMFeENsc28P): Igino Marini's revival of the Fell types.
+Almendra (Almendra-Regular): Ana Sanfelippo. Not used yet; an alternative hand for the small names.
+Both from github.com/google/fonts (ofl/imfellenglish, ofl/imfellenglishsc, ofl/almendra),
+2026-10-06, under the SIL Open Font License 1.1 (OFL-IMFell.txt, OFL-Almendra.txt).

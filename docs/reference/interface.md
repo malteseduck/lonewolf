@@ -131,19 +131,23 @@ vignette) and the close and +/- controls are the bronze medallions (`.med`). Esc
 backdrop, or the close medallion close it; `+` and `-` also zoom.
 
 The map is `scanOf`'s canvas (painted once per image, not repainted for the modal), laid out in image
-pixels and moved by one CSS transform `translate(tx, ty) scale(s)`. `s0` is the scale at which it just
-covers the view and is the least allowed; the most is 4 x `s0` (the source is about 1000 px). The pan is
-clamped so no edge shows. Drag (pointer events, so mouse, pen and touch), wheel (toward the cursor; a
+pixels and moved by one CSS transform `translate(tx, ty) scale(s)`. `s0` is the scale at which the whole
+map fits the view: it opens there, with the leather ground round it, and it is the least allowed. The
+most is 3 x `s0` (`MAP_ZOOM`, owner 2026-10-06: enough for the smallest labels of a 4K map). The pan is
+clamped so no edge comes inside the view, and the map is centred on an axis where it is smaller. Drag (pointer events, so mouse, pen and touch), wheel (toward the cursor; a
 trackpad pinch arrives as ctrl+wheel), two-finger pinch (toward the midpoint, which also pans), and the
 +/- medallions (toward the centre). On window resize the frame is redrawn and `s0` recomputed, keeping
-the centre and the zoom over cover. `printedMap()` loads the image once and starts an open modal when
+the centre and the zoom over fit. `printedMap()` loads the image once and starts an open modal when
 it arrives.
 
 ## The printed map (`maps.js`)
 
 `printedCanvas(img, crop, w, h)` repaints a book's printed map as sepia ink: lightness becomes ink
 depth, water is pushed darker, strong red survives faintly, then parchment grain is multiplied
-over it. `scanOf` (main.js) keeps one painting per image.
+over it. `scanOf` (main.js) keeps one painting per image, at twice the image's size for sharp ink
+but no wider than 4096 px (`SCAN_MAX`): a 4K map doubled is past the iPad's canvas limit. The image
+is `map-4k.webp` once a book's map is upscaled (`docs/reference/map-upscale.md`), else `map.png`;
+the sepia repaint applies to both (owner, 2026-10-07).
 
 The player once drew its own maps (replicas of the printed maps stamped with engraved symbols,
 made-up places per section, town plans, travel on the map). The owner dropped them on 2026-10-05;

@@ -201,7 +201,8 @@ hand.
 ### 6.4 Map
 
 - The map is the one printed in the book, repainted in sepia on the owner's machine (personal
-  use; never committed). The player drags it to look around.
+  use; never committed). Each is upscaled to 4K first (a Gemini repaint, lettered clean; owner,
+  2026-10-06), and still shown in sepia (owner, 2026-10-07). The player drags it to look around.
 - No map is drawn or redrawn for a book (owner, 2026-10-05: the custom maps, made-up places and
   travel on the map were dropped). Every choice is made on the story page.
 

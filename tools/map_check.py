@@ -3,12 +3,13 @@
 Run (from the project root):
   uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_check.py <faithful> <repaint> <out_dir>
 
-Writes <out_dir>/aligned.png (the repaint, warped onto the faithful map) and <out_dir>/flags.png
+Writes <out_dir>/aligned.png (the repaint, warped onto the faithful map), H.json (that warp) and <out_dir>/flags.png
 (red cells: a different hue; blue cells: outlines added or lost), and prints counts only.
 The flags are for the owner's review, not automatic rejection: Gemini's "upgrades" (forest style,
 richer colour) are allowed if the map stays close. Labels are checked separately, against the
 label list (docs/reference/map-upscale.md).
 """
+import json
 import sys
 from pathlib import Path
 
@@ -41,6 +42,7 @@ def main():
     Path(out).mkdir(parents=True, exist_ok=True)
     O, G = read(fa), read(rp)
     H, W = O.shape[:2]
+    gh, gw = G.shape[:2]
     G = cv2.resize(G, (W, H), interpolation=cv2.INTER_LANCZOS4)
 
     # one homography, found at half size. A local flow was tried and chased repainted areas
@@ -55,6 +57,8 @@ def main():
     Hm, inl = cv2.findHomography(src, dst, cv2.RANSAC, 4.0)
     A = cv2.warpPerspective(G, Hm, (W, H), flags=cv2.INTER_LANCZOS4, borderMode=cv2.BORDER_REPLICATE)
     write(Path(out) / 'aligned.png', A)
+    # for map_letter.py, which warps an upscale of the repaint onto the 4K frame the same way
+    (Path(out) / 'H.json').write_text(json.dumps({'H': Hm.tolist(), 'repaint': [gw, gh], 'faithful': [W, H]}))
     eo = edges(O, 2)
     dt = cv2.distanceTransform(255 - eo, cv2.DIST_L2, 3)
     err = float(np.minimum(dt[edges(A, 2) > 0], 20).mean())

@@ -149,33 +149,24 @@ Left to the player whatever the engine does: whether to sleep (B2 41), and the p
      count by the number). Also: Helshezag's and a weapon's increased power (88, 133) are left as
      text, so check them against the engine's own weapon bonus; mark bow shots and ambushes.
 3. **Upscale the printed maps** (owner's call 2026-10-06; checklist step 10). The procedure is
-   `docs/reference/map-upscale.md`: Gemini repaints (the owner, in the free Gemini app), local tools
-   check the labels, colour and shapes, Real-ESRGAN takes the last good round to 4K WebP. Real-ESRGAN
-   alone was too flat for the owner, and local Stable Diffusion too weak; why is in that file.
-   - Done: `tools/map_upscale.py`, `tools/map_check.py`, Real-ESRGAN in `tools/realesrgan/`, a
-     comparison page in Book 4's folder. Book 4 has trial files there (`map-esrgan-*`,
-     `map-gemini-esrgan-4k.webp`, `map-repaint-2k-test1.png`). Delete them once Book 4 is done.
-   - Originals re-fetched from Project Aon for all 12 books (2026-10-06): `map.png` is the
-     original, and there is no `mapbak.png` (dropped: nothing overwrites `map.png` now). The owner's earlier Gemini versions are kept as
-     `map-gemini-0.png` in Books 1-6 and 12; use them as round 0 where they help.
-   - **Next, in a fresh session:** write `tools/map_labels.py` (EasyOCR drafts the label list
-     from `map-2k.png`; later matches a Gemini round's labels to it by position and lists what is
-     wrong, missing or added). Then Book 4: `map-2k.png`, the label list corrected by eye, the
-     first prompt for the owner.
+   `docs/reference/map-upscale.md`: the place names are erased and set again in Cabin, Gemini
+   repaints around them (the owner, in the free Gemini app), local tools check it and set again any
+   name Gemini garbled, Real-ESRGAN takes it to 4K WebP. The player shows it in sepia like the old
+   scan (owner, 2026-10-07).
+   - **Book 1 done** (2026-10-07): round 8 of eight, 12 names re-set; `map-4k.webp` is shown in the
+     player. Its folder keeps the rounds, the inputs, the label list, round 8's checks and
+     `compare.html`.
+   - Done: the player code. The importer writes `map: 'map-4k.webp'` when that file exists; the
+     modal opens fitted with ground round the map, zooms to 3x the fit, and `scanOf` caps its
+     canvas at 4096 px wide (the iPad's canvas limit). Not yet checked on the iPad.
+   - Next: Books 2-12, one at a time (label list, erase, letter, one or two Gemini rounds, finish).
+     Book 1's label list took the most work; a label editor page (drag, rotate and resize labels
+     over the map, saving `map-labels.json`) was offered to the owner to cut the per-label fixes,
+     not yet decided.
+   - Book 4 has trial files from the first experiments (`map-esrgan-*`, `map-gemini-esrgan-4k.webp`,
+     `map-repaint-2k-test1.png`) and the first `compare.html`. Delete them when Book 4 is done.
    - Owner to decide: delete the local Stable Diffusion models (`data/models/sd15`,
      `controlnet-tile-sd15`, 3.4 GB), no longer needed. EasyOCR's (`data/models/easyocr`) stay.
-   - Code, once, before the first book uses it: the importer writes `map: 'map-4k.webp'` when that
-     file exists, else `map.png`. The browser shows WebP as it is; nothing else changes for the
-     format. But `scanOf` in `main.js` repaints the map onto a canvas at twice its own size, which
-     at 3840 px is 7680x5820, past the iPad's canvas limit. Cap that canvas instead of doubling,
-     and raise `MAP_ZOOM`, which assumes a ~1000 px source.
-   - Same change: the map modal opens *fitted*, showing the whole map, with parchment around it
-     (owner, 2026-10-06). Today `s0` is the cover scale, so it opens cropped at the sides and
-     cannot zoom out to see it all. Make the fit scale the least allowed, and let the pan clamp
-     centre the map on any axis where it is smaller than the view. Check it on the iPad.
-   - Same change: cap zoom-in at 3x the fitted scale (owner, 2026-10-06): enough to read the
-     smallest labels and see one area of the map, no more. Replaces `MAP_ZOOM`'s 4x over cover.
-     This is why 4K and not 2K: 2K is about the iPad's screen width, so it goes soft past 1x.
    - Other Project Aon pictures (illustrations, plates) stay at their own resolution for now.
 
 ### Work for each book
