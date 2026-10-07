@@ -159,7 +159,9 @@ Left to the player whatever the engine does: whether to sleep (B2 41), and the p
    - Done: the player code. The importer writes `map: 'map-4k.webp'` when that file exists; the
      modal opens fitted with ground round the map, zooms to 3x the fit, and `scanOf` caps its
      canvas at 4096 px wide (the iPad's canvas limit). Not yet checked on the iPad.
-   - Next: Books 2-12, one at a time (label list, erase, letter, one or two Gemini rounds, finish).
+   - **Book 2 done** (2026-10-07): its printed map is the same file as Book 1's, so it uses a copy
+     of Book 1's `map-4k.webp`.
+   - Next: Books 3-12, one at a time (label list, erase, letter, one or two Gemini rounds, finish).
      Book 1's label list took the most work; the map editor (`tools/map-editor.html`, which edits
      the labels and runs every step of the procedure) is built as a prototype, not yet tried on a
      new book.
