@@ -165,8 +165,8 @@ Left to the player whatever the engine does: whether to sleep (B2 41), and the p
      not yet decided.
    - Book 4 has trial files from the first experiments (`map-esrgan-*`, `map-gemini-esrgan-4k.webp`,
      `map-repaint-2k-test1.png`) and the first `compare.html`. Delete them when Book 4 is done.
-   - Owner to decide: delete the local Stable Diffusion models (`data/models/sd15`,
-     `controlnet-tile-sd15`, 3.4 GB), no longer needed. EasyOCR's (`data/models/easyocr`) stay.
+   - The local Stable Diffusion models (`data/models/sd15`, `controlnet-tile-sd15`, 3.4 GB) were
+     deleted on 2026-10-07. EasyOCR's (`data/models/easyocr`) stay.
    - Other Project Aon pictures (illustrations, plates) stay at their own resolution for now.
 
 ### Work for each book
