@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Map editor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+@font-face { font-family: 'CabinEd'; src: url('fonts/Cabin.ttf'); font-weight: 400 700; }
+:root {
+  --bg: #1b1d20; --panel: #24272b; --line: #3a3e44; --text: #d8dadd; --dim: #8b9097;
+  --place: #ffb347; --other: #5fb0ff; --sel: #ff4d6d; --accent: #6bd18a;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+  font: 13px/1.35 system-ui, Segoe UI, sans-serif; overflow: hidden; }
+body { display: flex; flex-direction: column; }
+#app { display: grid; grid-template-columns: 250px 1fr 290px; flex: 1; min-height: 0; }
+#rail { display: flex; align-items: center; gap: 4px; padding: 5px 8px; background: var(--panel); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+#rail b { margin-right: 6px; }
+#bookpick { width: 16em; margin-right: 8px; }
+#steps { display: flex; gap: 3px; flex-wrap: wrap; }
+.step { display: flex; align-items: center; gap: 5px; padding: 3px 8px; }
+.step i { width: 9px; height: 9px; border-radius: 50%; background: #5a5f66; display: inline-block; }
+.step.done i { background: var(--accent); }
+.step.stale i { background: #e0b341; }
+.step.open { background: #3d5a80; border-color: #5b86b8; }
+.step small { color: var(--dim); }
+#job { color: #e0b341; margin-left: auto; }
+#panel { background: #202327; border-bottom: 1px solid var(--line); padding: 8px 12px; max-height: 42vh; overflow-y: auto; }
+#panel[hidden] { display: none; }
+#panel h4 { margin: 0 0 4px; font-size: 14px; }
+#panel p { margin: 3px 0 7px; max-width: 80ch; }
+#panel .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 6px 0; }
+#panel .note { color: var(--dim); font-size: 12px; }
+#panel a { color: var(--other); }
+#panel .thumb { height: 90px; border: 1px solid var(--line); border-radius: 4px; cursor: grab; }
+#panel input[type=number] { width: 64px; }
+#panel details { margin-top: 6px; }
+#panel pre { max-height: 200px; overflow: auto; background: #15171a; padding: 6px; margin: 4px 0 0; font-size: 12px; white-space: pre-wrap; }
+.bad { color: var(--sel); }
+.spin::after { content: ''; display: inline-block; width: 11px; height: 11px; margin-left: 6px; vertical-align: -2px;
+  border: 2px solid #fff4; border-top-color: #fff; border-radius: 50%; animation: sp .7s linear infinite; }
+@keyframes sp { to { transform: rotate(360deg); } }
+.busy button[data-run] { pointer-events: none; opacity: .55; }
+#dropmark { position: fixed; inset: 0; background: #6bd18a22; border: 3px dashed var(--accent); display: none; pointer-events: none; z-index: 9; }
+aside { background: var(--panel); display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+#left { border-right: 1px solid var(--line); }
+#right { border-left: 1px solid var(--line); overflow-y: auto; }
+.bar { padding: 8px; border-bottom: 1px solid var(--line); display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+button, select, input[type=text], input[type=number], textarea {
+  background: #2f3338; color: var(--text); border: 1px solid var(--line); border-radius: 4px;
+  padding: 4px 7px; font: inherit; }
+button { cursor: pointer; }
+button:hover { background: #3a4047; }
+button.on { background: #3d5a80; border-color: #5b86b8; }
+button.primary { background: #2f6b46; border-color: #3f8a5c; }
+input[type=text], textarea { width: 100%; }
+#filter { flex: 1; }
+#list { overflow-y: auto; flex: 1; }
+.item { padding: 3px 10px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  border-left: 3px solid transparent; }
+.item:hover { background: #2d3136; }
+.item.sel { background: #3a2a30; border-left-color: var(--sel); }
+.item .n { color: var(--dim); display: inline-block; width: 28px; }
+.item.place .n { color: var(--place); }
+#main { position: relative; min-width: 0; }
+canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+#status { position: absolute; left: 8px; bottom: 8px; background: #000a; padding: 3px 8px; border-radius: 4px; color: var(--dim); }
+#msg { position: absolute; right: 8px; top: 8px; background: #000b; padding: 4px 10px; border-radius: 4px; display: none; }
+#dirty { color: var(--sel); font-weight: 700; display: none; }
+.field { padding: 5px 10px; display: grid; grid-template-columns: 70px 1fr; gap: 6px; align-items: center; }
+.field label { color: var(--dim); }
+.field .pair { display: flex; gap: 4px; }
+.field input[type=number] { width: 100%; min-width: 0; }
+.hint { padding: 2px 10px 8px; color: var(--dim); font-size: 12px; }
+h3 { margin: 0; padding: 8px 10px; font-size: 13px; border-bottom: 1px solid var(--line); }
+kbd { background: #333; border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; }
+</style>
+</head>
+<body>
+<header id="rail"><b>Map editor</b><input id="bookpick" list="booklist" placeholder="Pick a book: number, title or code" autocomplete="off"><datalist id="booklist"></datalist><div id="steps"></div><span id="job"></span></header>
+<section id="panel" hidden></section>
+<div id="dropmark"></div>
+<div id="app">
+  <aside id="left">
+    <div class="bar">
+      <b id="title">Labels</b> <span id="dirty">&#9679; unsaved</span>
+    </div>
+    <div class="bar">
+      <select id="bg" title="Background image"></select>
+      <button id="fit" title="Fit the map to the window (F)">Fit</button>
+    </div>
+    <div class="bar">
+      <input id="filter" type="text" placeholder="Filter (text, where, number)">
+    </div>
+    <div id="list"></div>
+  </aside>
+  <div id="main">
+    <canvas id="cv"></canvas>
+    <div id="status"></div>
+    <div id="msg"></div>
+  </div>
+  <aside id="right">
+    <div class="bar">
+      <button id="save" class="primary" title="Ctrl+S">Save</button>
+      <button id="undo" title="Ctrl+Z">Undo</button>
+      <button id="redo" title="Ctrl+Y">Redo</button>
+      <button id="prev" class="on" title="Preview place-name lettering (P). Approximate: map_letter.py measures the scan's ink, which this cannot.">Preview</button>
+    </div>
+    <div class="bar">
+      <button id="add" title="Draw a new box (N)">New box</button>
+      <button id="clearreset" title="Untick reset on every label: do this before checking a new Gemini round">Clear reset</button>
+      <button id="del" title="Delete the selected label (Delete)">Delete</button>
+    </div>
+    <h3 id="ftitle">No label selected</h3>
+    <div id="form"></div>
+    <div class="hint">
+      Wheel zoom, drag empty map or hold <kbd>Space</kbd> to pan. Drag a box to move it; handles resize;
+      the round handle turns the lettering (<code>angle</code>, degrees clockwise, 0 = reading to the right).
+      Arrows nudge 1 px, with <kbd>Shift</kbd> 10. Preview is approximate: the real size and angle come from the scan's ink.
+      Fields left empty are removed on save.
+    </div>
+  </aside>
+</div>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const book = params.get('book') || '';
+const dir = `/data/projectaon/${book}/`;
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let base = { w: 0, h: 0 };  // the frame the boxes are in (map-2k.png's size); every background is drawn into it
+
+let labels = [];            // the working list (objects as loaded; unknown fields kept)
+let savedJson = '';
+let sel = -1;
+let img = null;
+let view = { x: 0, y: 0, s: 1 };   // screen = map * s + (x, y)
+let undoStack = [], redoStack = [];
+let mode = null;            // 'draw' while waiting for a new box drag
+let drag = null;
+let spaceDown = false;
+let preview = true;
+let hover = null;
+let hideAll = false;  // H held: boxes and preview off, to see the map underneath
+
+const cv = $('cv'), ctx = cv.getContext('2d');
+const snap = () => JSON.stringify(labels);
+
+function msg(t, ms = 2500) {
+  const m = $('msg'); m.textContent = t; m.style.display = 'block';
+  clearTimeout(msg.t); msg.t = setTimeout(() => m.style.display = 'none', ms);
+}
+function dirty() { $('dirty').style.display = snap() !== savedJson ? 'inline' : 'none'; }
+
+// ---------- undo ----------
+function push() { undoStack.push(snap()); if (undoStack.length > 200) undoStack.shift(); redoStack = []; }
+function restore(s) {
+  labels = JSON.parse(s);
+  if (sel >= labels.length) sel = labels.length - 1;
+  refresh();
+}
+function undo() { if (!undoStack.length) return; redoStack.push(snap()); restore(undoStack.pop()); }
+function redo() { if (!redoStack.length) return; undoStack.push(snap()); restore(redoStack.pop()); }
+
+// ---------- loading ----------
+async function exists(url) {
+  try { const r = await fetch(url, { method: 'HEAD' }); return r.ok; } catch (e) { return false; }
+}
+function loadImage(url) {
+  return new Promise((res, rej) => {
+    const im = new Image();
+    im.onload = () => res(im); im.onerror = () => rej(new Error('Could not load ' + url));
+    im.src = url;
+  });
+}
+async function loadImg(name) {
+  if (!name) { img = null; return; }
+  try { img = await loadImage(dir + name + '?' + Date.now()); } catch (e) { img = null; msg('Could not load ' + name); }
+}
+const imgDims = () => { const w = base.w || img.width; return [w, img.height * w / img.width]; };
+async function setBase() {  // the labels' frame: map-2k.png, or the original while there is no 2k yet
+  const name = S.files['map-2k.png'] ? 'map-2k.png' : S.files['map.png'] ? 'map.png' : null;
+  if (!name) { base = { w: 0, h: 0 }; return; }
+  const key = name + (S.files[name].mtime);
+  if (setBase.key === key) return;
+  try { const im = await loadImage(dir + name + '?v=' + S.files[name].mtime); base = { w: im.width, h: im.height }; setBase.key = key; } catch (e) {}
+}
+async function loadLabels() {
+  const r = await fetch(`/api/maplabels/${encodeURIComponent(book)}`, { cache: 'no-store' });
+  if (!r.ok) { labels = []; savedJson = snap(); sel = -1; return false; }
+  labels = await r.json();
+  savedJson = snap();
+  if (sel >= labels.length) sel = -1;
+  return true;
+}
+async function bookPicker() {  // every book folder, typeahead by number, title or code
+  let books = [];
+  try { books = await (await fetch('/api/map/books', { cache: 'no-store' })).json(); } catch (e) {}
+  const name = b => (b.number ? b.number + '. ' : '') + (b.title || b.code);
+  $('booklist').innerHTML = books.map(b => `<option value="${esc(b.code)}" label="${esc(name(b) + ' (' + b.stage + ')')}"></option>`).join('');
+  const cur = books.find(b => b.code === book);
+  const pick = $('bookpick');
+  if (cur) pick.placeholder = name(cur) + ' (' + cur.code + ')';
+  pick.onchange = () => {
+    const b = books.find(x => x.code === pick.value.trim());
+    if (b && b.code !== book) location.search = '?book=' + encodeURIComponent(b.code);
+  };
+  pick.onfocus = () => { pick.value = ''; };
+}
+async function init() {
+  await bookPicker();
+  if (!book) { savedJson = snap(); $('bookpick').focus(); msg('Pick a book to start', 8000); return; }
+  $('title').textContent = 'Labels, ' + book;
+  const have = await loadLabels();
+  if (!have) msg('No label list for ' + book + ' yet: step 2 drafts one', 8000);
+  await refreshState();
+  try { await document.fonts.load('600 40px CabinEd'); } catch (e) {}
+  const first = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].find(n => status(n) !== 'done') || 10;
+  await openStep(Number(params.get('step')) || first);
+  const want = params.get('bg');
+  if (want && imageFiles().includes(want)) await setBg(want);
+  fit(); refresh();
+}
+$('bg').onchange = async () => { await loadImg($('bg').value); fit(); };
+
+// ---------- view ----------
+function resize() {
+  const r = cv.getBoundingClientRect(), d = devicePixelRatio || 1;
+  cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d);
+  draw();
+}
+function fit() {
+  const r = cv.getBoundingClientRect();
+  if (!img || !r.width) return;
+  const [W, H] = imgDims();
+  view.s = Math.min(r.width / W, r.height / H);
+  view.x = (r.width - W * view.s) / 2; view.y = (r.height - H * view.s) / 2;
+  draw();
+}
+$('fit').onclick = fit;
+const toMap = (sx, sy) => [(sx - view.x) / view.s, (sy - view.y) / view.s];
+function centreOn(i) {
+  const l = labels[i], r = cv.getBoundingClientRect();
+  const cx = (l.box[0] + l.box[2]) / 2, cy = (l.box[1] + l.box[3]) / 2;
+  const w = l.box[2] - l.box[0], h = l.box[3] - l.box[1];
+  const s = Math.max(view.s, Math.min(r.width / (w * 3), r.height / (h * 3), 4));
+  view.s = s; view.x = r.width / 2 - cx * s; view.y = r.height / 2 - cy * s;
+}
+cv.addEventListener('wheel', e => {
+  e.preventDefault();
+  const r = cv.getBoundingClientRect(), sx = e.clientX - r.left, sy = e.clientY - r.top;
+  const [mx, my] = toMap(sx, sy);
+  const f = Math.exp(-e.deltaY * 0.0015);
+  view.s = Math.max(0.05, Math.min(30, view.s * f));
+  view.x = sx - mx * view.s; view.y = sy - my * view.s;
+  draw();
+}, { passive: false });
+
+// ---------- geometry ----------
+const centre = l => [(l.box[0] + l.box[2]) / 2, (l.box[1] + l.box[3]) / 2];
+// reading direction in radians (y down), as map_letter.py: given angle, else 0 (or along a tall box);
+// "upwards"/"downwards" in `where` flips it to point that way
+function rotHandle(l) {
+  const [cx, cy] = centre(l);
+  const a = textAngle(l);
+  const half = Math.hypot(l.box[2] - l.box[0], l.box[3] - l.box[1]) / 2;
+  const off = Math.max(half * 0.55, 12 / view.s) + 22 / view.s;
+  return [cx + Math.cos(a) * off, cy + Math.sin(a) * off];
+}
+function handles(l) {
+  const [x0, y0, x1, y1] = l.box, mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+  return [
+    ['nw', x0, y0], ['n', mx, y0], ['ne', x1, y0], ['e', x1, my],
+    ['se', x1, y1], ['s', mx, y1], ['sw', x0, y1], ['w', x0, my],
+  ];
+}
+const HS = 6; // handle half-size, screen px
+function hit(sx, sy) {
+  if (sel >= 0) {
+    const l = labels[sel];
+    const [rx, ry] = rotHandle(l);
+    if (Math.hypot(rx * view.s + view.x - sx, ry * view.s + view.y - sy) <= 9) return { kind: 'rot' };
+    for (const [n, x, y] of handles(l))
+      if (Math.abs(x * view.s + view.x - sx) <= HS + 2 && Math.abs(y * view.s + view.y - sy) <= HS + 2) return { kind: 'size', n };
+  }
+  const [mx, my] = toMap(sx, sy);
+  let best = -1, area = Infinity;
+  labels.forEach((l, i) => {
+    if (!visible(i)) return;
+    const [x0, y0, x1, y1] = l.box;
+    if (mx >= x0 && mx <= x1 && my >= y0 && my <= y1) {
+      const a = (x1 - x0) * (y1 - y0);
+      if (a < area) { area = a; best = i; }
+    }
+  });
+  return best >= 0 ? { kind: 'box', i: best } : { kind: 'none' };
+}
+
+// ---------- drawing ----------
+// The preview follows map_letter.py's letter() and render(): the ink measure (map_measure.py writes
+// it as "ink") gives centre, angle, length and thickness; the hand fields override as there.
+const FILL = 0.92, TRACK = 0.05, BOLD = 0.025, SCALE = 1.3, SMALL = 30;
+function stale(l) { return l.ink && l.ink.box.some((v, j) => v !== l.box[j]); }
+function flip(a, where) {  // map_letter.py geometry(): "upwards"/"downwards" pick the reading direction
+  let dx = Math.cos(a), dy = Math.sin(a);
+  if (/upwards/.test(where)) { if (dy > 0) { dx = -dx; dy = -dy; } }
+  else if (/downwards/.test(where)) { if (dy < 0) { dx = -dx; dy = -dy; } }
+  else if (dx < 0) { dx = -dx; dy = -dy; }
+  return Math.atan2(dy, dx);
+}
+function letterGeom(l) {
+  const [x0, y0, x1, y1] = l.box, w = x1 - x0, h = y1 - y0;
+  let at, ang, length, thick;
+  if (l.ink) { at = l.ink.at; ang = l.ink.angle * Math.PI / 180; length = l.ink.length; thick = l.ink.thick; }
+  else {  // not measured yet: a guess from the box
+    at = [(x0 + x1) / 2, (y0 + y1) / 2];
+    ang = h > w * 1.6 ? -Math.PI / 2 : 0;
+    const horiz = Math.abs(Math.cos(ang)) >= 0.5;
+    length = (horiz ? w : h) * FILL; thick = (horiz ? h : w) * 0.8;
+  }
+  if (typeof l.angle === 'number') ang = flip(l.angle * Math.PI / 180, l.where || '');  // the ink's length along it is kept: approximate
+  const n = l.nudge || [0, 0];
+  const centre = [at[0] + n[0], at[1] + n[1]];
+  const stacked = !!(l.lines && l.lines.length);
+  if (stacked) { ang = (l.angle || 0) * Math.PI / 180; length = w / FILL * 0.95; thick = h; }
+  if (l.height) { thick = l.height / 1.25; if (!l.spread) length = 1e6; }
+  return { centre, ang, length, thick, stacked };
+}
+function textAngle(l) { return letterGeom(l).ang; }
+function block(lines, size) {  // render()'s block(): longest line, block height, line height
+  ctx.font = `600 ${size}px CabinEd, sans-serif`;
+  ctx.letterSpacing = '0px';
+  const m = lines.map(t => ctx.measureText(t));
+  const asc = m[0].fontBoundingBoxAscent, own = asc + m[0].fontBoundingBoxDescent;
+  const wid = Math.max(...m.map((x, i) => x.actualBoundingBoxLeft + x.actualBoundingBoxRight + TRACK * size * (lines[i].length - 1)));
+  return { m, asc, own, wid, top: asc - m[0].actualBoundingBoxAscent, bot: asc + m[m.length - 1].actualBoundingBoxDescent };
+}
+function setText(lines, centre, ang, length, thick, boost, leading) {
+  const b0 = block(lines, 100), lh0 = b0.own * leading;
+  const h0 = lh0 * (lines.length - 1) + (b0.bot - b0.top);
+  let size = 100 * Math.min(length * FILL / b0.wid, thick * 1.25 / h0);
+  if (boost == null) boost = thick < SMALL ? SCALE : 1;
+  size = Math.max(Math.floor(size * boost), 6);
+  const b = block(lines, size), lh = b.own * leading;
+  ctx.save();
+  ctx.translate(centre[0], centre[1]); ctx.rotate(ang);
+  ctx.letterSpacing = (TRACK * size) + 'px';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = ctx.strokeStyle = 'rgba(38,30,24,.92)';
+  ctx.lineWidth = 2 * Math.max(1, Math.round(size * BOLD)); ctx.lineJoin = 'round';
+  const top = -(lh * (lines.length - 1) + b.own) / 2;
+  lines.forEach((t, i) => {
+    const x = b.m[i], tw = x.actualBoundingBoxLeft + x.actualBoundingBoxRight + TRACK * size * (t.length - 1);
+    const px = -tw / 2 + x.actualBoundingBoxLeft, py = top + i * lh + b.asc;
+    ctx.strokeText(t, px, py); ctx.fillText(t, px, py);
+  });
+  ctx.restore();
+}
+function drawText(l) {
+  const g = letterGeom(l);
+  const leading = l.leading || 1;
+  if (l.spread) {  // the scale's numbers, each on its own
+    const words = l.text.split(/\s+/);
+    const step = g.length / Math.max(words.length - 1, 1) * 0.94;
+    words.forEach((w, i) => {
+      const o = (i - (words.length - 1) / 2) * step;
+      setText([w], [g.centre[0] + Math.cos(g.ang) * o, g.centre[1] + Math.sin(g.ang) * o], g.ang, 1e6, g.thick, null, 1);
+    });
+  } else setText(g.stacked ? l.lines : [l.text], g.centre, g.ang, g.length, g.thick, g.stacked ? 1 : null, leading);
+  if (stale(l) || !l.ink) {  // a box moved since measuring, or never measured: the preview is a guess
+    ctx.save(); ctx.setLineDash([4 / view.s, 4 / view.s]); ctx.strokeStyle = '#ff4d6d'; ctx.lineWidth = 1.5 / view.s;
+    ctx.strokeRect(l.box[0] - 3, l.box[1] - 3, l.box[2] - l.box[0] + 6, l.box[3] - l.box[1] + 6); ctx.restore();
+  }
+}
+function visible(i) {
+  const q = $('filter').value.trim().toLowerCase();
+  if (!q) return true;
+  const l = labels[i];
+  return String(i).startsWith(q) || (l.text || '').toLowerCase().includes(q) || (l.where || '').toLowerCase().includes(q);
+}
+function draw() {
+  const d = devicePixelRatio || 1;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = '#101113'; ctx.fillRect(0, 0, cv.width, cv.height);
+  ctx.setTransform(d * view.s, 0, 0, d * view.s, d * view.x, d * view.y);
+  if (img) { const [W, H] = imgDims(); ctx.imageSmoothingEnabled = view.s * W / img.width < 3; ctx.drawImage(img, 0, 0, W, H); }
+  if (hideAll) { $('status').textContent = `${Math.round(view.s * 100)}%  (H held: boxes hidden)`; return; }
+  if (preview) labels.forEach((l, i) => { if ((l.leave || l.fix) && visible(i)) drawText(l); });
+  const lw = 1.5 / view.s;
+  labels.forEach((l, i) => {
+    if (!visible(i) || i === sel) return;
+    ctx.strokeStyle = l.leave ? '#ffb347' : '#5fb0ff';
+    ctx.globalAlpha = 0.9; ctx.lineWidth = lw;
+    ctx.strokeRect(l.box[0], l.box[1], l.box[2] - l.box[0], l.box[3] - l.box[1]);
+    ctx.globalAlpha = 1;
+  });
+  if (sel >= 0 && labels[sel]) {
+    const l = labels[sel];
+    ctx.setLineDash([]);
+    (l.keep || []).forEach(k => {
+      ctx.strokeStyle = '#6bd18a'; ctx.setLineDash([4 / view.s, 3 / view.s]); ctx.lineWidth = lw;
+      ctx.strokeRect(k[0], k[1], k[2] - k[0], k[3] - k[1]);
+    });
+    ctx.setLineDash([]);
+    ctx.strokeStyle = '#ff4d6d'; ctx.lineWidth = 2.5 / view.s;
+    ctx.strokeRect(l.box[0], l.box[1], l.box[2] - l.box[0], l.box[3] - l.box[1]);
+    // screen-sized handles
+    const hs = HS / view.s;
+    ctx.fillStyle = '#fff'; ctx.strokeStyle = '#ff4d6d'; ctx.lineWidth = 1.5 / view.s;
+    for (const [, x, y] of handles(l)) { ctx.fillRect(x - hs, y - hs, 2 * hs, 2 * hs); ctx.strokeRect(x - hs, y - hs, 2 * hs, 2 * hs); }
+    const [cx, cy] = centre(l), [rx, ry] = rotHandle(l);
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(rx, ry); ctx.strokeStyle = '#ff4d6d'; ctx.stroke();
+    ctx.beginPath(); ctx.arc(rx, ry, 7 / view.s, 0, 7); ctx.fillStyle = '#ff4d6d'; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.stroke();
+  }
+  if (drag && drag.kind === 'new' && drag.box) {
+    const b = drag.box;
+    ctx.strokeStyle = '#6bd18a'; ctx.lineWidth = 2 / view.s; ctx.strokeRect(b[0], b[1], b[2] - b[0], b[3] - b[1]);
+  }
+  const s = sel >= 0 && labels[sel] ? `  #${sel} box ${labels[sel].box.join(', ')}` : '';
+  $('status').textContent = `${Math.round(view.s * 100)}%${s}`;
+}
+
+// ---------- list and form ----------
+function renderList() {
+  const el = $('list');
+  el.innerHTML = '';
+  labels.forEach((l, i) => {
+    if (!visible(i)) return;
+    const d = document.createElement('div');
+    d.className = 'item' + (l.leave ? ' place' : '') + (i === sel ? ' sel' : '');
+    d.dataset.i = i;
+    const n = document.createElement('span'); n.className = 'n'; n.textContent = i;
+    d.append(n, document.createTextNode((l.lines && l.lines.length ? l.lines.join(' / ') : l.text) || '(empty)'));
+    d.onclick = () => select(i, true);
+    el.appendChild(d);
+  });
+}
+function select(i, centre_) {
+  sel = i;
+  if (centre_ && i >= 0) centreOn(i);
+  renderList(); renderForm(); draw();
+  const it = $('list').querySelector('.item.sel'); if (it) it.scrollIntoView({ block: 'nearest' });
+}
+$('filter').oninput = () => { renderList(); draw(); };
+
+const TEXTS = ['text', 'where'];
+const BOOLS = [['small', true], ['leave', true], ['ok', true], ['clip', false], ['fix', false], ['reset', false], ['spread', false]];
+const TIPS = {  // what each field does in the map tools (docs/reference/map-upscale.md)
+  text: 'The wording exactly as printed on the map.',
+  where: 'Where the label sits, in words; goes into the Gemini prompt. "upwards" or "downwards" in it sets which way a slanted name reads.',
+  small: 'Hand-lettered name too small for OCR: the check lists it for a look by eye instead of comparing its reading.',
+  leave: 'Before Gemini. A place name: erased from the scan and set again in Cabin before Gemini sees the map. Leave off for the title, banner, shield captions and key, which Gemini copies as drawn.',
+  ok: 'Wording and box checked by eye. A marker only: no tool acts on it.',
+  clip: 'Erase the whole box, not just the letter shapes. For a name on flat ground where letters touch a line and leave fragments.',
+  fix: 'After a Gemini round: for a label kept in its printed lettering (title, caption, key) that Gemini misspelled. Its lettering is cleared and the label set in Cabin at 4K. Stays ticked for later rounds.',
+  reset: 'After a Gemini round: a place name Gemini garbled, to be set again at 4K by map_letter.py (replaces --only). Applies to the round just checked: untick all before checking a new round.',
+  spread: 'The scale bar’s numbers: each word set on its own, evenly from one end of the box to the other.',
+  lines: 'Split the name over lines as printed, one per row. Stacked names are set level (or at angle) and fitted to the box.',
+  'line spacing': 'Spacing between stacked lines (leading). 1 is the font’s own; lower is tighter.',
+  height: 'Type height outright, in map-2k px. Otherwise it is measured from the scan’s ink.',
+  angle: 'Reading direction in degrees, clockwise, 0 = left to right. Otherwise measured from the scan’s ink.',
+  'nudge x,y': 'Move the set type by this many map-2k px, off something the larger type runs into.',
+  'box x0,y0': 'Top-left corner of the label’s box, in map-2k px.',
+  'box x1,y1': 'Bottom-right corner of the label’s box, in map-2k px.',
+  keep: 'Areas inside the box the eraser must not touch (Book 1: a ship).',
+};
+let focusPushed = false;
+function setField(key, val) {  // val === undefined removes the key
+  const l = labels[sel];
+  if (val === undefined) delete l[key]; else l[key] = val;
+}
+function renderForm() {
+  const f = $('form');
+  if (sel < 0 || !labels[sel]) { f.innerHTML = ''; $('ftitle').textContent = 'No label selected'; return; }
+  const l = labels[sel];
+  $('ftitle').textContent = 'Label ' + sel;
+  f.innerHTML = '';
+  const row = (name, el) => {
+    const d = document.createElement('div'); d.className = 'field';
+    const lb = document.createElement('label'); lb.textContent = name;
+    if (TIPS[name]) d.title = TIPS[name];
+    d.append(lb, el); f.appendChild(d);
+  };
+  const guard = el => {  // one undo step per focus session on a field
+    el.addEventListener('focus', () => { focusPushed = false; });
+    return el;
+  };
+  const change = fn => () => { if (!focusPushed) { push(); focusPushed = true; } fn(); afterEdit(); };
+  for (const k of TEXTS) {
+    const i = guard(document.createElement('input')); i.type = 'text'; i.value = l[k] ?? '';
+    i.oninput = change(() => setField(k, i.value));
+    row(k, i);
+  }
+  for (const [k, always] of BOOLS) {
+    const c = document.createElement('input'); c.type = 'checkbox'; c.checked = !!l[k];
+    c.onchange = () => { push(); setField(k, c.checked ? true : (always ? false : undefined)); afterEdit(); };
+    row(k, c);
+  }
+  const ta = guard(document.createElement('textarea')); ta.rows = 3; ta.value = (l.lines || []).join('\n');
+  ta.placeholder = 'one printed line each; empty = single line';
+  ta.oninput = change(() => { const v = ta.value.split('\n').filter(s => s.length); setField('lines', v.length ? v : undefined); });
+  row('lines', ta);
+  const num = (key, step) => {
+    const i = guard(document.createElement('input')); i.type = 'number'; i.step = step; i.value = l[key] ?? '';
+    i.oninput = change(() => setField(key, i.value === '' ? undefined : Number(i.value)));
+    return i;
+  };
+  row('height', num('height', 1));
+  const ln = num('leading', 0.05); ln.min = 0.3; ln.max = 3; ln.placeholder = '1';
+  const lr = guard(document.createElement('input')); lr.type = 'range'; lr.min = 0.3; lr.max = 2; lr.step = 0.01; lr.value = l.leading ?? 1;
+  ln.addEventListener('input', () => { lr.value = ln.value || 1; });
+  lr.oninput = change(() => { const v = Number(lr.value); ln.value = v === 1 ? '' : v; setField('leading', v === 1 ? undefined : v); });
+  lr.onchange = () => lr.blur();  // let go of it, so Ctrl+Z and the arrow keys act on the map again
+  const lp = document.createElement('div'); lp.className = 'pair'; lp.append(lr, ln);
+  row('line spacing', lp);
+  row('angle', num('angle', 0.5));
+  const nx = guard(document.createElement('input')), ny = guard(document.createElement('input'));
+  [nx, ny].forEach(i => { i.type = 'number'; i.step = 1; });
+  nx.value = l.nudge ? l.nudge[0] : ''; ny.value = l.nudge ? l.nudge[1] : '';
+  const nchange = change(() => {
+    if (nx.value === '' && ny.value === '') setField('nudge', undefined);
+    else setField('nudge', [Number(nx.value || 0), Number(ny.value || 0)]);
+  });
+  nx.oninput = ny.oninput = nchange;
+  const pair = document.createElement('div'); pair.className = 'pair'; pair.append(nx, ny);
+  row('nudge x,y', pair);
+  const bx = [0, 1, 2, 3].map(j => {
+    const i = guard(document.createElement('input')); i.type = 'number'; i.step = 1; i.value = l.box[j];
+    i.oninput = change(() => { l.box[j] = Number(i.value) || 0; });
+    return i;
+  });
+  const p1 = document.createElement('div'); p1.className = 'pair'; p1.append(bx[0], bx[1]);
+  const p2 = document.createElement('div'); p2.className = 'pair'; p2.append(bx[2], bx[3]);
+  row('box x0,y0', p1); row('box x1,y1', p2);
+  if (l.keep) {
+    const k = document.createElement('div'); k.style.color = 'var(--dim)'; k.textContent = l.keep.length + ' keep box(es), shown dashed green; kept as is';
+    row('keep', k);
+  }
+  const others = Object.keys(l).filter(k => ![...TEXTS, ...BOOLS.map(b => b[0]), 'lines', 'leading', 'height', 'angle', 'nudge', 'box', 'keep'].includes(k));
+  if (others.length) { const k = document.createElement('div'); k.style.color = 'var(--dim)'; k.textContent = others.join(', ') + ' (kept as is)'; row('other', k); }
+}
+// after a form edit: redraw and refresh list text, without rebuilding the form under the cursor
+function afterEdit() { renderListKeep(); draw(); dirty(); }
+function renderListKeep() {
+  const it = $('list').querySelector(`.item[data-i="${sel}"]`);
+  if (it) { const l = labels[sel]; it.lastChild.textContent = (l.lines && l.lines.length ? l.lines.join(' / ') : l.text) || '(empty)'; it.classList.toggle('place', !!l.leave); it.firstChild.style.color = ''; }
+}
+function refresh() { renderList(); renderForm(); draw(); dirty(); }
+
+// ---------- mouse ----------
+const clampBox = b => { b[0] = Math.round(b[0]); b[1] = Math.round(b[1]); b[2] = Math.round(b[2]); b[3] = Math.round(b[3]); };
+cv.addEventListener('mousedown', e => {
+  if (e.button !== 0 && e.button !== 1) return;
+  const r = cv.getBoundingClientRect(), sx = e.clientX - r.left, sy = e.clientY - r.top;
+  const [mx, my] = toMap(sx, sy);
+  if (mode === 'draw') { drag = { kind: 'new', x: mx, y: my, box: null }; return; }
+  if (e.button === 1 || spaceDown) { drag = { kind: 'pan', sx, sy, vx: view.x, vy: view.y }; cv.style.cursor = 'grabbing'; return; }
+  const h = hit(sx, sy);
+  if (h.kind === 'rot') { push(); drag = { kind: 'rot' }; }
+  else if (h.kind === 'size') { push(); drag = { kind: 'size', n: h.n }; }
+  else if (h.kind === 'box') {
+    if (h.i !== sel) select(h.i, false);
+    drag = { kind: 'move', mx, my, orig: labels[sel].box.slice(), pushed: false };
+  } else { drag = { kind: 'pan', sx, sy, vx: view.x, vy: view.y, click: true }; cv.style.cursor = 'grabbing'; }
+});
+window.addEventListener('mousemove', e => {
+  const r = cv.getBoundingClientRect(), sx = e.clientX - r.left, sy = e.clientY - r.top;
+  const [mx, my] = toMap(sx, sy);
+  if (!drag) {
+    if (e.target === cv) {
+      const h = mode === 'draw' ? { kind: 'draw' } : hit(sx, sy);
+      cv.style.cursor = spaceDown ? 'grab' : h.kind === 'draw' ? 'crosshair' : h.kind === 'rot' ? 'alias'
+        : h.kind === 'size' ? (h.n.length === 2 ? (h.n === 'nw' || h.n === 'se' ? 'nwse-resize' : 'nesw-resize') : (h.n === 'n' || h.n === 's' ? 'ns-resize' : 'ew-resize'))
+        : h.kind === 'box' ? 'move' : 'grab';
+    }
+    return;
+  }
+  if (drag.kind === 'pan') {
+    const dx = sx - drag.sx, dy = sy - drag.sy;
+    if (Math.abs(dx) + Math.abs(dy) > 3) drag.moved = true;
+    view.x = drag.vx + dx; view.y = drag.vy + dy; draw();
+  } else if (drag.kind === 'new') {
+    drag.box = [Math.min(drag.x, mx), Math.min(drag.y, my), Math.max(drag.x, mx), Math.max(drag.y, my)]; draw();
+  } else if (drag.kind === 'move') {
+    const dx = mx - drag.mx, dy = my - drag.my;
+    if (!drag.pushed) { if (Math.hypot(dx, dy) * view.s < 3) return; push(); drag.pushed = true; }
+    const l = labels[sel];
+    l.box = [drag.orig[0] + dx, drag.orig[1] + dy, drag.orig[2] + dx, drag.orig[3] + dy]; clampBox(l.box);
+    boxChanged();
+  } else if (drag.kind === 'size') {
+    const b = labels[sel].box, n = drag.n;
+    if (n.includes('w')) b[0] = Math.min(mx, b[2] - 2);
+    if (n.includes('e')) b[2] = Math.max(mx, b[0] + 2);
+    if (n.includes('n')) b[1] = Math.min(my, b[3] - 2);
+    if (n.includes('s')) b[3] = Math.max(my, b[1] + 2);
+    clampBox(b); boxChanged();
+  } else if (drag.kind === 'rot') {
+    const l = labels[sel], [cx, cy] = centre(l);
+    let a = Math.atan2(my - cy, mx - cx) * 180 / Math.PI;
+    a = e.shiftKey ? Math.round(a / 15) * 15 : Math.round(a * 2) / 2;
+    l.angle = a; renderFormValues(); draw(); dirty();
+  }
+});
+window.addEventListener('mouseup', e => {
+  if (!drag) return;
+  const d = drag; drag = null; cv.style.cursor = 'grab';
+  if (d.kind === 'new') {
+    mode = null; $('add').classList.remove('on');
+    if (d.box && d.box[2] - d.box[0] > 3 && d.box[3] - d.box[1] > 3) {
+      push();
+      const b = d.box.map(Math.round);
+      labels.push({ text: '', box: b, where: '', small: false, ok: true, leave: true });
+      sel = labels.length - 1;
+      refresh();
+      msg('New label added: set its text');
+      const t = $('form').querySelector('input[type=text]'); if (t) t.focus();
+    } else draw();
+  } else if (d.kind === 'pan' && d.click && !d.moved) select(-1, false);
+  dirty();
+});
+function boxChanged() { renderFormValues(); draw(); dirty(); }
+function renderFormValues() {  // update numeric inputs in place
+  if (sel < 0) return;
+  const l = labels[sel], inputs = $('form').querySelectorAll('input[type=number]');
+  // order: height, angle, nudge x, nudge y, box x0,y0,x1,y1
+  if (inputs.length >= 8) {
+    inputs[1].value = l.angle ?? '';
+    l.box.forEach((v, j) => { inputs[4 + j].value = v; });
+  }
+}
+
+// ---------- keys ----------
+function typing() { const a = document.activeElement; return a && (a.tagName === 'INPUT' && a.type !== 'checkbox' || a.tagName === 'TEXTAREA'); }
+window.addEventListener('keydown', e => {
+  if (e.key === ' ' && !typing()) { spaceDown = true; e.preventDefault(); return; }
+  const ctrl = e.ctrlKey || e.metaKey;
+  if (ctrl && e.key.toLowerCase() === 's') { e.preventDefault(); save(); return; }
+  if (ctrl && e.key.toLowerCase() === 'z' && !e.shiftKey && !typing()) { e.preventDefault(); undo(); return; }
+  if (ctrl && (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey)) && !typing()) { e.preventDefault(); redo(); return; }
+  if (typing()) { if (e.key === 'Escape') document.activeElement.blur(); return; }
+  if (e.key === 'Escape') { mode = null; $('add').classList.remove('on'); return; }
+  if (e.key.toLowerCase() === 'n') { startDraw(); e.preventDefault(); }
+  else if (e.key.toLowerCase() === 'f') fit();
+  else if (e.key.toLowerCase() === 'p') togglePreview();
+  else if (e.key.toLowerCase() === 'h') { if (!hideAll) { hideAll = true; draw(); } }
+  else if (e.key === 'Delete') del();
+  else if (e.key.startsWith('Arrow') && sel >= 0) {
+    e.preventDefault();
+    const s = e.shiftKey ? 10 : 1, b = labels[sel].box;
+    const dx = e.key === 'ArrowLeft' ? -s : e.key === 'ArrowRight' ? s : 0;
+    const dy = e.key === 'ArrowUp' ? -s : e.key === 'ArrowDown' ? s : 0;
+    if (!e.repeat) push();
+    labels[sel].box = [b[0] + dx, b[1] + dy, b[2] + dx, b[3] + dy];
+    boxChanged();
+  }
+});
+window.addEventListener('keyup', e => {
+  if (e.key === ' ') spaceDown = false;
+  if (e.key.toLowerCase() === 'h' && hideAll) { hideAll = false; draw(); }
+});
+window.addEventListener('blur', () => { if (hideAll) { hideAll = false; draw(); } });
+
+// ---------- actions ----------
+function startDraw() { mode = 'draw'; $('add').classList.add('on'); msg('Drag on the map to draw the new box (Esc cancels)'); }
+function togglePreview() { preview = !preview; $('prev').classList.toggle('on', preview); draw(); }
+function del() {
+  if (sel < 0) return;
+  if (!confirm(`Delete label ${sel}?`)) return;
+  push(); labels.splice(sel, 1); sel = -1; refresh();
+}
+async function save() {
+  const body = snap();
+  const r = await fetch(`/api/maplabels/${encodeURIComponent(book)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
+  const j = await r.json().catch(() => ({}));
+  if (r.ok) { savedJson = body; dirty(); msg(`Saved ${labels.length} labels (previous kept as map-labels.json.bak)`); await refreshState(); renderPanel(); return true; }
+  msg('Save failed: ' + (j.error || r.status), 6000);
+  return false;
+}
+$('clearreset').onclick = clearReset;
+function clearReset() {
+  const n = labels.filter(l => l.reset).length;
+  if (!n) { msg('No label is marked reset'); return; }
+  push(); labels.forEach(l => { delete l.reset; }); renderForm(); afterEdit();
+  msg(`Cleared reset on ${n} label(s)`);
+}
+$('add').onclick = startDraw; $('del').onclick = del; $('save').onclick = save;
+$('undo').onclick = undo; $('redo').onclick = redo; $('prev').onclick = togglePreview;
+// ---------- the steps (docs/reference/map-upscale.md) ----------
+let S = { files: {}, rounds: [], running: null, err: '' };   // /api/map/<book>/state
+let curStep = 0, curRound = 1, roundSet = false;
+let busy = false;
+const logs = {};            // key -> {code, out}
+let logOpen = false, received = null;
+
+async function refreshState() {
+  try {
+    const r = await fetch(`/api/map/${encodeURIComponent(book)}/state`, { cache: 'no-store' });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || r.status);
+    S = { ...j, err: '' };
+  } catch (e) { S = { files: {}, rounds: [], running: null, err: String(e.message || e) }; }
+  await loadLetteredFrom();
+  await setBase();
+  renderRail();
+  $('job').textContent = S.err ? 'map steps unavailable: ' + S.err : S.running ? 'running: ' + S.running : '';
+}
+const mt = k => (S.files[k] ? S.files[k].mtime : null);
+const latest = () => S.rounds.length ? Math.max(...S.rounds) : 0;
+const nextFree = () => latest() + 1;
+const roundFile = n => Object.keys(S.files).find(k => new RegExp(`^map-gemini-${n}\\.(png|jpg|webp)$`).test(k));
+const imageFiles = () => Object.keys(S.files).filter(k => /\.(png|jpe?g|webp)$/i.test(k));
+function activeRound() { return S.rounds.includes(curRound) ? curRound : latest(); }
+const lettered = () => labels.filter(l => l.leave || l.fix);
+
+// done / todo / stale, from the files' times and the label list
+let letteredFrom = null;  // map-labels-lettered.json: the list step 6 last ran on
+const IDLE = new Set(['ok', 'small', 'reset', 'ink']);
+function letterSig(list) { return JSON.stringify(list.map(l => Object.keys(l).filter(k => !IDLE.has(k)).sort().map(k => [k, l[k]]))); }
+async function loadLetteredFrom() {
+  letteredFrom = null;
+  if (!mt('map-labels-lettered.json')) return;
+  try { letteredFrom = await (await fetch(dir + 'map-labels-lettered.json?t=' + mt('map-labels-lettered.json'), { cache: 'no-store' })).json(); } catch (e) {}
+}
+function status(n) {
+  const lab = mt('map-labels.json'), lt = mt('map-2k-lettered.jpg'), er = mt('map-2k-erased.jpg');
+  const rd = activeRound(), rf = rd && roundFile(rd), ck = rd && mt(`map-check-${rd}/aligned.png`);
+  switch (n) {
+    case 1: return !mt('map-2k.png') ? 'todo' : mt('map.png') > mt('map-2k.png') ? 'stale' : 'done';
+    case 2: return lab ? 'done' : 'todo';
+    case 3: return labels.length && labels.every(l => l.ok) ? 'done' : 'todo';
+    case 4: {
+      const ink = lettered().filter(l => l.ink);
+      if (!ink.length) return 'todo';
+      return ink.some(stale) ? 'stale' : 'done';
+    }
+    case 5: return lt ? 'done' : 'todo';
+    case 6: {
+      if (!lt || !er) return 'todo';
+      // out of date only if a field erase or letter reads has changed since (not ok, small, reset, ink)
+      const changed = letteredFrom ? letterSig(labels) !== letterSig(letteredFrom) : er < lab;
+      return changed || lt < er || er < mt('map-2k.png') ? 'stale' : 'done';
+    }
+    case 7: return !rd ? 'todo' : mt(rf) < lt ? 'stale' : 'done';
+    case 8: return !ck ? 'todo' : ck < mt(rf) ? 'stale' : 'done';
+    case 9: return !mt('map-4k.webp') || !rd ? 'todo' : mt('map-4k.webp') < mt(rf) || (mt(`map-check-${rd}/H.json`) || 0) > mt('map-4k.webp') ? 'stale' : 'done';
+    case 10: return !S.book ? 'todo' : S.book < mt('map-4k.webp') ? 'stale' : 'done';
+  }
+}
+
+const STEPS = [
+  { n: 1, short: 'Upscale', name: 'Upscale scan', run: 'upscale', bg: () => ['map.png'],
+    text: 'Real-ESRGAN makes map-2k.png, 2048 px wide, from the original map.png in the book\'s folder. About 10 seconds on the GPU. Everything after this works on map-2k.png.' },
+  { n: 2, short: 'Draft', name: 'Draft labels (OCR)', bg: () => ['map-2k.png'],
+    text: 'EasyOCR reads boxes off map-2k.png as a first label list. It is only a start (on Book 1 most came back as a stray digit) and can take a minute or more. If a list already exists it is replaced, and the old one is kept as map-labels.json.bak.' },
+  { n: 3, short: 'Labels', name: 'Labels: wording and boxes (by hand)', bg: () => ['map-2k.png'],
+    text: 'Correct every label\'s wording and box by eye, and add what OCR missed (New box, N). Tick leave on every place name; the title, banner, shield captions and key are left as drawn, since Gemini copies those right. Tick ok as each is checked. Save with Ctrl+S.' },
+  { n: 4, short: 'Measure', name: 'Measure', run: 'measure', bg: () => ['map-2k.png'],
+    text: 'Reads the scan\'s ink in each place name\'s box (centre, angle, length, thickness), so the preview starts from what the lettering step will really set. Run it again after moving boxes: a red dashed outline marks a label whose box moved since.' },
+  { n: 5, short: 'Lettering', name: 'Lettering: adjust over the original (by hand)', bg: () => ['map-2k.png'], preview: true,
+    text: 'The preview sets each place name in type over the original scan. Fix what is off with angle, nudge, height, lines, line spacing, spread (Book 1 needed about 15 fixes). Hold H to see the map under the boxes. Save, then measure again if you moved a box.' },
+  { n: 6, short: 'Erase + letter', name: 'Erase and letter', bg: () => ['map-2k-lettered.jpg', 'map-2k-erased.jpg', 'map-2k.png'],
+    text: 'Erase takes the place names out of the scan; Letter sets them again in Cabin. The result, map-2k-lettered.jpg, is the picture Gemini gets. Look at it: a letter joined to a line can survive as a fragment (tick clip on that label, or keep to protect something).' },
+  { n: 7, short: 'Gemini', name: 'Gemini', bg: () => ['map-2k-lettered.jpg', 'map-2k.png'],
+    text: 'Start a new Gemini chat, attach the lettered picture and give it the prompt, then bring the result back here. Do not use edit prompts: each repaints the whole picture.' },
+  { n: 8, short: 'Check', name: 'Check', run: 'check', bg: () => [`map-check-${activeRound()}/aligned.png`, `map-gemini-${activeRound()}.jpg`, 'map-2k.png'],
+    text: 'Lines Gemini\'s picture up with the scan and flags colour and shape changes, then reads its labels against the list. Open labels.png and compare every label by eye; the OCR diff in the log is only a hint. Tick reset on place names Gemini garbled, and fix on kept labels it garbled (title, captions, key), then Save.' },
+  { n: 9, short: 'Finish', name: 'Finish', run: 'finish', bg: () => ['map-4k.webp', 'map-2k.png'],
+    text: 'Upscales the round 4x, warps it onto the 4K frame, wipes Gemini\'s lettering round each label ticked reset (and fix) and sets those again in Cabin, removes the sparkle mark and writes map-4k.webp. With none ticked reset, every place name is set again. Look at map-4k-sheet.png.' },
+  { n: 10, short: 'Import', name: 'Import and view', run: 'import', bg: () => ['map-4k.webp', 'map-2k.png'],
+    text: 'Imports the book again so the player\'s map points at map-4k.webp, then open the player and look at the map there.' },
+];
+
+function renderRail() {
+  $('steps').innerHTML = STEPS.map(s => {
+    const st = status(s.n);
+    return `<button class="step ${st}${s.n === curStep ? ' open' : ''}" data-step="${s.n}" title="${esc(s.name)}: ${st === 'stale' ? 'out of date' : st === 'done' ? 'done' : 'not done'}"><i></i>${s.n} ${esc(s.short)}</button>`;
+  }).join('');
+}
+$('steps').onclick = e => { const b = e.target.closest('[data-step]'); if (b) { const n = Number(b.dataset.step); n === curStep ? closePanel() : openStep(n); } };
+
+async function setPreview(on) { preview = on; $('prev').classList.toggle('on', on); }
+async function setBg(name) {
+  const files = imageFiles();
+  const sel_ = $('bg').value;
+  $('bg').innerHTML = files.map(f => `<option>${esc(f)}</option>`).join('');
+  if (name && files.includes(name)) $('bg').value = name;
+  else if (files.includes(sel_)) $('bg').value = sel_;
+  await loadImg($('bg').value || null);
+}
+async function reloadBg() { await setBg(); }
+async function openStep(n) {
+  curStep = n;
+  const s = STEPS[n - 1];
+  if (!roundSet) curRound = n === 7 ? nextFree() : latest() || 1;
+  else if (n === 7 && S.rounds.includes(curRound) && !received) curRound = nextFree();
+  const pick = s.bg().find(f => S.files[f]);
+  setPreview(!!s.preview);
+  renderRail(); renderPanel();
+  await setBg(pick);
+  fit(); draw();
+}
+function closePanel() { curStep = 0; $('panel').hidden = true; renderRail(); resize(); }
+
+function runBtn(label, attrs = '') { return `<button class="primary" data-run ${attrs}>${esc(label)}</button>`; }
+function logHtml(key) {
+  const l = logs[key]; if (!l) return '';
+  return `<details ${logOpen || l.code ? 'open' : ''}><summary>${l.code ? '<span class="bad">failed (exit ' + l.code + ')</span>' : 'output (exit 0)'}</summary><pre>${esc(l.out || '(no output)')}</pre></details>`;
+}
+function roundInput() {
+  return `<label>Round <input type="number" id="rnd" min="0" max="999" value="${curRound}"></label>`;
+}
+function renderPanel() {
+  const p = $('panel'), s = STEPS[curStep - 1];
+  if (!s) { p.hidden = true; return; }
+  p.hidden = false;
+  const st = status(s.n), stTxt = st === 'done' ? 'done' : st === 'stale' ? 'out of date' : 'not done';
+  const rd = curRound, noRun = S.err ? ' disabled' : '';
+  let h = `<h4>${s.n}. ${esc(s.name)} <span class="note">(${stTxt})</span></h4><p>${esc(s.text)}</p>`;
+  const files = S.files;
+  switch (s.n) {
+    case 1:
+      h += `<div class="row">${runBtn('Upscale', 'data-do="upscale"' + noRun)}${files['map.png'] ? '' : '<span class="bad">no map.png in the folder: fetch the book first</span>'}</div>`; break;
+    case 2:
+      h += `<div class="row">${runBtn(files['map-labels.json'] ? 'Draft again (replaces the list)' : 'Draft', 'data-do="draft"' + noRun)}</div>`; break;
+    case 3: {
+      const places = labels.filter(l => l.leave).length, ok = labels.filter(l => l.ok).length;
+      h += `<div class="note">${labels.length} labels, ${places} place names, ${ok} ticked ok. Done when every label is ticked ok.</div>`; break; }
+    case 4: {
+      const l = lettered(), m = l.filter(x => x.ink).length, old = l.filter(x => x.ink && stale(x)).length;
+      h += `<div class="row">${runBtn('Measure', 'data-do="measure"' + noRun)}<span class="note">${m} of ${l.length} lettered labels measured${old ? `, ${old} with a box moved since` : ''}</span></div>`; break; }
+    case 5:
+      h += `<div class="row"><span class="note">Background is the original scan, preview on. Saved changes make step 6 out of date.</span></div>`; break;
+    case 6:
+      h += `<div class="row">${runBtn('Erase and letter', 'data-do="erase+letter"' + noRun)}${runBtn('Erase only', 'data-do="erase"' + noRun)}${runBtn('Letter only', 'data-do="letter"' + noRun)}</div>`; break;
+    case 7: {
+      const have = !!files[`map-prompt-${rd}.txt`], rf = roundFile(rd);
+      h += `<div class="row">${roundInput()}<span class="note">next free is ${nextFree()}${rf ? `; <span class="bad">map-gemini-${rd} exists</span>` : ''}</span></div>
+<div class="row"><button data-run data-do="copyprompt"${noRun}>Copy prompt${have ? '' : ' (writes it first)'}</button>
+<button data-do="copyimage">Copy image (PNG)</button>
+<a href="https://gemini.google.com/app" target="_blank" rel="noopener">Open Gemini</a>
+<span class="note">then paste the image and the prompt into a new chat</span></div>
+<div class="row">${files['map-2k-lettered.jpg'] ? `<img class="thumb" id="thumb" src="${dir}map-2k-lettered.jpg?v=${mt('map-2k-lettered.jpg')}" draggable="true" title="Drag me into the Gemini tab">` : '<span class="bad">no map-2k-lettered.jpg yet: step 6</span>'}
+<span class="note" style="max-width:60ch">Drag this JPEG straight into the Gemini tab. On Book 1 a 2048 px PNG with a long prompt was once refused and a roughly 1 MB JPEG went through, so drag the JPEG if a paste is refused.</span></div>
+<div class="row"><b>Receive</b> Ctrl+V the image Gemini made anywhere on this page, drop the file on it, or <input type="file" id="pick" accept="image/png,image/jpeg,image/webp">
+<span class="note">saved as map-gemini-${rd}.*</span></div>
+${received ? `<div class="row">Received ${esc(received)}. <button class="primary" data-do="gotocheck">Go to Check</button></div>` : ''}`;
+      break; }
+    case 8: {
+      const base_ = `${dir}map-check-${rd}/`;
+      h += `<div class="row">${roundInput()}${runBtn('Check', 'data-do="check"' + noRun)}
+<button data-open="${base_}labels.png"${files[`map-check-${rd}/labels.png`] ? '' : ' disabled'}>Open labels.png</button>
+<button data-open="${base_}flags.png"${files[`map-check-${rd}/flags.png`] ? '' : ' disabled'}>Open flags.png</button>
+<button data-do="clearreset">Clear reset</button>
+<span class="note">${labels.filter(l => l.reset).length} reset, ${labels.filter(l => l.fix).length} fix ticked now. Untick reset before checking a new round.</span></div>`;
+      break; }
+    case 9:
+      h += `<div class="row">${roundInput()}${runBtn('Finish', 'data-do="finish"' + noRun)}
+<button data-open="${dir}map-4k-sheet.png"${files['map-4k-sheet.png'] ? '' : ' disabled'}>Open map-4k-sheet.png</button>
+<span class="note">${labels.filter(l => l.reset).length} labels ticked reset, ${labels.filter(l => l.fix).length} fix: those are set again.</span></div>`; break;
+    case 10:
+      h += `<div class="row">${runBtn('Import', 'data-do="import"' + noRun)}<a href="/" target="_blank" rel="noopener">Open the player</a></div>`; break;
+  }
+  h += logHtml(s.n);
+  p.innerHTML = h;
+  const r = $('rnd'); if (r) r.onchange = async () => { curRound = Math.max(0, Math.floor(Number(r.value) || 0)); roundSet = true; renderPanel(); renderRail(); if (curStep === 8) await openStep(8); };
+  const th = $('thumb'); if (th) th.addEventListener('dragstart', e => { try { e.dataTransfer.setData('DownloadURL', `image/jpeg:map-2k-lettered.jpg:${th.src}`); } catch (x) {} });
+  const pk = $('pick'); if (pk) pk.onchange = () => { if (pk.files[0]) upload(pk.files[0]); };
+  p.querySelector('details')?.addEventListener('toggle', e => { logOpen = e.target.open; });
+  resize();
+}
+$('panel').onclick = async e => {
+  const o = e.target.closest('[data-open]'); if (o) { window.open(o.dataset.open + '?' + Date.now(), '_blank', 'noopener'); return; }
+  const b = e.target.closest('[data-do]'); if (!b || b.disabled) return;
+  const what = b.dataset.do;
+  if (what === 'clearreset') { clearReset(); renderPanel(); return; }
+  if (what === 'copyimage') return copyImage(b);
+  if (what === 'gotocheck') return openStep(8);
+  if (busy) return;
+  if (what === 'copyprompt') return copyPrompt(b);
+  await doStep(what, b);
+};
+
+// ---------- running ----------
+async function api(path, opts) {
+  try {
+    const r = await fetch(`/api/map/${encodeURIComponent(book)}/${path}`, opts);
+    return { status: r.status, j: await r.json().catch(() => ({})) };
+  } catch (e) { return { status: 0, j: { error: String(e.message || e) } }; }
+}
+function setBusy(on, btn, label) {
+  busy = on; document.body.classList.toggle('busy', on);
+  if (btn) btn.classList.toggle('spin', on);
+  $('job').textContent = on ? 'running: ' + label + '...' : '';
+}
+// one script step on the server: {ok, code, out}
+async function runOne(step, q = '') {
+  const r = await api(`run/${step}${q}`, { method: 'POST' });
+  if (r.status !== 200) return { ok: false, code: r.status, out: (r.j.error || 'request failed') + (r.status === 409 ? '' : '') };
+  return { ok: r.j.code === 0, code: r.j.code, out: r.j.out || '' };
+}
+async function doStep(what, btn) {
+  const s = curStep, rd = curRound;
+  if (dirtyNow() && !(await save())) return;
+  let seq = what.split('+'), q = '';
+  if (what === 'draft' && S.files['map-labels.json']) {
+    if (!confirm('Replace the label list with a new OCR draft? The old one is kept as map-labels.json.bak.')) return;
+    q = '?force=1';
+  }
+  if (['prompt', 'check', 'finish'].includes(what)) q = `?round=${rd}`;
+  if (what === 'finish' && S.files['map-4k.webp'] && !confirm('map-4k.webp exists and will be replaced. Go on?')) return;
+  setBusy(true, btn, what);
+  let all = { code: 0, out: '' };
+  for (const st of seq) {
+    const r = await runOne(st, q);
+    all.out += (all.out ? '\n' : '') + r.out; all.code = r.code;
+    if (!r.ok) break;
+  }
+  setBusy(false, btn);
+  logs[s] = all;
+  if (['draft', 'measure'].includes(what)) { await loadLabels(); refresh(); }
+  await refreshState();
+  if (curStep === s) { renderPanel(); await reloadBgAfter(what); }
+  msg(all.code ? `${what} failed (exit ${all.code}); see the log` : `${what} done`, all.code ? 6000 : 2500);
+  return all;
+}
+const dirtyNow = () => snap() !== savedJson;
+async function reloadBgAfter(what) {
+  const s = STEPS[curStep - 1];
+  const want = { upscale: 'map-2k.png', erase: 'map-2k-erased.jpg', letter: 'map-2k-lettered.jpg', 'erase+letter': 'map-2k-lettered.jpg',
+    check: `map-check-${curRound}/aligned.png`, finish: 'map-4k.webp' }[what];
+  await setBg(want || $('bg').value);
+  if (['upscale', 'draft'].includes(what)) fit();
+  draw();
+}
+
+// ---------- Gemini hand-off ----------
+async function copyPrompt(btn) {
+  const rd = curRound;
+  setBusy(true, btn, 'prompt');
+  try {
+    if (dirtyNow() && !(await save())) return;
+    if (!S.files[`map-prompt-${rd}.txt`] || mt(`map-prompt-${rd}.txt`) < mt('map-labels.json')) {
+      const r = await runOne('prompt', `?round=${rd}`);
+      logs[7] = r;
+      if (!r.ok) { msg('Could not write the prompt', 6000); return; }
+      await refreshState();
+    }
+    const t = await (await fetch(`${dir}map-prompt-${rd}.txt?${Date.now()}`)).text();
+    await navigator.clipboard.writeText(t);
+    msg(`Prompt for round ${rd} copied (${t.length} characters)`);
+  } catch (e) { msg('Copy failed: ' + e.message, 6000); }
+  finally { setBusy(false, btn); renderPanel(); }
+}
+async function copyImage(btn) {
+  try {
+    const blob = (async () => {
+      const im = await loadImage(`${dir}map-2k-lettered.jpg?${Date.now()}`);
+      const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight;
+      c.getContext('2d').drawImage(im, 0, 0);
+      return new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error('no blob')), 'image/png'));
+    })();
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+    msg('Image copied as PNG. If Gemini refuses a paste, drag the JPEG thumbnail instead.', 5000);
+  } catch (e) { msg('Copy failed: ' + e.message, 6000); }
+}
+const TYPES = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp' };
+async function upload(file) {
+  const type = TYPES[file.type.replace('image/', '')] || TYPES[(file.name.split('.').pop() || '').toLowerCase()];
+  if (!type) { msg('Not a PNG, JPEG or WebP image', 5000); return; }
+  if (file.size > 30 * 1024 * 1024) { msg('Over 30 MB', 5000); return; }
+  const n = curRound;
+  const send = force => api(`gemini/${n}${force ? '?force=1' : ''}`, { method: 'POST', headers: { 'Content-Type': type }, body: file });
+  let r = await send(false);
+  if (r.status === 409) {
+    if (!confirm(`map-gemini-${n} already exists. Replace it?`)) return;
+    r = await send(true);
+  }
+  if (r.status !== 200) { msg('Upload failed: ' + (r.j.error || r.status), 7000); return; }
+  received = r.j.saved; roundSet = true;
+  await refreshState();
+  if (curStep !== 7) await openStep(7); else renderPanel();
+  await setBg(r.j.saved); fit();
+  msg(`Saved ${r.j.saved} (${Math.round(r.j.size / 1024)} KB)`);
+}
+window.addEventListener('paste', e => {
+  if (curStep !== 7 || typing()) return;
+  const f = [...(e.clipboardData?.files || [])].find(x => x.type.startsWith('image/'));
+  if (f) { e.preventDefault(); upload(f); }
+});
+const hasFiles = e => e.dataTransfer && [...e.dataTransfer.types].includes('Files');
+window.addEventListener('dragover', e => { if (hasFiles(e)) { e.preventDefault(); $('dropmark').style.display = 'block'; } });
+window.addEventListener('dragleave', e => { if (!e.relatedTarget) $('dropmark').style.display = 'none'; });
+window.addEventListener('drop', async e => {
+  $('dropmark').style.display = 'none';
+  if (!hasFiles(e)) return;
+  e.preventDefault();
+  const f = [...e.dataTransfer.files].find(x => /^image\/(png|jpeg|webp)$/.test(x.type));
+  if (!f) { msg('Drop a PNG, JPEG or WebP image', 4000); return; }
+  if (curStep !== 7) await openStep(7);
+  upload(f);
+});
+
+window.addEventListener('beforeunload', e => { if (snap() !== savedJson) { e.preventDefault(); e.returnValue = ''; } });
+window.addEventListener('resize', resize);
+new ResizeObserver(resize).observe(cv);
+resize();
+init();
+window.__ed = { get labels() { return labels; }, select, save };
+</script>
+</body>
+</html>

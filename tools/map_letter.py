@@ -10,14 +10,16 @@ Labels marked "leave" (erased before Gemini saw the map) and "fix" (Gemini missp
 lettered here. For each, the scan's ink in its box gives the angle (its long axis; "upwards" or
 "downwards" in its "where" picks the reading direction) and the size (the type is fitted to the
 ink's length). "lines" splits a label over lines as printed, set level ("angle" in degrees
-otherwise) and fitted to the box; "height" gives the type's height outright, in map-2k px;
+otherwise) and fitted to the box, "leading" its line spacing (1 = the font's own); "height" gives the type's height outright, in map-2k px;
 "nudge" [dx, dy] (map-2k px) moves a label off something the larger type runs into. Mixed-case labels (the hand-lettered
 names) get --hand, capitals get --caps, set larger and heavier than the scan's ink measures
 (SCALE, BOLD): at the scan's size they looked faint beside Gemini's own labels (owner, Book 1).
 Before lettering, Gemini's own ink is erased from "fix" boxes, any ghost letters in "leave" boxes,
 and anything in a --mark box (a stray colon); its sparkle watermark, bottom right, always.
 --only n,n,... limits the erasing and lettering to those labels (Book 1, round 8: Gemini copied
-the clean type of most names right, so only the ones it garbled are set again).
+the clean type of most names right, so only the ones it garbled are set again). Without --only,
+on a repaint, labels marked "reset" (ticked in tools/map-editor.html after the round's check)
+and "fix" are the ones done, if any label is marked "reset".
 Also writes <out>-sheet.png: each lettered label, the scan beside the result.
 With <H.json> given as -, it letters Gemini's input instead: <repaint> is map_erase.py's picture,
 lettered at its own size (Book 1: the owner's idea, so Gemini copies clean type and paints round
@@ -83,7 +85,7 @@ def geometry(scan_ink, lab):
 K = 1  # 4K or 2K px per map-2k px, set in main
 
 
-def render(lines, font_path, length, thick, nlines, boost=None):
+def render(lines, font_path, length, thick, nlines, boost=None, leading=1):
     """The label as an RGBA image, horizontal, sized so its longest line spans <length> px (capped
     so the block is no thicker than the ink was, with a little give)."""
     def block(size):
@@ -93,7 +95,7 @@ def render(lines, font_path, length, thick, nlines, boost=None):
             f.set_variation_by_name(variant)
         boxes = [f.getbbox(t) for t in lines]
         boxes = [(b[0], b[1], b[2] + round(TRACK * size * (len(t) - 1)), b[3]) for b, t in zip(boxes, lines)]
-        lh = f.getmetrics()[0] + f.getmetrics()[1]
+        lh = (f.getmetrics()[0] + f.getmetrics()[1]) * leading
         return f, max(b[2] - b[0] for b in boxes), lh * (nlines - 1) + (boxes[-1][3] - boxes[0][1]), lh
     f, w, h, lh = block(100)
     size = 100 * min(length * FILL / w, thick * 1.25 / h)
@@ -101,8 +103,9 @@ def render(lines, font_path, length, thick, nlines, boost=None):
         boost = SCALE if thick < SMALL * K else 1
     f, w, h, lh = block(max(int(size * boost), 6))
     sw = max(1, round(f.size * BOLD))
-    pad = int(lh * 0.8)  # room for wipe()'s reach round the letters
-    img = Image.new('L', (w + 2 * pad, int(lh * nlines) + 2 * pad), 0)
+    own = lh / leading  # the font's own line height: the wipe's reach and the padding go by it
+    pad = int(own * 0.8)  # room for wipe()'s reach round the letters
+    img = Image.new('L', (w + 2 * pad, int(lh * (nlines - 1) + own) + 2 * pad), 0)
     dr = ImageDraw.Draw(img)
     for i, t in enumerate(lines):  # each line centred, as the scan's are
         tw = f.getbbox(t)[2] - f.getbbox(t)[0] + TRACK * f.size * (len(t) - 1)
@@ -110,7 +113,7 @@ def render(lines, font_path, length, thick, nlines, boost=None):
         for ch in t:  # letter by letter, a little apart: Cabin's tight 'rn' read as 'm' (Book 1)
             dr.text((x, pad + i * lh), ch, font=f, fill=255, stroke_width=sw, stroke_fill=255)
             x += f.getlength(ch) + TRACK * f.size
-    return img, lh
+    return img, own
 
 
 def letter(base, lab, scan_ink, hand, caps, k):
@@ -136,7 +139,8 @@ def letter(base, lab, scan_ink, hand, caps, k):
         return
     lines = lab.get('lines') or [text]
     # stacked lines are fitted to their box, which is already the size wanted
-    mask, lh = render(lines, font, length * k, thick * k, len(lines), 1 if lab.get('lines') else None)
+    mask, lh = render(lines, font, length * k, thick * k, len(lines), 1 if lab.get('lines') else None,
+                      lab.get('leading', 1))
     place(base, mask, lh, centre * k, ang)
 
 
@@ -220,6 +224,8 @@ def main():
     todo = [lab for lab in labels if lab.get('leave') or lab.get('fix')]
     if a.only:  # just the labels Gemini still got wrong, by number in the list
         todo = [labels[int(i)] for i in a.only.split(',')]
+    elif a.warp != '-' and any(lab.get('reset') for lab in labels):  # the same, ticked in the editor
+        todo = [lab for lab in labels if lab.get('reset') or lab.get('fix')]
     if a.warp == '-':
         # Gemini's input instead: <repaint> is map_erase.py's picture, lettered at its own size
         A = read(a.repaint)

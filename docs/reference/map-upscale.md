@@ -23,6 +23,13 @@ letter; see "How Book 1 got here" below.
 
 ## The chain, per book
 
+The map editor, `http://localhost:8765/tools/map-editor.html` (pick the book at the top, by number, title or code) (served by `python tools/serve.py`, on this PC
+only), walks through every step below in one page: a rail of the ten stages (upscale, draft, labels,
+measure, lettering, erase and letter, Gemini, check, finish, import), each marked done, not done or
+out of date from the files' times. It edits the labels, runs the scripts, copies the prompt and the
+lettered picture for Gemini, takes the round's image back (Ctrl+V, drop or file picker), and shows a
+suitable background for each stage. The command lines below are still how to run a step by hand.
+
 Files, all in `data/projectaon/<code>/` (git-ignored):
 
 | File | What |
@@ -51,6 +58,10 @@ Commands run from the project root as
    `where` (its place in words), `small` (hand-lettered), and `leave: true` on every *place name*.
    The title, banner and shield captions and the key are left as drawn: Gemini copied them right
    in every round. Book 1: 60 labels, 42 place names.
+   Then **measure**: `map_measure.py $D/map-2k.png $D/map-labels.json` writes each lettered
+   label's measured ink (`ink`: centre, angle, length, thickness) into the list, so the map editor's
+   preview starts from what step 4 will set. Optional: no other tool reads it. Run it once the
+   wording and boxes are right, and again after moving a box (the editor outlines stale ones in red).
 3. **Erase the place names**: `map_erase.py $D/map-2k.png $D/map-labels.json $D/map-2k-erased.jpg`.
    It takes each near-black shape lying mostly inside a name's box, and leaves lines running out of
    it (coasts, roads, the grid), trees and outlined shapes. Look at the result: a letter joined to a
@@ -59,7 +70,7 @@ Commands run from the project root as
 4. **Set them again**: `map_letter.py $D/map-2k.png $D/map-labels.json $D/map-2k-erased.jpg - $D/map-2k-lettered.jpg --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"`.
    Each name's angle and size come from the scan's ink; small names are set 30% larger. Look at
    it and fix by hand what the measuring got wrong: `angle` (degrees), `nudge` [dx, dy], `height`
-   (px), `lines` (a name stacked over lines, set level), `spread` (the scale's numbers). Book 1
+   (px), `lines` (a name stacked over lines, set level), `leading` (their line spacing, 1 = the font's own), `spread` (the scale's numbers). Book 1
    needed about 15 such fixes.
 5. **Prompt**: `map_labels.py prompt $D/map-labels.json $D/map-prompt-<n>.txt --lettered`. It asks
    for a richly painted repaint (shaded mountains, dense forests, textured water), every label as
@@ -76,7 +87,9 @@ Commands run from the project root as
    that were right (Book 1, round 4).
 8. **Finish**: `map_upscale.py $D/map-gemini-<n>.jpg $D/map-gemini-<n>-x4.png --width <4x its width>`, then
    `map_letter.py $D/map-2k.png $D/map-labels.json $D/map-gemini-<n>-x4.png $D/map-check-<n>/H.json $D/map-4k.webp --only <numbers> --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"`
-   with the numbers of the names Gemini garbled. It warps the upscale onto the 4K frame, wipes
+   with the numbers of the names Gemini garbled (or, leaving out `--only`, tick `reset` on them in
+   the map editor, `tools/map-editor.html?book=<code>`, and untick them before the next
+   round's check). It warps the upscale onto the 4K frame, wipes
    Gemini's thin strokes right round where each of those names goes (all wipes before any
    drawing), sets them again, and removes Gemini's sparkle watermark. Look at
    `map-4k-sheet.png`. A correct name next to a re-set one can lose strokes to the wipe: add it to
@@ -86,10 +99,14 @@ Commands run from the project root as
 
 ## Tools
 
+- `tools/map-editor.html` with `tools/serve.py`: the page that runs all of the above (endpoints in
+  serve.py's docstring: `/api/map/<book>/state`, `run/<step>`, `gemini/<n>`; local requests only).
 - `tools/map_upscale.py`: Real-ESRGAN (`tools/realesrgan/`, the v0.2.5.0 Windows build, git-ignored)
   in 4x passes until wide enough, then LANCZOS to the exact width. One pass about 10 s on the RTX 2060.
 - `tools/map_labels.py`: `draft` (EasyOCR boxes for a first list), `prompt` (the Gemini prompt,
   `--lettered` for step 5) and `check` (OCR hint plus the `labels.png` eye-check sheet).
+- `tools/map_measure.py`: measures each lettered label's ink with the same code `map_letter.py` uses and
+  stores it as `ink` in `map-labels.json`, for the map editor's preview.
 - `tools/map_erase.py`: erases the `leave` labels; its `LabelInk` (which of the scan's pixels belong
   to a label) is shared with `map_letter.py`, which measures labels with it.
 - `tools/map_check.py`: SIFT homography of the repaint onto `map-2k.png` (edge error 1-4 px), saved

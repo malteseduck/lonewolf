@@ -160,9 +160,9 @@ Left to the player whatever the engine does: whether to sleep (B2 41), and the p
      modal opens fitted with ground round the map, zooms to 3x the fit, and `scanOf` caps its
      canvas at 4096 px wide (the iPad's canvas limit). Not yet checked on the iPad.
    - Next: Books 2-12, one at a time (label list, erase, letter, one or two Gemini rounds, finish).
-     Book 1's label list took the most work; a label editor page (drag, rotate and resize labels
-     over the map, saving `map-labels.json`) was offered to the owner to cut the per-label fixes,
-     not yet decided.
+     Book 1's label list took the most work; the map editor (`tools/map-editor.html`, which edits
+     the labels and runs every step of the procedure) is built as a prototype, not yet tried on a
+     new book.
    - Book 4 has trial files from the first experiments (`map-esrgan-*`, `map-gemini-esrgan-4k.webp`,
      `map-repaint-2k-test1.png`) and the first `compare.html`. Delete them when Book 4 is done.
    - The local Stable Diffusion models (`data/models/sd15`, `controlnet-tile-sd15`, 3.4 GB) were
