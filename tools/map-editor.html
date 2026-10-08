@@ -74,6 +74,8 @@ canvas { display: block; width: 100%; height: 100%; cursor: grab; }
 .field label { color: var(--dim); }
 .field .pair { display: flex; gap: 4px; }
 .field input[type=number] { width: 100%; min-width: 0; }
+.fsec { padding: 9px 10px 3px; margin-top: 4px; border-top: 1px solid var(--line); font-weight: 600; }
+.fsec small { color: var(--dim); font-weight: 400; margin-left: 4px; }
 .hint { padding: 2px 10px 8px; color: var(--dim); font-size: 12px; }
 h3 { margin: 0; padding: 8px 10px; font-size: 13px; border-bottom: 1px solid var(--line); }
 kbd { background: #333; border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; }
@@ -264,7 +266,7 @@ cv.addEventListener('wheel', e => {
 // ---------- geometry ----------
 // A lettered name has two shapes: its box (what map_erase.py erases and Measure reads) and its frame,
 // the new type's own outline, turned to its reading angle. Moving or sizing the frame stores "set".
-const hasFrame = l => !!((l.leave || l.fix) && !l.spread);
+const hasFrame = l => !!((l.retype || l.fix) && !l.spread);
 const onFrame = l => hasFrame(l) && !eraseMode;
 const toLocal = (f, x, y) => {
   const dx = x - f.c[0], dy = y - f.c[1], ca = Math.cos(f.a), sa = Math.sin(f.a);
@@ -423,11 +425,11 @@ function draw() {
   ctx.setTransform(d * view.s, 0, 0, d * view.s, d * view.x, d * view.y);
   if (img) { const [W, H] = imgDims(); ctx.imageSmoothingEnabled = view.s * W / img.width < 3; ctx.drawImage(img, 0, 0, W, H); }
   if (hideAll) { $('status').textContent = `${Math.round(view.s * 100)}%  (H held: boxes hidden)`; return; }
-  if (preview) labels.forEach((l, i) => { if ((l.leave || l.fix) && visible(i)) drawText(l); });
+  if (preview) labels.forEach((l, i) => { if ((l.retype || l.fix) && visible(i)) drawText(l); });
   const lw = 1.5 / view.s;
   labels.forEach((l, i) => {
     if (!visible(i) || i === sel) return;
-    ctx.strokeStyle = l.leave ? '#ffb347' : '#5fb0ff';
+    ctx.strokeStyle = l.retype ? '#ffb347' : '#5fb0ff';
     ctx.globalAlpha = 0.9; ctx.lineWidth = lw;
     ctx.strokeRect(l.box[0], l.box[1], l.box[2] - l.box[0], l.box[3] - l.box[1]);
     ctx.globalAlpha = 1;
@@ -481,7 +483,7 @@ function renderList() {
   labels.forEach((l, i) => {
     if (!visible(i)) return;
     const d = document.createElement('div');
-    d.className = 'item' + (l.leave ? ' place' : '') + (i === sel ? ' sel' : '');
+    d.className = 'item' + (l.retype ? ' place' : '') + (i === sel ? ' sel' : '');
     d.dataset.i = i;
     const n = document.createElement('span'); n.className = 'n'; n.textContent = i;
     d.append(n, document.createTextNode((l.lines && l.lines.length ? l.lines.join(' / ') : l.text) || '(empty)'));
@@ -498,13 +500,13 @@ function select(i, centre_) {
 $('filter').oninput = () => { renderList(); draw(); };
 
 const TEXTS = ['text', 'where'];
-const BOOLS = [['small', true], ['leave', true], ['ok', true], ['clip', false], ['fix', false], ['reset', false], ['spread', false]];
+const BOOLS = [['small', true], ['retype', true], ['ok', true], ['clip', false], ['fix', false], ['reset', false], ['spread', false]];
 const TIPS = {  // what each field does in the map tools (docs/reference/map-upscale.md)
   text: 'The wording exactly as printed on the map.',
   where: 'Where the label sits, in words; goes into the Gemini prompt. "upwards" or "downwards" in it sets which way a slanted name reads.',
   small: 'Hand-lettered name too small for OCR: the check lists it for a look by eye instead of comparing its reading.',
-  leave: 'Before Gemini. A place name: erased from the scan and set again in Cabin before Gemini sees the map. Leave off for the title, banner, shield captions and key, which Gemini copies as drawn.',
-  ok: 'Wording and box checked by eye. A marker only: no tool acts on it.',
+  retype: 'A place name: erased from the scan and set again in clean type before Gemini sees the map. Untick for the title, banner, panel captions and key, which Gemini copies as drawn.',
+  ok: 'Wording and box checked by eye. Step 3 shows done once every label has it; no script reads it.',
   clip: 'Erase the whole box, not just the letter shapes. For a name on flat ground where letters touch a line and leave fragments.',
   fix: 'After a Gemini round: for a label kept in its printed lettering (title, caption, key) that Gemini misspelled. Its lettering is cleared and the label set in Cabin at 4K. Stays ticked for later rounds.',
   reset: 'After a Gemini round: a place name Gemini garbled, to be set again at 4K by map_letter.py (replaces --only). Applies to the round just checked: untick all before checking a new round.',
@@ -544,58 +546,77 @@ function renderForm() {
     return el;
   };
   const change = fn => () => { if (!focusPushed) { push(); focusPushed = true; } fn(); afterEdit(); };
+  const sec = (title, note) => {  // the fields grouped by the step that uses them
+    const d = document.createElement('div'); d.className = 'fsec'; d.textContent = title;
+    if (note) { const n = document.createElement('small'); n.textContent = note; d.appendChild(n); }
+    f.appendChild(d);
+  };
+  const check = (k, always, rebuild) => {  // rebuild: ticking it changes which fields apply
+    const c = document.createElement('input'); c.type = 'checkbox'; c.checked = !!l[k];
+    c.onchange = () => { push(); setField(k, c.checked ? true : (always ? false : undefined)); if (rebuild) renderForm(); afterEdit(); };
+    row(k, c);
+  };
+  const lettered = !!(l.retype || l.fix);
+
+  sec('Label', 'step 3');
   for (const k of TEXTS) {
     const i = guard(document.createElement('input')); i.type = 'text'; i.value = l[k] ?? '';
     i.oninput = change(() => setField(k, i.value));
     row(k, i);
   }
-  for (const [k, always] of BOOLS) {
-    const c = document.createElement('input'); c.type = 'checkbox'; c.checked = !!l[k];
-    c.onchange = () => { push(); setField(k, c.checked ? true : (always ? false : undefined)); afterEdit(); };
-    row(k, c);
-  }
   const ta = guard(document.createElement('textarea')); ta.rows = 3; ta.value = (l.lines || []).join('\n');
   ta.placeholder = 'one printed line each; empty = single line';
   ta.oninput = change(() => { const v = ta.value.split('\n').filter(s => s.length); setField('lines', v.length ? v : undefined); });
   row('lines', ta);
+  check('retype', true, true);
+  check('small', true);
+  check('ok', true);
+
   const num = (key, step) => {
     const i = guard(document.createElement('input')); i.type = 'number'; i.step = step; i.value = l[key] ?? ''; i.dataset.f = key;
     i.oninput = change(() => setField(key, i.value === '' ? undefined : Number(i.value)));
     return i;
   };
-  if (l.set) {  // placed by hand: these replace height, angle and nudge
-    const sv = (k, step, get, put) => {
-      const i = guard(document.createElement('input')); i.type = 'number'; i.step = step; i.value = get(); i.dataset.f = k;
-      i.oninput = change(() => { if (i.value !== '') put(Number(i.value)); });
-      return i;
-    };
-    const sx = sv('setx', 1, () => l.set.at[0], v => { l.set.at[0] = v; }), sy = sv('sety', 1, () => l.set.at[1], v => { l.set.at[1] = v; });
-    const sp = document.createElement('div'); sp.className = 'pair'; sp.append(sx, sy);
-    row('type at x,y', sp);
-    row('type size', sv('setsize', 0.5, () => l.set.size, v => { l.set.size = Math.max(v, 1); }));
-    row('type angle', sv('setangle', 0.5, () => l.set.angle, v => { l.set.angle = v; }));
-    const back = document.createElement('button'); back.textContent = 'Back to measured';
-    back.onclick = () => { push(); delete l.set; renderForm(); afterEdit(); };
-    row('measured', back);
-  } else row('height', num('height', 1));
-  const ln = num('leading', 0.05); ln.min = 0.3; ln.max = 3; ln.placeholder = '1';
-  const lr = guard(document.createElement('input')); lr.type = 'range'; lr.min = 0.3; lr.max = 2; lr.step = 0.01; lr.value = l.leading ?? 1;
-  ln.addEventListener('input', () => { lr.value = ln.value || 1; });
-  lr.oninput = change(() => { const v = Number(lr.value); ln.value = v === 1 ? '' : v; setField('leading', v === 1 ? undefined : v); });
-  lr.onchange = () => lr.blur();  // let go of it, so Ctrl+Z and the arrow keys act on the map again
-  const lp = document.createElement('div'); lp.className = 'pair'; lp.append(lr, ln);
-  row('line spacing', lp);
-  if (!l.set) row('angle', num('angle', 0.5));
-  const nx = guard(document.createElement('input')), ny = guard(document.createElement('input'));
-  [nx, ny].forEach(i => { i.type = 'number'; i.step = 1; });
-  nx.value = l.nudge ? l.nudge[0] : ''; ny.value = l.nudge ? l.nudge[1] : '';
-  const nchange = change(() => {
-    if (nx.value === '' && ny.value === '') setField('nudge', undefined);
-    else setField('nudge', [Number(nx.value || 0), Number(ny.value || 0)]);
-  });
-  nx.oninput = ny.oninput = nchange;
-  const pair = document.createElement('div'); pair.className = 'pair'; pair.append(nx, ny);
-  if (!l.set) row('nudge x,y', pair);
+  if (lettered) {
+    sec('New type', 'steps 4-5: drag its frame, or set here');
+    if (l.set) {  // placed by hand: these replace height, angle and nudge
+      const sv = (k, step, get, put) => {
+        const i = guard(document.createElement('input')); i.type = 'number'; i.step = step; i.value = get(); i.dataset.f = k;
+        i.oninput = change(() => { if (i.value !== '') put(Number(i.value)); });
+        return i;
+      };
+      const sx = sv('setx', 1, () => l.set.at[0], v => { l.set.at[0] = v; }), sy = sv('sety', 1, () => l.set.at[1], v => { l.set.at[1] = v; });
+      const sp = document.createElement('div'); sp.className = 'pair'; sp.append(sx, sy);
+      row('type at x,y', sp);
+      row('type size', sv('setsize', 0.5, () => l.set.size, v => { l.set.size = Math.max(v, 1); }));
+      row('type angle', sv('setangle', 0.5, () => l.set.angle, v => { l.set.angle = v; }));
+      const back = document.createElement('button'); back.textContent = 'Back to measured';
+      back.onclick = () => { push(); delete l.set; renderForm(); afterEdit(); };
+      row('measured', back);
+    } else {
+      row('height', num('height', 1));
+      row('angle', num('angle', 0.5));
+      const nx = guard(document.createElement('input')), ny = guard(document.createElement('input'));
+      [nx, ny].forEach(i => { i.type = 'number'; i.step = 1; });
+      nx.value = l.nudge ? l.nudge[0] : ''; ny.value = l.nudge ? l.nudge[1] : '';
+      nx.oninput = ny.oninput = change(() => {
+        if (nx.value === '' && ny.value === '') setField('nudge', undefined);
+        else setField('nudge', [Number(nx.value || 0), Number(ny.value || 0)]);
+      });
+      const pair = document.createElement('div'); pair.className = 'pair'; pair.append(nx, ny);
+      row('nudge x,y', pair);
+    }
+    const ln = num('leading', 0.05); ln.min = 0.3; ln.max = 3; ln.placeholder = '1';
+    const lr = guard(document.createElement('input')); lr.type = 'range'; lr.min = 0.3; lr.max = 2; lr.step = 0.01; lr.value = l.leading ?? 1;
+    ln.addEventListener('input', () => { lr.value = ln.value || 1; });
+    lr.oninput = change(() => { const v = Number(lr.value); ln.value = v === 1 ? '' : v; setField('leading', v === 1 ? undefined : v); });
+    lr.onchange = () => lr.blur();  // let go of it, so Ctrl+Z and the arrow keys act on the map again
+    const lp = document.createElement('div'); lp.className = 'pair'; lp.append(lr, ln);
+    row('line spacing', lp);
+    check('spread', false);
+  }
+
+  sec('Box', l.retype ? 'step 6 erases what is inside it' : 'where the label is');
   const bx = [0, 1, 2, 3].map(j => {
     const i = guard(document.createElement('input')); i.type = 'number'; i.step = 1; i.value = l.box[j]; i.dataset.f = 'box' + j;
     i.oninput = change(() => { l.box[j] = Number(i.value) || 0; });
@@ -604,10 +625,15 @@ function renderForm() {
   const p1 = document.createElement('div'); p1.className = 'pair'; p1.append(bx[0], bx[1]);
   const p2 = document.createElement('div'); p2.className = 'pair'; p2.append(bx[2], bx[3]);
   row('box x0,y0', p1); row('box x1,y1', p2);
+  if (l.retype) check('clip', false);
   if (l.keep) {
     const k = document.createElement('div'); k.style.color = 'var(--dim)'; k.textContent = l.keep.length + ' keep box(es), shown dashed green; kept as is';
     row('keep', k);
   }
+
+  sec('After a Gemini round', 'steps 8-9');
+  if (l.retype) check('reset', false);
+  else check('fix', false, true);
   const others = Object.keys(l).filter(k => ![...TEXTS, ...BOOLS.map(b => b[0]), 'lines', 'leading', 'height', 'angle', 'nudge', 'box', 'keep', 'set'].includes(k));
   if (others.length) { const k = document.createElement('div'); k.style.color = 'var(--dim)'; k.textContent = others.join(', ') + ' (kept as is)'; row('other', k); }
 }
@@ -615,7 +641,7 @@ function renderForm() {
 function afterEdit() { renderListKeep(); draw(); dirty(); }
 function renderListKeep() {
   const it = $('list').querySelector(`.item[data-i="${sel}"]`);
-  if (it) { const l = labels[sel]; it.lastChild.textContent = (l.lines && l.lines.length ? l.lines.join(' / ') : l.text) || '(empty)'; it.classList.toggle('place', !!l.leave); it.firstChild.style.color = ''; }
+  if (it) { const l = labels[sel]; it.lastChild.textContent = (l.lines && l.lines.length ? l.lines.join(' / ') : l.text) || '(empty)'; it.classList.toggle('place', !!l.retype); it.firstChild.style.color = ''; }
 }
 function refresh() { renderList(); renderForm(); draw(); dirty(); }
 
@@ -700,7 +726,7 @@ window.addEventListener('mouseup', e => {
     if (d.box && d.box[2] - d.box[0] > 3 && d.box[3] - d.box[1] > 3) {
       push();
       const b = d.box.map(Math.round);
-      labels.push({ text: '', box: b, where: '', small: false, ok: true, leave: true });
+      labels.push({ text: '', box: b, where: '', small: false, ok: true, retype: true });
       sel = labels.length - 1;
       refresh();
       msg('New label added: set its text');
@@ -803,7 +829,7 @@ const nextFree = () => latest() + 1;
 const roundFile = n => Object.keys(S.files).find(k => new RegExp(`^map-gemini-${n}\\.(png|jpg|webp)$`).test(k));
 const imageFiles = () => Object.keys(S.files).filter(k => /\.(png|jpe?g|webp)$/i.test(k));
 function activeRound() { return S.rounds.includes(curRound) ? curRound : latest(); }
-const lettered = () => labels.filter(l => l.leave || l.fix);
+const lettered = () => labels.filter(l => l.retype || l.fix);
 
 // done / todo / stale, from the files' times and the label list
 let letteredFrom = null;  // map-labels-lettered.json: the list step 6 last ran on
@@ -846,7 +872,7 @@ const STEPS = [
   { n: 2, short: 'Draft', name: 'Draft labels (OCR)', bg: () => ['map-2k.png'],
     text: 'OCR reads boxes off map-2k.png as a first label list: PaddleOCR when tools/.venv-paddle is set up (Book 4: about 55 of 62 right), else EasyOCR. It is only a start, to correct by hand in the next step, and takes a minute or more. If a list already exists it is replaced, and the old one is kept as map-labels.json.bak.' },
   { n: 3, short: 'Labels', name: 'Labels: wording and boxes (by hand)', bg: () => ['map-2k.png'],
-    text: 'Correct every label\'s wording and box by eye, and add what OCR missed (New box, N). Tick leave on every place name; the title, banner, shield captions and key are left as drawn, since Gemini copies those right. Tick ok as each is checked. Save with Ctrl+S.' },
+    text: 'Correct every label\'s wording and box by eye, and add what OCR missed (New box, N). The draft ticks retype on every label: untick it on the title, banner, panel captions and key, which Gemini copies as drawn. Tick ok on each label once checked: this step shows done when all are. Save with Ctrl+S.' },
   { n: 4, short: 'Measure', name: 'Measure', run: 'measure', bg: () => ['map-2k.png'],
     text: 'Reads the scan\'s ink in each place name\'s box (centre, angle, length, thickness), so the preview starts from what the lettering step will really set. Run it again after moving boxes: a red dashed outline marks a label whose box moved since.' },
   { n: 5, short: 'Lettering', name: 'Lettering: adjust over the original (by hand)', bg: () => ['map-2k.png'], preview: true,
@@ -916,7 +942,7 @@ function renderPanel() {
     case 2:
       h += `<div class="row">${runBtn(files['map-labels.json'] ? 'Draft again (replaces the list)' : 'Draft', 'data-do="draft"' + noRun)}</div>`; break;
     case 3: {
-      const places = labels.filter(l => l.leave).length, ok = labels.filter(l => l.ok).length;
+      const places = labels.filter(l => l.retype).length, ok = labels.filter(l => l.ok).length;
       h += `<div class="note">${labels.length} labels, ${places} place names, ${ok} ticked ok. Done when every label is ticked ok.</div>`; break; }
     case 4: {
       const l = lettered(), m = l.filter(x => x.ink).length, old = l.filter(x => x.ink && stale(x)).length;

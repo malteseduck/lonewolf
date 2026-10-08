@@ -128,14 +128,14 @@ def names(labels):
 
 
 def prompt(labels, lettered=False, style=None):
-    """The repaint prompt, for the picture map_erase.py made. Labels marked "leave" are ones Gemini
+    """The repaint prompt, for the picture map_erase.py made. Labels marked "retype" are ones Gemini
     cannot spell reliably (Book 1: the small hand-lettered names, and a few it got wrong in every
     round); they are erased from its picture and lettered afterwards, so the prompt only asks it not
     to letter the bare places. Book 1's rounds behind the wording: docs/reference/map-upscale.md."""
-    # lettered: the "leave" labels were erased and set again in clean type (map_letter.py with -),
+    # lettered: the "retype" labels were erased and set again in clean type (map_letter.py with -),
     # so Gemini gets every label to copy, and copies the clean type far better than the scan's hand
-    keep = labels if lettered else [lab for lab in labels if not lab.get('leave')]
-    leave = [] if lettered else [lab for lab in labels if lab.get('leave')]
+    keep = labels if lettered else [lab for lab in labels if not lab.get('retype')]
+    erased = [] if lettered else [lab for lab in labels if lab.get('retype')]
     # style: the book's own look, from map-style.txt beside the list. The default asks for forests and
     # water, and Gemini painted Book 3's snowfields as green woodland with it
     p = ((style.strip() + ' ') if style else
@@ -149,7 +149,7 @@ def prompt(labels, lettered=False, style=None):
     if lettered:
         p += (' The place names are set in clean sans-serif type: keep that clean, legible sans-serif lettering for '
               'them, and keep the ground behind each name clear so it stays easy to read.')
-    if leave:  # erased from the picture by map_erase.py: asking Gemini to leave them out failed
+    if erased:  # erased from the picture by map_erase.py: asking Gemini to leave them out failed
         p += (' Some towns, rivers, roads, islands and the scale bar have no name or numbers written beside them: '
               'leave them that way, with no lettering of any kind there.')
     return p + (' Do not add, remove or rename any other label. Add nothing that is not on the original: no fruit, '
@@ -163,6 +163,8 @@ def main():
     if cmd == 'draft':
         reads = ocr(a)
         reads.sort(key=lambda r: (r['box'][1] // 40, r['box'][0]))
+        for r in reads:  # most labels are place names: untick the key, title and captions
+            r['retype'] = True
         Path(b).write_text(json.dumps(reads, indent=1), encoding='utf-8')
         print(f'{len(reads)} boxes, {sum(r["conf"] < 0.5 for r in reads)} under 0.5 confidence')
     elif cmd == 'check':

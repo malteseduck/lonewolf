@@ -3,7 +3,7 @@
 Run (from the project root):
   uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_erase.py <map-2k.png> <map-labels.json> <out.jpg>
 
-Every label marked "leave": true in the list is erased: each near-black shape lying mostly inside its
+Every label marked "retype": true in the list is erased: each near-black shape lying mostly inside its
 box is filled in from the colour around it. Lines running out of the box (roads, coasts, the scale
 bar) and outlines next to a colour fill (trees, rivers, mountains) stay, and so does a letter
 joined to one; a label marked "clip": true has every stroke in its box erased instead (letters
@@ -71,7 +71,7 @@ def main():
     mask = np.zeros(im.shape[:2], np.uint8)
     n = 0
     for lab_ in json.loads(Path(labels).read_text(encoding='utf-8')):
-        if not lab_.get('leave'):
+        if not lab_.get('retype'):
             continue
         x0, y0, x1, y1 = li.box(lab_)
         mask[y0:y1, x0:x1] |= li.mask(lab_).astype(np.uint8) * 255

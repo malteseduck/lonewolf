@@ -5,7 +5,7 @@ Run (from the project root):
   uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_measure.py <map-2k.png> <map-labels.json>
 
 Writes "ink": {"at": [x, y] (centre), "angle" (degrees, y down, the reading direction), "length",
-"thick" (px on map-2k), "box" (the box it was measured in)} into every "leave" or "fix" label. It
+"thick" (px on map-2k), "box" (the box it was measured in)} into every "retype" or "fix" label. It
 ignores any "angle" set by hand, so the editor can show both. map_letter.py does not read "ink": it
 measures again, so a box moved since is never set from a stale measure (the editor flags those).
 """
@@ -28,7 +28,7 @@ def main():
     scan_ink = LabelInk(read(a.faithful))
     n = 0
     for lab in labels:
-        if not (lab.get('leave') or lab.get('fix')):
+        if not (lab.get('retype') or lab.get('fix')):
             lab.pop('ink', None)
             continue
         raw = {k: v for k, v in lab.items() if k != 'angle'}

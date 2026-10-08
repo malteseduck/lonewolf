@@ -6,7 +6,7 @@ Run (from the project root):
 
 <repaint-x4.png> is map_upscale.py's 4x of the Gemini round kept; <H.json> is map_check.py's warp
 for that round. Boxes, in the label list and --mark, are in map-2k.png's px.
-Labels marked "leave" (erased before Gemini saw the map) and "fix" (Gemini misspelled them) are
+Labels marked "retype" (erased before Gemini saw the map) and "fix" (Gemini misspelled them) are
 lettered here. For each, the scan's ink in its box gives the angle (its long axis; "upwards" or
 "downwards" in its "where" picks the reading direction) and the size (the type is fitted to the
 ink's length). "lines" splits a label over lines as printed, set level ("angle" in degrees
@@ -16,7 +16,7 @@ size, angle} places the type by hand (the map editor's text frame): centre of it
 map-2k px, reading angle in degrees; it overrides all of the above. Mixed-case labels (the hand-lettered
 names) get --hand, capitals get --caps, set larger and heavier than the scan's ink measures
 (SCALE, BOLD): at the scan's size they looked faint beside Gemini's own labels (owner, Book 1).
-Before lettering, Gemini's own ink is erased from "fix" boxes, any ghost letters in "leave" boxes,
+Before lettering, Gemini's own ink is erased from "fix" boxes, any ghost letters in "retype" boxes,
 and anything in a --mark box (a stray colon); its sparkle watermark, bottom right, always.
 --only n,n,... limits the erasing and lettering to those labels (Book 1, round 8: Gemini copied
 the clean type of most names right, so only the ones it garbled are set again). Without --only,
@@ -231,7 +231,7 @@ def main():
     F = read(a.faithful)
     fh, fw = F.shape[:2]
     labels = json.loads(Path(a.labels).read_text(encoding='utf-8'))
-    todo = [lab for lab in labels if lab.get('leave') or lab.get('fix')]
+    todo = [lab for lab in labels if lab.get('retype') or lab.get('fix')]
     if a.only:  # just the labels Gemini still got wrong, by number in the list
         todo = [labels[int(i)] for i in a.only.split(',')]
     elif a.warp != '-' and any(lab.get('reset') for lab in labels):  # the same, ticked in the editor

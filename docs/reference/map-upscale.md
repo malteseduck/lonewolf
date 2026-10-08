@@ -68,7 +68,10 @@ Commands run from the project root as
    wording and box by eye in the map editor, and adds what it missed (owner's call, 2026-10-07: the
    agent does not review the draft, which costs tokens on every map image it looks at; it helps
    only with names the owner asks about). Each entry: `text` (exact, as printed), `box` [x0, y0, x1, y1],
-   `where` (its place in words), `small` (hand-lettered), and `leave: true` on every *place name*.
+   `where` (its place in words), `small` (hand-lettered), and `retype: true` on every *place name* (erased from the scan and set again in clean type;
+   the draft ticks it on every label, so untick the key, title and panel captions). The editor groups
+   each label's fields by the step that uses them and hides those that do not apply. Ticking `ok` on
+   every label marks this step done in the editor.
    The title, banner and shield captions and the key are left as drawn: Gemini copied them right
    in every round. Book 1: 60 labels, 42 place names.
    Then **measure**: `map_measure.py $D/map-2k.png $D/map-labels.json` writes each lettered
@@ -126,7 +129,7 @@ Commands run from the project root as
   `--lettered` for step 5) and `check` (OCR hint plus the `labels.png` eye-check sheet).
 - `tools/map_measure.py`: measures each lettered label's ink with the same code `map_letter.py` uses and
   stores it as `ink` in `map-labels.json`, for the map editor's preview.
-- `tools/map_erase.py`: erases the `leave` labels; its `LabelInk` (which of the scan's pixels belong
+- `tools/map_erase.py`: erases the `retype` labels; its `LabelInk` (which of the scan's pixels belong
   to a label) is shared with `map_letter.py`, which measures labels with it.
 - `tools/map_check.py`: SIFT homography of the repaint onto `map-2k.png` (edge error 1-4 px), saved
   as `H.json`; then a 48 px grid, red where the hue moved (Lab a*b* distance over 25), blue where
