@@ -56,6 +56,9 @@ button { cursor: pointer; }
 button:hover { background: #3a4047; }
 button.on { background: #3d5a80; border-color: #5b86b8; }
 button.primary { background: #2f6b46; border-color: #3f8a5c; }
+#ask { background: var(--panel); color: inherit; border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; max-width: 46ch; }
+#ask::backdrop { background: #0008; }
+#ask .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
 input[type=text], textarea { width: 100%; }
 #filter { flex: 1; }
 #list { overflow-y: auto; flex: 1; }
@@ -860,9 +863,19 @@ function merge(i) {
 }
 function toggleErase() { eraseMode = !eraseMode; $('ebox').classList.toggle('on', eraseMode); draw(); }
 function togglePreview() { preview = !preview; $('prev').classList.toggle('on', preview); draw(); }
-function del() {
+// confirm() in the page: the app's browser pane answers the browser's own confirm() with Cancel unseen
+function ask(text, ok = 'OK') {
+  const d = $('ask');
+  $('askt').textContent = text; $('askok').textContent = ok;
+  return new Promise(res => {
+    const done = v => { $('askok').onclick = $('askno').onclick = d.onclose = null; if (d.open) d.close(); res(v); };
+    $('askok').onclick = () => done(true); $('askno').onclick = () => done(false); d.onclose = () => done(false);
+    d.showModal(); $('askok').focus();
+  });
+}
+async function del() {
   if (sel < 0) return;
-  if (!confirm(`Delete label ${sel}?`)) return;
+  if (!(await ask(`Delete label ${sel}?`, 'Delete'))) return;
   push(); labels.splice(sel, 1); sel = -1; refresh();
 }
 async function save() {
@@ -1108,11 +1121,11 @@ async function doStep(what, btn) {
   if (dirtyNow() && !(await save())) return;
   let seq = what.split('+'), q = '';
   if (what === 'draft' && S.files['map-labels.json']) {
-    if (!confirm('Replace the label list with a new OCR draft? The old one is kept as map-labels.json.bak.')) return;
+    if (!(await ask('Replace the label list with a new OCR draft? The old one is kept as map-labels.json.bak.', 'Replace'))) return;
     q = '?force=1';
   }
   if (['prompt', 'check', 'finish'].includes(what)) q = `?round=${rd}`;
-  if (what === 'finish' && S.files['map-4k.webp'] && !confirm('map-4k.webp exists and will be replaced. Go on?')) return;
+  if (what === 'finish' && S.files['map-4k.webp'] && !(await ask('map-4k.webp exists and will be replaced. Go on?', 'Replace'))) return;
   setBusy(true, btn, what);
   let all = { code: 0, out: '' };
   for (const st of seq) {
@@ -1178,7 +1191,7 @@ async function upload(file) {
   const send = force => api(`gemini/${n}${force ? '?force=1' : ''}`, { method: 'POST', headers: { 'Content-Type': type }, body: file });
   let r = await send(false);
   if (r.status === 409) {
-    if (!confirm(`map-gemini-${n} already exists. Replace it?`)) return;
+    if (!(await ask(`map-gemini-${n} already exists. Replace it?`, 'Replace'))) return;
     r = await send(true);
   }
   if (r.status !== 200) { msg('Upload failed: ' + (r.j.error || r.status), 7000); return; }
@@ -1213,5 +1226,6 @@ resize();
 init();
 window.__ed = { get labels() { return labels; }, select, save };
 </script>
+<dialog id="ask"><div id="askt"></div><div class="row"><button value="" id="askno">Cancel</button><button class="primary" id="askok">OK</button></div></dialog>
 </body>
 </html>
