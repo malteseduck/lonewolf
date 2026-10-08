@@ -74,7 +74,10 @@ Commands run from the project root as
    tick any place name it caught by mistake: a few names are a place on one map and a caption on
    another). The editor groups each label's fields by the step that uses them and hides those that
    do not apply. The **Labels checked** button in step 3 marks this step done (it writes
-   `map-labels-checked.txt`; drafting again removes it). It replaced a per-label `ok` tick on
+   `map-labels-checked.txt`; drafting again removes it). A name printed over two lines that OCR read as two
+   boxes is joined with **Merge** (`M` then click the other label, or Shift+click it): one label,
+   its `lines` top to bottom, the box covering both. Each line is set centred, as most scans print
+   them; keep a staggered name as two labels. It replaced a per-label `ok` tick on
    2026-10-07, which meant ticking every box.
    The title, banner and shield captions and the key are left as drawn: Gemini copied them right
    in every round. Book 1: 60 labels, 42 place names.

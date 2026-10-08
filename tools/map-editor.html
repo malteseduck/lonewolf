@@ -114,6 +114,7 @@ kbd { background: #333; border: 1px solid var(--line); border-radius: 3px; paddi
     <div class="bar">
       <button id="add" title="Draw a new box (N)">New box</button>
       <button id="clearreset" title="Untick reset on every label: do this before checking a new Gemini round">Clear reset</button>
+      <button id="merge" title="Merge another label into the selected one (M, then click it; or Shift+click it): one name printed over two lines">Merge</button>
       <button id="del" title="Delete the selected label (Delete)">Delete</button>
       <button id="ebox" title="Edit the erase box, not the type (E): what is erased from the scan and where it is measured">Erase box</button>
     </div>
@@ -121,7 +122,8 @@ kbd { background: #333; border: 1px solid var(--line); border-radius: 3px; paddi
     <div id="form"></div>
     <div class="hint">
       Wheel zoom, drag empty map or hold <kbd>Space</kbd> to pan. A place name's frame is its new type: drag it
-      to move, handles to resize, the round handle to turn it. <b>Erase box</b> (<kbd>E</kbd>) edits instead
+      to move, handles to resize, the round handle to turn it. <b>Merge</b> (<kbd>M</kbd>, or
+      <kbd>Shift</kbd>+click) joins another label into the selected one, as stacked lines. <b>Erase box</b> (<kbd>E</kbd>) edits instead
       what is erased from the scan and where Measure reads it. Arrows nudge 1 px, with <kbd>Shift</kbd> 10.
       Fields left empty are removed on save.
     </div>
@@ -142,7 +144,7 @@ let sel = -1;
 let img = null;
 let view = { x: 0, y: 0, s: 1 };   // screen = map * s + (x, y)
 let undoStack = [], redoStack = [];
-let mode = null;            // 'draw' while waiting for a new box drag
+let mode = null;            // 'draw' while waiting for a new box drag, 'merge' for the label to merge in
 let drag = null;
 let spaceDown = false;
 let preview = true;
@@ -488,7 +490,7 @@ function renderList() {
     d.dataset.i = i;
     const n = document.createElement('span'); n.className = 'n'; n.textContent = i;
     d.append(n, document.createTextNode((l.lines && l.lines.length ? l.lines.join(' / ') : l.text) || '(empty)'));
-    d.onclick = () => select(i, true);
+    d.onclick = e => (e.shiftKey || mode === 'merge') && sel >= 0 && i !== sel ? merge(i) : select(i, true);
     el.appendChild(d);
   });
 }
@@ -653,6 +655,8 @@ cv.addEventListener('mousedown', e => {
   if (mode === 'draw') { drag = { kind: 'new', x: mx, y: my, box: null }; return; }
   if (e.button === 1 || spaceDown) { drag = { kind: 'pan', sx, sy, vx: view.x, vy: view.y }; cv.style.cursor = 'grabbing'; return; }
   const h = hit(sx, sy);
+  if (h.kind === 'box' && h.i !== sel && sel >= 0 && (e.shiftKey || mode === 'merge')) { merge(h.i); return; }
+  if (mode === 'merge') endMerge();
   if (h.kind === 'rot') { push(); ensureSet(labels[sel]); drag = { kind: 'rot' }; }
   else if (h.kind === 'fsize') { push(); ensureSet(labels[sel]); drag = { kind: 'fsize', n: h.n, f: frameOf(labels[sel]) }; }
   else if (h.kind === 'size') { push(); drag = { kind: 'size', n: h.n }; }
@@ -753,12 +757,13 @@ window.addEventListener('keydown', e => {
   if (ctrl && e.key.toLowerCase() === 'z' && !e.shiftKey && !typing()) { e.preventDefault(); undo(); return; }
   if (ctrl && (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey)) && !typing()) { e.preventDefault(); redo(); return; }
   if (typing()) { if (e.key === 'Escape') document.activeElement.blur(); return; }
-  if (e.key === 'Escape') { mode = null; $('add').classList.remove('on'); return; }
+  if (e.key === 'Escape') { mode = null; $('add').classList.remove('on'); $('merge').classList.remove('on'); return; }
   if (e.key.toLowerCase() === 'n') { startDraw(); e.preventDefault(); }
   else if (e.key.toLowerCase() === 'f') fit();
   else if (e.key.toLowerCase() === 'p') togglePreview();
   else if (e.key.toLowerCase() === 'h') { if (!hideAll) { hideAll = true; draw(); } }
   else if (e.key === 'Delete') del();
+  else if (e.key.toLowerCase() === 'm') startMerge();
   else if (e.key.toLowerCase() === 'e') toggleErase();
   else if (e.key.startsWith('Arrow') && sel >= 0) {
     e.preventDefault();
@@ -779,6 +784,29 @@ window.addEventListener('blur', () => { if (hideAll) { hideAll = false; draw(); 
 
 // ---------- actions ----------
 function startDraw() { mode = 'draw'; $('add').classList.add('on'); msg('Drag on the map to draw the new box (Esc cancels)'); }
+function startMerge() {
+  if (sel < 0) { msg('Select a label first, then merge another into it'); return; }
+  mode = 'merge'; $('add').classList.remove('on'); $('merge').classList.add('on');
+  msg('Click the label to merge into this one (Esc cancels)');
+}
+function endMerge() { mode = null; $('merge').classList.remove('on'); }
+// one name printed over two lines that OCR read as two boxes: the selected label keeps its ticks and
+// where; the lines go top to bottom, the box covers both, and the old type frame and ink are dropped
+function merge(i) {
+  const a = labels[sel], b = labels[i];
+  const linesOf = l => l.lines && l.lines.length ? l.lines : [l.text || ''];
+  const [top, bot] = (a.box[1] + a.box[3]) <= (b.box[1] + b.box[3]) ? [a, b] : [b, a];
+  push();
+  a.lines = [...linesOf(top), ...linesOf(bot)].filter(t => t.length);
+  a.text = a.lines.join(' ');
+  a.box = [Math.min(a.box[0], b.box[0]), Math.min(a.box[1], b.box[1]), Math.max(a.box[2], b.box[2]), Math.max(a.box[3], b.box[3])];
+  if (b.keep) a.keep = [...(a.keep || []), ...b.keep];
+  delete a.set; delete a.ink;
+  labels.splice(i, 1);
+  if (i < sel) sel--;
+  endMerge(); refresh();
+  msg(`Merged label ${i} in (Ctrl+Z undoes)`);
+}
 function toggleErase() { eraseMode = !eraseMode; $('ebox').classList.toggle('on', eraseMode); draw(); }
 function togglePreview() { preview = !preview; $('prev').classList.toggle('on', preview); draw(); }
 function del() {
@@ -801,7 +829,7 @@ function clearReset() {
   push(); labels.forEach(l => { delete l.reset; }); renderForm(); afterEdit();
   msg(`Cleared reset on ${n} label(s)`);
 }
-$('add').onclick = startDraw; $('del').onclick = del; $('save').onclick = save;
+$('add').onclick = startDraw; $('merge').onclick = startMerge; $('del').onclick = del; $('save').onclick = save;
 $('undo').onclick = undo; $('redo').onclick = redo; $('prev').onclick = togglePreview; $('ebox').onclick = toggleErase;
 // ---------- the steps (docs/reference/map-upscale.md) ----------
 let S = { files: {}, rounds: [], running: null, err: '' };   // /api/map/<book>/state
