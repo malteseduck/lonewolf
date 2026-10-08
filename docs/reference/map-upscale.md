@@ -61,8 +61,10 @@ Commands run from the project root as
 `data/projectaon/<code>`.
 
 1. **Upscale the scan**: `map_upscale.py $D/map.png $D/map-2k.png --width 2048`.
-2. **Label list.** `map_labels.py draft $D/map-2k.png $D/map-labels.json` gives EasyOCR's boxes
-   as a start only (on Book 1 most came back as a stray digit). Correct every wording and box by
+2. **Label list.** `map_labels.py draft $D/map-2k.png $D/map-labels.json` gives OCR boxes as a
+   start only. It uses PaddleOCR when `tools/.venv-paddle` exists (see `map_ocr_paddle.py`): on
+   Book 4 it read about 55 of 62 labels right, slanted ones included, and missed a few small ones.
+   Without it, EasyOCR (on Book 1 most came back as a stray digit). Correct every wording and box by
    eye, and add what it missed. Each entry: `text` (exact, as printed), `box` [x0, y0, x1, y1],
    `where` (its place in words), `small` (hand-lettered), and `leave: true` on every *place name*.
    The title, banner and shield captions and the key are left as drawn: Gemini copied them right
@@ -115,7 +117,10 @@ Commands run from the project root as
   serve.py's docstring: `/api/map/<book>/state`, `run/<step>`, `gemini/<n>`; local requests only).
 - `tools/map_upscale.py`: Real-ESRGAN (`tools/realesrgan/`, the v0.2.5.0 Windows build, git-ignored)
   in 4x passes until wide enough, then LANCZOS to the exact width. One pass about 10 s on the RTX 2060.
-- `tools/map_labels.py`: `draft` (EasyOCR boxes for a first list), `prompt` (the Gemini prompt,
+- `tools/map_ocr_paddle.py`: PaddleOCR's reading of a map, run by `map_labels.py` in its own venv,
+  `tools/.venv-paddle` (Python 3.12, git-ignored; set-up commands in its docstring). Models in
+  `~/.paddlex`.
+- `tools/map_labels.py`: `draft` (OCR boxes for a first list), `prompt` (the Gemini prompt,
   `--lettered` for step 5) and `check` (OCR hint plus the `labels.png` eye-check sheet).
 - `tools/map_measure.py`: measures each lettered label's ink with the same code `map_letter.py` uses and
   stores it as `ink` in `map-labels.json`, for the map editor's preview.

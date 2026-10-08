@@ -5,7 +5,8 @@ Run (from the project root):
   uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_labels.py check <map-labels.json> <aligned.png> [<map-2k.png>]
   uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_labels.py prompt <map-labels.json> <prompt.txt> [--lettered]
 
-draft: EasyOCR finds each label's box and guesses its wording. The guesses are only a start:
+draft: OCR finds each label's box and guesses its wording: PaddleOCR (map_ocr_paddle.py, in
+tools/.venv-paddle) when that venv exists, else EasyOCR. The guesses are only a start:
 correct every wording by eye and add what it missed (docs/reference/map-upscale.md, step 2).
 Entries are {"text", "box": [x0, y0, x1, y1], "conf"}. The corrected list drops "conf" and adds
 "where" (the label's place in words, for the prompt), "small" (hand-lettered names OCR cannot read;
@@ -20,16 +21,25 @@ labels.png beside <aligned.png>: every label, faithful beside repaint, for the r
 """
 import difflib
 import json
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import cv2
 import numpy as np
 
 MODELS = Path(__file__).parent.parent / 'data' / 'models' / 'easyocr'
+PADDLE = Path(__file__).parent / '.venv-paddle' / 'Scripts' / 'python.exe'
 
 
 def ocr(path):
+    if PADDLE.exists():  # far better on slanted and hand-lettered names (Book 4)
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d) / 'reads.json'
+            subprocess.run([str(PADDLE), str(Path(__file__).parent / 'map_ocr_paddle.py'), str(path), str(out)],
+                           check=True)
+            return json.loads(out.read_text(encoding='utf-8'))
     import easyocr
     r = easyocr.Reader(['en'], model_storage_directory=str(MODELS), download_enabled=False, verbose=False)
     im = cv2.imdecode(np.fromfile(str(path), np.uint8), cv2.IMREAD_COLOR)
