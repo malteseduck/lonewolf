@@ -571,6 +571,7 @@ function renderForm() {
   ta.oninput = change(() => { const v = ta.value.split('\n').filter(s => s.length); setField('lines', v.length ? v : undefined); });
   row('lines', ta);
   check('retype', true, true);
+  if (lettered) check('spread', false);
   check('small', true);
 
   const num = (key, step) => {
@@ -614,7 +615,6 @@ function renderForm() {
     lr.onchange = () => lr.blur();  // let go of it, so Ctrl+Z and the arrow keys act on the map again
     const lp = document.createElement('div'); lp.className = 'pair'; lp.append(lr, ln);
     row('line spacing', lp);
-    check('spread', false);
   }
 
   sec('Box', l.retype ? 'step 6 erases what is inside it' : 'where the label is');
