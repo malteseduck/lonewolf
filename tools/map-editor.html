@@ -238,7 +238,7 @@ async function init() {
     msg(`Broken hand placement set back to measured: ${broken.map(i => `"${labels[i].text}"`).join(', ')}. Place it again, then save.`, 15000);
   }
 }
-$('bg').onchange = async () => { await loadImg($('bg').value); fit(); };
+$('bg').onchange = async () => { await loadImg($('bg').value); draw(); };  // keeps the zoom: only Fit resets it
 
 // ---------- view ----------
 function resize() {
@@ -510,13 +510,14 @@ function select(i, centre_) {
 $('filter').oninput = () => { renderList(); draw(); };
 
 const TEXTS = ['text', 'where'];
-const BOOLS = [['small', true], ['retype', true], ['clip', false], ['fix', false], ['reset', false], ['spread', false]];
+const BOOLS = [['small', true], ['retype', true], ['clip', false], ['water', false], ['fix', false], ['reset', false], ['spread', false]];
 const TIPS = {  // what each field does in the map tools (docs/reference/map-upscale.md)
   text: 'The wording exactly as printed on the map.',
   where: 'Where the label sits, in words; goes into the Gemini prompt. "upwards" or "downwards" in it sets which way a slanted name reads.',
   small: 'Hand-lettered name too small for OCR: the check lists it for a look by eye instead of comparing its reading.',
   retype: 'A place name: erased from the scan and set again in clean type before Gemini sees the map. Untick for the title, banner, panel captions and key, which Gemini copies as drawn.',
   clip: 'Erase the whole box, not just the letter shapes. For a name on flat ground where letters touch a line and leave fragments.',
+  water: 'A river runs through the name and its letters touch it: erase those letters too, keeping the river (Book 4: Holmgard).',
   fix: 'After a Gemini round: for a label kept in its printed lettering (title, caption, key) that Gemini misspelled. Its lettering is cleared and the label set in Cabin at 4K. Stays ticked for later rounds.',
   reset: 'After a Gemini round: a place name Gemini garbled, to be set again at 4K by map_letter.py (replaces --only). Applies to the round just checked: untick all before checking a new round.',
   spread: 'The scale bar’s numbers: each word set on its own, evenly from one end of the box to the other.',
@@ -633,7 +634,7 @@ function renderForm() {
   const p1 = document.createElement('div'); p1.className = 'pair'; p1.append(bx[0], bx[1]);
   const p2 = document.createElement('div'); p2.className = 'pair'; p2.append(bx[2], bx[3]);
   row('box x0,y0', p1); row('box x1,y1', p2);
-  if (l.retype) check('clip', false);
+  if (l.retype) { check('clip', false); check('water', false); }
   if (l.keep) {
     const k = document.createElement('div'); k.style.color = 'var(--dim)'; k.textContent = l.keep.length + ' keep box(es), shown dashed green; kept as is';
     row('keep', k);
@@ -951,7 +952,7 @@ async function openStep(n) {
   setPreview(!!s.preview);
   renderRail(); renderPanel();
   await setBg(pick);
-  fit(); draw();
+  draw();
 }
 function closePanel() { curStep = 0; $('panel').hidden = true; renderRail(); resize(); }
 
@@ -1142,7 +1143,7 @@ async function upload(file) {
   received = r.j.saved; roundSet = true;
   await refreshState();
   if (curStep !== 7) await openStep(7); else renderPanel();
-  await setBg(r.j.saved); fit();
+  await setBg(r.j.saved); draw();
   msg(`Saved ${r.j.saved} (${Math.round(r.j.size / 1024)} KB)`);
 }
 window.addEventListener('paste', e => {
