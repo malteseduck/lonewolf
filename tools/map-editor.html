@@ -200,6 +200,8 @@ async function loadLabels() {
   labels = await r.json();
   labels.forEach(l => delete l.ok);  // the old per-label tick, replaced by step 3's button; dropped on the next save
   savedJson = snap();
+  // a placement with a missing number (a frame sized while it had no width) would stop map_letter.py: drop it, unsaved
+  loadLabels.broken = labels.flatMap((l, i) => l.set && ![...(l.set.at || [NaN]).slice(0, 2), l.set.size, l.set.angle].every(v => Number.isFinite(v)) && delete l.set ? [i] : []);
   if (sel >= labels.length) sel = -1;
   return true;
 }
@@ -230,6 +232,11 @@ async function init() {
   const want = params.get('bg');
   if (want && imageFiles().includes(want)) await setBg(want);
   fit(); refresh();
+  const broken = loadLabels.broken || [];
+  if (broken.length) {  // show which, selected and centred
+    select(broken[0], true);
+    msg(`Broken hand placement set back to measured: ${broken.map(i => `"${labels[i].text}"`).join(', ')}. Place it again, then save.`, 15000);
+  }
 }
 $('bg').onchange = async () => { await loadImg($('bg').value); fit(); };
 
@@ -709,6 +716,7 @@ window.addEventListener('mousemove', e => {
     if (n.includes('e')) rs.push((u - L) / f.w); if (n.includes('w')) rs.push((R - u) / f.w);
     if (n.includes('s')) rs.push((v - T) / f.h); if (n.includes('n')) rs.push((B - v) / f.h);
     const r = Math.max(Math.max(...rs), 6 / f.size), w = f.w * r, h = f.h * r;
+    if (!Number.isFinite(r) || !(f.w > 0 && f.h > 0)) return;  // a frame with no width (no text yet) cannot be scaled
     const cu = n.includes('e') ? L + w / 2 : n.includes('w') ? R - w / 2 : 0;
     const cv_ = n.includes('s') ? T + h / 2 : n.includes('n') ? B - h / 2 : 0;
     const c = toWorld(f, cu, cv_), l = labels[sel];

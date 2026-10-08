@@ -124,6 +124,9 @@ def letter(base, lab, scan_ink, hand, caps, k):
     text = lab['text']
     font = hand if any(ch.islower() for ch in text) else caps
     s = lab.get('set')
+    if s and None in [*s.get('at', [None, None])[:2], s.get('size'), s.get('angle')]:
+        print(f'label at box {lab["box"]}: hand placement has a blank number, set from the measure instead')
+        s = None
     if s and not lab.get('spread'):  # placed by hand in the map editor
         lines = lab.get('lines') or [text]
         mask, lh = render(lines, font, 0, 0, len(lines), leading=lab.get('leading', 1), size=s['size'] * k)
