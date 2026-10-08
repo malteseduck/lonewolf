@@ -8,21 +8,24 @@ Static files as `python -m http.server` serves them, from the project root, plus
     GET  /api/backups/<name>   one backup's JSON
     POST /api/backups/<name>   write a backup (JSON body, up to 5 MB)
 
-    GET  /api/maplabels/<book>   a book's map-labels.json (data/projectaon/<book>/)
+    GET  /api/maplabels/<book>   a book's map label list, maps/<book>/labels.json (committed: the
+                                 owner's work, not the book's; the scan and the pictures made from
+                                 it stay in data/projectaon/<book>/)
     POST /api/maplabels/<book>   write it (a JSON list of {text, box, ...}); the old file is copied
-                                 to map-labels.json.bak first. For tools/map-editor.html
+                                 to labels.json.bak first (git-ignored). For tools/map-editor.html
 
     The map editor's steps (docs/reference/map-upscale.md). Refused with 403 unless the request comes
     from this machine (127.0.0.1 or ::1), because they run scripts, even if the server is bound to
     the LAN. <book> is an existing folder of data/projectaon:
     GET  /api/map/books               every book folder: {code, number, title, stage} (how far its map is)
-    GET  /api/map/<book>/state        the map files (names starting "map", and map-check-<n>/*) with
+    GET  /api/map/<book>/state        the map files (names starting "map", and map-check-<n>/*, and
+                                      maps/<book>/'s labels.json, style.txt, labels-checked.txt) with
                                       size and mtime, the Gemini rounds present, the job running, when book.js was written
     POST /api/map/<book>/run/<step>   run one step: upscale, draft, measure, erase, letter, prompt,
                                       check, finish, import. ?round=n for prompt, check, finish;
                                       ?force=1 for draft over an existing list; ?width=n for finish.
                                       One job at a time (409 if busy). Returns {code, out}
-    POST /api/map/<book>/checked      mark step 3 (labels checked) done: writes map-labels-checked.txt;
+    POST /api/map/<book>/checked      mark step 3 (labels checked) done: writes maps/<book>/labels-checked.txt;
                                       ?undo=1 removes it. Drafting again removes it too
     POST /api/map/<book>/gemini/<n>   body: the round's image (png, jpeg or webp, up to 30 MB), saved
                                       as map-gemini-<n>.<ext>; 409 if there is one, unless ?force=1
@@ -81,12 +84,15 @@ def _hash(rel):
     return _hashes[rel][1]
 
 
+MAPS = os.path.join(ROOT, 'maps')
+MAPS_FILES = ('labels.json', 'style.txt', 'labels-checked.txt')  # the owner's work on a map, committed
+
+
 def _labels_file(book):
-    """data/projectaon/<book>/map-labels.json for a book that is an existing folder, else None."""
-    base = os.path.join(ROOT, 'data', 'projectaon')
-    if not re.fullmatch(r'[A-Za-z0-9_-]{1,40}', book) or not os.path.isdir(os.path.join(base, book)):
+    """maps/<book>/labels.json for a book that is an existing folder of data/projectaon, else None."""
+    if not _book_dir(book):
         return None
-    return os.path.join(base, book, 'map-labels.json')
+    return os.path.join(MAPS, book, 'labels.json')
 
 
 def _labels_ok(data):
@@ -138,7 +144,7 @@ def map_books():
         # round 0 is the owner's tries from before the procedure
         rounds = [f for f in os.listdir(e.path) if re.fullmatch(r'map-gemini-[1-9]\d*\.(png|jpg|webp)', f)]
         stage = ('done' if has('map-4k.webp') else 'gemini' if rounds else 'lettered' if has('map-2k-lettered.jpg')
-                 else 'labels' if has('map-labels.json') else 'started' if has('map-2k.png')
+                 else 'labels' if os.path.isfile(os.path.join(MAPS, e.name, 'labels.json')) else 'started' if has('map-2k.png')
                  else 'not started' if has('map.png') else 'no map')
         out.append({'code': e.name, 'number': num, 'title': title, 'stage': stage})
     return out
@@ -147,9 +153,13 @@ def map_books():
 def map_state(d):
     files = {}
 
-    def add(rel):
-        st = os.stat(os.path.join(d, rel))
+    def add(rel, base=d):
+        st = os.stat(os.path.join(base, rel))
         files[rel] = {'size': st.st_size, 'mtime': int(st.st_mtime * 1000)}
+    own = os.path.join(MAPS, os.path.basename(d))
+    for f in MAPS_FILES:
+        if os.path.isfile(os.path.join(own, f)):
+            add(f, own)
     for e in sorted(os.scandir(d), key=lambda e: e.name):
         if e.is_file() and e.name.startswith('map'):
             add(e.name)
@@ -188,17 +198,19 @@ def map_commands(step, book, q):
             return None, 'round must be a small integer', 400
         rnd = int(rnd)
     t = lambda name: 'tools/' + name
-    labels = f'{d}/map-labels.json'
+    labels = f'maps/{book}/labels.json'
     if step == 'upscale':
         return [PY + [t('map_upscale.py'), f'{d}/map.png', f'{d}/map-2k.png', '--width', '2048']], None, 0
     if step == 'draft':
-        f = os.path.join(full, 'map-labels.json')
+        own = os.path.join(MAPS, book)
+        f = os.path.join(own, 'labels.json')
         if os.path.isfile(f):
             if q.get('force', [''])[0] != '1':
-                return None, 'map-labels.json exists; draft would overwrite it (force=1 to do so)', 409
+                return None, 'labels.json exists; draft would overwrite it (force=1 to do so)', 409
             shutil.copyfile(f, f + '.bak')
-        if os.path.isfile(os.path.join(full, 'map-labels-checked.txt')):  # a new list is unchecked
-            os.remove(os.path.join(full, 'map-labels-checked.txt'))
+        if os.path.isfile(os.path.join(own, 'labels-checked.txt')):  # a new list is unchecked
+            os.remove(os.path.join(own, 'labels-checked.txt'))
+        os.makedirs(own, exist_ok=True)
         return [PY + [t('map_labels.py'), 'draft', f'{d}/map-2k.png', labels]], None, 0
     if step == 'measure':
         return [PY + [t('map_measure.py'), f'{d}/map-2k.png', labels]], None, 0
@@ -297,7 +309,8 @@ class Handler(SimpleHTTPRequestHandler):
         if method == 'POST' and len(parts) == 3 and parts[1] == 'run':
             return self._map_run(parts[0], parts[2], q)
         if method == 'POST' and parts[1:] == ['checked']:
-            f = os.path.join(d, 'map-labels-checked.txt')
+            os.makedirs(os.path.join(MAPS, parts[0]), exist_ok=True)
+            f = os.path.join(MAPS, parts[0], 'labels-checked.txt')
             if q.get('undo', [''])[0] == '1':
                 if os.path.isfile(f):
                     os.remove(f)
@@ -326,7 +339,7 @@ class Handler(SimpleHTTPRequestHandler):
                     break
             if step == 'letter' and not rc:  # the list the lettered picture was made from, so the
                 d = _book_dir(book)          # editor can tell which later edits matter to it
-                shutil.copyfile(os.path.join(d, 'map-labels.json'), os.path.join(d, 'map-labels-lettered.json'))
+                shutil.copyfile(os.path.join(MAPS, book, 'labels.json'), os.path.join(d, 'map-labels-lettered.json'))
             self._json(200, {'code': rc, 'out': _tail(out)})
         finally:
             _job[0] = None
@@ -444,6 +457,7 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(400, {'error': 'expected a list of objects with text (string) and box (4 numbers)'})
         if os.path.isfile(file):
             shutil.copyfile(file, file + '.bak')
+        os.makedirs(os.path.dirname(file), exist_ok=True)
         tmp = file + '.part'
         with open(tmp, 'w', encoding='utf-8') as f:
             f.write(json.dumps(data, indent=1))  # as map_labels.py writes it

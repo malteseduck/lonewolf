@@ -882,7 +882,7 @@ async function save() {
   const body = snap();
   const r = await fetch(`/api/maplabels/${encodeURIComponent(book)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
   const j = await r.json().catch(() => ({}));
-  if (r.ok) { savedJson = body; dirty(); msg(`Saved ${labels.length} labels (previous kept as map-labels.json.bak)`); await refreshState(); renderPanel(); return true; }
+  if (r.ok) { savedJson = body; dirty(); msg(`Saved ${labels.length} labels (previous kept as labels.json.bak)`); await refreshState(); renderPanel(); return true; }
   msg('Save failed: ' + (j.error || r.status), 6000);
   return false;
 }
@@ -932,12 +932,12 @@ async function loadLetteredFrom() {
   try { letteredFrom = await (await fetch(dir + 'map-labels-lettered.json?t=' + mt('map-labels-lettered.json'), { cache: 'no-store' })).json(); } catch (e) {}
 }
 function status(n) {
-  const lab = mt('map-labels.json'), lt = mt('map-2k-lettered.jpg'), er = mt('map-2k-erased.jpg');
+  const lab = mt('labels.json'), lt = mt('map-2k-lettered.jpg'), er = mt('map-2k-erased.jpg');
   const rd = activeRound(), rf = rd && roundFile(rd), ck = rd && mt(`map-check-${rd}/aligned.png`);
   switch (n) {
     case 1: return !mt('map-2k.png') ? 'todo' : mt('map.png') > mt('map-2k.png') ? 'stale' : 'done';
     case 2: return lab ? 'done' : 'todo';
-    case 3: return mt('map-labels-checked.txt') ? 'done' : 'todo';
+    case 3: return mt('labels-checked.txt') ? 'done' : 'todo';
     case 4: {
       const ink = lettered().filter(l => l.ink);
       if (!ink.length) return 'todo';
@@ -961,7 +961,7 @@ const STEPS = [
   { n: 1, short: 'Upscale', name: 'Upscale scan', run: 'upscale', bg: () => ['map.png'],
     text: 'Real-ESRGAN makes map-2k.png, 2048 px wide, from the original map.png in the book\'s folder. About 10 seconds on the GPU. Everything after this works on map-2k.png.' },
   { n: 2, short: 'Draft', name: 'Draft labels (OCR)', bg: () => ['map-2k.png'],
-    text: 'OCR reads boxes off map-2k.png as a first label list: PaddleOCR when tools/.venv-paddle is set up (Book 4: about 55 of 62 right), else EasyOCR. It is only a start, to correct by hand in the next step, and takes a minute or more. If a list already exists it is replaced, and the old one is kept as map-labels.json.bak.' },
+    text: 'OCR reads boxes off map-2k.png as a first label list: PaddleOCR when tools/.venv-paddle is set up (Book 4: about 55 of 62 right), else EasyOCR. It is only a start, to correct by hand in the next step, and takes a minute or more. If a list already exists it is replaced, and the old one is kept as labels.json.bak.' },
   { n: 3, short: 'Labels', name: 'Labels: wording and boxes (by hand)', bg: () => ['map-2k.png'],
     text: 'Correct every label\'s wording and box by eye, and add what OCR missed (New box, N). The draft ticks retype on every label except wordings another book keeps as drawn (its key and captions): untick it on the title, banner and any other captions, which Gemini copies as drawn, and check the ones it left unticked are not place names. Save with Ctrl+S. When the list is right, press Labels checked to mark this step done.' },
   { n: 4, short: 'Measure', name: 'Measure', run: 'measure', bg: () => ['map-2k.png'],
@@ -1031,9 +1031,9 @@ function renderPanel() {
     case 1:
       h += `<div class="row">${runBtn('Upscale', 'data-do="upscale"' + noRun)}${files['map.png'] ? '' : '<span class="bad">no map.png in the folder: fetch the book first</span>'}</div>`; break;
     case 2:
-      h += `<div class="row">${runBtn(files['map-labels.json'] ? 'Draft again (replaces the list)' : 'Draft', 'data-do="draft"' + noRun)}</div>`; break;
+      h += `<div class="row">${runBtn(files['labels.json'] ? 'Draft again (replaces the list)' : 'Draft', 'data-do="draft"' + noRun)}</div>`; break;
     case 3: {
-      const places = labels.filter(l => l.retype).length, done = !!mt('map-labels-checked.txt');
+      const places = labels.filter(l => l.retype).length, done = !!mt('labels-checked.txt');
       h += `<div class="row">${done ? '<button data-do="unchecked">Not checked after all</button>' : '<button class="primary" data-do="checked">Labels checked</button>'}
 <span class="note">${labels.length} labels, ${places} place names</span></div>
 <div class="row"><button data-do="copyclaude">Copy request for Claude</button>
@@ -1105,7 +1105,7 @@ async function api(path, opts) {
 // step 3's retype ticks are a judgement by eye, so they go to Claude Code by hand, not to a script
 async function copyClaude() {
   if (snap() !== savedJson && !(await save())) return;  // Claude edits the saved file
-  const t = `Map editor, step 3, book ${book}: in data/projectaon/${book}/map-labels.json, untick "retype" on every label that is not a place name (the title, banner, panel captions, key and scale wording, which Gemini copies as drawn), and check that the labels already unticked are not place names. Judge from the wording and the boxes only: do not open the map image. If a label could be either, leave it as it is and ask me. Change only the retype ticks: no wording, boxes or other fields. Write the file back in its current format, then list what you changed by index.`;
+  const t = `Map editor, step 3, book ${book}: in maps/${book}/labels.json, untick "retype" on every label that is not a place name (the title, banner, panel captions, key and scale wording, which Gemini copies as drawn), and check that the labels already unticked are not place names. Judge from the wording and the boxes only: do not open the map image. If a label could be either, leave it as it is and ask me. Change only the retype ticks: no wording, boxes or other fields. Write the file back in its current format, then list what you changed by index.`;
   try { await navigator.clipboard.writeText(t); msg('Request copied: paste it into Claude Code, then reload this page', 5000); }
   catch (e) { msg('Copy failed: ' + e.message, 6000); }
 }
@@ -1130,8 +1130,8 @@ async function doStep(what, btn) {
   const s = curStep, rd = curRound;
   if (dirtyNow() && !(await save())) return;
   let seq = what.split('+'), q = '';
-  if (what === 'draft' && S.files['map-labels.json']) {
-    if (!(await ask('Replace the label list with a new OCR draft? The old one is kept as map-labels.json.bak.', 'Replace'))) return;
+  if (what === 'draft' && S.files['labels.json']) {
+    if (!(await ask('Replace the label list with a new OCR draft? The old one is kept as labels.json.bak.', 'Replace'))) return;
     q = '?force=1';
   }
   if (['prompt', 'check', 'finish'].includes(what)) q = `?round=${rd}`;
@@ -1168,7 +1168,7 @@ async function copyPrompt(btn) {
   try {
     if (dirtyNow() && !(await save())) return;
     const pm = mt(`map-prompt-${rd}.txt`);  // written again after the labels or the book's style changed
-    if (!pm || pm < mt('map-labels.json') || pm < (mt('map-style.txt') || 0)) {
+    if (!pm || pm < mt('labels.json') || pm < (mt('style.txt') || 0)) {
       const r = await runOne('prompt', `?round=${rd}`);
       logs[7] = r;
       if (!r.ok) { msg('Could not write the prompt', 6000); return; }

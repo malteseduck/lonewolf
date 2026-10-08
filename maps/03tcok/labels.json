@@ -1,0 +1,1233 @@
+[
+ {
+  "text": "THE ICY WASTES OF",
+  "box": [
+   968,
+   1100,
+   1135,
+   1160
+  ],
+  "where": "title scroll, bottom centre, small first lines",
+  "small": false,
+  "ok": true,
+  "retype": false
+ },
+ {
+  "text": "KALTE",
+  "box": [
+   932,
+   1170,
+   1167,
+   1280
+  ],
+  "where": "title scroll, large",
+  "small": false,
+  "ok": true,
+  "retype": false
+ },
+ {
+  "text": "CLOUDMAKER MOUNTAIN",
+  "box": [
+   1580,
+   805,
+   1870,
+   840
+  ],
+  "where": "caption under the right-hand mountain picture",
+  "small": false,
+  "ok": true,
+  "retype": false
+ },
+ {
+  "text": "IKAYA THE ICE FORTRESS",
+  "box": [
+   1585,
+   1125,
+   1865,
+   1158
+  ],
+  "where": "caption under the right-hand fortress picture",
+  "small": false,
+  "ok": true,
+  "retype": false
+ },
+ {
+  "text": "SCALE IN MILES",
+  "box": [
+   1620,
+   1268,
+   1825,
+   1298
+  ],
+  "where": "scale banner, bottom right",
+  "small": false,
+  "ok": true,
+  "retype": false
+ },
+ {
+  "text": "0 150",
+  "box": [
+   1550,
+   1360,
+   1905,
+   1392
+  ],
+  "where": "scale, upper bar ends",
+  "small": false,
+  "ok": true,
+  "retype": false
+ },
+ {
+  "text": "0 25 50 75 100 125 150",
+  "box": [
+   1545,
+   1435,
+   1925,
+   1462
+  ],
+  "where": "scale, lower bar numbers",
+  "small": false,
+  "ok": true,
+  "retype": false
+ },
+ {
+  "text": "THE UNCHARTED VOID",
+  "box": [
+   974,
+   70,
+   1302,
+   110
+  ],
+  "where": "top edge, centre right",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    1136.5,
+    89.8
+   ],
+   "angle": 0.2,
+   "length": 317,
+   "thick": 24.8,
+   "box": [
+    974,
+    70,
+    1302,
+    110
+   ]
+  },
+  "set": {
+   "at": [
+    1137.9,
+    88.4
+   ],
+   "size": 28.1,
+   "angle": 0.2
+  }
+ },
+ {
+  "text": "IKAYA",
+  "box": [
+   806,
+   104,
+   896,
+   134
+  ],
+  "where": "top centre, above the fortress",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    852,
+    118.6
+   ],
+   "angle": 1.09,
+   "length": 76.3,
+   "thick": 20.2,
+   "box": [
+    806,
+    104,
+    896,
+    134
+   ]
+  },
+  "set": {
+   "at": [
+    850.5,
+    117.2
+   ],
+   "size": 27.2,
+   "angle": -0.5
+  },
+  "clip": true
+ },
+ {
+  "text": "THE ICE FORTRESS",
+  "box": [
+   756,
+   124,
+   944,
+   152
+  ],
+  "where": "top centre, under Ikaya",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    849.6,
+    133.2
+   ],
+   "angle": 0.97,
+   "length": 181.2,
+   "thick": 26.6,
+   "box": [
+    756,
+    124,
+    944,
+    152
+   ]
+  },
+  "set": {
+   "at": [
+    852.7,
+    140.9
+   ],
+   "size": 19.7,
+   "angle": 0
+  }
+ },
+ {
+  "text": "HROD RANGE",
+  "box": [
+   449,
+   145,
+   603,
+   243
+  ],
+  "where": "along the northern mountains, slanting down to the right",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    528.8,
+    173.9
+   ],
+   "angle": 18.03,
+   "length": 151.6,
+   "thick": 79.2,
+   "box": [
+    449,
+    145,
+    603,
+    243
+   ]
+  },
+  "set": {
+   "at": [
+    522.5,
+    189.3
+   ],
+   "size": 22.2,
+   "angle": 27.5
+  }
+ },
+ {
+  "text": "HROD ICE SHELF",
+  "box": [
+   185,
+   165,
+   225,
+   350
+  ],
+  "where": "left edge, reading upwards",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    207.8,
+    263.5
+   ],
+   "angle": -90.14,
+   "length": 179,
+   "thick": 38,
+   "box": [
+    185,
+    165,
+    225,
+    350
+   ]
+  },
+  "set": {
+   "at": [
+    203.8,
+    260.9
+   ],
+   "size": 20,
+   "angle": -85.5
+  },
+  "reset": true
+ },
+ {
+  "text": "HROD",
+  "box": [
+   290,
+   278,
+   356,
+   304
+  ],
+  "where": "on the ice west of the Hrod Basin",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    318.5,
+    288.2
+   ],
+   "angle": 5.46,
+   "length": 67.4,
+   "thick": 22.4,
+   "box": [
+    290,
+    278,
+    356,
+    304
+   ]
+  },
+  "set": {
+   "at": [
+    323.3,
+    291.1
+   ],
+   "size": 20.8,
+   "angle": 1.5
+  }
+ },
+ {
+  "text": "STORM GIANT PASS",
+  "box": [
+   528,
+   202,
+   780,
+   302
+  ],
+  "where": "north centre, slanting up to the right",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    653.3,
+    248.7
+   ],
+   "angle": 1.78,
+   "length": 261.7,
+   "thick": 108.4,
+   "box": [
+    528,
+    202,
+    780,
+    302
+   ]
+  },
+  "set": {
+   "at": [
+    655.1,
+    251.8
+   ],
+   "size": 25,
+   "angle": -17
+  }
+ },
+ {
+  "text": "VIAD MOUNTAINS",
+  "box": [
+   576,
+   306,
+   722,
+   362
+  ],
+  "where": "centre, west of the glacier, two lines",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "lines": [
+   "VIAD",
+   "MOUNTAINS"
+  ],
+  "ink": {
+   "at": [
+    650.2,
+    334.1
+   ],
+   "angle": -8.21,
+   "length": 142.7,
+   "thick": 59.9,
+   "box": [
+    576,
+    306,
+    722,
+    362
+   ]
+  },
+  "set": {
+   "at": [
+    653.8,
+    334.1
+   ],
+   "size": 23,
+   "angle": 0
+  }
+ },
+ {
+  "text": "MYJAVIK MOUNTAINS",
+  "box": [
+   1028,
+   219,
+   1311,
+   340
+  ],
+  "where": "north east, slanting up to the right",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    1158.8,
+    259
+   ],
+   "angle": -9.14,
+   "length": 282.2,
+   "thick": 97.4,
+   "box": [
+    1028,
+    219,
+    1311,
+    340
+   ]
+  },
+  "set": {
+   "at": [
+    1169.2,
+    280.3
+   ],
+   "size": 25,
+   "angle": -18
+  }
+ },
+ {
+  "text": "HROD BASIN",
+  "box": [
+   432,
+   376,
+   570,
+   406
+  ],
+  "where": "west centre",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    500.7,
+    390.6
+   ],
+   "angle": 1.44,
+   "length": 127,
+   "thick": 16.8,
+   "box": [
+    432,
+    376,
+    570,
+    406
+   ]
+  },
+  "set": {
+   "at": [
+    503.1,
+    390.5
+   ],
+   "size": 19.3,
+   "angle": 1.4
+  }
+ },
+ {
+  "text": "CLOUDMAKER MTN",
+  "box": [
+   740,
+   406,
+   852,
+   452
+  ],
+  "where": "beside the glacier, two lines",
+  "small": true,
+  "ok": true,
+  "retype": true,
+  "lines": [
+   "CLOUDMAKER",
+   "MTN"
+  ],
+  "ink": {
+   "at": [
+    800,
+    427.7
+   ],
+   "angle": 1.91,
+   "length": 110.5,
+   "thick": 52.5,
+   "box": [
+    740,
+    406,
+    852,
+    452
+   ]
+  },
+  "set": {
+   "at": [
+    795.3,
+    430.7
+   ],
+   "size": 15,
+   "angle": 0
+  },
+  "reset": true
+ },
+ {
+  "text": "VIAD GLACIER",
+  "box": [
+   862,
+   330,
+   913,
+   488
+  ],
+  "where": "down the glacier, reading upwards",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    886.6,
+    409.5
+   ],
+   "angle": -85.21,
+   "length": 165.7,
+   "thick": 67.4,
+   "box": [
+    862,
+    330,
+    913,
+    488
+   ]
+  }
+ },
+ {
+  "text": "KLIU RANGE",
+  "box": [
+   960,
+   397,
+   1132,
+   496
+  ],
+  "where": "east of the glacier, slanting up to the right",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    1044.3,
+    450.3
+   ],
+   "angle": 9,
+   "length": 190.1,
+   "thick": 103.2,
+   "box": [
+    960,
+    397,
+    1132,
+    496
+   ]
+  },
+  "set": {
+   "at": [
+    1052.6,
+    447.6
+   ],
+   "size": 25.8,
+   "angle": -26
+  }
+ },
+ {
+  "text": "DRYGGA ICE SHELF",
+  "box": [
+   1326,
+   284,
+   1436,
+   510
+  ],
+  "where": "east coast, reading upwards",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    1361.5,
+    385.2
+   ],
+   "angle": -74.09,
+   "length": 233.1,
+   "thick": 78.2,
+   "box": [
+    1326,
+    284,
+    1436,
+    510
+   ]
+  },
+  "set": {
+   "at": [
+    1379.1,
+    399.2
+   ],
+   "size": 22.1,
+   "angle": -70
+  }
+ },
+ {
+  "text": "LJUK RANGE",
+  "box": [
+   220,
+   488,
+   329,
+   617
+  ],
+  "where": "west, slanting down to the right",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    282.4,
+    542.8
+   ],
+   "angle": 49.89,
+   "length": 134.5,
+   "thick": 113.7,
+   "box": [
+    220,
+    488,
+    329,
+    617
+   ]
+  },
+  "set": {
+   "at": [
+    274.9,
+    549.1
+   ],
+   "size": 21,
+   "angle": 49.9
+  }
+ },
+ {
+  "text": "LJUK",
+  "box": [
+   418,
+   548,
+   485,
+   579
+  ],
+  "where": "beside the Ljuk tower",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    447.3,
+    560.5
+   ],
+   "angle": 4.59,
+   "length": 65.2,
+   "thick": 35.2,
+   "box": [
+    418,
+    548,
+    485,
+    579
+   ]
+  },
+  "set": {
+   "at": [
+    449.7,
+    566.6
+   ],
+   "size": 22.9,
+   "angle": 0.5
+  }
+ },
+ {
+  "text": "THE ROCK",
+  "box": [
+   565,
+   536,
+   659,
+   565
+  ],
+  "where": "on the Ljuk ice shelf, west",
+  "small": true,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    612,
+    553
+   ],
+   "angle": 0.91,
+   "length": 84.1,
+   "thick": 13.3,
+   "box": [
+    565,
+    536,
+    659,
+    565
+   ]
+  },
+  "set": {
+   "at": [
+    612.2,
+    553.4
+   ],
+   "size": 15.4,
+   "angle": 0.9
+  }
+ },
+ {
+  "text": "GYEM ISLAND",
+  "box": [
+   743,
+   561,
+   873,
+   587
+  ],
+  "where": "on the Ljuk ice shelf, east",
+  "small": true,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    807.9,
+    568.2
+   ],
+   "angle": -1.96,
+   "length": 118.1,
+   "thick": 21.2,
+   "box": [
+    743,
+    561,
+    873,
+    587
+   ]
+  },
+  "set": {
+   "at": [
+    808.6,
+    573.2
+   ],
+   "size": 17.5,
+   "angle": -1
+  },
+  "reset": true
+ },
+ {
+  "text": "LJUK ICE SHELF",
+  "box": [
+   559,
+   577,
+   754,
+   641
+  ],
+  "where": "south coast of the ice shelf, slanting down",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    655.8,
+    604
+   ],
+   "angle": 3.01,
+   "length": 199.4,
+   "thick": 72.5,
+   "box": [
+    559,
+    577,
+    754,
+    641
+   ]
+  },
+  "set": {
+   "at": [
+    658.7,
+    609.3
+   ],
+   "size": 24,
+   "angle": 9.5
+  }
+ },
+ {
+  "text": "KLIU ICE SHELF",
+  "box": [
+   1006,
+   554,
+   1179,
+   658
+  ],
+  "where": "south east, slanting up to the right",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    1081.9,
+    593.3
+   ],
+   "angle": -8.73,
+   "length": 173.1,
+   "thick": 100.7,
+   "box": [
+    1006,
+    554,
+    1179,
+    658
+   ]
+  },
+  "set": {
+   "at": [
+    1090.7,
+    608.4
+   ],
+   "size": 22.5,
+   "angle": -26.5
+  }
+ },
+ {
+  "text": "HALLE BLUFF",
+  "box": [
+   783,
+   633,
+   927,
+   714
+  ],
+  "where": "the point east of the sound, slanting up",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    841.2,
+    665.4
+   ],
+   "angle": -22.16,
+   "length": 144.8,
+   "thick": 106.8,
+   "box": [
+    783,
+    633,
+    927,
+    714
+   ]
+  },
+  "set": {
+   "at": [
+    860.4,
+    670.7
+   ],
+   "size": 20.4,
+   "angle": -21
+  },
+  "reset": true
+ },
+ {
+  "text": "LJUK SOUND",
+  "box": [
+   467,
+   673,
+   633,
+   714
+  ],
+  "where": "in the sound",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    550.8,
+    694.2
+   ],
+   "angle": 3.13,
+   "length": 150.6,
+   "thick": 16.3,
+   "box": [
+    467,
+    673,
+    633,
+    714
+   ]
+  },
+  "set": {
+   "at": [
+    551.7,
+    694.9
+   ],
+   "size": 23.6,
+   "angle": 2.5
+  }
+ },
+ {
+  "text": "TOLA",
+  "box": [
+   649,
+   755,
+   719,
+   783
+  ],
+  "where": "under the small island",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    684.2,
+    765.6
+   ],
+   "angle": 3.53,
+   "length": 62.6,
+   "thick": 23.7,
+   "box": [
+    649,
+    755,
+    719,
+    783
+   ]
+  },
+  "set": {
+   "at": [
+    686.2,
+    771
+   ],
+   "size": 23.4,
+   "angle": 0.5
+  }
+ },
+ {
+  "text": "KRIE",
+  "box": [
+   776,
+   724,
+   844,
+   752
+  ],
+  "where": "beside the point",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    805.1,
+    741
+   ],
+   "angle": -3.14,
+   "length": 67.6,
+   "thick": 24.4,
+   "box": [
+    776,
+    724,
+    844,
+    752
+   ]
+  },
+  "set": {
+   "at": [
+    809,
+    739.7
+   ],
+   "size": 26,
+   "angle": -3.1
+  }
+ },
+ {
+  "text": "THE KALTERSEE",
+  "box": [
+   190,
+   936,
+   418,
+   991
+  ],
+  "where": "open sea, west",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    302.4,
+    962.9
+   ],
+   "angle": 7.73,
+   "length": 217.9,
+   "thick": 18.3,
+   "box": [
+    190,
+    936,
+    418,
+    991
+   ]
+  },
+  "set": {
+   "at": [
+    304.3,
+    963.9
+   ],
+   "size": 27.5,
+   "angle": 6.5
+  }
+ },
+ {
+  "text": "LIMIT OF WINTER PACK ICE",
+  "box": [
+   636,
+   929,
+   948,
+   984
+  ],
+  "where": "along the pack ice line",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    791.5,
+    946
+   ],
+   "angle": 4.03,
+   "length": 315.9,
+   "thick": 54.4,
+   "box": [
+    636,
+    929,
+    948,
+    984
+   ]
+  },
+  "set": {
+   "at": [
+    794.5,
+    954.9
+   ],
+   "size": 22,
+   "angle": 4
+  }
+ },
+ {
+  "text": "ANSKAVEN",
+  "box": [
+   237,
+   1360,
+   384,
+   1444
+  ],
+  "where": "bottom left, beside the castle, slanting up",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    310.3,
+    1404
+   ],
+   "angle": -15.87,
+   "length": 132.3,
+   "thick": 78,
+   "box": [
+    237,
+    1360,
+    384,
+    1444
+   ]
+  },
+  "set": {
+   "at": [
+    314.3,
+    1405.3
+   ],
+   "size": 23,
+   "angle": -19.5
+  }
+ },
+ {
+  "text": "BROKA",
+  "box": [
+   605,
+   1353,
+   694,
+   1386
+  ],
+  "where": "bottom, beside the eastern island",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    649,
+    1370.1
+   ],
+   "angle": 2.06,
+   "length": 80.5,
+   "thick": 18.5,
+   "box": [
+    605,
+    1353,
+    694,
+    1386
+   ]
+  },
+  "set": {
+   "at": [
+    649.4,
+    1368.8
+   ],
+   "size": 21.7,
+   "angle": 2.1
+  }
+ },
+ {
+  "text": "THET",
+  "box": [
+   404,
+   1408,
+   472,
+   1436
+  ],
+  "where": "bottom, west of the islands",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    438.7,
+    1422
+   ],
+   "angle": -1.7,
+   "length": 59.1,
+   "thick": 17.4,
+   "box": [
+    404,
+    1408,
+    472,
+    1436
+   ]
+  },
+  "set": {
+   "at": [
+    438.3,
+    1424.5
+   ],
+   "size": 22.7,
+   "angle": -1.7
+  }
+ },
+ {
+  "text": "EGEN",
+  "box": [
+   562,
+   1414,
+   640,
+   1444
+  ],
+  "where": "bottom, under the islands",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    600.4,
+    1429.1
+   ],
+   "angle": 0.63,
+   "length": 67,
+   "thick": 18.5,
+   "box": [
+    562,
+    1414,
+    640,
+    1444
+   ]
+  },
+  "set": {
+   "at": [
+    600,
+    1429.5
+   ],
+   "size": 26.1,
+   "angle": 0.6
+  }
+ },
+ {
+  "text": "LOF",
+  "box": [
+   1238,
+   1402,
+   1296,
+   1442
+  ],
+  "where": "bottom, beside the tower",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    1257.2,
+    1421.8
+   ],
+   "angle": 14.02,
+   "length": 54.6,
+   "thick": 33,
+   "box": [
+    1238,
+    1402,
+    1296,
+    1442
+   ]
+  },
+  "angle": 0,
+  "nudge": [
+   6,
+   2
+  ]
+ },
+ {
+  "text": "150",
+  "box": [
+   1880,
+   1445,
+   1920,
+   1451
+  ],
+  "where": "scale, last number of the lower bar",
+  "small": false,
+  "ok": true,
+  "retype": false,
+  "fix": true,
+  "set": {
+   "at": [
+    1900,
+    1449.5
+   ],
+   "size": 18,
+   "angle": 0
+  }
+ }
+]

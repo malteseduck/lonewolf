@@ -38,17 +38,19 @@ round handle to turn it. Touching the frame stores the placement as `set` {`at` 
 `height` and `angle`; "Back to measured" drops it. <kbd>E</kbd> or "Erase box" switches the handles
 to the box.
 
-Files, all in `data/projectaon/<code>/` (git-ignored):
+The owner's work on a map is committed, in `maps/<code>/`: `labels.json` (the label list: every
+label's wording, box on `map-2k.png`, and how to treat it), `style.txt` (the book's own look, opening
+the prompt in place of the default) and `labels-checked.txt` (step 3 done). Saving keeps the previous
+list as `labels.json.bak` (git-ignored). Everything made from the scan is in `data/projectaon/<code>/`
+(git-ignored):
 
 | File | What |
 |---|---|
 | `map.png` | The original, as Project Aon serves it (`/en/xhtml/lw/<code>/map.png`). The player shows it until `map-4k.webp` exists. Never overwrite it; if in doubt, fetch it again from that address. |
 | `map-gemini-0.png` | The owner's first Gemini versions, made before this procedure (Books 1-6, 12) |
 | `map-2k.png` | Real-ESRGAN of `map.png`, 2048 wide |
-| `map-labels.json` | The label list: every label's wording, box on `map-2k.png`, and how to treat it |
 | `map-2k-erased.jpg` | `map-2k.png` with the place names erased |
 | `map-2k-lettered.jpg` | The same with the place names set again in Cabin: the picture Gemini gets |
-| `map-style.txt` | Optional: the book's own look, opening the prompt in place of the default (Book 3: snow and ice) |
 | `map-prompt-<n>.txt` | The prompt for round n |
 | `map-gemini-<n>.jpg` | Gemini's output, round n, saved by the owner |
 | `map-check-<n>/` | Round n's checks: `aligned.png`, `H.json`, `flags.png`, `labels.png` |
@@ -58,10 +60,10 @@ Files, all in `data/projectaon/<code>/` (git-ignored):
 
 Commands run from the project root as
 `uv run --no-project --python tools/.venv/Scripts/python.exe python tools/<script> ...`; `D` below is
-`data/projectaon/<code>`.
+`data/projectaon/<code>` and `L` is `maps/<code>/labels.json`.
 
 1. **Upscale the scan**: `map_upscale.py $D/map.png $D/map-2k.png --width 2048`.
-2. **Label list.** `map_labels.py draft $D/map-2k.png $D/map-labels.json` gives OCR boxes as a
+2. **Label list.** `map_labels.py draft $D/map-2k.png $L` gives OCR boxes as a
    start only. It uses PaddleOCR when `tools/.venv-paddle` exists (see `map_ocr_paddle.py`): on
    Book 4 it read about 55 of 62 labels right, slanted ones included, and missed a few small ones.
    Without it, EasyOCR (on Book 1 most came back as a stray digit). **The owner** corrects every
@@ -76,18 +78,18 @@ Commands run from the project root as
    that unticking, to paste into Claude Code (the page cannot reach the agent itself); reload the
    editor after the agent has written the file. The editor groups each label's fields by the step that uses them and hides those that
    do not apply. The **Labels checked** button in step 3 marks this step done (it writes
-   `map-labels-checked.txt`; drafting again removes it). A name printed over two lines that OCR read as two
+   `maps/<code>/labels-checked.txt`; drafting again removes it). A name printed over two lines that OCR read as two
    boxes is joined with **Merge** (`M` then click the other label, or Shift+click it): one label,
    its `lines` top to bottom, the box covering both. Each line is set centred, as most scans print
    them; keep a staggered name as two labels. It replaced a per-label `ok` tick on
    2026-10-07, which meant ticking every box.
    The title, banner and shield captions and the key are left as drawn: Gemini copied them right
    in every round. Book 1: 60 labels, 42 place names.
-   Then **measure**: `map_measure.py $D/map-2k.png $D/map-labels.json` writes each lettered
+   Then **measure**: `map_measure.py $D/map-2k.png $L` writes each lettered
    label's measured ink (`ink`: centre, angle, length, thickness) into the list, so the map editor's
    preview starts from what step 4 will set. Optional: no other tool reads it. Run it once the
    wording and boxes are right, and again after moving a box (the editor outlines stale ones in red).
-3. **Erase the place names**: `map_erase.py $D/map-2k.png $D/map-labels.json $D/map-2k-erased.jpg`.
+3. **Erase the place names**: `map_erase.py $D/map-2k.png $L $D/map-2k-erased.jpg`.
    It takes each near-black shape lying mostly inside a name's box, and leaves lines running out of
    it (coasts, roads, the grid), trees and outlined shapes. Look at the result: a letter joined to a
    line survives as a fragment; `clip: true` clears that name's whole box instead (for a name on
@@ -97,13 +99,13 @@ Commands run from the project root as
    letters out at sea have only water round them, so they go: Book 5, Bisutan), and `keep: [[box]]`
    (the editor's Add keep box, K) protects something inside a box (Book 1: a ship). Small dark
    specks ringed by a name's taken ink (a thick stroke junction read as a tree) go with it.
-4. **Set them again**: `map_letter.py $D/map-2k.png $D/map-labels.json $D/map-2k-erased.jpg - $D/map-2k-lettered.jpg --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"`.
+4. **Set them again**: `map_letter.py $D/map-2k.png $L $D/map-2k-erased.jpg - $D/map-2k-lettered.jpg --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"`.
    Each name's angle and size come from the scan's ink; small names are set 30% larger. Look at
    it and fix by hand what the measuring got wrong: `angle` (degrees), `nudge` [dx, dy], `height`
    (px), `lines` (a name stacked over lines, set level), `leading` (their line spacing, 1 = the font's own), `spread` (the scale's numbers). Book 1
    needed about 15 such fixes. Since Book 3 the editor's frame does the same by dragging, as `set`.
-5. **Prompt**: `map_labels.py prompt $D/map-labels.json $D/map-prompt-<n>.txt --lettered`. It opens
-   with `map-style.txt` when the book has one: the default asks for forests and water, and on Book 3
+5. **Prompt**: `map_labels.py prompt $L $D/map-prompt-<n>.txt --lettered`. It opens
+   with `maps/<code>/style.txt` when the book has one: the default asks for forests and water, and on Book 3
    Gemini painted the snowfields as green woodland and the white sea deep teal (Book 5: the desert
    came back green). Every book 1-12 has one since 2026-10-08, written from its map, key and text
    (each region's ground, trees as drawn, what must not appear); read it before a book's first round. It asks
@@ -114,13 +116,13 @@ Commands run from the project root as
    out) and saves `map-gemini-<n>.jpg`.
 7. **Check**: `map_check.py $D/map-2k.png $D/map-gemini-<n>.jpg $D/map-check-<n>` (alignment,
    colour and shape flags), then
-   `map_labels.py check $D/map-labels.json $D/map-check-<n>/aligned.png $D/map-2k-lettered.jpg`,
+   `map_labels.py check $L $D/map-check-<n>/aligned.png $D/map-2k-lettered.jpg`,
    whose `labels.png` puts every label of the input beside the repaint's; read it by eye (the OCR
    diff it prints is a hint only). The owner judges the painting; a new round starts again from 5
    in a new chat. Do not use edit prompts: each edit repaints the whole picture and broke labels
    that were right (Book 1, round 4).
 8. **Finish**: `map_upscale.py $D/map-gemini-<n>.jpg $D/map-gemini-<n>-x4.png --width <4x its width>`, then
-   `map_letter.py $D/map-2k.png $D/map-labels.json $D/map-gemini-<n>-x4.png $D/map-check-<n>/H.json $D/map-4k.webp --only <numbers> --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"`
+   `map_letter.py $D/map-2k.png $L $D/map-gemini-<n>-x4.png $D/map-check-<n>/H.json $D/map-4k.webp --only <numbers> --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"`
    with the numbers of the names Gemini garbled (or, leaving out `--only`, tick `reset` on them in
    the map editor, `tools/map-editor.html?book=<code>`, and untick them before the next
    round's check). It warps the upscale onto the 4K frame, wipes
@@ -143,7 +145,7 @@ Commands run from the project root as
 - `tools/map_labels.py`: `draft` (OCR boxes for a first list), `prompt` (the Gemini prompt,
   `--lettered` for step 5) and `check` (OCR hint plus the `labels.png` eye-check sheet).
 - `tools/map_measure.py`: measures each lettered label's ink with the same code `map_letter.py` uses and
-  stores it as `ink` in `map-labels.json`, for the map editor's preview.
+  stores it as `ink` in `labels.json`, for the map editor's preview.
 - `tools/map_erase.py`: erases the `retype` labels; its `LabelInk` (which of the scan's pixels belong
   to a label) is shared with `map_letter.py`, which measures labels with it.
 - `tools/map_check.py`: SIFT homography of the repaint onto `map-2k.png` (edge error 1-4 px), saved

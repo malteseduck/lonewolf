@@ -1,9 +1,9 @@
 """Draft a map's label list, and check a repaint's labels against it.
 
 Run (from the project root):
-  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_labels.py draft <map-2k.png> <map-labels.json>
-  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_labels.py check <map-labels.json> <aligned.png> [<map-2k.png>]
-  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_labels.py prompt <map-labels.json> <prompt.txt> [--lettered]
+  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_labels.py draft <map-2k.png> <maps/<book>/labels.json>
+  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_labels.py check <maps/<book>/labels.json> <aligned.png> [<map-2k.png>]
+  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_labels.py prompt <maps/<book>/labels.json> <prompt.txt> [--lettered]
 
 draft: OCR finds each label's box and guesses its wording: PaddleOCR (map_ocr_paddle.py, in
 tools/.venv-paddle) when that venv exists, else EasyOCR. The guesses are only a start:
@@ -62,7 +62,7 @@ def kept_elsewhere(labels_file):
     """Wordings other books' lists keep as drawn: the key and captions recur from map to map. A name
     that is a place on one map and a caption on another stays ticked."""
     out, places = set(), set()
-    for f in Path(labels_file).resolve().parent.parent.glob('*/map-labels.json'):
+    for f in Path(labels_file).resolve().parent.parent.glob('*/labels.json'):
         if f.parent == Path(labels_file).resolve().parent:
             continue
         try:
@@ -158,7 +158,7 @@ def prompt(labels, lettered=False, style=None):
     # so Gemini gets every label to copy, and copies the clean type far better than the scan's hand
     keep = labels if lettered else [lab for lab in labels if not lab.get('retype')]
     erased = [] if lettered else [lab for lab in labels if lab.get('retype')]
-    # style: the book's own look, from map-style.txt beside the list. The default asks for forests and
+    # style: the book's own look, from style.txt beside the list. The default asks for forests and
     # water, and Gemini painted Book 3's snowfields as green woodland with it
     p = ((style.strip() + ' ') if style else
          'Repaint this fantasy map as a richly detailed hand-painted fantasy illustration on aged parchment: '
@@ -197,7 +197,7 @@ def main():
         if len(sys.argv) > 4:  # the faithful map: also write the eye-check sheet beside <aligned.png>
             sheet(labels, sys.argv[4], b, Path(b).parent / 'labels.png')
     elif cmd == 'prompt':
-        style = Path(a).parent / 'map-style.txt'
+        style = Path(a).parent / 'style.txt'
         style = style.read_text(encoding='utf-8') if style.exists() else None
         Path(b).write_text(prompt(json.loads(Path(a).read_text(encoding='utf-8')), '--lettered' in sys.argv, style),
                            encoding='utf-8')

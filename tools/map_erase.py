@@ -1,7 +1,7 @@
 """Erase labels from the faithful map before Gemini repaints it, so it cannot misspell them.
 
 Run (from the project root):
-  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_erase.py <map-2k.png> <map-labels.json> <out.jpg>
+  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_erase.py <map-2k.png> <maps/<book>/labels.json> <out.jpg>
 
 Every label marked "retype": true in the list is erased: each near-black shape lying mostly inside its
 box is filled in from the colour around it. Lines running out of the box (roads, coasts, the scale

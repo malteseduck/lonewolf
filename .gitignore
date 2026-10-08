@@ -14,3 +14,6 @@ data/models/
 tools/realesrgan/
 # npm packages for local tooling: reinstalled, never committed
 node_modules/
+# the map editor's backup of the previous label list, and its write in progress
+maps/*/*.bak
+maps/*/*.part
