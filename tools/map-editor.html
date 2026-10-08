@@ -14,7 +14,9 @@
 html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
   font: 13px/1.35 system-ui, Segoe UI, sans-serif; overflow: hidden; }
 body { display: flex; flex-direction: column; }
-#app { display: grid; grid-template-columns: 250px 1fr 290px; flex: 1; min-height: 0; }
+/* minmax(0, 1fr): otherwise the canvas's old pixel height sets the row and pushes the rail off the top */
+#app { display: grid; grid-template-columns: 250px 1fr 290px; grid-template-rows: minmax(0, 1fr); flex: 1; min-height: 0; }
+#rail, #panel { flex-shrink: 0; }
 #rail { display: flex; align-items: center; gap: 4px; padding: 5px 8px; background: var(--panel); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
 #rail b { margin-right: 6px; }
 #bookpick { width: 16em; margin-right: 8px; }
@@ -63,7 +65,7 @@ input[type=text], textarea { width: 100%; }
 .item.sel { background: #3a2a30; border-left-color: var(--sel); }
 .item .n { color: var(--dim); display: inline-block; width: 28px; }
 .item.place .n { color: var(--place); }
-#main { position: relative; min-width: 0; }
+#main { position: relative; min-width: 0; overflow: hidden; }
 canvas { display: block; width: 100%; height: 100%; cursor: grab; }
 #status { position: absolute; left: 8px; bottom: 8px; background: #000a; padding: 3px 8px; border-radius: 4px; color: var(--dim); }
 #msg { position: absolute; right: 8px; top: 8px; background: #000b; padding: 4px 10px; border-radius: 4px; display: none; }
@@ -111,13 +113,14 @@ kbd { background: #333; border: 1px solid var(--line); border-radius: 3px; paddi
       <button id="add" title="Draw a new box (N)">New box</button>
       <button id="clearreset" title="Untick reset on every label: do this before checking a new Gemini round">Clear reset</button>
       <button id="del" title="Delete the selected label (Delete)">Delete</button>
+      <button id="ebox" title="Edit the erase box, not the type (E): what is erased from the scan and where it is measured">Erase box</button>
     </div>
     <h3 id="ftitle">No label selected</h3>
     <div id="form"></div>
     <div class="hint">
-      Wheel zoom, drag empty map or hold <kbd>Space</kbd> to pan. Drag a box to move it; handles resize;
-      the round handle turns the lettering (<code>angle</code>, degrees clockwise, 0 = reading to the right).
-      Arrows nudge 1 px, with <kbd>Shift</kbd> 10. Preview is approximate: the real size and angle come from the scan's ink.
+      Wheel zoom, drag empty map or hold <kbd>Space</kbd> to pan. A place name's frame is its new type: drag it
+      to move, handles to resize, the round handle to turn it. <b>Erase box</b> (<kbd>E</kbd>) edits instead
+      what is erased from the scan and where Measure reads it. Arrows nudge 1 px, with <kbd>Shift</kbd> 10.
       Fields left empty are removed on save.
     </div>
   </aside>
@@ -143,6 +146,7 @@ let spaceDown = false;
 let preview = true;
 let hover = null;
 let hideAll = false;  // H held: boxes and preview off, to see the map underneath
+let eraseMode = false; // E: handles act on the erase box, not the type's frame
 
 const cv = $('cv'), ctx = cv.getContext('2d');
 const snap = () => JSON.stringify(labels);
@@ -258,17 +262,33 @@ cv.addEventListener('wheel', e => {
 }, { passive: false });
 
 // ---------- geometry ----------
-const centre = l => [(l.box[0] + l.box[2]) / 2, (l.box[1] + l.box[3]) / 2];
-// reading direction in radians (y down), as map_letter.py: given angle, else 0 (or along a tall box);
-// "upwards"/"downwards" in `where` flips it to point that way
-function rotHandle(l) {
-  const [cx, cy] = centre(l);
-  const a = textAngle(l);
-  const half = Math.hypot(l.box[2] - l.box[0], l.box[3] - l.box[1]) / 2;
-  const off = Math.max(half * 0.55, 12 / view.s) + 22 / view.s;
-  return [cx + Math.cos(a) * off, cy + Math.sin(a) * off];
+// A lettered name has two shapes: its box (what map_erase.py erases and Measure reads) and its frame,
+// the new type's own outline, turned to its reading angle. Moving or sizing the frame stores "set".
+const hasFrame = l => !!((l.leave || l.fix) && !l.spread);
+const onFrame = l => hasFrame(l) && !eraseMode;
+const toLocal = (f, x, y) => {
+  const dx = x - f.c[0], dy = y - f.c[1], ca = Math.cos(f.a), sa = Math.sin(f.a);
+  return [dx * ca + dy * sa, -dx * sa + dy * ca];
+};
+const toWorld = (f, u, v) => {
+  const ca = Math.cos(f.a), sa = Math.sin(f.a);
+  return [f.c[0] + u * ca - v * sa, f.c[1] + u * sa + v * ca];
+};
+function frameHandles(f) {
+  const W = f.w / 2, H = f.h / 2;
+  return [['nw', -W, -H], ['n', 0, -H], ['ne', W, -H], ['e', W, 0], ['se', W, H], ['s', 0, H], ['sw', -W, H], ['w', -W, 0]]
+    .map(([n, u, v]) => [n, ...toWorld(f, u, v)]);
 }
-function handles(l) {
+const frameRot = f => toWorld(f, f.w / 2 + 26 / view.s, 0);
+function inFrame(f, x, y) { const [u, v] = toLocal(f, x, y); return Math.abs(u) <= f.w / 2 && Math.abs(v) <= f.h / 2; }
+function ensureSet(l) {  // the frame as it stands becomes the label's own placement
+  if (l.set) return;
+  const f = frameOf(l);
+  l.set = { at: [r1(f.c[0]), r1(f.c[1])], size: r1(f.size), angle: r1(f.a * 180 / Math.PI) };
+  delete l.nudge; delete l.height; delete l.angle;
+}
+const r1 = v => Math.round(v * 10) / 10;
+function boxHandles(l) {
   const [x0, y0, x1, y1] = l.box, mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
   return [
     ['nw', x0, y0], ['n', mx, y0], ['ne', x1, y0], ['e', x1, my],
@@ -277,22 +297,25 @@ function handles(l) {
 }
 const HS = 6; // handle half-size, screen px
 function hit(sx, sy) {
-  if (sel >= 0) {
+  const near = (x, y, r) => Math.hypot(x * view.s + view.x - sx, y * view.s + view.y - sy) <= r;
+  const nearSq = (x, y) => Math.abs(x * view.s + view.x - sx) <= HS + 2 && Math.abs(y * view.s + view.y - sy) <= HS + 2;
+  if (sel >= 0 && labels[sel]) {
     const l = labels[sel];
-    const [rx, ry] = rotHandle(l);
-    if (Math.hypot(rx * view.s + view.x - sx, ry * view.s + view.y - sy) <= 9) return { kind: 'rot' };
-    for (const [n, x, y] of handles(l))
-      if (Math.abs(x * view.s + view.x - sx) <= HS + 2 && Math.abs(y * view.s + view.y - sy) <= HS + 2) return { kind: 'size', n };
+    if (onFrame(l)) {
+      const f = frameOf(l), [rx, ry] = frameRot(f);
+      if (near(rx, ry, 9)) return { kind: 'rot' };
+      for (const [n, x, y] of frameHandles(f)) if (nearSq(x, y)) return { kind: 'fsize', n };
+    } else for (const [n, x, y] of boxHandles(l)) if (nearSq(x, y)) return { kind: 'size', n };
   }
   const [mx, my] = toMap(sx, sy);
   let best = -1, area = Infinity;
   labels.forEach((l, i) => {
     if (!visible(i)) return;
     const [x0, y0, x1, y1] = l.box;
-    if (mx >= x0 && mx <= x1 && my >= y0 && my <= y1) {
-      const a = (x1 - x0) * (y1 - y0);
-      if (a < area) { area = a; best = i; }
-    }
+    let a = Infinity;
+    if (mx >= x0 && mx <= x1 && my >= y0 && my <= y1) a = (x1 - x0) * (y1 - y0);
+    if (onFrame(l)) { const f = frameOf(l); if (inFrame(f, mx, my)) a = Math.min(a, f.w * f.h); }
+    if (a < area) { area = a; best = i; }
   });
   return best >= 0 ? { kind: 'box', i: best } : { kind: 'none' };
 }
@@ -312,7 +335,10 @@ function flip(a, where) {  // map_letter.py geometry(): "upwards"/"downwards" pi
 function letterGeom(l) {
   const [x0, y0, x1, y1] = l.box, w = x1 - x0, h = y1 - y0;
   let at, ang, length, thick;
-  if (l.ink) { at = l.ink.at; ang = l.ink.angle * Math.PI / 180; length = l.ink.length; thick = l.ink.thick; }
+  if (l.ink) {  // a box moved since measuring carries the measured text with it, until Measure runs again
+    const b = l.ink.box, dx = (x0 + x1 - b[0] - b[2]) / 2, dy = (y0 + y1 - b[1] - b[3]) / 2;
+    at = [l.ink.at[0] + dx, l.ink.at[1] + dy]; ang = l.ink.angle * Math.PI / 180; length = l.ink.length; thick = l.ink.thick;
+  }
   else {  // not measured yet: a guess from the box
     at = [(x0 + x1) / 2, (y0 + y1) / 2];
     ang = h > w * 1.6 ? -Math.PI / 2 : 0;
@@ -327,7 +353,6 @@ function letterGeom(l) {
   if (l.height) { thick = l.height / 1.25; if (!l.spread) length = 1e6; }
   return { centre, ang, length, thick, stacked };
 }
-function textAngle(l) { return letterGeom(l).ang; }
 function block(lines, size) {  // render()'s block(): longest line, block height, line height
   ctx.font = `600 ${size}px CabinEd, sans-serif`;
   ctx.letterSpacing = '0px';
@@ -336,12 +361,25 @@ function block(lines, size) {  // render()'s block(): longest line, block height
   const wid = Math.max(...m.map((x, i) => x.actualBoundingBoxLeft + x.actualBoundingBoxRight + TRACK * size * (lines[i].length - 1)));
   return { m, asc, own, wid, top: asc - m[0].actualBoundingBoxAscent, bot: asc + m[m.length - 1].actualBoundingBoxDescent };
 }
-function setText(lines, centre, ang, length, thick, boost, leading) {
+function fitSize(lines, length, thick, boost, leading) {  // render()'s type size from the ink
   const b0 = block(lines, 100), lh0 = b0.own * leading;
   const h0 = lh0 * (lines.length - 1) + (b0.bot - b0.top);
-  let size = 100 * Math.min(length * FILL / b0.wid, thick * 1.25 / h0);
+  const size = 100 * Math.min(length * FILL / b0.wid, thick * 1.25 / h0);
   if (boost == null) boost = thick < SMALL ? SCALE : 1;
-  size = Math.max(Math.floor(size * boost), 6);
+  return Math.max(Math.floor(size * boost), 6);
+}
+function typeOf(l) {  // what gets set: lines, type size, centre, reading angle (radians)
+  const lines = l.lines && l.lines.length ? l.lines : [l.text || ' '], leading = l.leading || 1;
+  if (l.set) return { lines, leading, size: l.set.size, centre: l.set.at, ang: l.set.angle * Math.PI / 180 };
+  const g = letterGeom(l);
+  return { lines, leading, size: fitSize(lines, g.length, g.thick, g.stacked ? 1 : null, leading), centre: g.centre, ang: g.ang };
+}
+function frameOf(l) {  // the type's outline: longest line by the lines' height, as place() centres it
+  const t = typeOf(l), b = block(t.lines, Math.max(t.size, 1)), lh = b.own * t.leading;
+  return { c: t.centre, a: t.ang, size: t.size, w: b.wid, h: lh * (t.lines.length - 1) + b.own };
+}
+function setText(lines, centre, ang, size, leading) {
+  size = Math.max(size, 6);
   const b = block(lines, size), lh = b.own * leading;
   ctx.save();
   ctx.translate(centre[0], centre[1]); ctx.rotate(ang);
@@ -358,17 +396,16 @@ function setText(lines, centre, ang, length, thick, boost, leading) {
   ctx.restore();
 }
 function drawText(l) {
-  const g = letterGeom(l);
-  const leading = l.leading || 1;
-  if (l.spread) {  // the scale's numbers, each on its own
+  if (l.spread) {
+    const g = letterGeom(l);  // the scale's numbers, each on its own
     const words = l.text.split(/\s+/);
     const step = g.length / Math.max(words.length - 1, 1) * 0.94;
     words.forEach((w, i) => {
       const o = (i - (words.length - 1) / 2) * step;
-      setText([w], [g.centre[0] + Math.cos(g.ang) * o, g.centre[1] + Math.sin(g.ang) * o], g.ang, 1e6, g.thick, null, 1);
+      setText([w], [g.centre[0] + Math.cos(g.ang) * o, g.centre[1] + Math.sin(g.ang) * o], g.ang, fitSize([w], 1e6, g.thick, null, 1), 1);
     });
-  } else setText(g.stacked ? l.lines : [l.text], g.centre, g.ang, g.length, g.thick, g.stacked ? 1 : null, leading);
-  if (stale(l) || !l.ink) {  // a box moved since measuring, or never measured: the preview is a guess
+  } else { const t = typeOf(l); setText(t.lines, t.centre, t.ang, t.size, t.leading); }
+  if (!l.set && (stale(l) || !l.ink)) {  // a box moved since measuring, or never measured: the preview is a guess
     ctx.save(); ctx.setLineDash([4 / view.s, 4 / view.s]); ctx.strokeStyle = '#ff4d6d'; ctx.lineWidth = 1.5 / view.s;
     ctx.strokeRect(l.box[0] - 3, l.box[1] - 3, l.box[2] - l.box[0] + 6, l.box[3] - l.box[1] + 6); ctx.restore();
   }
@@ -403,23 +440,38 @@ function draw() {
       ctx.strokeRect(k[0], k[1], k[2] - k[0], k[3] - k[1]);
     });
     ctx.setLineDash([]);
-    ctx.strokeStyle = '#ff4d6d'; ctx.lineWidth = 2.5 / view.s;
+    const hs = HS / view.s;  // screen-sized handles
+    const knobs = pts => {
+      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#ff4d6d'; ctx.lineWidth = 1.5 / view.s; ctx.setLineDash([]);
+      for (const [, x, y] of pts) { ctx.fillRect(x - hs, y - hs, 2 * hs, 2 * hs); ctx.strokeRect(x - hs, y - hs, 2 * hs, 2 * hs); }
+    };
+    const f = hasFrame(l) ? frameOf(l) : null;
+    // the shape not being edited is drawn thin and dashed
+    ctx.strokeStyle = eraseMode || !f ? '#ff4d6d' : '#ffb347';
+    ctx.lineWidth = (eraseMode || !f ? 2.5 : 1.2) / view.s;
+    if (f && !eraseMode) ctx.setLineDash([5 / view.s, 4 / view.s]);
     ctx.strokeRect(l.box[0], l.box[1], l.box[2] - l.box[0], l.box[3] - l.box[1]);
-    // screen-sized handles
-    const hs = HS / view.s;
-    ctx.fillStyle = '#fff'; ctx.strokeStyle = '#ff4d6d'; ctx.lineWidth = 1.5 / view.s;
-    for (const [, x, y] of handles(l)) { ctx.fillRect(x - hs, y - hs, 2 * hs, 2 * hs); ctx.strokeRect(x - hs, y - hs, 2 * hs, 2 * hs); }
-    const [cx, cy] = centre(l), [rx, ry] = rotHandle(l);
-    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(rx, ry); ctx.strokeStyle = '#ff4d6d'; ctx.stroke();
-    ctx.beginPath(); ctx.arc(rx, ry, 7 / view.s, 0, 7); ctx.fillStyle = '#ff4d6d'; ctx.fill();
-    ctx.strokeStyle = '#fff'; ctx.stroke();
+    if (f) {
+      ctx.save(); ctx.translate(f.c[0], f.c[1]); ctx.rotate(f.a);
+      ctx.setLineDash(eraseMode ? [5 / view.s, 4 / view.s] : []);
+      ctx.strokeStyle = eraseMode ? '#ff4d6d99' : '#ff4d6d'; ctx.lineWidth = (eraseMode ? 1.2 : 2.5) / view.s;
+      ctx.strokeRect(-f.w / 2, -f.h / 2, f.w, f.h); ctx.restore();
+    }
+    if (f && !eraseMode) {
+      knobs(frameHandles(f));
+      const [ex, ey] = toWorld(f, f.w / 2, 0), [rx, ry] = frameRot(f);
+      ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(rx, ry); ctx.strokeStyle = '#ff4d6d'; ctx.stroke();
+      ctx.beginPath(); ctx.arc(rx, ry, 7 / view.s, 0, 7); ctx.fillStyle = '#ff4d6d'; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.stroke();
+    } else knobs(boxHandles(l));
   }
   if (drag && drag.kind === 'new' && drag.box) {
     const b = drag.box;
     ctx.strokeStyle = '#6bd18a'; ctx.lineWidth = 2 / view.s; ctx.strokeRect(b[0], b[1], b[2] - b[0], b[3] - b[1]);
   }
-  const s = sel >= 0 && labels[sel] ? `  #${sel} box ${labels[sel].box.join(', ')}` : '';
-  $('status').textContent = `${Math.round(view.s * 100)}%${s}`;
+  const L = sel >= 0 && labels[sel], st = L && L.set ? `  type ${L.set.size} px at ${L.set.at.join(', ')}, ${L.set.angle}°` : '';
+  const s = L ? `  #${sel} box ${L.box.join(', ')}${st}` : '';
+  $('status').textContent = `${Math.round(view.s * 100)}%${s}${eraseMode ? '  (editing erase box)' : ''}`;
 }
 
 // ---------- list and form ----------
@@ -465,6 +517,10 @@ const TIPS = {  // what each field does in the map tools (docs/reference/map-ups
   'box x0,y0': 'Top-left corner of the label’s box, in map-2k px.',
   'box x1,y1': 'Bottom-right corner of the label’s box, in map-2k px.',
   keep: 'Areas inside the box the eraser must not touch (Book 1: a ship).',
+  'type at x,y': 'Placed by hand (the frame on the map): centre of the type, in map-2k px. Overrides the measured place, nudge, height and angle.',
+  'type size': 'Type size in map-2k px, set by sizing the frame.',
+  'type angle': 'Reading angle in degrees, clockwise, 0 = left to right, set by the frame\u2019s round handle.',
+  measured: 'Drop the hand placement: the type goes back to where the scan\u2019s ink puts it.',
 };
 let focusPushed = false;
 function setField(key, val) {  // val === undefined removes the key
@@ -503,11 +559,25 @@ function renderForm() {
   ta.oninput = change(() => { const v = ta.value.split('\n').filter(s => s.length); setField('lines', v.length ? v : undefined); });
   row('lines', ta);
   const num = (key, step) => {
-    const i = guard(document.createElement('input')); i.type = 'number'; i.step = step; i.value = l[key] ?? '';
+    const i = guard(document.createElement('input')); i.type = 'number'; i.step = step; i.value = l[key] ?? ''; i.dataset.f = key;
     i.oninput = change(() => setField(key, i.value === '' ? undefined : Number(i.value)));
     return i;
   };
-  row('height', num('height', 1));
+  if (l.set) {  // placed by hand: these replace height, angle and nudge
+    const sv = (k, step, get, put) => {
+      const i = guard(document.createElement('input')); i.type = 'number'; i.step = step; i.value = get(); i.dataset.f = k;
+      i.oninput = change(() => { if (i.value !== '') put(Number(i.value)); });
+      return i;
+    };
+    const sx = sv('setx', 1, () => l.set.at[0], v => { l.set.at[0] = v; }), sy = sv('sety', 1, () => l.set.at[1], v => { l.set.at[1] = v; });
+    const sp = document.createElement('div'); sp.className = 'pair'; sp.append(sx, sy);
+    row('type at x,y', sp);
+    row('type size', sv('setsize', 0.5, () => l.set.size, v => { l.set.size = Math.max(v, 1); }));
+    row('type angle', sv('setangle', 0.5, () => l.set.angle, v => { l.set.angle = v; }));
+    const back = document.createElement('button'); back.textContent = 'Back to measured';
+    back.onclick = () => { push(); delete l.set; renderForm(); afterEdit(); };
+    row('measured', back);
+  } else row('height', num('height', 1));
   const ln = num('leading', 0.05); ln.min = 0.3; ln.max = 3; ln.placeholder = '1';
   const lr = guard(document.createElement('input')); lr.type = 'range'; lr.min = 0.3; lr.max = 2; lr.step = 0.01; lr.value = l.leading ?? 1;
   ln.addEventListener('input', () => { lr.value = ln.value || 1; });
@@ -515,7 +585,7 @@ function renderForm() {
   lr.onchange = () => lr.blur();  // let go of it, so Ctrl+Z and the arrow keys act on the map again
   const lp = document.createElement('div'); lp.className = 'pair'; lp.append(lr, ln);
   row('line spacing', lp);
-  row('angle', num('angle', 0.5));
+  if (!l.set) row('angle', num('angle', 0.5));
   const nx = guard(document.createElement('input')), ny = guard(document.createElement('input'));
   [nx, ny].forEach(i => { i.type = 'number'; i.step = 1; });
   nx.value = l.nudge ? l.nudge[0] : ''; ny.value = l.nudge ? l.nudge[1] : '';
@@ -525,9 +595,9 @@ function renderForm() {
   });
   nx.oninput = ny.oninput = nchange;
   const pair = document.createElement('div'); pair.className = 'pair'; pair.append(nx, ny);
-  row('nudge x,y', pair);
+  if (!l.set) row('nudge x,y', pair);
   const bx = [0, 1, 2, 3].map(j => {
-    const i = guard(document.createElement('input')); i.type = 'number'; i.step = 1; i.value = l.box[j];
+    const i = guard(document.createElement('input')); i.type = 'number'; i.step = 1; i.value = l.box[j]; i.dataset.f = 'box' + j;
     i.oninput = change(() => { l.box[j] = Number(i.value) || 0; });
     return i;
   });
@@ -538,7 +608,7 @@ function renderForm() {
     const k = document.createElement('div'); k.style.color = 'var(--dim)'; k.textContent = l.keep.length + ' keep box(es), shown dashed green; kept as is';
     row('keep', k);
   }
-  const others = Object.keys(l).filter(k => ![...TEXTS, ...BOOLS.map(b => b[0]), 'lines', 'leading', 'height', 'angle', 'nudge', 'box', 'keep'].includes(k));
+  const others = Object.keys(l).filter(k => ![...TEXTS, ...BOOLS.map(b => b[0]), 'lines', 'leading', 'height', 'angle', 'nudge', 'box', 'keep', 'set'].includes(k));
   if (others.length) { const k = document.createElement('div'); k.style.color = 'var(--dim)'; k.textContent = others.join(', ') + ' (kept as is)'; row('other', k); }
 }
 // after a form edit: redraw and refresh list text, without rebuilding the form under the cursor
@@ -558,11 +628,14 @@ cv.addEventListener('mousedown', e => {
   if (mode === 'draw') { drag = { kind: 'new', x: mx, y: my, box: null }; return; }
   if (e.button === 1 || spaceDown) { drag = { kind: 'pan', sx, sy, vx: view.x, vy: view.y }; cv.style.cursor = 'grabbing'; return; }
   const h = hit(sx, sy);
-  if (h.kind === 'rot') { push(); drag = { kind: 'rot' }; }
+  if (h.kind === 'rot') { push(); ensureSet(labels[sel]); drag = { kind: 'rot' }; }
+  else if (h.kind === 'fsize') { push(); ensureSet(labels[sel]); drag = { kind: 'fsize', n: h.n, f: frameOf(labels[sel]) }; }
   else if (h.kind === 'size') { push(); drag = { kind: 'size', n: h.n }; }
   else if (h.kind === 'box') {
     if (h.i !== sel) select(h.i, false);
-    drag = { kind: 'move', mx, my, orig: labels[sel].box.slice(), pushed: false };
+    const l = labels[sel];
+    drag = onFrame(l) ? { kind: 'fmove', mx, my, orig: frameOf(l).c.slice(), pushed: false }
+      : { kind: 'move', mx, my, orig: l.box.slice(), pushed: false };
   } else { drag = { kind: 'pan', sx, sy, vx: view.x, vy: view.y, click: true }; cv.style.cursor = 'grabbing'; }
 });
 window.addEventListener('mousemove', e => {
@@ -572,7 +645,7 @@ window.addEventListener('mousemove', e => {
     if (e.target === cv) {
       const h = mode === 'draw' ? { kind: 'draw' } : hit(sx, sy);
       cv.style.cursor = spaceDown ? 'grab' : h.kind === 'draw' ? 'crosshair' : h.kind === 'rot' ? 'alias'
-        : h.kind === 'size' ? (h.n.length === 2 ? (h.n === 'nw' || h.n === 'se' ? 'nwse-resize' : 'nesw-resize') : (h.n === 'n' || h.n === 's' ? 'ns-resize' : 'ew-resize'))
+        : h.kind === 'size' || h.kind === 'fsize' ? (h.n.length === 2 ? (h.n === 'nw' || h.n === 'se' ? 'nwse-resize' : 'nesw-resize') : (h.n === 'n' || h.n === 's' ? 'ns-resize' : 'ew-resize'))
         : h.kind === 'box' ? 'move' : 'grab';
     }
     return;
@@ -596,11 +669,27 @@ window.addEventListener('mousemove', e => {
     if (n.includes('n')) b[1] = Math.min(my, b[3] - 2);
     if (n.includes('s')) b[3] = Math.max(my, b[1] + 2);
     clampBox(b); boxChanged();
+  } else if (drag.kind === 'fmove') {
+    const dx = mx - drag.mx, dy = my - drag.my;
+    if (!drag.pushed) { if (Math.hypot(dx, dy) * view.s < 3) return; push(); ensureSet(labels[sel]); drag.pushed = true; }
+    labels[sel].set.at = [r1(drag.orig[0] + dx), r1(drag.orig[1] + dy)];
+    boxChanged();
+  } else if (drag.kind === 'fsize') {  // the type keeps its proportions; the opposite side stays put
+    const f = drag.f, n = drag.n, [u, v] = toLocal(f, mx, my);
+    const L = -f.w / 2, R = f.w / 2, T = -f.h / 2, B = f.h / 2, rs = [];
+    if (n.includes('e')) rs.push((u - L) / f.w); if (n.includes('w')) rs.push((R - u) / f.w);
+    if (n.includes('s')) rs.push((v - T) / f.h); if (n.includes('n')) rs.push((B - v) / f.h);
+    const r = Math.max(Math.max(...rs), 6 / f.size), w = f.w * r, h = f.h * r;
+    const cu = n.includes('e') ? L + w / 2 : n.includes('w') ? R - w / 2 : 0;
+    const cv_ = n.includes('s') ? T + h / 2 : n.includes('n') ? B - h / 2 : 0;
+    const c = toWorld(f, cu, cv_), l = labels[sel];
+    l.set.at = [r1(c[0]), r1(c[1])]; l.set.size = r1(f.size * r);
+    boxChanged();
   } else if (drag.kind === 'rot') {
-    const l = labels[sel], [cx, cy] = centre(l);
+    const l = labels[sel], [cx, cy] = l.set.at;
     let a = Math.atan2(my - cy, mx - cx) * 180 / Math.PI;
     a = e.shiftKey ? Math.round(a / 15) * 15 : Math.round(a * 2) / 2;
-    l.angle = a; renderFormValues(); draw(); dirty();
+    l.set.angle = a; renderFormValues(); draw(); dirty();
   }
 });
 window.addEventListener('mouseup', e => {
@@ -618,17 +707,16 @@ window.addEventListener('mouseup', e => {
       const t = $('form').querySelector('input[type=text]'); if (t) t.focus();
     } else draw();
   } else if (d.kind === 'pan' && d.click && !d.moved) select(-1, false);
+  else if (['rot', 'fsize', 'fmove'].includes(d.kind)) renderForm();  // the form now shows the hand placement
   dirty();
 });
 function boxChanged() { renderFormValues(); draw(); dirty(); }
 function renderFormValues() {  // update numeric inputs in place
   if (sel < 0) return;
-  const l = labels[sel], inputs = $('form').querySelectorAll('input[type=number]');
-  // order: height, angle, nudge x, nudge y, box x0,y0,x1,y1
-  if (inputs.length >= 8) {
-    inputs[1].value = l.angle ?? '';
-    l.box.forEach((v, j) => { inputs[4 + j].value = v; });
-  }
+  const l = labels[sel], put = (k, v) => { const i = $('form').querySelector(`input[data-f="${k}"]`); if (i) i.value = v; };
+  put('angle', l.angle ?? '');
+  l.box.forEach((v, j) => put('box' + j, v));
+  if (l.set) { put('setx', l.set.at[0]); put('sety', l.set.at[1]); put('setsize', l.set.size); put('setangle', l.set.angle); }
 }
 
 // ---------- keys ----------
@@ -646,13 +734,15 @@ window.addEventListener('keydown', e => {
   else if (e.key.toLowerCase() === 'p') togglePreview();
   else if (e.key.toLowerCase() === 'h') { if (!hideAll) { hideAll = true; draw(); } }
   else if (e.key === 'Delete') del();
+  else if (e.key.toLowerCase() === 'e') toggleErase();
   else if (e.key.startsWith('Arrow') && sel >= 0) {
     e.preventDefault();
-    const s = e.shiftKey ? 10 : 1, b = labels[sel].box;
+    const s = e.shiftKey ? 10 : 1, l = labels[sel], b = l.box;
     const dx = e.key === 'ArrowLeft' ? -s : e.key === 'ArrowRight' ? s : 0;
     const dy = e.key === 'ArrowUp' ? -s : e.key === 'ArrowDown' ? s : 0;
     if (!e.repeat) push();
-    labels[sel].box = [b[0] + dx, b[1] + dy, b[2] + dx, b[3] + dy];
+    if (onFrame(l)) { const had = !!l.set; ensureSet(l); l.set.at = [r1(l.set.at[0] + dx), r1(l.set.at[1] + dy)]; if (!had) renderForm(); }
+    else l.box = [b[0] + dx, b[1] + dy, b[2] + dx, b[3] + dy];
     boxChanged();
   }
 });
@@ -664,6 +754,7 @@ window.addEventListener('blur', () => { if (hideAll) { hideAll = false; draw(); 
 
 // ---------- actions ----------
 function startDraw() { mode = 'draw'; $('add').classList.add('on'); msg('Drag on the map to draw the new box (Esc cancels)'); }
+function toggleErase() { eraseMode = !eraseMode; $('ebox').classList.toggle('on', eraseMode); draw(); }
 function togglePreview() { preview = !preview; $('prev').classList.toggle('on', preview); draw(); }
 function del() {
   if (sel < 0) return;
@@ -686,7 +777,7 @@ function clearReset() {
   msg(`Cleared reset on ${n} label(s)`);
 }
 $('add').onclick = startDraw; $('del').onclick = del; $('save').onclick = save;
-$('undo').onclick = undo; $('redo').onclick = redo; $('prev').onclick = togglePreview;
+$('undo').onclick = undo; $('redo').onclick = redo; $('prev').onclick = togglePreview; $('ebox').onclick = toggleErase;
 // ---------- the steps (docs/reference/map-upscale.md) ----------
 let S = { files: {}, rounds: [], running: null, err: '' };   // /api/map/<book>/state
 let curStep = 0, curRound = 1, roundSet = false;
@@ -759,7 +850,7 @@ const STEPS = [
   { n: 4, short: 'Measure', name: 'Measure', run: 'measure', bg: () => ['map-2k.png'],
     text: 'Reads the scan\'s ink in each place name\'s box (centre, angle, length, thickness), so the preview starts from what the lettering step will really set. Run it again after moving boxes: a red dashed outline marks a label whose box moved since.' },
   { n: 5, short: 'Lettering', name: 'Lettering: adjust over the original (by hand)', bg: () => ['map-2k.png'], preview: true,
-    text: 'The preview sets each place name in type over the original scan. Fix what is off with angle, nudge, height, lines, line spacing, spread (Book 1 needed about 15 fixes). Hold H to see the map under the boxes. Save, then measure again if you moved a box.' },
+    text: 'The preview sets each place name in type over the original scan. Fix what is off by dragging the name’s frame: move it, resize it by its handles, turn it by the round handle (or lines, line spacing). Hold H to see the map under the boxes. Save, then measure again if you moved an erase box (E).' },
   { n: 6, short: 'Erase + letter', name: 'Erase and letter', bg: () => ['map-2k-lettered.jpg', 'map-2k-erased.jpg', 'map-2k.png'],
     text: 'Erase takes the place names out of the scan; Letter sets them again in Cabin. The result, map-2k-lettered.jpg, is the picture Gemini gets. Look at it: a letter joined to a line can survive as a fragment (tick clip on that label, or keep to protect something).' },
   { n: 7, short: 'Gemini', name: 'Gemini', bg: () => ['map-2k-lettered.jpg', 'map-2k.png'],
@@ -941,7 +1032,8 @@ async function copyPrompt(btn) {
   setBusy(true, btn, 'prompt');
   try {
     if (dirtyNow() && !(await save())) return;
-    if (!S.files[`map-prompt-${rd}.txt`] || mt(`map-prompt-${rd}.txt`) < mt('map-labels.json')) {
+    const pm = mt(`map-prompt-${rd}.txt`);  // written again after the labels or the book's style changed
+    if (!pm || pm < mt('map-labels.json') || pm < (mt('map-style.txt') || 0)) {
       const r = await runOne('prompt', `?round=${rd}`);
       logs[7] = r;
       if (!r.ok) { msg('Could not write the prompt', 6000); return; }

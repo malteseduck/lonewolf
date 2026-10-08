@@ -11,7 +11,9 @@ lettered here. For each, the scan's ink in its box gives the angle (its long axi
 "downwards" in its "where" picks the reading direction) and the size (the type is fitted to the
 ink's length). "lines" splits a label over lines as printed, set level ("angle" in degrees
 otherwise) and fitted to the box, "leading" its line spacing (1 = the font's own); "height" gives the type's height outright, in map-2k px;
-"nudge" [dx, dy] (map-2k px) moves a label off something the larger type runs into. Mixed-case labels (the hand-lettered
+"nudge" [dx, dy] (map-2k px) moves a label off something the larger type runs into. "set" {at: [x, y],
+size, angle} places the type by hand (the map editor's text frame): centre of its lines, type size in
+map-2k px, reading angle in degrees; it overrides all of the above. Mixed-case labels (the hand-lettered
 names) get --hand, capitals get --caps, set larger and heavier than the scan's ink measures
 (SCALE, BOLD): at the scan's size they looked faint beside Gemini's own labels (owner, Book 1).
 Before lettering, Gemini's own ink is erased from "fix" boxes, any ghost letters in "leave" boxes,
@@ -85,9 +87,9 @@ def geometry(scan_ink, lab):
 K = 1  # 4K or 2K px per map-2k px, set in main
 
 
-def render(lines, font_path, length, thick, nlines, boost=None, leading=1):
+def render(lines, font_path, length, thick, nlines, boost=None, leading=1, size=None):
     """The label as an RGBA image, horizontal, sized so its longest line spans <length> px (capped
-    so the block is no thicker than the ink was, with a little give)."""
+    so the block is no thicker than the ink was, with a little give), or at type <size> outright."""
     def block(size):
         path, _, variant = str(font_path).partition('|')  # 'Cabin.ttf|SemiBold': a variable font's weight
         f = ImageFont.truetype(path, size)
@@ -97,11 +99,13 @@ def render(lines, font_path, length, thick, nlines, boost=None, leading=1):
         boxes = [(b[0], b[1], b[2] + round(TRACK * size * (len(t) - 1)), b[3]) for b, t in zip(boxes, lines)]
         lh = (f.getmetrics()[0] + f.getmetrics()[1]) * leading
         return f, max(b[2] - b[0] for b in boxes), lh * (nlines - 1) + (boxes[-1][3] - boxes[0][1]), lh
-    f, w, h, lh = block(100)
-    size = 100 * min(length * FILL / w, thick * 1.25 / h)
-    if boost is None:
-        boost = SCALE if thick < SMALL * K else 1
-    f, w, h, lh = block(max(int(size * boost), 6))
+    if size is None:
+        f, w, h, lh = block(100)
+        size = 100 * min(length * FILL / w, thick * 1.25 / h)
+        if boost is None:
+            boost = SCALE if thick < SMALL * K else 1
+        size *= boost
+    f, w, h, lh = block(max(int(size), 6))
     sw = max(1, round(f.size * BOLD))
     own = lh / leading  # the font's own line height: the wipe's reach and the padding go by it
     pad = int(own * 0.8)  # room for wipe()'s reach round the letters
@@ -117,8 +121,15 @@ def render(lines, font_path, length, thick, nlines, boost=None, leading=1):
 
 
 def letter(base, lab, scan_ink, hand, caps, k):
-    centre, ang, length, thick = geometry(scan_ink, lab)
     text = lab['text']
+    font = hand if any(ch.islower() for ch in text) else caps
+    s = lab.get('set')
+    if s and not lab.get('spread'):  # placed by hand in the map editor
+        lines = lab.get('lines') or [text]
+        mask, lh = render(lines, font, 0, 0, len(lines), leading=lab.get('leading', 1), size=s['size'] * k)
+        place(base, mask, lh, np.array(s['at'], np.float64) * k, np.radians(s['angle']))
+        return
+    centre, ang, length, thick = geometry(scan_ink, lab)
     centre = centre + np.array(lab.get('nudge', [0, 0]))  # map-2k px, off a tower the bigger type runs into
     if lab.get('lines'):  # stacked lines: the ink's long axis may run down the stack, so level
         ang = np.radians(lab.get('angle', 0))
@@ -128,7 +139,6 @@ def letter(base, lab, scan_ink, hand, caps, k):
         thick = lab['height'] / 1.25
         if not lab.get('spread'):  # the length follows from it (spread words keep their ends)
             length = 10 ** 6
-    font = hand if any(ch.islower() for ch in text) else caps
     if lab.get('spread'):  # the scale's numbers: each word on its own, evenly from end to end
         words = text.split()
         d = np.array([np.cos(ang), np.sin(ang)])

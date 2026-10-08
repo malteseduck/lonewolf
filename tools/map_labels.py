@@ -117,7 +117,7 @@ def names(labels):
     return ', '.join(out)
 
 
-def prompt(labels, lettered=False):
+def prompt(labels, lettered=False, style=None):
     """The repaint prompt, for the picture map_erase.py made. Labels marked "leave" are ones Gemini
     cannot spell reliably (Book 1: the small hand-lettered names, and a few it got wrong in every
     round); they are erased from its picture and lettered afterwards, so the prompt only asks it not
@@ -126,10 +126,13 @@ def prompt(labels, lettered=False):
     # so Gemini gets every label to copy, and copies the clean type far better than the scan's hand
     keep = labels if lettered else [lab for lab in labels if not lab.get('leave')]
     leave = [] if lettered else [lab for lab in labels if lab.get('leave')]
-    p = ('Repaint this fantasy map as a richly detailed hand-painted fantasy illustration on aged parchment: '
+    # style: the book's own look, from map-style.txt beside the list. The default asks for forests and
+    # water, and Gemini painted Book 3's snowfields as green woodland with it
+    p = ((style.strip() + ' ') if style else
+         'Repaint this fantasy map as a richly detailed hand-painted fantasy illustration on aged parchment: '
          'shaded, three-dimensional mountain ranges, dense individually painted forests, textured water with depth, '
-         'and finer detail in the existing frame, heraldic panels, compass rose and key. '
-         'Keep the layout: every coastline, river, road, island, mountain range, forest and town stays where it is, '
+         'and finer detail in the existing frame, heraldic panels, compass rose and key. ')
+    p += ('Keep the layout: every coastline, river, road, island, mountain range, forest and town stays where it is, '
          'and every panel, ship and the compass rose stay in their places with their colours. '
          'Keep these labels in their present places and directions, spelled exactly as written here, letter for '
          'letter: ' + names(keep) + '.')
@@ -158,7 +161,10 @@ def main():
         if len(sys.argv) > 4:  # the faithful map: also write the eye-check sheet beside <aligned.png>
             sheet(labels, sys.argv[4], b, Path(b).parent / 'labels.png')
     elif cmd == 'prompt':
-        Path(b).write_text(prompt(json.loads(Path(a).read_text(encoding='utf-8')), '--lettered' in sys.argv), encoding='utf-8')
+        style = Path(a).parent / 'map-style.txt'
+        style = style.read_text(encoding='utf-8') if style.exists() else None
+        Path(b).write_text(prompt(json.loads(Path(a).read_text(encoding='utf-8')), '--lettered' in sys.argv, style),
+                           encoding='utf-8')
     else:
         sys.exit('draft, check or prompt')
 

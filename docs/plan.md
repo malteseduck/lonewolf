@@ -163,8 +163,12 @@ Left to the player whatever the engine does: whether to sleep (B2 41), and the p
      of Book 1's `map-4k.webp`.
    - Next: Books 3-12, one at a time (label list, erase, letter, one or two Gemini rounds, finish).
      Book 1's label list took the most work; the map editor (`tools/map-editor.html`, which edits
-     the labels and runs every step of the procedure) is built as a prototype, not yet tried on a
-     new book.
+     the labels and runs every step of the procedure) was first used on Book 3.
+   - **Book 3 in progress** (2026-10-07): 38 labels, 31 place names, measured, erased and lettered.
+     Round 1 was rejected: the default prompt made the snowfields green woodland. Round 2's prompt
+     opens with Book 3's own `map-style.txt` (snow and ice); waiting on the owner's Gemini run.
+     The editor gained a text frame per name (move, size, turn the type; stored as `set`), with the
+     erase box behind <kbd>E</kbd>.
    - Book 4 has trial files from the first experiments (`map-esrgan-*`, `map-gemini-esrgan-4k.webp`,
      `map-repaint-2k-test1.png`) and the first `compare.html`. Delete them when Book 4 is done.
    - The local Stable Diffusion models (`data/models/sd15`, `controlnet-tile-sd15`, 3.4 GB) were

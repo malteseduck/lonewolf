@@ -30,6 +30,14 @@ out of date from the files' times. It edits the labels, runs the scripts, copies
 lettered picture for Gemini, takes the round's image back (Ctrl+V, drop or file picker), and shows a
 suitable background for each stage. The command lines below are still how to run a step by hand.
 
+In the editor each place name has two shapes. Its **box** says where the printed name is: step 3
+erases the letters inside it and Measure reads them. Its **frame**, drawn round the new type, is what
+gets set: drag it to move the name, its handles to resize it (the type keeps its proportions), the
+round handle to turn it. Touching the frame stores the placement as `set` {`at` [x, y], `size`,
+`angle`} (centre, type size in map-2k px, degrees), which overrides the measured place and `nudge`,
+`height` and `angle`; "Back to measured" drops it. <kbd>E</kbd> or "Erase box" switches the handles
+to the box.
+
 Files, all in `data/projectaon/<code>/` (git-ignored):
 
 | File | What |
@@ -40,6 +48,7 @@ Files, all in `data/projectaon/<code>/` (git-ignored):
 | `map-labels.json` | The label list: every label's wording, box on `map-2k.png`, and how to treat it |
 | `map-2k-erased.jpg` | `map-2k.png` with the place names erased |
 | `map-2k-lettered.jpg` | The same with the place names set again in Cabin: the picture Gemini gets |
+| `map-style.txt` | Optional: the book's own look, opening the prompt in place of the default (Book 3: snow and ice) |
 | `map-prompt-<n>.txt` | The prompt for round n |
 | `map-gemini-<n>.jpg` | Gemini's output, round n, saved by the owner |
 | `map-check-<n>/` | Round n's checks: `aligned.png`, `H.json`, `flags.png`, `labels.png` |
@@ -71,8 +80,11 @@ Commands run from the project root as
    Each name's angle and size come from the scan's ink; small names are set 30% larger. Look at
    it and fix by hand what the measuring got wrong: `angle` (degrees), `nudge` [dx, dy], `height`
    (px), `lines` (a name stacked over lines, set level), `leading` (their line spacing, 1 = the font's own), `spread` (the scale's numbers). Book 1
-   needed about 15 such fixes.
-5. **Prompt**: `map_labels.py prompt $D/map-labels.json $D/map-prompt-<n>.txt --lettered`. It asks
+   needed about 15 such fixes. Since Book 3 the editor's frame does the same by dragging, as `set`.
+5. **Prompt**: `map_labels.py prompt $D/map-labels.json $D/map-prompt-<n>.txt --lettered`. It opens
+   with `map-style.txt` when the book has one: the default asks for forests and water, and on Book 3
+   Gemini painted the snowfields as green woodland and the white sea deep teal. Write one for any map
+   that is not temperate land. It asks
    for a richly painted repaint (shaded mountains, dense forests, textured water), every label as
    listed, the place names kept in clean sans-serif on clear ground, and nothing added (no fruit,
    foliage or ornaments, no new trees, ships or buildings).
