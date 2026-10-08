@@ -104,8 +104,9 @@ Commands run from the project root as
    needed about 15 such fixes. Since Book 3 the editor's frame does the same by dragging, as `set`.
 5. **Prompt**: `map_labels.py prompt $D/map-labels.json $D/map-prompt-<n>.txt --lettered`. It opens
    with `map-style.txt` when the book has one: the default asks for forests and water, and on Book 3
-   Gemini painted the snowfields as green woodland and the white sea deep teal. Write one for any map
-   that is not temperate land. It asks
+   Gemini painted the snowfields as green woodland and the white sea deep teal (Book 5: the desert
+   came back green). Every book 1-12 has one since 2026-10-08, written from its map, key and text
+   (each region's ground, trees as drawn, what must not appear); read it before a book's first round. It asks
    for a richly painted repaint (shaded mountains, dense forests, textured water), every label as
    listed, the place names kept in clean sans-serif on clear ground, and nothing added (no fruit,
    foliage or ornaments, no new trees, ships or buildings).
