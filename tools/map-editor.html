@@ -1035,7 +1035,9 @@ function renderPanel() {
     case 3: {
       const places = labels.filter(l => l.retype).length, done = !!mt('map-labels-checked.txt');
       h += `<div class="row">${done ? '<button data-do="unchecked">Not checked after all</button>' : '<button class="primary" data-do="checked">Labels checked</button>'}
-<span class="note">${labels.length} labels, ${places} place names</span></div>`; break; }
+<span class="note">${labels.length} labels, ${places} place names</span></div>
+<div class="row"><button data-do="copyclaude">Copy request for Claude</button>
+<span class="note">saves, then copies a request to untick retype on the title, banner and captions: paste it into Claude Code, then reload this page</span></div>`; break; }
     case 4: {
       const l = lettered(), m = l.filter(x => x.ink).length, old = l.filter(x => x.ink && stale(x)).length;
       h += `<div class="row">${runBtn('Measure', 'data-do="measure"' + noRun)}<span class="note">${m} of ${l.length} lettered labels measured${old ? `, ${old} with a box moved since` : ''}</span></div>`; break; }
@@ -1085,6 +1087,7 @@ $('panel').onclick = async e => {
   const what = b.dataset.do;
   if (what === 'clearreset') { clearReset(); renderPanel(); return; }
   if (what === 'copyimage') return copyImage(b);
+  if (what === 'copyclaude') return copyClaude();
   if (what === 'gotocheck') return openStep(8);
   if (what === 'checked' || what === 'unchecked') return markChecked(what === 'checked');
   if (busy) return;
@@ -1098,6 +1101,13 @@ async function api(path, opts) {
     const r = await fetch(`/api/map/${encodeURIComponent(book)}/${path}`, opts);
     return { status: r.status, j: await r.json().catch(() => ({})) };
   } catch (e) { return { status: 0, j: { error: String(e.message || e) } }; }
+}
+// step 3's retype ticks are a judgement by eye, so they go to Claude Code by hand, not to a script
+async function copyClaude() {
+  if (snap() !== savedJson && !(await save())) return;  // Claude edits the saved file
+  const t = `Map editor, step 3, book ${book}: in data/projectaon/${book}/map-labels.json, untick "retype" on every label that is not a place name (the title, banner, panel captions, key and scale wording, which Gemini copies as drawn), and check that the labels already unticked are not place names. Judge from the wording and the boxes only: do not open the map image. If a label could be either, leave it as it is and ask me. Change only the retype ticks: no wording, boxes or other fields. Write the file back in its current format, then list what you changed by index.`;
+  try { await navigator.clipboard.writeText(t); msg('Request copied: paste it into Claude Code, then reload this page', 5000); }
+  catch (e) { msg('Copy failed: ' + e.message, 6000); }
 }
 async function markChecked(on) {  // step 3 is the one step no script marks done
   if (on && snap() !== savedJson && !(await save())) return;
