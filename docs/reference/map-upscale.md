@@ -64,8 +64,10 @@ Commands run from the project root as
 2. **Label list.** `map_labels.py draft $D/map-2k.png $D/map-labels.json` gives OCR boxes as a
    start only. It uses PaddleOCR when `tools/.venv-paddle` exists (see `map_ocr_paddle.py`): on
    Book 4 it read about 55 of 62 labels right, slanted ones included, and missed a few small ones.
-   Without it, EasyOCR (on Book 1 most came back as a stray digit). Correct every wording and box by
-   eye, and add what it missed. Each entry: `text` (exact, as printed), `box` [x0, y0, x1, y1],
+   Without it, EasyOCR (on Book 1 most came back as a stray digit). **The owner** corrects every
+   wording and box by eye in the map editor, and adds what it missed (owner's call, 2026-10-07: the
+   agent does not review the draft, which costs tokens on every map image it looks at; it helps
+   only with names the owner asks about). Each entry: `text` (exact, as printed), `box` [x0, y0, x1, y1],
    `where` (its place in words), `small` (hand-lettered), and `leave: true` on every *place name*.
    The title, banner and shield captions and the key are left as drawn: Gemini copied them right
    in every round. Book 1: 60 labels, 42 place names.

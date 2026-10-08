@@ -844,7 +844,7 @@ const STEPS = [
   { n: 1, short: 'Upscale', name: 'Upscale scan', run: 'upscale', bg: () => ['map.png'],
     text: 'Real-ESRGAN makes map-2k.png, 2048 px wide, from the original map.png in the book\'s folder. About 10 seconds on the GPU. Everything after this works on map-2k.png.' },
   { n: 2, short: 'Draft', name: 'Draft labels (OCR)', bg: () => ['map-2k.png'],
-    text: 'EasyOCR reads boxes off map-2k.png as a first label list. It is only a start (on Book 1 most came back as a stray digit) and can take a minute or more. If a list already exists it is replaced, and the old one is kept as map-labels.json.bak.' },
+    text: 'OCR reads boxes off map-2k.png as a first label list: PaddleOCR when tools/.venv-paddle is set up (Book 4: about 55 of 62 right), else EasyOCR. It is only a start, to correct by hand in the next step, and takes a minute or more. If a list already exists it is replaced, and the old one is kept as map-labels.json.bak.' },
   { n: 3, short: 'Labels', name: 'Labels: wording and boxes (by hand)', bg: () => ['map-2k.png'],
     text: 'Correct every label\'s wording and box by eye, and add what OCR missed (New box, N). Tick leave on every place name; the title, banner, shield captions and key are left as drawn, since Gemini copies those right. Tick ok as each is checked. Save with Ctrl+S.' },
   { n: 4, short: 'Measure', name: 'Measure', run: 'measure', bg: () => ['map-2k.png'],
