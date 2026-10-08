@@ -164,9 +164,10 @@ Left to the player whatever the engine does: whether to sleep (B2 41), and the p
    - Next: Books 3-12, one at a time (label list, erase, letter, one or two Gemini rounds, finish).
      Book 1's label list took the most work; the map editor (`tools/map-editor.html`, which edits
      the labels and runs every step of the procedure) was first used on Book 3.
-   - **Book 3 in progress** (2026-10-07): 38 labels, 31 place names, measured, erased and lettered.
-     Round 1 was rejected: the default prompt made the snowfields green woodland. Round 2's prompt
-     opens with Book 3's own `map-style.txt` (snow and ice); waiting on the owner's Gemini run.
+   - **Book 3 done** (2026-10-07): 38 labels, 31 place names. Round 1 was rejected: the default
+     prompt made the snowfields green woodland. Round 2's prompt opened with Book 3's own
+     `map-style.txt` (snow and ice) and was kept: 4 names re-set at 4K, and the scale's last number
+     (Gemini wrote 250) re-set as a "fix" label placed by hand. `map-4k.webp` is shown in the player.
      The editor gained a text frame per name (move, size, turn the type; stored as `set`), with the
      erase box behind <kbd>E</kbd>.
    - Book 4 has trial files from the first experiments (`map-esrgan-*`, `map-gemini-esrgan-4k.webp`,

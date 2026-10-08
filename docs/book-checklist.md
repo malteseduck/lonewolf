@@ -21,7 +21,7 @@ under each step; what is left inside a step (counts, sections) is in `docs/plan.
 | 8. Played through with test characters; misreadings and item gaps fixed | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 9. The owner has played it and is happy | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | **Pictures** | | | | | | | | | | | | |
-| 10. Printed map repainted, labels checked, `map-4k.webp` made and shown in the player | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 10. Printed map repainted, labels checked, `map-4k.webp` made and shown in the player | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 
 Books: 1 Flight from the Dark · 2 Fire on the Water · 3 The Caverns of Kalte · 4 The Chasm of Doom ·
 5 Shadow on the Sand · 6 The Kingdoms of Terror · 7 Castle Death · 8 The Jungle of Horrors ·
