@@ -270,6 +270,8 @@ def main():
     global PHASE
     for PHASE in (['wipe'] if WIPE else []) + ['draw']:
         for lab in todo:
+            if PHASE == 'wipe' and lab.get('fix'):  # its box is cleared already; the wipe ate a panel's lines (Book 3's scale)
+                continue
             letter(base, lab, scan_ink, FONTS / a.hand, FONTS / a.caps, k)
     out = Path(a.out)
     base.save(out, quality=90, method=6) if out.suffix == '.webp' else base.save(out, quality=92)
