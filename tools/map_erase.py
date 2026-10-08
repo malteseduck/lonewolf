@@ -9,7 +9,7 @@ bar) and outlines next to a colour fill (trees, rivers, mountains) stay, and so 
 joined to one; a label marked "clip": true has every stroke in its box erased instead (letters
 joined to the scale bar, a tower, a road); "joined": true also erases letters joined to a line running
 out of the box (a river, mountain, flagpole) and the line's ink inside the box, except river
-outlines (Book 4: Holmgard, Cloeasia). "keep": [[x0, y0, x1, y1]] protects anything inside
+outlines and coasts (Book 4: Holmgard, Cloeasia; a name at sea is all taken, Book 5: Bisutan). "keep": [[x0, y0, x1, y1]] protects anything inside
 those boxes (Book 1: a ship inside a strait's name). Check the result: Gemini may letter a fragment. Asking Gemini to leave labels out did not work (Book 1, round
 5: it kept 22 of 23), so it is given a picture without them. The fill is rough where a label touched
 a tree or a coastline, but Gemini repaints all of it. The erased labels are lettered afterwards.
@@ -48,6 +48,9 @@ class LabelInk:
         self.total = np.bincount(self.cc.ravel(), minlength=self.n)
         # for "joined": within 3 px of blue paint (the paper is too colourful for plain chroma)
         self.near_water = cv2.dilate((lab[..., 2] < 112).astype(np.uint8), np.ones((7, 7), np.uint8)) > 0
+        # a river outline or coast has land beside it as well; letters out at sea have only water
+        land = cv2.morphologyEx(((lab[..., 2] >= 112) & (self.dark < 15)).astype(np.uint8), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+        self.shore = self.near_water & (cv2.dilate(land, np.ones((11, 11), np.uint8)) > 0)
 
     def box(self, lab_):
         x0, y0, x1, y1 = lab_['box']
@@ -71,10 +74,30 @@ class LabelInk:
             bx0, by0, bx1, by1 = (v - o for v, o in zip(lab_['box'], (x0, y0, x0, y0)))
             inner = np.zeros(m.shape, bool)
             inner[max(by0, 0):by1, max(bx0, 0):bx1] = True
-            m = m | (part[sub] & inner & ~self.near_water[y0:y1, x0:x1])
+            m = m | (part[sub] & inner & ~self.shore[y0:y1, x0:x1])
+        m = m | self.enclosed(m, self.dark[y0:y1, x0:x1] > 30)
         for kx0, ky0, kx1, ky1 in lab_.get('keep', []):  # a ship inside the label's box
             m[max(ky0 - y0, 0):max(ky1 - y0, 0), max(kx0 - x0, 0):max(kx1 - x0, 0)] = False
         return m
+
+    @staticmethod
+    def enclosed(m, dark):
+        """Small dark specks the taken ink rings round: a thick stroke junction (an A's apex) reads
+        as a tree and stays, and the inpaint smears it into a blot."""
+        md = cv2.dilate(m.astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool)
+        left = (dark & ~md).astype(np.uint8)
+        n, cc, st, _ = cv2.connectedComponentsWithStats(left, connectivity=8)
+        out = np.zeros(m.shape, bool)
+        h, w = m.shape
+        for c in range(1, n):
+            x, y, bw, bh, area = st[c]
+            if area > 150 or x == 0 or y == 0 or x + bw == w or y + bh == h:
+                continue
+            blob = cc == c
+            ring = cv2.dilate(blob.astype(np.uint8), np.ones((9, 9), np.uint8)).astype(bool) & ~blob & ~left.astype(bool)
+            if (md & ring).sum() >= 0.5 * ring.sum():
+                out |= cv2.dilate(blob.astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool)
+        return out
 
 
 def main():

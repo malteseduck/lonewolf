@@ -92,8 +92,11 @@ Commands run from the project root as
    it (coasts, roads, the grid), trees and outlined shapes. Look at the result: a letter joined to a
    line survives as a fragment; `clip: true` clears that name's whole box instead (for a name on
    flat ground), `joined: true` also clears letters joined to a line running out of the box (a
-   river, mountain or flagpole), with that line's ink inside the box except river outlines (Book 4:
-   Holmgard, Cloeasia), and `keep: [[box]]` (the editor's Add keep box, K) protects something inside a box (Book 1: a ship).
+   river, mountain or flagpole), with that line's ink inside the box except river outlines and
+   coasts, told apart as ink with both water and land within a few px (Book 4: Holmgard, Cloeasia;
+   letters out at sea have only water round them, so they go: Book 5, Bisutan), and `keep: [[box]]`
+   (the editor's Add keep box, K) protects something inside a box (Book 1: a ship). Small dark
+   specks ringed by a name's taken ink (a thick stroke junction read as a tree) go with it.
 4. **Set them again**: `map_letter.py $D/map-2k.png $D/map-labels.json $D/map-2k-erased.jpg - $D/map-2k-lettered.jpg --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"`.
    Each name's angle and size come from the scan's ink; small names are set 30% larger. Look at
    it and fix by hand what the measuring got wrong: `angle` (degrees), `nudge` [dx, dy], `height`
