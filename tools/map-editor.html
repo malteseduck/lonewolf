@@ -124,7 +124,8 @@ kbd { background: #333; border: 1px solid var(--line); border-radius: 3px; paddi
       Wheel zoom, drag empty map or hold <kbd>Space</kbd> to pan. A place name's frame is its new type: drag it
       to move, handles to resize, the round handle to turn it. <b>Merge</b> (<kbd>M</kbd>, or
       <kbd>Shift</kbd>+click) joins another label into the selected one, as stacked lines. <b>Erase box</b> (<kbd>E</kbd>) edits instead
-      what is erased from the scan and where Measure reads it. Arrows nudge 1 px, with <kbd>Shift</kbd> 10.
+      what is erased from the scan and where Measure reads it; <b>Add keep box</b> (<kbd>K</kbd>) then marks something
+      inside it for Erase to leave, drawn dashed green. Arrows nudge 1 px, with <kbd>Shift</kbd> 10.
       Fields left empty are removed on save.
     </div>
   </aside>
@@ -300,8 +301,8 @@ function ensureSet(l) {  // the frame as it stands becomes the label's own place
   delete l.nudge; delete l.height; delete l.angle;
 }
 const r1 = v => Math.round(v * 10) / 10;
-function boxHandles(l) {
-  const [x0, y0, x1, y1] = l.box, mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+function boxHandles(b) {
+  const [x0, y0, x1, y1] = b, mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
   return [
     ['nw', x0, y0], ['n', mx, y0], ['ne', x1, y0], ['e', x1, my],
     ['se', x1, y1], ['s', mx, y1], ['sw', x0, y1], ['w', x0, my],
@@ -317,9 +318,14 @@ function hit(sx, sy) {
       const f = frameOf(l), [rx, ry] = frameRot(f);
       if (near(rx, ry, 9)) return { kind: 'rot' };
       for (const [n, x, y] of frameHandles(f)) if (nearSq(x, y)) return { kind: 'fsize', n };
-    } else for (const [n, x, y] of boxHandles(l)) if (nearSq(x, y)) return { kind: 'size', n };
+    } else for (const [n, x, y] of boxHandles(l.box)) if (nearSq(x, y)) return { kind: 'size', n };
   }
   const [mx, my] = toMap(sx, sy);
+  if (sel >= 0 && labels[sel] && labels[sel].keep && !onFrame(labels[sel])) {  // keep boxes lie inside the label's box: they win
+    const ks = labels[sel].keep;
+    for (let k = 0; k < ks.length; k++) for (const [n, x, y] of boxHandles(ks[k])) if (nearSq(x, y)) return { kind: 'ksize', k, n };
+    for (let k = 0; k < ks.length; k++) { const [x0, y0, x1, y1] = ks[k]; if (mx >= x0 && mx <= x1 && my >= y0 && my <= y1) return { kind: 'kmove', k }; }
+  }
   let best = -1, area = Infinity;
   labels.forEach((l, i) => {
     if (!visible(i)) return;
@@ -453,8 +459,8 @@ function draw() {
     });
     ctx.setLineDash([]);
     const hs = HS / view.s;  // screen-sized handles
-    const knobs = pts => {
-      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#ff4d6d'; ctx.lineWidth = 1.5 / view.s; ctx.setLineDash([]);
+    const knobs = (pts, col = '#ff4d6d') => {
+      ctx.fillStyle = '#fff'; ctx.strokeStyle = col; ctx.lineWidth = 1.5 / view.s; ctx.setLineDash([]);
       for (const [, x, y] of pts) { ctx.fillRect(x - hs, y - hs, 2 * hs, 2 * hs); ctx.strokeRect(x - hs, y - hs, 2 * hs, 2 * hs); }
     };
     const f = hasFrame(l) ? frameOf(l) : null;
@@ -475,7 +481,10 @@ function draw() {
       ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(rx, ry); ctx.strokeStyle = '#ff4d6d'; ctx.stroke();
       ctx.beginPath(); ctx.arc(rx, ry, 7 / view.s, 0, 7); ctx.fillStyle = '#ff4d6d'; ctx.fill();
       ctx.strokeStyle = '#fff'; ctx.stroke();
-    } else knobs(boxHandles(l));
+    } else {
+      knobs(boxHandles(l.box));
+      (l.keep || []).forEach(k => knobs(boxHandles(k), '#6bd18a'));
+    }
   }
   if (drag && drag.kind === 'new' && drag.box) {
     const b = drag.box;
@@ -510,14 +519,14 @@ function select(i, centre_) {
 $('filter').oninput = () => { renderList(); draw(); };
 
 const TEXTS = ['text', 'where'];
-const BOOLS = [['small', true], ['retype', true], ['clip', false], ['water', false], ['fix', false], ['reset', false], ['spread', false]];
+const BOOLS = [['small', true], ['retype', true], ['clip', false], ['joined', false], ['fix', false], ['reset', false], ['spread', false]];
 const TIPS = {  // what each field does in the map tools (docs/reference/map-upscale.md)
   text: 'The wording exactly as printed on the map.',
   where: 'Where the label sits, in words; goes into the Gemini prompt. "upwards" or "downwards" in it sets which way a slanted name reads.',
   small: 'Hand-lettered name too small for OCR: the check lists it for a look by eye instead of comparing its reading.',
   retype: 'A place name: erased from the scan and set again in clean type before Gemini sees the map. Untick for the title, banner, panel captions and key, which Gemini copies as drawn.',
   clip: 'Erase the whole box, not just the letter shapes. For a name on flat ground where letters touch a line and leave fragments.',
-  water: 'A river runs through the name and its letters touch it: erase those letters too, keeping the river (Book 4: Holmgard).',
+  joined: 'Letters touching a line that runs out of the box (river, mountain, flagpole): erase them too, with the line inside the box except river outlines. Gemini repaints the gap; add keep for anything that must stay.',
   fix: 'After a Gemini round: for a label kept in its printed lettering (title, caption, key) that Gemini misspelled. Its lettering is cleared and the label set in Cabin at 4K. Stays ticked for later rounds.',
   reset: 'After a Gemini round: a place name Gemini garbled, to be set again at 4K by map_letter.py (replaces --only). Applies to the round just checked: untick all before checking a new round.',
   spread: 'The scale bar’s numbers: each word set on its own, evenly from one end of the box to the other.',
@@ -528,7 +537,7 @@ const TIPS = {  // what each field does in the map tools (docs/reference/map-ups
   'nudge x,y': 'Move the set type by this many map-2k px, off something the larger type runs into.',
   'box x0,y0': 'Top-left corner of the label’s box, in map-2k px.',
   'box x1,y1': 'Bottom-right corner of the label’s box, in map-2k px.',
-  keep: 'Areas inside the box the eraser must not touch (Book 1: a ship).',
+  keep: 'Areas inside the box the eraser must not touch (Book 1: a ship). Add one with the button or K, then drag on the map; drag a green box or its handles to change it.',
   'type at x,y': 'Placed by hand (the frame on the map): centre of the type, in map-2k px. Overrides the measured place, nudge, height and angle.',
   'type size': 'Type size in map-2k px, set by sizing the frame.',
   'type angle': 'Reading angle in degrees, clockwise, 0 = left to right, set by the frame\u2019s round handle.',
@@ -634,9 +643,17 @@ function renderForm() {
   const p1 = document.createElement('div'); p1.className = 'pair'; p1.append(bx[0], bx[1]);
   const p2 = document.createElement('div'); p2.className = 'pair'; p2.append(bx[2], bx[3]);
   row('box x0,y0', p1); row('box x1,y1', p2);
-  if (l.retype) { check('clip', false); check('water', false); }
-  if (l.keep) {
-    const k = document.createElement('div'); k.style.color = 'var(--dim)'; k.textContent = l.keep.length + ' keep box(es), shown dashed green; kept as is';
+  if (l.retype) { check('clip', false); check('joined', false); }
+  if (l.retype) {
+    const k = document.createElement('div'); k.className = 'keeps';
+    (l.keep || []).forEach((b, j) => {
+      const r = document.createElement('div'); r.textContent = b.join(', ') + ' ';
+      const x = document.createElement('button'); x.textContent = '\u00d7'; x.title = 'Remove this keep box';
+      x.onclick = () => { push(); l.keep.splice(j, 1); if (!l.keep.length) delete l.keep; renderForm(); afterEdit(); };
+      r.appendChild(x); k.appendChild(r);
+    });
+    const add = document.createElement('button'); add.textContent = 'Add keep box'; add.title = 'Then drag on the map round what the eraser must leave (K)';
+    add.onclick = startKeep; k.appendChild(add);
     row('keep', k);
   }
 
@@ -660,7 +677,7 @@ cv.addEventListener('mousedown', e => {
   if (e.button !== 0 && e.button !== 1) return;
   const r = cv.getBoundingClientRect(), sx = e.clientX - r.left, sy = e.clientY - r.top;
   const [mx, my] = toMap(sx, sy);
-  if (mode === 'draw') { drag = { kind: 'new', x: mx, y: my, box: null }; return; }
+  if (mode === 'draw' || mode === 'keep') { drag = { kind: 'new', keep: mode === 'keep', x: mx, y: my, box: null }; return; }
   if (e.button === 1 || spaceDown) { drag = { kind: 'pan', sx, sy, vx: view.x, vy: view.y }; cv.style.cursor = 'grabbing'; return; }
   const h = hit(sx, sy);
   if (h.kind === 'box' && h.i !== sel && sel >= 0 && (e.shiftKey || mode === 'merge')) { merge(h.i); return; }
@@ -668,6 +685,8 @@ cv.addEventListener('mousedown', e => {
   if (h.kind === 'rot') { push(); ensureSet(labels[sel]); drag = { kind: 'rot' }; }
   else if (h.kind === 'fsize') { push(); ensureSet(labels[sel]); drag = { kind: 'fsize', n: h.n, f: frameOf(labels[sel]) }; }
   else if (h.kind === 'size') { push(); drag = { kind: 'size', n: h.n }; }
+  else if (h.kind === 'ksize') { push(); drag = { kind: 'ksize', k: h.k, n: h.n }; }
+  else if (h.kind === 'kmove') drag = { kind: 'kmove', k: h.k, mx, my, orig: labels[sel].keep[h.k].slice(), pushed: false };
   else if (h.kind === 'box') {
     if (h.i !== sel) select(h.i, false);
     const l = labels[sel];
@@ -680,10 +699,10 @@ window.addEventListener('mousemove', e => {
   const [mx, my] = toMap(sx, sy);
   if (!drag) {
     if (e.target === cv) {
-      const h = mode === 'draw' ? { kind: 'draw' } : hit(sx, sy);
+      const h = mode === 'draw' || mode === 'keep' ? { kind: 'draw' } : hit(sx, sy);
       cv.style.cursor = spaceDown ? 'grab' : h.kind === 'draw' ? 'crosshair' : h.kind === 'rot' ? 'alias'
-        : h.kind === 'size' || h.kind === 'fsize' ? (h.n.length === 2 ? (h.n === 'nw' || h.n === 'se' ? 'nwse-resize' : 'nesw-resize') : (h.n === 'n' || h.n === 's' ? 'ns-resize' : 'ew-resize'))
-        : h.kind === 'box' ? 'move' : 'grab';
+        : h.kind === 'size' || h.kind === 'fsize' || h.kind === 'ksize' ? (h.n.length === 2 ? (h.n === 'nw' || h.n === 'se' ? 'nwse-resize' : 'nesw-resize') : (h.n === 'n' || h.n === 's' ? 'ns-resize' : 'ew-resize'))
+        : h.kind === 'box' || h.kind === 'kmove' ? 'move' : 'grab';
     }
     return;
   }
@@ -699,13 +718,18 @@ window.addEventListener('mousemove', e => {
     const l = labels[sel];
     l.box = [drag.orig[0] + dx, drag.orig[1] + dy, drag.orig[2] + dx, drag.orig[3] + dy]; clampBox(l.box);
     boxChanged();
-  } else if (drag.kind === 'size') {
-    const b = labels[sel].box, n = drag.n;
+  } else if (drag.kind === 'kmove') {
+    const dx = mx - drag.mx, dy = my - drag.my;
+    if (!drag.pushed) { if (Math.hypot(dx, dy) * view.s < 3) return; push(); drag.pushed = true; }
+    const b = [drag.orig[0] + dx, drag.orig[1] + dy, drag.orig[2] + dx, drag.orig[3] + dy]; clampBox(b);
+    labels[sel].keep[drag.k] = b; keepChanged();
+  } else if (drag.kind === 'size' || drag.kind === 'ksize') {
+    const b = drag.kind === 'size' ? labels[sel].box : labels[sel].keep[drag.k], n = drag.n;
     if (n.includes('w')) b[0] = Math.min(mx, b[2] - 2);
     if (n.includes('e')) b[2] = Math.max(mx, b[0] + 2);
     if (n.includes('n')) b[1] = Math.min(my, b[3] - 2);
     if (n.includes('s')) b[3] = Math.max(my, b[1] + 2);
-    clampBox(b); boxChanged();
+    clampBox(b); if (drag.kind === 'size') boxChanged(); else keepChanged();
   } else if (drag.kind === 'fmove') {
     const dx = mx - drag.mx, dy = my - drag.my;
     if (!drag.pushed) { if (Math.hypot(dx, dy) * view.s < 3) return; push(); ensureSet(labels[sel]); drag.pushed = true; }
@@ -733,7 +757,16 @@ window.addEventListener('mousemove', e => {
 window.addEventListener('mouseup', e => {
   if (!drag) return;
   const d = drag; drag = null; cv.style.cursor = 'grab';
-  if (d.kind === 'new') {
+  if (d.kind === 'new' && d.keep) {
+    mode = null;
+    if (d.box && d.box[2] - d.box[0] > 3 && d.box[3] - d.box[1] > 3 && sel >= 0) {
+      push();
+      const l = labels[sel];
+      l.keep = [...(l.keep || []), d.box.map(Math.round)];
+      renderForm(); msg('Keep box added: Erase will leave what is inside it');
+    }
+    draw();
+  } else if (d.kind === 'new') {
     mode = null; $('add').classList.remove('on');
     if (d.box && d.box[2] - d.box[0] > 3 && d.box[3] - d.box[1] > 3) {
       push();
@@ -745,10 +778,11 @@ window.addEventListener('mouseup', e => {
       const t = $('form').querySelector('input[type=text]'); if (t) t.focus();
     } else draw();
   } else if (d.kind === 'pan' && d.click && !d.moved) select(-1, false);
-  else if (['rot', 'fsize', 'fmove'].includes(d.kind)) renderForm();  // the form now shows the hand placement
+  else if (['rot', 'fsize', 'fmove', 'kmove', 'ksize'].includes(d.kind)) renderForm();  // the form now shows the hand placement
   dirty();
 });
 function boxChanged() { renderFormValues(); draw(); dirty(); }
+function keepChanged() { draw(); dirty(); }  // the form's keep list is redrawn on mouseup
 function renderFormValues() {  // update numeric inputs in place
   if (sel < 0) return;
   const l = labels[sel], put = (k, v) => { const i = $('form').querySelector(`input[data-f="${k}"]`); if (i) i.value = v; };
@@ -760,6 +794,7 @@ function renderFormValues() {  // update numeric inputs in place
 // ---------- keys ----------
 function typing() { const a = document.activeElement; return a && (a.tagName === 'INPUT' && a.type !== 'checkbox' || a.tagName === 'TEXTAREA'); }
 window.addEventListener('keydown', e => {
+  if (!e.key) return;  // autofill sends keydowns with no key
   if (e.key === ' ' && !typing()) { spaceDown = true; e.preventDefault(); return; }
   const ctrl = e.ctrlKey || e.metaKey;
   if (ctrl && e.key.toLowerCase() === 's') { e.preventDefault(); save(); return; }
@@ -769,6 +804,7 @@ window.addEventListener('keydown', e => {
   if (e.key === 'Escape') { mode = null; $('add').classList.remove('on'); $('merge').classList.remove('on'); return; }
   if (e.key.toLowerCase() === 'n') { startDraw(); e.preventDefault(); }
   else if (e.key.toLowerCase() === 'f') fit();
+  else if (e.key.toLowerCase() === 'k') startKeep();
   else if (e.key.toLowerCase() === 'p') togglePreview();
   else if (e.key.toLowerCase() === 'h') { if (!hideAll) { hideAll = true; draw(); } }
   else if (e.key === 'Delete') del();
@@ -792,6 +828,12 @@ window.addEventListener('keyup', e => {
 window.addEventListener('blur', () => { if (hideAll) { hideAll = false; draw(); } });
 
 // ---------- actions ----------
+function startKeep() {
+  const l = labels[sel];
+  if (!l || !l.retype) { msg('Select a place name first: a keep box protects something inside its box from Erase'); return; }
+  if (onFrame(l)) toggleErase();  // keep boxes are edited with the erase box
+  mode = 'keep'; msg('Drag on the map round what Erase must leave (Esc cancels)');
+}
 function startDraw() { mode = 'draw'; $('add').classList.add('on'); msg('Drag on the map to draw the new box (Esc cancels)'); }
 function startMerge() {
   if (sel < 0) { msg('Select a label first, then merge another into it'); return; }

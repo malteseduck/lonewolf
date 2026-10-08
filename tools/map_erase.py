@@ -7,8 +7,9 @@ Every label marked "retype": true in the list is erased: each near-black shape l
 box is filled in from the colour around it. Lines running out of the box (roads, coasts, the scale
 bar) and outlines next to a colour fill (trees, rivers, mountains) stay, and so does a letter
 joined to one; a label marked "clip": true has every stroke in its box erased instead (letters
-joined to the scale bar, a tower, a road); "water": true also erases the letters joined to a river
-running through the name, and keeps the river (Book 4: Holmgard). "keep": [[x0, y0, x1, y1]] protects anything inside
+joined to the scale bar, a tower, a road); "joined": true also erases letters joined to a line running
+out of the box (a river, mountain, flagpole) and the line's ink inside the box, except river
+outlines (Book 4: Holmgard, Cloeasia). "keep": [[x0, y0, x1, y1]] protects anything inside
 those boxes (Book 1: a ship inside a strait's name). Check the result: Gemini may letter a fragment. Asking Gemini to leave labels out did not work (Book 1, round
 5: it kept 22 of 23), so it is given a picture without them. The fill is rough where a label touched
 a tree or a coastline, but Gemini repaints all of it. The erased labels are lettered afterwards.
@@ -45,7 +46,7 @@ class LabelInk:
         ink &= (cv2.dilate(lines, np.ones((3, 3), np.uint8)) == 0).astype(np.uint8)
         self.n, self.cc = cv2.connectedComponents(ink, connectivity=8)
         self.total = np.bincount(self.cc.ravel(), minlength=self.n)
-        # for "water": within 3 px of blue paint (the paper is too colourful for plain chroma)
+        # for "joined": within 3 px of blue paint (the paper is too colourful for plain chroma)
         self.near_water = cv2.dilate((lab[..., 2] < 112).astype(np.uint8), np.ones((7, 7), np.uint8)) > 0
 
     def box(self, lab_):
@@ -62,9 +63,9 @@ class LabelInk:
         take[0] = False
         # clip: everything darker than the paint in the box, faint ghosts included (Gemini letters a ghost)
         m = take[sub] if not lab_.get('clip') else self.dark[y0:y1, x0:x1] > 18
-        if lab_.get('water') and not lab_.get('clip'):
-            # letters touching a river join its outline into one shape running out of the box: take
-            # that shape's ink inside the (unpadded) box too, except the river's own outline
+        if lab_.get('joined') and not lab_.get('clip'):
+            # letters touching a line (river, mountain, flagpole) join it into one shape running out
+            # of the box: take that shape's ink inside the (unpadded) box too, except river outlines
             part = (within > 0) & ~take
             part[0] = False
             bx0, by0, bx1, by1 = (v - o for v, o in zip(lab_['box'], (x0, y0, x0, y0)))
