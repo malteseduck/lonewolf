@@ -8,9 +8,11 @@ Run (from the project root):
 draft: OCR finds each label's box and guesses its wording: PaddleOCR (map_ocr_paddle.py, in
 tools/.venv-paddle) when that venv exists, else EasyOCR. The guesses are only a start:
 correct every wording by eye and add what it missed (docs/reference/map-upscale.md, step 2).
-Entries are {"text", "box": [x0, y0, x1, y1], "conf"}. The corrected list drops "conf" and adds
-"where" (the label's place in words, for the prompt), "small" (hand-lettered names OCR cannot read;
-check reports them for a look by eye instead of diffing them) and "ok": true.
+Entries are {"text", "box": [x0, y0, x1, y1], "conf", "retype"}. "retype" is ticked on every read
+except one worded like a label another book's list keeps as drawn (key entries, panel captions).
+The corrected list drops "conf" and adds "where" (the label's place in words, for the prompt) and
+"small" (hand-lettered names OCR cannot read; check reports them for a look by eye instead of
+diffing them).
 prompt: writes the Gemini prompt (step 3) from the corrected list, for the owner to paste.
 check: OCRs <aligned.png> (map_check.py's repaint, warped onto map-2k.png, so boxes line up),
 matches each listed label to the read text overlapping its box, and prints every one that reads
@@ -50,6 +52,26 @@ def ocr(path):
         out.append({'text': text.upper().strip(), 'box': [int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys))],
                     'conf': round(float(conf), 2)})
     return out
+
+
+def norm(text):
+    return ''.join(c for c in text.upper() if c.isalnum())
+
+
+def kept_elsewhere(labels_file):
+    """Wordings other books' lists keep as drawn: the key and captions recur from map to map. A name
+    that is a place on one map and a caption on another stays ticked."""
+    out, places = set(), set()
+    for f in Path(labels_file).resolve().parent.parent.glob('*/map-labels.json'):
+        if f.parent == Path(labels_file).resolve().parent:
+            continue
+        try:
+            labels = json.loads(f.read_text(encoding='utf-8'))
+        except (OSError, ValueError):
+            continue
+        for lab in labels:
+            (places if lab.get('retype') else out).add(norm(' '.join(lab.get('lines') or [lab.get('text', '')])))
+    return out - places - {''}
 
 
 def overlap(a, b):  # intersection over the smaller box, so a label read in pieces still matches
@@ -163,10 +185,12 @@ def main():
     if cmd == 'draft':
         reads = ocr(a)
         reads.sort(key=lambda r: (r['box'][1] // 40, r['box'][0]))
-        for r in reads:  # most labels are place names: untick the key, title and captions
-            r['retype'] = True
+        kept = kept_elsewhere(b)
+        for r in reads:  # most labels are place names; the title and new captions are left to untick by hand
+            r['retype'] = norm(r['text']) not in kept
         Path(b).write_text(json.dumps(reads, indent=1), encoding='utf-8')
-        print(f'{len(reads)} boxes, {sum(r["conf"] < 0.5 for r in reads)} under 0.5 confidence')
+        print(f'{len(reads)} boxes, {sum(r["conf"] < 0.5 for r in reads)} under 0.5 confidence, '
+              f'{sum(not r["retype"] for r in reads)} unticked retype (kept as drawn in another book)')
     elif cmd == 'check':
         labels = json.loads(Path(a).read_text(encoding='utf-8'))
         check(labels, ocr(b))

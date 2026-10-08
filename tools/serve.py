@@ -22,6 +22,8 @@ Static files as `python -m http.server` serves them, from the project root, plus
                                       check, finish, import. ?round=n for prompt, check, finish;
                                       ?force=1 for draft over an existing list; ?width=n for finish.
                                       One job at a time (409 if busy). Returns {code, out}
+    POST /api/map/<book>/checked      mark step 3 (labels checked) done: writes map-labels-checked.txt;
+                                      ?undo=1 removes it. Drafting again removes it too
     POST /api/map/<book>/gemini/<n>   body: the round's image (png, jpeg or webp, up to 30 MB), saved
                                       as map-gemini-<n>.<ext>; 409 if there is one, unless ?force=1
 
@@ -42,6 +44,7 @@ import re
 import shutil
 import subprocess
 import threading
+import time
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, unquote
@@ -194,6 +197,8 @@ def map_commands(step, book, q):
             if q.get('force', [''])[0] != '1':
                 return None, 'map-labels.json exists; draft would overwrite it (force=1 to do so)', 409
             shutil.copyfile(f, f + '.bak')
+        if os.path.isfile(os.path.join(full, 'map-labels-checked.txt')):  # a new list is unchecked
+            os.remove(os.path.join(full, 'map-labels-checked.txt'))
         return [PY + [t('map_labels.py'), 'draft', f'{d}/map-2k.png', labels]], None, 0
     if step == 'measure':
         return [PY + [t('map_measure.py'), f'{d}/map-2k.png', labels]], None, 0
@@ -291,6 +296,15 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(200, map_state(d))
         if method == 'POST' and len(parts) == 3 and parts[1] == 'run':
             return self._map_run(parts[0], parts[2], q)
+        if method == 'POST' and parts[1:] == ['checked']:
+            f = os.path.join(d, 'map-labels-checked.txt')
+            if q.get('undo', [''])[0] == '1':
+                if os.path.isfile(f):
+                    os.remove(f)
+            else:
+                with open(f, 'w', encoding='utf-8') as fh:
+                    fh.write(time.strftime('%Y-%m-%d %H:%M\n'))
+            return self._json(200, map_state(d))
         if method == 'POST' and len(parts) == 3 and parts[1] == 'gemini' and re.fullmatch(r'\d{1,3}', parts[2]):
             return self._map_upload(d, int(parts[2]), q)
         self.close_connection = True

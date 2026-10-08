@@ -196,6 +196,7 @@ async function loadLabels() {
   const r = await fetch(`/api/maplabels/${encodeURIComponent(book)}`, { cache: 'no-store' });
   if (!r.ok) { labels = []; savedJson = snap(); sel = -1; return false; }
   labels = await r.json();
+  labels.forEach(l => delete l.ok);  // the old per-label tick, replaced by step 3's button; dropped on the next save
   savedJson = snap();
   if (sel >= labels.length) sel = -1;
   return true;
@@ -500,13 +501,12 @@ function select(i, centre_) {
 $('filter').oninput = () => { renderList(); draw(); };
 
 const TEXTS = ['text', 'where'];
-const BOOLS = [['small', true], ['retype', true], ['ok', true], ['clip', false], ['fix', false], ['reset', false], ['spread', false]];
+const BOOLS = [['small', true], ['retype', true], ['clip', false], ['fix', false], ['reset', false], ['spread', false]];
 const TIPS = {  // what each field does in the map tools (docs/reference/map-upscale.md)
   text: 'The wording exactly as printed on the map.',
   where: 'Where the label sits, in words; goes into the Gemini prompt. "upwards" or "downwards" in it sets which way a slanted name reads.',
   small: 'Hand-lettered name too small for OCR: the check lists it for a look by eye instead of comparing its reading.',
   retype: 'A place name: erased from the scan and set again in clean type before Gemini sees the map. Untick for the title, banner, panel captions and key, which Gemini copies as drawn.',
-  ok: 'Wording and box checked by eye. Step 3 shows done once every label has it; no script reads it.',
   clip: 'Erase the whole box, not just the letter shapes. For a name on flat ground where letters touch a line and leave fragments.',
   fix: 'After a Gemini round: for a label kept in its printed lettering (title, caption, key) that Gemini misspelled. Its lettering is cleared and the label set in Cabin at 4K. Stays ticked for later rounds.',
   reset: 'After a Gemini round: a place name Gemini garbled, to be set again at 4K by map_letter.py (replaces --only). Applies to the round just checked: untick all before checking a new round.',
@@ -570,7 +570,6 @@ function renderForm() {
   row('lines', ta);
   check('retype', true, true);
   check('small', true);
-  check('ok', true);
 
   const num = (key, step) => {
     const i = guard(document.createElement('input')); i.type = 'number'; i.step = step; i.value = l[key] ?? ''; i.dataset.f = key;
@@ -726,7 +725,7 @@ window.addEventListener('mouseup', e => {
     if (d.box && d.box[2] - d.box[0] > 3 && d.box[3] - d.box[1] > 3) {
       push();
       const b = d.box.map(Math.round);
-      labels.push({ text: '', box: b, where: '', small: false, ok: true, retype: true });
+      labels.push({ text: '', box: b, where: '', small: false, retype: true });
       sel = labels.length - 1;
       refresh();
       msg('New label added: set its text');
@@ -846,7 +845,7 @@ function status(n) {
   switch (n) {
     case 1: return !mt('map-2k.png') ? 'todo' : mt('map.png') > mt('map-2k.png') ? 'stale' : 'done';
     case 2: return lab ? 'done' : 'todo';
-    case 3: return labels.length && labels.every(l => l.ok) ? 'done' : 'todo';
+    case 3: return mt('map-labels-checked.txt') ? 'done' : 'todo';
     case 4: {
       const ink = lettered().filter(l => l.ink);
       if (!ink.length) return 'todo';
@@ -872,7 +871,7 @@ const STEPS = [
   { n: 2, short: 'Draft', name: 'Draft labels (OCR)', bg: () => ['map-2k.png'],
     text: 'OCR reads boxes off map-2k.png as a first label list: PaddleOCR when tools/.venv-paddle is set up (Book 4: about 55 of 62 right), else EasyOCR. It is only a start, to correct by hand in the next step, and takes a minute or more. If a list already exists it is replaced, and the old one is kept as map-labels.json.bak.' },
   { n: 3, short: 'Labels', name: 'Labels: wording and boxes (by hand)', bg: () => ['map-2k.png'],
-    text: 'Correct every label\'s wording and box by eye, and add what OCR missed (New box, N). The draft ticks retype on every label: untick it on the title, banner, panel captions and key, which Gemini copies as drawn. Tick ok on each label once checked: this step shows done when all are. Save with Ctrl+S.' },
+    text: 'Correct every label\'s wording and box by eye, and add what OCR missed (New box, N). The draft ticks retype on every label except wordings another book keeps as drawn (its key and captions): untick it on the title, banner and any other captions, which Gemini copies as drawn, and check the ones it left unticked are not place names. Save with Ctrl+S. When the list is right, press Labels checked to mark this step done.' },
   { n: 4, short: 'Measure', name: 'Measure', run: 'measure', bg: () => ['map-2k.png'],
     text: 'Reads the scan\'s ink in each place name\'s box (centre, angle, length, thickness), so the preview starts from what the lettering step will really set. Run it again after moving boxes: a red dashed outline marks a label whose box moved since.' },
   { n: 5, short: 'Lettering', name: 'Lettering: adjust over the original (by hand)', bg: () => ['map-2k.png'], preview: true,
@@ -942,8 +941,9 @@ function renderPanel() {
     case 2:
       h += `<div class="row">${runBtn(files['map-labels.json'] ? 'Draft again (replaces the list)' : 'Draft', 'data-do="draft"' + noRun)}</div>`; break;
     case 3: {
-      const places = labels.filter(l => l.retype).length, ok = labels.filter(l => l.ok).length;
-      h += `<div class="note">${labels.length} labels, ${places} place names, ${ok} ticked ok. Done when every label is ticked ok.</div>`; break; }
+      const places = labels.filter(l => l.retype).length, done = !!mt('map-labels-checked.txt');
+      h += `<div class="row">${done ? '<button data-do="unchecked">Not checked after all</button>' : '<button class="primary" data-do="checked">Labels checked</button>'}
+<span class="note">${labels.length} labels, ${places} place names</span></div>`; break; }
     case 4: {
       const l = lettered(), m = l.filter(x => x.ink).length, old = l.filter(x => x.ink && stale(x)).length;
       h += `<div class="row">${runBtn('Measure', 'data-do="measure"' + noRun)}<span class="note">${m} of ${l.length} lettered labels measured${old ? `, ${old} with a box moved since` : ''}</span></div>`; break; }
@@ -994,6 +994,7 @@ $('panel').onclick = async e => {
   if (what === 'clearreset') { clearReset(); renderPanel(); return; }
   if (what === 'copyimage') return copyImage(b);
   if (what === 'gotocheck') return openStep(8);
+  if (what === 'checked' || what === 'unchecked') return markChecked(what === 'checked');
   if (busy) return;
   if (what === 'copyprompt') return copyPrompt(b);
   await doStep(what, b);
@@ -1005,6 +1006,12 @@ async function api(path, opts) {
     const r = await fetch(`/api/map/${encodeURIComponent(book)}/${path}`, opts);
     return { status: r.status, j: await r.json().catch(() => ({})) };
   } catch (e) { return { status: 0, j: { error: String(e.message || e) } }; }
+}
+async function markChecked(on) {  // step 3 is the one step no script marks done
+  if (on && snap() !== savedJson && !(await save())) return;
+  const r = await api('checked' + (on ? '' : '?undo=1'), { method: 'POST' });
+  if (r.status !== 200) { msg('Could not mark step 3: ' + (r.j.error || r.status), 6000); return; }
+  await refreshState(); renderPanel();
 }
 function setBusy(on, btn, label) {
   busy = on; document.body.classList.toggle('busy', on);

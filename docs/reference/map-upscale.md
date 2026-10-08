@@ -69,9 +69,13 @@ Commands run from the project root as
    agent does not review the draft, which costs tokens on every map image it looks at; it helps
    only with names the owner asks about). Each entry: `text` (exact, as printed), `box` [x0, y0, x1, y1],
    `where` (its place in words), `small` (hand-lettered), and `retype: true` on every *place name* (erased from the scan and set again in clean type;
-   the draft ticks it on every label, so untick the key, title and panel captions). The editor groups
-   each label's fields by the step that uses them and hides those that do not apply. Ticking `ok` on
-   every label marks this step done in the editor.
+   the draft ticks it on every label except one worded like a label another book's list keeps as
+   drawn, which catches the key and recurring captions; untick the title, banner and the rest, and
+   tick any place name it caught by mistake: a few names are a place on one map and a caption on
+   another). The editor groups each label's fields by the step that uses them and hides those that
+   do not apply. The **Labels checked** button in step 3 marks this step done (it writes
+   `map-labels-checked.txt`; drafting again removes it). It replaced a per-label `ok` tick on
+   2026-10-07, which meant ticking every box.
    The title, banner and shield captions and the key are left as drawn: Gemini copied them right
    in every round. Book 1: 60 labels, 42 place names.
    Then **measure**: `map_measure.py $D/map-2k.png $D/map-labels.json` writes each lettered
