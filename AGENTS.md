@@ -23,6 +23,11 @@ Then open http://localhost:8765/. It is `http.server` plus the backups API (`bac
 see Storage in `docs/reference/architecture.md`). `.claude/launch.json` has the same
 server as `lone-wolf` for the preview tools. It must be served: `main.js` is an ES module.
 
+The import dashboard is http://localhost:8765/tools/admin/ (this PC only): every book's steps, the
+script steps' buttons, the map editor inline, and a prompt for each agent step
+(`docs/reference/dashboard.md`). Never press its gated buttons (download, import, re-import all):
+those are the owner's go-ahead.
+
 To serve it to other devices on the home network (the "lan" server; `lone-wolf-lan` in
 `.claude/launch.json`):
 
@@ -35,9 +40,10 @@ no service worker and no offline copy; for that, see `docs/reference/offline.md`
 `python tools/offline_check.py` prints what the offline copy would hold (sizes, largest files) and
 exits 1 if the page names a file that is missing; run it after adding or moving a file the page loads.
 
-There are no automated tests and no linter. `node --check <file>` catches syntax errors, but on
-the root `.js` files it misses a `const` declared twice; copy the file to a `.mjs` name in the
-scratchpad and check that to catch it.
+There are no automated tests and no linter. `python tools/syntax_check.py` runs `node --check` on
+every script and `py_compile` on the Python. Plain `node --check` on a root `.js` file misses a
+`const` declared twice, so the script checks each ES module through a `.mjs` copy (do the same by
+hand: copy the file to a `.mjs` name in the scratchpad).
 
 ## Verify a change
 
@@ -80,6 +86,8 @@ explaining it would cost more than doing it.
 - **No real-time 3D, no pixel art, no bright flat colour.** See spec section 6.6.
 - **Automate only what is certain.** If a rule cannot be read reliably from the text, leave it as
   text and rely on the by-hand controls (spec principle 2 and 3).
+- **Mark a finished book step** with `python tools/book_status.py done <book> <step>` (the checklist's
+  number) and report what it prints; it says NOT done, and why, if the files disagree.
 - **The books' rules** are in `docs/reference/rules-books.md`, read from their rules pages (in our
   words, numbers as printed). Check a rule there before implementing it, and keep its Engine column
   true when the engine changes.
@@ -142,7 +150,8 @@ explaining it would cost more than doing it.
 | `docs/reference/items.md` | The procedure for a book's item table and its fight pictures: reading, icons, checks |
 | `docs/reference/map-upscale.md` | Upscaling the printed maps: Gemini repaint, label list, checks, Real-ESRGAN to 4K WebP |
 | `docs/reference/rules-books.md` | The books' rules: common, Kai, Magnakai, and an addendum per book; what the engine applies |
-| `docs/book-checklist.md` | Every step each book goes through, ticked as done. **Check it before starting work on a book; tick a step when it is finished.** |
+| `docs/reference/dashboard.md` | The import dashboard (`tools/admin/`): its status rules, `book_status.py`, the `/api/admin` jobs, the prompts |
+| `docs/book-checklist.md` | Every step each book goes through; its table is generated. **Check it before starting work on a book. When a step is finished, run `python tools/book_status.py done <book> <step>`**: it records a hand step, checks a step read from the files, and rewrites the table. Never edit the table by hand. |
 | `docs/plan.md` | State of the work, decisions made, what is waiting on the owner, next steps. **Read this first in a new session.** |
 
 Keep them current: a change to behaviour updates the matching reference file in the same piece of

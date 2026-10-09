@@ -17,7 +17,7 @@ counts, the table holds only the book's short item names, and everything else is
 | 2 | List the sections to read | `tools/item_sections.py <book>` | certain |
 | 3 | Read them and write `items-<book>.js` | by hand | judgement |
 | 4 | Icons for the book's new items | `tools/fetch_icons.py` | choice |
-| 5 | Check the table | `node tools/check_items.mjs <book>` | certain |
+| 5 | Check the table | `node tools/check_items.mjs <book> --json` | certain |
 | 6 | Try it in the page | the console hook, storage off | certain |
 | 7 | Register the table | `ITEM_TABLES` in `main.js` | certain |
 
@@ -113,6 +113,8 @@ unknown fields), the counts, and the flagged sections the table leaves out. Ever
 section should be one that was read and judged to need nothing. Book 1: no errors; 12 items, 61
 sections; 107 left out. Book 2: no errors; 13 items, 109 sections; 106 left out (three it first
 listed were real misses, so read the list). It knows every book's items, as the page does.
+`--json` also writes `data/projectaon/<book>/check-items.json`, which `tools/book_status.py` reads
+for checklist step 5 (the dashboard's "Check items" runs it so).
 
 ### 6. Try it
 
@@ -161,7 +163,8 @@ stand-in that suits that book), and put book entries first. Where to look, in or
    `assets/plates/README.txt`. A `crop` drops captions and plate numbers. Tonal prints (aquatints,
    such as Goya's) come out as a dark blot: look for line work.
 
-Show the owner each new picture as it will look (render it with `drawCreature` in a background
-tab) before calling it done. The importer's report counts the library entries the book can use;
+Show the owner each new picture as it will look before calling it done: the dashboard's sheet,
+`http://localhost:8765/tools/admin/fights.html?book=<book>`, shows every enemy of the book inked as in a
+fight (checklist step 7). The importer's report counts the library entries the book can use;
 after adding them, run it again and expect 0 "with none". Plates are drawn whole: only a ruled frame line round the picture is
 cut away, and the edges are not faded (owner's request).

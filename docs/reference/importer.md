@@ -108,6 +108,14 @@ then kinds of enemy (with a plate from the book, from the plate library (entries
 for this one), and with none, named: add those to `plates.json`), broken links, and sections with
 no way on and no ending (a puzzle counts as a way on). The last two should be empty.
 
+The same figures go to `data/projectaon/<book>/import-report.json` (counts, and the ids of broken
+links and sections with no way on; no names or text), since 2026-10-08. After changing the importer,
+`python tools/reimport_all.py` re-imports every imported book and compares each one's figures with
+the import before: more broken links, sections with no way on or enemies with no picture, or fewer
+sections, is "worse" (exit 1); anything else that moved is listed to look at. The dashboard
+(`docs/reference/dashboard.md`) shows a book's import as out of date once the importer or a source
+page is newer than its `book.js`.
+
 ## What it does not read
 
 Item and gold pick-ups, losses, Endurance changes stated in prose, shops, conditional combat

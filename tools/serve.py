@@ -31,6 +31,14 @@ Static files as `python -m http.server` serves them, from the project root, plus
     POST /api/map/<book>/gemini/<n>   body: the round's image (png, jpeg or webp, up to 30 MB), saved
                                       as work/map-gemini-<n>.<ext>; 409 if there is one, unless ?force=1
 
+    The import dashboard, tools/admin/ (docs/reference/dashboard.md). Local requests only, like the map's:
+    GET  /api/admin/status            every book's steps: tools/book_status.py's all_status(), and the job running
+    POST /api/admin/run/<stage>       start a job: a stage of ADMIN_STAGES, ?book=<code or number> for a book's.
+                                      Gated stages need the JSON body {"confirm": "<code>"} ("all" for re-import
+                                      all), else 428. One job at a time, shared with the map steps (409 if busy)
+    GET  /api/admin/jobs              the last ten jobs; GET /api/admin/jobs/<id>?from=n: its state and lines from n
+    POST /api/admin/mark/<book>/<n>   book_status.py's done (or ?undo=1) for checklist step n
+
     GET  /api/offline          what the offline copy holds: {version, files: {path: hash}}
 
 A page cannot write to disk by itself; this lets the "backup" button do it without a dialog.
@@ -359,6 +367,95 @@ def offline_list():
     return {'version': version, 'files': files, 'missing': sorted(missing)}
 
 
+# ---- the import dashboard (tools/admin/, docs/reference/dashboard.md) ----
+# Every job it can start, and nothing else: the command is built here from the stage and a book code
+# from book_status.CATALOGUE, never from the request. gated: the page must send {"confirm": <code>}
+# (or "all"), after asking the owner: downloads, and any import, which rewrites book.js.
+ADMIN_STAGES = {
+    'fetch': {'title': 'Download', 'gated': True, 'timeout': 1800, 'cmds': lambda c: [PY + ['tools/fetch_projectaon.py', c]]},
+    'fetch-rules': {'title': 'Fetch rules pages', 'gated': True, 'timeout': 600, 'cmds': lambda c: [PY + ['tools/fetch_projectaon.py', c, '--rules']]},
+    'import': {'title': 'Import', 'gated': True, 'timeout': 900, 'known': True, 'cmds': lambda c: [PY + ['tools/import_projectaon.py', c]]},
+    'reading': {'title': 'Reading copy', 'folder': True, 'timeout': 600, 'cmds': lambda c: [PY + ['tools/reading_copy.py', c], PY + ['tools/item_sections.py', c]]},
+    'check-items': {'title': 'Check items', 'folder': True, 'timeout': 300, 'cmds': lambda c: [['node', 'tools/check_items.mjs', c, '--json']]},
+    'offline': {'title': 'Offline check', 'book': False, 'timeout': 300, 'cmds': lambda c: [PY + ['tools/offline_check.py']]},
+    'syntax': {'title': 'Syntax check', 'book': False, 'timeout': 600, 'cmds': lambda c: [PY + ['tools/syntax_check.py']]},
+    'reimport-all': {'title': 'Re-import all and compare', 'book': False, 'gated': True, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/reimport_all.py']]},
+}
+_jobs, _jobs_lock, _job_seq = {}, threading.Lock(), [0]
+JOB_LINES = 20000
+
+
+def _admin_job(job, cmds, timeout):
+    """Run a job's commands one after another, keeping their output line by line. Holds _job_lock,
+    which the caller took, so the map editor's steps wait for it and it for them."""
+    env = {**os.environ, 'PYTHONIOENCODING': 'utf-8', 'PYTHONUTF8': '1'}
+    try:
+        for argv in cmds:
+            job['lines'].append('$ ' + ' '.join(argv))
+            try:
+                p = subprocess.Popen(argv, cwd=ROOT, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            except OSError as e:
+                job['lines'].append(f'could not start: {e}')
+                job['code'] = -1
+                break
+            timed = []
+            timer = threading.Timer(timeout, lambda: (timed.append(1), p.kill()))
+            timer.start()
+            for raw in p.stdout:
+                if len(job['lines']) < JOB_LINES:
+                    job['lines'].append(raw.decode('utf-8', 'replace').rstrip('\r\n'))
+            p.wait()
+            timer.cancel()
+            job['code'] = p.returncode
+            if p.returncode:
+                job['lines'].append(f'[exit {p.returncode}]' + (' (timed out)' if timed else ''))
+                break
+        job['state'] = 'done' if job['code'] == 0 else 'failed'
+    except Exception as e:  # noqa: BLE001 - whatever happens, the lock must be let go
+        job['lines'].append(f'[error] {e}')
+        job['state'] = 'failed'
+    finally:
+        job['ended'] = int(time.time() * 1000)
+        _job[0] = None
+        _job_lock.release()
+
+
+def admin_start(stage, book, confirm):
+    """(job, None, 0) or (None, error, http code)."""
+    import book_status
+    spec = ADMIN_STAGES.get(stage)
+    if not spec:
+        return None, 'unknown stage', 404
+    code = ''
+    if spec.get('book', True):
+        hit = book_status.find(book or '')
+        if not hit:
+            return None, 'not a book in the catalogue', 404
+        code = hit[0]
+        if spec.get('folder') and not os.path.isdir(os.path.join(ROOT, 'data', 'projectaon', code)):
+            return None, 'that book is not downloaded', 409
+        if spec.get('known') and code not in book_status.importer_books():
+            return None, 'the importer does not know that book', 409
+    if spec.get('gated') and confirm != (code or 'all'):
+        return None, 'this step needs the owner\'s confirmation', 428
+    if not _job_lock.acquire(blocking=False):
+        return None, f'busy: {_job[0]} is running', 409
+    with _jobs_lock:
+        _job_seq[0] += 1
+        job = {'id': _job_seq[0], 'stage': stage, 'book': code, 'title': (code + ': ' if code else '') + spec['title'],
+               'state': 'running', 'code': None, 'lines': [], 'started': int(time.time() * 1000), 'ended': None}
+        _jobs[job['id']] = job
+        for old in sorted(_jobs)[:-10]:  # the last ten are kept, in memory only
+            del _jobs[old]
+    _job[0] = job['title']
+    threading.Thread(target=_admin_job, args=(job, spec['cmds'](code), spec['timeout']), daemon=True).start()
+    return job, None, 0
+
+
+def _job_view(job, start=0):
+    return {k: v for k, v in job.items() if k != 'lines'} | {'from': start, 'lines': job['lines'][start:], 'total': len(job['lines'])}
+
+
 class Handler(SimpleHTTPRequestHandler):
     # HTTP/1.0 closes the connection after each file, and on Windows that close cut files over about
     # 510 KB short whenever the browser had asked to keep the connection (the "reset on first load")
@@ -419,6 +516,49 @@ class Handler(SimpleHTTPRequestHandler):
         self.close_connection = True
         return self._json(404, {'error': 'nothing here'})
 
+    def _admin_api(self, method):
+        """/api/admin/...: status, run/<stage>, jobs, jobs/<id>, mark/<book>/<step>. Local requests only."""
+        if self.client_address[0] not in LOCAL:
+            self.close_connection = True
+            return self._json(403, {'error': 'the dashboard runs from this machine only'})
+        import book_status
+        route, _, query = self.path.partition('?')
+        q = parse_qs(query)
+        parts = [unquote(p) for p in route[len('/api/admin/'):].split('/') if p]
+        body = {}
+        if method == 'POST':
+            size = int(self.headers.get('Content-Length') or 0)
+            if size > 64 * 1024:
+                self.close_connection = True
+                return self._json(413, {'error': 'too large'})
+            try:
+                body = json.loads(self.rfile.read(size).decode('utf-8') or '{}') if size else {}
+            except ValueError:
+                return self._json(400, {'error': 'not JSON'})
+            body = body if isinstance(body, dict) else {}
+        if method == 'GET' and parts == ['status']:
+            st = book_status.all_status()
+            st['running'] = _job[0]
+            return self._json(200, st)
+        if method == 'GET' and parts == ['jobs']:
+            with _jobs_lock:
+                return self._json(200, [_job_view(j, len(j['lines'])) for j in sorted(_jobs.values(), key=lambda j: -j['id'])])
+        if method == 'GET' and len(parts) == 2 and parts[0] == 'jobs' and parts[1].isdigit():
+            job = _jobs.get(int(parts[1]))
+            if not job:
+                return self._json(404, {'error': 'no such job (the server keeps the last ten, until it restarts)'})
+            start = q.get('from', ['0'])[0]
+            return self._json(200, _job_view(job, int(start) if start.isdigit() else 0))
+        if method == 'POST' and len(parts) == 2 and parts[0] == 'run':
+            job, err, code = admin_start(parts[1], q.get('book', [''])[0], body.get('confirm'))
+            if err:
+                return self._json(code, {'error': err})
+            return self._json(200, _job_view(job))
+        if method == 'POST' and len(parts) == 3 and parts[0] == 'mark' and parts[2].isdigit():
+            ok, msg = book_status.mark(parts[1], int(parts[2]), undo=q.get('undo', [''])[0] == '1', run_checks=False)
+            return self._json(200 if ok else 409, {'ok': ok, 'message': msg})
+        return self._json(404, {'error': 'nothing here'})
+
     def _map_run(self, book, step, q):
         cmds, err, code = map_commands(step, book, q)
         if err:
@@ -475,6 +615,8 @@ class Handler(SimpleHTTPRequestHandler):
         path = self.path.split('?', 1)[0]
         if path.startswith('/api/map/'):
             return self._map_api('GET')
+        if path.startswith('/api/admin/'):
+            return self._admin_api('GET')
         if path == '/api/offline':
             return self._json(200, offline_list())
         if path in ('/api/backups', '/api/backups/'):
@@ -515,6 +657,8 @@ class Handler(SimpleHTTPRequestHandler):
     def do_POST(self):
         if self.path.startswith('/api/map/'):
             return self._map_api('POST')
+        if self.path.startswith('/api/admin/'):
+            return self._admin_api('POST')
         if self.path.split('?', 1)[0].startswith('/api/maplabels/'):
             return self._post_labels()
         if not self.path.startswith('/api/backups/'):

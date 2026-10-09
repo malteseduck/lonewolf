@@ -24,7 +24,8 @@ letter; see "How Book 1 got here" below.
 ## The chain, per book
 
 The map editor, `http://localhost:8765/tools/map-editor.html` (pick the book at the top, by number, title or code) (served by `python tools/serve.py`, on this PC
-only), walks through every step below in one page: a rail of the ten stages (upscale, draft, labels,
+only; also opened inside the import dashboard, `/tools/admin/`, under its grid, where `?embed=1` hides the
+book picker and the dashboard follows the files it changes: `docs/reference/dashboard.md`), walks through every step below in one page: a rail of the ten stages (upscale, draft, labels,
 measure, lettering, erase and letter, Gemini, check, finish, import), each marked done, not done or
 out of date from the files' times. It edits the labels, runs the scripts, copies the prompt and the
 lettered picture for Gemini, takes the round's image back (Ctrl+V, drop or file picker), and shows a
@@ -140,6 +141,8 @@ Commands run from the project root as
 
 - `tools/map-editor.html` with `tools/serve.py`: the page that runs all of the above (endpoints in
   serve.py's docstring: `/api/map/<book>/state`, `run/<step>`, `gemini/<n>`; local requests only).
+  Its colours are the dashboard's (2026-10-08); the label outlines stay bright to read over any map.
+  Its steps and the dashboard's jobs share one lock: one runs at a time.
 - `tools/map_upscale.py`: Real-ESRGAN (`tools/realesrgan/`, the v0.2.5.0 Windows build, git-ignored)
   in 4x passes until wide enough, then LANCZOS to the exact width. One pass about 10 s on the RTX 2060.
 - `tools/map_ocr_paddle.py`: PaddleOCR's reading of a map, run by `map_labels.py` in its own venv,

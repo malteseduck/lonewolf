@@ -4,7 +4,9 @@
     python tools/import_projectaon.py 01fftd
 
 Writes data/projectaon/<book>/book.js and refreshes data/projectaon/index.js, which loads every
-imported book. Both are git-ignored: they contain the books' text.
+imported book. Both are git-ignored: they contain the books' text. The report it prints is also
+written as data/projectaon/<book>/import-report.json (counts and ids only), which
+tools/reimport_all.py compares from one import to the next.
 
 The parse is heuristic. What it understands: paragraphs, illustrations, choices, discipline,
 rank and Lore-circle gates, Random Number ranges and the discipline/rank/Lore-circle bonuses added
@@ -456,3 +458,21 @@ print(len(foes), 'kinds of enemy:', sum(1 for a in foes.values() if a), 'with a 
 broken = [(k, c['to']) for k, s in sections.items() for c in s['choices'] if c['to'] not in sections]
 print('broken links:', broken, '| no way on and no ending:', [k for k, s in sections.items() if not s['choices'] and 'end' not in s and 'puzzle' not in s])
 print('books loaded by index.js:', have)
+
+# the same figures as JSON, counts and ids only, for tools/reimport_all.py to compare one import with the next
+report = {
+    'book': book, 'sections': len(sections), 'fights': len(fights), 'auto_random': sum(s.get('rnt') == 'auto' for s in secs),
+    'free_random': sum(s.get('rnt') == 'free' for s in secs), 'random_bonuses': sum('rntMod' in s for s in secs),
+    'gates': {k: sum(any(k in c.get('need', {}) for c in s['choices']) for s in secs) for k in ('disc', 'rank', 'any', 'circle')},
+    'illustrated': sum('img' in s for s in secs), 'dead_ends': sum(s.get('end') == 'death' for s in secs),
+    'failed_endings': sum(s.get('end') == 'failed' for s in secs), 'puzzles': sum('puzzle' in s for s in secs),
+    'forced_meals': sum('meal' in s for s in secs), 'intro_paragraphs': len(intro),
+    'fight_cs_changes': sum('csMod' in c for c in fights), 'fight_evasion': sum('evade' in c for c in fights),
+    'enemy_kinds': len(foes), 'with_book_plate': sum(1 for a in foes.values() if a),
+    'from_library': len(borrowed) - len(bare), 'with_none': len(bare),
+    'broken_links': [list(x) for x in broken],
+    'no_way_on': [k for k, s in sections.items() if not s['choices'] and 'end' not in s and 'puzzle' not in s],
+    'map': map_file,
+}
+with open(os.path.join(src, 'import-report.json'), 'w', encoding='utf-8') as f:
+    json.dump(report, f, indent=1)

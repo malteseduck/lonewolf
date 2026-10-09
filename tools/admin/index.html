@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book import</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <h1>Book import</h1>
+    <p class="sub">Every book's way from Project Aon to the player, read from the files on disk and <code>docs/book-status.json</code>.</p>
+  </div>
+  <nav class="links">
+    <a href="/">Player</a>
+    <a href="/tools/map-editor.html">Map editor</a>
+    <a href="/docs/book-checklist.md" target="_blank">Checklist</a>
+  </nav>
+</header>
+
+
+<section class="tools-row" aria-label="Whole-project tools">
+  <div class="tool">
+    <span class="kind" data-kind="script"></span>
+    <div><b>Offline check</b><small>What the iPad copy would hold; fails on a missing file</small></div>
+    <button data-global="offline">Run</button>
+  </div>
+  <div class="tool">
+    <span class="kind" data-kind="script"></span>
+    <div><b>Re-import all and compare</b><small>After an importer change: every book re-imported, each report against the last</small></div>
+    <button data-global="reimport">Run</button>
+  </div>
+  <div class="tool">
+    <span class="kind" data-kind="script"></span>
+    <div><b>Syntax check</b><small><code>node --check</code> and <code>py_compile</code> on every script</small></div>
+    <button data-global="syntax">Run</button>
+  </div>
+  <div class="legend">
+    <span><span class="kind" data-kind="script"></span>script</span>
+    <span><span class="kind" data-kind="owner"></span>you, by hand</span>
+    <span><span class="kind" data-kind="agent"></span>Claude Code (copy prompt)</span>
+  </div>
+</section>
+
+<main class="layout">
+  <section class="board" aria-label="Books">
+    <table class="grid" id="grid">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+    <p class="loading" id="loading">Reading the books on disk...</p>
+  </section>
+  <aside class="detail" id="detail" aria-live="polite">
+    <p class="hint">Pick a book to see its steps.</p>
+  </aside>
+</main>
+
+<section class="mapwrap" id="mapwrap" hidden>
+  <header><b id="map-title">Map editor</b><a id="map-alone" href="/tools/map-editor.html" target="_blank">Open on its own</a><button id="map-close">Close</button></header>
+  <iframe id="mapframe" title="Map editor"></iframe>
+</section>
+
+<section class="log" id="log" hidden>
+  <header><b id="log-title">Job</b><span id="log-state"></span><button id="log-close" aria-label="Close the log">Close</button></header>
+  <pre id="log-out"></pre>
+</section>
+
+<dialog id="confirm">
+  <form method="dialog">
+    <h2 id="confirm-title"></h2>
+    <div id="confirm-body"></div>
+    <label class="ack"><input type="checkbox" id="confirm-ack"> <span id="confirm-ack-text"></span></label>
+    <menu>
+      <button value="cancel">Cancel</button>
+      <button value="ok" id="confirm-ok" class="danger" disabled></button>
+    </menu>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" hidden></div>
+<script type="module" src="admin.js"></script>
+</body>
+</html>

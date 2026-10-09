@@ -1,11 +1,13 @@
 """What the iPad's offline copy would hold, without starting a server.
 
-    python tools/offline_check.py
+    python tools/offline_check.py [--json]
 
 Prints the file count and size, the size of each top-level group (each book folder on its own),
 the 10 largest files, and every file the page names that is not on disk. Exits 1 if any is missing.
-The list is serve.py's offline_list(), the same that GET /api/offline gives sw.js.
+The list is serve.py's offline_list(), the same that GET /api/offline gives sw.js. --json prints the
+same as one JSON object: {files, bytes, version, groups: {name: [count, bytes]}, largest: [[path, bytes]], missing}.
 """
+import json
 import os
 import sys
 
@@ -24,6 +26,14 @@ def main():
     got = offline_list()
     sizes = {r: os.path.getsize(os.path.join(ROOT, r)) for r in got['files']}
     mb = lambda n: f'{n / 1e6:7.2f} MB'
+    if '--json' in sys.argv[1:]:
+        groups = {}
+        for r, n in sizes.items():
+            c, t = groups.get(group(r), (0, 0))
+            groups[group(r)] = (c + 1, t + n)
+        print(json.dumps({'files': len(sizes), 'bytes': sum(sizes.values()), 'version': got['version'], 'groups': groups,
+                          'largest': sorted(sizes.items(), key=lambda kv: -kv[1])[:10], 'missing': got.get('missing', [])}))
+        return 1 if got.get('missing') else 0
     print(f'{len(sizes)} files, {mb(sum(sizes.values())).strip()}, version {got["version"]}')
     groups = {}
     for r, n in sizes.items():

@@ -1,6 +1,9 @@
 /* Check a book's item table (items-<book>.js) against its imported sections.
 
-     node tools/check_items.mjs 01fftd
+     node tools/check_items.mjs 01fftd [--json]
+
+   --json also writes data/projectaon/<book>/check-items.json (errors, counts, left-out ids), which
+   tools/book_status.py reads for the checklist's step 5.
 
    Step 5 of docs/reference/items.md. Prints what is wrong: sections or choices that do not exist,
    item ids nobody defines, icons missing from assets/icons/, fields the engine does not know. Then
@@ -75,7 +78,15 @@ console.log(`${Object.keys(T.ITEMS).length} book items; ${Object.keys(T.SECTIONS
 
 // sections the scan flagged that the table does not mention
 const reading = path.join(ROOT, 'data', 'projectaon', book, 'items-reading.txt');
+let listed = null;
 if (fs.existsSync(reading)) {
-  const listed = [...fs.readFileSync(reading, 'utf8').matchAll(/^#(\d+) /gm)].map((m) => m[1]).filter((id) => !T.SECTIONS[id]);
+  listed = [...fs.readFileSync(reading, 'utf8').matchAll(/^#(\d+) /gm)].map((m) => m[1]).filter((id) => !T.SECTIONS[id]);
   console.log(`${listed.length} flagged sections left out (read, and judged to need nothing):\n${listed.join(' ')}`);
+}
+// --json: also leave the result beside the book, for tools/book_status.py (step 5 of the checklist)
+if (process.argv.includes('--json')) {
+  const counts = Object.fromEntries(['give', 'loot', 'take', 'ep', 'rolls', 'need', 'fight', 'todo'].map((f) => [f, n(f)]));
+  const out = { book, errors: bad, items: Object.keys(T.ITEMS).length, sections: Object.keys(T.SECTIONS).length, counts, leftOut: listed };
+  fs.writeFileSync(path.join(ROOT, 'data', 'projectaon', book, 'check-items.json'), JSON.stringify(out, null, 1));
+  console.log(`wrote data/projectaon/${book}/check-items.json`);
 }

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fight pictures</title>
+<link rel="stylesheet" href="admin.css">
+<style>
+  .sheet-top { display: flex; gap: 12px; align-items: center; padding: 16px 24px 8px; flex-wrap: wrap; }
+  .sheet-top h1 { margin: 0; font: 26px var(--title); color: var(--bronze-hi); }
+  .sheet-top select { font: inherit; background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-radius: 4px; padding: 4px 8px; }
+  .sheet-top .sum { color: var(--dim); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; padding: 8px 24px 32px; }
+  .card { background: linear-gradient(#e2d3aa, #d3c08f); color: #33231a; border-radius: 3px; padding: 10px; box-shadow: 0 2px 10px rgba(0,0,0,.5), inset 0 0 30px rgba(110, 80, 40, .25); }
+  .card .pic { height: 230px; display: grid; place-items: center; }
+  .card canvas, .card .none { max-width: 100%; max-height: 230px; }
+  .card .none { font: 15px var(--title); color: #7d1d14; text-align: center; padding: 20px; border: 1px dashed #7d1d14; }
+  .card b { display: block; font: 16px var(--title); margin-top: 6px; }
+  .card small { display: block; color: #6b553c; font-size: 12px; }
+  .card.missing { outline: 2px solid #7d1d14; }
+</style>
+</head>
+<body>
+<header class="sheet-top">
+  <h1>Fight pictures</h1>
+  <select id="pick" aria-label="Book"></select>
+  <span class="sum" id="sum"></span>
+  <nav class="links" style="margin-left:auto"><a href="./">Dashboard</a></nav>
+</header>
+<p class="proto" style="border-style:solid">Every enemy of the book with the picture the player would show, inked as in a fight
+  (checklist step 7). Pictures are chosen in <code>assets/plates/plates.json</code> (docs/reference/items.md, "Fight pictures").</p>
+<main class="cards" id="cards"></main>
+<script type="module">
+import { inkPlate } from '../../plates.js';
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const code = new URLSearchParams(location.search).get('book') || '01fftd';
+
+// the books that are imported, for the picker
+fetch('/api/map/books', { cache: 'no-store' }).then((r) => r.json()).then((list) => {
+  $('#pick').innerHTML = list.map((b) => `<option value="${esc(b.code)}" ${b.code === code ? 'selected' : ''}>${esc((b.number ? b.number + '. ' : '') + (b.title || b.code))}</option>`).join('');
+}).catch(() => { $('#pick').innerHTML = `<option>${esc(code)}</option>`; });
+$('#pick').onchange = () => { location.search = '?book=' + encodeURIComponent($('#pick').value); };
+
+function script(src) {
+  return new Promise((ok, bad) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = bad; document.head.append(s); });
+}
+function image(src, lib) {
+  return new Promise((ok) => { const im = new Image(); im.crop = lib && lib.crop; im.levels = lib && lib.levels; im.onload = () => ok(im); im.onerror = () => ok(null); im.src = src; });
+}
+
+async function main() {
+  if (!/^[\w-]{1,40}$/.test(code)) return;
+  try { await script(`/data/projectaon/${code}/book.js`); } catch { $('#sum').textContent = 'No book.js for ' + code; return; }
+  const book = window.LW.BOOKS[code];
+  const plates = ((await (await fetch('/assets/plates/plates.json', { cache: 'no-store' })).json()).plates || [])
+    .map((p) => Object.assign({ re: new RegExp(p.match, 'i') }, p));
+  // one card per kind of enemy, as the importer's report counts them, with the sections it is fought in
+  const foes = new Map();
+  for (const [id, s] of Object.entries(book.sections)) {
+    for (const e of s.combat?.enemies || []) {
+      const f = foes.get(e.name) || { name: e.name, art: null, secs: [] };
+      f.art = f.art || e.art || null; f.secs.push(id); foes.set(e.name, f);
+    }
+  }
+  let none = 0;
+  const cards = [];
+  for (const f of foes.values()) {
+    // the same choice as main.js nextFoe(): an "over" library entry wins, then the book's own, then the library
+    const fits = (p) => (!p.book || p.book === code) && p.re.test(f.name);
+    const lib = plates.find((p) => p.over && fits(p)) || (!f.art && plates.find(fits));
+    const src = lib && (lib.over || !f.art) ? '/' + lib.src : f.art ? `/data/projectaon/${code}/${f.art}` : null;
+    const from = lib && (lib.over || !f.art) ? `plates.json: "${lib.match}"${lib.over ? ' (over)' : ''}` : f.art ? `the book's ${f.art}` : 'none: the drawn emblem';
+    if (!src) none++;
+    cards.push({ f, src, lib: lib && (lib.over || !f.art) ? lib : null, from });
+  }
+  $('#sum').textContent = `${foes.size} kinds of enemy, ${none} with no picture`;
+  document.title = `Fight pictures: ${book.number}. ${book.title}`;
+  $('#cards').innerHTML = cards.map((c, i) => `<div class="card ${c.src ? '' : 'missing'}"><div class="pic" id="pic${i}">${c.src ? '' : '<div class="none">no picture</div>'}</div>
+    <b>${esc(c.f.name)}</b><small>section${c.f.secs.length > 1 ? 's' : ''} ${esc(c.f.secs.join(', '))}</small><small>${esc(c.from)}</small></div>`).join('');
+  // ink them one by one, so the page shows at once
+  for (const [i, c] of cards.entries()) {
+    if (!c.src) continue;
+    const im = await image(c.src, c.lib);
+    if (!im) { $('#pic' + i).innerHTML = '<div class="none">file missing</div>'; continue; }
+    $('#pic' + i).append(inkPlate(im));
+  }
+}
+main();
+</script>
+</body>
+</html>

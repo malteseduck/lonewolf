@@ -21,6 +21,8 @@ assets/plates/              plates.json: pictures for enemies their book does no
                             from Wikimedia Commons (credited in README.txt)
 CLAUDE.md, README.md
 docs/                       spec, plan, reference
+  book-status.json          the book steps no file can show (checklist 3, 4, 7, 8, 9), with the date each was
+                            marked done; written by tools/book_status.py (docs/reference/dashboard.md)
 shared/                     used by the player and the prototypes (classic scripts on a global LW)
   core.js                   rules data (Combat Results Table, Kai disciplines, items) and LW.Game, the book runner
   rules-series.js           per-series rules (Kai/Magnakai), Lore-circles, ranks, carried character, character dialog, starting kits
@@ -32,11 +34,22 @@ prototypes/                 earlier experiments, kept working, not developed
   index.html                chooser page for the three
   a-book/, b-map/, c-3d/    load ../../shared
 tools/
-  serve.py                  the local server: static files, backups/ (api/backups), the offline list (api/offline)
+  serve.py                  the local server: static files, backups/ (api/backups), the offline list (api/offline),
+                            the map editor's steps (api/map, api/maplabels) and the dashboard's jobs (api/admin);
+                            the last two answer this PC only
+  admin/                    the import dashboard, /tools/admin/ (docs/reference/dashboard.md): index.html,
+                            admin.js, admin.css, prompts.js (the agent steps' prompts), fights.html (one
+                            book's fight pictures on a sheet)
+  map-editor.html           the map steps' page (docs/reference/map-upscale.md); also shown inside the dashboard
+  book_status.py            every book's checklist steps, from the files and docs/book-status.json; marks steps
+                            done; writes the table in docs/book-checklist.md
+  reimport_all.py           re-imports every imported book and compares each import-report.json with the last
+  syntax_check.py           node --check (modules via .mjs copies) and py_compile on every script
   offline_check.py          prints the offline list without a server: size per group, largest, missing
                             (docs/reference/offline.md)
   fetch_projectaon.py       downloads one book into data/projectaon/<code>/
-  import_projectaon.py      converts it to data/projectaon/<code>/book.js and rewrites data/projectaon/index.js
+  import_projectaon.py      converts it to data/projectaon/<code>/book.js (and import-report.json, its report's
+                            figures) and rewrites data/projectaon/index.js
   reading_copy.py           writes data/projectaon/<code>/reading.txt, the book as text to read
   item_sections.py          lists the sections that may give, take or need items; writes them to read
   check_items.mjs           checks items-<code>.js against the book (node)
@@ -52,7 +65,8 @@ maps/<code>/                the owner's work on each book's printed map, committ
 data/projectaon/            git-ignored. Downloaded pages and images, generated book.js files, index.js;
                             maps/: sheets 1-2 of Project Aon's Maps of Magnamund (reference only)
   <code>/                   one book: the pages the importer reads, book.js, the images it names (map.png,
-                            the scan; map-4k.webp once made), reading copies (reading.txt, items-reading.txt)
+                            the scan; map-4k.webp once made), reading copies (reading.txt, items-reading.txt),
+                            import-report.json and check-items.json (figures and ids, for book_status.py)
   <code>/work/              the map steps' files (map-2k*, map-gemini-*, map-check-<n>/, sheets, prompts;
                             docs/reference/map-upscale.md). Never in the offline copy
 data/reference/             git-ignored. Reference images fetched for the owner: a fan-made world map of
