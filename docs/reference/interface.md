@@ -191,7 +191,7 @@ late", once `evade.within` rounds are fought. When `B.over` is set the left page
 ## Art pipeline (`plates.js`, `shared/ink.js`)
 
 - `Ink.parchment`, `leather`, `inkScene(name, w, h)`: procedural textures and ink-wash vignettes.
-- `inkPlate(img)`: takes a black-on-white illustration, upscales it, maps darkness to alpha in a
+- `inkPlate(img, keep = true)`: (`keep: false` skips its cache, for the picture sheet's live preview) takes a black-on-white illustration, upscales it, maps darkness to alpha in a
   sepia ink colour. Steps: `img.crop` (fractions) picks part of the picture; an old scan's toned
   paper is lifted to white (the brightest 5% of pixels taken as paper, lift capped at 1.6); tones
   from 75 down to 225 become ink, or the plate entry's own `levels` [black, white] (for a painting,

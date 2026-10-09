@@ -112,12 +112,17 @@ def save_hand(data):
 _cache = {}
 
 
+def load_book(code, js_path=None):
+    """A book's data from its book.js (the JSON inside the script)."""
+    js = read(js_path or os.path.join(DATA, code, 'book.js'))
+    return json.loads(js[js.index('|| {}, ') + 7:js.rindex(');')])[code]
+
+
 def import_stats(code, js_path, plates_path):
     key = (code, mtime(js_path), mtime(plates_path))
     if key in _cache:
         return _cache[key]
-    js = read(js_path)
-    book = json.loads(js[js.index('|| {}, ') + 7:js.rindex(');')])[code]
+    book = load_book(code, js_path)
     secs = book['sections']
     try:
         library = json.loads(read(plates_path))['plates']

@@ -84,7 +84,9 @@ $('#grid').addEventListener('click', (e) => {
   if (!tr) return;
   selected = tr.dataset.code;
   render();
-  if (e.target.closest('td[data-stage="map"]')) openMap(books.find((b) => b.code === selected));
+  const b = books.find((x) => x.code === selected);
+  if (e.target.closest('td[data-stage="map"]')) openMap(b);
+  if (e.target.closest('td[data-stage="sheet"], td[data-stage="pictures"]')) openSheet(b);
 });
 
 // ---------- one book ----------
@@ -98,8 +100,8 @@ const ACTIONS = {
   rules: () => [prompt('rules'), mark(4)],
   reading: () => [run('Make reading copy', 'reading')],
   items: (b) => [prompt('items'), run('Check items', 'check-items'), ...(b.items.check?.errors?.length ? [prompt('itemsFix', 'Copy fix prompt')] : [])],
-  pictures: (b) => [prompt('pictures'), link('Picture sheet', `fights.html?book=${b.code}`)],
-  sheet: (b) => [link('Open picture sheet', `fights.html?book=${b.code}`), mark(7)],
+  pictures: () => [prompt('pictures'), { t: 'sheet', label: 'Picture sheet here' }],
+  sheet: (b) => [{ t: 'sheet', label: 'Open picture sheet here' }, link('On its own', `fights.html?book=${b.code}`), mark(7)],
   testplay: () => [prompt('testplay'), link('Test address', 'http://127.0.0.1:8765/'), mark(8)],
   ownerplay: () => [link('Open the player', '/'), mark(9)],
   map: () => [{ t: 'map', label: 'Open map editor here' }],
@@ -112,6 +114,7 @@ function mark(step) { return { t: 'mark', step }; }
 let acts = [];
 function actHtml(a, b) {
   const i = acts.push({ ...a, b }) - 1;
+  if (a.t === 'sheet') return `<button data-act="${i}">${esc(a.label)}</button>`;
   if (a.t === 'link') return `<a class="btn" href="${esc(a.href)}" target="_blank">${esc(a.label)}</a>`;
   if (a.t === 'mark') return `<button data-act="${i}">${b.marks[a.step] ? 'Mark not done' : 'Mark done'}</button>`;
   return `<button data-act="${i}" ${a.t === 'run' && running ? 'disabled title="a job is running"' : ''}>${esc(a.label)}</button>`;
@@ -167,6 +170,7 @@ $('#detail').addEventListener('click', async (e) => {
   const a = acts[+btn.dataset.act];
   if (a.t === 'prompt') return copy(PROMPTS[a.key](a.b), 'Prompt copied: paste it into Claude Code');
   if (a.t === 'map') return openMap(a.b, a.step);
+  if (a.t === 'sheet') return openSheet(a.b);
   if (a.t === 'mark') {
     const undo = !!a.b.marks[a.step];
     const { j } = await api(`mark/${a.b.code}/${a.step}${undo ? '?undo=1' : ''}`, { method: 'POST' });
@@ -183,22 +187,28 @@ $('#detail').addEventListener('click', async (e) => {
   }
 });
 
-// ---------- the map editor, inline ----------
+// ---------- the map editor and the picture sheet, inline under the grid (one at a time) ----------
+function openSheet(b) {
+  if (!b?.imp) return toast('Import the book first', 3000);
+  openInline(b, `/tools/admin/fights.html?book=${encodeURIComponent(b.code)}&embed=1`, `Fight pictures: ${b.n}. ${b.title}`);
+}
 function openMap(b, step) {
   if (!b?.folder) return toast('Download the book first', 3000);
+  openInline(b, `/tools/map-editor.html?book=${encodeURIComponent(b.code)}&embed=1${step ? '&step=' + step : ''}`, `Map editor: ${b.n}. ${b.title}`);
+}
+function openInline(b, src, title) {
   const wrap = $('#mapwrap'), frame = $('#mapframe');
-  const src = `/tools/map-editor.html?book=${encodeURIComponent(b.code)}&embed=1${step ? '&step=' + step : ''}`;
-  if (!wrap.hidden && frame.dataset.book !== b.code && !leaveMap()) return;
-  $('#map-title').textContent = `Map editor: ${b.n}. ${b.title}`;
+  if (!wrap.hidden && frame.dataset.src !== src && !leaveMap()) return;
+  $('#map-title').textContent = title;
   $('#map-alone').href = src.replace('&embed=1', '');
   if (frame.dataset.src !== src) { frame.src = src; frame.dataset.src = src; frame.dataset.book = b.code; }
   wrap.hidden = false;
   wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
-function leaveMap() {  // the editor's unsaved labels would go with the frame
+function leaveMap() {  // the editor's unsaved labels, or a picture being adjusted, would go with the frame
   let dirty = false;
-  try { dirty = $('#mapframe').contentWindow.mapEditorDirty?.(); } catch { /* not loaded */ }
-  return !dirty || window.confirm('The map editor has unsaved label changes. Close it and lose them?');
+  try { const w = $('#mapframe').contentWindow; dirty = w.mapEditorDirty?.() || w.document.querySelector('#ed')?.open; } catch { /* not loaded */ }
+  return !dirty || window.confirm('The page below has unsaved changes. Close it and lose them?');
 }
 $('#map-close').onclick = () => {
   if (!leaveMap()) return;
@@ -207,7 +217,7 @@ $('#map-close').onclick = () => {
   load();
 };
 window.addEventListener('message', (e) => {
-  if (e.origin === location.origin && e.data?.mapEditor === 'state') reloadSoon();
+  if (e.origin === location.origin && (e.data?.mapEditor === 'state' || e.data?.fightSheet === 'changed')) reloadSoon();
 });
 window.addEventListener('beforeunload', (e) => {
   try { if ($('#mapframe').contentWindow.mapEditorDirty?.()) { e.preventDefault(); e.returnValue = ''; } } catch { /* none */ }

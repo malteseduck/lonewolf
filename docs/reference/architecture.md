@@ -13,6 +13,7 @@ items-01fftd.js             ES module: Book 1's items and what each section give
                             (docs/reference/book-format.md, "Item tables")
 sw.js                       service worker: the offline copy (docs/reference/offline.md)
 manifest.webmanifest        the Home Screen app: name, colours, icons (assets/app/)
+art/plates/<code>/          git-ignored. Fight pictures the owner gave on the picture sheet (WebP)
 art/manifest.json           optional pictures in art/: enemy sprites, Lone Wolf's figure (inventory), the Kai panel portrait
 assets/icons/               discipline glyphs from game-icons.net (CC BY 3.0, credited in README.txt)
 assets/fonts/               the page's three fonts and fonts.css, from Google Fonts (SIL OFL, licences beside them)
@@ -39,8 +40,11 @@ tools/
                             the last two answer this PC only
   admin/                    the import dashboard, /tools/admin/ (docs/reference/dashboard.md): index.html,
                             admin.js, admin.css, prompts.js (the agent steps' prompts), fights.html (one
-                            book's fight pictures on a sheet)
+                            book's fight pictures on a sheet, where the owner drops, crops and removes
+                            pictures)
   map-editor.html           the map steps' page (docs/reference/map-upscale.md); also shown inside the dashboard
+  plates_file.py            reads and writes assets/plates/plates.json in its layout; the owner's pictures from the
+                            picture sheet (api/admin/plate)
   book_status.py            every book's checklist steps, from the files and docs/book-status.json; marks steps
                             done; writes the table in docs/book-checklist.md
   reimport_all.py           re-imports every imported book and compares each import-report.json with the last

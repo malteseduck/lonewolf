@@ -143,8 +143,18 @@ the enemy's name wins, so narrower ones first). Give an entry `"book": "<code>"`
 for that book only (its own characters, a generic name such as "Priest" or "guard" given a
 stand-in that suits that book), and put book entries first. Where to look, in order:
 
-1. **The owner's own picture**, if they give one: copy it to git-ignored `art/` and point the
-   entry there (Book 1's Winged Serpent).
+1. **The owner's own picture**, if they give one. The owner puts it in on the picture sheet
+   (`tools/admin/fights.html?book=<code>`, also inline in the dashboard at step 7): drop a picture file on
+   the enemy's card, paste it, or Choose; the page shrinks it to 2000 px on its long side as WebP and
+   `POST /api/admin/plate` saves it as git-ignored `art/plates/<code>/<name>.webp` and writes the entry
+   (`tools/plates_file.py`): `match` the enemy's exact name, escaped and anchored, `book` set, at the top
+   of the list so it wins; `over: true` where the book has its own picture, or a broader `over` entry would
+   win. A second picture for the same enemy replaces the entry and the file. **Adjust** on any card opens
+   the same editor on the picture it has (a book's own, a library entry's): a crop box on the original and
+   the fight panel as it will look, through `inkPlate`, with a levels control for paintings; saving a re-crop
+   writes the owner's entry pointing at that same file. **Remove** drops the entry (and its file under
+   `art/plates/<code>/`). A picture dragged from another site arrives as an address and is refused: save it
+   first, or copy and paste it. Older owner pictures sit in `art/` and `art/plates/` (Book 1's Winged Serpent).
 2. **The same book's own illustrations**, also those outside fights: a page of portraits, or a
    creature pictured where it is met but not fought. A `crop` cuts one figure out (Book 2's
    council of travellers, cut from its portrait page). First look at every `ill*.png` of the book;

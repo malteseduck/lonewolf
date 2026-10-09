@@ -38,6 +38,9 @@ Static files as `python -m http.server` serves them, from the project root, plus
                                       all), else 428. One job at a time, shared with the map steps (409 if busy)
     GET  /api/admin/jobs              the last ten jobs; GET /api/admin/jobs/<id>?from=n: its state and lines from n
     POST /api/admin/mark/<book>/<n>   book_status.py's done (or ?undo=1) for checklist step n
+    POST /api/admin/plate             the picture sheet: {book, enemy, image?: base64 WebP, crop?, levels?, remove?};
+                                      the owner's picture for one enemy, saved as art/plates/<book>/<slug>.webp and
+                                      written into assets/plates/plates.json (tools/plates_file.py)
 
     GET  /api/offline          what the offline copy holds: {version, files: {path: hash}}
 
@@ -528,7 +531,7 @@ class Handler(SimpleHTTPRequestHandler):
         body = {}
         if method == 'POST':
             size = int(self.headers.get('Content-Length') or 0)
-            if size > 64 * 1024:
+            if size > (25 * 1024 * 1024 if parts == ['plate'] else 64 * 1024):  # a plate carries a picture
                 self.close_connection = True
                 return self._json(413, {'error': 'too large'})
             try:
@@ -554,10 +557,31 @@ class Handler(SimpleHTTPRequestHandler):
             if err:
                 return self._json(code, {'error': err})
             return self._json(200, _job_view(job))
+        if method == 'POST' and parts == ['plate']:
+            return self._admin_plate(body)
         if method == 'POST' and len(parts) == 3 and parts[0] == 'mark' and parts[2].isdigit():
             ok, msg = book_status.mark(parts[1], int(parts[2]), undo=q.get('undo', [''])[0] == '1', run_checks=False)
             return self._json(200 if ok else 409, {'ok': ok, 'message': msg})
         return self._json(404, {'error': 'nothing here'})
+
+    def _admin_plate(self, body):
+        """The picture sheet's drop and adjust: the owner's own picture (or crop) for one enemy, written
+        to plates.json by tools/plates_file.py. Body: {book, enemy, image?: base64 WebP, crop?, levels?,
+        remove?}. The file name is made from the enemy's name, never taken from the request."""
+        import base64
+        import binascii
+        import book_status
+        import plates_file
+        hit = book_status.find(str(body.get('book') or ''))
+        if not hit or not os.path.isfile(os.path.join(ROOT, 'data', 'projectaon', hit[0], 'book.js')):
+            return self._json(404, {'error': 'not an imported book'})
+        try:
+            image = base64.b64decode(body['image'], validate=True) if body.get('image') else None
+            entry, msg = plates_file.put(hit[0], book_status.load_book(hit[0]), str(body.get('enemy') or ''), image=image,
+                                         crop=body.get('crop'), levels=body.get('levels'), remove=bool(body.get('remove')))
+        except (ValueError, binascii.Error) as e:
+            return self._json(400, {'error': str(e)})
+        return self._json(200, {'entry': entry, 'message': msg})
 
     def _map_run(self, book, step, q):
         cmds, err, code = map_commands(step, book, q)

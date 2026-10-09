@@ -114,9 +114,10 @@ export function setArt(kind, img) { ART[kind] = img; }
    img.levels, if set, is [black, white]: the tones (0-255, after the paper lift) that become full ink
    and bare paper. A painting needs it: its mid-tones would otherwise all turn to solid ink. */
 const inked = new Map();
-export function inkPlate(img) {
+/* keep: false for a preview that changes as it is dragged (tools/admin/fights.html), so the cache does not fill */
+export function inkPlate(img, keep = true) {
   const key = img.src + (img.crop || '') + (img.levels || '');
-  if (inked.has(key)) return inked.get(key);
+  if (keep && inked.has(key)) return inked.get(key);
   const [cx, cy, cw, ch] = (img.crop || [0, 0, 1, 1]).map((f, i) => f * (i % 2 ? img.naturalHeight : img.naturalWidth));
   const S = Math.min(3, 1100 / cw);
   let w = Math.round(cw * S), h = Math.round(ch * S), c = Ink.canvas(w, h), x = c.getContext('2d');
@@ -154,7 +155,7 @@ export function inkPlate(img) {
     }
   } catch (e) { /* cross-origin image: leave it as drawn */ }
   // no fade at the edges: the owner wants the whole picture as drawn, only without its ruled frame
-  inked.set(key, c);
+  if (keep) inked.set(key, c);
   return c;
 }
 /* The box inside a ruled frame, from the ink's alpha (A, w x h). On each side, looking in from the

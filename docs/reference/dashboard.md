@@ -23,7 +23,12 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   Closing it asks first if it has unsaved label edits. It still works on its own at its own address.
 - **The picture sheet**, `tools/admin/fights.html?book=<code>`: every kind of enemy in the book with
   the picture the player would show (the same choice as `nextFoe()` in `main.js`), inked as in a
-  fight, the sections it is fought in and where the picture comes from. Checklist step 7.
+  fight, the sections it is fought in and where the picture comes from. Checklist step 7. It opens
+  inline under the grid like the map editor (the step 6 or 7 cell, or Open picture sheet here;
+  `?embed=1`), and on its own. A picture file dropped, pasted or chosen on a card becomes that enemy's
+  picture; Adjust crops any card's picture and sets levels, with the fight panel previewed as it will look;
+  Remove takes the owner's entry away. Each save redraws the cards and the "with none" count, and the
+  dashboard's grid follows. The rules for the entry: `docs/reference/items.md`, "Fight pictures".
 - **Whole-project tools**: the offline check, re-import all and compare, the syntax check.
 - **The job log** at the foot: a job's output line by line while it runs. A job started in another
   tab, or before a reload, is followed too.
@@ -71,6 +76,7 @@ step; the owner marks only what is theirs (7, 9), from the page.
 | `GET jobs` | the last ten jobs (in memory; gone when the server restarts) |
 | `GET jobs/<id>?from=<n>` | a job's state, exit code and lines from n; the page polls it every 0.8 s |
 | `POST mark/<book>/<step>` (`?undo=1`) | `book_status.mark()` |
+| `POST plate` | the picture sheet: `{book, enemy, image?, crop?, levels?, remove?}` (`image` base64 WebP, up to 25 MB): the owner's picture for one enemy, saved as `art/plates/<book>/<slug of the name>.webp` (never a path from the request) and entered in `plates.json` by `tools/plates_file.py`, which keeps the file's one-entry-per-line layout |
 
 The stages are a fixed table, `ADMIN_STAGES`: the command is built from it and a code from
 `book_status.CATALOGUE`, never from the request. One job at a time, sharing the map editor's lock,
