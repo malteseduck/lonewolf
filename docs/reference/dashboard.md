@@ -42,7 +42,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
 | Step | From | Done when |
 |---|---|---|
 | 1 Download | files | `sect*.htm` and `gamerulz.htm` in `data/projectaon/<code>/` |
-| 2 Import | files | `book.js` there, no broken links, no section without a way on. A warning when it is out of date: the importer, a source page or `map-4k.webp` is newer than `book.js` |
+| 2 Import | files | `book.js` there, no broken links, no section without a way on. A warning when it is out of date: the importer or a source page is newer than the last import (`import-report.json`, written every run), or `map-4k.webp` is not named yet |
 | 3 Phrasings | hand | marked in `docs/book-status.json` |
 | 4 Rules | both | a `### Book N,` heading in `rules-books.md` and a hand mark |
 | Reading copy | files | `reading.txt` and `items-reading.txt` newer than `book.js` (not a checklist step) |
@@ -112,7 +112,9 @@ downloads and imports still need the owner's word (AGENTS.md).
 - `tools/reimport_all.py [book ...]`: re-imports every imported book (or those named) and compares
   the figures before and after (from `book.js` and `import-report.json`): worse is more broken links,
   sections with no way on or enemies with no picture, or fewer sections; anything else that moved is
-  listed. Exits 1 if any book got worse. Run after any importer change.
+  listed. Where `book.js` changed, or the reading copy or item check is older than it, it makes the
+  reading copy again and re-runs `check_items.mjs --json`; item-check errors count as worse. Exits 1
+  if any book got worse. Run after any importer change.
 - `node tools/check_items.mjs <code> --json` also writes `check-items.json` beside the book.
 - `python tools/offline_check.py --json` prints its figures as one JSON object.
 - `tools/syntax_check.py`: `node --check` on every `.js`/`.mjs` (an ES module through a `.mjs`

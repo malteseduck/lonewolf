@@ -182,7 +182,9 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
          'marks': marks}
     sect = glob.glob(os.path.join(d, 'sect*.htm'))
     js_path = os.path.join(d, 'book.js')
-    t = {'bookjs': mtime(js_path), 'importer': mtime(IMPORTER), 'map4k': mtime(os.path.join(d, 'map-4k.webp')),
+    # imported: when the importer last ran (it rewrites import-report.json every time, book.js only when
+    # its content changes), against which the importer and the source pages are compared
+    t = {'bookjs': mtime(js_path), 'imported': mtime(os.path.join(d, 'import-report.json')) or mtime(js_path), 'importer': mtime(IMPORTER), 'map4k': mtime(os.path.join(d, 'map-4k.webp')),
          'sources': max((mtime(p) for p in glob.glob(os.path.join(d, '*.htm'))), default=None),
          'reading': mtime(os.path.join(d, 'reading.txt')), 'itemsReading': mtime(os.path.join(d, 'items-reading.txt'))}
     b['times'] = t
@@ -198,9 +200,9 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
     # why the import is out of date, if it is
     stale = []
     if imp:
-        if t['importer'] and t['importer'] > t['bookjs']:
+        if t['importer'] and t['importer'] > t['imported']:
             stale.append('the importer changed since')
-        if t['sources'] and t['sources'] > t['bookjs']:
+        if t['sources'] and t['sources'] > t['imported']:
             stale.append('a source page is newer')
         if t['map4k'] and imp.get('map') != 'map-4k.webp':
             stale.append('map-4k.webp is not named yet')
@@ -239,7 +241,7 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
         st['import'] = {'state': 'todo', 'ev': b.get('impError') and f"book.js unreadable: {b['impError']}" or 'No book.js', 'src': 'disk'}
     else:
         clean = not imp['broken'] and not imp['noway']
-        ev = f"{imp['sections']} sections, {imp['fights']} fights; {imp['broken']} broken links, {imp['noway']} with no way on. Imported {day(t['bookjs'])}"
+        ev = f"{imp['sections']} sections, {imp['fights']} fights; {imp['broken']} broken links, {imp['noway']} with no way on. Imported {day(t['imported'])}"
         st['import'] = {'state': 'bad' if not clean else 'warn' if stale else 'done', 'src': 'disk',
                         'ev': ev + ('. Out of date: ' + '; '.join(stale) if stale else '')}
     # 3 phrasings, 4 rules

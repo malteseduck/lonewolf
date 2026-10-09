@@ -424,13 +424,27 @@ if os.path.exists(tssf):
 map_file = 'map-4k.webp' if os.path.exists(os.path.join(src, 'map-4k.webp')) else 'map.png'
 out = {'id': book, 'number': number, 'series': series, 'title': title, 'subtitle': 'Project Aon edition, imported for personal use',
        'start': '1', 'assets': f'data/projectaon/{book}/', 'map': map_file, 'bonusItem': book == '01fftd', 'intro': intro, 'sections': sections}
-with open(os.path.join(src, 'book.js'), 'w', encoding='utf-8') as f:
-    f.write('(window.LW = window.LW || {}).BOOKS = Object.assign(window.LW.BOOKS || {}, ' + json.dumps({book: out}, ensure_ascii=False) + ');\n')
+def write_if_changed(path, text):
+    """Leave the file alone when it already holds this text: the reading copy and the item check count
+    as out of date once book.js is newer (tools/book_status.py), so a re-import that changes nothing
+    must not touch it. Returns whether it was written."""
+    try:
+        with open(path, encoding='utf-8') as f:
+            if f.read() == text:
+                return False
+    except OSError:
+        pass
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(text)
+    return True
+
+
+write_if_changed(os.path.join(src, 'book.js'),
+                 '(window.LW = window.LW || {}).BOOKS = Object.assign(window.LW.BOOKS || {}, ' + json.dumps({book: out}, ensure_ascii=False) + ');\n')
 
 have = sorted(os.path.basename(os.path.dirname(p)) for p in glob.glob(os.path.join(top, '*', 'book.js')))
-with open(os.path.join(top, 'index.js'), 'w', encoding='utf-8') as f:
-    f.write('/* written by tools/import_projectaon.py: loads every imported book */\n')
-    f.write(''.join(f'document.write(\'<script src="data/projectaon/{b}/book.js"><\\/script>\');\n' for b in have))
+write_if_changed(os.path.join(top, 'index.js'), '/* written by tools/import_projectaon.py: loads every imported book */\n'
+                 + ''.join(f'document.write(\'<script src="data/projectaon/{b}/book.js"><\\/script>\');\n' for b in have))
 
 secs = sections.values()
 print(f'{title} ({series}):', len(sections), 'sections;', sum('combat' in s for s in secs), 'with combat;',

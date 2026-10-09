@@ -242,7 +242,8 @@ function gate(kind, b) {
     title = first ? `Import Book ${b.n} for the first time?` : `Re-import Book ${b.n}?`;
     body = `<p><b>${esc(b.title)}</b> (${b.code}): ${first ? 'writes' : 'rewrites'} <code>data/projectaon/${b.code}/book.js</code> and refreshes <code>index.js</code>${first ? ', so the book appears in the player' : ''}. Saves are not touched.</p>
       <table class="dates">
-        <tr><th>book.js made</th><td>${when(t.bookjs)}</td></tr>
+        <tr><th>Last imported</th><td>${when(t.imported)}</td></tr>
+        <tr><th>book.js last changed</th><td>${when(t.bookjs)}</td></tr>
         <tr><th>Source pages, newest</th><td>${when(t.sources)}</td></tr>
         <tr><th>Importer last changed</th><td>${when(t.importer)}</td></tr>
         ${t.map4k ? `<tr><th>map-4k.webp made</th><td>${when(t.map4k)}</td></tr>` : ''}

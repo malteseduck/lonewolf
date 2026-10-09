@@ -115,7 +115,10 @@ links and sections with no way on; no names or text), since 2026-10-08. After ch
 the import before: more broken links, sections with no way on or enemies with no picture, or fewer
 sections, is "worse" (exit 1); anything else that moved is listed to look at. The dashboard
 (`docs/reference/dashboard.md`) shows a book's import as out of date once the importer or a source
-page is newer than its `book.js`.
+page is newer than its last import (`import-report.json`, rewritten every run). `book.js` and
+`index.js` are written only when their content changes, so a re-import that changes nothing leaves
+the reading copy and the item check (judged against `book.js`) up to date; where it does change,
+`reimport_all.py` makes them again.
 
 ## What it does not read
 
