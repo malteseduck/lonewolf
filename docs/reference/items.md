@@ -187,6 +187,10 @@ variety, 2026-10-09). Give each guard, soldier or bandit kind its own book entry
 illustration, or a different figure cropped from one, using the book's non-fight pictures and other
 books' plain humans (in-fight or not). Book 4 does this for its 19 guards and soldiers, drawing on its
 own pictures and Books 5, 6, 8 and 9 (Book 5 is set in Vassagonia, so its guards suit Book 4's).
+Book 5 gives its seven guards and sentries crops of its own non-fight pictures, Book 9's palace guards
+and the owner's `art/plates/` guards. Its creatures met in other books use those books' pictures of the
+same creature: Elix and Itikar from Book 4 (the Itikar is Barraka's mount, not fought there), Drakkarim
+from Books 1 and 2 beside its own Drakkar; the Yas, a constrictor, takes the library's snake engraving.
 An already-downloaded free engraving can serve a second creature by a different crop (Book 4's Tunnel
 Fiends are other demons from the Schongauer print that gives Book 3 its Mutant).
 4. **A free old engraving** from Wikimedia Commons, public domain or CC BY: search with
