@@ -170,8 +170,14 @@ async function render() {
     const box = $('#pic' + i);
     if (!box) return;  // drawn again meanwhile
     if (!im) { box.innerHTML = '<div class="none">file missing</div>'; continue; }
-    box.append(inkPlate(im));
+    box.append(copy(inkPlate(im)));
   }
+}
+// inkPlate() hands back one cached canvas per picture; a second card using it would take it from the first
+function copy(cv) {
+  const c = Object.assign(document.createElement('canvas'), { width: cv.width, height: cv.height, className: cv.className });
+  c.getContext('2d').drawImage(cv, 0, 0);
+  return c;
 }
 
 async function main() {
