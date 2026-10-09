@@ -87,7 +87,8 @@ export const SECTIONS = {
   129: { todo: 'unless you have rubbed Baknar oil into your skin, lose 3 ENDURANCE.' },
   121: { ep: -1 },
   132: { todo: 'unless you have just eaten, lose 3 ENDURANCE (Hunting does not help in Kalte).' },
-  137: { todo: 'Mindblast is only partly blocked here: if you have it, it adds 1 COMBAT SKILL, not 2.' },
+  // partly immune: Mindblast adds 1 here, not 2 (the importer marked the pair immune, so the engine adds nothing)
+  137: { fight: { csMod: 1, csIf: { disc: ['mindblast'] } } },
   138: { todo: 'the moment you lose any ENDURANCE here, stop and turn to the section the text names (use the Turn to section box).' },
   139: { need: { 116: { item: 'redLaumspur' }, 239: { item: 'redLaumspur', not: true } } },
   140: { ep: -2 },

@@ -114,7 +114,7 @@ how the books are written: draw first, then one choice per range.
   to,                        // authored: section to continue to after winning. Imported books leave this out and show the section's choices
   csMod, csNote,             // adjustment to the hero's CS for this fight, and its label
   csIf, csUnless,           // imported: a Condition (below). The csMod is given only if he meets csIf, and spared if he meets csUnless
-  // from an item table: unless, unarmed, with, double, ambush; enemies may carry undead, drain, mindforce
+  // from an item table: unless, unarmed, with, double, ambush, and csIf / csUnless as above; enemies may carry undead, drain, mindforce
 }
 ```
 
