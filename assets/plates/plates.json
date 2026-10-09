@@ -1,6 +1,7 @@
 {
   "_readme": "Pictures for fights whose section has no illustration of its own. The first entry whose match (a regular expression, case ignored) is found in the enemy's name is used, so put the narrower ones first. book, if given, limits an entry to that book (its own characters, or a stand-in that would be wrong elsewhere); book entries go first. src is relative to the project root: files in assets/plates/ are free to redistribute (sources in README.txt); files under data/projectaon/ are Project Aon illustrations on the owner's machine only, from the same book or borrowed from another, and files under art/ are pictures the owner supplied for personal use (git-ignored); a missing one falls back to the drawn emblem. crop, if given, is the part of the picture to use, [x, y, w, h] as fractions. over: true makes the entry win even where the section has an illustration of its own (the owner preferred another picture). levels, if given, is [black, white] (0-255): the tones that become full ink and bare paper, for a painting whose mid-tones would otherwise all turn to solid ink. See docs/reference/interface.md, Art pipeline, and docs/reference/items.md, Fight pictures.",
   "plates": [
+    { "match": "^szall 2$", "book": "02fotw", "src": "data/projectaon/01fftd/ill4.png", "crop": [0.0072, 0.0394, 0.8496, 0.5632] },
     { "match": "^wounded helghast$", "book": "02fotw", "src": "data/projectaon/02fotw/ill8.png" },
     { "match": "^dorier \\+ ganon$", "book": "02fotw", "src": "data/projectaon/02fotw/ill15.png", "crop": [0.01, 0.045, 0.98, 0.27] },
     { "match": "vordak", "book": "01fftd", "src": "art/plates/bestiary-gourgaz-zlanbeast-vordak-doomwolf.webp", "crop": [0.745, 0.04, 0.17, 0.37], "over": true },
@@ -36,6 +37,15 @@
     { "match": "street thief 1", "book": "02fotw", "src": "art/plates/rogue-sneaking.webp", "crop": [0.1, 0.25, 0.76, 0.56] },
     { "match": "street thief 2", "book": "02fotw", "src": "art/plates/rogue-masked-blades.webp", "crop": [0.06, 0.03, 0.82, 0.7] },
     { "match": "trickster", "book": "02fotw", "src": "art/plates/rogue-helmeted-dagger.png", "crop": [0.19, 0.015, 0.62, 0.63] },
+    { "match": "kalkoth", "book": "03tcok", "src": "assets/plates/wolverine-rosomak.jpg", "crop": [0.1, 0.04, 0.88, 0.84] },
+    { "match": "mutant", "book": "03tcok", "src": "assets/plates/demons-schongauer.jpg", "crop": [0.17, 0.06, 0.33, 0.28] },
+    { "match": "^akraa", "book": "03tcok", "src": "data/projectaon/03tcok/ill11.png" },
+    { "match": "barbarian \\+ doomwolf", "book": "03tcok", "src": "data/projectaon/03tcok/ill1.png" },
+    { "match": "ice barbarian scout", "book": "03tcok", "src": "data/projectaon/03tcok/ill12.png", "crop": [0.3, 0.42, 0.7, 0.58] },
+    { "match": "ice barbarians", "book": "03tcok", "src": "data/projectaon/03tcok/ill12.png" },
+    { "match": "ice barbarian$", "book": "03tcok", "src": "data/projectaon/03tcok/ill18.png" },
+    { "match": "^doomwolf [0-9]$", "book": "03tcok", "src": "art/plates/bestiary-gourgaz-zlanbeast-vordak-doomwolf.webp", "crop": [0.5, 0.72, 0.27, 0.26], "levels": [60, 190] },
+    { "match": "helghast", "book": "03tcok", "src": "data/projectaon/02fotw/ill8.png" },
     { "match": "vordak", "src": "art/plates/bestiary-gourgaz-zlanbeast-vordak-doomwolf.webp", "crop": [0.745, 0.04, 0.17, 0.37] },
     { "match": "giak", "src": "data/projectaon/01fftd/ill4.png", "crop": [0.5, 0.6, 0.5, 0.4] },
     { "match": "crypt spawn", "src": "data/projectaon/05sots/ill14.png" },

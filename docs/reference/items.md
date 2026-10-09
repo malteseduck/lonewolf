@@ -143,7 +143,9 @@ the same book where that enemy is fought and pictured (`PLATE_FIXES`). Its repor
 the enemies "with none". For each, add an entry to `assets/plates/plates.json` (first match on
 the enemy's name wins, so narrower ones first). Give an entry `"book": "<code>"` when it is right
 for that book only (its own characters, a generic name such as "Priest" or "guard" given a
-stand-in that suits that book), and put book entries first. Where to look, in order:
+stand-in that suits that book), and put book entries first. The sheet labels a book entry whose
+`match` is exactly the enemy's anchored name (`^name$`) as the owner's own picture, so an entry you
+add is written some other way (`ice barbarian$`, `kalkoth`). Where to look, in order:
 
 1. **The owner's own picture**, if they give one. The owner puts it in on the picture sheet
    (`tools/admin/fights.html?book=<code>`, also inline in the dashboard at step 7): drop a picture file on
