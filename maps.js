@@ -4,6 +4,7 @@ import * as Ink from './shared/ink.js';
    shade darker so coasts still read, and strong red survives as a faint rubric (flags, banners).
    Then the parchment grain is multiplied over it. crop is in image pixels. */
 const DARK = [38, 25, 14], LIGHT = [236, 222, 186], RUBRIC = [146, 40, 24];
+const KEEP = 0.5, WARM = [1, 0.94, 0.8]; // share of the printed colour kept under the sepia; warm cast on it
 export function printedCanvas(img, crop, w, h) {
   const cv = Ink.canvas(w, h), x = cv.getContext('2d');
   x.imageSmoothingQuality = 'high';
@@ -13,7 +14,11 @@ export function printedCanvas(img, crop, w, h) {
     const r = p[i], g = p[i + 1], b = p[i + 2];
     const water = Math.max(0, Math.min(1, (b - r - 25) / 110)), red = Math.max(0, Math.min(1, (r - g - 60) / 90));
     const v = Math.max(0, Math.min(1, ((0.3 * r + 0.55 * g + 0.15 * b) / 255 - water * 0.24 - 0.5) * 1.3 + 0.56));
-    for (let k = 0; k < 3; k++) { const o = DARK[k] + (LIGHT[k] - DARK[k]) * v; p[i + k] = o + (RUBRIC[k] - o) * red * 0.75; }
+    for (let k = 0; k < 3; k++) {
+      const o = DARK[k] + (LIGHT[k] - DARK[k]) * v, c = p[i + k] * WARM[k] * 0.92 + 6; // the map's own colour, warmed
+      const s = o + (c - o) * KEEP;
+      p[i + k] = s + (RUBRIC[k] - s) * red * 0.75;
+    }
   }
   x.putImageData(d, 0, 0);
   x.globalCompositeOperation = 'multiply'; x.globalAlpha = 0.7;
