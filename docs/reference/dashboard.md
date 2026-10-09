@@ -16,7 +16,8 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
 - **A book** (click its row): every step with its evidence, where it came from (the files, or a hand
   mark), and its buttons: **Run** for a script, **Copy prompt** for an agent step, **Mark done** for a
   hand step, links to the player, the test address and the picture sheet. Under it, the map's own
-  steps, as the map editor's rail shows them.
+  steps, as the map editor's rail shows them. Clicking a step's cell scrolls the panel to that step
+  and lights it briefly (the map and picture cells open their editor inline instead).
 - **The map editor** opens under the grid, full width (the Map cell, "Open map editor here", or any
   map step's Open): the same `tools/map-editor.html`, with `?embed=1`, which hides its book picker
   (the dashboard chose the book) and tells the dashboard when its files change, so the grid follows.

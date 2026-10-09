@@ -106,6 +106,9 @@ button.danger:hover:not(:disabled) { border-color: var(--bad); color: #f0c8b8; }
 .step .acts a.btn:hover { border-color: var(--bronze); }
 .step .acts .proposed { font-size: 11px; color: var(--faint); align-self: center; }
 .step.sub { padding-left: 14px; }
+.step { scroll-margin: 12px; }
+.step.flash { animation: flash 1.6s ease-out; }
+@keyframes flash { from { background: rgba(160, 138, 88, .28); box-shadow: inset 3px 0 0 var(--bronze); } to { background: transparent; box-shadow: inset 3px 0 0 transparent; } }
 
 .log { position: fixed; left: 24px; right: 24px; bottom: 12px; max-height: 40vh; display: flex; flex-direction: column; background: #0f0a07; border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 8px 30px rgba(0, 0, 0, .6); }
 .log header { display: flex; gap: 12px; align-items: center; padding: 6px 10px; border-bottom: 1px solid var(--line-lo); }

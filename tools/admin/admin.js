@@ -85,9 +85,18 @@ $('#grid').addEventListener('click', (e) => {
   selected = tr.dataset.code;
   render();
   const b = books.find((x) => x.code === selected);
-  if (e.target.closest('td[data-stage="map"]')) openMap(b);
-  if (e.target.closest('td[data-stage="sheet"], td[data-stage="pictures"]')) openSheet(b);
+  const cell = e.target.closest('td[data-stage]');
+  if (!cell) return;
+  if (cell.dataset.stage === 'map') return openMap(b);
+  if (['sheet', 'pictures'].includes(cell.dataset.stage)) return openSheet(b);
+  showStep(cell.dataset.stage);
 });
+function showStep(id) {  // a step's cell in the grid scrolls the book's panel to that step and lights it
+  const el = document.querySelector(`#detail .step[data-stage="${id}"]`);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+}
 
 // ---------- one book ----------
 const ACTIONS = {
@@ -127,7 +136,7 @@ async function renderDetail(b) {
   const steps = STAGES.map((s) => {
     const x = b.stages[s.id];
     const list = x.state === 'na' && s.id !== 'import' ? [] : ACTIONS[s.id]?.(b) || [];
-    return `<div class="step"><span class="st ${x.state}"></span><span class="kind" data-kind="${s.kind}"></span>
+    return `<div class="step" data-stage="${s.id}"><span class="st ${x.state}"></span><span class="kind" data-kind="${s.kind}"></span>
       <div class="what"><b>${s.step ? s.step + '. ' : ''}${esc(s.label)}</b><div class="ev">${esc(x.ev)}</div><div class="src">${x.src === 'disk' ? 'from the files' : 'marked by hand (docs/book-status.json)'}</div></div>
       <div class="acts">${list.map((a) => actHtml(a, b)).join('')}</div></div>`;
   }).join('');
