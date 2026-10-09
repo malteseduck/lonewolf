@@ -10,7 +10,7 @@
     { "match": "^leader$", "book": "01fftd", "src": "art/plates/citadel-c41-flyer-1984.jpg", "crop": [0.8, 0.29, 0.17, 0.19] },
     { "match": "^soldier 1$", "book": "01fftd", "src": "art/plates/citadel-c41-flyer-1984.jpg", "crop": [0.625, 0.24, 0.15, 0.24] },
     { "match": "^soldier 2$", "book": "01fftd", "src": "art/plates/guard-veteran-pencil.webp", "crop": [0.05, 0.06, 0.77, 0.92] },
-    { "match": "^robber$", "book": "01fftd", "src": "art/plates/rogue-masked-grey.png", "crop": [0.2, 0.08, 0.62, 0.62], "levels": [20, 150] },
+    { "match": "^robber$", "book": "01fftd", "src": "art/plates/rogue-masked-grey.png", "crop": [0.2011, 0, 0.62, 0.62], "levels": [29, 213] },
     { "match": "dorier|ganon", "book": "02fotw", "src": "data/projectaon/02fotw/ill15.png", "crop": [0.01, 0.045, 0.98, 0.27] },
     { "match": "halvorc", "book": "02fotw", "src": "data/projectaon/02fotw/ill15.png", "crop": [0.075, 0.37, 0.41, 0.27] },
     { "match": "priest", "book": "02fotw", "src": "data/projectaon/02fotw/ill15.png", "crop": [0.585, 0.37, 0.39, 0.27] },
