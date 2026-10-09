@@ -57,15 +57,16 @@ matching reference file. Not started; the owner picks which, and in what order.
    the dice do not give, rounds underwater past a drawn count); the enemy's losses raised (an ally
    striking, psychic attack doubled). B3 88, 180; B4 194, 234; B6 270; B7 76, 126, 178, 219, 233,
    285, 301, 325; B8 52, 155, 159, 199; B9 82; B10 172; B11 34, 298; B12 55, 226, 268, 276.
-8. **The fight's length deciding the way on, or ending it** (about 30): won in N rounds or fewer
+8. **The fight's length deciding the way on, or ending it** (about 35): won in N rounds or fewer
    goes one way; only N rounds are fought; one round, decided by who lost more; stop when he loses
-   any ENDURANCE; break off when the enemy is down to N. B1 227, 231, 339; B3 108, 138, 158, 263,
-   296; B4 36, 47, 56, 133, 193, 260, 333; B5 244, 357; B6 78, 201, 344; B8 257; B9 82, 104, 244;
+   any ENDURANCE; break off when the enemy is down to N. B1 227, 231, 339; B3 32, 123, 138, 147,
+   158, 164, 180, 200, 208, 259, 263, 296; B4 36, 47, 56, 133, 193, 260, 333; B5 244, 357; B6 78, 201, 344; B8 257; B9 82, 104, 244;
    B10 41, 187, 286, 336, 349; B11 22, 97, 201, 206, 274.
 9. **Choices that need more than "any of these items"** (about 20): two items together (a Torch and
    a Tinderbox, or a Lantern, or a Firesphere: the light-source gate; a Blowpipe and a Sleep Dart);
    a count (4 Meals, 2 Arrows, 2 Backpack Items); any weapon of a kind (any sword; an edged weapon).
-   B4 117; B5 19, 313; B6 339; B7 16, 66, 107, 168, 258, 298, 348; B8 194, 214; B10 131, 256; B11
+   B3 36, 290 (Sixth Sense below the rank of Guardian), 173 (an Effigy, or the Sommerswerd without
+   one), 277 (any weapon); B4 117; B5 19, 313; B6 339; B7 16, 66, 107, 168, 258, 298, 348; B8 194, 214; B10 131, 256; B11
    126, 168, 234, 260; B12 131.
 10. **Random Number changes the importer cannot express** (about 20): by an item carried (a Rope, a
     Pick or Shovel), the weapon in his hand, a discipline at a rank, a Lore-circle, a dead arm; and
@@ -84,7 +85,8 @@ matching reference file. Not started; the owner picks which, and in what order.
     the Dagger of Vashna and Helshezag against a Darklord, Gnaag's 12 in all); a penalty by weapon
     kind; no Shield or no two-handed weapon; no Bow; no evading; no potion before the fight; an item
     wrapped round the arm; fighting with a weapon not yet in the inventory; a bonus for having fought
-    a foe in an earlier book. B3 170, 328; B5 57, 253; B6 343; B7 76, 221, 257; B10 54, 304; B11 201;
+    a foe in an earlier book; wounds carried over from an earlier fight with the same foes (B3 32).
+    B3 170, 328; B5 57, 253; B6 343; B7 76, 221, 257; B10 54, 304; B11 201;
     B12 68, 75, 88, 133, 230.
 14. **Equipment taken away and given back later**: the page keeps what was taken and restores it.
     B5 69 to 14, and the Sommerswerd 350 to 400; B7 264, 335 to 15; B9 170, 174, 312 to 54, 177, and
@@ -105,7 +107,12 @@ matching reference file. Not started; the owner picks which, and in what order.
     name (B11 8); a torch in hand (B4 79, 123); a Meal that may be bought on the spot (B2 346; B6 253,
     307); swapping one item for another (B8 242); a draw that ends the adventure (B3 94).
 19. **Notes on the Action Chart**: a number to remember (B7 73, 183, 333) and things done in an
-    earlier book (B5 57; B9 142).
+    earlier book (B3 128, 250, 268; B5 57; B9 142).
+20. **A by-hand way out of a fight and to any section** (found playing Book 3, 2026-10-09): the
+    Turn to section box shows only in puzzle sections, and a fight can be left only by Evade, which
+    costs a blow. Item-table todos that name the box cannot be followed: B4 36, 47, 56, 133; B6 78,
+    170 (Book 3's were reworded to what the page can do). A box under every section's choices, and
+    a "stop the fight here" control without the blow, would serve every such todo until item 8 is done.
 
 Left to the player whatever the engine does: whether to sleep (B2 41), and the puzzles.
 
@@ -117,6 +124,9 @@ Things to check while a book goes through its steps, which no step asks for:
   Ring +8 (214), Book 11's Ironheart Broadsword +8 (204), Book 12's Helshezag and a weapon's
   increased power (88, 133).
 - Book 3's sledge food is left to the text.
+- Book 3's play-through (2026-10-09) left to the player, beyond the todos: a Guardian with Sixth
+  Sense sees both 341 and 124 at 36 and 290, and one with both an Effigy and the Sommerswerd both 34
+  and 164 at 173 (item 9); 108's way north (198, a death) cannot be taken in mid-fight.
 - Book 4's `work/` holds trial files from the first map experiments (`map-esrgan-*`,
   `map-gemini-esrgan-4k.webp`, `map-repaint-2k-test1.png`, the first `compare.html`): delete them
   when Book 4's map is done.

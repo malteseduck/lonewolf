@@ -305,7 +305,8 @@ for n in numbers:
                 r = span(text)
                 if r:
                     ch['range'] = r
-                if re.search(r'\bevade\b|\bcease [‘\'"]?combat\b', text, re.I):  # a door's "cease 'combat' at any time"
+                # a door's "cease 'combat' at any time"; not "if you lose any, even when attempting to evade"
+                if re.search(r'\bevade\b|\bcease [‘\'"]?combat\b', text, re.I) and not re.search(r'\beven (?:when|if)\b[^.,]*\bevad', text, re.I):
                     ch['evade'] = True
                 sec['choices'].append(ch)
         else:

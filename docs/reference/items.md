@@ -64,6 +64,7 @@ Decide each section by what the text says, outright:
   "instead of" a normal bonus, or from a weapon's or item's power: check those sections, and give
   the `csMod` here where it is certain, with `csIf` / `csUnless` when a discipline decides it (Book 3's
   137: a foe only partly immune, so Mindblast adds 1, is `{csMod: 1, csIf: {disc: ['mindblast']}}`).
+  `evade: {after, to}` where the text allows evasion in its prose rather than in a choice (Book 3's 108).
 - **bowShot** (Magnakai books): a Random Number that is a bow shot, `{to: [lo, hi]}` for each
   choice it decides, with the ranges of the total as the text gives them (use 99 for "or
   higher"). Leave out the choice for having no Bow. The engine adds Weaponmastery and spends the
@@ -71,6 +72,9 @@ Decide each section by what the text says, outright:
 - **food as a Meal**: an item the text says can be eaten as a Meal gets `meal: true` (Book 1's
   Laumspur).
 - **todo**: anything the player must decide, in our words, shown as "By hand: ...". Never guess.
+  Name only controls the page has: the Turn to section box shows only in puzzle sections, and a
+  fight cannot be stopped except by Evade, so a fight the text cuts short (after N rounds, at the
+  first wound) is fought on and the ENDURANCE lost past that point given back with Endurance +.
 - **shops** (Book 2 on): each ware is a `loot` entry with `cost`; "choose any two" is a group with
   `or` and `pick: 2`. Gold won or lost by a number is `rolls` with `gold`.
 - **book weapons**: a Special Item that fights (the Sommerswerd, the Magic Spear) gets `weapon`,
@@ -113,7 +117,7 @@ Pendant), standing-potion (Alether), soap, torch, flint-spark (Tinderbox), backp
 unknown fields), the counts, and the flagged sections the table leaves out. Every left-out
 section should be one that was read and judged to need nothing. Book 1: no errors; 12 items, 65
 sections; 103 left out (four found on a re-read, 2026-10-09). Book 2: no errors; 13 items, 117 sections; 98 left out (three it first
-listed were real misses, so read the list; a full re-read on 2026-10-09 found nothing more). Book 3: no errors; 17 items, 116 sections; 108 left out (a full re-read on 2026-10-09 turned one
+listed were real misses, so read the list; a full re-read on 2026-10-09 found nothing more). Book 3: no errors; 17 items, 118 sections; 106 left out (a full re-read on 2026-10-09 turned one
 todo, 137's partial Mindblast, into a fight change). It knows every book's items, as the page does.
 `--json` also writes `data/projectaon/<book>/check-items.json`, which `tools/book_status.py` reads
 for checklist step 5 (the dashboard's "Check items" runs it so).

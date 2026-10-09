@@ -74,7 +74,8 @@ Heuristics layered on top, all by regular expression:
 - **auto or free**: `auto` when the bonuses were all read, every total they can make is covered by
   exactly one choice's range, and every choice without a range is an "If you have / possess ..."
   taken instead of drawing. Otherwise `free`, and the ranges are dropped.
-- **Evasion**: a choice containing "evade" (or a door's "cease 'combat'") becomes the fight's evade exit; "after N rounds",
+- **Evasion**: a choice containing "evade" (or a door's "cease 'combat'") becomes the fight's evade exit (not "if you lose any ENDURANCE, even when attempting to evade, turn to
+  ...", which stays a choice shown after the fight: Book 3's 138, 263, Book 4's 133); "after N rounds",
   "after the first round" and "until the beginning of the third round" set the wait; "in the first
   round of combat only" sets `within: 1`.
 - **Mind immunity**: "immune to Mindblast / Psi-surge" in the section; "immune to Mindblast (but

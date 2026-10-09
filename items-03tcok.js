@@ -50,6 +50,8 @@ export const SECTIONS = {
   26: { loot: [{ item: 'boneSword' }, { item: 'dagger' }, { item: 'mace' }] },
   27: { todo: 'unless you have rubbed Baknar oil into your skin, lose 2 ENDURANCE.' },
   29: { need: { 43: sommerswerd } },
+  // met before at 138 or 263 (evaded there)
+  32: { todo: 'if you fought these Kalkoth before, the text carries over the wounds you gave them, and leaves out Kalkoth 3 if that fight had two: the page cannot, so they come at you fresh.' },
   33: { ep: -1 },
   38: { loot: [{ pack: true }, { item: 'rope' }] },
   43: { ep: -1 },
@@ -68,7 +70,7 @@ export const SECTIONS = {
   83: { todo: 'its controller attacks with Mindforce: unless you have Mindshield, lose 2 ENDURANCE (the text gives it once, not per round).' },
   84: { loot: [{ item: 'blueTriangle' }] },
   86: { todo: 'with Weaponskill for the weapon in your hand, add 3 to the number drawn before choosing the way on.' },
-  88: { todo: 'ENDURANCE lost in this fight is not taken from your total. Draw a number after each such loss instead: 0-8 and the padded arm saved you, a 9 is death.' },
+  88: { todo: 'ENDURANCE lost in this fight is not taken from your total: after the fight give back (Endurance +) what the page took. Instead, for each round in which you lost any, spin the medallion on this page once: 0-8 and the padded arm saved you, a 9 is death.' },
   91: { give: [oil] },
   92: { need: { 133: { item: 'rope' }, 297: { item: 'rope', not: true } } },
   // a drowning on 7-9, which the draw cannot do for him
@@ -81,7 +83,8 @@ export const SECTIONS = {
   102: { loot: [{ item: 'effigy' }] },
   107: { need: { 202: oil, 284: { item: 'baknarOil', not: true } } },
   // the Doomstone and the empty vial are thrown away
-  108: { todo: 'after the first round you may break off, either way the text offers: use the Turn to section box.' },
+  // "evade after one round" is in the text, not in a choice, so the importer missed it
+  108: { fight: { evade: { after: 1, to: '330' } }, todo: 'from the second round you may break off: Evade takes the south way (330); the north way (198) the page cannot take in mid-fight. After a win the way on is 282.' },
   116: { take: [{ item: 'redLaumspur' }, { item: 'glowingCrystal' }] },
   119: { loot: sledge },
   129: { todo: 'unless you have rubbed Baknar oil into your skin, lose 3 ENDURANCE.' },
@@ -89,7 +92,7 @@ export const SECTIONS = {
   132: { todo: 'unless you have just eaten, lose 3 ENDURANCE (Hunting does not help in Kalte).' },
   // partly immune: Mindblast adds 1 here, not 2 (the importer marked the pair immune, so the engine adds nothing)
   137: { fight: { csMod: 1, csIf: { disc: ['mindblast'] } } },
-  138: { todo: 'the moment you lose any ENDURANCE here, stop and turn to the section the text names (use the Turn to section box).' },
+  138: { todo: 'once you have lost any ENDURANCE here, even while evading, the way on is 66: do not evade then, and take 66 after the fight.' },
   139: { need: { 116: { item: 'redLaumspur' }, 239: { item: 'redLaumspur', not: true } } },
   140: { ep: -2 },
   146: { need: { 43: sommerswerd } },
@@ -100,14 +103,14 @@ export const SECTIONS = {
   155: { noHunt: true },
   156: { loot: [{ item: 'greenGallowbrush' }] },
   157: { ep: 6, take: [{ item: 'greenGallowbrush' }] },
-  158: { todo: 'only one round is fought: the way on follows who lost more ENDURANCE in it, or neither.' },
+  158: { todo: 'only one round is fought: the way on follows who lost more ENDURANCE in it, or neither. The page fights on, so after the fight give back (Endurance +) what you lost after the first round.' },
   164: { fight: { undead: true } },
   169: { need: { 41: { item: 'blueTriangle' }, 265: { item: 'blueTriangle', not: true } } },
   // reached when he is seized: no potion can be swallowed before the fight
   170: { ep: -6, need: { 304: sommerswerd, 175: { item: 'sommerswerd', not: true } }, todo: 'you cannot swallow any potion before this fight.' },
   173: { need: { 34: { item: 'effigy' }, 164: sommerswerd, 200: { item: ['effigy', 'sommerswerd'], not: true } } },
   177: { loot: [{ item: 'blackGraveweed' }] },
-  180: { todo: 'Fenor stabs the creature from behind: take 3 more ENDURANCE off the Kalkoth in every round you fight.' },
+  180: { todo: 'Fenor stabs the creature from behind: it loses 3 more ENDURANCE every round (the page does not). The text stops the fight at your first loss of ENDURANCE and sends you to 129; the page fights on, so then take 129 after the fight and give back (Endurance +) what you lost after that first wound.' },
   181: { need: { 152: { gold: 1 } } },
   187: { give: [{ item: 'bracelet' }] },
   192: { need: { 267: { item: 'glowingCrystal' }, 44: { item: 'glowingCrystal', not: true } } },
@@ -131,8 +134,9 @@ export const SECTIONS = {
   251: { ep: -2 },
   // the number drawn is the loss, less 2 with Hunting or Sixth Sense (not below nothing)
   258: { rolls: loss(), todo: 'with Hunting or Sixth Sense the loss is 2 less (never below 0): give back up to 2 ENDURANCE. The Bracelet is then gone.', take: [{ item: 'bracelet' }] },
+  259: { todo: 'the text stops the fight at your first loss of ENDURANCE and sends you to 129; the page fights on, so then take 129 after the fight and give back (Endurance +) what you lost after that first wound.' },
   260: { todo: 'you lose no ENDURANCE in the first two rounds.' },
-  263: { todo: 'the moment you lose any ENDURANCE here, stop and turn to the section the text names (use the Turn to section box).' },
+  263: { todo: 'once you have lost any ENDURANCE here, even while evading, the way on is 66: do not evade then, and take 66 after the fight.' },
   267: { take: [{ item: 'glowingCrystal' }] },
   272: { need: { 213: sommerswerd } },
   280: { ep: -1, loot: [{ item: 'silverKey3' }] },
@@ -144,7 +148,7 @@ export const SECTIONS = {
   290: { need: { 124: { disc: 'sixthSense' } } },
   294: { todo: 'after the six hours of labour eat two Meals or lose 6 ENDURANCE.' },
   295: { loot: [{ item: 'firesphere' }] },
-  296: { todo: 'only three rounds are fought before the guards collapse.' },
+  296: { todo: 'only three rounds are fought before the guards collapse. The page fights on, so after the fight give back (Endurance +) what you lost after the third round.' },
   298: { loot: [{ item: 'blueTriangle' }] },
   299: { todo: 'unless you used Mind Over Matter, lose 2 ENDURANCE.' },
   303: { take: [{ item: 'silverKey3' }] },
