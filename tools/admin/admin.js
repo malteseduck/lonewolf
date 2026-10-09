@@ -85,7 +85,6 @@ $('#grid').addEventListener('click', (e) => {
   const cell = e.target.closest('td[data-stage]');
   if (!cell) return;
   if (cell.dataset.stage === 'map') return openMap(b);
-  if (cell.dataset.stage === 'pictures') return openSheet(b);
   showStep(cell.dataset.stage);
 });
 function showStep(id) {  // a step's cell in the grid scrolls the book's panel to that step and lights it

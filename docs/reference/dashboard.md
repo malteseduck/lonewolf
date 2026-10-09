@@ -26,8 +26,8 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   the picture the player would show (the same choice as `nextFoe()` in `main.js`), inked as in a
   fight, the sections it is fought in and where the picture comes from. Checklist step 6, after the
   agent's work: the owner looks here and marks it. It opens
-  inline under the grid like the map editor (the step 6 cell, or Open picture sheet here;
-  `?embed=1`), and on its own. A picture file dropped, pasted or chosen on a card becomes that enemy's
+  inline under the grid like the map editor (Open picture sheet here, `?embed=1`; the step 6 cell
+  only goes to that step's line in the book's list), and on its own. A picture file dropped, pasted or chosen on a card becomes that enemy's
   picture; Adjust crops any card's picture and sets levels, with the fight panel previewed as it will look;
   Remove takes the owner's entry away. Each save redraws the cards and the "with none" count, and the
   dashboard's grid follows. The rules for the entry: `docs/reference/items.md`, "Fight pictures".

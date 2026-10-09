@@ -180,6 +180,15 @@ add is written some other way (`ice barbarian$`, `kalkoth`). Where to look, in o
    in which fights, list each book's sections that have both an `ill*.png` and a combat line
    (section numbers, picture names and enemy names only). Book 2's Giaks and Szalls (a breed of
    Giak) use Book 1's Giak, cropped to the one on foot.
+
+**Vary the plain humans.** The broad library entries (`soldier|...|guard`, `robber|...|bandit`) are a
+last resort: a book full of guards would show the same picture in every fight (the owner asked for
+variety, 2026-10-09). Give each guard, soldier or bandit kind its own book entry: a different
+illustration, or a different figure cropped from one, using the book's non-fight pictures and other
+books' plain humans (in-fight or not). Book 4 does this for its 19 guards and soldiers, drawing on its
+own pictures and Books 5, 6, 8 and 9 (Book 5 is set in Vassagonia, so its guards suit Book 4's).
+An already-downloaded free engraving can serve a second creature by a different crop (Book 4's Tunnel
+Fiends are other demons from the Schongauer print that gives Book 3 its Mutant).
 4. **A free old engraving** from Wikimedia Commons, public domain or CC BY: search with
    `filetype:bitmap` (the Commons API answers the browser with `origin=*`), lay the thumbnails out
    in the page to compare, and prefer menacing over quaint (the owner turned down a cute bear).
