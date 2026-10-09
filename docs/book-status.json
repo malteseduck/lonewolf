@@ -3,15 +3,14 @@
   "01fftd": {
    "3": "2026-10-08",
    "4": "2026-10-08",
-   "7": "2026-10-08",
-   "8": "2026-10-08",
-   "9": "2026-10-09"
+   "6": "2026-10-08",
+   "7": "2026-10-08"
   },
   "02fotw": {
    "3": "2026-10-08",
    "4": "2026-10-08",
-   "7": "2026-10-08",
-   "8": "2026-10-08"
+   "6": "2026-10-08",
+   "7": "2026-10-08"
   },
   "03tcok": {
    "3": "2026-10-08",
@@ -54,5 +53,5 @@
    "4": "2026-10-08"
   }
  },
- "note": "The book steps no file can show (3, 4, 7, 8, 9), each with the date it was marked done. Written by tools/book_status.py (done/undo) and the dashboard. Marks dated 2026-10-08 were carried over from the checklist's ticks that day."
+ "note": "The book steps no file can show (3, 4, 6, 7; 6 is the owner's look at the picture sheet, once every enemy has a picture), each with the date it was marked done. Written by tools/book_status.py (done/undo) and the dashboard. Marks dated 2026-10-08 were carried over from the checklist's ticks that day."
 }

@@ -3,7 +3,7 @@
 How each book's printed map becomes the 4K WebP the player shows: the place names are erased and
 set again in clean type, Gemini repaints the map around them, and local tools check the result,
 set again any name Gemini garbled, and upscale it. The player still repaints it in sepia
-(`docs/reference/interface.md`). The checklist step is 10 in `docs/book-checklist.md`.
+(`docs/reference/interface.md`). The checklist step is 8 in `docs/book-checklist.md`.
 
 ## Why this chain
 

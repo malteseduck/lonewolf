@@ -5,8 +5,8 @@ files named under each step; what is left inside a step (counts, sections) is sh
 dashboard (`tools/admin/`). Work outside the steps is in `docs/plan.md`.
 
 **The table is generated: do not edit it.** `tools/book_status.py` works each step out from the
-files on disk (steps 1, 2, 5, 6, 10, and the heading half of 4) or from `docs/book-status.json`
-(steps 3, 4, 7, 8, 9, which no file can show), and rewrites the table whenever a step is marked.
+files on disk (steps 1, 2, 5, 8, and the file halves of 4 and 6) or from `docs/book-status.json`
+(steps 3, 4, 6, 7, which no file can show), and rewrites the table whenever a step is marked.
 When a step is finished, run `python tools/book_status.py done <book> <step>` (or use Mark done in
 the dashboard, `http://localhost:8765/tools/admin/`); for a step read from the files it checks the
 files instead and says what is missing. `undo` takes a hand mark back. See
@@ -23,14 +23,12 @@ files instead and says what is missing. `undo` takes a hand mark back. See
 | 3. Importer reads the book's own phrasings (gates, Random Number, combat) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | 4. Rules addendum written, Engine column true | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **Items and fights** | | | | | | | | | | | | |
-| 5. Item table (`items-<code>.js`): read, `check_items.mjs` clean, registered | ✅ | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ |
-| 6. Every enemy has a fight picture (importer: "0 with none") | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 7. Fight pictures shown to the owner on one sheet, changes made | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 5. Item table (`items-<code>.js`): read, `check_items.mjs` clean, registered | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ |
+| 6. Every enemy has a fight picture (importer: "0 with none"), shown to the owner on one sheet, changes made | ✅ | ✅ | ⚠️ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | **Playing it** | | | | | | | | | | | | |
-| 8. Played through with test characters; misreadings and item gaps fixed | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 9. The owner has played it and is happy | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 7. Played through with test characters; misreadings and item gaps fixed | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | **Pictures** | | | | | | | | | | | | |
-| 10. Printed map repainted, labels checked, `map-4k.webp` made and shown in the player | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 8. Printed map repainted, labels checked, `map-4k.webp` made and shown in the player | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 <!-- end of status table -->
 
 Books: 1 Flight from the Dark · 2 Fire on the Water · 3 The Caverns of Kalte · 4 The Chasm of Doom ·
@@ -52,13 +50,13 @@ Each step's buttons and prompt are in the dashboard, `http://localhost:8765/tool
 5. `docs/reference/items.md`. Where the text leaves a choice to the player, a `todo`, never a guess.
    In the Magnakai books, mark ambushes and bow shots. Read from the files: registered in `main.js`,
    `node tools/check_items.mjs <code> --json` clean.
-6. `docs/reference/items.md`, "Fight pictures". Read from the files: every enemy has a plate of its own or a
-   `plates.json` match.
-7. The picture sheet, `tools/admin/fights.html?book=<code>`; the owner picks changes, and may supply
-   drawings (kept in git-ignored `art/plates/`). A hand mark (the owner's).
-8-9. Play in the browser on a test address (`http://127.0.0.1:8765/`), never over the owner's saves.
-   Hand marks: 8 the agent's, 9 the owner's.
-10. `docs/reference/map-upscale.md`. Never overwrite `map.png`: it is the original.
+6. `docs/reference/items.md`, "Fight pictures": every enemy has a plate of its own or a `plates.json`
+   match (read from the files), then the owner looks at the picture sheet,
+   `tools/admin/fights.html?book=<code>`, picks changes, and may supply drawings (kept in git-ignored
+   `art/plates/`). The mark is the owner's, and takes only once every enemy has a picture.
+7. Play in the browser on a test address (`http://127.0.0.1:8765/`), never over the owner's saves.
+   A hand mark (the agent's).
+8. `docs/reference/map-upscale.md`. Never overwrite `map.png`: it is the original.
     Read from the files: done once `map-4k.webp` exists and `book.js` names it (a re-import).
 
 ## Notes

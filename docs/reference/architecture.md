@@ -22,7 +22,7 @@ assets/plates/              plates.json: pictures for enemies their book does no
                             from Wikimedia Commons (credited in README.txt)
 CLAUDE.md, README.md
 docs/                       spec, plan, reference
-  book-status.json          the book steps no file can show (checklist 3, 4, 7, 8, 9), with the date each was
+  book-status.json          the book steps no file can show (checklist 3, 4, 6, 7), with the date each was
                             marked done; written by tools/book_status.py (docs/reference/dashboard.md)
 shared/                     used by the player and the prototypes (classic scripts on a global LW)
   core.js                   rules data (Combat Results Table, Kai disciplines, items) and LW.Game, the book runner

@@ -14,13 +14,10 @@ const STAGES = [
   { id: 'rules', group: 'Getting the book', label: 'Rules', kind: 'agent', step: 4 },
   { id: 'reading', group: 'Items and fights', label: 'Reading copy', kind: 'script' },
   { id: 'items', group: 'Items and fights', label: 'Item table', kind: 'agent', step: 5 },
-  { id: 'pictures', group: 'Items and fights', label: 'Fight pictures', kind: 'agent', step: 6 },
-  { id: 'sheet', group: 'Items and fights', label: 'Picture sheet', kind: 'owner', step: 7 },
-  { id: 'testplay', group: 'Playing it', label: 'Test play', kind: 'agent', step: 8 },
-  { id: 'ownerplay', group: 'Playing it', label: 'You play', kind: 'owner', step: 9 },
-  { id: 'map', group: 'Map', label: 'Map', kind: 'owner', step: 10 },
+  { id: 'pictures', group: 'Items and fights', label: 'Fight pictures', kind: 'agent', step: 6 },  // then your look at the sheet
+  { id: 'testplay', group: 'Playing it', label: 'Test play', kind: 'agent', step: 7 },
+  { id: 'map', group: 'Map', label: 'Map', kind: 'owner', step: 8 },
 ];
-const HAND = new Set([3, 4, 7, 8, 9]);
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -88,7 +85,7 @@ $('#grid').addEventListener('click', (e) => {
   const cell = e.target.closest('td[data-stage]');
   if (!cell) return;
   if (cell.dataset.stage === 'map') return openMap(b);
-  if (['sheet', 'pictures'].includes(cell.dataset.stage)) return openSheet(b);
+  if (cell.dataset.stage === 'pictures') return openSheet(b);
   showStep(cell.dataset.stage);
 });
 function showStep(id) {  // a step's cell in the grid scrolls the book's panel to that step and lights it
@@ -109,10 +106,8 @@ const ACTIONS = {
   rules: () => [prompt('rules'), mark(4)],
   reading: () => [run('Make reading copy', 'reading')],
   items: (b) => [prompt('items'), run('Check items', 'check-items'), ...(b.items.check?.errors?.length ? [prompt('itemsFix', 'Copy fix prompt')] : [])],
-  pictures: () => [prompt('pictures'), { t: 'sheet', label: 'Picture sheet here' }],
-  sheet: (b) => [{ t: 'sheet', label: 'Open picture sheet here' }, link('On its own', `fights.html?book=${b.code}`), mark(7)],
-  testplay: () => [prompt('testplay'), link('Test address', 'http://127.0.0.1:8765/'), mark(8)],
-  ownerplay: () => [link('Open the player', '/'), mark(9)],
+  pictures: (b) => [prompt('pictures'), { t: 'sheet', label: 'Open picture sheet here' }, link('On its own', `fights.html?book=${b.code}`), mark(6)],
+  testplay: () => [prompt('testplay'), link('Test address', 'http://127.0.0.1:8765/'), mark(7)],
   map: () => [{ t: 'map', label: 'Open map editor here' }],
 };
 function run(label, stage, opt = {}) { return { t: 'run', label, stage, ...opt }; }

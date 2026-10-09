@@ -148,7 +148,7 @@ stand-in that suits that book), and put book entries first. The sheet labels a b
 add is written some other way (`ice barbarian$`, `kalkoth`). Where to look, in order:
 
 1. **The owner's own picture**, if they give one. The owner puts it in on the picture sheet
-   (`tools/admin/fights.html?book=<code>`, also inline in the dashboard at step 7): drop a picture file on
+   (`tools/admin/fights.html?book=<code>`, also inline in the dashboard at step 6): drop a picture file on
    the enemy's card, paste it, or Choose; the page shrinks it to 2000 px on its long side as WebP and
    `POST /api/admin/plate` saves it as git-ignored `art/plates/<code>/<name>.webp` and writes the entry
    (`tools/plates_file.py`): `match` the enemy's exact name, escaped and anchored, `book` set, at the top
@@ -183,6 +183,6 @@ add is written some other way (`ice barbarian$`, `kalkoth`). Where to look, in o
 
 Show the owner each new picture as it will look before calling it done: the dashboard's sheet,
 `http://localhost:8765/tools/admin/fights.html?book=<book>`, shows every enemy of the book inked as in a
-fight (checklist step 7). The importer's report counts the library entries the book can use;
+fight (the owner's half of checklist step 6). The importer's report counts the library entries the book can use;
 after adding them, run it again and expect 0 "with none". Plates are drawn whole: only a ruled frame line round the picture is
 cut away, and the edges are not faded (owner's request).

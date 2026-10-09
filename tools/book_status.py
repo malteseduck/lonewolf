@@ -8,10 +8,11 @@ can show, which are kept in docs/book-status.json (committed).
     python tools/book_status.py undo <book> <step>   take a hand mark back
     python tools/book_status.py checklist            rewrite the table in docs/book-checklist.md
 
-<book> is a code (03tcok) or a number (3). <step> is the checklist's number, 1-10.
+<book> is a code (03tcok) or a number (3). <step> is the checklist's number, 1-8.
 
-Steps 3, 7, 8 and 9 are judgements, so `done` records them (with today's date) in book-status.json;
-step 4 is too, once its "Book N" heading is in docs/reference/rules-books.md. The other steps are read
+Steps 3 and 7 are judgements, so `done` records them (with today's date) in book-status.json;
+step 4 is too, once its "Book N" heading is in docs/reference/rules-books.md, and step 6 (the owner's
+look at the picture sheet) once every enemy has a picture. The other steps are read
 from the files, so `done` checks them instead (step 5 runs check_items.mjs first) and exits 1, saying
 why, if they are not done. Either way the checklist table is rewritten. Agents finishing a step run
 this; the dashboard (tools/admin/) does the same through serve.py.
@@ -51,14 +52,12 @@ STEPS = {
     3: ('phrasings', "Importer reads the book's own phrasings (gates, Random Number, combat)"),
     4: ('rules', 'Rules addendum written, Engine column true'),
     5: ('items', 'Item table (`items-<code>.js`): read, `check_items.mjs` clean, registered'),
-    6: ('pictures', 'Every enemy has a fight picture (importer: "0 with none")'),
-    7: ('sheet', 'Fight pictures shown to the owner on one sheet, changes made'),
-    8: ('testplay', 'Played through with test characters; misreadings and item gaps fixed'),
-    9: ('ownerplay', 'The owner has played it and is happy'),
-    10: ('map', 'Printed map repainted, labels checked, `map-4k.webp` made and shown in the player'),
+    6: ('pictures', 'Every enemy has a fight picture (importer: "0 with none"), shown to the owner on one sheet, changes made'),
+    7: ('testplay', 'Played through with test characters; misreadings and item gaps fixed'),
+    8: ('map', 'Printed map repainted, labels checked, `map-4k.webp` made and shown in the player'),
 }
-HAND = {3, 4, 7, 8, 9}  # judgements: recorded in book-status.json
-GROUPS = [('Getting the book', 1), ('Items and fights', 5), ('Playing it', 8), ('Pictures', 10)]
+HAND = {3, 4, 6, 7}  # judgements: recorded in book-status.json (4 and 6 also need their files)
+GROUPS = [('Getting the book', 1), ('Items and fights', 5), ('Playing it', 7), ('Pictures', 8)]
 
 
 def mtime(path):
@@ -274,17 +273,20 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
         st['items'] = {'state': 'warn', 'ev': f"{it['todos']} todos; the table or book changed since the last check (Check items)", 'src': 'disk', 'num': it['todos']}
     else:
         st['items'] = {'state': 'done', 'ev': f"Registered, check clean; {it['todos']} todo entries left to the player", 'src': 'disk', 'num': it['todos']}
-    # 6 fight pictures
+    # 6 fight pictures: every enemy has one (from the files), then the owner's look at the sheet (a mark)
+    m6 = hand_mark(6)
     if not imp:
         st['pictures'] = {'state': 'todo', 'ev': 'After import', 'src': 'disk'}
     elif imp['bare']:
-        st['pictures'] = {'state': 'todo', 'ev': f"{imp['bare']} of {imp['kinds']} kinds of enemy have no picture", 'src': 'disk', 'num': imp['bare']}
+        ev = f"{imp['bare']} of {imp['kinds']} kinds of enemy have no picture"
+        st['pictures'] = {'state': 'warn' if m6 else 'todo', 'src': 'disk', 'num': imp['bare'],
+                          'ev': f'Marked done {m6}, but {ev[0].lower()}{ev[1:]}' if m6 else ev}
+    elif m6:
+        st['pictures'] = {'state': 'done', 'ev': f"All {imp['kinds']} kinds of enemy have a picture; sheet looked at, marked done {m6}", 'src': 'hand'}
     else:
-        st['pictures'] = {'state': 'done', 'ev': f"All {imp['kinds']} kinds of enemy have a picture", 'src': 'disk'}
-    st['sheet'] = handed(7, 'You look at every enemy on one sheet; changes made')
-    st['testplay'] = handed(8, 'Every gate, fight and draw tried with test characters')
-    st['ownerplay'] = handed(9, 'You have played it and are happy')
-    # 10 map
+        st['pictures'] = {'state': 'warn', 'ev': f"All {imp['kinds']} kinds of enemy have a picture; waiting for your look at the sheet", 'src': 'disk'}
+    st['testplay'] = handed(7, 'Every gate, fight and draw tried with test characters')
+    # 8 map
     ms = b['mapStage']
     if not ms:
         st['map'] = {'state': 'todo', 'ev': 'After download', 'src': 'disk'}
@@ -349,12 +351,14 @@ def mark(code, step, undo=False, run_checks=True):
         return False, f'unknown book {code}'
     code, title, n = hit
     if step not in STEPS:
-        return False, 'step must be 1-10'
+        return False, f'step must be 1-{max(STEPS)}'
     sid = STEPS[step][0]
     if step in HAND:
         b = book_status(code, title, n)
         if not undo and step == 4 and not b['rulesHeading']:
             return False, f'step 4: write "### Book {n}, {title}" in docs/reference/rules-books.md first'
+        if not undo and step == 6 and b['stages']['pictures']['state'] == 'todo':
+            return False, f"Book {n} step 6 is NOT done (read from the files): {b['stages']['pictures']['ev']}"
         data = load_hand()
         marks = data.setdefault('books', {}).setdefault(code, {})
         if undo:

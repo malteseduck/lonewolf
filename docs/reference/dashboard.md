@@ -24,8 +24,9 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   Closing it asks first if it has unsaved label edits. It still works on its own at its own address.
 - **The picture sheet**, `tools/admin/fights.html?book=<code>`: every kind of enemy in the book with
   the picture the player would show (the same choice as `nextFoe()` in `main.js`), inked as in a
-  fight, the sections it is fought in and where the picture comes from. Checklist step 7. It opens
-  inline under the grid like the map editor (the step 6 or 7 cell, or Open picture sheet here;
+  fight, the sections it is fought in and where the picture comes from. Checklist step 6, after the
+  agent's work: the owner looks here and marks it. It opens
+  inline under the grid like the map editor (the step 6 cell, or Open picture sheet here;
   `?embed=1`), and on its own. A picture file dropped, pasted or chosen on a card becomes that enemy's
   picture; Adjust crops any card's picture and sets levels, with the fight panel previewed as it will look;
   Remove takes the owner's entry away. Each save redraws the cards and the "with none" count, and the
@@ -46,9 +47,9 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
 | 4 Rules | both | a `### Book N,` heading in `rules-books.md` and a hand mark |
 | Reading copy | files | `reading.txt` and `items-reading.txt` newer than `book.js` (not a checklist step) |
 | 5 Item table | files | `items-<code>.js` registered in `main.js` `ITEM_TABLES`, and `check-items.json` (from `check_items.mjs --json`) clean and newer than the table and `book.js` |
-| 6 Fight pictures | files | every enemy in `book.js` has a plate of its own or a `plates.json` match (the importer's "0 with none", worked out afresh, so a new `plates.json` entry counts at once) |
-| 7, 8, 9 | hand | marked |
-| 10 Map | files | `map-4k.webp` made and named by `book.js` |
+| 6 Fight pictures | both | every enemy in `book.js` has a plate of its own or a `plates.json` match (the importer's "0 with none", worked out afresh, so a new `plates.json` entry counts at once), and the owner's hand mark once they have looked at the sheet. All pictured but not marked is a warning |
+| 7 Test play | hand | marked |
+| 8 Map | files | `map-4k.webp` made and named by `book.js` |
 
 `docs/book-status.json` (committed) holds only the hand marks: `{"books": {"<code>": {"<step>":
 "<date>"}}}`. The checklist's table is generated from all of this (`book_status.py checklist`, run
@@ -57,16 +58,18 @@ by every mark), so there is one source; edit the files or the marks, never the t
 ### Marking a step
 
 ```sh
-python tools/book_status.py done <book> <step>     # book: code or number; step: 1-10
+python tools/book_status.py done <book> <step>     # book: code or number; step: 1-8
 python tools/book_status.py undo <book> <step>     # a hand mark only
 python tools/book_status.py show <book>            # every step with its evidence
 python tools/book_status.py                        # one line per book
 ```
 
-For a hand step `done` records today's date (step 4 only once the addendum's heading exists). For a
+For a hand step `done` records today's date (step 4 only once the addendum's heading exists, step 6
+only once every enemy has a picture). For a
 step read from the files it checks them instead (step 5 runs `check_items.mjs --json` first) and
-exits 1 naming what is missing. Every copy-prompt ends with this command, so an agent marks its own
-step; the owner marks only what is theirs (7, 9), from the page.
+exits 1 naming what is missing. Every copy-prompt but step 6's ends with this command, so an agent marks its own
+step; step 6 is the owner's to mark, from the page, after looking at the sheet (its prompt has the
+agent run `show` instead).
 
 ## Server: `/api/admin/*` in `tools/serve.py`
 
