@@ -111,8 +111,8 @@ Pendant), standing-potion (Alether), soap, torch, flint-spark (Tinderbox), backp
 `node tools/check_items.mjs <book>`: errors (sections, choices, items or icons that do not exist,
 unknown fields), the counts, and the flagged sections the table leaves out. Every left-out
 section should be one that was read and judged to need nothing. Book 1: no errors; 12 items, 65
-sections; 103 left out (four found on a re-read, 2026-10-09). Book 2: no errors; 13 items, 109 sections; 106 left out (three it first
-listed were real misses, so read the list). It knows every book's items, as the page does.
+sections; 103 left out (four found on a re-read, 2026-10-09). Book 2: no errors; 13 items, 117 sections; 98 left out (three it first
+listed were real misses, so read the list; a full re-read on 2026-10-09 found nothing more). It knows every book's items, as the page does.
 `--json` also writes `data/projectaon/<book>/check-items.json`, which `tools/book_status.py` reads
 for checklist step 5 (the dashboard's "Check items" runs it so).
 

@@ -166,7 +166,10 @@ Left to the player whatever the engine does: whether to sleep (B2 41), and the p
      modal opens fitted with ground round the map, zooms to 3x the fit, and `scanOf` caps its
      canvas at 4096 px wide (the iPad's canvas limit). Not yet checked on the iPad.
    - **Book 2 done** (2026-10-07): its printed map is the same file as Book 1's, so it uses a copy
-     of Book 1's `map-4k.webp`.
+     of Book 1's `map-4k.webp`. On 2026-10-09 Book 1's label list (`labels.json`, `labels-checked.txt` in `maps/02fotw/`) and
+     work files (`work/`: 2K, lettered, rounds 1-8, check 8) were copied too, so every map step reads
+     as done; kept as separate copies so Book 2 can gain its own city maps. Its `style.txt` is its
+     own (written for a repaint never made), not the one Book 1's map was painted with.
    - Next: Books 3-12, one at a time (label list, erase, letter, one or two Gemini rounds, finish).
      Book 1's label list took the most work; the map editor (`tools/map-editor.html`, which edits
      the labels and runs every step of the procedure) was first used on Book 3.
@@ -327,7 +330,7 @@ Working and checked by playing in the browser:
   them; 170's -3 now lives in the table); Book 2 gains two automatic draws (12, 122) and a gate (25),
   and stops applying first-round +2s (7, 270) and the no-weapon -4 to an armed hero (110, 157).
   Both still have 0 enemies with no picture.
-- Items handled by the engine for Book 2 (2026-10-01): `items-02fotw.js`, 109 sections, 13 book
+- Items handled by the engine for Book 2 (2026-10-01): `items-02fotw.js`, 117 sections (re-read in full 2026-10-09: nothing missing; 14 todos), 13 book
   items with icons. New in the engine for it, all rules the text states: the Sommerswerd (+8 in
   combat, Weaponskill with any sword counts, undead foes lose double), Special Items that fight
   (the Magic Spear), fights only one weapon can win and bare-handed ones, Helghast mind drain per

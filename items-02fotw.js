@@ -112,7 +112,7 @@ export const SECTIONS = {
   160: { need: { 255: { disc: 'weaponskill' } } },
   165: { take: [{ item: 'seal' }], give: [{ gold: 40 }] },
   168: { need: { 314: { gold: 1, spend: true } } },
-  // reached only by turning down the food at the inn
+  // reached only by turning down the fruit on the shore (337)
   171: { ep: -3 },
   178: { meal: true },
   181: { loot: shop([['sword', 4], ['dagger', 2], ['shortSword', 3], ['warhammer', 6], ['spear', 5], ['mace', 4], ['blanket', 3], ['pack', 1]]) },
