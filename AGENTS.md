@@ -152,7 +152,7 @@ explaining it would cost more than doing it.
 | `docs/reference/rules-books.md` | The books' rules: common, Kai, Magnakai, and an addendum per book; what the engine applies |
 | `docs/reference/dashboard.md` | The import dashboard (`tools/admin/`): its status rules, `book_status.py`, the `/api/admin` jobs, the prompts |
 | `docs/book-checklist.md` | Every step each book goes through; its table is generated. **Check it before starting work on a book. When a step is finished, run `python tools/book_status.py done <book> <step>`**: it records a hand step, checks a step read from the files, and rewrites the table. Never edit the table by hand. |
-| `docs/plan.md` | State of the work, decisions made, what is waiting on the owner, next steps. **Read this first in a new session.** |
+| `docs/plan.md` | Work outside the book steps (engine gaps, notes for later), decisions made, what the player can do. **Read this first in a new session.** Where each book stands is the dashboard's, not this file's. |
 
 Keep them current: a change to behaviour updates the matching reference file in the same piece of
-work, and `plan.md` when something moves between done and not done.
+work, and `plan.md` when work outside the book steps moves between done and not done.

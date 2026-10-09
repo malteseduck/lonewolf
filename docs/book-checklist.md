@@ -1,7 +1,8 @@
 # Book import checklist
 
 Every step a book goes through, in order, and where each book stands. The procedures are in the
-files named under each step; what is left inside a step (counts, sections) is in `docs/plan.md`.
+files named under each step; what is left inside a step (counts, sections) is shown by the import
+dashboard (`tools/admin/`). Work outside the steps is in `docs/plan.md`.
 
 **The table is generated: do not edit it.** `tools/book_status.py` works each step out from the
 files on disk (steps 1, 2, 5, 6, 10, and the heading half of 4) or from `docs/book-status.json`
@@ -62,5 +63,5 @@ Each step's buttons and prompt are in the dashboard, `http://localhost:8765/tool
 
 ## Notes
 
-- Books 3-12: what each import report left (Random Number draws for the item table, puzzles,
-  weapon bonuses left as text) is under steps 2.1-2.10 of `docs/plan.md`.
+- Per-book things no step asks for (weapon bonuses left as text, files to delete) are under "Book
+  notes outside the steps" in `docs/plan.md`.
