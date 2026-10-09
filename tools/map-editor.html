@@ -23,6 +23,12 @@ body { display: flex; flex-direction: column; }
 #rail { display: flex; align-items: center; gap: 4px; padding: 5px 8px; background: var(--panel); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
 #rail b { margin-right: 6px; }
 #bookpick { width: 16em; margin-right: 8px; }
+#booklist { position: fixed; z-index: 50; min-width: 22em; max-height: 60vh; overflow-y: auto; background: var(--panel);
+  border: 1px solid var(--line); border-radius: 4px; box-shadow: 0 6px 18px #0008; }
+#booklist[hidden] { display: none; }
+#booklist .bk { padding: 4px 9px; cursor: pointer; white-space: nowrap; }
+#booklist .bk:hover, #booklist .bk.hi { background: var(--btn-hi); }
+#booklist .bk small { color: var(--dim); margin-left: 6px; }
 #steps { display: flex; gap: 3px; flex-wrap: wrap; }
 .step { display: flex; align-items: center; gap: 5px; padding: 3px 8px; }
 .step i { width: 9px; height: 9px; border-radius: 50%; background: #6b5d48; display: inline-block; }
@@ -90,7 +96,7 @@ body.embed #rail > b, body.embed #bookpick { display: none; }
 </style>
 </head>
 <body>
-<header id="rail"><b>Map editor</b><input id="bookpick" list="booklist" placeholder="Pick a book: number, title or code" autocomplete="off"><datalist id="booklist"></datalist><div id="steps"></div><span id="job"></span></header>
+<header id="rail"><b>Map editor</b><input id="bookpick" placeholder="Pick a book: number, title or code" autocomplete="off"><div id="booklist" hidden></div><div id="steps"></div><span id="job"></span></header>
 <section id="panel" hidden></section>
 <div id="dropmark"></div>
 <div id="app">
@@ -223,15 +229,36 @@ async function bookPicker() {  // every book folder, typeahead by number, title 
   let books = [];
   try { books = await (await fetch('/api/map/books', { cache: 'no-store' })).json(); } catch (e) {}
   const name = b => (b.number ? b.number + '. ' : '') + (b.title || b.code);
-  $('booklist').innerHTML = books.map(b => `<option value="${esc(b.code)}" label="${esc(name(b) + ' (' + b.stage + ')')}"></option>`).join('');
   const cur = books.find(b => b.code === book);
-  const pick = $('bookpick');
+  const pick = $('bookpick'), list = $('booklist');
   if (cur) pick.placeholder = name(cur) + ' (' + cur.code + ')';
-  pick.onchange = () => {
-    const b = books.find(x => x.code === pick.value.trim());
-    if (b && b.code !== book) location.search = '?book=' + encodeURIComponent(b.code);
+  // our own list under the box: a datalist's popup opened at the far left of the window
+  let shown = [], hi = 0;
+  const go = b => { list.hidden = true; if (b && b.code !== book) location.search = '?book=' + encodeURIComponent(b.code); };
+  const mark = () => [...list.children].forEach((d, i) => d.classList.toggle('hi', i === hi));
+  const show = () => {
+    const q = pick.value.trim().toLowerCase();
+    shown = books.filter(b => !q || (name(b) + ' ' + b.code).toLowerCase().includes(q))
+      .sort((a, b) => (String(b.number) === q) - (String(a.number) === q));  // "3" puts Book 3 before 13
+    hi = 0;
+    list.innerHTML = shown.map((b, i) => `<div class="bk" data-i="${i}">${esc(name(b))}<small>${esc(b.code + ', ' + b.stage)}</small></div>`).join('');
+    mark();
+    const r = pick.getBoundingClientRect();
+    Object.assign(list.style, { left: r.left + 'px', top: r.bottom + 2 + 'px' });
+    list.hidden = !shown.length;
   };
-  pick.onfocus = () => { pick.value = ''; };
+  pick.oninput = show;
+  pick.onfocus = () => { pick.value = ''; show(); };
+  pick.onblur = () => { list.hidden = true; };
+  list.onmousedown = e => { e.preventDefault(); const d = e.target.closest('.bk'); if (d) go(shown[+d.dataset.i]); };
+  pick.onkeydown = e => {
+    if (list.hidden) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault(); hi = (hi + (e.key === 'ArrowDown' ? 1 : shown.length - 1)) % shown.length;
+      mark(); list.children[hi].scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter') { e.preventDefault(); go(shown[hi]); }
+    else if (e.key === 'Escape') pick.blur();
+  };
 }
 async function init() {
   await bookPicker();
