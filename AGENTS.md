@@ -32,6 +32,8 @@ python tools/serve.py 8765 --bind 0.0.0.0
 
 Then open `http://<the PC's LAN address>:8765/` on the device (`ipconfig` shows it). Plain HTTP, so
 no service worker and no offline copy; for that, see `docs/reference/offline.md`.
+`python tools/offline_check.py` prints what the offline copy would hold (sizes, largest files) and
+exits 1 if the page names a file that is missing; run it after adding or moving a file the page loads.
 
 There are no automated tests and no linter. `node --check <file>` catches syntax errors, but on
 the root `.js` files it misses a `const` declared twice; copy the file to a `.mjs` name in the

@@ -24,7 +24,7 @@ saves under that address). Tailscale gives both.
    `serve.py` must be running for the iPad to reach the PC. Only your own Tailscale devices can
    open it. `tailscale serve status` shows it; `tailscale serve --https=443 off` stops it.
 5. **On the iPad, in Chrome** (or Safari): open that address. The top right corner of the page says
-   "Saving for offline n / 631", then "Ready offline" (about 42 MB).
+   "Saving for offline n / 647", then "Ready offline" (about 44 MB).
 6. **Add it to the Home Screen**: Chrome's share button (top right), "Add to Home Screen". Play from
    that icon from now on. The icon's app has its own storage, apart from Chrome's tabs: bring a game
    over with backup (in the tab) and restore (in the app). iPadOS clears website data unused for a
@@ -46,9 +46,21 @@ saves under that address). Tailscale gives both.
 
 ## How it works
 
-- `tools/serve.py` lists every file the player loads at `GET /api/offline`, with a hash of each
-  (`OFFLINE_FILES`, `OFFLINE_DIRS`, less `OFFLINE_SKIP_*`: Project Aon's section pages, the
-  prototypes, docs, tools and `art/reference/` stay behind). `version` is a hash of the whole list.
+- `tools/serve.py` lists every file the player loads at `GET /api/offline`, with a hash of each.
+  It is an allow-list, never whole folders, found by following references from `index.html`:
+  `<script src>` and `<link href>` (stylesheet, manifest, apple-touch-icon), the web manifest's
+  icons, static `import ... from` (relative to the module), `fetch('a literal path')`, CSS `url()`
+  (`fonts.css` brings the woff2), and the `<script>` tags `data/projectaon/index.js` writes, which
+  bring each `book.js`; a `book.js` brings the images it names (pictures and its one map), and
+  `assets/plates/plates.json` and `art/manifest.json` the pictures they name. Paths built at
+  runtime cannot be followed, so `OFFLINE_DIRS` keeps `assets/icons/*.svg` whole (main.js builds
+  `assets/icons/${name}.svg`); a new file loaded that way needs a rule there. Map work files
+  (`data/projectaon/<code>/work/`), section pages, prototypes, docs and tools stay on the PC.
+  `version` is a hash of the whole list. The answer also has `missing`: files something names that
+  are not on disk (sw.js ignores it).
+- `python tools/offline_check.py` prints the same list without a server: file count and size, size
+  per group (each book on its own), the 10 largest files and anything missing (exit code 1 if so).
+  Run it after adding a file the page loads, or moving one.
 - `sw.js` (the service worker) keeps the files in a Cache named `lw-files-<version>` and answers
   every request for them from it; `api/` and `sw.js` itself always go to the network. Its state
   (`active`, `staged`) is kept in the `lw-offline-state` cache.

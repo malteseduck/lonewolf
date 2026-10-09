@@ -2,7 +2,7 @@
 Gemini was not trusted with, and save the 4K WebP.
 
 Run (from the project root):
-  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_letter.py <map-2k.png> <maps/<book>/labels.json> <repaint-x4.png> <H.json> <out.webp> [--mark x0,y0,x1,y1 ...] [--hand FONT] [--caps FONT]
+  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_letter.py <map-2k.png> <maps/<book>/labels.json> <repaint-x4.png> <H.json> <out.webp> [--mark x0,y0,x1,y1 ...] [--hand FONT] [--caps FONT] [--sheet PATH]
 
 <repaint-x4.png> is map_upscale.py's 4x of the Gemini round kept; <H.json> is map_check.py's warp
 for that round. Boxes, in the label list and --mark, are in map-2k.png's px.
@@ -22,7 +22,7 @@ and anything in a --mark box (a stray colon); its sparkle watermark, bottom righ
 the clean type of most names right, so only the ones it garbled are set again). Without --only,
 on a repaint, labels marked "reset" (ticked in tools/map-editor.html after the round's check)
 and "fix" are the ones done, if any label is marked "reset".
-Also writes <out>-sheet.png: each lettered label, the scan beside the result.
+Also writes <out>-sheet.png (or --sheet <path>): each lettered label, the scan beside the result.
 With <H.json> given as -, it letters Gemini's input instead: <repaint> is map_erase.py's picture,
 lettered at its own size (Book 1: the owner's idea, so Gemini copies clean type and paints round
 it). Book 1 used Cabin SemiBold, a free Gill Sans relative, for every place name: --hand and
@@ -230,6 +230,7 @@ def main():
     ap.add_argument('--only', default='')
     ap.add_argument('--hand', default='Cabin.ttf|SemiBold')
     ap.add_argument('--caps', default='Cabin.ttf|SemiBold')
+    ap.add_argument('--sheet', default='')  # where the sheet goes; map-4k.webp's goes to work/, not beside it
     a = ap.parse_args()
     F = read(a.faithful)
     fh, fw = F.shape[:2]
@@ -295,7 +296,7 @@ def main():
         rows.append(row)
     Wd = max(r.shape[1] for r in rows)
     sheet = np.vstack([np.pad(r, ((0, 0), (0, Wd - r.shape[1]), (0, 0)), constant_values=255) for r in rows])
-    cv2.imencode('.png', sheet)[1].tofile(str(out.with_name(out.stem + '-sheet.png')))
+    cv2.imencode('.png', sheet)[1].tofile(a.sheet or str(out.with_name(out.stem + '-sheet.png')))
 
 
 if __name__ == '__main__':

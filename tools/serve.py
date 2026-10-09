@@ -10,7 +10,7 @@ Static files as `python -m http.server` serves them, from the project root, plus
 
     GET  /api/maplabels/<book>   a book's map label list, maps/<book>/labels.json (committed: the
                                  owner's work, not the book's; the scan and the pictures made from
-                                 it stay in data/projectaon/<book>/)
+                                 it stay in data/projectaon/<book>/, the steps' files in its work/)
     POST /api/maplabels/<book>   write it (a JSON list of {text, box, ...}); the old file is copied
                                  to labels.json.bak first (git-ignored). For tools/map-editor.html
 
@@ -18,7 +18,8 @@ Static files as `python -m http.server` serves them, from the project root, plus
     from this machine (127.0.0.1 or ::1), because they run scripts, even if the server is bound to
     the LAN. <book> is an existing folder of data/projectaon:
     GET  /api/map/books               every book folder: {code, number, title, stage} (how far its map is)
-    GET  /api/map/<book>/state        the map files (names starting "map", and map-check-<n>/*, and
+    GET  /api/map/<book>/state        the map files (names starting "map" in the book's folder and its
+                                      work/, named without the folder, and work/map-check-<n>/*, and
                                       maps/<book>/'s labels.json, style.txt, labels-checked.txt) with
                                       size and mtime, the Gemini rounds present, the job running, when book.js was written
     POST /api/map/<book>/run/<step>   run one step: upscale, draft, measure, erase, letter, prompt,
@@ -28,7 +29,7 @@ Static files as `python -m http.server` serves them, from the project root, plus
     POST /api/map/<book>/checked      mark step 3 (labels checked) done: writes maps/<book>/labels-checked.txt;
                                       ?undo=1 removes it. Drafting again removes it too
     POST /api/map/<book>/gemini/<n>   body: the round's image (png, jpeg or webp, up to 30 MB), saved
-                                      as map-gemini-<n>.<ext>; 409 if there is one, unless ?force=1
+                                      as work/map-gemini-<n>.<ext>; 409 if there is one, unless ?force=1
 
     GET  /api/offline          what the offline copy holds: {version, files: {path: hash}}
 
@@ -43,6 +44,7 @@ import argparse
 import hashlib
 import json
 import os
+import posixpath
 import re
 import shutil
 import subprocess
@@ -57,13 +59,24 @@ BACKUPS = os.path.join(ROOT, 'backups')
 MAX = 5 * 1024 * 1024
 NAME = re.compile(r'^[^\\/:*?"<>|\x00-\x1f]{1,120}\.json$')
 
-# What the offline copy holds: the player and everything it loads. Project Aon's section pages and
-# the importer's notes stay behind (the page reads book.js and the images), as do the prototypes,
-# docs, tools and the reference images.
-OFFLINE_FILES = ['index.html', 'manifest.webmanifest']
-OFFLINE_DIRS = ['shared', 'assets', 'art', 'data/projectaon']
-OFFLINE_SKIP_DIRS = {'art/reference', '__pycache__'}
-OFFLINE_SKIP_EXT = {'.htm', '.html', '.txt', '.md', '.py', '.pyc'}
+# What the offline copy holds: only what the player loads, never whole folders, so map work files,
+# trial upscales, prototypes, docs and tools stay on the PC. It is found by following references from
+# index.html, so a new file the page loads by a plain path comes along by itself: <script src> and
+# <link href> (also the <script> tags data/projectaon/index.js writes), the web manifest's icons,
+# static imports, fetch('a literal path') and CSS url(). Each book.js brings the images it names
+# (pictures and its one map); plates.json and art/manifest.json bring the pictures they name.
+OFFLINE_ENTRY = 'index.html'
+# paths built at runtime, which the walk cannot see: main.js asks for `assets/icons/${name}.svg`
+OFFLINE_DIRS = {'assets/icons': ('.svg',)}
+BOOK_IMAGE = re.compile(r'"([\w.-]+\.(?:png|jpe?g|gif|webp))"', re.I)
+HTML_TAG = re.compile(r'<(script|link)\b([^>]*)>', re.I)
+HTML_ATTR = re.compile(r'\b(src|href|rel)\s*=\s*["\']([^"\']*)["\']', re.I)
+LINK_RELS = {'stylesheet', 'manifest', 'apple-touch-icon'}
+JS_IMPORT = re.compile(r'''\b(?:import|export)\s+(?:[\w*{}\s,$]+?\s+from\s+)?['"]([^'"`]+)['"]''')
+JS_FETCH = re.compile(r'''\bfetch\(\s*['"]([^'"`]+)['"]''')
+JS_SCRIPT = re.compile(r'''<script\b[^>]*\bsrc=["']([^"']+)["']''')  # document.write in data/projectaon/index.js
+CSS_URL = re.compile(r'''url\(\s*['"]?([^'")]+?)['"]?\s*\)''')
+BOOK_JS = re.compile(r'data/projectaon/[\w-]+/book\.js')
 _hashes, _hash_lock = {}, threading.Lock()
 
 
@@ -119,8 +132,19 @@ def _book_dir(book):
     return os.path.join(base, book)
 
 
+def _work(d, make=False):
+    """A book's map work folder: everything the map steps make, except map-4k.webp, which book.js
+    names. map.png, the printed scan, stays beside book.js too. Kept apart so the book folder holds
+    only what the importer reads and the page loads."""
+    w = os.path.join(d, 'work')
+    if make:
+        os.makedirs(w, exist_ok=True)
+    return w
+
+
 def _gemini_files(d, n):
-    return [f for f in os.listdir(d) if re.fullmatch(rf'map-gemini-{n}\.(png|jpg|webp)', f)]
+    w = _work(d)
+    return [f for f in os.listdir(w) if re.fullmatch(rf'map-gemini-{n}\.(png|jpg|webp)', f)] if os.path.isdir(w) else []
 
 
 def map_books():
@@ -140,11 +164,13 @@ def map_books():
             num = int(m.group(1))
         if m := re.search(r'"title":\s*"((?:[^"\\]|\\.)*)"', head):
             title = json.loads('"' + m.group(1) + '"')
+        w = _work(e.path)
         has = lambda f: os.path.isfile(os.path.join(e.path, f))
+        work = lambda f: os.path.isfile(os.path.join(w, f))
         # round 0 is the owner's tries from before the procedure
-        rounds = [f for f in os.listdir(e.path) if re.fullmatch(r'map-gemini-[1-9]\d*\.(png|jpg|webp)', f)]
-        stage = ('done' if has('map-4k.webp') else 'gemini' if rounds else 'lettered' if has('map-2k-lettered.jpg')
-                 else 'labels' if os.path.isfile(os.path.join(MAPS, e.name, 'labels.json')) else 'started' if has('map-2k.png')
+        rounds = [f for f in os.listdir(w) if re.fullmatch(r'map-gemini-[1-9]\d*\.(png|jpg|webp)', f)] if os.path.isdir(w) else []
+        stage = ('done' if has('map-4k.webp') else 'gemini' if rounds else 'lettered' if work('map-2k-lettered.jpg')
+                 else 'labels' if os.path.isfile(os.path.join(MAPS, e.name, 'labels.json')) else 'started' if work('map-2k.png')
                  else 'not started' if has('map.png') else 'no map')
         out.append({'code': e.name, 'number': num, 'title': title, 'stage': stage})
     return out
@@ -160,14 +186,18 @@ def map_state(d):
     for f in MAPS_FILES:
         if os.path.isfile(os.path.join(own, f)):
             add(f, own)
-    for e in sorted(os.scandir(d), key=lambda e: e.name):
-        if e.is_file() and e.name.startswith('map'):
-            add(e.name)
-        elif e.is_dir() and re.fullmatch(r'map-check-\d+', e.name):
-            for f in sorted(os.listdir(e.path)):
-                if os.path.isfile(os.path.join(e.path, f)):
-                    add(f'{e.name}/{f}')
-    rounds = sorted({int(m.group(1)) for f in os.listdir(d) if (m := re.fullmatch(r'map-gemini-(\d+)\.(png|jpg|webp)', f))})
+    w = _work(d)
+    # named without their folder: the editor knows map.png and map-4k.webp are in the book's, the rest in work/
+    for base in (d, w) if os.path.isdir(w) else (d,):
+        for e in sorted(os.scandir(base), key=lambda e: e.name):
+            if e.is_file() and e.name.startswith('map'):
+                add(e.name, base)
+            elif e.is_dir() and re.fullmatch(r'map-check-\d+', e.name):
+                for f in sorted(os.listdir(e.path)):
+                    if os.path.isfile(os.path.join(e.path, f)):
+                        add(f'{e.name}/{f}', base)
+    rounds = sorted({int(m.group(1)) for f in (os.listdir(w) if os.path.isdir(w) else [])
+                     if (m := re.fullmatch(r'map-gemini-(\d+)\.(png|jpg|webp)', f))})
     book_js = os.path.join(d, 'book.js')  # when the book was last imported
     return {'files': files, 'rounds': rounds, 'running': _job[0],
             'book': int(os.stat(book_js).st_mtime * 1000) if os.path.isfile(book_js) else None}
@@ -192,6 +222,8 @@ def map_commands(step, book, q):
     """(argv lists a step runs in order, None, 0), or (None, error, http code)."""
     d = f'data/projectaon/{book}'
     full = os.path.join(ROOT, d)
+    wk = f'{d}/work'  # all the steps make, but map-4k.webp
+    _work(full, make=step != 'import')
     rnd = q.get('round', [''])[0]
     if step in ('prompt', 'check', 'finish'):
         if not re.fullmatch(r'\d{1,3}', rnd):
@@ -200,7 +232,7 @@ def map_commands(step, book, q):
     t = lambda name: 'tools/' + name
     labels = f'maps/{book}/labels.json'
     if step == 'upscale':
-        return [PY + [t('map_upscale.py'), f'{d}/map.png', f'{d}/map-2k.png', '--width', '2048']], None, 0
+        return [PY + [t('map_upscale.py'), f'{d}/map.png', f'{wk}/map-2k.png', '--width', '2048']], None, 0
     if step == 'draft':
         own = os.path.join(MAPS, book)
         f = os.path.join(own, 'labels.json')
@@ -211,23 +243,23 @@ def map_commands(step, book, q):
         if os.path.isfile(os.path.join(own, 'labels-checked.txt')):  # a new list is unchecked
             os.remove(os.path.join(own, 'labels-checked.txt'))
         os.makedirs(own, exist_ok=True)
-        return [PY + [t('map_labels.py'), 'draft', f'{d}/map-2k.png', labels]], None, 0
+        return [PY + [t('map_labels.py'), 'draft', f'{wk}/map-2k.png', labels]], None, 0
     if step == 'measure':
-        return [PY + [t('map_measure.py'), f'{d}/map-2k.png', labels]], None, 0
+        return [PY + [t('map_measure.py'), f'{wk}/map-2k.png', labels]], None, 0
     if step == 'erase':
-        return [PY + [t('map_erase.py'), f'{d}/map-2k.png', labels, f'{d}/map-2k-erased.jpg']], None, 0
+        return [PY + [t('map_erase.py'), f'{wk}/map-2k.png', labels, f'{wk}/map-2k-erased.jpg']], None, 0
     if step == 'letter':
-        return [PY + [t('map_letter.py'), f'{d}/map-2k.png', labels, f'{d}/map-2k-erased.jpg', '-', f'{d}/map-2k-lettered.jpg'] + FONTS], None, 0
+        return [PY + [t('map_letter.py'), f'{wk}/map-2k.png', labels, f'{wk}/map-2k-erased.jpg', '-', f'{wk}/map-2k-lettered.jpg'] + FONTS], None, 0
     if step == 'prompt':
-        return [PY + [t('map_labels.py'), 'prompt', labels, f'{d}/map-prompt-{rnd}.txt', '--lettered']], None, 0
+        return [PY + [t('map_labels.py'), 'prompt', labels, f'{wk}/map-prompt-{rnd}.txt', '--lettered']], None, 0
     if step in ('check', 'finish'):
         got = _gemini_files(full, rnd)
         if not got:
             return None, f'no map-gemini-{rnd} image', 404
-        g = f'{d}/{got[0]}'
+        g = f'{wk}/{got[0]}'
         if step == 'check':
-            return [PY + [t('map_check.py'), f'{d}/map-2k.png', g, f'{d}/map-check-{rnd}'],
-                    PY + [t('map_labels.py'), 'check', labels, f'{d}/map-check-{rnd}/aligned.png', f'{d}/map-2k-lettered.jpg']], None, 0
+            return [PY + [t('map_check.py'), f'{wk}/map-2k.png', g, f'{wk}/map-check-{rnd}'],
+                    PY + [t('map_labels.py'), 'check', labels, f'{wk}/map-check-{rnd}/aligned.png', f'{wk}/map-2k-lettered.jpg']], None, 0
         w = q.get('width', [''])[0]
         if w:
             if not re.fullmatch(r'\d{3,5}', w):
@@ -239,28 +271,92 @@ def map_commands(step, book, q):
                 width = int(out.strip().splitlines()[-1])
             except (ValueError, IndexError):
                 return None, 'could not read the round image width', 500
-        x4 = f'{d}/map-gemini-{rnd}-x4.png'
+        x4 = f'{wk}/map-gemini-{rnd}-x4.png'
         return [PY + [t('map_upscale.py'), g, x4, '--width', str(width * 4)],
-                PY + [t('map_letter.py'), f'{d}/map-2k.png', labels, x4, f'{d}/map-check-{rnd}/H.json', f'{d}/map-4k.webp'] + FONTS], None, 0
+                PY + [t('map_letter.py'), f'{wk}/map-2k.png', labels, x4, f'{wk}/map-check-{rnd}/H.json', f'{d}/map-4k.webp', '--sheet', f'{wk}/map-4k-sheet.png'] + FONTS], None, 0
     if step == 'import':
         return [PY + [t('import_projectaon.py'), book]], None, 0
     return None, 'unknown step', 404
 
 
 def offline_list():
-    rels = [f for f in OFFLINE_FILES if os.path.isfile(os.path.join(ROOT, f))]
-    rels += [e.name for e in os.scandir(ROOT) if e.is_file() and e.name.endswith('.js') and e.name != 'sw.js']
-    for top in OFFLINE_DIRS:
-        for dirpath, dirnames, filenames in os.walk(os.path.join(ROOT, top)):
-            rel_dir = os.path.relpath(dirpath, ROOT).replace(os.sep, '/')
-            dirnames[:] = [d for d in dirnames if not d.startswith('.') and d not in OFFLINE_SKIP_DIRS
-                           and f'{rel_dir}/{d}' not in OFFLINE_SKIP_DIRS]
-            for f in filenames:
-                if not f.startswith('.') and os.path.splitext(f)[1].lower() not in OFFLINE_SKIP_EXT:
-                    rels.append(f'{rel_dir}/{f}')
-    files = {r: _hash(r) for r in sorted(set(rels))}
+    def text(rel):
+        try:
+            with open(os.path.join(ROOT, rel), encoding='utf-8') as f:
+                return f.read()
+        except OSError:
+            return ''
+
+    def as_json(rel):
+        try:
+            return json.loads(text(rel))
+        except ValueError:
+            return {}
+
+    seen, missing, todo = set(), set(), [OFFLINE_ENTRY]
+
+    def add(base, url):
+        """Queue url as read from a file in folder base ('' for the page itself); not data:, other
+        hosts, the server's api/, or a path with ${...} in it."""
+        url = url.split('#', 1)[0].split('?', 1)[0].strip()
+        if not url or re.match(r'^(?:[a-z][\w+.-]*:|//)', url, re.I) or '${' in url:
+            return
+        rel = posixpath.normpath(url.lstrip('/') if url.startswith('/') else posixpath.join(base, url))
+        if not rel.startswith('..') and not rel.startswith('api/'):
+            todo.append(rel)
+
+    while todo:
+        rel = todo.pop()
+        if rel in seen:
+            continue
+        seen.add(rel)
+        if not os.path.isfile(os.path.join(ROOT, rel)):
+            missing.add(rel)
+            continue
+        here, ext = posixpath.dirname(rel), os.path.splitext(rel)[1].lower()
+        if ext not in ('.html', '.js', '.css', '.json', '.webmanifest'):
+            continue
+        t = text(rel)
+        if ext == '.html':
+            for tag, attrs in HTML_TAG.findall(t):
+                a = {k.lower(): v for k, v in HTML_ATTR.findall(attrs)}
+                if tag.lower() == 'script' and a.get('src'):
+                    add(here, a['src'])
+                elif tag.lower() == 'link' and a.get('href') and LINK_RELS & set(a.get('rel', '').lower().split()):
+                    add(here, a['href'])
+        elif BOOK_JS.fullmatch(rel):  # too big and too wordy to read for imports
+            for name in set(BOOK_IMAGE.findall(t)):
+                add(here, name)
+        elif ext == '.js':
+            for u in JS_IMPORT.findall(t):  # an import is relative to its module...
+                add(here, u)
+            for u in JS_FETCH.findall(t) + JS_SCRIPT.findall(t):  # ...a fetch or a written tag to the page
+                add('', u)
+        elif ext == '.css':
+            for u in CSS_URL.findall(t):
+                add(here, u)
+        elif ext == '.webmanifest':
+            for icon in as_json(rel).get('icons', []):
+                add(here, icon.get('src', ''))
+        elif rel == 'assets/plates/plates.json':
+            for p in as_json(rel).get('plates', []):
+                add('', p.get('src', ''))
+        elif rel == 'art/manifest.json':
+            art = as_json(rel)
+            hero, portrait = art.get('hero'), art.get('portrait')
+            for s in [*(art.get('enemies') or {}).values(), hero.get('src') if isinstance(hero, dict) else hero,
+                      portrait.get('src') if isinstance(portrait, dict) else portrait]:
+                if s:
+                    add('art', s)
+    for top, exts in OFFLINE_DIRS.items():
+        if os.path.isdir(os.path.join(ROOT, top)):
+            seen.update(f'{top}/{e.name}' for e in os.scandir(os.path.join(ROOT, top))
+                        if e.is_file() and e.name.lower().endswith(exts))
+    files = {r: _hash(r) for r in sorted(seen - missing)}
     version = hashlib.sha1(json.dumps(files, sort_keys=True).encode()).hexdigest()[:16]
-    return {'version': version, 'files': files}
+    # missing: named by something the page loads but not on disk (tools/offline_check.py reports it;
+    # sw.js reads only version and files)
+    return {'version': version, 'files': files, 'missing': sorted(missing)}
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -339,7 +435,7 @@ class Handler(SimpleHTTPRequestHandler):
                     break
             if step == 'letter' and not rc:  # the list the lettered picture was made from, so the
                 d = _book_dir(book)          # editor can tell which later edits matter to it
-                shutil.copyfile(os.path.join(MAPS, book, 'labels.json'), os.path.join(d, 'map-labels-lettered.json'))
+                shutil.copyfile(os.path.join(MAPS, book, 'labels.json'), os.path.join(_work(d, True), 'map-labels-lettered.json'))
             self._json(200, {'code': rc, 'out': _tail(out)})
         finally:
             _job[0] = None
@@ -366,12 +462,13 @@ class Handler(SimpleHTTPRequestHandler):
         if not body.startswith(kind[1]):
             return self._json(400, {'error': 'the bytes are not that image type'})
         name = f'map-gemini-{n}.{kind[0]}'
-        tmp = os.path.join(d, name + '.part')
+        w = _work(d, True)
+        tmp = os.path.join(w, name + '.part')
         with open(tmp, 'wb') as f:
             f.write(body)
         for f in have:
-            os.remove(os.path.join(d, f))
-        os.replace(tmp, os.path.join(d, name))
+            os.remove(os.path.join(w, f))
+        os.replace(tmp, os.path.join(w, name))
         self._json(200, {'saved': name, 'size': size})
 
     def do_GET(self):

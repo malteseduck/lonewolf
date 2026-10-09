@@ -139,6 +139,8 @@ const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const book = params.get('book') || '';
 const dir = `/data/projectaon/${book}/`;
+// the steps' files are in work/; the scan and the finished map stay beside book.js, which names the map
+const at = name => (name === 'map.png' || name === 'map-4k.webp' ? dir : dir + 'work/') + name;
 const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 let base = { w: 0, h: 0 };  // the frame the boxes are in (map-2k.png's size); every background is drawn into it
 
@@ -188,7 +190,7 @@ function loadImage(url) {
 }
 async function loadImg(name) {
   if (!name) { img = null; return; }
-  try { img = await loadImage(dir + name + '?' + Date.now()); } catch (e) { img = null; msg('Could not load ' + name); }
+  try { img = await loadImage(at(name) + '?' + Date.now()); } catch (e) { img = null; msg('Could not load ' + name); }
 }
 const imgDims = () => { const w = base.w || img.width; return [w, img.height * w / img.width]; };
 async function setBase() {  // the labels' frame: map-2k.png, or the original while there is no 2k yet
@@ -196,7 +198,7 @@ async function setBase() {  // the labels' frame: map-2k.png, or the original wh
   if (!name) { base = { w: 0, h: 0 }; return; }
   const key = name + (S.files[name].mtime);
   if (setBase.key === key) return;
-  try { const im = await loadImage(dir + name + '?v=' + S.files[name].mtime); base = { w: im.width, h: im.height }; setBase.key = key; } catch (e) {}
+  try { const im = await loadImage(at(name) + '?v=' + S.files[name].mtime); base = { w: im.width, h: im.height }; setBase.key = key; } catch (e) {}
 }
 async function loadLabels() {
   const r = await fetch(`/api/maplabels/${encodeURIComponent(book)}`, { cache: 'no-store' });
@@ -929,7 +931,7 @@ function letterSig(list) { return JSON.stringify(list.map(l => Object.keys(l).fi
 async function loadLetteredFrom() {
   letteredFrom = null;
   if (!mt('map-labels-lettered.json')) return;
-  try { letteredFrom = await (await fetch(dir + 'map-labels-lettered.json?t=' + mt('map-labels-lettered.json'), { cache: 'no-store' })).json(); } catch (e) {}
+  try { letteredFrom = await (await fetch(at('map-labels-lettered.json') + '?t=' + mt('map-labels-lettered.json'), { cache: 'no-store' })).json(); } catch (e) {}
 }
 function status(n) {
   const lab = mt('labels.json'), lt = mt('map-2k-lettered.jpg'), er = mt('map-2k-erased.jpg');
@@ -959,7 +961,7 @@ function status(n) {
 
 const STEPS = [
   { n: 1, short: 'Upscale', name: 'Upscale scan', run: 'upscale', bg: () => ['map.png'],
-    text: 'Real-ESRGAN makes map-2k.png, 2048 px wide, from the original map.png in the book\'s folder. About 10 seconds on the GPU. Everything after this works on map-2k.png.' },
+    text: 'Real-ESRGAN makes map-2k.png, 2048 px wide, from the original map.png in the book\'s folder. It and every file after it, but map-4k.webp, go in the folder\'s work/. About 10 seconds on the GPU. Everything after this works on map-2k.png.' },
   { n: 2, short: 'Draft', name: 'Draft labels (OCR)', bg: () => ['map-2k.png'],
     text: 'OCR reads boxes off map-2k.png as a first label list: PaddleOCR when tools/.venv-paddle is set up (Book 4: about 55 of 62 right), else EasyOCR. It is only a start, to correct by hand in the next step, and takes a minute or more. If a list already exists it is replaced, and the old one is kept as labels.json.bak.' },
   { n: 3, short: 'Labels', name: 'Labels: wording and boxes (by hand)', bg: () => ['map-2k.png'],
@@ -1052,14 +1054,14 @@ function renderPanel() {
 <button data-do="copyimage">Copy image (PNG)</button>
 <a href="https://gemini.google.com/app" target="_blank" rel="noopener">Open Gemini</a>
 <span class="note">then paste the image and the prompt into a new chat</span></div>
-<div class="row">${files['map-2k-lettered.jpg'] ? `<img class="thumb" id="thumb" src="${dir}map-2k-lettered.jpg?v=${mt('map-2k-lettered.jpg')}" draggable="true" title="Drag me into the Gemini tab">` : '<span class="bad">no map-2k-lettered.jpg yet: step 6</span>'}
+<div class="row">${files['map-2k-lettered.jpg'] ? `<img class="thumb" id="thumb" src="${at('map-2k-lettered.jpg')}?v=${mt('map-2k-lettered.jpg')}" draggable="true" title="Drag me into the Gemini tab">` : '<span class="bad">no map-2k-lettered.jpg yet: step 6</span>'}
 <span class="note" style="max-width:60ch">Drag this JPEG straight into the Gemini tab. On Book 1 a 2048 px PNG with a long prompt was once refused and a roughly 1 MB JPEG went through, so drag the JPEG if a paste is refused.</span></div>
 <div class="row"><b>Receive</b> Ctrl+V the image Gemini made anywhere on this page, drop the file on it, or <input type="file" id="pick" accept="image/png,image/jpeg,image/webp">
 <span class="note">saved as map-gemini-${rd}.*</span></div>
 ${received ? `<div class="row">Received ${esc(received)}. <button class="primary" data-do="gotocheck">Go to Check</button></div>` : ''}`;
       break; }
     case 8: {
-      const base_ = `${dir}map-check-${rd}/`;
+      const base_ = at(`map-check-${rd}/`);
       h += `<div class="row">${roundInput()}${runBtn('Check', 'data-do="check"' + noRun)}
 <button data-open="${base_}labels.png"${files[`map-check-${rd}/labels.png`] ? '' : ' disabled'}>Open labels.png</button>
 <button data-open="${base_}flags.png"${files[`map-check-${rd}/flags.png`] ? '' : ' disabled'}>Open flags.png</button>
@@ -1068,7 +1070,7 @@ ${received ? `<div class="row">Received ${esc(received)}. <button class="primary
       break; }
     case 9:
       h += `<div class="row">${roundInput()}${runBtn('Finish', 'data-do="finish"' + noRun)}
-<button data-open="${dir}map-4k-sheet.png"${files['map-4k-sheet.png'] ? '' : ' disabled'}>Open map-4k-sheet.png</button>
+<button data-open="${at('map-4k-sheet.png')}"${files['map-4k-sheet.png'] ? '' : ' disabled'}>Open map-4k-sheet.png</button>
 <span class="note">${labels.filter(l => l.reset).length} labels ticked reset, ${labels.filter(l => l.fix).length} fix: those are set again.</span></div>`; break;
     case 10:
       h += `<div class="row">${runBtn('Import', 'data-do="import"' + noRun)}<a href="/" target="_blank" rel="noopener">Open the player</a></div>`; break;
@@ -1174,7 +1176,7 @@ async function copyPrompt(btn) {
       if (!r.ok) { msg('Could not write the prompt', 6000); return; }
       await refreshState();
     }
-    const t = await (await fetch(`${dir}map-prompt-${rd}.txt?${Date.now()}`)).text();
+    const t = await (await fetch(`${at(`map-prompt-${rd}.txt`)}?${Date.now()}`)).text();
     await navigator.clipboard.writeText(t);
     msg(`Prompt for round ${rd} copied (${t.length} characters)`);
   } catch (e) { msg('Copy failed: ' + e.message, 6000); }
@@ -1183,7 +1185,7 @@ async function copyPrompt(btn) {
 async function copyImage(btn) {
   try {
     const blob = (async () => {
-      const im = await loadImage(`${dir}map-2k-lettered.jpg?${Date.now()}`);
+      const im = await loadImage(`${at('map-2k-lettered.jpg')}?${Date.now()}`);
       const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight;
       c.getContext('2d').drawImage(im, 0, 0);
       return new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error('no blob')), 'image/png'));

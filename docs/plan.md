@@ -154,8 +154,7 @@ Left to the player whatever the engine does: whether to sleep (B2 41), and the p
    name Gemini garbled, Real-ESRGAN takes it to 4K WebP. The player shows it in sepia like the old
    scan (owner, 2026-10-07).
    - **Book 1 done** (2026-10-07): round 8 of eight, 12 names re-set; `map-4k.webp` is shown in the
-     player. Its folder keeps the rounds, the inputs, the label list, round 8's checks and
-     `compare.html`.
+     player. Its `work/` keeps the rounds, the inputs, round 8's checks and `compare.html`.
    - Done: the player code. The importer writes `map: 'map-4k.webp'` when that file exists; the
      modal opens fitted with ground round the map, zooms to 3x the fit, and `scanOf` caps its
      canvas at 4096 px wide (the iPad's canvas limit). Not yet checked on the iPad.
@@ -171,7 +170,10 @@ Left to the player whatever the engine does: whether to sleep (B2 41), and the p
      The editor gained a text frame per name (move, size, turn the type; stored as `set`), with the
      erase box behind <kbd>E</kbd>.
    - Book 4 has trial files from the first experiments (`map-esrgan-*`, `map-gemini-esrgan-4k.webp`,
-     `map-repaint-2k-test1.png`) and the first `compare.html`. Delete them when Book 4 is done.
+     `map-repaint-2k-test1.png`) and the first `compare.html`, now in its `work/`. Delete them when Book 4 is done.
+   - Map work files moved to `data/projectaon/<code>/work/` (2026-10-08); the book folder keeps only
+     what the importer reads and the player loads. The offline list is now found by following
+     references from `index.html` (`tools/offline_check.py` prints it).
    - The local Stable Diffusion models (`data/models/sd15`, `controlnet-tile-sd15`, 3.4 GB) were
      deleted on 2026-10-07. EasyOCR's (`data/models/easyocr`) stay.
    - Other Project Aon pictures (illustrations, plates) stay at their own resolution for now.

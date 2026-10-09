@@ -33,6 +33,8 @@ prototypes/                 earlier experiments, kept working, not developed
   a-book/, b-map/, c-3d/    load ../../shared
 tools/
   serve.py                  the local server: static files, backups/ (api/backups), the offline list (api/offline)
+  offline_check.py          prints the offline list without a server: size per group, largest, missing
+                            (docs/reference/offline.md)
   fetch_projectaon.py       downloads one book into data/projectaon/<code>/
   import_projectaon.py      converts it to data/projectaon/<code>/book.js and rewrites data/projectaon/index.js
   reading_copy.py           writes data/projectaon/<code>/reading.txt, the book as text to read
@@ -49,6 +51,10 @@ maps/<code>/                the owner's work on each book's printed map, committ
                             labels.json.bak is git-ignored (docs/reference/map-upscale.md)
 data/projectaon/            git-ignored. Downloaded pages and images, generated book.js files, index.js;
                             maps/: sheets 1-2 of Project Aon's Maps of Magnamund (reference only)
+  <code>/                   one book: the pages the importer reads, book.js, the images it names (map.png,
+                            the scan; map-4k.webp once made), reading copies (reading.txt, items-reading.txt)
+  <code>/work/              the map steps' files (map-2k*, map-gemini-*, map-check-<n>/, sheets, prompts;
+                            docs/reference/map-upscale.md). Never in the offline copy
 data/reference/             git-ignored. Reference images fetched for the owner: a fan-made world map of
                             Magnamund (4658x5234, World Anvil); SOURCES.txt says where each came from;
                             symbol-packs/: downloaded engraved symbol packs (Hogenburg, Donia, Walser; unused)
