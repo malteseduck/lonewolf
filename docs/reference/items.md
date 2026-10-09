@@ -69,6 +69,8 @@ Decide each section by what the text says, outright:
   choice it decides, with the ranges of the total as the text gives them (use 99 for "or
   higher"). Leave out the choice for having no Bow. The engine adds Weaponmastery and spends the
   Arrow. Arrows found or bought are `{arrows: n}` in `loot`; lost ones `{arrows: n | 'all'}` in `take`.
+  A discipline's bonus the text gives on the shot, which the importer does not read there, is an
+  `rntMod` (Book 6's 170: `[{disc: 'huntmastery', plus: 1}]`).
 - **food as a Meal**: an item the text says can be eaten as a Meal gets `meal: true` (Book 1's
   Laumspur).
 - **todo**: anything the player must decide, in our words, shown as "By hand: ...". Never guess.

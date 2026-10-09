@@ -93,7 +93,7 @@ export const SECTIONS = {
   // the glass jar of spa water
   65: taunor,
   76: { todo: 'the mercenary buys only these, at: Sword 3, Dagger 1, Broadsword 6, Short Sword 2, Mace 3, Ruby Ring 10, Warhammer 5, Spear 4, Axe 2, Bow 5, Quarterstaff 2, Silver Brooch 7 Gold Crowns. You need 2 Crowns for the night. Adjust your things and gold by hand.' },
-  78: { todo: 'break off the fight and turn to the next section as soon as Roark is down to 11 ENDURANCE or less (use the Turn to section box).' },
+  78: { todo: 'the text stops the fight once Roark is down to 11 ENDURANCE or less and sends you to 180; the page fights on, so take 180 after the fight and give back (Endurance +) what you lost after that round.' },
   85: { ep: -2, need: withBow('178', '39') },
   88: { give: [{ gold: 5 }] },
   91: { rolls: win(5) },
@@ -130,7 +130,7 @@ export const SECTIONS = {
   // the jump scatters two things from the pack
   166: { todo: 'two Backpack Items of your choice fell out: drop them in the inventory.' },
   // a bow shot at the pirate on a heaving deck; Huntmastery adds 1 to the total
-  170: { bowShot: { 23: [-99, 5], 265: [6, 99] }, todo: 'with Huntmastery add 1 to the total (the engine does not): at a total of exactly 5 you may turn to the section for a hit with the Turn to section box.' },
+  170: { bowShot: { 23: [-99, 5], 265: [6, 99] }, rntMod: [{ disc: 'huntmastery', plus: 1 }] },
   // food, then the key to the room
   172: { take: [{ gold: 5 }] },
   174: { ep: -5 },

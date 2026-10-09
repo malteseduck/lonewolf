@@ -71,7 +71,7 @@ matching reference file. Not started; the owner picks which, and in what order.
 10. **Random Number changes the importer cannot express** (about 20): by an item carried (a Rope, a
     Pick or Shovel), the weapon in his hand, a discipline at a rank, a Lore-circle, a dead arm; and
     on a bow shot, a discipline's extra or a penalty without Weaponmastery. B3 86, 96; B4 35, 173;
-    B5 23; B6 170, 340; B7 175, 328; B9 215, 216, 239; B10 128; B11 244; B12 206, 324.
+    B5 23; B6 340; B7 175, 328; B9 215, 216, 239; B10 128; B11 244; B12 206, 324.
 11. **Wagers, stakes, selling and paying what he can** (about 25): a stake chosen by the player and
     won or lost by the next section or a draw; selling weapons and goods to a shop; a price "or all
     you have"; a price that depends on where he came from. B2 93, 238, 266, 308, 327; B3 152; B6 10,
@@ -110,9 +110,10 @@ matching reference file. Not started; the owner picks which, and in what order.
     earlier book (B3 128, 250, 268; B5 57; B9 142).
 20. **A by-hand way out of a fight and to any section** (found playing Book 3, 2026-10-09): the
     Turn to section box shows only in puzzle sections, and a fight can be left only by Evade, which
-    costs a blow. Item-table todos that name the box cannot be followed: B4 36, 47, 56, 133; B6 78,
-    170 (Book 3's were reworded to what the page can do). A box under every section's choices, and
-    a "stop the fight here" control without the blow, would serve every such todo until item 8 is done.
+    costs a blow. The item-table todos that named the box were reworded to what the page can do
+    (Books 3, 4 and 6, 2026-10-09: fight on, then give back the ENDURANCE lost past the stopping
+    point; B6 170's Huntmastery bonus is now an `rntMod`). A box under every section's choices, and a
+    "stop the fight here" control without the blow, would spare those workarounds until item 8 is done.
 
 Left to the player whatever the engine does: whether to sleep (B2 41), and the puzzles.
 

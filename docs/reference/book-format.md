@@ -35,7 +35,7 @@ shows the book's printed map. Only the prototypes travel on a map.
 | `end` | `'death'` \| `'victory'` \| `'failed'` | set on endings. `failed`: the book's own ending short of death (a mission given up); played as a death |
 | `combat` | Combat | must be won (or evaded) before choices open |
 | `rnt` | `'auto'` \| `'free'` | the section calls for a Random Number. `auto`: the draw opens only the matching choice (a choice with no `range`, the way taken instead of drawing, stays open). `free`: the draw is shown and every choice stays open |
-| `rntMod` | `[{plus, ...condition}]` | imported: what the text adds to the number (minus: takes away) when he meets the condition (see Conditions below); `{plus, each: 'magnakai', over}` adds `plus` for every Magnakai Discipline beyond the first `over`. The ranges are for the total |
+| `rntMod` | `[{plus, ...condition}]` | imported, or from an item table: what the text adds to the number (minus: takes away) when he meets the condition (see Conditions below); `{plus, each: 'magnakai', over}` adds `plus` for every Magnakai Discipline beyond the first `over`. The ranges are for the total |
 | `puzzle` | true | imported: the text sets a puzzle whose answer is a section number; the page offers "Turn to section" |
 | `meal` | true | a Meal must be eaten on arrival |
 | `noHunt` | true | item table: Hunting does not excuse that Meal (Book 2's Wildlands) |

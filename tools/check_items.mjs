@@ -29,7 +29,7 @@ const T = await import(pathToFileURL(file).href), B = LW.BOOKS[book], bad = [];
 // every book's items are known in the page (an item from Book 1 can gate a choice in Book 2)
 for (const f of fs.readdirSync(ROOT).filter((f) => /^items-\w+\.js$/.test(f))) LW.addItems((await import(pathToFileURL(path.join(ROOT, f)).href)).ITEMS);
 
-const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'noHunt', 'todo', 'need', 'fight', 'bowShot']);
+const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'noHunt', 'todo', 'need', 'fight', 'bowShot', 'rntMod']);
 const FIGHT = new Set(['csMod', 'csIf', 'csUnless', 'csNote', 'mindforce', 'unless', 'unarmed', 'undead', 'drain', 'with', 'double', 'ambush', 'evade']);
 const known = (id) => id === 'meal' || !!LW.ITEMS[id];
 for (const [k, it] of Object.entries(T.ITEMS)) {
