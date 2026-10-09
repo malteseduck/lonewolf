@@ -79,9 +79,63 @@ def current(plates, code, book, name):
     return (f'data/projectaon/{code}/{art}' if art else None), None
 
 
-def put(code, book, name, image=None, crop=None, levels=None, remove=False):
+IMG = ('.png', '.jpg', '.jpeg', '.webp')
+# not stand-ins: the map symbols, split into hundreds of fragments, and the symbol packs
+SKIP_DIRS = {'map-symbols', 'symbol-packs', 'work', 'node_modules'}
+MIN_BYTES = 20 * 1024  # smaller files are icons and fragments, too low to make a plate
+
+
+def standins():
+    """Every picture a fight can borrow, for the picture sheet's picker: [{src, group, size}].
+    Groups: 'library' (assets/plates), 'yours' (art/plates), 'book <code>' (a book's illustrations,
+    not its small ones or its maps), 'art' (the owner's borrowed art and reference images)."""
+    out = []
+
+    def walk(rel, group, keep=lambda n: True):
+        top = os.path.join(ROOT, *rel.split('/'))
+        for dp, dns, fns in os.walk(top):
+            dns[:] = sorted(d for d in dns if d not in SKIP_DIRS)
+            for fn in sorted(fns):
+                if not fn.lower().endswith(IMG) or not keep(fn):
+                    continue
+                size = os.path.getsize(os.path.join(dp, fn))
+                if size < MIN_BYTES:
+                    continue
+                r = os.path.relpath(os.path.join(dp, fn), ROOT).replace(os.sep, '/')
+                out.append({'src': r, 'group': group(r) if callable(group) else group, 'size': size})
+
+    walk('assets/plates', 'library')
+    walk('art/plates', 'yours')
+    pa = os.path.join(ROOT, 'data', 'projectaon')
+    if os.path.isdir(pa):
+        for code in sorted(os.listdir(pa)):
+            if os.path.isdir(os.path.join(pa, code)):
+                for fn in sorted(os.listdir(os.path.join(pa, code))):
+                    if re.fullmatch(r'ill\d+\.(png|jpe?g|webp)', fn, re.I):
+                        out.append({'src': f'data/projectaon/{code}/{fn}', 'group': 'book ' + code,
+                                    'size': os.path.getsize(os.path.join(pa, code, fn))})
+    for rel in ('art', 'data/reference'):
+        if os.path.isdir(os.path.join(ROOT, *rel.split('/'))):
+            walk(rel, 'art')
+    first = {}
+    for o in out:  # art/plates is walked twice: the first group wins
+        first.setdefault(o['src'], o)
+    return list(first.values())
+
+
+def stand_in_ok(src):
+    """src is a picture a fight may borrow: an existing image file under assets/, art/ or data/."""
+    if not isinstance(src, str) or '..' in src.split('/') or '\\' in src or src.startswith('/'):
+        return False
+    if src.split('/')[0] not in ('assets', 'art', 'data') or not src.lower().endswith(IMG):
+        return False
+    return os.path.isfile(os.path.join(ROOT, *src.split('/')))
+
+
+def put(code, book, name, image=None, crop=None, levels=None, remove=False, src=None):
     """Write (or remove) the owner's entry for one enemy. image: WebP bytes, or None to keep the
-    picture it has. Returns (entry or None, message). Raises ValueError for a bad request."""
+    picture it has; src: instead, a picture already on disk to stand in (see standins()).
+    Returns (entry or None, message). Raises ValueError for a bad request."""
     if name not in enemy_names(book):
         raise ValueError('no enemy of that name in the book')
     data = load_plates()
@@ -114,7 +168,19 @@ def put(code, book, name, image=None, crop=None, levels=None, remove=False):
         if not (isinstance(levels, list) and len(levels) == 2 and all(isinstance(v, (int, float)) for v in levels) and 0 <= levels[0] < levels[1] <= 255):
             raise ValueError('levels must be [black, white], 0-255, black below white')
         levels = [int(levels[0]), int(levels[1])]
-    if image is not None:
+    if src is not None:
+        if image is not None:
+            raise ValueError('give a picture or a stand-in, not both')
+        if not stand_in_ok(src):
+            raise ValueError('that stand-in is not a picture under assets/, art/ or data/')
+        if mine is not None:  # the owner's file it replaces, if nothing else uses it
+            old = plates[mine].get('src', '')
+            if old != src and old.startswith(folder) and not any(p.get('src') == old for i, p in enumerate(plates) if i != mine):
+                try:
+                    os.remove(os.path.join(ROOT, *old.split('/')))
+                except OSError:
+                    pass
+    elif image is not None:
         if not (image[:4] == b'RIFF' and image[8:12] == b'WEBP'):
             raise ValueError('the picture must be WebP')
         src = folder + slug(name) + '.webp'

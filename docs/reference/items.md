@@ -154,7 +154,11 @@ stand-in that suits that book), and put book entries first. Where to look, in or
    the fight panel as it will look, through `inkPlate`, with a levels control for paintings; saving a re-crop
    writes the owner's entry pointing at that same file. **Remove** drops the entry (and its file under
    `art/plates/<code>/`). A picture dragged from another site arrives as an address and is refused: save it
-   first, or copy and paste it. Older owner pictures sit in `art/` and `art/plates/` (Book 1's Winged Serpent).
+   first, or copy and paste it. **Stand-in...** on a card opens a picker of every picture already on disk
+   (`GET /api/admin/standins`: `assets/plates/`, `art/` including `art/plates/`, `data/reference/`, and every
+   imported book's `ill*.png`, each labelled with the enemies it is fought with); filter by name or enemy,
+   click one, crop it in the same editor, Save. The entry points `src` at that file (no copy), so a creature
+   met in several books needs one picture found once. Older owner pictures sit in `art/` and `art/plates/` (Book 1's Winged Serpent).
 2. **The same book's own illustrations**, also those outside fights: a page of portraits, or a
    creature pictured where it is met but not fought. A `crop` cuts one figure out (Book 2's
    council of travellers, cut from its portrait page). First look at every `ill*.png` of the book;

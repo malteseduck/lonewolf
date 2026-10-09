@@ -40,7 +40,9 @@ Static files as `python -m http.server` serves them, from the project root, plus
     POST /api/admin/mark/<book>/<n>   book_status.py's done (or ?undo=1) for checklist step n
     POST /api/admin/plate             the picture sheet: {book, enemy, image?: base64 WebP, crop?, levels?, remove?};
                                       the owner's picture for one enemy, saved as art/plates/<book>/<slug>.webp and
-                                      written into assets/plates/plates.json (tools/plates_file.py)
+                                      written into assets/plates/plates.json (tools/plates_file.py). Or src: a picture
+                                      already on disk (assets/, art/, data/) to stand in, instead of image
+    GET  /api/admin/standins          every picture a fight can borrow: [{src, group, size}]
 
     GET  /api/offline          what the offline copy holds: {version, files: {path: hash}}
 
@@ -557,6 +559,9 @@ class Handler(SimpleHTTPRequestHandler):
             if err:
                 return self._json(code, {'error': err})
             return self._json(200, _job_view(job))
+        if method == 'GET' and parts == ['standins']:
+            import plates_file
+            return self._json(200, plates_file.standins())
         if method == 'POST' and parts == ['plate']:
             return self._admin_plate(body)
         if method == 'POST' and len(parts) == 3 and parts[0] == 'mark' and parts[2].isdigit():
@@ -578,7 +583,8 @@ class Handler(SimpleHTTPRequestHandler):
         try:
             image = base64.b64decode(body['image'], validate=True) if body.get('image') else None
             entry, msg = plates_file.put(hit[0], book_status.load_book(hit[0]), str(body.get('enemy') or ''), image=image,
-                                         crop=body.get('crop'), levels=body.get('levels'), remove=bool(body.get('remove')))
+                                         crop=body.get('crop'), levels=body.get('levels'), remove=bool(body.get('remove')),
+                                         src=body.get('src'))
         except (ValueError, binascii.Error) as e:
             return self._json(400, {'error': str(e)})
         return self._json(200, {'entry': entry, 'message': msg})
