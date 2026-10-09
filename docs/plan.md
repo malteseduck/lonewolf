@@ -289,7 +289,8 @@ Working and checked by playing in the browser:
 - Items handled by the engine for Book 1 (2026-10-01): `items-01fftd.js`, read by hand: 61
   sections give, offer, take or gate items, gold, Meals or Endurance, or correct a misread fight
   (the Vordaks' -2 is now Mindforce, which Mindshield blocks; the Burrowcrawler's darkness is spared
-  by a Torch and Tinderbox); 12 book items with their own icons (game-icons.net). Tested on a
+  by a Torch and Tinderbox); re-read 2026-10-09: 65 sections (36's fall, 46's ferry fee, the losses on
+  276 and 343; the two undead Vordaks), 3 todos; 12 book items with their own icons (game-icons.net). Tested on a
   stand-in hero, not yet in a play-through. The procedure and its tools are in
   docs/reference/items.md; books 2-12 each need a table when imported.
 - Going back up to three sections (2026-10-01): on the death panel. Saves keep only those three

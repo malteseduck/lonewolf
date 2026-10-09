@@ -29,7 +29,7 @@ dash. Book 2's first import dropped them; check a new book's shops show their wa
 `python tools/item_sections.py <book>` scans every section for item, gold, Meal, Endurance and
 Combat Skill wording and writes those sections, from the reading copy, to
 `data/projectaon/<book>/items-reading.txt`, each with its choice lines under it (`  > `). It casts
-wide (Book 1: 168 of 350, of which 61 needed an entry). Read all of it: the item's name is often
+wide (Book 1: 168 of 350, of which 65 needed an entry). Read all of it: the item's name is often
 in one sentence and the instruction in the next. Choice lines like "If you have a Golden Key" or
 "If you wish to pay 10 Gold Crowns" are the gates (`need`).
 
@@ -110,8 +110,8 @@ Pendant), standing-potion (Alether), soap, torch, flint-spark (Tinderbox), backp
 
 `node tools/check_items.mjs <book>`: errors (sections, choices, items or icons that do not exist,
 unknown fields), the counts, and the flagged sections the table leaves out. Every left-out
-section should be one that was read and judged to need nothing. Book 1: no errors; 12 items, 61
-sections; 107 left out. Book 2: no errors; 13 items, 109 sections; 106 left out (three it first
+section should be one that was read and judged to need nothing. Book 1: no errors; 12 items, 65
+sections; 103 left out (four found on a re-read, 2026-10-09). Book 2: no errors; 13 items, 109 sections; 106 left out (three it first
 listed were real misses, so read the list). It knows every book's items, as the page does.
 `--json` also writes `data/projectaon/<book>/check-items.json`, which `tools/book_status.py` reads
 for checklist step 5 (the dashboard's "Check items" runs it so).

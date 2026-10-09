@@ -10,7 +10,8 @@
      todo   what is the player's own choice, as a reminder
      need   choices that open only with an item or gold: {to: {item | gold, not, spend}}
      fight  corrections to what the importer read of a fight: csMod, mindforce (blocked by
-            Mindshield), unless (items that spare the csMod), unarmed (csMod is the no-weapon penalty)
+            Mindshield), unless (items that spare the csMod), unarmed (csMod is the no-weapon penalty),
+            undead (the text calls the enemy undead)
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {
   vordakGem: { name: 'Vordak Gem', kind: 'backpack', glyph: 'cut-diamond', about: 'A large gem that burns to the touch.' },
@@ -37,7 +38,11 @@ export const SECTIONS = {
   20: { loot: [{ pack: true }, { meal: 2 }, { item: 'dagger' }] },
   23: { need: { 326: { item: 'goldenKey' } } },
   33: { give: [{ gold: 3 }] },
+  // the fall that the number decides costs 2 ENDURANCE; the choice line says so
+  36: { rolls: [{ range: [0, 4], ep: -2 }] },
   37: { meal: true },
+  // the ferryman's fee for the crossing he offers
+  46: { need: { 246: { gold: 2, spend: true } } },
   62: { give: [{ gold: 28 }], loot: [{ meal: 3 }, { item: 'sword' }] },
   76: { ep: -2, give: [{ item: 'vordakGem' }] },
   94: { give: [{ gold: 16 }] },
@@ -75,8 +80,10 @@ export const SECTIONS = {
   267: { loot: [{ item: 'message' }, { item: 'dagger' }] },
   269: { give: [{ gold: 10 }] },
   274: { take: [{ weapons: 'all' }] },
+  // 276 and 343 give the loss on their one way on, so it is taken on arrival
+  276: { ep: -1 },
   277: { take: [{ weapons: 'one' }] },
-  283: { fight: { csMod: 0, mindforce: 2 }, todo: 'you surprised him: add 2 to your COMBAT SKILL for the first round only. The engine does not.' },
+  283: { fight: { csMod: 0, mindforce: 2, undead: true }, todo: 'first round only: add 2 to your COMBAT SKILL for the surprise, and without Mindshield 2 more, as his Mindforce strikes from the second round on. The engine does not.' },
   290: { loot: [{ item: 'quarterstaff' }] },
   291: { loot: [{ gold: 6 }, { item: 'dagger', or: 'weapon' }, { item: 'spear', or: 'weapon' }] },
   294: { take: [{ weapons: 'all' }, { backpack: 'all' }] },
@@ -88,7 +95,8 @@ export const SECTIONS = {
   315: { loot: [{ gold: 6 }, { item: 'soap' }] },
   319: { loot: [{ item: 'dagger' }, { gold: 20 }] },
   320: { ep: -2 },
-  342: { fight: { csMod: 0, mindforce: 2 } },
+  342: { fight: { csMod: 0, mindforce: 2, undead: true } },
+  343: { ep: -2 },
   346: { loot: [{ item: 'spear' }] },
   347: { loot: [{ item: 'shortSword' }, { item: 'tinderbox' }, { item: 'torch' }] },
   349: { give: [{ item: 'crystalStar' }] },
