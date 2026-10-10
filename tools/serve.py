@@ -25,7 +25,8 @@ Static files as `python -m http.server` serves them, from the project root, plus
                                       size and mtime, the Gemini rounds present, the job running, when book.js was written
     POST /api/map/<book>/run/<step>   run one step: upscale, draft, measure, erase, letter, prompt,
                                       check, finish, import. ?round=n for prompt, check, finish;
-                                      ?force=1 for draft over an existing list; ?width=n for finish.
+                                      ?force=1 for draft over an existing list; ?width=n for finish;
+                                      ?all=1 for finish to set every place name again when none is ticked reset.
                                       One job at a time (409 if busy). Returns {code, out}
     POST /api/map/<book>/checked      mark step 3 (labels checked) done: writes maps/<book>/labels-checked.txt;
                                       ?undo=1 removes it. Drafting again removes it too
@@ -145,7 +146,7 @@ FONTS = ['--hand', 'Cabin.ttf|SemiBold', '--caps', 'Cabin.ttf|SemiBold']
 
 def _fonts(book):
     """map_letter.py's font arguments: the file in tools/fonts that maps/<book>/font.txt names,
-    honoured for every map that has one (ADR 0015); else Cabin."""
+    honoured for every map that has one (ADR 0006); else Cabin."""
     try:
         with open(os.path.join(MAPS, book, 'font.txt'), encoding='utf-8') as fh:
             name = fh.readline().strip()
@@ -307,7 +308,8 @@ def map_commands(step, book, q):
                 return None, 'could not read the round image width', 500
         x4 = f'{wk}/map-gemini-{rnd}-x4.png'
         return [PY + [t('map_upscale.py'), g, x4, '--width', str(width * 4)],
-                PY + [t('map_letter.py'), f'{wk}/map-2k.png', labels, x4, f'{wk}/map-check-{rnd}/H.json', f'{d}/map-4k.webp', '--sheet', f'{wk}/map-4k-sheet.png'] + _fonts(book)], None, 0
+                PY + [t('map_letter.py'), f'{wk}/map-2k.png', labels, x4, f'{wk}/map-check-{rnd}/H.json', f'{d}/map-4k.webp', '--sheet', f'{wk}/map-4k-sheet.png'] + _fonts(book)
+                + (['--all'] if q.get('all', [''])[0] == '1' else [])], None, 0
     if step == 'import':
         return [PY + [t('import_projectaon.py'), book]], None, 0
     return None, 'unknown step', 404

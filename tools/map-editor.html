@@ -171,6 +171,7 @@ let preview = true;
 let hover = null;
 let hideAll = false;  // H held: boxes and preview off, to see the map underneath
 let eraseMode = false; // E: handles act on the erase box, not the type's frame
+let finishAll = false;  // Finish's "Set every place name again": off on every load (ADR 0005)
 
 const cv = $('cv'), ctx = cv.getContext('2d');
 const snap = () => JSON.stringify(labels);
@@ -411,7 +412,7 @@ function letterGeom(l) {
   if (l.height) { thick = l.height / 1.25; if (!l.spread) length = 1e6; }
   return { centre, ang, length, thick, stacked };
 }
-// The lettering's font: the one in tools/fonts that maps/<book>/font.txt names (ADR 0015), else
+// The lettering's font: the one in tools/fonts that maps/<book>/font.txt names (ADR 0006), else
 // Cabin SemiBold, as serve.py's _fonts() passes to map_letter.py. FONT is "<weight> <family>".
 let FONT = '600 CabinEd';
 async function bookFont() {
@@ -577,7 +578,7 @@ const TIPS = {  // what each field does in the map tools (docs/reference/map-ups
   text: 'The wording exactly as printed on the map.',
   where: 'Where the label sits, in words; goes into the Gemini prompt. "upwards" or "downwards" in it sets which way a slanted name reads.',
   small: 'Hand-lettered name too small for OCR: the check lists it for a look by eye instead of comparing its reading.',
-  retype: 'A place name: erased from the scan and set again in clean type before Gemini sees the map. Untick for the title, banner, panel captions and key, which Gemini copies as drawn.',
+  retype: 'A place name: erased from the scan and set again in the map font before Gemini sees the map. Untick for the title, banner, panel captions and key, which Gemini copies as drawn.',
   clip: 'Erase the whole box, not just the letter shapes. For a name on flat ground where letters touch a line and leave fragments.',
   joined: 'Letters touching a line that runs out of the box (river, mountain, flagpole): erase them too, with the line inside the box except river outlines and coasts. Gemini repaints the gap; add keep for anything that must stay.',
   fix: 'After a Gemini round: for a label kept in its printed lettering (title, caption, key) that Gemini misspelled. Its lettering is cleared and the label set in the map font at 4K. Stays ticked for later rounds.',
@@ -1026,7 +1027,7 @@ const STEPS = [
   { n: 8, short: 'Check', name: 'Check', run: 'check', bg: () => [`map-check-${activeRound()}/aligned.png`, `map-gemini-${activeRound()}.jpg`, 'map-2k.png'],
     text: 'Lines Gemini\'s picture up with the scan and flags colour and shape changes, then reads its labels against the list. Open labels.png and compare every label by eye; the OCR diff in the log is only a hint. Tick reset on place names Gemini garbled, and fix on kept labels it garbled (title, captions, key), then Save.' },
   { n: 9, short: 'Finish', name: 'Finish', run: 'finish', bg: () => ['map-4k.webp', 'map-2k.png'],
-    text: 'Upscales the round 4x, warps it onto the 4K frame, wipes Gemini\'s lettering round each label ticked reset (and fix) and sets those again in the map font, removes the sparkle mark and writes map-4k.webp. With none ticked reset, every place name is set again. Look at map-4k-sheet.png.' },
+    text: 'Upscales the round 4x, warps it onto the 4K frame, wipes Gemini\'s lettering round each label ticked reset (and fix) and sets those again in the map font, removes the sparkle mark and writes map-4k.webp. With none ticked reset, Gemini\'s names stand, unless "Set every place name again" is ticked. Look at map-4k-sheet.png.' },
   { n: 10, short: 'Import', name: 'Import and view', run: 'import', bg: () => ['map-4k.webp', 'map-2k.png'],
     text: 'Imports the book again so the player\'s map points at map-4k.webp, then open the player and look at the map there.' },
 ];
@@ -1117,15 +1118,26 @@ ${received ? `<div class="row">Received ${esc(received)}. <button class="primary
 <button data-do="clearreset">Clear reset</button>
 <span class="note">${labels.filter(l => l.reset).length} reset, ${labels.filter(l => l.fix).length} fix ticked now. Untick reset before checking a new round.</span></div>`;
       break; }
-    case 9:
+    case 9: {
+      // what Finish will set again, said before it runs (ADR 0005): ticked labels decide; with none
+      // ticked, Gemini's names stand unless the box asks for every one
+      const nReset = labels.filter(l => l.reset).length, nFix = labels.filter(l => l.fix).length;
+      const nAll = labels.filter(l => l.retype || l.fix).length;
+      const fixes = nFix ? ` and ${nFix} fix` : '';
+      const will = nReset ? `Will set again: ${nReset} ticked reset${fixes}.`
+        : finishAll ? `Will set again: all ${nAll} place names, over Gemini's own.`
+        : nFix ? `Will set again: ${nFix} fix only; Gemini's place names stand.`
+        : 'Upscale only: no names set again; Gemini\'s names stand.';
       h += `<div class="row">${roundInput()}${runBtn('Finish', 'data-do="finish"' + noRun)}
-<button data-open="${at('map-4k-sheet.png')}"${files['map-4k-sheet.png'] ? '' : ' disabled'}>Open map-4k-sheet.png</button>
-<span class="note">${labels.filter(l => l.reset).length} labels ticked reset, ${labels.filter(l => l.fix).length} fix: those are set again.</span></div>`; break;
+<label class="note"><input type="checkbox" id="finishall"${finishAll ? ' checked' : ''}${nReset ? ' disabled' : ''}> Set every place name again</label>
+<button data-open="${at('map-4k-sheet.png')}"${files['map-4k-sheet.png'] ? '' : ' disabled'}>Open map-4k-sheet.png</button></div>
+<div class="row"><span class="note">${esc(will)}</span></div>`; break; }
     case 10:
       h += `<div class="row">${runBtn('Import', 'data-do="import"' + noRun)}<a href="/" target="_blank" rel="noopener">Open the player</a></div>`; break;
   }
   h += logHtml(s.n);
   p.innerHTML = h;
+  const fa = $('finishall'); if (fa) fa.onchange = () => { finishAll = fa.checked; renderPanel(); };
   const r = $('rnd'); if (r) r.onchange = async () => { curRound = Math.max(0, Math.floor(Number(r.value) || 0)); roundSet = true; renderPanel(); renderRail(); if (curStep === 8) await openStep(8); };
   const th = $('thumb'); if (th) th.addEventListener('dragstart', e => { try { e.dataTransfer.setData('DownloadURL', `image/jpeg:map-2k-lettered.jpg:${th.src}`); } catch (x) {} });
   const pk = $('pick'); if (pk) pk.onchange = () => { if (pk.files[0]) upload(pk.files[0]); };
@@ -1197,6 +1209,7 @@ async function doStep(what, btn) {
     q = '?force=1';
   }
   if (['prompt', 'check', 'finish'].includes(what)) q = `?round=${rd}`;
+  if (what === 'finish' && finishAll && !labels.some(l => l.reset)) q += '&all=1';
   if (what === 'finish' && S.files['map-4k.webp'] && !(await ask('map-4k.webp exists and will be replaced. Go on?', 'Replace'))) return;
   setBusy(true, btn, what);
   let all = { code: 0, out: '' };

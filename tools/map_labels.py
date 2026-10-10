@@ -149,7 +149,7 @@ def names(labels):
     return ', '.join(out)
 
 
-def prompt(labels, lettered=False, style=None):
+def prompt(labels, lettered=False, style=None, lettering=None):
     """The repaint prompt, for the picture map_erase.py made. Labels marked "retype" are ones Gemini
     cannot spell reliably (Book 1: the small hand-lettered names, and a few it got wrong in every
     round); they are erased from its picture and lettered afterwards, so the prompt only asks it not
@@ -163,12 +163,16 @@ def prompt(labels, lettered=False, style=None):
     p = ((style.strip() + ' ') if style else
          'Repaint this fantasy map as a richly detailed hand-painted fantasy illustration on aged parchment: '
          'shaded, three-dimensional mountain ranges, dense individually painted forests, textured water with depth, '
-         'and finer detail in the existing frame, heraldic panels, compass rose and key. ')
+         'and finer detail in the existing frame, panels and key. ')
+    # no ship or compass rose named here: Book 12 has neither, and naming them got it two ships
     p += ('Keep the layout: every coastline, river, road, island, mountain range, forest and town stays where it is, '
-         'and every panel, ship and the compass rose stay in their places with their colours. '
+         'and every panel and every object already drawn on the map stays in its place with its colours. '
          'Keep these labels in their present places and directions, spelled exactly as written here, letter for '
          'letter: ' + names(keep) + '.')
-    if lettered:
+    if lettered and lettering:  # font.txt's second line (ADR 0006), e.g. a hand Gemini is not to tidy into type
+        p += (f' The place names are {lettering}: keep that same lettering for them, not other type, '
+              'and keep the ground behind each name clear so it stays easy to read.')
+    elif lettered:
         p += (' The place names are set in clean sans-serif type: keep that clean, legible sans-serif lettering for '
               'them, and keep the ground behind each name clear so it stays easy to read.')
     if erased:  # erased from the picture by map_erase.py: asking Gemini to leave them out failed
@@ -199,8 +203,11 @@ def main():
     elif cmd == 'prompt':
         style = Path(a).parent / 'style.txt'
         style = style.read_text(encoding='utf-8') if style.exists() else None
-        Path(b).write_text(prompt(json.loads(Path(a).read_text(encoding='utf-8')), '--lettered' in sys.argv, style),
-                           encoding='utf-8')
+        font = Path(a).parent / 'font.txt'  # line 1 the font, line 2 how to describe it to Gemini
+        font = font.read_text(encoding='utf-8').splitlines() if font.exists() else []
+        lettering = font[1].strip() if len(font) > 1 and font[1].strip() else None
+        Path(b).write_text(prompt(json.loads(Path(a).read_text(encoding='utf-8')), '--lettered' in sys.argv, style,
+                                  lettering), encoding='utf-8')
     else:
         sys.exit('draft, check or prompt')
 

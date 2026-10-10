@@ -21,7 +21,9 @@ and anything in a --mark box (a stray colon); its sparkle watermark, bottom righ
 --only n,n,... limits the erasing and lettering to those labels (Book 1, round 8: Gemini copied
 the clean type of most names right, so only the ones it garbled are set again). Without --only,
 on a repaint, labels marked "reset" (ticked in tools/map-editor.html after the round's check)
-and "fix" are the ones done, if any label is marked "reset".
+and "fix" are the ones done, if any label is marked "reset". With none marked "reset", only the
+"fix" labels are done, so Gemini's names stand; --all sets every "retype" label again as well
+(ADR 0005). With nothing to letter, it still warps, erases --mark and the sparkle, and saves.
 Also writes <out>-sheet.png (or --sheet <path>): each lettered label, the scan beside the result.
 With <H.json> given as -, it letters Gemini's input instead: <repaint> is map_erase.py's picture,
 lettered at its own size (Book 1: the owner's idea, so Gemini copies clean type and paints round
@@ -228,6 +230,7 @@ def main():
         ap.add_argument(n)
     ap.add_argument('--mark', action='append', default=[])
     ap.add_argument('--only', default='')
+    ap.add_argument('--all', action='store_true')  # on a repaint with nothing ticked: set every name again
     ap.add_argument('--hand', default='Cabin.ttf|SemiBold')
     ap.add_argument('--caps', default='Cabin.ttf|SemiBold')
     ap.add_argument('--sheet', default='')  # where the sheet goes; map-4k.webp's goes to work/, not beside it
@@ -240,6 +243,8 @@ def main():
         todo = [labels[int(i)] for i in a.only.split(',')]
     elif a.warp != '-' and any(lab.get('reset') for lab in labels):  # the same, ticked in the editor
         todo = [lab for lab in labels if lab.get('reset') or lab.get('fix')]
+    elif a.warp != '-' and not a.all:  # nothing ticked: keep Gemini's names (ADR 0005; re-setting
+        todo = [lab for lab in labels if lab.get('fix')]  # them all left Book 12 a doubled "Vorndarol")
     if a.warp == '-':
         # Gemini's input instead: <repaint> is map_erase.py's picture, lettered at its own size
         A = read(a.repaint)
@@ -294,6 +299,9 @@ def main():
         row = np.full((p.shape[0] + 8, 2 * p.shape[1] + 24, 3), 255, np.uint8)
         row[4:4 + p.shape[0], :p.shape[1]], row[4:4 + p.shape[0], p.shape[1] + 24:] = p, q
         rows.append(row)
+    if not rows:  # nothing lettered: no sheet, and none left from an earlier run
+        Path(a.sheet or str(out.with_name(out.stem + '-sheet.png'))).unlink(missing_ok=True)
+        return
     Wd = max(r.shape[1] for r in rows)
     sheet = np.vstack([np.pad(r, ((0, 0), (0, Wd - r.shape[1]), (0, 0)), constant_values=255) for r in rows])
     cv2.imencode('.png', sheet)[1].tofile(a.sheet or str(out.with_name(out.stem + '-sheet.png')))

@@ -154,7 +154,7 @@ pages (`docs/reference/rules-books.md`), and its text is not copied into the rep
 | File | Holds |
 |---|---|
 | `docs/spec.md` | Intent: purpose, principles, game rules, presentation. Change it when the owner changes the intent. |
-| `docs/adr/` | The owner's decisions, one record each, binding. A new decision gets a new ADR; an old one is changed only by a new ADR that supersedes it. |
+| `docs/adr/` | The owner's decisions, one record each, binding. A refinement amends its ADR in place (dated in its Changes list); a new topic or a reversal gets a new ADR. |
 | `docs/reference/architecture.md` | File map, load order, state, storage keys |
 | `docs/reference/book-format.md` | The book data model, field by field |
 | `docs/reference/rules-engine.md` | How the rules are implemented and where |

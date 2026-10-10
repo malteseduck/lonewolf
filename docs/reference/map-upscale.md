@@ -114,8 +114,13 @@ Commands run from the project root as
    came back green). Every book 1-12 has one since 2026-10-08, written from its map, key and text
    (each region's ground, trees as drawn, what must not appear); read it before a book's first round. It asks
    for a richly painted repaint (shaded mountains, dense forests, textured water), every label as
-   listed, the place names kept in clean sans-serif on clear ground, and nothing added (no fruit,
-   foliage or ornaments, no new trees, ships or buildings).
+   listed, the place names kept in clean sans-serif on clear ground (or as `font.txt`'s second line
+   describes them), every object already drawn kept in place, and nothing added (no fruit,
+   foliage or ornaments, no new trees, ships or buildings). It names no ship or compass rose: Book
+   12 has neither, and naming them got it two ships in round 1.
+   A map drawn as rows of small identical mountain symbols comes back as those symbols recoloured
+   (Book 12, round 1): its `style.txt` asks for continuous sculpted ranges over the same ground
+   instead, and names what the map does not have.
 6. **The owner runs it** in a new Gemini chat with `map-2k-lettered.jpg` attached (about 1180 px
    out) and saves `map-gemini-<n>.jpg`.
 7. **Check**: `map_check.py $W/map-2k.png $W/map-gemini-<n>.jpg $W/map-check-<n>` (alignment,
@@ -129,7 +134,10 @@ Commands run from the project root as
    `map_letter.py $W/map-2k.png $L $W/map-gemini-<n>-x4.png $W/map-check-<n>/H.json $D/map-4k.webp --sheet $W/map-4k-sheet.png --only <numbers> --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"`
    with the numbers of the names Gemini garbled (or, leaving out `--only`, tick `reset` on them in
    the map editor, `tools/map-editor.html?book=<code>`, and untick them before the next
-   round's check). It warps the upscale onto the 4K frame, wipes
+   round's check). With nothing ticked reset it sets no place name again, only the `fix` labels:
+   an upscale only, Gemini's names standing; `--all` (the Finish step's "Set every place name
+   again", unchecked by default) sets every one again, which leaves doubled names wherever Gemini
+   moved one (Book 12, round 3; ADR 0005). The step says which it will do. It warps the upscale onto the 4K frame, wipes
    Gemini's thin strokes right round where each of those names goes (all wipes before any
    drawing), sets them again, and removes Gemini's sparkle watermark. Look at
    `map-4k-sheet.png`. A correct name next to a re-set one can lose strokes to the wipe: add it to
@@ -161,9 +169,11 @@ Commands run from the project root as
   or onto a round's 4K upscale (step 8). See its docstring for every label field.
 - `tools/fonts/`: Cabin (used), Architects Daughter (Book 12), IM Fell English and Almendra (tried),
   all OFL; sources in its README.
-- `maps/<code>/font.txt`: one line naming a file in `tools/fonts/`, the font that map's names are
-  set in, honoured by every step (ADR 0015). The dashboard's Letter and Finish steps pass it to `map_letter.py` as `--hand` and `--caps`,
-  and the editor's preview draws in it; with no file, Cabin SemiBold. Book 12's map is lettered by
+- `maps/<code>/font.txt`: line 1 names a file in `tools/fonts/`, the font that map's names are
+  set in, honoured by every step (ADR 0006). The dashboard's Letter and Finish steps pass it to `map_letter.py` as `--hand` and `--caps`,
+  and the editor's preview draws in it; with no file, Cabin SemiBold. An optional line 2 describes
+  the lettering for the Gemini prompt in place of "clean sans-serif type" (Book 12: hand-lettered
+  in a thin, even pen). Book 12's map is lettered by
   hand in thin marker, so it has `ArchitectsDaughter-Regular.ttf` (tried against Patrick Hand, Kalam,
   Neucha and Comic Neue, 2026-10-10).
 - The comparison page, `work/compare.html` in a book's folder (git-ignored): two panes, synced pan and
