@@ -23,7 +23,7 @@ letter; see "How Book 1 got here" below.
 
 ## The chain, per book
 
-The map editor, `http://localhost:8765/tools/map-editor.html` (pick the book at the top, by number, title or code) (served by `python tools/serve.py`, on this PC
+The map editor, `http://localhost:8766/tools/map-editor.html` (pick the book at the top, by number, title or code) (served by `python tools/serve.py`, on this PC
 only; also opened inside the import dashboard, `/tools/admin/`, under its grid, where `?embed=1` hides the
 book picker and the dashboard follows the files it changes: `docs/reference/dashboard.md`), walks through every step below in one page: a rail of the ten stages (upscale, draft, labels,
 measure, lettering, erase and letter, Gemini, check, finish, import), each marked done, not done or

@@ -256,7 +256,7 @@ Fiends are other demons from the Schongauer print that gives Book 3 its Mutant).
    numbers. **Ask the owner before each download**, naming the picture, its source and its size.
 
 Show the owner each new picture as it will look before calling it done: the dashboard's sheet,
-`http://localhost:8765/tools/admin/fights.html?book=<book>`, shows every enemy of the book inked as in a
+`http://localhost:8766/tools/admin/fights.html?book=<book>`, shows every enemy of the book inked as in a
 fight (the owner's half of checklist step 6). The importer's report counts the library entries the book can use;
 after adding them, run it again and expect 0 "with none". Plates are drawn whole: only a ruled frame line round the picture is
 cut away, and the edges are not faded (owner's request).

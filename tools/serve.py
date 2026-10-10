@@ -1,6 +1,7 @@
 """Serve the player, and keep adventure backups in backups/.
 
-    python tools/serve.py [port] [--bind ADDRESS]      (defaults: 8765, 127.0.0.1)
+    python tools/serve.py [port] [--bind ADDRESS]      (defaults: 8766, 127.0.0.1)
+    python tools/serve.py --release [--bind ADDRESS]   the last release, for the iPad, on 8765 (below)
 
 Static files as `python -m http.server` serves them, from the project root, plus:
 
@@ -52,6 +53,10 @@ Names are plain file names ending in .json: no folders, so nothing outside backu
 /api/offline is read by sw.js, which keeps a copy of every file listed so the player runs with no
 connection (see docs/reference/offline.md). A file whose hash changes is fetched again; `version`
 changes whenever any file does.
+
+--release serves release/ (tools/release.py) instead of the working copy, so the iPad gets only what
+was released: the files of the folder release/CURRENT names, read at each request (a new release
+takes over without a restart), and the backups API. The map and admin APIs are not there.
 """
 import argparse
 import hashlib
@@ -61,6 +66,7 @@ import posixpath
 import re
 import shutil
 import subprocess
+import sys
 import threading
 import time
 from functools import partial
@@ -93,21 +99,22 @@ BOOK_JS = re.compile(r'data/projectaon/[\w-]+/book\.js')
 _hashes, _hash_lock = {}, threading.Lock()
 
 
-def _hash(rel):
+def _hash(rel, root=ROOT):
     """sha1 of a file, remembered while its size and time stay the same."""
-    st = os.stat(os.path.join(ROOT, rel))
+    full = os.path.join(root, rel)
+    st = os.stat(full)
     key = (st.st_size, st.st_mtime_ns)
     with _hash_lock:
-        got = _hashes.get(rel)
+        got = _hashes.get(full)
         if got and got[0] == key:
             return got[1]
     h = hashlib.sha1()
-    with open(os.path.join(ROOT, rel), 'rb') as f:
+    with open(full, 'rb') as f:
         for chunk in iter(lambda: f.read(1 << 16), b''):
             h.update(chunk)
     with _hash_lock:
-        _hashes[rel] = (key, h.hexdigest()[:16])
-    return _hashes[rel][1]
+        _hashes[full] = (key, h.hexdigest()[:16])
+    return _hashes[full][1]
 
 
 MAPS = os.path.join(ROOT, 'maps')
@@ -292,10 +299,12 @@ def map_commands(step, book, q):
     return None, 'unknown step', 404
 
 
-def offline_list():
+def offline_list(root=ROOT, fill=None):
+    """The files under root the page loads. fill(rel), if given, may put a file not under root
+    there and return True (tools/release.py brings the git-ignored books and art that way)."""
     def text(rel):
         try:
-            with open(os.path.join(ROOT, rel), encoding='utf-8') as f:
+            with open(os.path.join(root, rel), encoding='utf-8') as f:
                 return f.read()
         except OSError:
             return ''
@@ -323,7 +332,7 @@ def offline_list():
         if rel in seen:
             continue
         seen.add(rel)
-        if not os.path.isfile(os.path.join(ROOT, rel)):
+        if not os.path.isfile(os.path.join(root, rel)) and not (fill and fill(rel)):
             missing.add(rel)
             continue
         here, ext = posixpath.dirname(rel), os.path.splitext(rel)[1].lower()
@@ -362,10 +371,10 @@ def offline_list():
                 if s:
                     add('art', s)
     for top, exts in OFFLINE_DIRS.items():
-        if os.path.isdir(os.path.join(ROOT, top)):
-            seen.update(f'{top}/{e.name}' for e in os.scandir(os.path.join(ROOT, top))
+        if os.path.isdir(os.path.join(root, top)):
+            seen.update(f'{top}/{e.name}' for e in os.scandir(os.path.join(root, top))
                         if e.is_file() and e.name.lower().endswith(exts))
-    files = {r: _hash(r) for r in sorted(seen - missing)}
+    files = {r: _hash(r, root) for r in sorted(seen - missing)}
     version = hashlib.sha1(json.dumps(files, sort_keys=True).encode()).hexdigest()[:16]
     # missing: named by something the page loads but not on disk (tools/offline_check.py reports it;
     # sw.js reads only version and files)
@@ -385,6 +394,8 @@ ADMIN_STAGES = {
     'offline': {'title': 'Offline check', 'book': False, 'timeout': 300, 'cmds': lambda c: [PY + ['tools/offline_check.py']]},
     'syntax': {'title': 'Syntax check', 'book': False, 'timeout': 600, 'cmds': lambda c: [PY + ['tools/syntax_check.py']]},
     'reimport-all': {'title': 'Re-import all and compare', 'book': False, 'gated': True, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/reimport_all.py']]},
+    # the last commit to the iPad (the release server, docs/reference/offline.md); gated: the owner's go-ahead
+    'release': {'title': 'Release to the iPad', 'book': False, 'gated': True, 'timeout': 600, 'cmds': lambda c: [PY + ['tools/release.py']]},
 }
 _jobs, _jobs_lock, _job_seq = {}, threading.Lock(), [0]
 JOB_LINES = 20000
@@ -459,6 +470,20 @@ def admin_start(stage, book, confirm):
 
 def _job_view(job, start=0):
     return {k: v for k, v in job.items() if k != 'lines'} | {'from': start, 'lines': job['lines'][start:], 'total': len(job['lines'])}
+
+
+RELEASES = os.path.join(ROOT, 'release')
+RELEASE = False  # --release
+
+
+def release_dir():
+    """The folder of the current release (release/CURRENT, written by tools/release.py), or None."""
+    try:
+        with open(os.path.join(RELEASES, 'CURRENT'), encoding='utf-8') as f:
+            d = os.path.join(RELEASES, json.load(f)['dir'])
+    except (OSError, ValueError, KeyError):
+        return None
+    return d if os.path.isdir(d) else None
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -545,6 +570,9 @@ class Handler(SimpleHTTPRequestHandler):
             st = book_status.all_status()
             st['running'] = _job[0]
             return self._json(200, st)
+        if method == 'GET' and parts == ['release']:
+            import release
+            return self._json(200, release.status())
         if method == 'GET' and parts == ['jobs']:
             with _jobs_lock:
                 return self._json(200, [_job_view(j, len(j['lines'])) for j in sorted(_jobs.values(), key=lambda j: -j['id'])])
@@ -643,12 +671,20 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         path = self.path.split('?', 1)[0]
+        if RELEASE and not (path == '/api/offline' or path.startswith('/api/backups')):
+            if path.startswith('/api/'):
+                return self._json(404, {'error': 'not in a release'})
+            if not self.directory:
+                return self._json(503, {'error': 'nothing released yet: run python tools/release.py'})
+            return super().do_GET()
         if path.startswith('/api/map/'):
             return self._map_api('GET')
         if path.startswith('/api/admin/'):
             return self._admin_api('GET')
         if path == '/api/offline':
-            return self._json(200, offline_list())
+            if RELEASE and not self.directory:
+                return self._json(503, {'error': 'nothing released yet'})
+            return self._json(200, offline_list(self.directory if RELEASE else ROOT))
         if path in ('/api/backups', '/api/backups/'):
             os.makedirs(BACKUPS, exist_ok=True)
             files = [e for e in os.scandir(BACKUPS) if e.is_file() and NAME.match(e.name)]
@@ -685,6 +721,8 @@ class Handler(SimpleHTTPRequestHandler):
         super().do_GET()
 
     def do_POST(self):
+        if RELEASE and not self.path.startswith('/api/backups/'):
+            return self._json(404, {'error': 'not in a release'})
         if self.path.startswith('/api/map/'):
             return self._map_api('POST')
         if self.path.startswith('/api/admin/'):
@@ -738,14 +776,28 @@ class Handler(SimpleHTTPRequestHandler):
 
 def main():
     p = argparse.ArgumentParser(description='Serve the Lone Wolf player and keep its backups.')
-    p.add_argument('port', nargs='?', type=int, default=8765)
+    p.add_argument('port', nargs='?', type=int, help='default 8766, or 8765 with --release')
     p.add_argument('--bind', default='127.0.0.1')
+    p.add_argument('--release', action='store_true', help='serve release/ (tools/release.py), not the working copy')
     a = p.parse_args()
+    if sys.stderr is None:  # pythonw (started with Windows) has no console: log to a file instead
+        os.makedirs(RELEASES, exist_ok=True)
+        sys.stdout = sys.stderr = open(os.path.join(RELEASES, 'server.log'), 'a', encoding='utf-8', buffering=1)
+    global RELEASE
+    RELEASE = a.release
+    a.port = a.port or (8765 if a.release else 8766)  # the release keeps the port Tailscale forwards to
     # the default queue of 5 waiting connections overflows when a page (or the offline copy) asks for
     # many files at once, and Windows answers the overflow with a reset
     ThreadingHTTPServer.request_queue_size = 128
-    server = ThreadingHTTPServer((a.bind, a.port), partial(Handler, directory=ROOT))
-    print(f'Serving {ROOT} on http://{a.bind}:{a.port}/ (backups in {BACKUPS})', flush=True)
+    if a.release:  # each request looks up the current release, so a new one needs no restart
+        handler = lambda *args, **kw: Handler(*args, directory=release_dir() or '', **kw)  # '' (not None, which means the current folder): nothing released
+        print(f'Serving the release in {RELEASES} on http://{a.bind}:{a.port}/ (backups in {BACKUPS})', flush=True)
+        if not release_dir():
+            print('Nothing released yet: run python tools/release.py', flush=True)
+    else:
+        handler = partial(Handler, directory=ROOT)
+        print(f'Serving {ROOT} on http://{a.bind}:{a.port}/ (backups in {BACKUPS})', flush=True)
+    server = ThreadingHTTPServer((a.bind, a.port), handler)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

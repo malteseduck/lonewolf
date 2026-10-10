@@ -34,7 +34,7 @@ async function api(path, opts) {
 async function load() {
   const { status, j } = await api('status');
   if (status !== 200) {
-    $('#loading').textContent = status === 403 ? 'The dashboard answers this PC only: open it at http://localhost:8765/tools/admin/.'
+    $('#loading').textContent = status === 403 ? 'The dashboard answers this PC only: open it at http://localhost:8766/tools/admin/.'
       : `No status from the server (${j.error || status}). Is it tools/serve.py, restarted since the dashboard was added?`;
     return;
   }
@@ -106,7 +106,7 @@ const ACTIONS = {
   reading: () => [run('Make reading copy', 'reading')],
   items: (b) => [prompt('items'), run('Check items', 'check-items'), ...(b.items.check?.errors?.length ? [prompt('itemsFix', 'Copy fix prompt')] : [])],
   pictures: (b) => [prompt('pictures'), { t: 'sheet', label: 'Open picture sheet here' }, link('On its own', `fights.html?book=${b.code}`), mark(6)],
-  testplay: () => [prompt('testplay'), link('Test address', 'http://127.0.0.1:8765/'), mark(7)],
+  testplay: () => [prompt('testplay'), link('Test address', 'http://127.0.0.1:8766/'), mark(7)],
   map: () => [{ t: 'map', label: 'Open map editor here' }],
 };
 function run(label, stage, opt = {}) { return { t: 'run', label, stage, ...opt }; }
@@ -251,6 +251,19 @@ function gate(kind, b) {
       ${first ? '' : '<p class="hint">After an importer change, "Re-import all and compare" also checks no other book got worse.</p>'}`;
     ackText = `I approve ${first ? 'importing' : 're-importing'} Book ${b.n}.`;
     okText = first ? `Import Book ${b.n}` : `Re-import Book ${b.n}`;
+  } else if (kind === 'release') {
+    const r = b, cur = r.current || {}, same = cur.commit === r.head.commit;
+    value = 'all';
+    title = 'Release to the iPad?';
+    body = `<p>Copies commit <code>${esc(r.head.commit)}</code>, <i>${esc(r.head.subject)}</i>, with the books and art as they are on disk, into <code>release/</code>. The release server serves it at once; the iPad fetches it at its next sync.</p>
+      <table class="dates">
+        <tr><th>Released now</th><td>${cur.commit ? `<code>${esc(cur.commit)}</code> ${esc(cur.subject || '')}, ${esc(cur.made || '')}` : 'nothing yet'}</td></tr>
+        <tr><th>Commits since</th><td>${r.commits_since == null ? '?' : r.commits_since}</td></tr>
+      </table>
+      ${r.dirty ? `<p class="stale">${r.dirty} file${r.dirty === 1 ? ' has' : 's have'} uncommitted changes: left out. Commit first to include them.</p>` : ''}
+      ${same ? '<p class="hint">This commit is already released: only changed books or art would go.</p>' : ''}`;
+    ackText = 'I approve releasing this to the iPad.';
+    okText = 'Release';
   } else {  // re-import all
     const list = books.filter((x) => x.known && x.imp);
     const stale = list.filter((x) => x.stale?.length).length;
@@ -314,6 +327,11 @@ document.querySelectorAll('[data-global]').forEach((btn) => btn.onclick = async 
   const stage = btn.dataset.global;
   let confirm;
   if (stage === 'reimport-all') { confirm = await gate('all'); if (!confirm) return; }
+  if (stage === 'release') {
+    const { status, j } = await api('release');
+    if (status !== 200) return toast(j.error || `Could not read the release (${status})`, 6000);
+    confirm = await gate('release', j); if (!confirm) return;
+  }
   startJob(stage, '', confirm);
 });
 

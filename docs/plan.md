@@ -4,7 +4,7 @@ Working notes: work that is not a book step, decisions made, and what the player
 be refined with the owner. Last updated 2026-10-09.
 
 Where each book stands, step by step, is not kept here: the import dashboard
-(`http://localhost:8765/tools/admin/`, `docs/reference/dashboard.md`) works it out from the files and
+(`http://localhost:8766/tools/admin/`, `docs/reference/dashboard.md`) works it out from the files and
 the hand marks, and `docs/book-checklist.md` holds the same table. Work found here that belongs to
 every book can become a step or a check there.
 
@@ -236,6 +236,8 @@ Working and checked by playing in the browser:
   read as once a book), Huntmastery against an ambush, Laumspur eaten as a Meal. The potion in a
   fight stays our house rule.
 - Offline on the iPad (2026-10-03, docs/reference/offline.md).
+- Releases: the iPad is served the last release, not the working copy (2026-10-10, `tools/release.py`,
+  the dashboard's Release button, the release server on 8765 started with Windows; edit server on 8766).
 - Docs: spec, reference, CLAUDE.md.
 
 Tested only against stand-in data, not real text:

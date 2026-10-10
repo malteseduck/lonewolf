@@ -19,11 +19,11 @@ not extend them. `shared/` is used by all of them, so check A-C still load after
 python tools/serve.py
 ```
 
-Then open http://localhost:8765/. It is `http.server` plus the backups API (`backups/`, git-ignored;
+Then open http://localhost:8766/. It is `http.server` plus the backups API (`backups/`, git-ignored;
 see Storage in `docs/reference/architecture.md`). `.claude/launch.json` has the same
 server as `lone-wolf` for the preview tools. It must be served: `main.js` is an ES module.
 
-The import dashboard is http://localhost:8765/tools/admin/ (this PC only): every book's steps, the
+The import dashboard is http://localhost:8766/tools/admin/ (this PC only): every book's steps, the
 script steps' buttons, the map editor inline, and a prompt for each agent step
 (`docs/reference/dashboard.md`). Never press its gated buttons (download, import, re-import all):
 those are the owner's go-ahead.
@@ -32,10 +32,10 @@ To serve it to other devices on the home network (the "lan" server; `lone-wolf-l
 `.claude/launch.json`):
 
 ```sh
-python tools/serve.py 8765 --bind 0.0.0.0
+python tools/serve.py 8766 --bind 0.0.0.0
 ```
 
-Then open `http://<the PC's LAN address>:8765/` on the device (`ipconfig` shows it). Plain HTTP, so
+Then open `http://<the PC's LAN address>:8766/` on the device (`ipconfig` shows it). Plain HTTP, so
 no service worker and no offline copy; for that, see `docs/reference/offline.md`.
 `python tools/offline_check.py` prints what the offline copy would hold (sizes, largest files) and
 exits 1 if the page names a file that is missing; run it after adding or moving a file the page loads.
@@ -136,9 +136,11 @@ pages (`docs/reference/rules-books.md`), and its text is not copied into the rep
 - Python's server in its default HTTP/1.0 mode cut files over ~510 KB short on Windows (the old
   "connection reset on first load"). `tools/serve.py` speaks HTTP/1.1, which fixes it; plain
   `python -m http.server` still has it.
-- Over HTTPS (Tailscale) or at an address with `?offline`, the page is served by the service worker's
-  copy and changes appear only after its sync and a reload (docs/reference/offline.md). On
-  `http://localhost:8765/` there is no service worker.
+- The iPad (Tailscale) is served the last *release* (`python tools/serve.py --release` on 8765, always running, started with Windows), not
+  the working copy: a change reaches it only after a commit and `python tools/release.py`, which is
+  the owner's call. Over HTTPS or at an address with `?offline`, the page is served by the service
+  worker's copy and changes appear only after its sync and a reload (docs/reference/offline.md). On
+  `http://localhost:8766/` there is no service worker.
 - The browser console keeps errors from earlier page loads. Confirm an error is current before
   chasing it.
 - Re-run `python tools/import_projectaon.py <book>` after changing the importer; the page loads

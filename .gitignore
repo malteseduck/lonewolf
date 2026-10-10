@@ -17,3 +17,5 @@ node_modules/
 # the map editor's backup of the previous label list, and its write in progress
 maps/*/*.bak
 maps/*/*.part
+# what the iPad is served (tools/release.py): copies of committed code and the books
+release/

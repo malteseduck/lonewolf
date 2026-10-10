@@ -8,7 +8,7 @@ dashboard (`tools/admin/`). Work outside the steps is in `docs/plan.md`.
 files on disk (steps 1, 2, 5, 8, and the file halves of 4 and 6) or from `docs/book-status.json`
 (steps 3, 4, 6, 7, which no file can show), and rewrites the table whenever a step is marked.
 When a step is finished, run `python tools/book_status.py done <book> <step>` (or use Mark done in
-the dashboard, `http://localhost:8765/tools/admin/`); for a step read from the files it checks the
+the dashboard, `http://localhost:8766/tools/admin/`); for a step read from the files it checks the
 files instead and says what is missing. `undo` takes a hand mark back. See
 `docs/reference/dashboard.md`.
 
@@ -38,7 +38,7 @@ Darkness.
 
 ## Where each step is done
 
-Each step's buttons and prompt are in the dashboard, `http://localhost:8765/tools/admin/`.
+Each step's buttons and prompt are in the dashboard, `http://localhost:8766/tools/admin/`.
 
 1. `tools/fetch_projectaon.py <code>`. Needs the owner's go-ahead for each book. Read from the files.
 2. `tools/import_projectaon.py <code>`, then read its report. Needs the owner's go-ahead too.
@@ -54,7 +54,7 @@ Each step's buttons and prompt are in the dashboard, `http://localhost:8765/tool
    match (read from the files), then the owner looks at the picture sheet,
    `tools/admin/fights.html?book=<code>`, picks changes, and may supply drawings (kept in git-ignored
    `art/plates/`). The mark is the owner's, and takes only once every enemy has a picture.
-7. Play in the browser on a test address (`http://127.0.0.1:8765/`), never over the owner's saves.
+7. Play in the browser on a test address (`http://127.0.0.1:8766/`), never over the owner's saves.
    A hand mark (the agent's).
 8. `docs/reference/map-upscale.md`. Never overwrite `map.png`: it is the original.
     Read from the files: done once `map-4k.webp` exists and `book.js` names it (a re-import).

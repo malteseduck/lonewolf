@@ -13,7 +13,8 @@ saves under that address). Tailscale gives both.
    it connected (it can stay on in the background).
 3. **In the Tailscale admin console** (https://login.tailscale.com/admin/dns): turn on
    **MagicDNS** and **HTTPS Certificates**.
-4. **On the PC**, start the player's server as usual (`python tools/serve.py`), then in a terminal:
+4. **On the PC**, make a release and start the release server (see Releasing, below), then in a
+   terminal:
 
    ```
    tailscale serve --bg 8765
@@ -21,7 +22,7 @@ saves under that address). Tailscale gives both.
 
    It prints the address, like `https://yourpc.your-tailnet.ts.net/`. Tailscale keeps serving it
    (HTTPS, its own certificate) across restarts; it only forwards to the local server, so
-   `serve.py` must be running for the iPad to reach the PC. Only your own Tailscale devices can
+   the release server must be running for the iPad to reach the PC. Only your own Tailscale devices can
    open it. `tailscale serve status` shows it; `tailscale serve --https=443 off` stops it.
 5. **On the iPad, in Chrome** (or Safari): open that address. The top right corner of the page says
    "Saving for offline n / 647", then "Ready offline" (about 44 MB).
@@ -43,6 +44,35 @@ saves under that address). Tailscale gives both.
   PC what changed and downloads just that, in the background. Then "Update ready: reload" appears at
   the top right: touch it (or simply open the app next time) and the new version takes over.
   A page already running never changes under you.
+
+## Releasing
+
+The iPad gets only what has been released, never the working copy, so half-finished work stays on
+the PC. Two servers run side by side:
+
+| Server | Command | Serves |
+|---|---|---|
+| release (always on) | `python tools/serve.py --release` (port 8765) | the last release, to the iPad through Tailscale |
+| work (when editing) | `python tools/serve.py` (port 8766) | the working copy at http://localhost:8766/ |
+
+To release: commit, then `python tools/release.py` (or `python tools/release.py <commit>`). It
+copies into `release/<date>-<commit>/` (git-ignored) the files `GET /api/offline` lists, plus
+`sw.js`: the code from the commit (uncommitted changes are left out, and it says how many), the
+books and art from disk as they are (they are git-ignored, so never in a commit). A file the page
+needs that is neither committed nor ignored stops the release. `release/CURRENT` names the folder;
+the release server reads it at each request, so no restart is needed, and the iPad fetches the
+difference at its next sync. The last two releases are kept: `release.py <older commit>` puts one
+back.
+
+The release server answers the files of the release and the backups API (the same `backups/` as the
+work server), nothing else: no map or admin API, no docs or tools. Backups from the iPad land in
+`backups/` either way.
+
+The release server starts with Windows from a shortcut in the Startup folder (Win+R,
+`shell:startup`), "Lone Wolf release server": `C:\Python314\pythonw.exe tools\serve.py --release`,
+started in the project folder. pythonw has no window; it logs to `release/server.log`. To stop it,
+end `pythonw.exe` in Task Manager; to start it again, open the shortcut. The release server's own
+code is `tools/serve.py` from the working copy, read when it starts.
 
 ## How it works
 
@@ -74,8 +104,8 @@ saves under that address). Tailscale gives both.
   fix), when the page comes to the front, and when the device comes back online. The page shows the
   worker's messages in `#offline` at the top right (`offlineSay` in `main.js`).
 - The service worker is registered only over HTTPS (as Tailscale serves it) or when the address
-  has `?offline`, so working on the PC at `http://localhost:8765/` is never served stale files. To
-  try the offline copy on the PC, open `http://127.0.0.1:8765/?offline` (a different origin from
+  has `?offline`, so working on the PC at `http://localhost:8766/` is never served stale files. To
+  try the offline copy on the PC, open `http://127.0.0.1:8766/?offline` (a different origin from
   `localhost`, with its own saves); unregister it afterwards (browser devtools, Application,
   Service workers), or that origin keeps serving its copy.
 - Fonts are in `assets/fonts/` (from Google Fonts, SIL Open Font License), so nothing comes from

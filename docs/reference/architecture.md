@@ -54,6 +54,8 @@ tools/
   syntax_check.py           node --check (modules via .mjs copies) and py_compile on every script
   offline_check.py          prints the offline list without a server: size per group, largest, missing
                             (docs/reference/offline.md)
+  release.py                copies a commit's files (and the git-ignored books and art) into release/, which
+                            serve.py --release serves to the iPad (docs/reference/offline.md, Releasing)
   fetch_projectaon.py       downloads one book into data/projectaon/<code>/
   import_projectaon.py      converts it to data/projectaon/<code>/book.js (and import-report.json, its report's
                             figures) and rewrites data/projectaon/index.js
@@ -81,7 +83,10 @@ data/reference/             git-ignored. Reference images fetched for the owner:
                             symbol-packs/: downloaded engraved symbol packs (Hogenburg, Donia, Walser; unused)
 art/reference/map-symbols/  git-ignored. Map symbols kept from the dropped custom maps; from-game/ holds
                             the Widman sheet and Hogenburg symbols the game used, with their READMEs
-.claude/launch.json         local server definition (tools/serve.py on 8765)
+.claude/launch.json         local servers: lone-wolf (tools/serve.py on 8766), lone-wolf-lan (the same on the
+                            network), lone-wolf-release (serve.py --release on 8765)
+release/                    git-ignored. The releases the iPad is served (tools/release.py): the last two
+                            folders, CURRENT naming the one in use, server.log
 ```
 
 ## Load order

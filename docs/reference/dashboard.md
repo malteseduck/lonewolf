@@ -1,6 +1,6 @@
 # The import dashboard
 
-`http://localhost:8765/tools/admin/`, served by `python tools/serve.py`, on this PC only (its API
+`http://localhost:8766/tools/admin/`, served by `python tools/serve.py`, on this PC only (its API
 refuses other machines, even when the server is bound to the LAN). One page for every book's way from
 Project Aon into the player: where each book stands, a button for each step that is a script, the
 map editor inline, and a ready prompt for each step that needs Claude Code. Built 2026-10-08.
@@ -96,11 +96,14 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `offline` | `offline_check.py` | |
 | `syntax` | `syntax_check.py` | |
 | `reimport-all` | `reimport_all.py` | yes |
+| `release` | `release.py` (the last commit to the iPad, docs/reference/offline.md) | yes |
 
 **Gated stages** open a dialog first: the book, what is fetched or rewritten (about 400 files, 4 MB
 for a download), and for an import the dates (when `book.js` was made, the newest source page, when
 the importer last changed, `map-4k.webp`) and whether the import is out of date; then a tick "I
-approve" before the button works. The server refuses the run without the confirmation. This makes
+approve" before the button works. The release dialog shows, from `GET /api/admin/release`
+(`release.py --status`), the commit to release, the one released now, the commits between and how
+many files have uncommitted changes (left out). The server refuses the run without the confirmation. This makes
 the step deliberate, not secure: **an agent driving the browser never presses a gated button**;
 downloads and imports still need the owner's word (AGENTS.md).
 
