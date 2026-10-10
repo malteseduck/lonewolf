@@ -45,6 +45,9 @@ tools/
   map-editor.html           the map steps' page (docs/reference/map-upscale.md); also shown inside the dashboard
   plates_file.py            reads and writes assets/plates/plates.json in its layout; the owner's pictures from the
                             picture sheet (api/admin/plate)
+  ill_index.py              writes data/projectaon/ill-index.json: every book's illustrations, the fights near
+                            each, and a hand note of what each shows (data/projectaon/ill-notes.json); both
+                            git-ignored (docs/reference/items.md, Fight pictures)
   book_status.py            every book's checklist steps, from the files and docs/book-status.json; marks steps
                             done; writes the table in docs/book-checklist.md
   reimport_all.py           re-imports every imported book and compares each import-report.json with the last

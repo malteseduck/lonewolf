@@ -286,12 +286,14 @@ async function pickStandIn(foe) {
 }
 function showPool() {
   const q = $('#si-q').value.trim().toLowerCase(), g = $('#si-g').value;
-  const hits = pool.filter((o) => (!g || o.group === g) && (!q || o.src.toLowerCase().includes(q) || o.who.some((w) => w.toLowerCase().includes(q))));
+  const hits = pool.filter((o) => (!g || o.group === g) && (!q || o.src.toLowerCase().includes(q)
+    || [...o.who, ...(o.near || []), o.shows || ''].some((w) => w.toLowerCase().includes(q))));
   $('#si-n').textContent = `${hits.length} of ${pool.length}`;
   const shown = hits.slice(0, 300);  // lazy images, but the page stays light
   $('#si-grid').innerHTML = shown.map((o) => `<button class="it" data-src="${esc(o.src)}" title="${esc(o.src)}">
     <img loading="lazy" src="/${esc(o.src)}" alt=""><span>${esc(o.src.split('/').slice(-2).join('/'))}</span>
-    ${o.who.length ? `<span class="who">${esc(o.who.join(', '))}</span>` : ''}</button>`).join('')
+    ${o.who.length ? `<span class="who">${esc(o.who.join(', '))}</span>` : ''}
+    ${o.shows ? `<span class="who">${esc(o.shows)}</span>` : ''}</button>`).join('')
     + (hits.length > shown.length ? `<p class="count">${hits.length - shown.length} more: filter to narrow.</p>` : '');
 }
 $('#si-q').addEventListener('input', () => showPool());

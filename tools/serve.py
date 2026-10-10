@@ -42,7 +42,7 @@ Static files as `python -m http.server` serves them, from the project root, plus
                                       the owner's picture for one enemy, saved as art/plates/<book>/<slug>.webp and
                                       written into assets/plates/plates.json (tools/plates_file.py). Or src: a picture
                                       already on disk (assets/, art/, data/) to stand in, instead of image
-    GET  /api/admin/standins          every picture a fight can borrow: [{src, group, size}]
+    GET  /api/admin/standins          every picture a fight can borrow: [{src, group, size, shows?, near?}]
 
     GET  /api/offline          what the offline copy holds: {version, files: {path: hash}}
 

@@ -166,13 +166,25 @@ add is written some other way (`ice barbarian$`, `kalkoth`). Where to look, in o
    `art/plates/<code>/`). A picture dragged from another site arrives as an address and is refused: save it
    first, or copy and paste it. **Stand-in...** on a card opens a picker of every picture already on disk
    (`GET /api/admin/standins`: `assets/plates/`, `art/` including `art/plates/`, `data/reference/`, and every
-   imported book's `ill*.png`, each labelled with the enemies it is fought with); filter by name or enemy,
+   imported book's `ill*.png`, each labelled with the enemies it is fought with and, once the index below
+   has been built, what it shows); filter by name, enemy, a nearby fight's enemy or a word of the note,
    click one, crop it in the same editor, Save. The entry points `src` at that file (no copy), so a creature
    met in several books needs one picture found once. Older owner pictures sit in `art/` and `art/plates/` (Book 1's Winged Serpent).
 2. **The same book's own illustrations**, also those outside fights: a page of portraits, or a
    creature pictured where it is met but not fought. A `crop` cuts one figure out (Book 2's
-   council of travellers, cut from its portrait page). First look at every `ill*.png` of the book;
-   the small ones (`small*.png`) are too low to make a plate.
+   council of travellers, cut from its portrait page). The small ones (`small*.png`) are too low to
+   make a plate.
+
+   **The illustration index** saves looking through every book again. `python tools/ill_index.py`
+   writes git-ignored `data/projectaon/ill-index.json`: for each `ill*.png` of every downloaded book
+   (imported or not), its section, the fight there, the sections it links to and from, the fights
+   within two links either way (`near`, with `steps`, negative for fights that lead to it), the
+   `plates.json` entries already borrowing it, and `shows`, a few words of our own on what it shows.
+   The notes are kept by hand in git-ignored `data/projectaon/ill-notes.json` and merged in, so a
+   re-run keeps them; `--missing` lists pictures with none. All 245 pictures of Books 1-12 have a
+   note (2026-10-10); when a new book is downloaded, look at its pictures once and add theirs. Search
+   the index for a creature's name or a word ("hound", "robed", "dwarf"), then look at the few hits.
+   The Stand-in picker searches the same notes and nearby fights.
 3. **Another downloaded book's illustration**, only for plain human enemies (soldiers, guards,
    robbers, bodyguards), by path under `data/projectaon/`. Never another book's special creature
    or set-piece fight: the owner would meet the same picture twice. The exception is the very same
@@ -213,6 +225,14 @@ Viollet-le-Duc's portcullis in the Carcassonne gate passage (free, not Book 6's 
 Engravings kept: the Invisible Whipmaster Doré's whipping demons (*Inferno* XVIII), the Trap-webs a 1547
 woodcut of a spider on its web, the Black Lakeweed a crop of Haeckel's seaweeds (the search found only
 cartoon plants).
+Book 8 pictures Rahgu, Anapheg, the Silver Swamp Python and the Taan-spider from the non-fight
+pictures one or two links before their fights; the Monks of the Sword and the mounted monks from its
+hooded monks at the abbey (whole, and one monk cropped); Boran from the innkeeper his father, the one
+dwarf the book pictures, at the same inn (a near miss, flagged to the owner). The Gnaag Helghast, a
+Helghast disguised as a monk, takes Book 2's robed Helghast in human form (not the skull-faced one
+Books 2 and 3 use); Bourn the Bowyer, Book 6's archer Altan. Foes it never pictures: Kezoor a pen
+necromancer, gaunt as the wiki describes him, and the Korkuna an ink alien egg standing in liquid
+(both in `art/plates/08tjoh/`); the Hunting Dogs a Wellcome engraving of hounds pouncing on a stag.
 An already-downloaded free engraving can serve a second creature by a different crop (Book 4's Tunnel
 Fiends are other demons from the Schongauer print that gives Book 3 its Mutant).
 4. **A picture found by searching**, anywhere: Wikimedia Commons, a general image search, fan art,

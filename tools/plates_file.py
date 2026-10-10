@@ -86,7 +86,8 @@ MIN_BYTES = 20 * 1024  # smaller files are icons and fragments, too low to make 
 
 
 def standins():
-    """Every picture a fight can borrow, for the picture sheet's picker: [{src, group, size}].
+    """Every picture a fight can borrow, for the picture sheet's picker: [{src, group, size}], a book
+    picture also with shows and near (enemies fought within two links) from data/projectaon/ill-index.json.
     Groups: 'library' (assets/plates), 'yours' (art/plates), 'book <code>' (a book's illustrations,
     not its small ones or its maps), 'art' (the owner's borrowed art and reference images)."""
     out = []
@@ -120,6 +121,16 @@ def standins():
     first = {}
     for o in out:  # art/plates is walked twice: the first group wins
         first.setdefault(o['src'], o)
+    # what each book picture shows and the fights near it, from tools/ill_index.py, if it has been run
+    idx = os.path.join(pa, 'ill-index.json')
+    if os.path.exists(idx):
+        with open(idx, encoding='utf-8') as f:
+            index = json.load(f)
+        for key, v in index.items():
+            o = first.get('data/projectaon/' + key)
+            if o:
+                o['shows'] = v['shows']
+                o['near'] = sorted({e for n in v['near'] for e in n['enemies']} - set(v['fight']))
     return list(first.values())
 
 

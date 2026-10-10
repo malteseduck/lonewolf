@@ -52,3 +52,9 @@ seaweed-haeckel.jpg
   "Haeckel Fucoideae.jpg", Ernst Haeckel, Kunstformen der Natur plate 65 (1904). Public domain.
   Commons' 1920 px copy, cropped to the top left fronds, greyscale.
   https://commons.wikimedia.org/wiki/File:Haeckel_Fucoideae.jpg
+
+hounds-stag-wellcome.jpg
+  "The stag entangled by his horns": hounds pouncing on a stag caught in a bush, line engraving.
+  Wellcome Collection V0021541, CC BY 4.0. Commons' 1920 px copy, cropped to the hounds and the
+  stag's forequarters (caption cut off), greyscale.
+  https://commons.wikimedia.org/wiki/File:A_stag_with_his_antlers_caught_in_a_bush_is_pounced_on_by_ho_Wellcome_V0021541.jpg
