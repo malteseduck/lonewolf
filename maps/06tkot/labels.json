@@ -1,0 +1,622 @@
+[
+ {
+  "text": "THE STORNLANDS",
+  "box": [
+   84,
+   120,
+   393,
+   214
+  ],
+  "conf": 1,
+  "retype": false,
+  "lines": [
+   "THE",
+   "STORNLANDS"
+  ]
+ },
+ {
+  "text": "HELGOR",
+  "box": [
+   511,
+   121,
+   592,
+   235
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "AKE KAZONARA",
+  "box": [
+   638,
+   173,
+   828,
+   229
+  ],
+  "conf": 0.98,
+  "retype": true
+ },
+ {
+  "text": "LAKE VORNDAROL",
+  "box": [
+   898,
+   166,
+   1119,
+   204
+  ],
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "AKENGORGE",
+  "box": [
+   1212,
+   175,
+   1356,
+   249
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "THE ZAUT",
+  "box": [
+   1371,
+   304,
+   1485,
+   338
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "QUARIEN RANGE",
+  "box": [
+   1657,
+   323,
+   1858,
+   396
+  ],
+  "conf": 0.97,
+  "retype": true
+ },
+ {
+  "text": "HELGOR",
+  "box": [
+   731,
+   379,
+   833,
+   417
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "KARKASTE",
+  "box": [
+   1185,
+   409,
+   1305,
+   434
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "HELIN",
+  "box": [
+   1378,
+   420,
+   1459,
+   449
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "MAGADOR",
+  "box": [
+   712,
+   462,
+   866,
+   507
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "VAKOVAR",
+  "box": [
+   984,
+   479,
+   1087,
+   507
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "VARETTIANHILLS",
+  "box": [
+   1476,
+   464,
+   1673,
+   492
+  ],
+  "conf": 0.97,
+  "retype": true
+ },
+ {
+  "text": "SCHAAN",
+  "box": [
+   507,
+   504,
+   616,
+   532
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "LYRIS",
+  "box": [
+   1234,
+   517,
+   1326,
+   554
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "QUARLED",
+  "box": [
+   1721,
+   543,
+   1823,
+   572
+  ],
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "TELT",
+  "box": [
+   721,
+   588,
+   784,
+   622
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "SOREN",
+  "box": [
+   1219,
+   598,
+   1305,
+   630
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "CASIORN",
+  "box": [
+   1757,
+   594,
+   1868,
+   625
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "VARETTA",
+  "box": [
+   156,
+   613,
+   338,
+   659
+  ],
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "\u2606",
+  "box": [
+   103,
+   714,
+   336,
+   947
+  ],
+  "conf": 0.91,
+  "retype": true
+ },
+ {
+  "text": "ELDENORA",
+  "box": [
+   367,
+   707,
+   408,
+   921
+  ],
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "KAON",
+  "box": [
+   457,
+   700,
+   538,
+   732
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "SOLD",
+  "box": [
+   733,
+   689,
+   808,
+   723
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "DELDEN",
+  "box": [
+   785,
+   789,
+   893,
+   824
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "AMORY",
+  "box": [
+   1340,
+   793,
+   1428,
+   826
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "THE CENERS",
+  "box": [
+   1144,
+   808,
+   1288,
+   839
+  ],
+  "conf": 0.97,
+  "retype": true
+ },
+ {
+  "text": "SLOVARIAN RANGE",
+  "box": [
+   1582,
+   816,
+   1850,
+   886
+  ],
+  "conf": 0.96,
+  "retype": true
+ },
+ {
+  "text": "NORTH PASS",
+  "box": [
+   1774,
+   835,
+   1914,
+   909
+  ],
+  "conf": 0.97,
+  "retype": true
+ },
+ {
+  "text": "LUYEN",
+  "box": [
+   1036,
+   867,
+   1113,
+   901
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "BAIS",
+  "box": [
+   832,
+   906,
+   894,
+   941
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "WOEL",
+  "box": [
+   1426,
+   939,
+   1508,
+   972
+  ],
+  "conf": 0.9,
+  "retype": true
+ },
+ {
+  "text": "TIDO",
+  "box": [
+   1532,
+   996,
+   1604,
+   1038
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "LYRIS",
+  "box": [
+   71,
+   1037,
+   115,
+   1158
+  ],
+  "conf": 0.85,
+  "retype": false
+ },
+ {
+  "text": "RIOMA",
+  "box": [
+   575,
+   1019,
+   668,
+   1052
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "DUADON",
+  "box": [
+   1037,
+   1032,
+   1145,
+   1067
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "ELDENORA",
+  "box": [
+   535,
+   1124,
+   656,
+   1155
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "ABISKO",
+  "box": [
+   838,
+   1133,
+   959,
+   1166
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "TEKARO",
+  "box": [
+   1359,
+   1179,
+   1466,
+   1211
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "SLOVIA",
+  "box": [
+   1543,
+   1198,
+   1648,
+   1237
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "SUENTINA",
+  "box": [
+   1780,
+   1181,
+   1918,
+   1212
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "RELONI",
+  "box": [
+   806,
+   1210,
+   887,
+   1320
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "R.SUEN",
+  "box": [
+   1468,
+   1276,
+   1580,
+   1357
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "CHOD",
+  "box": [
+   1299,
+   1283,
+   1377,
+   1316
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "SCALE IN MILES",
+  "box": [
+   147,
+   1353,
+   336,
+   1382
+  ],
+  "conf": 0.99,
+  "retype": false
+ },
+ {
+  "text": "N",
+  "box": [
+   1744,
+   1349,
+   1780,
+   1391
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "OREDAL",
+  "box": [
+   703,
+   1362,
+   800,
+   1393
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "GORA",
+  "box": [
+   1041,
+   1382,
+   1116,
+   1415
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "2A",
+  "box": [
+   135,
+   1410,
+   155,
+   1422
+  ],
+  "conf": 0.9,
+  "retype": true
+ },
+ {
+  "text": "50",
+  "box": [
+   192,
+   1427,
+   215,
+   1444
+  ],
+  "conf": 0.78,
+  "retype": true
+ },
+ {
+  "text": "75",
+  "box": [
+   245,
+   1409,
+   271,
+   1424
+  ],
+  "conf": 0.8,
+  "retype": true
+ },
+ {
+  "text": "100",
+  "box": [
+   301,
+   1409,
+   334,
+   1423
+  ],
+  "conf": 0.94,
+  "retype": true
+ },
+ {
+  "text": "00",
+  "box": [
+   308,
+   1430,
+   334,
+   1446
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "185 150",
+  "box": [
+   353,
+   1408,
+   414,
+   1425
+  ],
+  "conf": 0.83,
+  "retype": true
+ },
+ {
+  "text": "150",
+  "box": [
+   380,
+   1429,
+   415,
+   1447
+  ],
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "260",
+  "box": [
+   380,
+   1453,
+   413,
+   1474
+  ],
+  "conf": 1,
+  "retype": true
+ }
+]
