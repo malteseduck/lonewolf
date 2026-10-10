@@ -237,6 +237,25 @@ const ITEM_GLYPH = { dagger: 'plain-dagger', spear: 'barbed-spear', mace: 'mace-
   bow: 'pocket-bow', quiver: 'quiver', arrows: 'arrow-flights', potion: 'health-potion', meal: 'meal', map: 'treasure-map', helmet: 'visored-helm', chainmail: 'mail-shirt' };
 const itemGlyph = (id) => glyph(ITEM_GLYPH[id] || (LW.ITEMS[id] && LW.ITEMS[id].glyph) || (id === 'gold' ? 'two-coins' : id === 'pack' ? 'backpack' : LW.itemKind(id) === 'special' ? 'gem-pendant' : LW.itemKind(id) === 'weapon' ? 'pointy-sword' : 'swap-bag'));
 
+/* The seal buttons' plate, of a piece with the medallions: a bronze bezel round a dark enamel field,
+   a bronze lozenge pin at each end. Drawn 400 x 100 (given as its size, so border-image slices count
+   in these units); .seal lays it on with border-image, the ends (60 each side) kept whole and only
+   the straight run between them stretched, so it holds any label. Colours from :root. */
+function sealPlate() {
+  const v = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const hi = v('--bronze-hi'), mid = v('--bronze'), lo = v('--bronze-lo'), en = v('--enamel'), dark = v('--enamel-lo');
+  const stud = (x) => `<path d="M${x} 40L${x + 10} 50 ${x} 60 ${x - 10} 50Z" fill="url(#stud)" stroke="${dark}" stroke-width="1.8"/>`; // the lozenge pin of the dial and the discs
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="100" viewBox="0 0 400 100" preserveAspectRatio="none"><defs>
+    <linearGradient id="rim" gradientUnits="userSpaceOnUse" x1="0" y1="8" x2="0" y2="92"><stop offset="0" stop-color="${hi}"/><stop offset="0.22" stop-color="${mid}"/><stop offset="0.5" stop-color="${lo}"/><stop offset="0.78" stop-color="${mid}"/><stop offset="1" stop-color="${hi}"/></linearGradient>
+    <linearGradient id="field" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${dark}"/><stop offset="0.45" stop-color="${en}"/><stop offset="1" stop-color="${dark}"/></linearGradient>
+    <linearGradient id="stud" x1="0" y1="0" x2="1" y2="1"><stop offset="0.15" stop-color="${hi}"/><stop offset="0.85" stop-color="${lo}"/></linearGradient></defs>
+    <rect x="6" y="8" width="388" height="84" rx="42" fill="url(#rim)" stroke="${dark}" stroke-width="3"/>
+    <rect x="9.5" y="11.5" width="381" height="77" rx="38.5" fill="none" stroke="${hi}" stroke-width="1.2" opacity="0.3"/>
+    <rect x="19" y="21" width="362" height="58" rx="29" fill="url(#field)" stroke="${dark}" stroke-width="2.4"/>
+    <path d="M40 77.4H360" stroke="${hi}" stroke-width="1" opacity="0.18"/>
+    ${stud(40)}${stud(360)}</svg>`;
+}
+
 /* ---------- materials, drawn once ---------- */
 const root = document.documentElement.style;
 root.setProperty('--parch-l', `url(${Ink.parchment(900, 1300, false, true).toDataURL('image/jpeg', 0.86)})`);
@@ -245,6 +264,7 @@ root.setProperty('--frame', `url(${drawFrame().toDataURL()})`);
 root.setProperty('--grid-frame', `url(${drawFrame(1000, 470, { vine: false }).toDataURL()})`);
 root.setProperty('--banner', `url(${drawBanner().toDataURL()})`);
 root.setProperty('--crest', `url(${drawCrest().toDataURL()})`);
+root.setProperty('--seal', `url("data:image/svg+xml,${encodeURIComponent(sealPlate())}")`);
 root.setProperty('--wood', `linear-gradient(rgba(10,7,6,0.55), rgba(10,7,6,0.55)), url(${Ink.leather(512).toDataURL('image/jpeg', 0.8)})`);
 gear.innerHTML = gearSVG();
 let portraitURL = null; // Lone Wolf's likeness over the Kai panel, if the owner has a picture of him (art/manifest.json "portrait")
@@ -286,15 +306,15 @@ function makeDial(onIdleClick) {
     show(n) { angle = -n * 36; ring.style.transform = `rotate(${angle}deg)`; mark(n); },
     async spin() {
       const n = LW.rand10(), from = angle;
-      angle = Math.floor(from / 360) * 360 - 1080 - n * 36;
+      angle = Math.floor(from / 360) * 360 - 720 - n * 36;
       hub.textContent = ''; ring.querySelectorAll('.hit').forEach((s) => s.classList.remove('hit'));
       hub.classList.add('shuffle');
       const ticks = setInterval(() => { hub.textContent = LW.rand10(); }, 70); // the face shuffles while the bezel turns
-      anim = ring.animate([{ transform: `rotate(${from}deg)` }, { transform: `rotate(${angle}deg)` }], { duration: still ? 1 : 1500, easing: 'cubic-bezier(0.15, 0.6, 0.2, 1)', fill: 'forwards' });
+      anim = ring.animate([{ transform: `rotate(${from}deg)` }, { transform: `rotate(${angle}deg)` }], { duration: still ? 1 : 800, easing: 'cubic-bezier(0.15, 0.6, 0.2, 1)', fill: 'forwards' });
       await anim.finished.catch(() => {});
       clearInterval(ticks); anim = null; hub.classList.remove('shuffle');
       mark(n);
-      await wait(350);
+      await wait(200);
       return n;
     },
   };
@@ -732,7 +752,14 @@ function renderRight() {
   rtabs.innerHTML = tabs.map(([id, label]) => `<button type="button" class="med" role="tab" aria-selected="${panel === id}" aria-label="${label}" data-panel="${id}">${TAB_ART[id]}</button>`).join('')
     + `<button type="button" class="med home" data-home aria-label="Back to the title page" title="Back to the title page">${glyph('return-arrow')}</button>`; // the HD return medallion: start over, or pick another book
   if (mode === 'title') { pr.innerHTML = titleRightHTML(); return; }
-  if (mode === 'setup') { pr.innerHTML = setupRightHTML(); return; }
+  if (mode === 'setup') {
+    // a choice redraws the page: keep the list where the reader had scrolled it
+    const was = pr.querySelector('.supage'), top = was && was.dataset.step === SU.step ? was.scrollTop : 0;
+    pr.innerHTML = setupRightHTML();
+    const list = pr.querySelector('.supage');
+    if (list) { list.dataset.step = SU.step; list.scrollTop = top; fadeEdges(list); }
+    return;
+  }
   if (!game.s) return;
   const h = game.hero, cs = B ? B.cs() : LW.heroCS(h).total;
   const place = mode === 'battle' ? 'Combat' : book.title;
@@ -756,15 +783,6 @@ function render() {
    a slot for each thing to take; right: what may be taken, kept or left). LW.HeroSetup and
    LW.KitSetup (shared/rules-series.js) hold the rules. */
 let SU = null; // { step: 'hero', h } or { step: 'kit', k }
-/* the gold still to draw: touched, its face shuffles and settles on the total */
-const suMed = (key, v, label) => (v == null ? `<button type="button" class="med su-val" data-suroll="${key}" aria-label="Draw your ${label}">?</button>` : `<span class="med su-val">${v}</span>`);
-async function suRoll(btn, key) {
-  busy = true;
-  const n = LW.rand10();
-  if (!still) for (let i = 0; i < 12; i++) { btn.textContent = LW.rand10(); await wait(60); }
-  if (key === 'gold') SU.k.rollGold(n); else SU.h.roll(key, n);
-  busy = false; render();
-}
 const kitName = (x) => { const s = LW.kitEntryName(x); return s.charAt(0).toUpperCase() + s.slice(1); };
 const KIND_WORD = { weapon: 'A Weapon', backpack: 'A Backpack Item', special: 'A Special Item' };
 const kitArt = (x) => itemGlyph(x.meal ? 'meal' : x.item) + (x.meal > 1 || x.n > 1 ? `<span class="n">${x.meal || x.n}</span>` : '');
@@ -776,11 +794,28 @@ const kitAbout = (x) => {
 const suFoot = (say, ready, goLabel) => `<div class="finis su-foot"><p aria-live="polite">${esc(say)}</p>
     <button type="button" class="seal" data-su="go" ${ready ? '' : 'disabled'}>${goLabel}</button>
     <span><button type="button" class="inkbtn" data-su="auto">choose for me</button><button type="button" class="inkbtn" data-su="shelf">back to the books</button></span></div>`;
-/* a row of slots, one for each choice: the chosen as lit medallions (touch one to let it go), the rest empty rings */
+/* A row of slots, one for each choice, strung on an engraved rail: a double rule ending each side in
+   a lozenge and a pair of scrolls, a smaller lozenge between slots. The chosen are lit medallions
+   (touch one to let it go); the rest are sockets cut into the page, a ticked double ring round a
+   faint star. All drawn in ink (currentColor), sized off the row's em. */
+const RAIL_END = '<svg class="su-end" viewBox="0 0 44 24" aria-hidden="true"><path d="M28 10.2h16v1.1H28zM28 12.7h16v1.1H28zM19 12l5-4.5 5 4.5-5 4.5zM22 12l2 2 2-2-2-2z" fill-rule="evenodd"/>'
+  + '<path d="M19 12C14 12 12 8.5 9 6.8 6 5 3 6.5 3.6 9 4.2 11.2 7.2 10.8 7 8.8M19 12C14 12 12 15.5 9 17.2 6 19 3 17.5 3.6 15 4.2 12.8 7.2 13.2 7 15.2" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/>'
+  + '<path d="M.5 12L11 11.1v1.8z"/></svg>';
+const RAIL_LINK = '<i class="su-link" aria-hidden="true"><svg viewBox="0 0 10 10"><path d="M5 1.2L8.8 5 5 8.8 1.2 5zM5 3.4L6.6 5 5 6.6 3.4 5z" fill-rule="evenodd"/></svg></i>';
+const SOCKET = (() => {
+  let ticks = '';
+  for (let i = 0; i < 36; i++) { const a = (i / 36) * Math.PI * 2, c = Math.cos(a), s = Math.sin(a); ticks += `M${(c * 17.1).toFixed(2)} ${(s * 17.1).toFixed(2)}L${(c * 18.7).toFixed(2)} ${(s * 18.7).toFixed(2)}`; }
+  return '<span class="su-socket" aria-hidden="true"><svg viewBox="-20 -20 40 40"><defs><radialGradient id="su-sunk" cx="0.5" cy="0.32" r="0.62">'
+    + '<stop offset="0.55" stop-color="currentColor" stop-opacity="0"/><stop offset="1" stop-color="currentColor" stop-opacity="0.2"/></radialGradient></defs>'
+    + '<circle r="16.6" fill="url(#su-sunk)" stroke="currentColor" stroke-width="0.6"/><circle r="19.3" fill="none" stroke="currentColor" stroke-width="0.9"/>'
+    + `<path d="${ticks}" stroke="currentColor" stroke-width="0.55" opacity="0.7"/>`
+    + '<path class="star" d="M0-7.5L1.5-1.5 7.5 0 1.5 1.5 0 7.5-1.5 1.5-7.5 0-1.5-1.5z" transform="rotate(45) scale(0.62)"/>'
+    + '<path class="star" d="M0-7.5L1.5-1.5 7.5 0 1.5 1.5 0 7.5-1.5 1.5-7.5 0-1.5-1.5z"/></svg></span>';
+})();
 const suSlots = (label, filled, n) => {
   const out = filled.slice();
-  while (out.length < n) out.push('<span class="disc empty"></span>');
-  return `<div class="su-slots">${ruled(label)}<div>${out.join('')}</div></div>`;
+  while (out.length < n) out.push(SOCKET);
+  return `<div class="su-slots">${ruled(label)}<div class="su-rail">${RAIL_END}${out.join(RAIL_LINK)}${RAIL_END}</div></div>`;
 };
 function setupLeftHTML() {
   const head = (title) => `<span class="eyebrow lead">${esc(book.title)}</span><h2 class="su-h">${title}</h2>`;
@@ -811,12 +846,22 @@ function setupLeftHTML() {
   const say = k.roll == null ? 'Draw your gold.' : k.problems()[0] || (k.chosen.size < kit.choose ? `You may take ${kit.choose - k.chosen.size} more.` : 'Your equipment is ready.');
   const taken = [...k.chosen].map((i) => `<button type="button" class="disc item lit" data-sukit="${i}" title="${esc(kitName(k.from[i]))}" aria-label="Put back ${esc(kitName(k.from[i]))}">${kitArt(k.from[i])}</button>`);
   return `<div class="setup">${head('Your equipment')}
-    <div class="su-gold">${suMed('gold', k.roll == null ? null : g.purse, 'Gold Crowns')}<div><b>Gold Crowns</b><p>${gold}</p>${g.bank && k.roll != null ? `<p>At the Monastery: ${g.bank - k.draw}. ${
+    <div class="su-gold"><span class="dialslot" data-sudial="gold"></span><div><b>Gold Crowns</b><p>${gold}</p>${g.bank && k.roll != null ? `<p>At the Monastery: ${g.bank - k.draw}. ${
       ''}<span class="step"><button type="button" data-sudraw="-1" aria-label="Leave one there" ${k.canDraw(-1) ? '' : 'disabled'}>&minus;</button><button type="button" data-sudraw="1" aria-label="Take one" ${k.canDraw(1) ? '' : 'disabled'}>+</button></span> In the pouch: ${g.purse + k.draw}.</p>` : ''}</div></div>
     ${given.length || kit.wear ? `<div class="block finds"><span class="eyebrow">The Kai give you</span>${given.map(({ x, note }) => `<span class="find got"><span class="med lit">${kitArt(x)}</span><span>${esc(kitName(x))}<i>${note}</i></span></span>`).join('')}${
       kit.wear ? `<span class="su-wear">You wear ${esc(kit.wear)}.</span>` : ''}</div>` : ''}
     ${suSlots(`Take up to ${kit.choose}`, taken, kit.choose)}
     ${suFoot(say, k.ready(), 'Begin')}</div>`;
+}
+/* a scrolling list fades out at each edge it can still be scrolled past (.fade-t, .fade-b) */
+function fadeEdges(box) {
+  const set = () => {
+    box.classList.toggle('fade-t', box.scrollTop > 1);
+    box.classList.toggle('fade-b', box.scrollTop + box.clientHeight < box.scrollHeight - 1);
+  };
+  box.addEventListener('scroll', set, { passive: true });
+  if (window.ResizeObserver) new ResizeObserver(set).observe(box); // the window resized, or the fonts came in
+  set();
 }
 /* the facing page: every choice a row, its medallion, name and what it does, touched to take it or let it go */
 const suItem = (data, art, name, about, on, note, off) => `<button type="button" class="suitem ${off ? 'off' : ''}" ${data} aria-pressed="${!!on}"><span class="disc ${on ? 'lit' : ''}">${art}</span><span><b>${esc(name)}${note ? ` <small>${note}</small>` : ''}</b>${about ? `<i>${esc(about)}</i>` : ''}</span></button>`;
@@ -846,16 +891,17 @@ function setupRightHTML() {
     ${weapons.length ? `${ruled('Your Weapons')}<div class="sulist">${weapons.join('')}</div>` : ''}
     ${k.store && monastery.length ? `${ruled('Special Items <small>the Monastery keeps them safe, out of use</small>')}<div class="sulist">${monastery.join('')}</div>` : ''}</div>`;
 }
-/* Combat Skill and Endurance are drawn on the Random Number medallion */
+/* Combat Skill, Endurance and the gold are drawn on the Random Number medallion */
 function mountSetup() {
   if (mode !== 'setup') return;
   pl.querySelectorAll('[data-sudial]').forEach((slot) => {
-    const key = slot.dataset.sudial, h = SU.h, got = h.rolls[key];
+    const key = slot.dataset.sudial, gold = key === 'gold', got = gold ? SU.k.roll : SU.h.rolls[key];
     const dial = makeDial(async () => {
       if (busy || got != null) return;
       busy = true;
       const n = await dial.spin();
-      h.roll(key, n); busy = false; render();
+      if (gold) SU.k.rollGold(n); else SU.h.roll(key, n);
+      busy = false; render();
     });
     if (got != null) dial.show(got);
     slot.append(dial.el);
@@ -863,7 +909,6 @@ function mountSetup() {
 }
 function setupClick(d, t) {
   const h = SU.h, k = SU.k;
-  if (d.suroll) return void suRoll(t, d.suroll);
   if (d.su === 'shelf') { SU = null; return toTitle(true); }
   if (d.su === 'go') return void guard(setOut);
   if (d.su === 'auto') (h || k).auto();
