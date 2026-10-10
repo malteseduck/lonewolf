@@ -267,7 +267,7 @@ async function init() {
   const have = await loadLabels();
   if (!have) msg('No label list for ' + book + ' yet: step 2 drafts one', 8000);
   await refreshState();
-  try { await document.fonts.load('600 40px CabinEd'); } catch (e) {}
+  try { await bookFont(); await document.fonts.load(`${FONT} 40px ${FONT.split(' ')[1]}`); } catch (e) {}
   const first = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].find(n => status(n) !== 'done') || 10;
   await openStep(Number(params.get('step')) || first);
   const want = params.get('bg');
@@ -411,8 +411,21 @@ function letterGeom(l) {
   if (l.height) { thick = l.height / 1.25; if (!l.spread) length = 1e6; }
   return { centre, ang, length, thick, stacked };
 }
+// The lettering's font: the one in tools/fonts that maps/<book>/font.txt names (ADR 0015), else
+// Cabin SemiBold, as serve.py's _fonts() passes to map_letter.py. FONT is "<weight> <family>".
+let FONT = '600 CabinEd';
+async function bookFont() {
+  const r = await fetch(`/maps/${encodeURIComponent(book)}/font.txt`, { cache: 'no-store' });
+  if (!r.ok) return;
+  const name = (await r.text()).split('\n')[0].trim().split('|')[0];
+  if (!/^[\w.-]+\.(ttf|otf)$/.test(name)) return;
+  const f = new FontFace('BookEd', `url(fonts/${name})`);
+  document.fonts.add(await f.load());
+  FONT = '400 BookEd';
+}
 function block(lines, size) {  // render()'s block(): longest line, block height, line height
-  ctx.font = `600 ${size}px CabinEd, sans-serif`;
+  const [weight, family] = FONT.split(' ');
+  ctx.font = `${weight} ${size}px ${family}, sans-serif`;
   ctx.letterSpacing = '0px';
   const m = lines.map(t => ctx.measureText(t));
   const asc = m[0].fontBoundingBoxAscent, own = asc + m[0].fontBoundingBoxDescent;
@@ -567,7 +580,7 @@ const TIPS = {  // what each field does in the map tools (docs/reference/map-ups
   retype: 'A place name: erased from the scan and set again in clean type before Gemini sees the map. Untick for the title, banner, panel captions and key, which Gemini copies as drawn.',
   clip: 'Erase the whole box, not just the letter shapes. For a name on flat ground where letters touch a line and leave fragments.',
   joined: 'Letters touching a line that runs out of the box (river, mountain, flagpole): erase them too, with the line inside the box except river outlines and coasts. Gemini repaints the gap; add keep for anything that must stay.',
-  fix: 'After a Gemini round: for a label kept in its printed lettering (title, caption, key) that Gemini misspelled. Its lettering is cleared and the label set in Cabin at 4K. Stays ticked for later rounds.',
+  fix: 'After a Gemini round: for a label kept in its printed lettering (title, caption, key) that Gemini misspelled. Its lettering is cleared and the label set in the map font at 4K. Stays ticked for later rounds.',
   reset: 'After a Gemini round: a place name Gemini garbled, to be set again at 4K by map_letter.py (replaces --only). Applies to the round just checked: untick all before checking a new round.',
   spread: 'The scale bar’s numbers: each word set on its own, evenly from one end of the box to the other.',
   lines: 'Split the name over lines as printed, one per row. Stacked names are set level (or at angle) and fitted to the box.',
@@ -1007,13 +1020,13 @@ const STEPS = [
   { n: 5, short: 'Lettering', name: 'Lettering: adjust over the original (by hand)', bg: () => ['map-2k.png'], preview: true,
     text: 'The preview sets each place name in type over the original scan. Fix what is off by dragging the name’s frame: move it, resize it by its handles, turn it by the round handle (or lines, line spacing). Hold H to see the map under the boxes. Save, then measure again if you moved an erase box (E).' },
   { n: 6, short: 'Erase + letter', name: 'Erase and letter', bg: () => ['map-2k-lettered.jpg', 'map-2k-erased.jpg', 'map-2k.png'],
-    text: 'Erase takes the place names out of the scan; Letter sets them again in Cabin. The result, map-2k-lettered.jpg, is the picture Gemini gets. Look at it: a letter joined to a line can survive as a fragment (tick clip on that label, or keep to protect something).' },
+    text: 'Erase takes the place names out of the scan; Letter sets them again in the map font (Cabin, or the one maps/<book>/font.txt names). The result, map-2k-lettered.jpg, is the picture Gemini gets. Look at it: a letter joined to a line can survive as a fragment (tick clip on that label, or keep to protect something).' },
   { n: 7, short: 'Gemini', name: 'Gemini', bg: () => ['map-2k-lettered.jpg', 'map-2k.png'],
     text: 'Start a new Gemini chat, attach the lettered picture and give it the prompt, then bring the result back here. Do not use edit prompts: each repaints the whole picture.' },
   { n: 8, short: 'Check', name: 'Check', run: 'check', bg: () => [`map-check-${activeRound()}/aligned.png`, `map-gemini-${activeRound()}.jpg`, 'map-2k.png'],
     text: 'Lines Gemini\'s picture up with the scan and flags colour and shape changes, then reads its labels against the list. Open labels.png and compare every label by eye; the OCR diff in the log is only a hint. Tick reset on place names Gemini garbled, and fix on kept labels it garbled (title, captions, key), then Save.' },
   { n: 9, short: 'Finish', name: 'Finish', run: 'finish', bg: () => ['map-4k.webp', 'map-2k.png'],
-    text: 'Upscales the round 4x, warps it onto the 4K frame, wipes Gemini\'s lettering round each label ticked reset (and fix) and sets those again in Cabin, removes the sparkle mark and writes map-4k.webp. With none ticked reset, every place name is set again. Look at map-4k-sheet.png.' },
+    text: 'Upscales the round 4x, warps it onto the 4K frame, wipes Gemini\'s lettering round each label ticked reset (and fix) and sets those again in the map font, removes the sparkle mark and writes map-4k.webp. With none ticked reset, every place name is set again. Look at map-4k-sheet.png.' },
   { n: 10, short: 'Import', name: 'Import and view', run: 'import', bg: () => ['map-4k.webp', 'map-2k.png'],
     text: 'Imports the book again so the player\'s map points at map-4k.webp, then open the player and look at the map there.' },
 ];

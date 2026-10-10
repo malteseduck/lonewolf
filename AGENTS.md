@@ -3,8 +3,11 @@
 A personal-use player for the Lone Wolf gamebooks, styled after *Lone Wolf HD Remastered*.
 Plain HTML/CSS/JS, no build step, no dependencies to install.
 
-Read `docs/spec.md` before changing behaviour. It is the statement of intent.
-`docs/reference/` describes the code as it is.
+Read `docs/spec.md` and the index in `docs/adr/README.md` before changing behaviour, art, or a
+tool's output. The spec is the statement of intent; the ADRs are the owner's decisions, and they
+are binding: never reverse or work around one without the owner's say-so in chat. When the owner
+decides something, write an ADR in the same piece of work (rules in `docs/adr/README.md`), and
+change the spec too only if the intent itself changed. `docs/reference/` describes the code as it is.
 
 ## What is live
 
@@ -150,7 +153,8 @@ pages (`docs/reference/rules-books.md`), and its text is not copied into the rep
 
 | File | Holds |
 |---|---|
-| `docs/spec.md` | Intent: purpose, principles, game rules, presentation. Change it when the owner changes their mind. |
+| `docs/spec.md` | Intent: purpose, principles, game rules, presentation. Change it when the owner changes the intent. |
+| `docs/adr/` | The owner's decisions, one record each, binding. A new decision gets a new ADR; an old one is changed only by a new ADR that supersedes it. |
 | `docs/reference/architecture.md` | File map, load order, state, storage keys |
 | `docs/reference/book-format.md` | The book data model, field by field |
 | `docs/reference/rules-engine.md` | How the rules are implemented and where |
@@ -162,7 +166,7 @@ pages (`docs/reference/rules-books.md`), and its text is not copied into the rep
 | `docs/reference/rules-books.md` | The books' rules: common, Kai, Magnakai, and an addendum per book; what the engine applies |
 | `docs/reference/dashboard.md` | The import dashboard (`tools/admin/`): its status rules, `book_status.py`, the `/api/admin` jobs, the prompts |
 | `docs/book-checklist.md` | Every step each book goes through; its table is generated. **Check it before starting work on a book. When a step is finished, run `python tools/book_status.py done <book> <step>`**: it records a hand step, checks a step read from the files, and rewrites the table. Never edit the table by hand. |
-| `docs/plan.md` | Work outside the book steps (engine gaps, notes for later), decisions made, what the player can do. **Read this first in a new session.** Where each book stands is the dashboard's, not this file's. |
+| `docs/plan.md` | Work outside the book steps (engine gaps, notes for later), what the player can do. **Read this first in a new session.** Where each book stands is the dashboard's, not this file's. |
 
 Keep them current: a change to behaviour updates the matching reference file in the same piece of
 work, and `plan.md` when work outside the book steps moves between done and not done.

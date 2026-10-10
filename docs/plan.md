@@ -175,26 +175,8 @@ built in one sitting:
 D is now the product and lives at the project root (`index.html`, `main.js`, `plates.js`,
 `maps.js`, `art/`). A-C were moved under `prototypes/` with their chooser page.
 
-Decisions the owner has made:
-
-- Style follows Lone Wolf HD Remastered: framed story page left, panel page right, bronze medallions.
-- No 3D. Combat is on the book's pages with controls.
-- Creatures are still images of good quality, not crude animation.
-- The map is the book's own printed map (2026-10-05). No custom maps or made-up places. It is
-  upscaled by `docs/reference/map-upscale.md` and shown in sepia like the old scan (2026-10-07).
-- Personal use only, so Project Aon content may be downloaded and restyled locally. It never
-  goes into the repository.
-- The clockwork gear should not take space from the pages.
-- A single choice that is only a page reference reads "Continue".
-- Carry-over between books: support both, default to continuing the same character. Carried over:
-  scores, disciplines, Weapons, Special Items and gold, not the Backpack's contents (as the books
-  say; 2026-10-02).
-- Book 2's readings (2026-10-01): Hunting does not excuse a Meal anywhere in the Wildlands, Ragadorn
-  and its coast road included (32, 37, 127, 148, 346). Documents and the Gold Ring are Special
-  Items; the Healing Potion, Potion of Orange Liquid, Fur Blanket and Rope Backpack Items. "Some
-  Laumspur" (36) is the herb or any Laumspur potion, and one is used up. "Ever been given" (328)
-  counts a Pendant since lost. "No pass" (246) closes when he holds either pass.
-- Plates are drawn whole: only a ruled frame line is cut away, and the edges are not faded.
+The decisions the owner has made are in `docs/adr/` (since 2026-10-10), one record each, binding
+on every agent.
 
 ## State of the player
 

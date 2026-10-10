@@ -5,6 +5,10 @@ the design as it should be now, not how it got here, and not the code. For how t
 see `docs/reference/`; for the state of the work, `docs/plan.md`. When this file and the reference
 disagree, this file says what should be true and the reference says what is true.
 
+Where there was a choice, what the owner chose and why is recorded in `docs/adr/`, one decision
+per record. Those records are binding: an agent does not reverse one without the owner. This file
+changes when the intent changes; a decision within the intent gets an ADR instead.
+
 ## 1. Purpose
 
 A personal-use player for Joe Dever's Lone Wolf gamebooks, starting with the Kai series (books 1-5)
@@ -230,8 +234,9 @@ anything by hand; the list to add from offers the open book's own items.
 - The map is the one printed in the book, and only that. No map is drawn or redrawn for a book: no
   made-up places, town plans or travel on the map. Every choice is made on the story page.
 - Each printed map is upscaled to 4K on the owner's machine (personal use; never committed): the
-  place names are erased and set again in clean type, the land is repainted around them in the
-  map's own style, any name the repaint garbles is set again, and the result is enlarged to 4K.
+  place names are erased and set again in type that suits the map's own lettering (ADR 0006, 0015),
+  the land is repainted around them in the map's own style, any name the repaint garbles is set
+  again, and the result is enlarged to 4K (ADR 0005).
 - It is shown in sepia like the rest of the book, opened in a framed view the player drags and
   zooms. A book with no upscale yet shows its printed scan the same way.
 

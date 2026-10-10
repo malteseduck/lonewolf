@@ -4,3 +4,8 @@ IM Fell English (IMFeENrm28P, IMFeENit28P, IMFeENsc28P): Igino Marini's revival 
 Almendra (Almendra-Regular): Ana Sanfelippo. Not used yet; an alternative hand for the small names.
 Both from github.com/google/fonts (ofl/imfellenglish, ofl/imfellenglishsc, ofl/almendra),
 2026-10-06, under the SIL Open Font License 1.1 (OFL-IMFell.txt, OFL-Almendra.txt).
+
+Architects Daughter (ArchitectsDaughter-Regular): Kimberly Geswein. Named by maps/12tmod/font.txt,
+since Book 12's map is lettered by hand (a map's font.txt sets its font: docs/adr/0015). Chosen over Patrick Hand, Kalam, Neucha
+and Comic Neue as the closest to the scan's thin marker. From github.com/google/fonts
+(ofl/architectsdaughter), 2026-10-10, under the SIL Open Font License 1.1 (OFL-ArchitectsDaughter.txt).

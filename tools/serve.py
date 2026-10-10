@@ -21,7 +21,7 @@ Static files as `python -m http.server` serves them, from the project root, plus
     GET  /api/map/books               every book folder: {code, number, title, stage} (how far its map is)
     GET  /api/map/<book>/state        the map files (names starting "map" in the book's folder and its
                                       work/, named without the folder, and work/map-check-<n>/*, and
-                                      maps/<book>/'s labels.json, style.txt, labels-checked.txt) with
+                                      maps/<book>/'s labels.json, style.txt, labels-checked.txt, font.txt) with
                                       size and mtime, the Gemini rounds present, the job running, when book.js was written
     POST /api/map/<book>/run/<step>   run one step: upscale, draft, measure, erase, letter, prompt,
                                       check, finish, import. ?round=n for prompt, check, finish;
@@ -118,7 +118,7 @@ def _hash(rel, root=ROOT):
 
 
 MAPS = os.path.join(ROOT, 'maps')
-MAPS_FILES = ('labels.json', 'style.txt', 'labels-checked.txt')  # the owner's work on a map, committed
+MAPS_FILES = ('labels.json', 'style.txt', 'labels-checked.txt', 'font.txt')  # the owner's work on a map, committed
 
 
 def _labels_file(book):
@@ -141,6 +141,20 @@ MAP_MAX = 30 * 1024 * 1024
 PY = ['uv', 'run', '--no-project', '--python', 'tools/.venv/Scripts/python.exe', 'python']
 LOCAL = ('127.0.0.1', '::1', '::ffff:127.0.0.1')
 FONTS = ['--hand', 'Cabin.ttf|SemiBold', '--caps', 'Cabin.ttf|SemiBold']
+
+
+def _fonts(book):
+    """map_letter.py's font arguments: the file in tools/fonts that maps/<book>/font.txt names,
+    honoured for every map that has one (ADR 0015); else Cabin."""
+    try:
+        with open(os.path.join(MAPS, book, 'font.txt'), encoding='utf-8') as fh:
+            name = fh.readline().strip()
+    except OSError:
+        return FONTS
+    if not re.fullmatch(r'[\w.-]+\.(ttf|otf)(\|\w+)?', name) or not os.path.isfile(
+            os.path.join(ROOT, 'tools', 'fonts', name.partition('|')[0])):
+        return FONTS
+    return ['--hand', name, '--caps', name]
 IMG_TYPES = {'image/png': ('png', b'\x89PNG'), 'image/jpeg': ('jpg', b'\xff\xd8\xff'), 'image/webp': ('webp', b'RIFF')}
 _job, _job_lock = [None], threading.Lock()
 
@@ -269,7 +283,7 @@ def map_commands(step, book, q):
     if step == 'erase':
         return [PY + [t('map_erase.py'), f'{wk}/map-2k.png', labels, f'{wk}/map-2k-erased.jpg']], None, 0
     if step == 'letter':
-        return [PY + [t('map_letter.py'), f'{wk}/map-2k.png', labels, f'{wk}/map-2k-erased.jpg', '-', f'{wk}/map-2k-lettered.jpg'] + FONTS], None, 0
+        return [PY + [t('map_letter.py'), f'{wk}/map-2k.png', labels, f'{wk}/map-2k-erased.jpg', '-', f'{wk}/map-2k-lettered.jpg'] + _fonts(book)], None, 0
     if step == 'prompt':
         return [PY + [t('map_labels.py'), 'prompt', labels, f'{wk}/map-prompt-{rnd}.txt', '--lettered']], None, 0
     if step in ('check', 'finish'):
@@ -293,7 +307,7 @@ def map_commands(step, book, q):
                 return None, 'could not read the round image width', 500
         x4 = f'{wk}/map-gemini-{rnd}-x4.png'
         return [PY + [t('map_upscale.py'), g, x4, '--width', str(width * 4)],
-                PY + [t('map_letter.py'), f'{wk}/map-2k.png', labels, x4, f'{wk}/map-check-{rnd}/H.json', f'{d}/map-4k.webp', '--sheet', f'{wk}/map-4k-sheet.png'] + FONTS], None, 0
+                PY + [t('map_letter.py'), f'{wk}/map-2k.png', labels, x4, f'{wk}/map-check-{rnd}/H.json', f'{d}/map-4k.webp', '--sheet', f'{wk}/map-4k-sheet.png'] + _fonts(book)], None, 0
     if step == 'import':
         return [PY + [t('import_projectaon.py'), book]], None, 0
     return None, 'unknown step', 404

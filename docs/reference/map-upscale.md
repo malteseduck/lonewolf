@@ -103,7 +103,7 @@ Commands run from the project root as
    letters out at sea have only water round them, so they go: Book 5, Bisutan), and `keep: [[box]]`
    (the editor's Add keep box, K) protects something inside a box (Book 1: a ship). Small dark
    specks ringed by a name's taken ink (a thick stroke junction read as a tree) go with it.
-4. **Set them again**: `map_letter.py $W/map-2k.png $L $W/map-2k-erased.jpg - $W/map-2k-lettered.jpg --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"`.
+4. **Set them again**: `map_letter.py $W/map-2k.png $L $W/map-2k-erased.jpg - $W/map-2k-lettered.jpg --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"` (or the font `maps/<code>/font.txt` names).
    Each name's angle and size come from the scan's ink; small names are set 30% larger. Look at
    it and fix by hand what the measuring got wrong: `angle` (degrees), `nudge` [dx, dy], `height`
    (px), `lines` (a name stacked over lines, set level), `leading` (their line spacing, 1 = the font's own), `spread` (the scale's numbers). Book 1
@@ -159,7 +159,13 @@ Commands run from the project root as
   outlines were added or lost. On Book 4 the blue cells found exactly Gemini's added forest.
 - `tools/map_letter.py`: sets labels in type, onto `map-2k-erased.jpg` (step 4, `-` for the warp)
   or onto a round's 4K upscale (step 8). See its docstring for every label field.
-- `tools/fonts/`: Cabin (used), IM Fell English and Almendra (tried), all OFL; sources in its README.
+- `tools/fonts/`: Cabin (used), Architects Daughter (Book 12), IM Fell English and Almendra (tried),
+  all OFL; sources in its README.
+- `maps/<code>/font.txt`: one line naming a file in `tools/fonts/`, the font that map's names are
+  set in, honoured by every step (ADR 0015). The dashboard's Letter and Finish steps pass it to `map_letter.py` as `--hand` and `--caps`,
+  and the editor's preview draws in it; with no file, Cabin SemiBold. Book 12's map is lettered by
+  hand in thin marker, so it has `ArchitectsDaughter-Regular.ttf` (tried against Patrick Hand, Kalam,
+  Neucha and Comic Neue, 2026-10-10).
 - The comparison page, `work/compare.html` in a book's folder (git-ignored): two panes, synced pan and
   zoom, any version in each, file sizes in the menu. Copy Book 1's and edit its file list (the scan
   and the finished map are `../map.png` and `../map-4k.webp` from there).
