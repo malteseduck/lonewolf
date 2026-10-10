@@ -191,6 +191,15 @@ Book 5 gives its seven guards and sentries crops of its own non-fight pictures, 
 and the owner's `art/plates/` guards. Its creatures met in other books use those books' pictures of the
 same creature: Elix and Itikar from Book 4 (the Itikar is Barraka's mount, not fought there), Drakkarim
 from Books 1 and 2 beside its own Drakkar; the Yas, a constrictor, takes the library's snake engraving.
+Book 6 pictures most of its unpictured enemies from its own non-fight illustrations, found by following
+the section links from each picture to the nearest fight: Roark from the tavern scene before his fight,
+the Acolytes of Vashna from the procession that leads to them, the Dakomyd from its death scene, Chanda
+from his workshop, the City Watch, Town Sergeant and Mercenaries from its guard and soldier pictures
+(two figures cropped from one), the Deldenian pirate from its own pirate. Its thieves, backstabbers and
+river pirates take the owner's `art/plates/` rogues and sailor, also used by Book 2. The Yawshath and
+the Sewer Door take engravings saved already cropped (the Beast of Gévaudan, a Piranesi prison doorway):
+fetch Commons' 1920 px copy rather than the original, and cut it to the part used before saving, so
+the offline copy stays small (the owner's request, 2026-10-09).
 An already-downloaded free engraving can serve a second creature by a different crop (Book 4's Tunnel
 Fiends are other demons from the Schongauer print that gives Book 3 its Mutant).
 4. **A free old engraving** from Wikimedia Commons, public domain or CC BY: search with
