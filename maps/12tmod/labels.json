@@ -1,0 +1,486 @@
+[
+ {
+  "text": "DEJKAATA",
+  "box": [
+   616,
+   166,
+   734,
+   197
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "&DARKLANDS",
+  "box": [
+   1364,
+   267,
+   1633,
+   341
+  ],
+  "conf": 0.96,
+  "retype": true
+ },
+ {
+  "text": "THE",
+  "box": [
+   1482,
+   265,
+   1547,
+   297
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "GULF OF HELENAG",
+  "box": [
+   1075,
+   302,
+   1267,
+   513
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "DTEZNA",
+  "box": [
+   439,
+   356,
+   542,
+   380
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "THE KALTERSEE",
+  "box": [
+   1357,
+   360,
+   1590,
+   390
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "POINT VASHNA",
+  "box": [
+   1243,
+   413,
+   1437,
+   440
+  ],
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "GOURDANAK",
+  "box": [
+   847,
+   469,
+   995,
+   492
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "MTNS",
+  "box": [
+   887,
+   489,
+   957,
+   516
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "ARGAZAD",
+  "box": [
+   1035,
+   594,
+   1200,
+   621
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "AARNAK",
+  "box": [
+   559,
+   616,
+   677,
+   641
+  ],
+  "conf": 0.97,
+  "retype": true
+ },
+ {
+  "text": "HELGEDAD",
+  "box": [
+   252,
+   646,
+   395,
+   672
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "ANSKAVEN",
+  "box": [
+   1649,
+   645,
+   1810,
+   672
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "TORAN",
+  "box": [
+   1528,
+   715,
+   1634,
+   743
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "NAOG\u00cdZAGA",
+  "box": [
+   469,
+   727,
+   627,
+   762
+  ],
+  "conf": 0.95,
+  "retype": true
+ },
+ {
+  "text": "SOMMERLUND",
+  "box": [
+   1508,
+   766,
+   1749,
+   797
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "THE HOLMGULF",
+  "box": [
+   1619,
+   777,
+   1815,
+   916
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "THE DARKLANDS",
+  "box": [
+   411,
+   844,
+   693,
+   874
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "MONASTERY",
+  "box": [
+   1403,
+   858,
+   1551,
+   888
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "TYSO",
+  "box": [
+   1562,
+   844,
+   1646,
+   871
+  ],
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "KAAG",
+  "box": [
+   1061,
+   918,
+   1155,
+   946
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "DURNCRAG MTNS",
+  "box": [
+   1252,
+   920,
+   1471,
+   948
+  ],
+  "conf": 0.96,
+  "retype": true
+ },
+ {
+  "text": "HOLMGARD",
+  "box": [
+   1515,
+   955,
+   1684,
+   979
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "KAGAZITZAGA",
+  "box": [
+   419,
+   1019,
+   586,
+   1047
+  ],
+  "conf": 0.97,
+  "retype": true
+ },
+ {
+  "text": "THE WILDLANDS",
+  "box": [
+   1520,
+   1149,
+   1796,
+   1182
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "GADOR",
+  "box": [
+   852,
+   1211,
+   963,
+   1239
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "MAAKENGORG",
+  "box": [
+   1147,
+   1234,
+   1326,
+   1315
+  ],
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "ESHNAR",
+  "box": [
+   1558,
+   1200,
+   1665,
+   1224
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "TEMEL",
+  "box": [
+   1735,
+   1223,
+   1823,
+   1247
+  ],
+  "conf": 0.96,
+  "retype": true
+ },
+ {
+  "text": "OGIA",
+  "box": [
+   323,
+   1275,
+   419,
+   1307
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "PL.KAZONARA",
+  "box": [
+   759,
+   1321,
+   923,
+   1347
+  ],
+  "conf": 0.94,
+  "retype": true
+ },
+ {
+  "text": "MOUNTAINS",
+  "box": [
+   318,
+   1394,
+   467,
+   1415
+  ],
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "FOREST",
+  "box": [
+   595,
+   1391,
+   712,
+   1415
+  ],
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "LAKE",
+  "box": [
+   871,
+   1389,
+   955,
+   1414
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "PACK ICE",
+  "box": [
+   1160,
+   1390,
+   1309,
+   1417
+  ],
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "SCALE IN MILES",
+  "box": [
+   1421,
+   1381,
+   1623,
+   1401
+  ],
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "75",
+  "box": [
+   1511,
+   1424,
+   1536,
+   1441
+  ],
+  "conf": 0.98,
+  "retype": true
+ },
+ {
+  "text": "150",
+  "box": [
+   1644,
+   1420,
+   1680,
+   1440
+  ],
+  "conf": 0.99,
+  "retype": false
+ },
+ {
+  "text": "HILLS",
+  "box": [
+   319,
+   1472,
+   408,
+   1496
+  ],
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "SWAMP",
+  "box": [
+   597,
+   1471,
+   706,
+   1492
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "VOLCANOES",
+  "box": [
+   867,
+   1469,
+   1022,
+   1495
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "TUNDRA",
+  "box": [
+   1162,
+   1471,
+   1291,
+   1495
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "WASTELAND",
+  "box": [
+   1435,
+   1474,
+   1595,
+   1494
+  ],
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "PLAINS",
+  "box": [
+   1712,
+   1470,
+   1821,
+   1494
+  ],
+  "conf": 0.99,
+  "retype": false
+ }
+]
