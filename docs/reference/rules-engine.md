@@ -103,14 +103,14 @@ Adds `bow` and `quiver` to `LW.ITEMS`.
 | Combat Skill | `LW.heroCS(hero, ctx)` returns `{total, parts: [{label, n}]}`. `ctx`: `mindblast`, `psiSurge`, `enemy`, `csMod`, `csNote`, `with`, `noShield`. A carried Special Item with `fightCs` (the Shield, +2) counts |
 | Weapon in hand | `LW.armedWith(hero, ctx)`: of his weapons and the Special Items that are weapons (`item.weapon`: the kinds it counts as), the one that adds most: its own `item.cs` (the Sommerswerd's 8) plus Weaponskill or Weaponmastery in any of its kinds. `ctx.with`: `'none'` (bare-handed, -4) or the one item that can harm this foe. Null: unarmed, -4 |
 | Carried character | `LW.Character.load()`, `.save(hero, book)`, `.clear()`, all on the storage key in `LW.Character.key` (the player points it at the open adventure's) |
-| Character dialog | `LW.UI.chooseCharacter(book, carry)` resolves to a hero. `carry` null = roll a new one |
+| Setting out | `LW.HeroSetup(book, carry)`: the scores, disciplines and Weaponmastery weapons chosen (`roll`, `toggle`, `toggleWeapon`, `auto`, `ready`), `build()` makes the hero; `.kit` is the book's kit or null. `LW.KitSetup(book, kit, hero)`: the kit's choices (`rollGold`, `choose`, `flip`, `problems`, `auto`, `ready`), `finish()` applies them. `LW.readyHero(hero)` settles Lore-circles and fills Endurance. `carry` null = roll a new one. The player draws them on its pages (interface.md, Setting out) |
 
-`chooseCharacter` rules: a new character picks `first` disciplines of the book's series; a
+Setting-out rules: a new character picks `first` disciplines of the book's series; a
 carried one picks one more (or `first` if it has none in this series yet). Choosing Weaponmastery
 asks for three weapons; a character that already has it picks one more. A new Magnakai character
 is given all ten Kai disciplines. A new character at Book 2 or later starts with nothing but the
 book's kit. Then, where the book has a kit (`LW.KITS`; not for a carried character in Book 11),
-a second page (`kitStep`): the gold (10 + a Random Number added, at most 50; from Book 6 the rest
+a second step (`KitSetup`): the gold (10 + a Random Number added, at most 50; from Book 6 the rest
 goes to `storedGold`, which can be drawn on), the given items (one he has is skipped), the
 "choose N" list ("Choose for me" fills it), his weapons (any may be left behind), and where the
 book allows, Special Items left at or taken from the Monastery. Begin waits until the limits hold

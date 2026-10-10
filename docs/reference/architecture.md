@@ -26,7 +26,7 @@ docs/                       spec, plan, reference
                             marked done; written by tools/book_status.py (docs/reference/dashboard.md)
 shared/                     used by the player and the prototypes (classic scripts on a global LW)
   core.js                   rules data (Combat Results Table, Kai disciplines, items) and LW.Game, the book runner
-  rules-series.js           per-series rules (Kai/Magnakai), Lore-circles, ranks, carried character, character dialog, starting kits
+  rules-series.js           per-series rules (Kai/Magnakai), Lore-circles, ranks, carried character, setting out (HeroSetup, KitSetup), starting kits
   book-demo.js              LW.BOOK_DEMO: the original 20-section demo chapter, with map locations (prototypes only)
   ui.js                     LW.UI helpers: el, esc, wait, toast, createHero (Kai only), pickRandom, chart; LW.sfx (blips, prototypes only)
   ink.js                    ES module: procedural parchment, leather, wood, ink-wash scenes
@@ -90,7 +90,7 @@ art/reference/map-symbols/  git-ignored. Map symbols kept from the dropped custo
 shared/core.js              defines LW, LW.Game, Kai rules
 data/projectaon/index.js    document.writes a <script> for each imported book -> LW.BOOKS[code]
 shared/ui.js                LW.UI (LW.sfx blips: prototypes only)
-shared/rules-series.js      adds Magnakai, overrides LW.has and LW.heroCS, adds LW.Character, LW.UI.chooseCharacter, LW.KITS
+shared/rules-series.js      adds Magnakai, overrides LW.has and LW.heroCS, adds LW.Character, LW.HeroSetup, LW.KitSetup, LW.KITS
 main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js
 ```
 

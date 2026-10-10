@@ -255,7 +255,7 @@ const vignettes = {};
 const vignette = (scene) => vignettes[scene] || (vignettes[scene] = Ink.inkScene(scene, 1000, 340).toDataURL());
 
 /* ---------- state ---------- */
-let mode = 'title';          // title | story | battle
+let mode = 'title';          // title | setup (a new character, SU) | story | battle
 let panel = 'kai';           // kai | pack (the map is a modal, `M`)
 let sel = null;              // the medallion whose box is open on the right page
 let busy = false, gearTurn = 0, B = null;
@@ -373,6 +373,7 @@ function shelfHTML() {
 }
 function leftHTML() {
   if (mode === 'title') return titleLeftHTML();
+  if (mode === 'setup') return setupLeftHTML();
   if (intro) return `<div class="badge"><div class="med" style="--s:3.300em">${glyph('wolf-head')}</div></div><div class="story"><div class="scroll" id="scroll">
       <span class="eyebrow lead">The story so far</span><div class="text">${book.intro.map((p, i) => `<p class="${i ? '' : 'first'}">${esc(p)}</p>`).join('')}</div></div>
       <div class="finis"><button type="button" class="seal" data-intro>${intro === 'again' ? `Back to section ${esc(game.s.at)}` : 'Begin'}</button></div></div>`;
@@ -440,7 +441,7 @@ function mountRnt() {
   else note.textContent = shot ? shot.why || `Touch the medallion to shoot. It spends an Arrow (${game.hero.arrows} left).` : 'Touch the medallion for your Random Number.';
   slot.append(dial.el, note);
 }
-function renderLeft() { pl.innerHTML = leftHTML(); mountRnt(); trimSmall(); }
+function renderLeft() { pl.innerHTML = leftHTML(); mountRnt(); mountSetup(); trimSmall(); }
 /* The books' small pictures sit in a wide strip of blank paper, some filling less than half of it,
    which drawn at the column's width left the drawing tiny. Each is cut to its drawing (with a little
    paper round it) and shown at one height (CSS .vignette.small). Hidden until cut, so it does not jump. */
@@ -731,7 +732,8 @@ function renderRight() {
   rtabs.innerHTML = tabs.map(([id, label]) => `<button type="button" class="med" role="tab" aria-selected="${panel === id}" aria-label="${label}" data-panel="${id}">${TAB_ART[id]}</button>`).join('')
     + `<button type="button" class="med home" data-home aria-label="Back to the title page" title="Back to the title page">${glyph('return-arrow')}</button>`; // the HD return medallion: start over, or pick another book
   if (mode === 'title') { pr.innerHTML = titleRightHTML(); return; }
-  if (!game.s) return; // a new game is being set up
+  if (mode === 'setup') { pr.innerHTML = setupRightHTML(); return; }
+  if (!game.s) return;
   const h = game.hero, cs = B ? B.cs() : LW.heroCS(h).total;
   const place = mode === 'battle' ? 'Combat' : book.title;
   const head = `<div class="headrow"><div class="place">${esc(place)}</div>
@@ -745,6 +747,146 @@ function render() {
   // reaching the end of a real book keeps the character for the next one
   if (mode === 'story' && game.section.end === 'victory' && !game.dead) LW.Character.save(game.hero, book);
   renderLeft(); renderRight();
+}
+
+/* ---------- setting out: the Action Chart over both pages ----------
+   Before a book begins: the two scores, each drawn on the Random Number medallion, and the
+   disciplines (left page: the scores, and a slot for each discipline to choose; right: every
+   discipline of the series, with what it does); then the book's kit (left: gold, what is given, and
+   a slot for each thing to take; right: what may be taken, kept or left). LW.HeroSetup and
+   LW.KitSetup (shared/rules-series.js) hold the rules. */
+let SU = null; // { step: 'hero', h } or { step: 'kit', k }
+/* the gold still to draw: touched, its face shuffles and settles on the total */
+const suMed = (key, v, label) => (v == null ? `<button type="button" class="med su-val" data-suroll="${key}" aria-label="Draw your ${label}">?</button>` : `<span class="med su-val">${v}</span>`);
+async function suRoll(btn, key) {
+  busy = true;
+  const n = LW.rand10();
+  if (!still) for (let i = 0; i < 12; i++) { btn.textContent = LW.rand10(); await wait(60); }
+  if (key === 'gold') SU.k.rollGold(n); else SU.h.roll(key, n);
+  busy = false; render();
+}
+const kitName = (x) => { const s = LW.kitEntryName(x); return s.charAt(0).toUpperCase() + s.slice(1); };
+const KIND_WORD = { weapon: 'A Weapon', backpack: 'A Backpack Item', special: 'A Special Item' };
+const kitArt = (x) => itemGlyph(x.meal ? 'meal' : x.item) + (x.meal > 1 || x.n > 1 ? `<span class="n">${x.meal || x.n}</span>` : '');
+const kitAbout = (x) => {
+  if (x.meal) return 'Meals, eaten when the story calls for it.';
+  const it = LW.ITEMS[x.item] || {};
+  return `${KIND_WORD[LW.itemKind(x.item)] || 'An item'}${it.ep ? `: +${it.ep} Endurance while carried` : ''}.${it.about ? ` ${it.about}` : ''}`;
+};
+const suFoot = (say, ready, goLabel) => `<div class="finis su-foot"><p aria-live="polite">${esc(say)}</p>
+    <button type="button" class="seal" data-su="go" ${ready ? '' : 'disabled'}>${goLabel}</button>
+    <span><button type="button" class="inkbtn" data-su="auto">choose for me</button><button type="button" class="inkbtn" data-su="shelf">back to the books</button></span></div>`;
+/* a row of slots, one for each choice: the chosen as lit medallions (touch one to let it go), the rest empty rings */
+const suSlots = (label, filled, n) => {
+  const out = filled.slice();
+  while (out.length < n) out.push('<span class="disc empty"></span>');
+  return `<div class="su-slots">${ruled(label)}<div>${out.join('')}</div></div>`;
+};
+function setupLeftHTML() {
+  const head = (title) => `<span class="eyebrow lead">${esc(book.title)}</span><h2 class="su-h">${title}</h2>`;
+  if (SU.step === 'hero') {
+    const h = SU.h, carried = !!h.hero, need = h.need();
+    const score = (key, label, base) => {
+      const n = h.rolls[key];
+      return `<div class="su-score">${carried ? `<span class="med su-val">${key === 'cs' ? h.hero.cs : h.hero.epMax}</span>` : `<span class="dialslot" data-sudial="${key}"></span>`}<b>${label}</b><i>${
+        carried ? 'carried on' : n == null ? `${base} + the number drawn` : `${base} + ${n} = <em>${base + n}</em>`}</i></div>`;
+    };
+    const note = carried
+      ? `Carried on from ${esc(h.carry.fromTitle || 'the last book')}: your scores, disciplines, weapons, Special Items and gold. The Backpack starts empty.`
+      : 'Touch each medallion to draw your two scores.';
+    const say = h.rolls.cs == null || h.rolls.ep == null ? 'Draw both scores.' : h.picked.size < h.pick ? `Choose ${h.pick - h.picked.size} more on the facing page.`
+      : h.weapons.size < need ? `Choose ${need - h.weapons.size} more weapon${need - h.weapons.size === 1 ? '' : 's'} to master.` : 'Your Action Chart is ready.';
+    const chosen = [...h.picked].map((id) => `<button type="button" class="disc lit" data-supick="${id}" title="${esc(LW.DISCIPLINES[id].name)}" aria-label="Let ${esc(LW.DISCIPLINES[id].name)} go">${glyph(DISC_GLYPH[id])}</button>`);
+    const mastered = [...h.weapons].map((w) => `<button type="button" class="disc item lit" data-suw="${w}" title="${esc(LW.itemName(w))}" aria-label="Let ${esc(LW.itemName(w))} go">${itemGlyph(w)}</button>`);
+    return `<div class="setup">${head(carried ? 'Your Lone Wolf returns' : 'Your Action Chart')}<p class="su-note">${note}</p>
+      <div class="su-scores">${score('cs', 'Combat Skill', 10)}${score('ep', 'Endurance', 20)}</div>
+      ${h.pick ? suSlots(`${h.pick === 1 ? 'A new' : h.pick} ${h.S.name} Discipline${h.pick === 1 ? '' : 's'}`, chosen, h.pick) : `<p class="su-note">You have mastered every ${h.S.name} Discipline.</p>`}
+      ${need ? suSlots(`Weaponmastery: ${need} weapon${need === 1 ? '' : 's'}`, mastered, need) : ''}
+      ${suFoot(say, h.ready(), h.kit ? 'On to your equipment' : 'Begin')}</div>`;
+  }
+  const k = SU.k, kit = k.kit, g = k.gold(), hero = k.hero;
+  const gold = k.roll == null ? `${hero.gold} carried, and the book adds 10 + the number drawn.`
+    : `${hero.gold} carried + 10 + ${k.roll}: <em>${g.purse}</em> in your Belt Pouch${g.over ? kit.storeGold ? `, and ${g.over} over its 50 go to the Monastery` : `; it holds 50, so ${g.over} are lost` : ''}.`;
+  const given = [...k.gifts.map((x) => ({ x, note: 'given' })), ...k.had.map((x) => ({ x, note: 'yours already' }))];
+  const say = k.roll == null ? 'Draw your gold.' : k.problems()[0] || (k.chosen.size < kit.choose ? `You may take ${kit.choose - k.chosen.size} more.` : 'Your equipment is ready.');
+  const taken = [...k.chosen].map((i) => `<button type="button" class="disc item lit" data-sukit="${i}" title="${esc(kitName(k.from[i]))}" aria-label="Put back ${esc(kitName(k.from[i]))}">${kitArt(k.from[i])}</button>`);
+  return `<div class="setup">${head('Your equipment')}
+    <div class="su-gold">${suMed('gold', k.roll == null ? null : g.purse, 'Gold Crowns')}<div><b>Gold Crowns</b><p>${gold}</p>${g.bank && k.roll != null ? `<p>At the Monastery: ${g.bank - k.draw}. ${
+      ''}<span class="step"><button type="button" data-sudraw="-1" aria-label="Leave one there" ${k.canDraw(-1) ? '' : 'disabled'}>&minus;</button><button type="button" data-sudraw="1" aria-label="Take one" ${k.canDraw(1) ? '' : 'disabled'}>+</button></span> In the pouch: ${g.purse + k.draw}.</p>` : ''}</div></div>
+    ${given.length || kit.wear ? `<div class="block finds"><span class="eyebrow">The Kai give you</span>${given.map(({ x, note }) => `<span class="find got"><span class="med lit">${kitArt(x)}</span><span>${esc(kitName(x))}<i>${note}</i></span></span>`).join('')}${
+      kit.wear ? `<span class="su-wear">You wear ${esc(kit.wear)}.</span>` : ''}</div>` : ''}
+    ${suSlots(`Take up to ${kit.choose}`, taken, kit.choose)}
+    ${suFoot(say, k.ready(), 'Begin')}</div>`;
+}
+/* the facing page: every choice a row, its medallion, name and what it does, touched to take it or let it go */
+const suItem = (data, art, name, about, on, note, off) => `<button type="button" class="suitem ${off ? 'off' : ''}" ${data} aria-pressed="${!!on}"><span class="disc ${on ? 'lit' : ''}">${art}</span><span><b>${esc(name)}${note ? ` <small>${note}</small>` : ''}</b>${about ? `<i>${esc(about)}</i>` : ''}</span></button>`;
+function setupRightHTML() {
+  if (SU.step === 'hero') {
+    const h = SU.h, need = h.need();
+    const disc = (id) => {
+      const own = h.owned.includes(id), on = own || h.picked.has(id), d = LW.DISCIPLINES[id];
+      const ws = id === 'weaponskill' && h.series === 'kai' && !own ? ' The weapon is drawn when you begin.' : '';
+      return suItem(`data-supick="${id}" ${own ? 'disabled' : ''}`, glyph(DISC_GLYPH[id]), d.name, d.blurb + ws, on, own ? 'learned' : '', !on && !h.canPick(id));
+    };
+    const weapon = (w) => {
+      const had = h.oldMastery.includes(w), on = had || h.weapons.has(w);
+      return suItem(`data-suw="${w}" ${had ? 'disabled' : ''}`, itemGlyph(w), LW.itemName(w), '', on, had ? 'mastered' : '', !on && !h.canWeapon(w));
+    };
+    return `<div class="headrow"><div class="place">${esc(h.S.name)} Disciplines</div></div>
+      <div class="supage"><div class="sulist">${h.S.list.map(disc).join('')}</div>
+      ${need ? `${ruled(`Weaponmastery <small>choose ${need} weapon${need === 1 ? '' : 's'} to master</small>`)}<div class="sulist short">${LW.WEAPONS.map(weapon).join('')}</div>` : ''}</div>`;
+  }
+  const k = SU.k, hero = k.hero;
+  const entry = (x, i) => suItem(`data-sukit="${i}"`, kitArt(x), kitName(x), kitAbout(x), k.chosen.has(i), k.held(i) ? 'yours already' : '', !k.chosen.has(i) && !k.canChoose(i));
+  const weapons = hero.weapons.map((w, i) => suItem(`data-sudrop="${i}"`, itemGlyph(w), LW.itemName(w), k.dropW.has(i) ? 'Left behind.' : 'Kept. Touch to leave it behind.', !k.dropW.has(i)));
+  const monastery = [...hero.special.map((s, i) => suItem(`data-suleave="${i}"`, itemGlyph(s), LW.itemName(s), k.leave.has(i) ? 'At the Monastery.' : 'Carried.', !k.leave.has(i))),
+    ...k.stored.map((s, i) => suItem(`data-sufetch="${i}"`, itemGlyph(s), LW.itemName(s), k.fetch.has(i) ? 'Carried.' : 'At the Monastery.', k.fetch.has(i)))];
+  return `<div class="headrow"><div class="place">The Kai Monastery</div></div>
+    <div class="supage">${ruled(`Take up to ${k.kit.choose} <small>${k.chosen.size} taken</small>`)}<div class="sulist">${k.from.map(entry).join('')}</div>
+    ${weapons.length ? `${ruled('Your Weapons')}<div class="sulist">${weapons.join('')}</div>` : ''}
+    ${k.store && monastery.length ? `${ruled('Special Items <small>the Monastery keeps them safe, out of use</small>')}<div class="sulist">${monastery.join('')}</div>` : ''}</div>`;
+}
+/* Combat Skill and Endurance are drawn on the Random Number medallion */
+function mountSetup() {
+  if (mode !== 'setup') return;
+  pl.querySelectorAll('[data-sudial]').forEach((slot) => {
+    const key = slot.dataset.sudial, h = SU.h, got = h.rolls[key];
+    const dial = makeDial(async () => {
+      if (busy || got != null) return;
+      busy = true;
+      const n = await dial.spin();
+      h.roll(key, n); busy = false; render();
+    });
+    if (got != null) dial.show(got);
+    slot.append(dial.el);
+  });
+}
+function setupClick(d, t) {
+  const h = SU.h, k = SU.k;
+  if (d.suroll) return void suRoll(t, d.suroll);
+  if (d.su === 'shelf') { SU = null; return toTitle(true); }
+  if (d.su === 'go') return void guard(setOut);
+  if (d.su === 'auto') (h || k).auto();
+  else if (d.supick) h.toggle(d.supick);
+  else if (d.suw) h.toggleWeapon(d.suw);
+  else if (d.sukit != null) k.choose(+d.sukit);
+  else if (d.sudrop != null) k.flip(k.dropW, +d.sudrop);
+  else if (d.suleave != null) k.flip(k.leave, +d.suleave);
+  else if (d.sufetch != null) k.flip(k.fetch, +d.sufetch);
+  else if (d.sudraw) { if (k.canDraw(+d.sudraw)) k.draw += +d.sudraw; }
+  else return;
+  render();
+}
+/* the Action Chart is done: on to the book's kit, or into the book */
+async function setOut() {
+  if (SU.step === 'hero' && SU.h.kit) {
+    SU = { step: 'kit', k: LW.KitSetup(book, SU.h.kit, SU.h.build()) };
+    return turn(render);
+  }
+  const hero = LW.readyHero(SU.step === 'kit' ? SU.k.finish() : SU.h.build());
+  SU = null;
+  game.clear(); game.start(hero); mode = 'story'; panel = 'kai'; sel = null; intro = book.intro && book.intro.length ? 'new' : false;
+  await turn(render);
 }
 
 /* A page turn, as in a book read left to right: the right-hand leaf lifts at the spine and falls
@@ -991,6 +1133,7 @@ bookEl.addEventListener('click', (e) => {
   if (mode === 'title' && !('forget' in d)) forgetting = null;
   if (mode === 'title' && !('rename' in d)) renaming = null;
   if (mode === 'title' && !('restorego' in d || 'restoredisk' in d)) restoring = null;
+  if (mode === 'setup') return void setupClick(d, t);
   if (d.back) return void guard(() => goBack(+d.back));
   if (d.book) guard(() => begin(d.book, 'fresh' in d, 'anew' in d, 'tssf' in d));
   else if (d.adv) {
@@ -1068,12 +1211,10 @@ async function begin(id, fresh, anew, reread) {
   useBook(id);
   intro = false;
   if (!fresh && !anew && game.load()) { mode = 'story'; panel = 'kai'; sel = null; if (reread && book.intro && book.intro.length) intro = 'again'; return turn(render); }
-  game.clear();
   const kept = LW.Character.load(), carry = !anew && kept && !kept.completed.includes(id) ? kept : null;
-  const hero = await LW.UI.chooseCharacter(book, carry);
-  game.start(hero); mode = 'story'; panel = 'kai'; sel = null; intro = book.intro && book.intro.length ? 'new' : false;
+  SU = { step: 'hero', h: LW.HeroSetup(book, carry) }; // the save is cleared only when he sets out
+  mode = 'setup'; sel = null;
   await turn(render);
-  if (hero.found) LW.UI.toast(`In the ruins you also find: ${hero.found === 'meals' ? 'two Meals' : hero.found === 'gold' ? '12 Gold Crowns' : LW.itemName(hero.found)}.`);
 }
 window.addEventListener('resize', () => { if (B && B.fit) B.fit(); });
 

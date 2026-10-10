@@ -383,6 +383,50 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 .book.hurt .page { box-shadow: inset 0 0 5em rgba(150, 20, 10, 0.7); }
 @keyframes hurt { 20% { transform: translate(-0.6em, 0.25em) rotate(-0.4deg); } 45% { transform: translate(0.5em, -0.3em) rotate(0.3deg); } 70% { transform: translate(-0.3em, -0.1em); } }
 
+/* ---------- setting out: the Action Chart over both pages (setupLeftHTML) ---------- */
+.setup { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 0.6em; }
+.setup .eyebrow.lead { margin-bottom: 0; }
+.su-h { margin: 0; font: 400 2.3em/1.05 var(--cap); text-align: center; }
+.su-note { margin: 0; font-size: 1.15em; line-height: 1.3; color: var(--ink-dim); text-align: center; text-wrap: balance; }
+.su-val { --s: 2.45em; font: 400 1.35em/1 var(--title); color: #fff3d6; text-shadow: 0 0 0.3em var(--ember); } /* bronze, as the section number */
+button.su-val { color: rgba(233, 224, 200, 0.85); text-shadow: none; }
+.su-scores { display: flex; justify-content: center; gap: 3.5em; padding: 0.4em 0; }
+.su-score { display: flex; flex-direction: column; align-items: center; gap: 0.25em; }
+.su-score b, .su-gold b { font: 400 0.82em var(--title); letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap; }
+.su-score i { font-size: 1.15em; font-style: normal; color: var(--ink-dim); }
+.su-score em, .su-gold em { font: 400 1.25em var(--title); font-style: normal; color: var(--ink); }
+.su-gold { display: flex; align-items: center; justify-content: center; gap: 1.2em; }
+.su-gold p { margin: 0.1em 0 0; font-size: 1.15em; line-height: 1.25; color: var(--ink-dim); }
+.su-wear { font-weight: 400; color: var(--ink-dim); }
+.su-foot { flex: none; margin-top: auto; }
+.su-foot .seal { font-size: 1.1em; }
+.su-foot .seal:disabled { filter: grayscale(0.7); opacity: 0.55; }
+.su-foot span { display: flex; gap: 0.45em; }
+.su-foot span .inkbtn { font-weight: 400; font-size: 1.05em; }
+.su-foot span .inkbtn + .inkbtn::before { content: '|'; margin-right: 0.45em; color: var(--ink-dim); }
+/* a slot for each choice, filling as they are made */
+.su-slots > div { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6em 0.9em; padding: 1.1em 0.8em 1em; background: var(--grid-frame) center / 100% 100% no-repeat, rgba(51, 35, 26, 0.08); }
+.su-slots .disc { --s: 2.8em; }
+.su-slots .disc::after { display: none; }
+/* the facing page: each choice a row, its medallion, name and what it does */
+.supage { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; justify-content: safe center; gap: 0.4em; margin-top: 0.4em; padding: 0 0.3em 0.6em 0.4em; scrollbar-width: thin; scrollbar-color: var(--ink-faint) transparent; }
+.sulist { flex: none; display: flex; flex-direction: column; gap: 0.3em; }
+.sulist.short { flex-direction: row; flex-wrap: wrap; gap: 0.4em 1.2em; }
+.suitem { display: flex; align-items: center; gap: 0.7em; padding: 0; border: 0; background: none; color: var(--ink); font: inherit; text-align: left; }
+.suitem .disc { --s: 2.5em; }
+.suitem .disc::after { display: none; }
+.suitem .glyph i { background: rgba(233, 224, 200, 0.5); }
+.suitem > span:last-child { min-width: 0; display: flex; flex-direction: column; }
+.suitem b { font: 400 0.85em/1.2 var(--title); }
+.suitem b small { font: 400 1.05em var(--script); color: var(--ink-dim); }
+.suitem i { font-size: 0.95em; font-style: normal; line-height: 1.15; color: var(--ink-dim); }
+.suitem[aria-pressed='true'] b { color: var(--blood); }
+.suitem:hover:not(:disabled) .disc, .suitem:focus-visible .disc { box-shadow: 0 0 0 0.07em var(--enamel-lo), 0 0 0.8em 0.15em rgba(255, 220, 140, 0.85), inset 0 0.08em 0.1em rgba(255, 245, 220, 0.35); }
+.suitem:hover:not(:disabled) b { color: var(--blood); }
+.suitem:focus-visible { outline: none; }
+.suitem.off { opacity: 0.5; }
+.disc .n { position: absolute; right: -0.3em; bottom: -0.3em; min-width: 1.5em; height: 1.5em; border-radius: 50%; background: var(--enamel-lo); box-shadow: 0 0 0 0.08em var(--pewter); font: 400 0.62em/1.5em var(--title); text-align: center; color: var(--glyph); }
+
 /* ---------- the map modal ---------- */
 /* over the whole window: the left page's parchment and vine frame, the map cut into it. --inset (the frame's band) is set by main.js */
 .mapmodal { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(10, 7, 6, 0.72), rgba(5, 3, 3, 0.94)); }

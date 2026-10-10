@@ -64,7 +64,7 @@ table, not here.
 |---|---|
 | A completed book's COMBAT SKILL, ENDURANCE, disciplines, Weapons and Special Items carry into the next | `LW.Character` |
 | Gold carries; each book's starting gold is **added** to it (still at most 50) | yes |
-| Backpack Items and Meals do not carry over: the rules pages name only Weapons and Special Items | yes: the Backpack starts empty (`chooseCharacter`) |
+| Backpack Items and Meals do not carry over: the rules pages name only Weapons and Special Items | yes: the Backpack starts empty (`LW.HeroSetup`) |
 | A new character may start at any book, with that book's own kit | yes: Book 1 by `makeHero`, later books by `LW.KITS` |
 
 ## Kai series (Books 1–5)
@@ -73,8 +73,8 @@ table, not here.
 
 A new character has **five**. A character carried on chooses **one more for each book completed**:
 six in Book 2, seven in Book 3, eight in Book 4, nine in Book 5; completing Book 5 with all of
-Books 1–4 behind him makes him a Kai Master with all ten. *Engine*: the character dialog
-(`LW.UI.chooseCharacter`): new = five, carried = one more.
+Books 1–4 behind him makes him a Kai Master with all ten. *Engine*: setting out
+(`LW.HeroSetup`): new = five, carried = one more.
 
 | Discipline | Effect | Engine |
 |---|---|---|
@@ -188,7 +188,7 @@ improved disciplines it introduces, and its footnote rulings. Each section is co
 book without the other books' sections. "Choose N" lists are what the book offers to add to what he
 carries. From Book 2 on, starting gold is 10 + a Random Number, added to any he carries.
 *Engine*: Book 1's kit is `makeHero`'s; every later book's is `LW.KITS` in rules-series.js, offered
-after the disciplines in the character dialog (gold, given items, the choice, his weapons, the
+after the disciplines when setting out (gold, given items, the choice, his weapons, the
 Monastery). Clothing is named there but not tracked.
 
 ### Book 1, Flight from the Dark (Kai)
