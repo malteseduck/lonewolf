@@ -1,6 +1,6 @@
 [
  {
-  "text": "DEJKAATA",
+  "text": "Dejkaata",
   "box": [
    616,
    166,
@@ -8,7 +8,30 @@
    197
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    676.5,
+    184.5
+   ],
+   "angle": 0.03,
+   "length": 109,
+   "thick": 25,
+   "box": [
+    616,
+    166,
+    734,
+    197
+   ]
+  },
+  "set": {
+   "at": [
+    675.4,
+    183.4
+   ],
+   "size": 27.1,
+   "angle": 0
+  }
  },
  {
   "text": "&DARKLANDS",
@@ -19,18 +42,18 @@
    341
   ],
   "conf": 0.96,
-  "retype": true
+  "retype": false
  },
  {
-  "text": "THE",
+  "text": "& THE DARKLANDS",
   "box": [
-   1482,
+   1365,
    265,
-   1547,
-   297
+   1627,
+   344
   ],
   "conf": 1,
-  "retype": true
+  "retype": false
  },
  {
   "text": "GULF OF HELENAG",
@@ -41,21 +64,68 @@
    513
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1157.3,
+    397.7
+   ],
+   "angle": -49.15,
+   "length": 236,
+   "thick": 219.4,
+   "box": [
+    1075,
+    302,
+    1267,
+    513
+   ]
+  },
+  "set": {
+   "at": [
+    1171.2,
+    408.1
+   ],
+   "size": 23.2,
+   "angle": -49.1
+  }
  },
  {
-  "text": "DTEZNA",
+  "text": "Orgadtezna",
   "box": [
-   439,
+   374,
    356,
    542,
    380
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    455.9,
+    367.8
+   ],
+   "angle": 0.68,
+   "length": 170.2,
+   "thick": 31.5,
+   "box": [
+    374,
+    356,
+    542,
+    380
+   ]
+  },
+  "where": "",
+  "set": {
+   "at": [
+    461,
+    367.3
+   ],
+   "size": 28.6,
+   "angle": 0.7
+  }
  },
  {
-  "text": "THE KALTERSEE",
+  "text": "The Kaltersee",
   "box": [
    1357,
    360,
@@ -63,10 +133,33 @@
    390
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "set": {
+   "at": [
+    1474.5,
+    375.6
+   ],
+   "size": 32,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1474,
+    376.8
+   ],
+   "angle": 0.84,
+   "length": 228.1,
+   "thick": 21.1,
+   "box": [
+    1357,
+    360,
+    1590,
+    390
+   ]
+  }
  },
  {
-  "text": "POINT VASHNA",
+  "text": "Point Vashna",
   "box": [
    1243,
    413,
@@ -74,40 +167,96 @@
    440
   ],
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1341,
+    426.8
+   ],
+   "angle": 0.94,
+   "length": 186.2,
+   "thick": 19.3,
+   "box": [
+    1243,
+    413,
+    1437,
+    440
+   ]
+  },
+  "set": {
+   "at": [
+    1338.3,
+    427.3
+   ],
+   "size": 28.5,
+   "angle": 0.9
+  },
+  "small": false
  },
  {
-  "text": "GOURDANAK",
+  "text": "Gourdanak Mtns",
   "box": [
    847,
    469,
    995,
-   492
-  ],
-  "conf": 1,
-  "retype": true
- },
- {
-  "text": "MTNS",
-  "box": [
-   887,
-   489,
-   957,
    516
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "lines": [
+   "Gourdanak",
+   "Mtns"
+  ],
+  "ink": {
+   "at": [
+    923.6,
+    491.8
+   ],
+   "angle": 1.3,
+   "length": 149.7,
+   "thick": 53.8,
+   "box": [
+    847,
+    469,
+    995,
+    516
+   ]
+  },
+  "leading": 0.67
  },
  {
   "text": "ARGAZAD",
   "box": [
-   1035,
+   1079,
    594,
    1200,
    621
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1142,
+    603.5
+   ],
+   "angle": -0.12,
+   "length": 112,
+   "thick": 27.1,
+   "box": [
+    1079,
+    594,
+    1200,
+    621
+   ]
+  },
+  "set": {
+   "at": [
+    1132.9,
+    609.4
+   ],
+   "size": 26.2,
+   "angle": -0.5
+  }
  },
  {
   "text": "AARNAK",
@@ -118,7 +267,31 @@
    641
   ],
   "conf": 0.97,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    618.6,
+    627.4
+   ],
+   "angle": -2.09,
+   "length": 113.9,
+   "thick": 28.1,
+   "box": [
+    559,
+    616,
+    677,
+    641
+   ]
+  },
+  "set": {
+   "at": [
+    619.5,
+    629.2
+   ],
+   "size": 28.5,
+   "angle": 0.5
+  },
+  "joined": true
  },
  {
   "text": "HELGEDAD",
@@ -129,7 +302,39 @@
    672
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    324.1,
+    659.5
+   ],
+   "angle": 0.9,
+   "length": 148.2,
+   "thick": 25.2,
+   "box": [
+    252,
+    646,
+    395,
+    672
+   ]
+  },
+  "set": {
+   "at": [
+    326.2,
+    662.4
+   ],
+   "size": 25.3,
+   "angle": 1.6
+  },
+  "joined": true,
+  "keep": [
+   [
+    333,
+    633,
+    408,
+    651
+   ]
+  ]
  },
  {
   "text": "ANSKAVEN",
@@ -140,7 +345,38 @@
    672
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1730,
+    654.8
+   ],
+   "angle": -0.25,
+   "length": 154.1,
+   "thick": 27.1,
+   "box": [
+    1649,
+    645,
+    1810,
+    672
+   ]
+  },
+  "set": {
+   "at": [
+    1730.1,
+    660.2
+   ],
+   "size": 29.2,
+   "angle": -0.2
+  },
+  "keep": [
+   [
+    1634,
+    633,
+    1653,
+    658
+   ]
+  ]
  },
  {
   "text": "TORAN",
@@ -151,10 +387,33 @@
    743
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1576.6,
+    726.4
+   ],
+   "angle": 2.18,
+   "length": 105.5,
+   "thick": 30.5,
+   "box": [
+    1528,
+    715,
+    1634,
+    743
+   ]
+  },
+  "set": {
+   "at": [
+    1577.7,
+    727.5
+   ],
+   "size": 28,
+   "angle": 2.2
+  }
  },
  {
-  "text": "NAOG\u00cdZAGA",
+  "text": "Naogizaga",
   "box": [
    469,
    727,
@@ -162,7 +421,30 @@
    762
   ],
   "conf": 0.95,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    548.8,
+    746.7
+   ],
+   "angle": 1.7,
+   "length": 148.4,
+   "thick": 25.5,
+   "box": [
+    469,
+    727,
+    627,
+    762
+   ]
+  },
+  "set": {
+   "at": [
+    548.4,
+    742.1
+   ],
+   "size": 28.9,
+   "angle": 1.5
+  }
  },
  {
   "text": "SOMMERLUND",
@@ -173,7 +455,30 @@
    797
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1631.5,
+    783.6
+   ],
+   "angle": 0.5,
+   "length": 237,
+   "thick": 32.1,
+   "box": [
+    1508,
+    766,
+    1749,
+    797
+   ]
+  },
+  "set": {
+   "at": [
+    1630.6,
+    782.5
+   ],
+   "size": 30.7,
+   "angle": 0.5
+  }
  },
  {
   "text": "THE HOLMGULF",
@@ -184,10 +489,33 @@
    916
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1718.3,
+    844.8
+   ],
+   "angle": 4.84,
+   "length": 208.9,
+   "thick": 146.6,
+   "box": [
+    1619,
+    777,
+    1815,
+    916
+   ]
+  },
+  "set": {
+   "at": [
+    1717.7,
+    845.9
+   ],
+   "size": 23,
+   "angle": -32.5
+  }
  },
  {
-  "text": "THE DARKLANDS",
+  "text": "THE  DARKLANDS",
   "box": [
    411,
    844,
@@ -195,18 +523,99 @@
    874
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    551.5,
+    860.3
+   ],
+   "angle": 0.5,
+   "length": 277.1,
+   "thick": 26.5,
+   "box": [
+    411,
+    844,
+    693,
+    874
+   ]
+  },
+  "set": {
+   "at": [
+    552.1,
+    861.8
+   ],
+   "size": 30.8,
+   "angle": 0.4
+  },
+  "joined": true,
+  "keep": [
+   [
+    512,
+    828,
+    572,
+    846
+   ]
+  ]
  },
  {
-  "text": "MONASTERY",
+  "text": "Kai Monastery",
   "box": [
    1403,
-   858,
+   837,
    1551,
    888
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1481,
+    868.8
+   ],
+   "angle": 4.93,
+   "length": 134.6,
+   "thick": 54.7,
+   "box": [
+    1403,
+    837,
+    1551,
+    888
+   ]
+  },
+  "set": {
+   "at": [
+    1474.9,
+    861.6
+   ],
+   "size": 24.2,
+   "angle": 0
+  },
+  "lines": [
+   "Kai",
+   "Monastery"
+  ],
+  "leading": 0.79,
+  "joined": true,
+  "keep": [
+   [
+    1384,
+    807,
+    1452,
+    860
+   ],
+   [
+    1499,
+    819,
+    1556,
+    866
+   ],
+   [
+    1549,
+    824,
+    1562,
+    900
+   ]
+  ]
  },
  {
   "text": "TYSO",
@@ -217,7 +626,22 @@
    871
   ],
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1601.4,
+    857.5
+   ],
+   "angle": 1.05,
+   "length": 87.3,
+   "thick": 33.4,
+   "box": [
+    1562,
+    844,
+    1646,
+    871
+   ]
+  }
  },
  {
   "text": "KAAG",
@@ -228,10 +652,34 @@
    946
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1105.5,
+    929.6
+   ],
+   "angle": 1.96,
+   "length": 97.1,
+   "thick": 31.6,
+   "box": [
+    1061,
+    918,
+    1155,
+    946
+   ]
+  },
+  "set": {
+   "at": [
+    1108,
+    932.7
+   ],
+   "size": 32,
+   "angle": 0
+  },
+  "joined": true
  },
  {
-  "text": "DURNCRAG MTNS",
+  "text": "Durncrag Mtns",
   "box": [
    1252,
    920,
@@ -239,7 +687,38 @@
    948
   ],
   "conf": 0.96,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1366,
+    933.8
+   ],
+   "angle": -0.37,
+   "length": 213.9,
+   "thick": 34.6,
+   "box": [
+    1252,
+    920,
+    1471,
+    948
+   ]
+  },
+  "set": {
+   "at": [
+    1364.9,
+    934
+   ],
+   "size": 26.1,
+   "angle": -0.3
+  },
+  "keep": [
+   [
+    1316,
+    893,
+    1397,
+    924
+   ]
+  ]
  },
  {
   "text": "HOLMGARD",
@@ -250,10 +729,47 @@
    979
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1602.9,
+    964.2
+   ],
+   "angle": -1.42,
+   "length": 162.2,
+   "thick": 22.6,
+   "box": [
+    1515,
+    955,
+    1684,
+    979
+   ]
+  },
+  "set": {
+   "at": [
+    1602.5,
+    966.2
+   ],
+   "size": 26.9,
+   "angle": -1.2
+  },
+  "keep": [
+   [
+    1499,
+    940,
+    1521,
+    995
+   ],
+   [
+    1668,
+    973,
+    1692,
+    998
+   ]
+  ]
  },
  {
-  "text": "KAGAZITZAGA",
+  "text": "Kagazitzaga",
   "box": [
    419,
    1019,
@@ -261,7 +777,30 @@
    1047
   ],
   "conf": 0.97,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    504.4,
+    1034.8
+   ],
+   "angle": 0.58,
+   "length": 159.1,
+   "thick": 25.8,
+   "box": [
+    419,
+    1019,
+    586,
+    1047
+   ]
+  },
+  "set": {
+   "at": [
+    504.5,
+    1031.5
+   ],
+   "size": 27.4,
+   "angle": 0.6
+  }
  },
  {
   "text": "THE WILDLANDS",
@@ -272,21 +811,90 @@
    1182
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1660,
+    1165.4
+   ],
+   "angle": 0.41,
+   "length": 266.1,
+   "thick": 27,
+   "box": [
+    1520,
+    1149,
+    1796,
+    1182
+   ]
+  },
+  "set": {
+   "at": [
+    1662.6,
+    1168.7
+   ],
+   "size": 31.5,
+   "angle": 0.5
+  },
+  "keep": [
+   [
+    1483,
+    1131,
+    1527,
+    1194
+   ],
+   [
+    1505,
+    1119,
+    1552,
+    1151
+   ]
+  ]
  },
  {
-  "text": "GADOR",
+  "text": "MAGADOR",
   "box": [
-   852,
+   790,
    1211,
    963,
    1239
   ],
   "conf": 1,
-  "retype": true
+  "retype": false,
+  "ink": {
+   "at": [
+    879.4,
+    1225.1
+   ],
+   "angle": 1.46,
+   "length": 167.6,
+   "thick": 33.9,
+   "box": [
+    790,
+    1211,
+    963,
+    1239
+   ]
+  },
+  "set": {
+   "at": [
+    880.2,
+    1225.2
+   ],
+   "size": 32.3,
+   "angle": 0.1
+  },
+  "joined": true,
+  "keep": [
+   [
+    779,
+    1194,
+    796,
+    1246
+   ]
+  ]
  },
  {
-  "text": "MAAKENGORG",
+  "text": "Maakengorge",
   "box": [
    1147,
    1234,
@@ -294,7 +902,44 @@
    1315
   ],
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1237.2,
+    1272.9
+   ],
+   "angle": 15.65,
+   "length": 192.6,
+   "thick": 123.6,
+   "box": [
+    1147,
+    1234,
+    1326,
+    1315
+   ]
+  },
+  "set": {
+   "at": [
+    1237.8,
+    1272.8
+   ],
+   "size": 28.3,
+   "angle": 16
+  },
+  "keep": [
+   [
+    1134,
+    1266,
+    1175,
+    1316
+   ],
+   [
+    1189,
+    1285,
+    1244,
+    1340
+   ]
+  ]
  },
  {
   "text": "ESHNAR",
@@ -305,7 +950,30 @@
    1224
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1611.5,
+    1212.5
+   ],
+   "angle": 0.38,
+   "length": 101.1,
+   "thick": 17.6,
+   "box": [
+    1558,
+    1200,
+    1665,
+    1224
+   ]
+  },
+  "set": {
+   "at": [
+    1614.2,
+    1213.6
+   ],
+   "size": 26.5,
+   "angle": 0.4
+  }
  },
  {
   "text": "TEMEL",
@@ -316,7 +984,30 @@
    1247
   ],
   "conf": 0.96,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1777.5,
+    1235.4
+   ],
+   "angle": -2.02,
+   "length": 93.8,
+   "thick": 22,
+   "box": [
+    1735,
+    1223,
+    1823,
+    1247
+   ]
+  },
+  "set": {
+   "at": [
+    1773.8,
+    1234.4
+   ],
+   "size": 24.2,
+   "angle": -0.5
+  }
  },
  {
   "text": "OGIA",
@@ -327,10 +1018,33 @@
    1307
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    370.5,
+    1291.5
+   ],
+   "angle": 0.33,
+   "length": 93.1,
+   "thick": 21.4,
+   "box": [
+    323,
+    1275,
+    419,
+    1307
+   ]
+  },
+  "set": {
+   "at": [
+    370,
+    1291.5
+   ],
+   "size": 37,
+   "angle": 0.3
+  }
  },
  {
-  "text": "PL.KAZONARA",
+  "text": "L. Kazonara",
   "box": [
    759,
    1321,
@@ -338,7 +1052,30 @@
    1347
   ],
   "conf": 0.94,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    847.4,
+    1337.5
+   ],
+   "angle": 1.15,
+   "length": 153.2,
+   "thick": 23.6,
+   "box": [
+    759,
+    1321,
+    923,
+    1347
+   ]
+  },
+  "set": {
+   "at": [
+    842.9,
+    1335.3
+   ],
+   "size": 25,
+   "angle": 0.5
+  }
  },
  {
   "text": "MOUNTAINS",
@@ -371,7 +1108,7 @@
    1414
   ],
   "conf": 1,
-  "retype": true
+  "retype": false
  },
  {
   "text": "PACK ICE",
@@ -382,7 +1119,7 @@
    1417
   ],
   "conf": 0.99,
-  "retype": true
+  "retype": false
  },
  {
   "text": "SCALE IN MILES",
@@ -404,7 +1141,7 @@
    1441
   ],
   "conf": 0.98,
-  "retype": true
+  "retype": false
  },
  {
   "text": "150",
@@ -437,7 +1174,7 @@
    1492
   ],
   "conf": 1,
-  "retype": true
+  "retype": false
  },
  {
   "text": "VOLCANOES",
@@ -448,7 +1185,7 @@
    1495
   ],
   "conf": 1,
-  "retype": true
+  "retype": false
  },
  {
   "text": "TUNDRA",
@@ -459,7 +1196,7 @@
    1495
   ],
   "conf": 1,
-  "retype": true
+  "retype": false
  },
  {
   "text": "WASTELAND",
@@ -470,7 +1207,7 @@
    1494
   ],
   "conf": 1,
-  "retype": true
+  "retype": false
  },
  {
   "text": "PLAINS",
@@ -481,6 +1218,201 @@
    1494
   ],
   "conf": 0.99,
+  "retype": false
+ },
+ {
+  "text": "SOMMERLUND",
+  "box": [
+   1247,
+   172,
+   1520,
+   255
+  ],
+  "where": "",
+  "small": false,
+  "retype": false
+ },
+ {
+  "text": "NADGAZAD",
+  "box": [
+   585,
+   1231,
+   765,
+   1262
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "ink": {
+   "at": [
+    678.8,
+    1245.7
+   ],
+   "angle": -1.17,
+   "length": 176,
+   "thick": 40.7,
+   "box": [
+    585,
+    1231,
+    765,
+    1262
+   ]
+  },
+  "set": {
+   "at": [
+    678,
+    1246.8
+   ],
+   "size": 29.2,
+   "angle": -1
+  },
+  "joined": true,
+  "keep": [
+   [
+    630,
+    1208,
+    700,
+    1233
+   ],
+   [
+    568,
+    1216,
+    591,
+    1271
+   ]
+  ]
+ },
+ {
+  "text": "L. Vorndarol",
+  "box": [
+   1035,
+   1281,
+   1211,
+   1319
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "ink": {
+   "at": [
+    1126.9,
+    1303.8
+   ],
+   "angle": -2.02,
+   "length": 167.8,
+   "thick": 41.8,
+   "box": [
+    1035,
+    1281,
+    1211,
+    1319
+   ]
+  },
+  "set": {
+   "at": [
+    1117,
+    1299.5
+   ],
+   "size": 22.7,
+   "angle": -1
+  },
+  "keep": [
+   [
+    1083,
+    1269,
+    1174,
+    1289
+   ]
+  ]
+ },
+ {
+  "text": "DAJDOKRITZAGA",
+  "box": [
+   263,
+   512,
+   461,
+   549
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "ink": {
+   "at": [
+    355.5,
+    528.8
+   ],
+   "angle": 0.95,
+   "length": 185.2,
+   "thick": 20.2,
+   "box": [
+    263,
+    512,
+    461,
+    549
+   ]
+  },
+  "joined": true,
+  "keep": [
+   [
+    248,
+    539,
+    475,
+    570
+   ],
+   [
+    244,
+    501,
+    479,
+    520
+   ]
+  ]
+ },
+ {
+  "text": "RUANON",
+  "box": [
+   1433,
+   1325,
+   1549,
+   1351
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "ink": {
+   "at": [
+    1492.4,
+    1335.8
+   ],
+   "angle": -1.02,
+   "length": 119.1,
+   "thick": 26.5,
+   "box": [
+    1433,
+    1325,
+    1549,
+    1351
+   ]
+  },
+  "set": {
+   "at": [
+    1489.1,
+    1338.2
+   ],
+   "size": 24.4,
+   "angle": -1.6
+  },
+  "joined": true
+ },
+ {
+  "text": "0",
+  "box": [
+   1377,
+   1420,
+   1397,
+   1441
+  ],
+  "where": "",
+  "small": false,
   "retype": false
  }
 ]
