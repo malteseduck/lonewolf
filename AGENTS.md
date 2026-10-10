@@ -121,6 +121,14 @@ explaining it would cost more than doing it.
 - HTML is built as template strings. Pass every piece of book or user text through `esc()`.
 - Comments say why, briefly. Match the density of the file you are in.
 
+## Lore
+
+The Lone Wolf fandom wiki, https://lonewolf.fandom.com/wiki/ (one page per character, creature,
+place and book, e.g. `/wiki/Zahda`), is a good source for what things look like and who they are:
+use it when searching for a fight picture, and to clarify a passage whose meaning is unclear. It is
+fan-written (CC BY-SA): the book's own text wins where they differ, rules still come from the rules
+pages (`docs/reference/rules-books.md`), and its text is not copied into the repository either.
+
 ## Things that will bite you
 
 - **Shell heredocs have silently truncated files here** when the content contained certain quote

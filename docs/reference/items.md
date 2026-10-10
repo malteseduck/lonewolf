@@ -200,14 +200,37 @@ river pirates take the owner's `art/plates/` rogues and sailor, also used by Boo
 the Sewer Door take engravings saved already cropped (the Beast of Gévaudan, a Piranesi prison doorway):
 fetch Commons' 1920 px copy rather than the original, and cut it to the part used before saving, so
 the offline copy stays small (the owner's request, 2026-10-09).
+Book 7 does the same: its Vampire Bats, Hactaraton Brood, Giant Hactaraton and Lekhor take the
+non-fight pictures in the sections that lead to their fights; its Beastmen (the Zahda Beastmen, the
+Throne-hall Guard and the two numbered gaolers) share the book's only two Beastman pictures, as
+whole pictures and as close crops of the heads (Gaoler No. 1 shows the same whole picture as the
+Beastman Gaoler, whose fight it illustrates). Its foes the book never pictures take engravings: Lord
+Zahda (both fights) Howard Pyle's gaunt, white-haired Merlin (the fandom wiki's description; Doré's
+Merlin was too tender), the Oudagorg the Lambton Worm, the Flame-man the *Dictionnaire
+infernal*'s fire-tending Ukobach, the Invisible Whipmaster Doré's whipping demons (*Inferno* XVIII), the
+Tunnel Door Piranesi's drawbridge and chains (*Carceri* VII, not Book 6's prison door again), the
+Trap-webs a 1547 woodcut of a spider on its web, the Black Lakeweed a crop of Haeckel's seaweeds.
 An already-downloaded free engraving can serve a second creature by a different crop (Book 4's Tunnel
 Fiends are other demons from the Schongauer print that gives Book 3 its Mutant).
-4. **A free old engraving** from Wikimedia Commons, public domain or CC BY: search with
-   `filetype:bitmap` (the Commons API answers the browser with `origin=*`), lay the thumbnails out
-   in the page to compare, and prefer menacing over quaint (the owner turned down a cute bear).
-   Save it to `assets/plates/`, shrink anything over about 1 MB, and credit it in
-   `assets/plates/README.txt`. A `crop` drops captions and plate numbers. Tonal prints (aquatints,
-   such as Goya's) come out as a dark blot: look for line work.
+4. **A picture found by searching**, anywhere: Wikimedia Commons, a general image search, fan art,
+   game art, modern fantasy illustration. Read the enemy's page on the Lone Wolf fandom wiki first
+   (see AGENTS.md, Lore) for what it looks like: the book's text at its fight often says little
+   (Book 7's Lord Zahda is gaunt and white-haired). The player is for personal use, so a picture need
+   not be free (the owner widened the search beyond Commons, 2026-10-10); where it is saved depends
+   on its licence:
+   - **Free** (public domain, CC0, CC BY): save it to `assets/plates/` (committed, so a fresh clone
+     has it) and credit it in `assets/plates/README.txt`. Commons is a good first stop for these:
+     search with `filetype:bitmap` (its API answers the browser with `origin=*`).
+   - **Anything else**: save it to git-ignored `art/plates/<code>/` and note its source page in
+     git-ignored `art/plates/SOURCES.txt`. A fresh clone shows the drawn emblem for that enemy.
+
+   Lay the candidates out in the page to compare, and prefer menacing over quaint (the owner
+   turned down a cute bear). Prefer line work: tonal prints (aquatints, such as Goya's) come out as a
+   dark blot, and paintings need `levels` and may still turn to mud, so judge each on the sheet.
+   Pass over small copies and anything watermarked. Fetch a copy about 2000 px on its long side
+   (Commons' 1920 px copy rather than a huge original), cut it to the part used and shrink anything
+   over about 1 MB before saving, so the offline copy stays small; a `crop` drops captions and plate
+   numbers. **Ask the owner before each download**, naming the picture, its source and its size.
 
 Show the owner each new picture as it will look before calling it done: the dashboard's sheet,
 `http://localhost:8765/tools/admin/fights.html?book=<book>`, shows every enemy of the book inked as in a

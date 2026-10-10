@@ -18,8 +18,8 @@ art/manifest.json           optional pictures in art/: enemy sprites, Lone Wolf'
 assets/icons/               discipline glyphs from game-icons.net (CC BY 3.0, credited in README.txt)
 assets/fonts/               the page's three fonts and fonts.css, from Google Fonts (SIL OFL, licences beside them)
 assets/app/                 the Home Screen icon (README.txt says how it was made)
-assets/plates/              plates.json: pictures for enemies their book does not picture; free engravings
-                            from Wikimedia Commons (credited in README.txt)
+assets/plates/              plates.json: pictures for enemies their book does not picture; free pictures,
+                            mostly engravings from Wikimedia Commons (credited in README.txt)
 CLAUDE.md, README.md
 docs/                       spec, plan, reference
   book-status.json          the book steps no file can show (checklist 3, 4, 6, 7), with the date each was

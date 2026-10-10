@@ -215,7 +215,8 @@ late", once `evade.within` rounds are fought. When `B.over` is set the left page
   whose `match` is found in its name and whose `book`, if it has one, is the open book (`PLATES`;
   `__lw.plates` in the console), else the drawn
   sprite. Library entries are free engravings in `assets/plates/` (sources in its README.txt),
-  pictures the owner supplied in git-ignored `art/` (Winged Serpent), or Project Aon
+  pictures the owner supplied or that were found by search and are not free, in git-ignored `art/`
+  (Winged Serpent; sources of found ones in `art/plates/SOURCES.txt`), or Project Aon
   illustrations by path under `data/projectaon/`: the same book's, often cropped to one figure
   (Book 2's portrait page), or another book's (plain human enemies only: another book's special
   creature would be seen twice, the very same creature excepted).
