@@ -1140,11 +1140,22 @@ async function api(path, opts) {
     return { status: r.status, j: await r.json().catch(() => ({})) };
   } catch (e) { return { status: 0, j: { error: String(e.message || e) } }; }
 }
+// after an await (a save, a fetch) or inside the dashboard's frame the browser may refuse the clipboard:
+// copy through a selection instead
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); }
+  catch (e) {
+    const ta = Object.assign(document.createElement('textarea'), { value: t });
+    document.body.append(ta); ta.select();
+    const ok = document.execCommand('copy'); ta.remove();
+    if (!ok) throw e;
+  }
+}
 // step 3's retype ticks are a judgement by eye, so they go to Claude Code by hand, not to a script
 async function copyClaude() {
   if (snap() !== savedJson && !(await save())) return;  // Claude edits the saved file
   const t = `Map editor, step 3, book ${book}: in maps/${book}/labels.json, untick "retype" on every label that is not a place name (the title, banner, panel captions, key and scale wording, which Gemini copies as drawn), and check that the labels already unticked are not place names. Judge from the wording and the boxes only: do not open the map image. If a label could be either, leave it as it is and ask me. Change only the retype ticks: no wording, boxes or other fields. Write the file back in its current format, then list what you changed by index.`;
-  try { await navigator.clipboard.writeText(t); msg('Request copied: paste it into Claude Code, then reload this page', 5000); }
+  try { await copyText(t); msg('Request copied: paste it into Claude Code, then reload this page', 5000); }
   catch (e) { msg('Copy failed: ' + e.message, 6000); }
 }
 async function markChecked(on) {  // step 3 is the one step no script marks done
@@ -1213,7 +1224,7 @@ async function copyPrompt(btn) {
       await refreshState();
     }
     const t = await (await fetch(`${at(`map-prompt-${rd}.txt`)}?${Date.now()}`)).text();
-    await navigator.clipboard.writeText(t);
+    await copyText(t);
     msg(`Prompt for round ${rd} copied (${t.length} characters)`);
   } catch (e) { msg('Copy failed: ' + e.message, 6000); }
   finally { setBusy(false, btn); renderPanel(); }
