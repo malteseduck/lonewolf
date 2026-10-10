@@ -13,13 +13,19 @@ body
                       "Update ready: reload" reloads when touched. The title page is reached by the
                       return medallion. The player has no sound
   .stage > .book#book > .spread
-      section#pl.page.left        the story page (ornate frame via ::before)
-      .edges                      the stacked page edges between the two pages
+      .edges.l                    the stacked edges of the pages beneath, at the far left
+      section#pl.page.left        the story page (ornate frame via ::before, gutter shade via ::after)
       .rightwrap
           #rtabs                  three tab medallions (TAB_ART: wolf head, chest, compass rose), then a smaller
-                                  return-arrow medallion (data-home) back to the title page; hidden outside story mode
-          section#pr.page.right   the panel (torn edge via clip-path)
+                                  return-arrow medallion (data-home) back to the title page; on the page's
+                                  outer edge; hidden outside story mode
+          section#pr.page.right   the panel: the same parchment and frame, mirrored
+      .edges.r                    the left stack mirrored, at the far right
+      .spine                      a 1px line where the pages meet; each page's ::after shades into it
 ```
+
+The two pages are equal columns (`1em 1fr 1fr 1em`). The right page's padding is a little tighter
+than the story's (it sits closer to the frame) because the panels need the room.
 
 `--bw` is the book's width; `.book { font-size: calc(var(--bw) / 59) }` and everything inside is
 in `em`, so the spread scales as one piece. Below 760px wide the spread stacks into one column.
@@ -29,7 +35,7 @@ Design tokens (colours, the three font roles) are CSS custom properties on `:roo
 Display (loaded, currently unused for the title). All from Google Fonts.
 
 Textures are generated at start-up in `main.js` and set as CSS variables: `--parch-l`,
-`--parch-r`, `--frame`, `--wood`, `--torn`.
+`--parch-r` (the same paper, mirrored), `--frame`, `--wood`.
 
 ## Modes
 
@@ -82,7 +88,13 @@ Textures are generated at start-up in `main.js` and set as CSS variables: `--par
 Header on every panel: the book's title on a ribbon (or
 "Combat") and `gauges()`: Combat Skill, Endurance and gold, each a dark window in a bronze frame
 with a medallion (crossed swords, heart, coins) at its end; Endurance has a red thread for what is
-left. `updateBattle` redraws the gauges each round.
+left. The gauges sit on the page's top frame band, left of the tab medallions, so they cost the
+panel no height. `updateBattle` redraws the gauges each round.
+
+Touching a medallion (`data-sel`) sets `sel`, and `placeTip()` opens a box (`.caption.tip`) over
+the page beside it: below it, or above when the page runs out, with a lozenge pointing back at it
+(`--ax`). It holds what `captionHTML()` says, buttons included. A touch anywhere outside the box,
+on the same medallion again, or Escape closes it; touching another medallion moves it.
 
 - **kai** (`kaiHTML`), after the HD character sheet:
   - `.likeness`: Lone Wolf's portrait (`portraitURL`, made by `portraitFromArt` from
@@ -95,17 +107,17 @@ left. `updateBattle` redraws the gauges each round.
     by bars, in a box framed by `drawFrame(1000, 470)` (`--grid-frame`). Learned ones are `.lit`.
     Glyphs are game-icons.net SVGs in `assets/icons/` (`DISC_GLYPH`), used as CSS masks so they
     can take the ivory fill and ember glow.
-  - `.caption` explains the selected discipline, and says when it is not learned.
+  - The box explains the touched discipline, and says when it is not learned.
 - **pack** (`packHTML`), after the HD equipment sheet: in `.kit`, his full-length figure
   faint behind a paper doll of slots: the helmet between two shoulder slots, the two weapons either
   side of the chainmail (a mastered weapon is lit), two belt slots below; the first four other
   Special Items fill the shoulder and belt slots, the rest a row of five rings (more in fives) under
   a scrolled rule (`flourish`); empty slots are bare rings. The figure is `dollURL` (see "Lone Wolf's figure" below). Then a ruled "Backpack" heading, a knapsack medallion beside eight dark square tiles (one per Meal or
   item) under the HD sheet's ironwork (`packLattice`: a curl in each tile's corners, diamond studs
-  where they meet, a double frame, a scroll off each corner); a ledger (gold -/+, "Add an item by hand"); and the caption with Drink / Drop / Eat. The
-  Quiver's caption counts its Arrows, with -/+ (`adjust('arrows')`); with nothing selected the
-  caption lists what is kept at the Kai Monastery (`hero.stored`, `hero.storedGold`). With
-  the Backpack lost (`hero.noPack`) its heading says so. The caption gives a book item's `about`;
+  where they meet, a double frame, a scroll off each corner); a ledger (gold -/+, "Add an item by hand"); and, when anything is kept at the Kai Monastery
+  (`hero.stored`, `hero.storedGold`), a line (`.kept`) saying what. A touched item's box has
+  Drink / Drop / Eat; the Quiver's counts its Arrows, with -/+ (`adjust('arrows')`). With
+  the Backpack lost (`hero.noPack`) its heading says so. The box gives a book item's `about`;
   anything with `heal` can be drunk (the potion) or eaten (Laumspur herb). Icons: `ITEM_GLYPH` for the
   standard items, else the item's own `glyph` from its book's item table, else a pouch or pendant
   by kind; gold and a found Backpack have their own.
@@ -115,7 +127,9 @@ left. `updateBattle` redraws the gauges each round.
   for something else, which ask for a name on an inked line (`naming`; Enter adds, Escape cancels).
   A typed name that is a known item's (`knownItem`: "Sommerswerd") adds that item, with its kind and
   powers; any other becomes a plain Backpack or Special Item of that name.
-  The caption is hidden meanwhile; the picker's own line names whatever is under the pointer.
+  The picker takes exactly the doll's space and scrolls within it (overriding the fixed height
+  `shared/shared.css` gives `.picker`), so the Backpack below does not move; its row labels are one
+  width, wrapping when long, top-aligned. The picker's own line names whatever is under the pointer.
   Item glyphs are game-icons.net SVGs (`ITEM_GLYPH`); items typed in by hand get a pouch or a
   pendant by their kind.
 - **map**: not a panel. Its tab medallion opens `openMap()`'s modal over the whole window (see "The map modal"
@@ -231,8 +245,6 @@ late", once `evade.within` rounds are fought. When `B.over` is set the left page
   curled tendrils, leaves, berries) between heavy and double rules, square corner tiles with an
   interlaced quatrefoil cut through them and flourishes, lozenges with scrolls mid-side, a diamond
   with swept leaves top and bottom. `{ vine: false }` gives the plain beaded band for small boxes.
-- `drawSheet`: laid over the right page's parchment (`--sheet-art`): a faint half-drop damask, a
-  darkened edge, and a slimmer vine band inside the torn edge with corner tiles and curls.
 - `drawBanner` / `drawCrest`: the place's ribbon with scrolled ends (a border-image, so only its
   middle stretches) and the pointed arch of flourish above it (its own background, unstretched).
 - Story illustrations are plain `<img>` with `mix-blend-mode: multiply`; full plates also get a
@@ -240,6 +252,10 @@ late", once `evade.within` rounds are fought. When `B.over` is set the left page
 
 ## Page turn (`turn(update)`)
 
-Clones the left page, runs `update()` underneath, then rotates the clone away about its left edge
-and removes it. Also turns the gear. Skipped under reduced motion.
+A leaf (`.leaf`) is laid over the right page: its front a copy of the old right page, its back a
+copy of the new left page (taken after `update()`), and a copy of the old left page lies under it
+on the left. The leaf rotates 0 to -180deg about the spine (900ms), a shade deepening on each face
+as it stands upright, then all three copies are removed. Copies lose their ids. Also turns the
+gear. Stacked (under 760px wide) the story page is only cloned and lifted away about its left edge;
+under reduced motion the change is immediate.
 

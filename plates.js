@@ -482,53 +482,6 @@ export function drawFrame(w = 1000, h = 1480, opts = { vine: true }) {
   return c;
 }
 
-/* The right page's own dressing, laid over its parchment: a faint damask woven across it, as on
-   the HD sheets, a fine double rule inside the torn edge with curled corners, and the edges
-   darkened as old paper is. */
-function damask(x, s, col) {
-  for (const m of [1, -1]) {
-    x.save(); x.scale(m * s, s); x.fillStyle = col; x.strokeStyle = col; x.lineCap = 'round';
-    x.beginPath(); x.moveTo(0, 46); x.bezierCurveTo(26, 40, 50, 14, 40, -10); x.bezierCurveTo(34, -24, 18, -22, 20, -10); x.bezierCurveTo(22, 0, 32, -2, 30, -10);
-    x.bezierCurveTo(36, 10, 18, 28, 0, 28); x.closePath(); x.fill();
-    x.beginPath(); x.moveTo(0, 20); x.bezierCurveTo(8, 4, 8, -18, 0, -34); x.lineTo(0, 20); x.fill();
-    x.beginPath(); x.moveTo(0, -38); x.quadraticCurveTo(12, -54, 0, -72); x.quadraticCurveTo(4, -54, 0, -38); x.fill();
-    x.lineWidth = 2.4; curl(x, 46, 40, 9, Math.PI, 1.1, -1);
-    x.beginPath(); x.moveTo(6, 52); x.bezierCurveTo(20, 62, 36, 58, 42, 48); x.stroke();
-    x.restore();
-  }
-}
-export function drawSheet(w = 860, h = 1300) {
-  const c = Ink.canvas(w, h), x = c.getContext('2d'), col = 'rgba(58,38,24,';
-  for (let row = 0, y = -40; y < h + 160; row++, y += 150) for (let i = -1; i * 170 < w + 170; i++) { // a half-drop repeat
-    x.save(); x.translate(i * 170 + (row % 2 ? 85 : 0), y); damask(x, 0.9, col + '0.07)'); x.restore();
-  }
-  const g = x.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.35, w / 2, h / 2, Math.max(w, h) * 0.72);
-  g.addColorStop(0, 'rgba(40,24,10,0)'); g.addColorStop(1, 'rgba(40,24,10,0.32)'); x.fillStyle = g; x.fillRect(0, 0, w, h);
-  // a slim border band inside the torn edge: rules either side of a fine vine, lighter than the story page's
-  const o = 30, B = 20, m = o + B / 2 + 2, e = o + 44;
-  x.strokeStyle = col + '0.7)'; x.lineWidth = 2; x.strokeRect(o, o, w - 2 * o, h - 2 * o);
-  x.lineWidth = 1.2; x.strokeRect(o + B + 4, o + B + 4, w - 2 * (o + B + 4), h - 2 * (o + B + 4));
-  [[e, m, 0, w - 2 * e], [w - e, h - m, Math.PI, w - 2 * e], [m, h - e, -Math.PI / 2, h - 2 * e], [w - m, e, Math.PI / 2, h - 2 * e]].forEach(([tx, ty, a, len]) => {
-    x.save(); x.translate(tx, ty); x.rotate(a); vine(x, len, B, col + '0.55)'); x.restore();
-  });
-  x.lineCap = 'round';
-  [[o, o, 1, 1], [w - o, o, -1, 1], [o, h - o, 1, -1], [w - o, h - o, -1, -1]].forEach(([tx, ty, sx, sy]) => {
-    x.save(); x.translate(tx, ty); x.scale(sx, sy);
-    x.fillStyle = col + '0.8)'; x.fillRect(0, 0, B + 4, B + 4);
-    x.save(); x.globalCompositeOperation = 'destination-out'; poly(x, [[12, 4], [20, 12], [12, 20], [4, 12]], '#000'); x.restore();
-    x.strokeStyle = col + '0.65)';
-    for (const t of [false, true]) {
-      x.save(); if (t) x.transform(0, 1, 1, 0, 0, 0);
-      x.lineWidth = 2.2; x.beginPath(); x.moveTo(B + 12, B + 12); x.bezierCurveTo(B + 44, B + 10, B + 74, B + 18, B + 68, B + 38); x.stroke(); curl(x, B + 60, B + 34, 9, -0.3, 1, 1);
-      oval(x, B + 38, B + 16, 9, 2.8, col + '0.65)', 0.15);
-      x.restore();
-    }
-    x.restore();
-  });
-  [[w / 2, m], [w / 2, h - m]].forEach(([tx, ty]) => { x.clearRect(tx - 22, ty - B / 2, 44, B); poly(x, [[tx, ty - 9], [tx + 14, ty], [tx, ty + 9], [tx - 14, ty]], col + '0.75)'); });
-  return c;
-}
-
 /* The ribbon that names the place at the head of the right page, after the HD banners: a pale
    band with scrolled ends. Drawn wide, then used as a border-image so the ends keep their shape
    and only the middle stretches; the crest above its middle is drawn apart (drawCrest) for the

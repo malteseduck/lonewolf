@@ -14,13 +14,13 @@
 <link rel="stylesheet" href="assets/fonts/fonts.css">
 <link rel="stylesheet" href="shared/shared.css">
 <style>
-/* Layout, after Lone Wolf HD: the story is written on a framed left page; the right page is a darker
-   sheet that holds a panel (Kai Disciplines, inventory, or the fight). Round bronze medallions are the
+/* Layout, after Lone Wolf HD: an open book of two matching framed pages. The story is written on the
+   left; the right holds a panel (Kai Disciplines, inventory, or the fight). Round bronze medallions are the
    controls. The map is a separate sheet laid over the table. Everything in the book is sized in em off --bw. */
 :root {
   color-scheme: dark;
   --void: #0a0706; --hide: #231510;
-  --page: #dccb9f; --sheet: #b79f74; --ink: #33231a; --ink-dim: #6b553c; --ink-faint: rgba(51, 35, 26, 0.3); --blood: #7d1d14;
+  --page: #dccb9f; --ink: #33231a; --ink-dim: #6b553c; --ink-faint: rgba(51, 35, 26, 0.3); --blood: #7d1d14;
   --bronze: #a08a58; --bronze-hi: #e2d09a; --bronze-lo: #3b3020; --bone: #e9e0c8; --kai: #7fe9f2;
   /* the HD character sheet's medallions: dark enamel in a ring of worn, beaded pewter; ivory glyphs that glow ember when learned */
   --enamel: #2f211a; --enamel-lo: #140c08; --pewter: #8a7b64; --pewter-lo: #4a3f31; --glyph: #f6eedc; --ember: #f0a040; --glyph-off: rgba(233, 224, 200, 0.2);
@@ -48,15 +48,30 @@ body { background: var(--void) var(--wood, none) center / 820px; color: var(--bo
 
 /* ---------- the book ---------- */
 .book { position: relative; width: var(--bw); aspect-ratio: 1.4; font-size: calc(var(--bw) / 59); transition: opacity 0.45s; z-index: 1; }
-.spread { position: relative; height: 100%; display: grid; grid-template-columns: 1fr 1.6em 0.92fr; perspective: 2400px; }
-.edges { background: repeating-linear-gradient(90deg, #2a1a10 0 1px, #5a4228 1px 2px, #3a2818 2px 3.5px); box-shadow: inset 0.5em 0 0.6em rgba(0, 0, 0, 0.7), inset -0.3em 0 0.5em rgba(0, 0, 0, 0.6); margin: 0.2em 0; }
+.spread { position: relative; height: 100%; display: grid; grid-template-columns: 1em 1fr 1fr 1em; perspective: 3200px; filter: drop-shadow(0 1.2em 1.4em rgba(0, 0, 0, 0.7)); }
+/* the rest of the book: the edges of the pages beneath, stacked at each outer side */
+.edges { margin: 0.3em 0; background: linear-gradient(90deg, rgba(14, 8, 4, 0.85), rgba(30, 18, 8, 0.35) 45%, rgba(30, 18, 8, 0.1)), repeating-linear-gradient(90deg, #c8b68a 0 0.09em, #5a4630 0.09em 0.14em, #b29f74 0.14em 0.24em, #4a3a26 0.24em 0.28em); box-shadow: inset 0 0.3em 0.35em rgba(0, 0, 0, 0.5), inset 0 -0.3em 0.35em rgba(0, 0, 0, 0.5), inset -0.12em 0 0.15em rgba(30, 18, 8, 0.6); }
+.edges.l { border-radius: 0.5em 0 0 0.5em; }
+.edges.r { border-radius: 0.5em 0 0 0.5em; transform: scaleX(-1); } /* the left stack mirrored, rounded corners and all */
+/* the fold: a fine line where the pages meet, shadowed either side */
+.spine { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; margin-left: -0.5px; z-index: 3; background: rgba(40, 24, 10, 0.55); pointer-events: none; }
 .page { position: relative; min-width: 0; min-height: 0; color: var(--ink); background: var(--page) center / 100% 100% no-repeat; display: flex; flex-direction: column; }
-.page.left { background-image: var(--parch-l); padding: 4em 4.1em 4em 4.3em; box-shadow: 0 1.2em 2.4em rgba(0, 0, 0, 0.7); transform-origin: left center; }
-.page.left::before { content: ''; position: absolute; inset: 0.9em; background: var(--frame) center / 100% 100% no-repeat; pointer-events: none; }
-.page.right { background-image: var(--sheet-art), var(--parch-r); background-color: var(--sheet); margin: 1.1em 0 1.5em; padding: 2.1em 2.4em 2.6em 2.2em; clip-path: var(--torn); filter: none; }
-.rightwrap { position: relative; display: flex; min-width: 0; min-height: 0; filter: drop-shadow(0 1em 1.4em rgba(0, 0, 0, 0.75)); }
+.page.left { background-image: var(--parch-l); padding: 4em 4.1em 4em 4.3em; transform-origin: left center; }
+.page.right { background-image: var(--parch-r); padding: 3.4em 3.6em 3.5em 3.5em; } /* closer to the frame than the story's margins: the panels need the room */
+.page::before { content: ''; position: absolute; inset: 0.9em; background: var(--frame) center / 100% 100% no-repeat; pointer-events: none; }
+.page.right::before { transform: scaleX(-1); }
+/* each page darkens into the gutter, as paper curving down into the spine */
+.page::after { content: ''; position: absolute; top: 0; bottom: 0; width: 3.2em; pointer-events: none; }
+.page.left::after { right: 0; background: linear-gradient(90deg, transparent, rgba(60, 38, 18, 0.12) 55%, rgba(40, 24, 10, 0.42)); }
+.page.right::after { left: 0; background: linear-gradient(270deg, transparent, rgba(60, 38, 18, 0.12) 55%, rgba(40, 24, 10, 0.42)); }
+.rightwrap { position: relative; display: flex; min-width: 0; min-height: 0; }
 .rightwrap .page { flex: 1; }
 .turning { position: absolute; left: 0; top: 0; z-index: 4; pointer-events: none; }
+/* a page turn: the right leaf lifts at the spine and falls onto the left, the new story on its back */
+.leaf { position: absolute; top: 0; z-index: 4; pointer-events: none; transform-origin: left center; transform-style: preserve-3d; }
+.leaf > .page { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.leaf > .page.left { transform: rotateY(180deg); transform-origin: center; }
+.leaf .dim { position: absolute; inset: 0; z-index: 9; background: linear-gradient(90deg, rgba(30, 18, 8, 0.5), rgba(30, 18, 8, 0.15)); opacity: 0; }
 
 /* story page */
 .badge { position: absolute; left: -0.6em; top: -0.6em; z-index: 3; }
@@ -172,7 +187,7 @@ button.med:disabled { opacity: 0.4; }
 .medcap { display: flex; flex-direction: column; align-items: center; gap: 0.2em; font: 400 0.62em var(--title); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); text-align: center; }
 .medcap small { font: 400 1.15em var(--script); letter-spacing: 0; text-transform: none; color: var(--ink-dim); }
 
-.rtabs { position: absolute; left: -0.9em; top: 0.6em; z-index: 5; display: flex; flex-direction: column; gap: 0.45em; }
+.rtabs { position: absolute; right: -0.9em; top: 0.6em; z-index: 5; display: flex; flex-direction: column; gap: 0.45em; }
 /* the HD tab medallions: a heavy bronze bezel, banded and notched, round a black face with a silver glyph */
 .rtabs .med.home { --s: 2.6em; margin: 0.5em 0 0 0.35em; } /* apart from the tabs: it leaves the book */
 .rtabs .med { --s: 3.3em;
@@ -205,11 +220,18 @@ button.med:disabled { opacity: 0.4; }
 .gauge.ep .glyph i { background: linear-gradient(#f0b0a0, #b13a2a 60%, #6e1a10); }
 .bar { height: 0.36em; background: rgba(0, 0, 0, 0.45); box-shadow: 0 0 0 1px rgba(226, 208, 154, 0.35); }
 .bar i { display: block; height: 100%; background: #b13a2a; transition: width 0.5s; }
-.panel { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 0.6em; margin-top: 0.6em; padding-left: 1.6em; }
-.caption { min-height: 4.6em; padding: 0.5em 0.8em; border: 1px solid var(--ink-faint); background: rgba(51, 35, 26, 0.07); display: flex; align-items: center; gap: 0.8em; }
+.panel { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 0.8em; margin-top: 0.6em; padding-bottom: 1em; justify-content: space-evenly; } /* clear of the frame's foot */
+.caption { min-height: 3.8em; padding: 0.5em 0.8em; border: 1px solid var(--ink-faint); background: rgba(51, 35, 26, 0.07); display: flex; align-items: center; gap: 0.8em; }
 .caption div { flex: 1; min-width: 0; }
 .caption h3 { margin: 0; font: 400 0.95em var(--title); letter-spacing: 0.06em; }
 .caption p { margin: 0; font-size: 1.05em; line-height: 1.2; color: var(--ink-dim); }
+/* a touched medallion's box, laid over the page beside it with a lozenge pointing back at it */
+.tip { position: absolute; z-index: 6; width: 17em; min-height: 0; box-sizing: border-box; padding: 0.7em 0.9em; border: 1px solid var(--ink-dim); background: var(--page) var(--parch-r) center / cover; box-shadow: 0 0.4em 1.2em rgba(20, 12, 6, 0.45); flex-wrap: wrap; }
+.tip::before { content: ''; position: absolute; left: var(--ax); width: 0.8em; height: 0.8em; margin-left: -0.4em; background: inherit; border: inherit; transform: rotate(45deg); }
+.tip.down::before { top: -0.45em; border-right: 0; border-bottom: 0; }
+.tip.up::before { bottom: -0.45em; border-left: 0; border-top: 0; }
+.tip .seal { font-size: 0.9em; }
+.kept { margin: 0; font-size: 0.95em; line-height: 1.2; color: var(--ink-dim); }
 
 /* Kai panel, after the HD character sheet */
 .likeness { position: relative; flex: none; height: 7.2em; margin: -0.6em 0 0; }
@@ -217,7 +239,7 @@ button.med:disabled { opacity: 0.4; }
 .who { position: absolute; left: 0; bottom: 0; display: flex; align-items: center; gap: 0.4em; }
 .who .disc { --s: 2.7em; }
 .who h3 { margin: 0; padding: 0 1.4em 0 0.1em; font: 700 1.75em/1.1 var(--script); color: var(--ink); border-bottom: 1px solid var(--ink); text-shadow: 0 0 0.3em var(--page); }
-.ledgers { flex: none; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 1.4em; position: relative; font: 400 0.8em/1.45 var(--title); font-variant-numeric: lining-nums; }
+.ledgers { flex: none; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 1.4em; position: relative; font: 400 0.92em/1.5 var(--title); font-variant-numeric: lining-nums; }
 .ledgers::before { content: ''; position: absolute; left: 50%; top: 1.6em; bottom: 0.2em; border-left: 1px solid var(--ink-faint); }
 .ledgers::after { content: ''; position: absolute; left: 50%; top: 0.75em; width: 0.5em; height: 0.5em; margin-left: -0.25em; background: var(--ink); transform: rotate(45deg); }
 h4.ruled { flex: none; margin: 0 0 0.15em; font: 400 1.08em/1.2 var(--title); color: var(--ink); text-align: right; }
@@ -229,6 +251,7 @@ h4.ruled small { font-size: 0.7em; color: var(--ink-dim); margin-left: 0.3em; }
 .swash i { flex: 1; height: 0.07em; margin-bottom: 0.25em; background: linear-gradient(90deg, var(--ink), var(--ink-dim)); }
 .ledgers section > div { display: flex; justify-content: space-between; align-items: center; gap: 0.6em; padding: 0 0.15em; color: var(--ink); }
 .ledgers section > div b { font-weight: 400; white-space: nowrap; }
+.ledgers section:first-child > div:not(.long) > span { white-space: nowrap; } /* "Combat Skill" beside its steppers */
 /* Magnakai ranks ("Kai Master Superior") and circle lists are long: they wrap, right-aligned */
 .ledgers section > div.long { align-items: baseline; }
 .ledgers section > div.long b { white-space: normal; text-align: right; line-height: 1.15; }
@@ -305,14 +328,17 @@ button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background:
 .pack .cell > * { position: relative; z-index: 1; }
 /* each tile: dark leather with an engraved inner line, as the HD Backpack grid */
 .pack .cell { aspect-ratio: 1; display: grid; place-items: center; padding: 0.4em; background: radial-gradient(circle, #3b2b21, #22170f 75%); }
-.pack .disc { --s: 2.5em; }
+.pack .disc { --s: 2.8em; }
 /* adding by hand: rows of small medallions where the worn kit was */
-.picker { flex: 1 0 auto; display: flex; flex-direction: column; gap: 0.35em; }
+.page .picker { flex: 1; min-height: 0; max-height: none; margin-bottom: 0; display: flex; flex-direction: column; gap: 0.35em; } /* the doll's space exactly, scrolling within it, so the Backpack below stays put */
 .picker h4.ruled .inkbtn { font: 400 0.75em var(--script); margin-left: 0.6em; }
 .pickrow { display: grid; grid-template-columns: 5.2em minmax(0, 1fr); align-items: center; gap: 0.5em; }
 .pickrow em { font: 400 0.7em var(--title); letter-spacing: 0.08em; color: var(--ink-dim); font-style: normal; text-align: right; }
 .pickrow div { display: flex; flex-wrap: wrap; gap: 0.3em; }
 .pickrow .disc { --s: 2.25em; }
+/* every label one width, wrapping when long ("Special Items"), so the icons line up in one column */
+.page .pickrow em { flex: none; box-sizing: border-box; width: 7.4em; min-width: 0; padding-top: 1em; align-self: flex-start; line-height: 1.15; white-space: normal; }
+.page .pickrow div { flex: 1; min-width: 0; }
 .pickrow .disc::after { display: none; }
 .disc.other::before { content: '+'; position: absolute; right: -0.15em; bottom: -0.15em; width: 1.05em; height: 1.05em; border-radius: 50%; background: var(--enamel-lo); box-shadow: 0 0 0 0.07em var(--pewter); color: var(--glyph); font: 400 0.75em/1.05em var(--title); text-align: center; }
 .pickname { margin: 0.1em 0 0 5.7em; min-height: 1.3em; font-size: 1.05em; color: var(--ink-dim); }
@@ -356,7 +382,7 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 .cmds .dial { align-self: flex-start; margin-top: -0.4em; } /* level with the command medallions, its foot beside their labels */
 .dialslot p { margin: 0; font-size: 1.15em; color: var(--ink-dim); max-width: 10em; }
 .book.hurt { animation: hurt 0.38s; }
-.book.hurt .page.left { box-shadow: inset 0 0 5em rgba(150, 20, 10, 0.7); }
+.book.hurt .page { box-shadow: inset 0 0 5em rgba(150, 20, 10, 0.7); }
 @keyframes hurt { 20% { transform: translate(-0.6em, 0.25em) rotate(-0.4deg); } 45% { transform: translate(0.5em, -0.3em) rotate(0.3deg); } 70% { transform: translate(-0.3em, -0.1em); } }
 
 /* ---------- the map modal ---------- */
@@ -380,8 +406,8 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 /* the place's name on a ribbon with scrolled ends (drawBanner), its ends kept whole by border-image */
 .place { min-width: 0; height: 2.6em; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0.95em 0.6em 0; font: 400 1em/1.2 var(--title); color: var(--ink); text-align: center;
   border: solid transparent; border-width: 0 3em; border-image: var(--banner) 0 160 fill / 0 3em / 0 stretch; background: var(--crest) center top / 8.2em 1em no-repeat; }
-.headrow { display: flex; flex-direction: column-reverse; align-items: stretch; gap: 0.5em; padding-left: 1.6em; }
-.headrow .gauges { align-self: flex-end; }
+.headrow { display: flex; flex-direction: column-reverse; align-items: stretch; gap: 0.5em; }
+.headrow .gauges { position: absolute; z-index: 3; top: 0.95em; right: 3.1em; } /* set on the top of the frame, clear of the tab medallions */
 .headrow .place { align-self: center; min-width: 13em; padding-inline: 1em; }
 .compass { align-self: center; display: flex; flex-direction: column; align-items: center; gap: 0.3em; font-size: 1.1em; color: var(--ink-dim); margin: 0.3em 0; }
 .compass .med { --s: 3.7em; }
@@ -397,7 +423,7 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
   .stage { display: block; height: auto; padding: 12px 8px 3rem; }
   .book { width: 100%; aspect-ratio: auto; font-size: 13.5px; }
   .spread { grid-template-columns: 1fr; gap: 10px; }
-  .edges { display: none; }
+  .edges, .spine { display: none; }
   .page.left { min-height: 70vh; padding: 2.6em 2.4em; }
   .rightwrap { min-height: 34em; }
   .maker { white-space: normal; letter-spacing: 0.2em; }
@@ -416,12 +442,14 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 <div class="stage">
   <div class="book" id="book">
     <div class="spread">
+      <div class="edges l"></div>
       <section class="page left" id="pl" aria-label="Story" aria-live="polite"></section>
-      <div class="edges"></div>
       <div class="rightwrap">
         <div class="rtabs" id="rtabs" role="tablist"></div>
         <section class="page right" id="pr" aria-label="Panel"></section>
       </div>
+      <div class="edges r"></div>
+      <div class="spine"></div>
     </div>
   </div>
 </div>

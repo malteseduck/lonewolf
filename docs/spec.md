@@ -201,8 +201,12 @@ shown and the by-hand controls do it. Each object has one identity across all bo
 - **Left page: the story.** Aged parchment inside an ornate ink frame. Script hand, drop capital,
   the section number in a medallion at the top-left corner. Illustrations sit in the text where
   the book places them.
-- **Right page: a panel.** A darker, torn sheet. Round bronze tab medallions choose between the
-  character, the inventory and the map. During combat the fight takes the whole panel.
+- **Right page: a panel.** The same parchment and frame as the story page, mirrored, so the spread
+  reads as one open book: the pages meet at a fine shadowed fold, and the edges of the pages
+  beneath show at the far left and right. Round bronze tab medallions on its outer edge choose
+  between the character, the inventory and the map. During combat the fight takes the whole panel.
+- **Page turn**: the right-hand leaf lifts at the spine and falls onto the left, the new section
+  on its back, as a book read left to right.
 - Controls are round bronze medallions with a pale icon; an active or owned one glows. Actions
   that belong to the story (start a fight, open the map) appear as a centred medallion in the text.
 
@@ -211,7 +215,8 @@ shown and the by-hand controls do it. Each object has one identity across all bo
 Laid out after the Lone Wolf HD character sheet: an ink-wash likeness of Lone Wolf across the top
 with his name in script beneath it; two ruled ledgers, "Attributes" (scores, rank, Lore-circles)
 and the make-up of Combat Skill and Endurance; then every discipline of the series as a medallion
-in a framed grid, linked by bars, the learned ones glowing. Touching a discipline explains it.
+in a framed grid, linked by bars, the learned ones glowing. Touching a discipline opens a small
+box beside it that explains it; a touch elsewhere closes it.
 
 ### 6.3 Inventory panel
 

@@ -2,7 +2,7 @@
    Left page: the story. Right page: a panel (Kai Disciplines, inventory, or the fight); the map is a modal.
    Plays the books imported by tools/import_projectaon.py. */
 import * as Ink from './shared/ink.js';
-import { drawCreature, setArt, setEmblem, newWound, heroFromArt, portraitFromArt, drawFrame, drawSheet, drawBanner, drawCrest, gearSVG } from './plates.js';
+import { drawCreature, setArt, setEmblem, newWound, heroFromArt, portraitFromArt, drawFrame, drawBanner, drawCrest, gearSVG } from './plates.js';
 import { printedCanvas } from './maps.js';
 
 import * as ITEMS_01 from './items-01fftd.js';
@@ -240,22 +240,12 @@ const itemGlyph = (id) => glyph(ITEM_GLYPH[id] || (LW.ITEMS[id] && LW.ITEMS[id].
 /* ---------- materials, drawn once ---------- */
 const root = document.documentElement.style;
 root.setProperty('--parch-l', `url(${Ink.parchment(900, 1300, false, true).toDataURL('image/jpeg', 0.86)})`);
-root.setProperty('--parch-r', `linear-gradient(rgba(120,88,50,0.34), rgba(120,88,50,0.34)), url(${Ink.parchment(860, 1300, true, true).toDataURL('image/jpeg', 0.86)})`);
+root.setProperty('--parch-r', `url(${Ink.parchment(900, 1300, true, true).toDataURL('image/jpeg', 0.86)})`); // the facing page: the same paper, mirrored
 root.setProperty('--frame', `url(${drawFrame().toDataURL()})`);
 root.setProperty('--grid-frame', `url(${drawFrame(1000, 470, { vine: false }).toDataURL()})`);
-root.setProperty('--sheet-art', `url(${drawSheet().toDataURL()})`);
 root.setProperty('--banner', `url(${drawBanner().toDataURL()})`);
 root.setProperty('--crest', `url(${drawCrest().toDataURL()})`);
 root.setProperty('--wood', `linear-gradient(rgba(10,7,6,0.55), rgba(10,7,6,0.55)), url(${Ink.leather(512).toDataURL('image/jpeg', 0.8)})`);
-{
-  const r = Ink.seeded(77), pts = [];
-  const j = () => (r() * 1.3).toFixed(2);
-  for (let i = 0; i <= 10; i++) pts.push(`${i * 10}% ${j()}%`);
-  for (let i = 1; i <= 14; i++) pts.push(`${(100 - r() * 1.6).toFixed(2)}% ${(i * 100) / 14}%`);
-  for (let i = 9; i >= 0; i--) pts.push(`${i * 10}% ${(100 - r() * 1.3).toFixed(2)}%`);
-  for (let i = 13; i >= 1; i--) pts.push(`${j()}% ${(i * 100) / 14}%`);
-  root.setProperty('--torn', `polygon(${pts.join(',')})`);
-}
 gear.innerHTML = gearSVG();
 let portraitURL = null; // Lone Wolf's likeness over the Kai panel, if the owner has a picture of him (art/manifest.json "portrait")
 /* Lone Wolf's figure behind the inventory's slots: the owner's picture of him cut out, toned sepia
@@ -267,7 +257,7 @@ const vignette = (scene) => vignettes[scene] || (vignettes[scene] = Ink.inkScene
 /* ---------- state ---------- */
 let mode = 'title';          // title | story | battle
 let panel = 'kai';           // kai | pack (the map is a modal, `M`)
-let sel = null;              // what the caption under a panel describes
+let sel = null;              // the medallion whose box is open on the right page
 let busy = false, gearTurn = 0, B = null;
 let intro = false;           // the book's introduction is showing: 'new' before section 1 of a new game, 'again' when re-read from the shelf
 const REWIND = 3;            // how many sections back a rewind reaches
@@ -499,9 +489,21 @@ function captionHTML() {
   if (sel && sel.kind === 'meal' && h.meals) return `<div><h3>Meal</h3><p>Eaten when the story calls for it. Go hungry and you lose 3 Endurance.</p></div>${drop('Eat')}`;
   const arrows = id === 'quiver' ? ` ${h.arrows || 0} of ${LW.MAX_ARROWS} Arrows ${stepper('arrows')}` : '';
   if (sel && sel.kind === 'special' && h.special.includes(id)) return `<div><h3>${esc(LW.itemName(id))}</h3><p>A Special Item${it.ep ? `: +${it.ep} Endurance while you carry it` : ''}.${about}${arrows}</p></div>${drop()}`;
-  // what is in safekeeping is shown when nothing is picked out
-  const kept = [...(h.stored || []).map(LW.itemName), ...(h.storedGold ? [`${h.storedGold} Gold Crowns`] : [])];
-  return `<div><p>${panel === 'kai' ? 'Touch a medallion to read what the discipline does.' : `Touch an item to see what it is for.${kept.length ? ` At the Kai Monastery, taken up or left at the start of a book: ${esc(kept.join(', '))}.` : ''}`}</p></div>`;
+  return '';
+}
+/* the box a touched medallion opens beside itself: below it, or above when the page runs out */
+function placeTip() {
+  const html = sel && captionHTML(), btn = html && pr.querySelector(`[data-sel="${CSS.escape(`${sel.kind}|${sel.id}`)}"]`);
+  if (!btn) return;
+  const tip = el('div', 'caption tip'); tip.innerHTML = html; pr.append(tip);
+  const page = pr.getBoundingClientRect(), b = btn.getBoundingClientRect(), fs = parseFloat(getComputedStyle(pr).fontSize);
+  const w = tip.offsetWidth, hgt = tip.offsetHeight, cx = b.left + b.width / 2 - page.left, margin = 2.6 * fs, gap = 0.7 * fs;
+  const left = Math.max(margin, Math.min(page.width - margin - w, cx - w / 2));
+  const below = b.bottom - page.top + gap, up = b.top - page.top - gap - hgt;
+  const top = below + hgt <= page.height - margin || up < margin ? below : up;
+  Object.assign(tip.style, { left: left + 'px', top: top + 'px' });
+  tip.style.setProperty('--ax', cx - left + 'px');
+  tip.classList.add(top === below ? 'down' : 'up');
 }
 const stepper = (field) => `<span class="step"><button type="button" data-adj="${field}:-1" aria-label="Less">&minus;</button><button type="button" data-adj="${field}:1" aria-label="More">+</button></span>`;
 /* a ruled heading with the HD sheet's swash: a hairline that curls back at its left end */
@@ -523,8 +525,7 @@ function kaiHTML() {
       series === 'magnakai' ? row('Lore-circles', circles.length ? esc(circles.map((c) => c.name.replace('Circle of ', '').replace('the ', '')).join(', ')) : 'none', true) : ''}</section>
       <section>${ruled('Combat Skill')}${cs.parts.map((p, i) => row(esc(p.label), i ? signed(p.n) : p.n)).join('')}
       ${ruled('Endurance')}${row('Base', h.epMax - epParts.reduce((t, p) => t + p.n, 0))}${epParts.map((p) => row(p.label, signed(p.n))).join('')}</section></div>
-    <div class="discs">${rows.map((r) => `<div class="drow">${r.map(disc).join(`<span class="linkwrap">${bar}</span>`)}</div>`).join('')}</div>
-    <div class="caption">${captionHTML()}</div>`;
+    <div class="discs">${rows.map((r) => `<div class="drow">${r.map(disc).join(`<span class="linkwrap">${bar}</span>`)}</div>`).join('')}</div>`;
 }
 /* Inventory, after the HD equipment sheet: his figure faint behind a paper doll of slots (helmet
    between two shoulder slots, weapons either side of the chest, two at the belt; Special Items fill
@@ -552,6 +553,7 @@ function packLattice(cols, rows) {
 }
 function packHTML() {
   const h = game.hero, cells = [], on = (kind, id) => (sel && sel.kind === kind && sel.id === id ? 'sel' : '');
+  const kept = [...(h.stored || []).map(LW.itemName), ...(h.storedGold ? [`${h.storedGold} Gold Crowns`] : [])]; // in safekeeping
   const slot = (kind, id, extra = '') => `<button type="button" class="disc item ${on(kind, id)} ${extra}" data-sel="${kind}|${esc(id)}" aria-label="${esc(LW.itemName(id))}">${itemGlyph(id)}</button>`;
   const empty = (label) => `<span class="disc empty"${label ? ` title="${label}"` : ''}></span>`;
   const worn = (id) => (h.special.includes(id) ? slot('special', id) : empty(esc(LW.itemName(id))));
@@ -574,7 +576,7 @@ function packHTML() {
     <div class="bag"><span class="disc lit">${glyph('knapsack')}</span><div class="pack">${cells.map((c) => `<div class="cell">${c}</div>`).join('')}${packLattice(4, Math.ceil(cells.length / 4))}</div></div>
     <div class="ledger"><span class="purse">${glyph('two-coins')}<b>${h.gold}</b> Gold Crowns ${stepper('gold')}</span>
       ${adding ? '' : '<button type="button" class="inkbtn" data-adding="open">Add an item by hand</button>'}</div>
-    ${adding ? '' : `<div class="caption">${captionHTML()}</div>`}`; // while picking, the picker's own line names things
+    ${kept.length && !adding ? `<p class="kept">At the Kai Monastery, taken up or left at the start of a book: ${esc(kept.join(', '))}.</p>` : ''}`;
 }
 /* Adding by hand: the items as medallions in place of the worn kit, so the Backpack below fills
    while you pick. "Something else" asks for a name on the line beneath. */
@@ -737,7 +739,7 @@ function renderRight() {
   pr.innerHTML = head + '<div class="panel" id="panel"></div>';
   const host = $('#panel');
   if (mode === 'battle') host.append(B.node);
-  else host.innerHTML = panel === 'kai' ? kaiHTML() : packHTML();
+  else { host.innerHTML = panel === 'kai' ? kaiHTML() : packHTML(); placeTip(); }
 }
 function render() {
   // reaching the end of a real book keeps the character for the next one
@@ -745,16 +747,45 @@ function render() {
   renderLeft(); renderRight();
 }
 
-/* the left page lifts away and the gear turns a notch */
+/* A page turn, as in a book read left to right: the right-hand leaf lifts at the spine and falls
+   over onto the left, the new story on its back. The old story stays under it until covered. On a
+   phone the pages are stacked, so the story page only lifts away. */
+const stacked = window.matchMedia('(max-width: 760px)');
+const snap = (node, cls) => {
+  const c = node.cloneNode(true);
+  c.removeAttribute('id'); c.querySelectorAll('[id]').forEach((n) => n.removeAttribute('id'));
+  c.className = cls; c.removeAttribute('aria-live');
+  return c;
+};
 async function turn(update) {
-  const old = pl.cloneNode(true);
-  old.removeAttribute('id'); old.classList.add('turning');
-  old.style.width = pl.offsetWidth + 'px'; old.style.height = pl.offsetHeight + 'px';
-  pl.parentNode.appendChild(old);
+  const spread = pl.parentNode;
+  if (still || stacked.matches) {
+    const old = snap(pl, pl.className + ' turning');
+    old.style.width = pl.offsetWidth + 'px'; old.style.height = pl.offsetHeight + 'px';
+    spread.appendChild(old);
+    update();
+    gearTurn -= 22.5; gear.style.transform = `rotate(${gearTurn}deg)`;
+    if (!still) await old.animate([{ transform: 'rotateY(0deg)', opacity: 1, filter: 'brightness(1)' }, { transform: 'rotateY(-82deg)', opacity: 1, filter: 'brightness(0.55)', offset: 0.8 }, { transform: 'rotateY(-90deg)', opacity: 0, filter: 'brightness(0.4)' }], { duration: 750, easing: 'ease-in' }).finished.catch(() => {});
+    old.remove();
+    return;
+  }
+  const place = (n, box) => Object.assign(n.style, { left: box.offsetLeft + 'px', top: box.offsetTop + 'px', width: box.offsetWidth + 'px', height: box.offsetHeight + 'px' });
+  const under = snap(pl, 'page left turning'), leaf = el('div', 'leaf'), front = snap(pr, 'page right');
+  place(under, pl); place(leaf, pr.parentNode);
+  front.append(el('i', 'dim'));
+  leaf.append(front);
+  spread.append(under, leaf);
   update();
+  const back = snap(pl, 'page left');
+  back.append(el('i', 'dim'));
+  leaf.append(back);
   gearTurn -= 22.5; gear.style.transform = `rotate(${gearTurn}deg)`;
-  if (!still) await old.animate([{ transform: 'rotateY(0deg)', opacity: 1, filter: 'brightness(1)' }, { transform: 'rotateY(-82deg)', opacity: 1, filter: 'brightness(0.55)', offset: 0.8 }, { transform: 'rotateY(-90deg)', opacity: 0, filter: 'brightness(0.4)' }], { duration: 750, easing: 'ease-in' }).finished.catch(() => {});
-  old.remove();
+  const ms = 900, ease = 'cubic-bezier(0.45, 0.05, 0.4, 1)';
+  const dims = leaf.querySelectorAll('.dim');
+  dims[0].animate([{ opacity: 0 }, { opacity: 1 }], { duration: ms / 2, easing: 'ease-in', fill: 'forwards' });
+  dims[1].animate([{ opacity: 1 }, { opacity: 1, offset: 0.5 }, { opacity: 0 }], { duration: ms, easing: ease, fill: 'forwards' });
+  await leaf.animate([{ transform: 'rotateY(0deg)' }, { transform: 'rotateY(-180deg)' }], { duration: ms, easing: ease }).finished.catch(() => {});
+  under.remove(); leaf.remove();
 }
 
 /* ---------- story actions ---------- */
@@ -948,7 +979,12 @@ async function endBattle() {
 /* ---------- input ---------- */
 async function guard(fn) { if (busy) return; busy = true; try { await fn(); } finally { busy = false; } }
 bookEl.addEventListener('click', (e) => {
-  const t = e.target.closest('button'); if (!t) return;
+  const t = e.target.closest('button');
+  // a medallion's box closes on a touch anywhere outside it, or on the same medallion again
+  if (sel && mode === 'story' && !e.target.closest('.tip') && !(t && t.dataset.sel && t.dataset.sel !== `${sel.kind}|${sel.id}`)) {
+    const same = t && t.dataset.sel; sel = null; renderRight(); if (same || !t) return;
+  }
+  if (!t) return;
   const d = t.dataset;
   if (d.cmd) return void battleAct(d.cmd);
   if (busy) return;
@@ -998,6 +1034,7 @@ function turnTo() {
   guard(async () => { game.choose({ text: 'Turn to the section you worked out' }, to); sel = null; await turn(render); });
 }
 bookEl.addEventListener('keydown', (e) => { if (e.target.id === 'puzzleto' && e.key === 'Enter') turnTo(); });
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && sel && mode === 'story' && !M) { sel = null; renderRight(); } });
 // an adventure's name is the owner's own label: Enter keeps it (empty clears it), Escape leaves it as it was
 bookEl.addEventListener('keydown', (e) => {
   if (e.target.id !== 'advname' || (e.key !== 'Enter' && e.key !== 'Escape')) return;
