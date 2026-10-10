@@ -120,7 +120,10 @@ unknown fields), the counts, and the flagged sections the table leaves out. Ever
 section should be one that was read and judged to need nothing. Book 1: no errors; 12 items, 65
 sections; 103 left out (four found on a re-read, 2026-10-09). Book 2: no errors; 13 items, 117 sections; 98 left out (three it first
 listed were real misses, so read the list; a full re-read on 2026-10-09 found nothing more). Book 3: no errors; 17 items, 118 sections; 106 left out (a full re-read on 2026-10-09 turned one
-todo, 137's partial Mindblast, into a fight change). It knows every book's items, as the page does.
+todo, 137's partial Mindblast, into a fight change). Book 12: no errors; 16 items, 121 sections; 127
+left out (a full re-read on 2026-10-10 found seven misses, among them a Special Item lost in a section
+with no item wording, so also search the whole book for each of its item names, and two evasions
+the importer read as "at any time"). It knows every book's items, as the page does.
 `--json` also writes `data/projectaon/<book>/check-items.json`, which `tools/book_status.py` reads
 for checklist step 5 (the dashboard's "Check items" runs it so).
 

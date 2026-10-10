@@ -6,14 +6,17 @@
        it is drawn in the Darklands; the section says when that is wrong, the page just offers it.
      - Kika (the Darklands' coin, ten to a Gold Crown) are not tracked: the page counts Crowns, and the
        text will not let Crowns stand in for Kika when bribing or betting. Sections that hand out Kika,
-       or take them, say so in a note and the player keeps them on the chart.
+       or take them, say so in a note and the player keeps them on the chart; a choice that needs Kika
+       is left open, with a note.
      - Arrows fired where the text says outright that one flies are taken from the Quiver here (the
        count stops at none); Random Number shots are spent by the page's own bow shot. 211 returns one.
      - The three armours (Kagonite Chainmail, Bronin Vest, Silver Bracers) add ENDURANCE through the
        item; their COMBAT SKILL is for the player to add (the page counts one armour bonus at most, a
        Shield's).
      - First-round and first-two-round penalties, unarmed opening rounds, doubled psychic bonuses and
-       the Ictakko's extra loss are notes, not changes to the fight: they last only some rounds.
+       the Ictakko's extra loss are notes, not changes to the fight: they last only some rounds. Every
+       surprise attack Huntmastery spares here lasts only its first round or two, so no fight is marked
+       ambush.
      - Bonuses that depend on which weapon is used (Helshezag, the Dagger, 12 against Gnaag) are set
        only where the section can be reached with one weapon alone (171, 133); the rest are notes.
      - Junk the dead carry (tobacco, wine, a pipe) is left out. A Pouch of Herbs is an item only so the
@@ -46,6 +49,7 @@ const bow = { item: 'bow' };
 const kikaNote = (what) => `${what} Kika: the page does not count them; keep them on your chart (10 Kika to a Gold Crown).`;
 const unarmed = (rounds) => `you cannot draw a weapon for ${rounds}: those rounds are fought bare-handed, so adjust your COMBAT SKILL for them by hand.`;
 const psychic = 'this foe takes psychic attack badly: double the Mindblast or Psi-surge bonus you use (the page does not).';
+const kikaGate = (to) => `the way to ${to} needs Kika, which the page does not count: take it only if your chart shows some.`;
 const extraLoss = 'unless you have Nexus and are an Archmaster, every wound the Ictakko deals costs 1 more ENDURANCE: take it off by hand.';
 
 export const SECTIONS = {
@@ -67,6 +71,8 @@ export const SECTIONS = {
   43: { todo: 'half your Kika are gone: take them off your chart.' },
   44: { ep: -6 },
   48: { need: { 324: bow } },
+  // the Arrow that kills the first bird is not recovered
+  49: { take: [{ arrows: 1 }] },
   50: { ep: 'full' },
   52: { loot: [{ item: 'shortSword' }, { item: 'dagger' }, { item: 'rope' }], todo: kikaNote('20') },
   53: { ep: -3 },
@@ -78,7 +84,8 @@ export const SECTIONS = {
   61: { todo: 'decide your stake (10 Kika or more, Kika only) and which fighter; write it down. The result follows in the next section.' },
   63: { give: [{ item: 'kagoniteMail' }] },
   67: { ep: -3, need: { 208: sommerswerd } },
-  68: { todo: 'with any weapon other than a Broadsword, Spear or Quarterstaff, take 2 off your COMBAT SKILL for the whole fight.' },
+  // he can evade only at the start of the second round (the importer read any time)
+  68: { fight: { evade: { after: 1, to: '169' } }, todo: 'with any weapon other than a Broadsword, Spear or Quarterstaff, take 2 off your COMBAT SKILL for the whole fight.' },
   75: { todo: 'the Sommerswerd is out of reach for the first three rounds; the book’s footnote says that in those rounds you cannot hurt him without the Dagger of Vashna. Win or survive, then take the Sommerswerd back.' },
   79: { loot: [{ item: 'sword' }, { item: 'dagger' }, { item: 'bow' }, { item: 'quiver' }, { arrows: 4 }], todo: kikaNote('30') },
   82: { take: [{ arrows: 1 }] },
@@ -94,6 +101,7 @@ export const SECTIONS = {
   114: { todo: psychic },
   118: { need: { 231: bow } },
   119: { take: [{ arrows: 1 }] },
+  121: { take: [{ item: 'goldenAmulet12' }] },
   130: { need: { 278: { item: 'blackKey12' }, 29: { item: 'blackKey12', not: true } } },
   131: { take: [{ arrows: 1 }] },
   // he uses the black sword he has just picked up
@@ -106,6 +114,7 @@ export const SECTIONS = {
   146: { need: { 99: bow } },
   159: { loot: [{ item: 'broninVest' }, { item: 'silverBracers' }] },
   160: { fight: { drain: 1 } },
+  162: { todo: kikaGate(43) },
   166: { give: [{ item: 'crystalExplosive' }], need: { 282: sommerswerd, 229: { item: 'sommerswerd', not: true } } },
   171: { fight: { csMod: 7, csNote: 'Dagger of Vashna' } },
   // the number drawn is the loss (0 counting as 10), less 2 with the Lore-circle of Solaris
@@ -113,17 +122,20 @@ export const SECTIONS = {
   176: { need: { 208: sommerswerd, 230: { item: ['daggerVashna', 'helshezag'] }, 238: { item: 'zejarDulaga' } } },
   180: { rolls: loss() },
   183: { ep: -4 },
+  184: { todo: kikaGate(61) },
   185: { take: [{ arrows: 1 }] },
   186: { bowShot: { 313: [0, 8], 105: [9, 99] } },
   187: { loot: [{ item: 'zejarDulaga' }], todo: 'it takes the place of one Arrow in the Quiver: with six Arrows, drop one first.' },
   190: { need: { 208: sommerswerd } },
   193: { need: { 208: sommerswerd } },
+  194: { todo: 'unless you have Huntmastery, take 2 off your COMBAT SKILL for the first round only.' },
   198: { fight: { with: 'none' } },
   201: { take: [{ item: 'herbsPouch12' }] },
   202: { todo: 'all your Kika are gone: take them off your chart.' },
   206: { todo: 'add to the number drawn: 1 for a Rope, 2 with Huntmastery at Primate or higher, 3 with the Lore-circle of Solaris.' },
   211: { give: [{ arrows: 1 }] },
   220: { ep: -2 },
+  221: { todo: kikaGate(108) },
   224: { todo: unarmed('the first two rounds') },
   225: { todo: 'the Kika you staked are gone: take them off your chart.' },
   226: { ep: -3, todo: extraLoss },
@@ -139,7 +151,8 @@ export const SECTIONS = {
   244: { ep: -4 },
   245: { take: [{ item: 'bow' }] },
   246: { loot: [{ item: 'blackKey12' }] },
-  247: { todo: unarmed('the first two rounds') },
+  // evasion opens at the start of the third round (the importer read any time)
+  247: { fight: { evade: { after: 2, to: '96' } }, todo: unarmed('the first two rounds') },
   258: { todo: 'lose 8 ENDURANCE, or only 3 if you carry a Psychic Ring or a Grey Crystal Ring.' },
   259: { take: [{ arrows: 2 }], todo: `without Huntmastery ${unarmed('the first two rounds')}` },
   264: { take: [{ arrows: 1 }], todo: psychic },
@@ -158,7 +171,8 @@ export const SECTIONS = {
   308: { loot: [{ item: 'blackKey12' }, { item: 'blackCube12' }] },
   309: { need: { 77: bow, 128: sommerswerd } },
   310: { take: [{ arrows: 1 }], loot: [{ item: 'spear' }, { item: 'axe' }, { item: 'dagger' }, { item: 'ironKey12' }, { meal: 1 }], todo: kikaNote('60') },
-  314: { todo: 'bribe with Kika (to 202), Gold Crowns (to 126) or a Medal (to 269); the page cannot tell which you hold.' },
+  // the only Medal is Book 10's; the sergeant keeps it
+  314: { need: { 126: { gold: 1 }, 269: { item: 'medal10', spend: true } }, todo: kikaGate(202) },
   315: { need: { 103: bow } },
   317: { loot: [{ item: 'sword' }, { item: 'axe' }, { item: 'dagger' }, { item: 'bow' }, { arrows: 4 }, { item: 'rope' }, { item: 'herbsPouch12' }] },
   322: { loot: [{ item: 'sword' }, { item: 'dagger' }, { item: 'whip12' }], todo: kikaNote('40') },
@@ -166,6 +180,7 @@ export const SECTIONS = {
   324: { bowShot: { 25: [0, 4], 193: [5, 9], 287: [10, 99] }, todo: 'with Huntmastery as an Archmaster add 3 more to the total: the page does not. If the choice it opens is wrong, use the Turn to section box.' },
   327: { need: { 49: bow } },
   333: { ep: -4 },
-  348: { fight: { drain: 1 } },
   342: { need: { 208: sommerswerd } },
+  348: { fight: { drain: 1 } },
+  350: { take: [{ item: 'crystalExplosive' }] },
 };
