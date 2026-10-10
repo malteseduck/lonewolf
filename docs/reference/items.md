@@ -204,12 +204,15 @@ Book 7 does the same: its Vampire Bats, Hactaraton Brood, Giant Hactaraton and L
 non-fight pictures in the sections that lead to their fights; its Beastmen (the Zahda Beastmen, the
 Throne-hall Guard and the two numbered gaolers) share the book's only two Beastman pictures, as
 whole pictures and as close crops of the heads (Gaoler No. 1 shows the same whole picture as the
-Beastman Gaoler, whose fight it illustrates). Its foes the book never pictures take engravings: Lord
-Zahda (both fights) Howard Pyle's gaunt, white-haired Merlin (the fandom wiki's description; Doré's
-Merlin was too tender), the Oudagorg the Lambton Worm, the Flame-man the *Dictionnaire
-infernal*'s fire-tending Ukobach, the Invisible Whipmaster Doré's whipping demons (*Inferno* XVIII), the
-Tunnel Door Piranesi's drawbridge and chains (*Carceri* VII, not Book 6's prison door again), the
-Trap-webs a 1547 woodcut of a spider on its web, the Black Lakeweed a crop of Haeckel's seaweeds.
+Beastman Gaoler, whose fight it illustrates). Its foes the book never pictures were first given
+Commons engravings, then the near misses were replaced from a broad image search (Bing; Google
+answers a script with a CAPTCHA): Lord Zahda (both fights) an ink evil sorcerer, gaunt and
+white-haired as the fandom wiki describes him; the Flame-man an ink fire elemental; the Oudagorg an ink
+giant worm with a ringed, toothed mouth (all three in `art/plates/07cd/`); the Tunnel Door
+Viollet-le-Duc's portcullis in the Carcassonne gate passage (free, not Book 6's prison door again).
+Engravings kept: the Invisible Whipmaster Doré's whipping demons (*Inferno* XVIII), the Trap-webs a 1547
+woodcut of a spider on its web, the Black Lakeweed a crop of Haeckel's seaweeds (the search found only
+cartoon plants).
 An already-downloaded free engraving can serve a second creature by a different crop (Book 4's Tunnel
 Fiends are other demons from the Schongauer print that gives Book 3 its Mutant).
 4. **A picture found by searching**, anywhere: Wikimedia Commons, a general image search, fan art,

@@ -28,29 +28,20 @@ prison-door-piranesi.jpg
   Piranesi, Carceri (etching, 1745). CC0. Commons' 1920 px copy, cropped to the doorway, greyscale.
   https://commons.wikimedia.org/wiki/File:Giovanni_Battista_Piranesi_-_The_Prisons-_A_Prison_Door_-_1941.26.7_-_Cleveland_Museum_of_Art.jpg
 
-merlin-pyle.jpg
-  "Arthur-Pyle The Enchanter Merlin.JPG", Howard Pyle, The Story of King Arthur and His Knights
-  (pen drawing, 1903). Public domain. Caption margin cropped off, greyscale.
-  https://commons.wikimedia.org/wiki/File:Arthur-Pyle_The_Enchanter_Merlin.JPG
 
-lambton-worm.jpg
-  "Lambton Worm.jpg", C. E. Brock (illustration, 1890s). Public domain. Margins trimmed, greyscale.
-  https://commons.wikimedia.org/wiki/File:Lambton_Worm.jpg
 
-ukobach-plancy.jpg
-  "Dictionnaire Infernal - Ukobach.jpg", Louis Le Breton for Collin de Plancy's Dictionnaire
-  infernal (1863). Public domain. Signatures cropped off, greyscale.
-  https://commons.wikimedia.org/wiki/File:Dictionnaire_Infernal_-_Ukobach.jpg
 
 demons-whips-dore.jpg
   "Inferno Canto 18 verse 38.jpg", Gustave Doré, Inferno (wood engraving, 1861). Public domain.
   Cropped to the demons with whips (no caption), greyscale.
   https://commons.wikimedia.org/wiki/File:Inferno_Canto_18_verse_38.jpg
 
-drawbridge-piranesi.jpg
-  "Piranesi-Carceri-07Zugbrücke.jpg", Piranesi, Carceri plate VII, The Drawbridge (etching).
-  CC0. Commons' 1920 px copy, cropped to the drawbridge and its chains, greyscale.
-  https://commons.wikimedia.org/wiki/File:Piranesi-Carceri-07Zugbr%C3%BCcke.jpg
+
+portcullis-carcassonne.png
+  "Porte.chateau.Carcassonne.png", Eugène Viollet-le-Duc, Dictionnaire raisonné de l'architecture
+  française (1854-68): the château gate at Carcassonne and its portcullis. Public domain.
+  Figure number cropped off, greyscale.
+  https://commons.wikimedia.org/wiki/File:Porte.chateau.Carcassonne.png
 
 spider-web-woodcut.jpg
   "A spider on its web, woodcut, 1547 Wellcome L0029216.jpg", German woodcut (1547), Wellcome
