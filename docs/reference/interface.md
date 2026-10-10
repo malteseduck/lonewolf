@@ -14,14 +14,14 @@ body
                       return medallion. The player has no sound
   .stage > .book#book > .spread
       .edges.l                    the stacked edges of the pages beneath, at the far left
-      section#pl.page.left        the story page (ornate frame via ::before, gutter shade via ::after)
+      section#pl.page.left        the story page (ornate frame via ::before; via ::after, the shade into the
+                                  gutter and the fold's 1px line, so a page turn's copies carry the fold)
       .rightwrap
           #rtabs                  three tab medallions (TAB_ART: wolf head, chest, compass rose), then a smaller
                                   return-arrow medallion (data-home) back to the title page; on the page's
                                   outer edge; hidden outside story mode
           section#pr.page.right   the panel: the same parchment and frame, mirrored
       .edges.r                    the left stack mirrored, at the far right
-      .spine                      a 1px line where the pages meet; each page's ::after shades into it
 ```
 
 The two pages are equal columns (`1em 1fr 1fr 1em`). The right page's padding is a little tighter
