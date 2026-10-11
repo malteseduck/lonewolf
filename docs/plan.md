@@ -141,8 +141,8 @@ Disciplines would never open (no character holds one) and a carried hero would p
    the fight's medallions, Deliverance (20 back at 8 or less, in the fight like Archmaster Curing),
    Grand Huntmastery in `LW.hunts`; a foe immune to Mindblast and Psi-surge but not Kai-surge (Book 13
    has 8: 31, 45, 120, 156, 157, 186, 212, 243; 295 is Mindblast only, which the importer reads).
-6. The Kai sheet's grid of twelve disciplines and their glyphs, the ranks, and the title shelf
-   (`SERIES_TITLES` stops at 12).
+6. The Kai sheet's grid of twelve disciplines and their glyphs, and the ranks. (The title page shows
+   Books 13-20 since 2026-10-11.)
 
 **Decided 2026-10-10** (the Readers' Handbook downloaded that day, then the owner): ADR 0018 (which
 earlier disciplines keep their numbers: a carried character's chosen Magnakai ones, replaced by
@@ -195,7 +195,6 @@ For step 6 in the later books (all git-ignored, personal use):
 
 - The 4K map's fit, zoom and 4096 px canvas cap are not yet checked on the iPad.
 - Other Project Aon pictures (illustrations, plates) stay at their own resolution for now.
-- Title page gets crowded with twelve books.
 - Delete `prototypes/` (and `shared/art.js`, `battle.js`, `flow.js`) once the owner is sure.
 
 ## How we got here
@@ -228,7 +227,8 @@ Working and checked by playing in the browser:
   snapshots now.
 - Introduction (2026-10-01): a new game opens on the book's "The Story So Far" (imported from
   `tssf.htm`), with "Begin" to turn to section 1.
-- Title page: the adventures, then an adventure's imported books, with continue / start over / new character.
+- Title page: the adventures, then an adventure's books one series at a time (Kai, Magnakai, Grand
+  Master; 2026-10-11), with continue / start over / new character.
 - Story page: frame, script text, drop cap, illustrations in place, arrival events, choices.
 - Panels: Kai, laid out like the HD character sheet (ink portrait from the owner's screenshot,
   ruled ledgers, a framed grid of every discipline with drawn game-icons glyphs), inventory (likewise

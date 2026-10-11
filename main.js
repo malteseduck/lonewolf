@@ -332,7 +332,11 @@ function storyText(sec) {
 /* ---------- the title spread, after the HD title page ---------- */
 /* the series as tools/import_projectaon.py knows it, so books not yet downloaded can show on the shelf */
 const SERIES_TITLES = ['Flight from the Dark', 'Fire on the Water', 'The Caverns of Kalte', 'The Chasm of Doom', 'Shadow on the Sand', 'The Kingdoms of Terror',
-  'Castle Death', 'The Jungle of Horrors', 'The Cauldron of Fear', 'The Dungeons of Torgar', 'The Prisoners of Time', 'The Masters of Darkness'];
+  'Castle Death', 'The Jungle of Horrors', 'The Cauldron of Fear', 'The Dungeons of Torgar', 'The Prisoners of Time', 'The Masters of Darkness',
+  'The Plague Lords of Ruel', 'The Captives of Kaag', 'The Darke Crusade', 'The Legacy of Vashna', 'The Deathlord of Ixia', 'Dawn of the Dragons', "Wolf's Bane", 'The Curse of Naar'];
+/* the series by book number: a band of numerals each on the left page, a shelf each on the right */
+const SHELVES = [{ key: 'kai', name: 'The Kai', from: 1, to: 5 }, { key: 'magnakai', name: 'The Magnakai', from: 6, to: 12 }, { key: 'grandmaster', name: 'The Grand Master', from: 13, to: 20 }];
+const shelfOf = (n) => SHELVES.find((s) => n >= s.from && n <= s.to) || SHELVES[0];
 const bookIds = () => Object.keys(BOOKS).sort((a, b) => (BOOKS[a].number || 0) - (BOOKS[b].number || 0));
 const savedAt = (id) => (hasSave(id) ? saved(id).s.at : null);
 /* engraved scrollwork either side of a row of medallions: a hairline that curls at each end, with leaves */
@@ -342,21 +346,35 @@ function titleLeftHTML() {
   ids.forEach((id) => { byNum[BOOKS[id].number] = id; });
   const numeral = (n) => {
     const id = byNum[n], name = `${n}. ${SERIES_TITLES[n - 1]}`;
-    return id ? `<button type="button" class="med numeral ${hasSave(id) ? 'lit' : ''}" data-book="${id}" title="${esc(name)}" aria-label="${esc(name)}">${ROMAN[n - 1]}</button>`
-      : `<span class="med numeral off" title="${esc(name)}, not downloaded">${ROMAN[n - 1]}</span>`;
+    return id ? `<button type="button" class="med numeral ${hasSave(id) ? 'lit' : ''}" data-book="${id}" title="${esc(name)}" aria-label="${esc(name)}">${roman(n)}</button>`
+      : `<span class="med numeral off" title="${esc(name)}, not downloaded">${roman(n)}</span>`;
   };
   const band = (label, from, to) => `<div class="band"><em>${label}</em><div>${SCROLL}${Array.from({ length: to - from + 1 }, (_, i) => numeral(from + i)).join('')}${SCROLL}</div></div>`;
   return `<div class="titlepage">
     <div class="maker">A solo adventure in Magnamund</div>
     <h1 class="mark"><span>Lone</span><span class="wolfmark">${glyph('wolf-head')}</span><span>Wolf</span></h1>
     <div class="frontis">${portraitURL ? `<img src="${portraitURL}" alt="">` : ''}</div>
-    <p class="motto">The monastery burns. The Kai are gone.<br>One remains.</p>
-    ${band('The Kai', 1, 5)}${band('The Magnakai', 6, 12)}
+    <div class="bands">${SHELVES.map((s) => band(s.name, s.from, s.to)).join('')}</div>
   </div>`;
 }
 /* the right page of the title spread: every adventure, or the books of the one chosen (shelf) */
 let shelf = false, forgetting = null, renaming = null, restoring = null;
-const roman = (n) => `<span class="roman">${ROMAN[n - 1] || n}</span>`;
+let shelfSeries = null;      // the series the shelf shows; null: the one the adventure is in
+/* a numeral as large as the medallion's dark face allows: its ink measured in the title font, --f the size
+   (per medallion width) at which the ink's corners touch the rim, --dx/--dy what centres the ink rather than the line box */
+const FACE = 0.79;           // the dark face's diameter, per medallion width (.med's background: 56% of a farthest-corner circle)
+const inks = {};
+function romanInk(r) {
+  if (inks[r]) return inks[r];
+  const c = romanInk.c || (romanInk.c = document.createElement('canvas').getContext('2d'));
+  c.font = `100px ${getComputedStyle(document.documentElement).getPropertyValue('--title')}`;
+  const m = c.measureText(r), w = (m.actualBoundingBoxLeft + m.actualBoundingBoxRight) / 100, h = (m.actualBoundingBoxAscent + m.actualBoundingBoxDescent) / 100;
+  const baseline = 0.5 + (m.fontBoundingBoxAscent - m.fontBoundingBoxDescent) / 200; // in a box of line-height 1
+  const ink = `--f:${(FACE / Math.hypot(w, h)).toFixed(3)};--dx:${((m.width / 100 - (m.actualBoundingBoxRight - m.actualBoundingBoxLeft) / 100) / 2).toFixed(3)};--dy:${(0.5 - baseline + (m.actualBoundingBoxAscent - m.actualBoundingBoxDescent) / 200).toFixed(3)}`;
+  if (document.fonts.status === 'loaded') inks[r] = ink; // measured in a stand-in font otherwise
+  return ink;
+}
+const roman = (n) => { const r = ROMAN[n - 1] || String(n); return `<span class="roman" style="${romanInk(r)}">${r}</span>`; };
 function titleRightHTML() { return shelf && adventure() ? shelfHTML() : adventuresHTML(); }
 function adventuresHTML() {
   const plaque = (a) => {
@@ -387,11 +405,18 @@ function shelfHTML() {
         <span class="med">${roman(b.number)}</span><span class="plaqtext"><b>${esc(b.title)}</b><i>${at ? `Continue at section ${esc(String(at))}` : `Book ${b.number} · begin`}</i></span></button>
       <span class="plaqmore">${at && b.intro && b.intro.length ? `<button type="button" class="inkbtn" data-book="${id}" data-tssf>the story so far</button>` : ''}${at ? `<button type="button" class="inkbtn" data-book="${id}" data-fresh>start over</button>` : ''}${can(id) ? `<button type="button" class="inkbtn" data-book="${id}" data-anew>new character</button>` : ''}</span></div>`;
   };
-  const ids = bookIds();
+  // a book not yet downloaded keeps its place on the shelf, dim
+  const missing = (n) => `<div class="plaq off"><div class="plaqmain"><span class="med">${roman(n)}</span><span class="plaqtext"><b>${esc(SERIES_TITLES[n - 1])}</b><i>Book ${n} · not downloaded</i></span></div></div>`;
+  const byNum = {};
+  bookIds().forEach((id) => { byNum[BOOKS[id].number] = id; });
+  // open on the series of the book in play, or of the next one after what he has finished
+  const cur = BOOKS[adventure().book], done = kept ? Math.max(0, ...kept.completed.map((id) => (BOOKS[id] ? BOOKS[id].number : 0))) : 0;
+  const s = SHELVES.find((x) => x.key === shelfSeries) || shelfOf(cur ? cur.number : done + 1);
+  const nums = Array.from({ length: s.to - s.from + 1 }, (_, i) => s.from + i);
   return `<div class="shelfpage">${ruled(`${advName(adv.at)} <button type="button" class="inkbtn" data-shelf="">all adventures</button>`)}
-    ${kept ? `<p class="kept">Your Lone Wolf, ${esc(LW.rankOf(kept.hero) || 'Kai Lord')}, waits after <i>${esc(kept.fromTitle)}</i>. A book not yet finished begins with him.</p>` : '<p class="kept">Choose your book.</p>'}
-    <div class="plaqs">${ids.map(plaque).join('')}</div>
-    ${ids.length < 12 ? `<p class="kept">${12 - ids.length} more books wait on the shelf: tools/fetch_projectaon.py downloads them.</p>` : ''}</div>`;
+    ${kept ? `<p class="kept">Your Lone Wolf, ${esc(LW.rankOf(kept.hero) || 'Kai Lord')}, waits after <i>${esc(kept.fromTitle)}</i>. A book not yet finished begins with him.</p>` : ''}
+    <div class="shelftabs" role="tablist">${SHELVES.map((x) => `<button type="button" class="inkbtn ${x === s ? 'on' : ''}" role="tab" aria-selected="${x === s}" data-series="${x.key}">${x.name}</button>`).join('')}</div>
+    <div class="plaqs shelfrow">${nums.map((n) => (byNum[n] ? plaque(byNum[n]) : missing(n))).join('')}</div></div>`;
 }
 function leftHTML() {
   if (mode === 'title') return titleLeftHTML();
@@ -1193,14 +1218,15 @@ bookEl.addEventListener('click', (e) => {
   else if (d.adv) {
     useAdventure(d.adv);
     const b = adventure().book, alive = b && BOOKS[b] && hasSave(b) && saved(b).s.hero.ep > 0; // a fallen one goes to the books, to start over
-    if (alive) guard(() => begin(b)); else { shelf = true; render(); }
+    if (alive) guard(() => begin(b)); else { shelf = true; shelfSeries = null; render(); }
   }
   else if ('restore' in d) openRestore(d.restore);
   else if ('restorego' in d) restoreGo();
   else if ('restoredisk' in d) restoreFromDisk();
   else if ('restorecancel' in d) { renderRight(); } // restoring was cleared above
-  else if ('advnew' in d) { newAdventure(); shelf = true; render(); }
-  else if ('shelf' in d) { if (d.shelf) useAdventure(d.shelf); shelf = !!d.shelf; render(); }
+  else if ('advnew' in d) { newAdventure(); shelf = true; shelfSeries = null; render(); }
+  else if ('shelf' in d) { if (d.shelf) useAdventure(d.shelf); shelf = !!d.shelf; shelfSeries = null; render(); }
+  else if (d.series) { shelfSeries = d.series; renderRight(); }
   else if (d.backup) backupAdventure(d.backup);
   else if ('rename' in d) { renaming = d.rename || null; renderRight(); const box = $('#advname'); if (box) { box.focus(); box.select(); } }
   else if ('forget' in d) { if ('sure' in d) forgetAdventure(d.forget); forgetting = 'sure' in d ? null : d.forget || null; renderRight(); }
@@ -1258,7 +1284,7 @@ pr.addEventListener('pointerover', (e) => {
   if (t && line) line.textContent = t.title;
 });
 /* toShelf: back to this adventure's books (after a death or an ending) rather than the list of adventures */
-function toTitle(toShelf) { B = null; mode = 'title'; intro = false; shelf = !!toShelf; forgetting = restoring = null; render(); }
+function toTitle(toShelf) { B = null; mode = 'title'; intro = false; shelf = !!toShelf; shelfSeries = forgetting = restoring = null; render(); }
 /* fresh = ignore this book's save. anew = roll a new character even though one is being carried.
    reread = open a saved game on the introduction. */
 async function begin(id, fresh, anew, reread) {

@@ -132,7 +132,8 @@ The player keeps its own view state in module variables in `main.js`:
 `mode` (`title` | `story` | `battle`), `panel` (`kai` | `pack` | `map`), `sel` (selected item or
 discipline), `B` (the fight in progress, or null), `busy` (input lock during animations),
 `shelf` (the title page shows the open
-adventure's books rather than the list of adventures), `forgetting` (the adventure whose "forget" is
+adventure's books rather than the list of adventures), `shelfSeries` (the series the shelf shows, chosen
+by its tabs; null: the adventure's own), `forgetting` (the adventure whose "forget" is
 asking to be confirmed), `renaming` (the adventure whose name box is open), `restoring` (the restore row open on a plaque: `{id, files, chosen}`), `adv` (the adventures, as stored in `lw-adventures`).
 
 `book` and `game` are null until a book is opened.
