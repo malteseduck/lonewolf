@@ -2,6 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-11
+- Amended: 2026-10-11
 
 ## Context
 
@@ -20,6 +21,9 @@ unseen.
   Agents never press it nor run `plates_pin.mjs --approve` on their own.
 - The owner's own change to an enemy on the picture sheet is his approval for that enemy.
 - Unmarking step 6 lets the pins go.
+- The picture sheet says once, at the top, whether the book is approved; only cards waiting for
+  approval are marked (showing the new picture), with a filter to show only those. No mark on every
+  approved card.
 
 ## Consequences
 
@@ -28,3 +32,7 @@ unseen.
   `platepick.js`, used by the player, the picture sheet and the tool.
 - Books 1–8, already marked done, were pinned on 2026-10-11 to what the player showed then.
 - `docs/reference/dashboard.md`, `interface.md` (Art pipeline), `items.md` (Fight pictures).
+
+## Changes
+
+- 2026-10-11: the sheet marks only the cards waiting for approval, and says the book's state once.

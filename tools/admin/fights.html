@@ -20,6 +20,10 @@
   .card .none { font: 15px var(--title); color: #7d1d14; text-align: center; padding: 20px; border: 1px dashed #7d1d14; }
   .card b { display: block; font: 16px var(--title); margin-top: 6px; }
   .card small { display: block; color: #6b553c; font-size: 12px; }
+  .card.waiting { box-shadow: 0 2px 10px rgba(0,0,0,.5), inset 0 0 0 3px #7d1d14; }
+  .card .badge { position: absolute; top: 6px; right: 6px; z-index: 1; font: 12px var(--title); color: #f3e6c4; background: #7d1d14; border-radius: 3px; padding: 2px 7px; }
+  .card[hidden] { display: none; }
+  .sheet-top .only { color: var(--fg); font-size: 13px; }
   .card.missing { box-shadow: 0 2px 10px rgba(0,0,0,.5), inset 0 0 0 2px #7d1d14; }
   .card .tools { display: flex; gap: 6px; margin-top: 6px; }
   .card .tools button { font-size: 12px; padding: 2px 8px; color: #33231a; background: rgba(255, 250, 230, .45); border-color: #a08a58; }
@@ -66,11 +70,13 @@
   <h1>Fight pictures</h1>
   <select id="pick" aria-label="Book"></select>
   <span class="sum" id="sum"></span>
+  <label class="only" id="only" hidden><input type="checkbox"> Show only these</label>
   <nav class="links" style="margin-left:auto"><a href="./">Dashboard</a></nav>
 </header>
 <p class="note">Every enemy with the picture the player would show, inked as in a fight (checklist step 6: look, change what you want, then mark it done on the dashboard). Drop a
   picture file on a card, paste one (the card under the mouse), or use Choose; Adjust crops it. Pictures you give
-  are kept in <code>art/plates/</code> (git-ignored) and entered in <code>assets/plates/plates.json</code>.</p>
+  are kept in <code>art/plates/</code> (git-ignored) and entered in <code>assets/plates/plates.json</code>.
+  Once approved, the line above says so; only a card whose picture has changed since is marked, showing the new picture.</p>
 <main class="cards" id="cards"></main>
 <input type="file" id="file" accept="image/*" hidden>
 
@@ -121,12 +127,13 @@ if (EMBED) document.body.classList.add('embed');
 // the owner's entry for one enemy: its name, escaped and anchored, as tools/plates_file.py writes it
 const anchored = (name) => '^' + name.toLowerCase().replace(/[.^$*+?()[\]{}|\\/]/g, '\\$&') + '$';
 const LONG = 2000;  // the longest side kept of a dropped picture
-let book, plates = [], pins = null, foes = [], stamp = Date.now(), active = null;
+let book, plates = [], pins = null, approvedOn = null, onlyWaiting = false, foes = [], stamp = Date.now(), active = null;
 
 fetch('/api/map/books', { cache: 'no-store' }).then((r) => r.json()).then((list) => {
   $('#pick').innerHTML = list.map((b) => `<option value="${esc(b.code)}" ${b.code === code ? 'selected' : ''}>${esc((b.number ? b.number + '. ' : '') + (b.title || b.code))}</option>`).join('');
 }).catch(() => { $('#pick').innerHTML = `<option>${esc(code)}</option>`; });
 $('#pick').onchange = () => { location.search = '?book=' + encodeURIComponent($('#pick').value); };
+$('#only input').onchange = (e) => { onlyWaiting = e.target.checked; render(); };
 
 function script(src) {
   return new Promise((ok, bad) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = bad; document.head.append(s); });
@@ -141,7 +148,8 @@ async function loadPlates() {
   plates = compilePlates((await (await fetch('/assets/plates/plates.json', { cache: 'no-store' })).json()).plates);
   // the pictures approved when step 6 was marked done: the player keeps showing these (platepick.js)
   const r = await fetch(`/assets/plates/approved/${code}.json`, { cache: 'no-store' }).catch(() => null);
-  pins = r && r.ok ? (await r.json()).pins || null : null;
+  const j = r && r.ok ? await r.json() : null;
+  pins = (j && j.pins) || null; approvedOn = j && j.approved;
 }
 
 /* Each kind of enemy, with what the player shows for it at its first fight (platepick.js: the approved
@@ -152,21 +160,31 @@ function choose() {
     const fits = (p) => (!p.book || p.book === code) && p.re.test(f.name);
     const lib = plates.find((p) => p.over && fits(p)) || (!f.art && plates.find(fits));
     f.lib = lib && (lib.over || !f.art) ? lib : null;
-    const shown = pickPlate(f.first, book, plates, pins, f.keys[0]);
+    const changed = pins ? f.fights.filter(([foe, key]) => !samePlate(pickPlate(foe, book, plates, pins, key), choosePlate(foe, book, plates))) : [];
+    f.waiting = changed.length;
+    // a card waiting for approval shows the new picture, the one to judge; the others what the player shows
+    const shown = changed.length ? choosePlate(changed[0][0], book, plates) : pickPlate(f.first, book, plates, pins, f.keys[0]);
     f.plate = shown; f.src = shown ? shown.src : null;
-    f.waiting = pins ? f.fights.filter(([foe, key]) => !samePlate(pickPlate(foe, book, plates, pins, key), choosePlate(foe, book, plates))).length : 0;
     f.mine = plates.find((p) => p.book === code && p.match === anchored(f.name)) || null;
     f.from = (f.mine ? 'your picture' + (f.mine.src.startsWith('art/') ? '' : ` (re-cropped: ${f.mine.src.split('/').pop()})`)
       : f.lib ? `plates.json: "${f.lib.match}"${f.lib.over ? ' (over)' : ''}` : f.art ? `the book's ${f.art}` : 'none: the drawn emblem')
-      + (pins ? (f.waiting ? `; approved picture kept: a new one waits for your approval in ${f.waiting} fight${f.waiting > 1 ? 's' : ''}` : '; approved') : '');
+      + (f.waiting ? `; the player still shows the approved picture${f.waiting < f.fights.length ? ` (${f.waiting} of ${f.fights.length} fights)` : ''}` : '');
   }
 }
 
 async function render() {
   choose();
   const none = foes.filter((f) => !f.src).length;
-  $('#sum').textContent = `${foes.length} kinds of enemy, ${none} with no picture`;
-  $('#cards').innerHTML = foes.map((f, i) => `<div class="card ${f.src ? '' : 'missing'}" data-i="${i}">
+  // approval is told once, here; only the cards that need the owner are marked (ADR 0020)
+  const waiting = foes.filter((f) => f.waiting).length;
+  $('#sum').textContent = `${foes.length} kinds of enemy, ${none} with no picture; `
+    + (!pins ? 'not approved yet (mark step 6 done on the dashboard)'
+      : waiting ? `${waiting} wait${waiting === 1 ? 's' : ''} for your approval (Approve picture changes, step 6 on the dashboard)` : `all approved ${approvedOn || ''}`);
+  $('#only').hidden = !waiting;
+  if (!waiting) onlyWaiting = false;
+  $('#only input').checked = onlyWaiting;
+  $('#cards').innerHTML = foes.map((f, i) => `<div class="card ${f.src ? '' : 'missing'} ${f.waiting ? 'waiting' : ''}" data-i="${i}" ${onlyWaiting && !f.waiting ? 'hidden' : ''}>
+    ${f.waiting ? '<span class="badge">New picture: approve?</span>' : ''}
     <div class="pic" id="pic${i}">${f.src ? '' : '<div class="none">no picture<br><small>drop one here</small></div>'}</div>
     <b>${esc(f.name)}</b><small>section${f.secs.length > 1 ? 's' : ''} ${esc(f.secs.join(', '))}</small><small>${esc(f.from)}</small>
     <div class="tools"><button data-do="choose">Choose...</button><button data-do="standin">Stand-in...</button>${f.src ? '<button data-do="adjust">Adjust</button>' : ''}</div></div>`).join('');

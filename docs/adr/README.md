@@ -46,4 +46,4 @@ choice, and why. Read this index before changing behaviour, art, or a tool's out
 | [0016](0016-book-2-readings.md) | Book 2's rule readings | 2026-10-01 | Accepted |
 | [0018](0018-earlier-disciplines-for-veterans.md) | An earlier series' disciplines keep their numbers only for a character who played them | 2026-10-10 | Accepted |
 | [0019](0019-grand-master-readings.md) | Grand Master rule readings: other Special Items dropped, Deliverance once a book, no re-roll | 2026-10-10 | Accepted |
-| [0020](0020-approved-fight-pictures-pinned.md) | Approved fight pictures are pinned; a change waits for the owner | 2026-10-11 | Accepted |
+| [0020](0020-approved-fight-pictures-pinned.md) | Approved fight pictures are pinned; a change waits for the owner; the sheet marks only those waiting | 2026-10-11 | Accepted, amended 2026-10-11 |
