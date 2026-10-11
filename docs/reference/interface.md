@@ -216,10 +216,9 @@ late", once `evade.within` rounds are fought. When `B.over` is set the left page
   from 75 down to 225 become ink, or the plate entry's own `levels` [black, white] (for a painting,
   whose mid-tones would otherwise all turn solid; such a picture is not deepened); a fine
   grey drawing has its greys deepened until the middle of its ink is at 80% strength, to sit
-  beside the books' solid pen work; `frameOf` finds a ruled frame round the picture (a thin band,
-  ink along at least 40% of the middle of its length, clearly darker than the strip inside it,
-  within the outer 12%) and cuts inside it. No fade at the edges: the owner wants each picture
-  whole, as drawn, with only its ruled frame removed (2026-10-01). Cached per URL, crop and levels. Needs a
+  beside the books' solid pen work. Nothing is cut but the crop: a ruled frame is left out by
+  setting the crop by hand (ADR 0008; a frame detector was dropped on 2026-10-11 for cutting art
+  drawn past the frame). No fade at the edges. Cached per URL, crop and levels. Needs a
   same-origin image. Scaled to about 1100px wide either way.
 - `drawCreature(canvas, kind, scene, t, fx, img, floor)`: draws the plate. With `img` (or an entry
   from `art/manifest.json`) it draws the whole inked illustration, fitted to 94% of the width and to

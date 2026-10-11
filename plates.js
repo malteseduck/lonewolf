@@ -110,7 +110,7 @@ export function setArt(kind, img) { ART[kind] = img; }
 /* Turn a black-on-white illustration into page ink: sepia line on clear ground, so the picture
    sits in the parchment instead of on it as a white rectangle.
    img.crop, if set, is the part to use, [x, y, w, h] as fractions of the image (a web engraving's
-   caption or plate number). A ruled frame drawn round the picture is found and cut away.
+   caption, plate number or ruled frame). Nothing else is cut: what is set by hand is what shows.
    img.levels, if set, is [black, white]: the tones (0-255, after the paper lift) that become full ink
    and bare paper. A painting needs it: its mid-tones would otherwise all turn to solid ink. */
 const inked = new Map();
@@ -120,7 +120,7 @@ export function inkPlate(img, keep = true) {
   if (keep && inked.has(key)) return inked.get(key);
   const [cx, cy, cw, ch] = (img.crop || [0, 0, 1, 1]).map((f, i) => f * (i % 2 ? img.naturalHeight : img.naturalWidth));
   const S = Math.min(3, 1100 / cw);
-  let w = Math.round(cw * S), h = Math.round(ch * S), c = Ink.canvas(w, h), x = c.getContext('2d');
+  const w = Math.round(cw * S), h = Math.round(ch * S), c = Ink.canvas(w, h), x = c.getContext('2d');
   x.imageSmoothingQuality = 'high'; x.drawImage(img, cx, cy, cw, ch, 0, 0, w, h);
   try {
     const d = x.getImageData(0, 0, w, h), p = d.data, A = new Float32Array(w * h);
@@ -148,44 +148,11 @@ export function inkPlate(img, keep = true) {
       p[i] = 46; p[i + 1] = 30; p[i + 2] = 18; p[i + 3] = A[j] * 240;
     }
     x.putImageData(d, 0, 0);
-    const [l, t, r, b] = frameOf(A, w, h);
-    if (l || t || r < w || b < h) {
-      const k = Ink.canvas(r - l, b - t); k.getContext('2d').drawImage(c, l, t, r - l, b - t, 0, 0, r - l, b - t);
-      c = k; x = c.getContext('2d'); w = r - l; h = b - t;
-    }
   } catch (e) { /* cross-origin image: leave it as drawn */ }
-  // no fade at the edges: the owner wants the whole picture as drawn, only without its ruled frame
+  // no fade at the edges: the owner wants the picture as drawn
   if (keep) inked.set(key, c);
   return c;
 }
-/* The box inside a ruled frame, from the ink's alpha (A, w x h). On each side, looking in from the
-   edge across the outer 12%: a rule is a thin band (at most 1.5% deep) with ink along at least
-   40% of its length (the art breaks it), clearly darker than the strip just inside it. The cut goes
-   a little past the innermost rule. A dark mass at the edge (a night sky) is not thin, so it stays. */
-function frameOf(A, w, h) {
-  const rowInk = (y) => { let s = 0; for (let i = Math.round(w * 0.2); i < w * 0.8; i++) s += A[y * w + i] > 0.5; return s / (w * 0.6); };
-  const colInk = (xx) => { let s = 0; for (let i = Math.round(h * 0.2); i < h * 0.8; i++) s += A[i * w + xx] > 0.5; return s / (h * 0.6); };
-  // measured along the middle 60%, so a figure that breaks the frame near a corner does not hide it
-  const inner = (measure, len) => {
-    const memo = [], ink = (i) => memo[i] ?? (memo[i] = measure(i));
-    const band = Math.round(len * 0.12), thin = Math.max(3, len * 0.015), pad = Math.round(len * 0.012) + 2;
-    let cut = 0;
-    for (let i = 0; i < band; i++) {
-      if (ink(i) < 0.4) continue;
-      let j = i, top = 0;
-      while (j < band && ink(j) >= 0.4) top = Math.max(top, ink(j++));
-      if (j - i <= thin) {
-        let inside = 0; for (let k = j; k < j + thin; k++) inside += ink(k) / thin;
-        if (top - inside >= 0.25) cut = j + pad;
-      }
-      i = j;
-    }
-    return cut;
-  };
-  const t = inner(rowInk, h), b = inner((i) => rowInk(h - 1 - i), h), l = inner(colInk, w), r = inner((i) => colInk(w - 1 - i), w);
-  return [l, t, w - r, h - b];
-}
-
 /* One still plate for the fight. The canvas fills the whole panel; the controls sit over its foot.
    fx: {lunge, hit, dead, wounds:[{x1,y1,x2,y2,k,spots}]} */
 /* floor: where the fight's controls begin, as a fraction of the canvas height (the picture stays above) */

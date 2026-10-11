@@ -256,8 +256,8 @@ anything by hand; the list to add from offers the open book's own items.
   another book's special creature or set-piece fight, unless it is the very same creature), a free
   old engraving of what is described, or a picture the owner supplies. A borrowed picture can be
   limited to one book. If a picture is missing, a drawn emblem stands in.
-- The picture is shown whole, as drawn, a little smaller than the panel; a ruled frame line round
-  it is removed, and the edges are not faded. Wounds appear on the plate in red ink.
+- The picture is shown whole, as drawn, a little smaller than the panel, cut only where its crop
+  is set by hand (a frame line, a caption), and the edges are not faded. Wounds appear on the plate in red ink.
 - Controls are medallions: strike, mind attack, potion, evade. The Random Number medallion spins
   for each round.
 - Each round is written on the story page as a line of the fight's record.
