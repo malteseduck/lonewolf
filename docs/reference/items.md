@@ -188,8 +188,8 @@ add is written some other way (`ice barbarian$`, `kalkoth`). Where to look, in o
    within two links either way (`near`, with `steps`, negative for fights that lead to it), the
    `plates.json` entries already borrowing it, and `shows`, a few words of our own on what it shows.
    The notes are kept by hand in git-ignored `data/projectaon/ill-notes.json` and merged in, so a
-   re-run keeps them; `--missing` lists pictures with none. All 245 pictures of Books 1-12 have a
-   note (2026-10-10); when a new book is downloaded, look at its pictures once and add theirs. Search
+   re-run keeps them; `--missing` lists pictures with none. All 405 pictures of Books 1-20 have a
+   note (2026-10-11); when a new book is downloaded, look at its pictures once and add theirs. Search
    the index for a creature's name or a word ("hound", "robed", "dwarf"), then look at the few hits.
    The Stand-in picker searches the same notes and nearby fights.
 3. **Another downloaded book's illustration**, only for plain human enemies (soldiers, guards,
@@ -242,6 +242,23 @@ necromancer, gaunt as the wiki describes him, and the Korkuna an ink alien egg s
 (both in `art/plates/08tjoh/`); the Hunting Dogs a Wellcome engraving of hounds pouncing on a stag.
 An already-downloaded free engraving can serve a second creature by a different crop (Book 4's Tunnel
 Fiends are other demons from the Schongauer print that gives Book 3 its Mutant).
+Book 12 pictures its Darklords from its own non-fight pictures: Gnaag (the fly-headed figure where he
+summons the Mind Reaper), Kraagenskûl in all four of his fights (cropped from the throne scene), and the
+Xargath from the serpent at the ship's rail. Its Drakkarim Sailors are cropped from the burning-ship
+picture one link before their fights, the Gunners from its ironclads (whole, and the near gun deck), and
+the Ironclad Bo'sun is the book's whip-carrying Slavemaster (a near miss). The other Drakkarim kinds take
+other books' Drakkarim, the same race: the Escorts Book 10's Drakkarim soldiers with captives (not
+a fight there), the surprise-attack Drakkar Book 5's Drakkar plunging from above (not a fight there),
+the Assault Squad Book 9's Drakkarim Assault-troopers (that book's fight picture, the same kind of troop)
+and the Marine Officer its plumed leader cropped from it, the Marine Sergeant Book 2's; the Imperial
+Sector Guards, a crop of Book 15's ranks of helmeted spearmen. The Liganim (the Ligan and the Minions
+of Taktaal) take Book 14's Ligan with his Ziranakag, whole and cropped: it is that book's fight picture
+for the same creature, so the owner will meet it again there. Vladoka, a Nadziran temple guard, takes
+Book 14's furry creature in a section about the Nadziranim (a near miss). The Mind Reaper, a parasite
+that forms out of a haze, is an ink sketch of a spirit rising from smoke (`art/plates/12tmod/`, with
+`levels` to darken the pencil-grey lines); Darklord Taktaal is left to the owner, who is searching for
+him. Check a borrowed picture's `fight` in the index first: Book 15's armoured warriors at a wall look
+like Drakkarim but are its Tukodak Guardians.
 4. **A picture found by searching**, anywhere: Wikimedia Commons, a general image search, fan art,
    game art, modern fantasy illustration. Read the enemy's page on the Lone Wolf fandom wiki first
    (see AGENTS.md, Lore) for what it looks like: the book's text at its fight often says little
