@@ -9,6 +9,8 @@ index.html                  the player: markup, all CSS, script tags
 main.js                     ES module: state, rendering, input, combat, title page
 plates.js                   ES module: ink creatures, inkPlate (restyles an illustration), figure, frame, gear
 maps.js                     ES module: printedCanvas, the book's printed map repainted in sepia
+platepick.js                ES module: which picture a fight shows (pins, plates.json, the book's own); also used
+                            by the picture sheet and tools/plates_pin.mjs
 items-01fftd.js             ES module: Book 1's items and what each section gives, takes or gates, by hand
                             (docs/reference/book-format.md, "Item tables")
 sw.js                       service worker: the offline copy (docs/reference/offline.md)
@@ -20,6 +22,8 @@ assets/fonts/               the page's three fonts and fonts.css, from Google Fo
 assets/app/                 the Home Screen icon (README.txt says how it was made)
 assets/plates/              plates.json: pictures for enemies their book does not picture; free pictures,
                             mostly engravings from Wikimedia Commons (credited in README.txt)
+  approved/<code>.json      the fight pictures the owner approved (step 6 marked done), pinned per fight:
+                            section/enemy number -> picture; no book text (ADR 0020)
 CLAUDE.md, README.md
 docs/                       spec, plan, reference
   book-status.json          the book steps no file can show (checklist 3, 4, 6, 7), with the date each was
@@ -62,6 +66,7 @@ tools/
   reading_copy.py           writes data/projectaon/<code>/reading.txt, the book as text to read
   item_sections.py          lists the sections that may give, take or need items; writes them to read
   check_items.mjs           checks items-<code>.js against the book (node)
+  plates_pin.mjs            pins a book's approved fight pictures, and lists what would now differ (node)
   fetch_icons.py            fetches game-icons.net glyphs into assets/icons/, background removed
                             (the four above: docs/reference/items.md)
   map_upscale.py            Real-ESRGAN upscale of a printed map to a set width, saved as WebP or PNG
@@ -96,7 +101,7 @@ shared/core.js              defines LW, LW.Game, Kai rules
 data/projectaon/index.js    document.writes a <script> for each imported book -> LW.BOOKS[code]
 shared/ui.js                LW.UI (LW.sfx blips: prototypes only)
 shared/rules-series.js      adds Magnakai, overrides LW.has and LW.heroCS, adds LW.Character, LW.HeroSetup, LW.KitSetup, LW.KITS
-main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js
+main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js, ./platepick.js
 ```
 
 Order matters: `rules-series.js` overrides functions defined in `core.js` and needs `LW.UI`.

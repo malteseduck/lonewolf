@@ -23,17 +23,23 @@ BOOKS = {  # code: (number, series, title)
     '07cd': (7, 'magnakai', 'Castle Death'), '08tjoh': (8, 'magnakai', 'The Jungle of Horrors'),
     '09tcof': (9, 'magnakai', 'The Cauldron of Fear'), '10tdot': (10, 'magnakai', 'The Dungeons of Torgar'),
     '11tpot': (11, 'magnakai', 'The Prisoners of Time'), '12tmod': (12, 'magnakai', 'The Masters of Darkness'),
+    '13tplor': (13, 'grandmaster', 'The Plague Lords of Ruel'),
 }
 DISC = {'camouflage': 'camouflage', 'hunting': 'hunting', 'sixth sense': 'sixthSense', 'tracking': 'tracking', 'healing': 'healing',
         'weaponskill': 'weaponskill', 'mindshield': 'mindshield', 'mindblast': 'mindblast', 'animal kinship': 'animalKinship',
         'mind over matter': 'mindOverMatter',
         'weaponmastery': 'weaponmastery', 'animal control': 'animalControl', 'curing': 'curing', 'invisibility': 'invisibility',
         'huntmastery': 'huntmastery', 'pathsmanship': 'pathsmanship', 'psi-surge': 'psiSurge', 'psi-screen': 'psiScreen',
-        'nexus': 'nexus', 'divination': 'divination'}
+        'nexus': 'nexus', 'divination': 'divination',
+        'grand weaponmastery': 'grandWeaponmastery', 'animal mastery': 'animalMastery', 'deliverance': 'deliverance', 'assimilance': 'assimilance',
+        'grand huntmastery': 'grandHuntmastery', 'grand pathsmanship': 'grandPathsmanship', 'kai-surge': 'kaiSurge', 'kai-screen': 'kaiScreen',
+        'grand nexus': 'grandNexus', 'telegnosis': 'telegnosis', 'magi-magic': 'magiMagic', 'kai-alchemy': 'kaiAlchemy'}
 RANKS = {  # rank name: how many disciplines of the series it takes
     'novice': 1, 'intuite': 2, 'doan': 3, 'acolyte': 4, 'initiate': 5, 'aspirant': 6, 'guardian': 7, 'warmarn': 8, 'savant': 9, 'master': 10,
     'kai master': 1, 'kai master senior': 2, 'kai master superior': 3, 'primate': 4, 'tutelary': 5, 'principalin': 6, 'mentora': 7,
-    'scion-kai': 8, 'archmaster': 9, 'kai grand master': 10}
+    'scion-kai': 8, 'archmaster': 9, 'kai grand master': 10,
+    'kai grand master senior': 1, 'kai grand master superior': 2, 'kai grand sentinel': 3, 'kai grand defender': 4, 'kai grand guardian': 5,
+    'sun knight': 6, 'sun lord': 7, 'sun thane': 8, 'grand thane': 9, 'grand crown': 10, 'sun prince': 11, 'kai supreme master': 12}
 CIRCLES = {'fire': 'Circle of Fire', 'light': 'Circle of Light', 'solaris': 'Circle of Solaris', 'spirit': 'Circle of the Spirit'}
 # Plates for enemies pictured in a section other than the one where they are fought. Checked by eye.
 PLATE_FIXES = {'01fftd': {'kraan': 'ill3.png', 'vordak': 'ill3.png', 'giak': 'ill4.png', 'doomwolf': 'ill4.png', 'gourgaz': 'ill7.png'}}
@@ -65,6 +71,11 @@ def sentences(text):
     return [s.strip() for s in re.split(r'(?<!i\.e\.)(?<!e\.g\.)(?<=[.!?])\s+', text) if s.strip()]  # "(i.e. you possess ...)"
 
 
+def gm_names(s):
+    """A Grand Master book's own ways of naming a discipline, made plain: "Grand Mastery of Nexus" is Grand Nexus."""
+    return re.sub(r'\bGrand Mastery of Nexus\b', 'Grand Nexus', s)
+
+
 def disc_list(s):
     """'Hunting', 'either Tracking or Sixth Sense', 'both Camouflage and Hunting' -> (ids, every) or None.
     'or' means any of them will do, 'and' that all are needed; every name must be a discipline."""
@@ -83,11 +94,15 @@ def condition(text):
     """The condition of an "If you ..." rule, when it is only disciplines, a rank and Lore-circles:
     {disc: [ids], every, rank, circle: [names]}. Anything else (items, Endurance, a weapon in hand) -> None."""
     out = {}
+    if series == 'grandmaster' and re.search(r'\(with (?:a |the )?Bow\)', text):
+        return None  # "Grand Weaponmastery (with Bow)": the Bow must be one of his weapons, which a condition cannot say
     text = re.sub(r'\s*\([^)]*\)?', '', text)  # "(you possess 8 Kai Disciplines)", or one cut short at its comma
     text = re.sub(r'\s+and therefore\b.*$', '', text)
     for clause in re.split(r',?\s+and\s+(?:if you\s+)?(?:also\s+)?(?=have\b|possess\b|completed\b|reached\b|attained\b)', text.strip()):
         clause = clause.strip()
         d = re.fullmatch(r'(?:have|possess)(?: and wish to use)? (?:either |both )?(?:of )?the (?:Kai |Magnakai )?Disciplines? (?:either |both )?(?:of )?(.+)', clause)
+        if not d and series == 'grandmaster':
+            d = re.fullmatch(r'(?:have|possess) (?:the )?(?:(?:Grand Master |Magnakai |Kai )?Disciplines? of |(?:Grand )?Mastery of )?(.+)', gm_names(clause))
         r = re.fullmatch(r'(?:have )?(?:also )?(?:reached|attained) the (?:Kai |Magnakai )?[Rr]ank of ([A-Za-z -]+?)(?: or (?:higher|above|more))?(?: \([^)]*\))?', clause)
         c = re.fullmatch(r'(?:(?:have )?completed|possess) the (?:Magnakai )?Lore-circles? of (.+)', clause)
         e = re.fullmatch(r'your (?:current )?ENDURANCE(?: points?)?(?: point)? total is (?:now )?(.+)', clause)
@@ -150,6 +165,8 @@ def gate(text):
             return {'any': got}
         return None
     d = re.search(r'If you (?:have|possess|wish to use|wish to demonstrate)[^.;]*?(?:Kai|Magnakai) Disciplines? (?:either |both )?(?:of )?((?:either |both )?[A-Za-z -]+?(?:\s*\(any weapon\))?)(?:,| to| on| you| turn|\.| \(|$)', head + '.')
+    if not d and series == 'grandmaster' and not re.search(r'\(with (?:a |the )?Bow\)', head):
+        d = re.search(r'If you (?:have|possess) (?:the )?(?:(?:Grand Master |Magnakai |Kai )?Disciplines? of |(?:Grand )?Mastery of )?([A-Za-z -]+?)(?:,| to| on| you| turn|\.| \(|$)', gm_names(head) + '.')
     if d:
         got = disc_list(d.group(1))
         if not got:  # "of Hunting and wish to ...": the list stops at the first word that is not a discipline
@@ -352,6 +369,8 @@ for n in numbers:
                 continue
             if re.search(r'immune to Mindblast[\s,(]*but not (?:to )?Psi-surge', whole):
                 e['immune'] = 'mindblast'  # Psi-surge still works
+            elif re.search(r'immune to Mindblast and Psi-surge(?:[\s,(]*but not (?:to )?|; only (?:the Grand Mastery of )?)Kai-surge', whole):
+                e['immune'] = 'psi'  # Kai-surge still works
             elif said:
                 e['immune'] = True
         cs = cs_rule(whole)

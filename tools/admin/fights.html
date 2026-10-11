@@ -110,6 +110,7 @@
 
 <script type="module">
 import { inkPlate } from '../../plates.js';
+import { compilePlates, choosePlate, pickPlate, samePlate } from '../../platepick.js';
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -120,7 +121,7 @@ if (EMBED) document.body.classList.add('embed');
 // the owner's entry for one enemy: its name, escaped and anchored, as tools/plates_file.py writes it
 const anchored = (name) => '^' + name.toLowerCase().replace(/[.^$*+?()[\]{}|\\/]/g, '\\$&') + '$';
 const LONG = 2000;  // the longest side kept of a dropped picture
-let book, plates = [], foes = [], stamp = Date.now(), active = null;
+let book, plates = [], pins = null, foes = [], stamp = Date.now(), active = null;
 
 fetch('/api/map/books', { cache: 'no-store' }).then((r) => r.json()).then((list) => {
   $('#pick').innerHTML = list.map((b) => `<option value="${esc(b.code)}" ${b.code === code ? 'selected' : ''}>${esc((b.number ? b.number + '. ' : '') + (b.title || b.code))}</option>`).join('');
@@ -137,21 +138,27 @@ function image(src, lib) {
 const url = (src) => '/' + src + (src.startsWith(`art/plates/${code}/`) ? `?v=${stamp}` : '');
 
 async function loadPlates() {
-  plates = ((await (await fetch('/assets/plates/plates.json', { cache: 'no-store' })).json()).plates || [])
-    .map((p) => Object.assign({ re: new RegExp(p.match, 'i') }, p));
+  plates = compilePlates((await (await fetch('/assets/plates/plates.json', { cache: 'no-store' })).json()).plates);
+  // the pictures approved when step 6 was marked done: the player keeps showing these (platepick.js)
+  const r = await fetch(`/assets/plates/approved/${code}.json`, { cache: 'no-store' }).catch(() => null);
+  pins = r && r.ok ? (await r.json()).pins || null : null;
 }
 
-/* Each kind of enemy, with what the player shows for it (main.js nextFoe(): an "over" library entry
-   wins, then the book's own picture, then the library) and the owner's own entry, if any. */
+/* Each kind of enemy, with what the player shows for it at its first fight (platepick.js: the approved
+   picture, else an "over" library entry, the book's own picture, the library) and the owner's own entry,
+   if any. waiting: fights where plates.json or the book now pick another picture than the approved one. */
 function choose() {
   for (const f of foes) {
     const fits = (p) => (!p.book || p.book === code) && p.re.test(f.name);
     const lib = plates.find((p) => p.over && fits(p)) || (!f.art && plates.find(fits));
     f.lib = lib && (lib.over || !f.art) ? lib : null;
-    f.src = f.lib ? f.lib.src : f.art ? `data/projectaon/${code}/${f.art}` : null;
+    const shown = pickPlate(f.first, book, plates, pins, f.keys[0]);
+    f.plate = shown; f.src = shown ? shown.src : null;
+    f.waiting = pins ? f.fights.filter(([foe, key]) => !samePlate(pickPlate(foe, book, plates, pins, key), choosePlate(foe, book, plates))).length : 0;
     f.mine = plates.find((p) => p.book === code && p.match === anchored(f.name)) || null;
-    f.from = f.mine ? 'your picture' + (f.mine.src.startsWith('art/') ? '' : ` (re-cropped: ${f.mine.src.split('/').pop()})`)
-      : f.lib ? `plates.json: "${f.lib.match}"${f.lib.over ? ' (over)' : ''}` : f.art ? `the book's ${f.art}` : 'none: the drawn emblem';
+    f.from = (f.mine ? 'your picture' + (f.mine.src.startsWith('art/') ? '' : ` (re-cropped: ${f.mine.src.split('/').pop()})`)
+      : f.lib ? `plates.json: "${f.lib.match}"${f.lib.over ? ' (over)' : ''}` : f.art ? `the book's ${f.art}` : 'none: the drawn emblem')
+      + (pins ? (f.waiting ? `; approved picture kept: a new one waits for your approval in ${f.waiting} fight${f.waiting > 1 ? 's' : ''}` : '; approved') : '');
   }
 }
 
@@ -166,7 +173,7 @@ async function render() {
   // ink them one by one, so the page shows at once
   for (const [i, f] of foes.entries()) {
     if (!f.src) continue;
-    const im = await image(url(f.src), f.lib);
+    const im = await image(url(f.src), f.plate);
     const box = $('#pic' + i);
     if (!box) return;  // drawn again meanwhile
     if (!im) { box.innerHTML = '<div class="none">file missing</div>'; continue; }
@@ -189,8 +196,9 @@ async function main() {
   const by = new Map();
   for (const [id, s] of Object.entries(book.sections)) {
     for (const e of s.combat?.enemies || []) {
-      const f = by.get(e.name) || { name: e.name, art: null, secs: [] };
-      f.art = f.art || e.art || null; f.secs.push(id); by.set(e.name, f);
+      const f = by.get(e.name) || { name: e.name, art: null, secs: [], keys: [], fights: [], first: e };
+      const key = `${id}/${s.combat.enemies.indexOf(e)}`;
+      f.art = f.art || e.art || null; f.secs.push(id); f.keys.push(key); f.fights.push([e, key]); by.set(e.name, f);
     }
   }
   foes = [...by.values()];

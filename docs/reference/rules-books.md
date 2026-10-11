@@ -1,8 +1,9 @@
 # The books' rules
 
-The rules as Books 1–12 state them, read from each book's rules pages (game rules, disciplines,
+The rules as Books 1–13 state them, read from each book's rules pages (game rules, disciplines,
 equipment, combat, ranks, Lore-circles, improved disciplines, the tables, footnotes), downloaded
-2026-10-02 into `data/projectaon/<book>/` (`tools/fetch_projectaon.py <book> --rules`). Written in
+2026-10-02 into `data/projectaon/<book>/` (`tools/fetch_projectaon.py <book> --rules`; Book 13's read
+2026-10-10 from its full download). Written in
 our own words; numbers and lists are the books'. A common rule set first, then what the Magnakai
 series changes, then an addendum for each book. **Engine** says where the player implements a rule,
 or that it does not (then it is applied by hand, or noted as a gap in docs/plan.md).
@@ -105,7 +106,12 @@ books begin), 6 Aspirant, 7 Guardian, 8 Warmarn (or Journeyman), 9 Savant, 10 Ma
 - Each Magnakai book completed adds **one** Magnakai Discipline and **one** mastered weapon.
 - The Kai effects are restated as Magnakai ones (Book 6's equipment page: Weaponmastery for weapons,
   Huntmastery for Meals), so in a Magnakai book only Magnakai Disciplines act. *Engine*: yes
-  (`rules-series.js`); the spec's interpretation is confirmed.
+  (`rules-series.js`); the spec's interpretation is confirmed. *But* the Lone Wolf Club newsletters
+  (in the Readers' Handbook, downloaded 2026-10-10) rule that a character who completed Books 1–5
+  keeps Healing's +1 a section (not added to Curing's) and Hunting's spared Meals in the Magnakai
+  books (Summer Special 1987, 8, 10). The owner adopted that (ADR 0018). *Engine*: yes (`LW.heals`,
+  `LW.hunts`); as the Magnakai books do not mark desert and wasteland, Hunting spares the Meal and
+  the page reminds him to eat by hand in such a place.
 - Gold over 50 may be left in safekeeping at the Kai Monastery. *Engine*: yes: at a book's start
   (the kit step) the excess goes to `hero.storedGold`, and may be drawn on at a later book's start.
 
@@ -180,6 +186,93 @@ Nexus limited immunity to fire, gas and acid.
 | Bow: used only when the text allows; needs a Quiver and an Arrow, one Arrow a shot; useless hand to hand (armed only with a Bow, fight as unarmed). A Quiver holds six Arrows | Book 6 | yes: `ranged` weapons; `hero.arrows`; a section's `bowShot` |
 | Special Items: at most 12 carried; more may be left at the Monastery | Book 8 | yes (`LW.specialLimit`) |
 | Special Items may be left in safekeeping at the Monastery between books | Book 5 | yes: `hero.stored`, in the kit step |
+
+## Grand Master series (Books 13–20)
+
+Read from Book 13's rules pages (2026-10-10). **The engine applies none of this yet**: the importer
+does not know Book 13, and `rules-series.js` treats any series but Magnakai as Kai. What it would
+take is in docs/plan.md ("Grand Master series"); the owner's readings are ADRs 0011, 0018 and 0019.
+
+Book 13's footnote points to Project Aon's Readers' Handbook for what the earlier disciplines still
+do. Its rules pages (Kai, Magnakai, Grand Master, New Order, the rules FAQ, the newsletter excerpts,
+three Topical Guide pages) were downloaded on 2026-10-10 into git-ignored
+`data/projectaon/readers-handbook/`. Its rulings come from the Lone Wolf Club newsletters (marked
+**LWCN** below, with the issue); where the Handbook gives only its editors' advice, it says so.
+
+### What the Kai and Magnakai Disciplines still do
+
+| Rule | Engine |
+|---|---|
+| He holds every Kai and Magnakai Discipline; the text offers the Magnakai ones by name (Book 13: Nexus, Divination, Invisibility, Psi-surge, Animal Control) and assumes those with no number | no |
+| Only a character who completed Books 1–12 keeps the numbers of his Magnakai Disciplines (LWCN Summer Special 1987, 10, 28). Partly completed: the Handbook leaves it to the reader. *Owner*: any carried character keeps the numbers of those he chose (ADR 0018) | no |
+| Those numbers: Huntmastery spares Meals unless the text says not; Curing +1 ENDURANCE a section without a fight; Weaponmastery +3 (+4 from Scion-kai) and +2 on bow or thrown shots; Psi-surge +4 at 2 a round, Mindblast +2 (an Archmaster's +6 at 1, +3) | no |
+| A Grand Master Discipline replaces its Magnakai counterpart's number, never adds to it: Grand Weaponmastery with a weapon he had mastered is +5, not +8 or +9 (LWCN 28) | no |
+| The +1 a section without a fight carries on into the series only for a character who played and survived the Magnakai books: a hidden reward for loyal readers (LWCN 28) | no |
+| Deliverance replaces Archmaster Curing. "Once every 20 days" has no official ruling; the Handbook suggests once an adventure. *Owner*: once a book (ADR 0019) | no |
+
+### Entering the series
+
+| Rule | Engine |
+|---|---|
+| A new character: COMBAT SKILL = **25** + a Random Number, ENDURANCE = **30** + a Random Number | no |
+| A carried character (Books 1–12 behind him) keeps his COMBAT SKILL and ENDURANCE, Lore-circle bonuses included in them | no (the engine adds circle COMBAT SKILL in each fight, and only in a Magnakai book) |
+| Discipline bonuses of the earlier series do not raise his permanent scores; only a character who completed the earlier books benefits from them (above) | no |
+| Weapons, **Backpack Items** and gold carry over (unlike every earlier book). Whether Meals do is left open: the Handbook calls dropping them optional. *Owner*: Meals do not (ADR 0011) | no |
+| A carried character may instead re-roll: the rules say he "can" carry his scores; the Handbook lists ways to start afresh but gives no ruling. *Owner*: no re-roll; he keeps his scores and bonuses (ADR 0019) | no |
+| Only these Special Items carry into the series: Crystal Star Pendant, Sommerswerd, Silver Helm, Dagger of Vashna, Silver Bracers, Jewelled Mace, Silver Bow of Duadon, Helshezag, Kagonite Chainmail, Korlinium Scabbard. A character who begins the series at Book 13 uses this list throughout; later books alter it for one who begins there. *Owner*: the others are dropped (ADR 0019) | no |
+
+### Carrying
+
+| Rule | Engine |
+|---|---|
+| At most 2 Weapons; at most **10** Backpack Items, Meals included | no (`LW.MAX_BACKPACK` is 8 for every book) |
+| At most 12 Special Items; more may be left at the Monastery | `LW.specialLimit` reads only a Magnakai book |
+| Gold: at most 50; more may be left at the Monastery | no |
+| Bow: as in the Magnakai series (a Quiver and an Arrow a shot, useless hand to hand) | no |
+| Some sections give Grand Weaponmastery with Bow its own bonus (3 to 5); the Handbook advises using the section's number in place of the +5 | no |
+
+### Grand Master Disciplines
+
+A character begins at rank Kai Grand Defender with **four**; each Grand Master book completed adds
+**one**. Each discipline beyond the first four adds **+1 COMBAT SKILL and +2 ENDURANCE** to his
+basic scores, for good.
+
+| Discipline | Effect | Engine |
+|---|---|---|
+| Grand Weaponmastery | +5 COMBAT SKILL with a mastered weapon; two weapons at the start, one more for each Grand Master book completed; with the Bow, +5 to the Random Number of a shot | no |
+| Animal Mastery | Controls hostile non-sentient creatures; speaks with birds and fish | gates only |
+| Deliverance (Advanced Curing) | Once every 20 days, at 8 ENDURANCE or less in a fight, restore 20 | no |
+| Assimilance (Advanced Invisibility) | Changes his appearance for days; near undetectable in open land | gates only |
+| Grand Huntmastery | No Meal needed when told to eat; sees in total darkness | no |
+| Grand Pathsmanship | Resists hostile plants; senses ambush in woods | gates only |
+| Kai-surge | +8 COMBAT SKILL at 1 ENDURANCE a round, or Mindblast +4 at no cost; not with Psi-surge or Mindblast at once; not at 6 ENDURANCE or less | no |
+| Kai-screen | Mind fortresses for himself and others, stronger by rank (the text gives it a COMBAT SKILL penalty to spare: 221, 325) | no |
+| Grand Nexus | Withstands flame and acid for an hour or more | gates only |
+| Telegnosis (Advanced Divination) | Longer, safer spirit-walking | gates only |
+| Magi-magic | Old Kingdom battle-spells | gates only |
+| Kai-alchemy | Left-handed magic spells | gates only |
+
+The weapons that can be mastered are the same ten as Weaponmastery's.
+
+Footnote rulings (Project Aon's): Grand Weaponmastery's bonus **replaces** Weaponmastery's, it is
+not added to it; and the Mentora +2 on bow shots is not added to Grand Weaponmastery's +5.
+
+### Ranks
+
+By the number of Grand Master Disciplines: 1 Kai Grand Master Senior, 2 Kai Grand Master Superior,
+3 Kai Grand Sentinel, 4 Kai Grand Defender (where the series begins), 5 Kai Grand Guardian, 6 Sun
+Knight, 7 Sun Lord, 8 Sun Thane, 9 Grand Thane, 10 Grand Crown, 11 Sun Prince, 12 Kai Supreme
+Master. *Engine*: no.
+
+### Improved Disciplines
+
+Promised by rank in later books; Book 13 lists none. The Handbook gathers those of Books 14–20 by
+rank; the ones with numbers, for when those books come: Grand Weaponmastery at Sun Knight (6)
+wields two-handed weapons one-handed, at Sun Lord (7) sets a non-magical blade alight for +1
+enemy loss a winning round, at Grand Crown (10) +3 bare-handed; Kai-surge at Kai Grand Guardian (5)
+attacks up to three foes at once, at Sun Lord (7) a Kai-blast (two Random Numbers added, 0 = 1, at
+4 ENDURANCE), at Sun Prince (11) a Kai-ray once a fight (15 more damage at 4 ENDURANCE, not at 10 or
+less).
 
 ## Book addenda
 
@@ -353,3 +446,15 @@ Monastery). Clothing is named there but not tracked.
 - **Footnotes**: his base ENDURANCE itself can be lowered (240, 268), and at 0 he is dead even if
   armour keeps his current score above it; the Dagger of Vashna adds 7 COMBAT SKILL against a
   Darklord of Helgedad (75, 230); at 75 he cannot harm Kraagenskûl for three rounds without it.
+
+### Book 13, The Plague Lords of Ruel (Grand Master)
+
+*Engine*: none of this book's rules yet (see the Grand Master series above).
+
+- **First Grand Master book**: the Grand Master rules above start here.
+- **Gold**: 20 + a Random Number, added to any he carries; above 50 may be left at the Monastery.
+- **Kit**: a map of Ruel (Special). Choose any **5** of: Sword, Bow, Quiver (Special, six Arrows),
+  Axe, four Meals, Rope, Potion of Laumspur (4 after a fight, one dose), Spear, Dagger.
+- **Money**: Palmyrion's Lune, 4 to the Gold Crown.
+- **Footnotes**: the riddles at 48, 158 and 227 are answered by the sections that say they are (15,
+  146).

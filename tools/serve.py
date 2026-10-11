@@ -84,7 +84,8 @@ NAME = re.compile(r'^[^\\/:*?"<>|\x00-\x1f]{1,120}\.json$')
 # index.html, so a new file the page loads by a plain path comes along by itself: <script src> and
 # <link href> (also the <script> tags data/projectaon/index.js writes), the web manifest's icons,
 # static imports, fetch('a literal path') and CSS url(). Each book.js brings the images it names
-# (pictures and its one map); plates.json and art/manifest.json bring the pictures they name.
+# (pictures and its one map); plates.json, art/manifest.json and assets/plates/approved/*.json bring the
+# pictures they name.
 OFFLINE_ENTRY = 'index.html'
 # paths built at runtime, which the walk cannot see: main.js asks for `assets/icons/${name}.svg`
 OFFLINE_DIRS = {'assets/icons': ('.svg',)}
@@ -332,6 +333,10 @@ def offline_list(root=ROOT, fill=None):
             return {}
 
     seen, missing, todo = set(), set(), [OFFLINE_ENTRY]
+    # main.js asks for assets/plates/approved/${book}.json, a path the walk cannot see
+    pins = os.path.join(root, 'assets', 'plates', 'approved')
+    if os.path.isdir(pins):
+        todo += [f'assets/plates/approved/{e.name}' for e in os.scandir(pins) if e.is_file() and e.name.endswith('.json')]
 
     def add(base, url):
         """Queue url as read from a file in folder base ('' for the page itself); not data:, other
@@ -379,6 +384,10 @@ def offline_list(root=ROOT, fill=None):
         elif rel == 'assets/plates/plates.json':
             for p in as_json(rel).get('plates', []):
                 add('', p.get('src', ''))
+        elif rel.startswith('assets/plates/approved/'):  # the approved pictures, which plates.json may no longer name
+            for pin in as_json(rel).get('pins', {}).values():
+                if (pin or {}).get('plate'):
+                    add('', pin['plate'].get('src', ''))
         elif rel == 'art/manifest.json':
             art = as_json(rel)
             hero, portrait = art.get('hero'), art.get('portrait')
@@ -407,6 +416,8 @@ ADMIN_STAGES = {
     'import': {'title': 'Import', 'gated': True, 'timeout': 900, 'known': True, 'cmds': lambda c: [PY + ['tools/import_projectaon.py', c]]},
     'reading': {'title': 'Reading copy', 'folder': True, 'timeout': 600, 'cmds': lambda c: [PY + ['tools/reading_copy.py', c], PY + ['tools/item_sections.py', c]]},
     'check-items': {'title': 'Check items', 'folder': True, 'timeout': 300, 'cmds': lambda c: [['node', 'tools/check_items.mjs', c, '--json']]},
+    # the fight pictures that now differ from those approved at step 6 become the approved ones (the owner's go-ahead)
+    'approve-pictures': {'title': 'Approve fight pictures', 'folder': True, 'gated': True, 'timeout': 120, 'cmds': lambda c: [['node', 'tools/plates_pin.mjs', c, '--approve']]},
     'offline': {'title': 'Offline check', 'book': False, 'timeout': 300, 'cmds': lambda c: [PY + ['tools/offline_check.py']]},
     'syntax': {'title': 'Syntax check', 'book': False, 'timeout': 600, 'cmds': lambda c: [PY + ['tools/syntax_check.py']]},
     'reimport-all': {'title': 'Re-import all and compare', 'book': False, 'gated': True, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/reimport_all.py']]},
@@ -631,6 +642,11 @@ class Handler(SimpleHTTPRequestHandler):
                                          src=body.get('src'))
         except (ValueError, binascii.Error) as e:
             return self._json(400, {'error': str(e)})
+        # the owner's own change on the sheet is his approval for that enemy: re-pin it in a book already
+        # approved (assets/plates/approved/, tools/plates_pin.mjs), or the player would keep the old one
+        if os.path.isfile(os.path.join(ROOT, 'assets', 'plates', 'approved', hit[0] + '.json')):
+            subprocess.run(['node', os.path.join('tools', 'plates_pin.mjs'), hit[0], '--approve-name', str(body.get('enemy') or '')],
+                           cwd=ROOT, capture_output=True, timeout=120)
         return self._json(200, {'entry': entry, 'message': msg})
 
     def _map_run(self, book, step, q):

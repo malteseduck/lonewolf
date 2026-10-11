@@ -82,7 +82,8 @@ code is `tools/serve.py` from the working copy, read when it starts.
   icons, static `import ... from` (relative to the module), `fetch('a literal path')`, CSS `url()`
   (`fonts.css` brings the woff2), and the `<script>` tags `data/projectaon/index.js` writes, which
   bring each `book.js`; a `book.js` brings the images it names (pictures and its one map), and
-  `assets/plates/plates.json` and `art/manifest.json` the pictures they name. Paths built at
+  `assets/plates/plates.json`, `art/manifest.json` and `assets/plates/approved/*.json` (added to the
+  walk, as main.js builds their paths) the pictures they name. Paths built at
   runtime cannot be followed, so `OFFLINE_DIRS` keeps `assets/icons/*.svg` whole (main.js builds
   `assets/icons/${name}.svg`); a new file loaded that way needs a rule there. Map work files
   (`data/projectaon/<code>/work/`), section pages, prototypes, docs and tools stay on the PC.

@@ -26,6 +26,7 @@ Magnakai and overrides some functions).
   stored: [ids],             // Special Items left at the Kai Monastery (Book 5 on): kept, not usable
   storedGold: 0,             // Gold Crowns left there (Book 6 on)
   cured: 'code',             // the book an Archmaster last used Curing's 20 in
+  completed: ['01fftd', ...], // the books he had completed when he set out on this one (from LW.Character's record; [] when new)
   found,                     // transient flag used for a toast after creation
 }
 ```
@@ -96,7 +97,7 @@ Adds `bow` and `quiver` to `LW.ITEMS`.
 | Series table | `LW.SERIES.kai` / `.magnakai`: `list`, `first` (disciplines for a new character), `field` (hero property), `ranks` |
 | Lore-circles | `LW.CIRCLES`; `LW.circlesOf(hero)`; `settleCircles(hero)` adds circle Endurance once |
 | Discipline tests | `LW.has(hero, id)` checks both lists. `LW.owned(hero, series)`, `LW.rankOf`, `LW.rankCount` |
-| Series-dependent effects | `LW.heals`, `LW.hunts`, `LW.shielded`, `LW.mindPower` (0 none, 1 Mindblast, 2 Psi-surge), `LW.psi(hero)` (Psi-surge's `surge`, `cost`, `floor`, Mindblast's `blast`: an Archmaster's +6, 1, 4, +3, else +4, 2, 6, +2) |
+| Series-dependent effects | `LW.heals`, `LW.hunts` (in a Magnakai book, Healing and Hunting too for one who completed Books 1-5: `LW.completedAll(hero, 1, 5)`, ADR 0018; `LW.huntNote` then reminds that Hunting fails in desert and wasteland), `LW.shielded`, `LW.mindPower` (0 none, 1 Mindblast, 2 Psi-surge), `LW.psi(hero)` (Psi-surge's `surge`, `cost`, `floor`, Mindblast's `blast`: an Archmaster's +6, 1, 4, +3, else +4, 2, 6, +2) |
 | Improved disciplines | `LW.mkRank(hero)`: the number of Magnakai Disciplines. Weaponmastery +4 at Scion-kai (8); unarmed with Weaponmastery −2 at Tutelary (5), −1 at Scion-kai; Psi-surge as above; `LW.canCure(hero, book)`: an Archmaster's Curing, once a book |
 | Bow | `bow` is `ranged`: never the weapon in hand unless the fight names it (`ctx.with`). `LW.bowShot(hero)`: `{why}` with no Bow or Arrow, else `{bow, parts, plus}`: Weaponmastery with the Bow +3, and from Mentora (7) +2 more, both only with the Bow mastered, a book bow's own `shot` |
 | Starting kits | `LW.KITS[number]`: `give`, `choose`, `from`, `store`, `storeGold`, `newOnly`, `wear` (rules-books.md, "Book addenda") |
@@ -118,7 +119,9 @@ book allows, Special Items left at or taken from the Monastery. Begin waits unti
 On confirm it sets `hero.series`, settles Lore-circles and restores Endurance to maximum.
 
 In a Magnakai book `heals`, `hunts`, `shielded`, `mindPower` and the weapon bonus look only at
-Magnakai disciplines. That is an interpretation flagged in the spec.
+Magnakai disciplines, except that one who completed Books 1-5 also heals and hunts by his Kai
+Disciplines (spec 4.2, ADR 0018). `hero.completed` is set when setting out; a hero saved before
+2026-10-11 has none and counts as no veteran until his next book.
 
 ## Combat procedure
 
@@ -129,7 +132,7 @@ the weapon (`B.weapon`, `LW.armedWith`). Per round: spin the dial, `LW.combatRou
 apply both losses (the foe's doubled when `combat.double`, or when it is `undead` and the weapon in
 hand has `undead`, as the Sommerswerd does), then the foe's `drain` in Endurance unless he is
 shielded, then Psi-surge's cost if it was active (dropping to Mindblast at its floor; `LW.psi`).
-Evade applies only the hero's loss. The house rule that Laumspur can be drunk mid-fight lives here,
+Evade applies only the hero's loss. A foe `immune: 'psi'` ignores Mindblast and Psi-surge (only a Grand Master's Kai-surge, not in the engine yet, would tell). The house rule that Laumspur can be drunk mid-fight lives here,
 and an Archmaster's Curing (`cure`). Huntmastery drops a `combat.ambush` fight's negative `csMod`.
 The importer's `csIf` / `csUnless` give or spare the `csMod` by `LW.meets`. A foe `immune: true`
 ignores every mind attack; `immune: 'mindblast'` only Mindblast (Psi-surge, and so the +4, still
@@ -143,7 +146,8 @@ not know about Magnakai.
 The books' rules the engine does not apply are marked in rules-books.md (Engine column).
 
 Every rule in rules-books.md is applied, or left to the text where only the text can tell (a
-discipline's wider uses). Not: Grand Master rules (Books 13 on), any rule the importer leaves as
+discipline's wider uses). Not: Grand Master rules (Books 13 on; listed in rules-books.md, the
+work in docs/plan.md), any rule the importer leaves as
 text and no item table covers, Book 3's sledge food. Potions that help in a fight (Alether) are only
 described; their bonus is applied by hand. Bow shots and ambushes work only where a book's item
 table marks them (none yet: Books 1-2 have neither).

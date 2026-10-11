@@ -105,7 +105,8 @@ const ACTIONS = {
   rules: () => [prompt('rules'), mark(4)],
   reading: () => [run('Make reading copy', 'reading')],
   items: (b) => [prompt('items'), run('Check items', 'check-items'), ...(b.items.check?.errors?.length ? [prompt('itemsFix', 'Copy fix prompt')] : [])],
-  pictures: (b) => [prompt('pictures'), { t: 'sheet', label: 'Open picture sheet here' }, link('On its own', `fights.html?book=${b.code}`), mark(6)],
+  pictures: (b) => [prompt('pictures'), { t: 'sheet', label: 'Open picture sheet here' }, link('On its own', `fights.html?book=${b.code}`), mark(6),
+    ...(b.pins?.waiting ? [run('Approve picture changes...', 'approve-pictures', { gate: 'pictures' })] : [])],
   testplay: () => [prompt('testplay'), link('Test address', 'http://127.0.0.1:8766/'), mark(7)],
   map: () => [{ t: 'map', label: 'Open map editor here' }],
 };
@@ -251,6 +252,13 @@ function gate(kind, b) {
       ${first ? '' : '<p class="hint">After an importer change, "Re-import all and compare" also checks no other book got worse.</p>'}`;
     ackText = `I approve ${first ? 'importing' : 're-importing'} Book ${b.n}.`;
     okText = first ? `Import Book ${b.n}` : `Re-import Book ${b.n}`;
+  } else if (kind === 'pictures') {
+    const p = b.pins;
+    title = `Approve Book ${b.n}'s new fight pictures?`;
+    body = `<p>${p.waiting} fight${p.waiting === 1 ? '' : 's'} would now show another picture than the one you approved on ${esc(p.approved || '?')} (sections ${esc(p.sections.join(', '))}). Until you approve, the player keeps the approved ones.</p>
+      <p class="hint">Look at them first on the picture sheet: each changed card says so.</p>`;
+    ackText = `I approve the new fight pictures for Book ${b.n}.`;
+    okText = 'Approve';
   } else if (kind === 'release') {
     const r = b, cur = r.current || {}, same = cur.commit === r.head.commit;
     value = 'all';

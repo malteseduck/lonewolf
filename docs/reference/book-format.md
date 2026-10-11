@@ -108,7 +108,7 @@ how the books are written: draw first, then one choice per range.
   enemies: [{ name, cs, ep,
               sprite,        // 'kraan' | 'giak' | 'vordak' | 'emblem': which drawn plate to use if there is no art
               art,           // imported: illustration file to use as the plate
-              immune,        // true: mind attacks have no effect; 'mindblast': Mindblast has none, Psi-surge works
+              immune,        // true: mind attacks have no effect; 'mindblast': Mindblast has none, Psi-surge works; 'psi': neither, only Kai-surge (Grand Master) works
               drain,         // imported too where the text says so: Endurance lost each round unless shielded (Mindshield, Psi-screen)
               mindforce }],  // authored: CS penalty the enemy inflicts unless the hero is shielded
   evade: { after, to, within }, // evasion allowed once `after` rounds have been fought (and, with within, before that many are); go to `to`

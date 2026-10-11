@@ -1,0 +1,33 @@
+{
+ "_readme": "The fight pictures the owner approved for this book (step 6 marked done): the player shows these whatever plates.json or a re-import would now pick. Keyed by section/enemy number; name is a hash of the enemy's name, so a pin is not used for another enemy; plate is {src, crop?, levels?} or null for the drawn emblem. Written by tools/plates_pin.mjs; see docs/reference/interface.md, Art pipeline.",
+ "approved": "2026-10-11",
+ "pins": {
+  "12/0": {"name":"1gmtqma","plate":{"src":"assets/plates/beast-gevaudan.jpg"}},
+  "37/0": {"name":"1mu48qv","plate":{"src":"data/projectaon/06tkot/ill19.png"}},
+  "42/0": {"name":"xt3rgj","plate":{"src":"art/plates/thief-hooded-swordsman.webp"}},
+  "47/0": {"name":"1jc4cs7","plate":{"src":"data/projectaon/06tkot/ill3.png"}},
+  "71/0": {"name":"15e5036","plate":{"src":"data/projectaon/06tkot/ill5.png"}},
+  "77/0": {"name":"j5z5vi","plate":{"src":"data/projectaon/06tkot/ill6.png"}},
+  "78/0": {"name":"dl25qa","plate":{"src":"data/projectaon/06tkot/ill13.png"}},
+  "92/0": {"name":"19zyf6q","plate":{"src":"data/projectaon/06tkot/ill18.png"}},
+  "114/0": {"name":"lp20db","plate":{"src":"art/plates/rogue-sneaking.webp","crop":[0.1,0.25,0.76,0.56]}},
+  "116/0": {"name":"8qgeuy","plate":{"src":"data/projectaon/06tkot/ill8.png"}},
+  "138/0": {"name":"k8opy8","plate":{"src":"data/projectaon/06tkot/ill7.png","crop":[0,0,1,0.6]}},
+  "155/0": {"name":"1gmtqma","plate":{"src":"assets/plates/beast-gevaudan.jpg"}},
+  "156/0": {"name":"1esiutv","plate":{"src":"assets/plates/prison-door-piranesi.jpg"}},
+  "159/0": {"name":"6znq1f","plate":{"src":"data/projectaon/06tkot/ill1.png","crop":[0,0.33,0.72,0.4]}},
+  "164/0": {"name":"mejai1","plate":{"src":"data/projectaon/06tkot/ill11.png"}},
+  "194/0": {"name":"16yl7g3","plate":{"src":"data/projectaon/06tkot/ill10.png"}},
+  "201/0": {"name":"1tpup18","plate":{"src":"data/projectaon/06tkot/ill1.png","crop":[0,0.62,0.62,0.38]}},
+  "208/0": {"name":"1mu48qv","plate":{"src":"data/projectaon/06tkot/ill19.png"}},
+  "215/0": {"name":"uovmsj","plate":{"src":"art/plates/sailor-on-deck.png","crop":[0.1425,0.0375,0.6325,0.7388]}},
+  "234/0": {"name":"mejai1","plate":{"src":"data/projectaon/06tkot/ill11.png"}},
+  "254/0": {"name":"12fi7vt","plate":{"src":"data/projectaon/06tkot/ill6.png"}},
+  "270/0": {"name":"j2uieo","plate":{"src":"data/projectaon/06tkot/ill16.png"}},
+  "282/0": {"name":"iw52ys","plate":{"src":"art/plates/rogue-helmeted-dagger.png","crop":[0.1,0,0.8,0.75]}},
+  "283/0": {"name":"mejai1","plate":{"src":"data/projectaon/06tkot/ill11.png"}},
+  "337/0": {"name":"e6hd03","plate":{"src":"data/projectaon/02fotw/ill16.png","crop":[0,0.15,1,0.73]}},
+  "343/0": {"name":"1gmtqma","plate":{"src":"assets/plates/beast-gevaudan.jpg"}},
+  "344/0": {"name":"15lf82a","plate":{"src":"data/projectaon/06tkot/ill20.png"}}
+ }
+}

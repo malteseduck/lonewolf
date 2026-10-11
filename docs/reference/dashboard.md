@@ -47,7 +47,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
 | 4 Rules | both | a `### Book N,` heading in `rules-books.md` and a hand mark |
 | Reading copy | files | `reading.txt` and `items-reading.txt` newer than `book.js` (not a checklist step) |
 | 5 Item table | files | `items-<code>.js` registered in `main.js` `ITEM_TABLES`, and `check-items.json` (from `check_items.mjs --json`) clean and newer than the table and `book.js` |
-| 6 Fight pictures | both | every enemy in `book.js` has a plate of its own or a `plates.json` match (the importer's "0 with none", worked out afresh, so a new `plates.json` entry counts at once), and the owner's hand mark once they have looked at the sheet. All pictured but not marked is a warning |
+| 6 Fight pictures | both | every enemy in `book.js` has a plate of its own or a `plates.json` match (the importer's "0 with none", worked out afresh, so a new `plates.json` entry counts at once), and the owner's hand mark once they have looked at the sheet. All pictured but not marked is a warning. Marking it done pins every fight's picture (`assets/plates/approved/<code>.json`, `plates_pin.mjs --approve`); unmarking lets them go. A fight that would now show another picture (a `plates.json` change, a re-import) is a warning naming its sections, with **Approve picture changes...** (gated); until then the player keeps the approved picture. The owner's own change on the sheet re-pins that enemy at once |
 | 7 Test play | hand | marked |
 | 8 Map | files | `map-4k.webp` made and named by `book.js` |
 
@@ -93,6 +93,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `import` | `import_projectaon.py <code>` (books the importer knows) | yes, every time: it rewrites `book.js` |
 | `reading` | `reading_copy.py <code>`, then `item_sections.py <code>` | |
 | `check-items` | `node check_items.mjs <code> --json` | |
+| `approve-pictures` | `node plates_pin.mjs <code> --approve` | gated: the owner's approval of changed fight pictures |
 | `offline` | `offline_check.py` | |
 | `syntax` | `syntax_check.py` | |
 | `reimport-all` | `reimport_all.py` | yes |

@@ -4,6 +4,7 @@
 import * as Ink from './shared/ink.js';
 import { drawCreature, setArt, setEmblem, newWound, heroFromArt, portraitFromArt, drawFrame, drawBanner, drawCrest, gearSVG } from './plates.js';
 import { printedCanvas } from './maps.js';
+import { compilePlates, pickPlate, pinKey } from './platepick.js';
 
 import * as ITEMS_01 from './items-01fftd.js';
 import * as ITEMS_02 from './items-02fotw.js';
@@ -208,6 +209,7 @@ function useBook(id) {
   book = BOOKS[id]; applyItems(book);
   LW.bookNumber = book.number || 0; // the Special Item limit depends on it
   game = new LW.Game(book, saveKey(adv.at, id)); game.keep = REWIND;
+  loadPins(id);
   adventure().book = id; keepAdventures();
 }
 const asset = (f) => (book.assets || '') + f;
@@ -1021,8 +1023,9 @@ async function startBattle() {
   // mind: 0 at rest, 1 Mindblast, 2 Psi-surge. power is the most this character can do.
   B = { c, i: -1, foe: null, img: null, power: LW.mindPower(hero), mind: LW.mindPower(hero) ? 1 : 0, rounds: 0, log: [], over: null, lock: false, scene: sec.scene, node, dial,
     fx: { lunge: 0, hit: 0, dead: 0, wounds: [] },
-    // immune: true, to every attack of the mind; 'mindblast', to Mindblast only (Psi-surge still tells)
-    blasting() { return this.foe.immune === true || (this.foe.immune && this.mind === 1) ? 0 : this.mind; },
+    // immune: true, to every attack of the mind; 'mindblast', to Mindblast only (Psi-surge still tells);
+    // 'psi', to Mindblast and Psi-surge (only a Grand Master's Kai-surge tells, which the engine lacks yet)
+    blasting() { return allDeaf(this.foe) || (this.foe.immune && this.mind === 1) ? 0 : this.mind; },
     cs() { return LW.heroCS(hero, { mindblast: this.blasting() === 1, psiSurge: this.blasting() === 2, enemy: this.foe, csMod, csNote: note, with: c.with }).total; },
     weapon: LW.armedWith(hero, { with: c.with }),
     ratio() {
@@ -1058,19 +1061,25 @@ async function startBattle() {
   })();
 }
 /* the foe no mind attack of his can touch: immune to all, or to Mindblast when that is all he has */
-const deaf = (foe) => foe.immune === true || (!!foe.immune && B.power === 1);
+const allDeaf = (foe) => foe.immune === true || foe.immune === 'psi';
+const deaf = (foe) => allDeaf(foe) || (!!foe.immune && B.power === 1);
 function nextFoe() {
   B.i++; B.foe = Object.assign({}, B.c.enemies[B.i]); B.foe.max = B.foe.ep;
   B.fx.dead = 0; B.fx.wounds = []; B.img = null;
-  // the section's own illustration, else one from the plate library (an entry with a book is for that book only), else the drawn emblem;
-  // a library entry marked over is the owner's choice and wins even over the section's own
-  const foe = B.foe, fits = (p) => (!p.book || p.book === book.id) && p.re.test(foe.name);
-  const lib = PLATES.find((p) => p.over && fits(p)) || (!foe.art && PLATES.find(fits)), src = lib && (lib.over || !foe.art) ? lib.src : foe.art ? asset(foe.art) : null;
-  if (src) { const im = new Image(); im.crop = lib && lib.crop; im.levels = lib && lib.levels; im.onload = () => { if (B && B.foe === foe) B.img = im; }; im.src = src; }
+  // the approved picture, else the plate library's or the section's own, else the drawn emblem (platepick.js)
+  const foe = B.foe, plate = pickPlate(foe, book, PLATES, PINS[book.id], pinKey(game.s.at, B.i));
+  if (plate) { const im = new Image(); im.crop = plate.crop; im.levels = plate.levels; im.onload = () => { if (B && B.foe === foe) B.img = im; }; im.src = plate.src; }
 }
 /* assets/plates/plates.json: pictures for enemies the book does not picture */
 let PLATES = [];
-fetch('assets/plates/plates.json').then((r) => r.json()).then((j) => { PLATES = j.plates.map((p) => Object.assign({ re: new RegExp(p.match, 'i') }, p)); }).catch(() => {});
+fetch('assets/plates/plates.json').then((r) => r.json()).then((j) => { PLATES = compilePlates(j.plates); }).catch(() => {});
+/* assets/plates/approved/<book>.json: the pictures the owner approved, kept whatever plates.json now picks */
+const PINS = {};
+function loadPins(id) {
+  if (id in PINS) return;
+  PINS[id] = null;
+  fetch(`assets/plates/approved/${id}.json`).then((r) => (r.ok ? r.json() : null)).then((j) => { PINS[id] = (j && j.pins) || null; }).catch(() => {});
+}
 function updateBattle() {
   const hero = game.hero, foe = B.foe, q = (k) => B.node.querySelector(`[data-b=${k}]`), r = B.ratio();
   q('name').textContent = foe.name;
@@ -1102,7 +1111,7 @@ async function battleAct(id) {
   const hero = game.hero, foe = B.foe;
   B.lock = true; updateBattle();
   if (id === 'mind') {
-    if (deaf(foe)) B.log.push(`${foe.name} is immune to ${foe.immune === true ? 'attacks of the mind' : 'Mindblast'}.`);
+    if (deaf(foe)) B.log.push(`${foe.name} is immune to ${foe.immune === true ? 'attacks of the mind' : foe.immune === 'psi' ? 'Mindblast and Psi-surge' : 'Mindblast'}.`);
     else {
       B.mind = (B.mind + 1) % (B.power + 1);
       if (B.mind === 2 && hero.ep <= LW.psi(hero).floor) { B.mind = 0; B.log.push('You are too weak to Psi-surge.'); }

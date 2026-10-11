@@ -102,8 +102,14 @@ apply.
   | Solaris | Invisibility, Huntmastery, Pathsmanship | +1 | +3 |
   | Spirit | Psi-surge, Psi-screen, Nexus, Divination | +3 | +3 |
 - Psi-surge cannot be used when Endurance is 6 or less.
-- In a Magnakai book only Magnakai Disciplines have mechanical effect (Book 6 restates the Kai
-  effects as Magnakai ones: Weaponmastery for weapons, Huntmastery for Meals).
+- In a Magnakai book the Magnakai Disciplines have mechanical effect (Book 6 restates the Kai
+  effects as Magnakai ones: Weaponmastery for weapons, Huntmastery for Meals). Only a character
+  who completed Books 1–5 also keeps Healing's +1 (never added to Curing's) and Hunting's spared
+  Meals, as the Lone Wolf Club newsletters rule (ADR 0018).
+- **Grand Master series** (Book 13 on; not in the engine yet): twelve Grand Master Disciplines, four
+  to begin with. The earlier disciplines are held for the text's gates; their numbers count only
+  for a carried character, for the Magnakai Disciplines he chose, each replaced by its Grand Master
+  counterpart (ADR 0018). The rules are in rules-books.md, the readings in ADR 0019.
 - From Book 7, ranks improve some disciplines; the engine applies them as rules-books.md
   ("Improved Disciplines") lists them.
 
@@ -171,7 +177,8 @@ shown and the by-hand controls do it. Each object has one identity across all bo
 
 - Completing a book saves the character: scores, disciplines of every series, weapons, Special
   Items, gold, mastered weapons. As the books' rules say, the Backpack's contents and Meals do not
-  carry over: the next book starts with an empty Backpack.
+  carry over: the next book starts with an empty Backpack. Into a Grand Master book the Backpack
+  Items do carry, Meals still not; and only the Special Items on that series' list (ADR 0011).
 - Starting a book that the saved character has not completed uses that character **by default**.
   Endurance is restored to maximum and the character chooses the discipline(s) it has earned.
 - The player can always choose to roll a new character for any book instead.

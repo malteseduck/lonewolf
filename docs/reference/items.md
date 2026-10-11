@@ -147,6 +147,10 @@ carried character).
 
 ## Fight pictures
 
+Once the owner marks step 6 done, each fight's picture is pinned (ADR 0020): an entry added to
+`plates.json` later, or a re-import, changes nothing in the player until the owner approves it on the
+dashboard. `node tools/plates_pin.mjs <code>` lists what would change. Do not run `--approve` yourself.
+
 The importer gives a fight its section's full-page illustration, or one from another section of
 the same book where that enemy is fought and pictured (`PLATE_FIXES`). Its report then counts
 the enemies "with none". For each, add an entry to `assets/plates/plates.json` (first match on

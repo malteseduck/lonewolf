@@ -41,9 +41,19 @@
   LW.rankOf = (hero) => seriesOf(hero).ranks[LW.owned(hero).length] || '';
   LW.rankCount = (hero) => LW.owned(hero).length;
   LW.circlesOf = (hero) => (hero.series === 'magnakai' ? LW.CIRCLES.filter((c) => c.needs.every((d) => LW.has(hero, d))) : []);
-  /* In a Magnakai book the Magnakai Disciplines do the work; the Kai ones are taken as read. */
-  LW.heals = (hero) => (hero.series === 'magnakai' ? LW.has(hero, 'curing') && 'Curing' : LW.has(hero, 'healing') && 'Healing');
-  LW.hunts = (hero) => (hero.series === 'magnakai' ? LW.has(hero, 'huntmastery') && 'Huntmastery' : LW.has(hero, 'hunting') && 'Hunting');
+  /* hero.completed: the books (ids) he had completed when he set out on this one */
+  LW.completedAll = (hero, from, to) => {
+    const done = new Set((hero.completed || []).map((id) => parseInt(id, 10)));
+    for (let n = from; n <= to; n++) if (!done.has(n)) return false;
+    return true;
+  };
+  /* In a Magnakai book the Magnakai Disciplines do the work; the Kai ones are taken as read, except
+     that one who played Books 1-5 keeps Healing's +1 (never added to Curing's) and Hunting's Meals
+     (ADR 0018). The Magnakai books do not mark where Hunting fails, so it says so. */
+  const kaiVeteran = (hero) => LW.completedAll(hero, 1, 5);
+  LW.heals = (hero) => (hero.series === 'magnakai' ? (LW.has(hero, 'curing') && 'Curing') || (kaiVeteran(hero) && LW.has(hero, 'healing') && 'Healing') : LW.has(hero, 'healing') && 'Healing');
+  LW.hunts = (hero) => (hero.series === 'magnakai' ? (LW.has(hero, 'huntmastery') && 'Huntmastery') || (kaiVeteran(hero) && LW.has(hero, 'hunting') && 'Hunting') : LW.has(hero, 'hunting') && 'Hunting');
+  LW.huntNote = (hero) => (LW.hunts(hero) === 'Hunting' && hero.series === 'magnakai' ? ' Hunting fails in desert and wasteland: if this is such a place, eat a Meal by hand.' : '');
   LW.shielded = (hero) => (hero.series === 'magnakai' ? LW.has(hero, 'psiScreen') : LW.has(hero, 'mindshield'));
   /* Psi-surge's numbers: an Archmaster's are stronger and cheaper (Book 12) */
   LW.psi = (hero) => (LW.mkRank(hero) >= 9 && LW.has(hero, 'psiSurge') ? { surge: 6, cost: 1, floor: 4, blast: 3 } : { surge: 4, cost: 2, floor: 6, blast: 2 });
@@ -173,6 +183,7 @@
         out[S.field] = [...owned, ...this.picked];
         if (series === 'kai' && this.picked.has('weaponskill') && !out.weaponskill) out.weaponskill = LW.WEAPONSKILL_TABLE[LW.rand10()];
         out.mastery = [...oldMastery, ...this.weapons];
+        out.completed = carry ? [...(carry.completed || [])] : []; // for rules that reward having played earlier books
         delete out.found;
         return out;
       },

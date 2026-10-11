@@ -1,7 +1,7 @@
 # Plan and state
 
 Working notes: work that is not a book step, decisions made, and what the player can do. Rough; to
-be refined with the owner. Last updated 2026-10-09.
+be refined with the owner. Last updated 2026-10-10.
 
 Where each book stands, step by step, is not kept here: the import dashboard
 (`http://localhost:8766/tools/admin/`, `docs/reference/dashboard.md`) works it out from the files and
@@ -116,6 +116,45 @@ matching reference file. Not started; the owner picks which, and in what order.
     "stop the fight here" control without the blow, would spare those workarounds until item 8 is done.
 
 Left to the player whatever the engine does: whether to sleep (B2 41), and the puzzles.
+
+### Grand Master series (Book 13 on)
+
+Book 13's rules were read on 2026-10-10 (rules-books.md, "Grand Master series"); the engine has none
+of them. Not started. Until it does, the importer can learn Book 13 but its gates on Grand Master
+Disciplines would never open (no character holds one) and a carried hero would play it by Kai rules.
+
+**Engine work**, roughly in order:
+
+1. A third series in `LW.SERIES` (`grandmaster`: twelve disciplines, `first: 4`, field
+   `grandmaster`, the twelve ranks), and every `series === 'magnakai'` test in `rules-series.js`,
+   `core.js` (`specialLimit`) and `main.js` (Lore-circles row, `skilled`, the ambush) made to say what
+   a Grand Master book does.
+2. Setting out: a new character 25 + RN / 30 + RN, holding all Kai and Magnakai Disciplines; four
+   Grand Master Disciplines; Grand Weaponmastery's two weapons (then one a book, as Weaponmastery's
+   three then one); from Book 14, +1 COMBAT SKILL and +2 ENDURANCE for each discipline past four.
+3. Carrying into the series: the Backpack kept, Special Items cut to the ten listed, Lore-circle
+   COMBAT SKILL folded into his base score (the engine adds it per fight, and only in Magnakai books).
+4. Book 13's kit in `LW.KITS[13]` (gold 20 + RN; choose 5), a Backpack of 10 (`LW.MAX_BACKPACK` per
+   series), the 12 Special Item limit and Monastery storage in this series too.
+5. Disciplines with numbers: Grand Weaponmastery +5 (replacing Weaponmastery, not added; Bow +5,
+   Mentora's +2 not added), Kai-surge (+8 at 1 a round, Mindblast +4, not at 6 or less) in `LW.psi` and
+   the fight's medallions, Deliverance (20 back at 8 or less, in the fight like Archmaster Curing),
+   Grand Huntmastery in `LW.hunts`; a foe immune to Mindblast and Psi-surge but not Kai-surge (Book 13
+   has 8: 31, 45, 120, 156, 157, 186, 212, 243; 295 is Mindblast only, which the importer reads).
+6. The Kai sheet's grid of twelve disciplines and their glyphs, the ranks, and the title shelf
+   (`SERIES_TITLES` stops at 12).
+
+**Decided 2026-10-10** (the Readers' Handbook downloaded that day, then the owner): ADR 0018 (which
+earlier disciplines keep their numbers: a carried character's chosen Magnakai ones, replaced by
+their Grand Master counterparts), ADR 0011 amended (Backpack Items carry into the series, Meals not),
+ADR 0019 (other Special Items dropped, Deliverance once a book, no re-roll). Step 2 above follows
+them: the scores carried with every bonus; step 3 cuts the Special Items and keeps the Backpack.
+
+### Kai Disciplines in the Magnakai books (ADR 0018, decided 2026-10-10)
+
+Done 2026-10-11 (rules-engine.md): `hero.completed`, set when setting out, decides it. Hunting
+spares the Meal except where `noHunt` is marked, and says to eat by hand in desert or wasteland
+(the owner's choice). Item tables could mark such Magnakai sections `noHunt`; none do yet.
 
 ### Book notes outside the steps
 

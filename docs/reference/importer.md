@@ -60,6 +60,11 @@ Heuristics layered on top, all by regular expression:
   of Fire", "possess the Lore-circle of ...") and, for Random Number bonuses, his Endurance ("your current ENDURANCE point total is
   less than 10"), joined by "and have ...". Anything else in it (an item, a weapon in hand, "or have
   reached") and the rule is not read. Written as in book-format.md, Conditions.
+  In a Grand Master book (Book 13 on) a discipline is also read as "the Grand Master Discipline of
+  X", "(the) Grand Mastery of X", "Mastery of X", "the Discipline of X" or bare ("If you possess
+  Kai-screen"); a name that is not a discipline still leaves the rule unread. "Grand Mastery of
+  Nexus" is Grand Nexus. "Grand Weaponmastery (with Bow)" is not read: it needs the Bow mastered.
+  The twelve Grand Master ranks are known, though Book 13 gates on none.
 - **Gates** (`gate()`): the choice's condition, up to its first comma or "turn to". Negative
   phrasings ("if you do not have", "have yet to", "neither") are left open. "X, or have reached the rank of Y" (parts joined by "or (if you) have/possess/reached/attained") is split and each part read as a condition; if all parse, `need: {any: [...]}`, else the choice is left open. A
   looser reading still gates "If you wish to use the Kai Discipline of X ...".
@@ -79,7 +84,8 @@ Heuristics layered on top, all by regular expression:
   "after the first round" and "until the beginning of the third round" set the wait; "in the first
   round of combat only" sets `within: 1`.
 - **Mind immunity**: "immune to Mindblast / Psi-surge" in the section; "immune to Mindblast (but
-  not Psi-surge)" makes it `'mindblast'`.
+  not Psi-surge)" makes it `'mindblast'`; "immune to Mindblast and Psi-surge (but not Kai-surge)" or
+  "...; only (the Grand Mastery of) Kai-surge" makes it `'psi'`.
 - **Mind drain**: "Unless you possess the Discipline of Mindshield (Psi-screen in a Magnakai
   book), deduct N ENDURANCE points every round" sets each enemy's `drain`.
 - **Combat Skill adjustment** (`cs_rule()`): one sentence that adds to, deducts from or reduces
@@ -148,6 +154,10 @@ evasion. Every book: no broken links, none without a way on.
 | 10 | 350 | 43 | 19 (16) / 8 | 32 / 15 / 2 | 44 | 15 / 0 | 0 | 9 | 4 / 10 (10) / 0 / 5 | 14 / 1 / 15 |
 | 11 | 350 | 40 | 19 (12) / 10 | 52 / 21 / 1 | 34 | 12 / 0 | 0 | 8 | 2 / 22 (21) / 0 / 4 | 4 / 3 / 18 |
 | 12 | 350 | 65 | 30 (24) / 10 | 40 / 25 / 2 | 42 | 20 / 0 | 0 | 8 | 0 / 21 (15) / 2 / 9 | 10 / 9 / 20 |
+
+Book 13, a trial run into the scratchpad (2026-10-10, not imported): 350 sections, 51 with combat;
+Random 21 (15) / 14; gates 51 / 0 / 0; 42 illustrated; 9 dead ends; 3 puzzles; 10 Meals; fights 5 / 9
+(1) / 0 / 4, eight of the nine `'psi'`.
 
 Introductions: 7, 7, 9, 4, 10, 7, 10, 10, 8, 9, 8, 8 paragraphs. The free Random Number sections
 left are those where the number counts gold or Endurance, plays a game, or is changed by a bow, a

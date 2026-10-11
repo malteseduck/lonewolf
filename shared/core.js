@@ -161,6 +161,7 @@
   /* Series rules (rules-series.js) replace these; each returns the discipline's name, or false. */
   LW.heals = (hero) => LW.has(hero, 'healing') && 'Healing';
   LW.hunts = (hero) => LW.has(hero, 'hunting') && 'Hunting';
+  LW.huntNote = () => ''; // a caveat said after the Meal is spared
   LW.rankCount = (hero) => hero.disciplines.length;
   /* An imported condition, {disc: id | [ids] (any of them; all with every), rank, circle: [names] (all), ep: [lo, hi] (his Endurance now), item: id | [ids] (any held)}:
      whether he meets it, and what it reads as. The functions are looked up late: rules-series.js replaces them. */
@@ -247,7 +248,7 @@
         events.push('A Meal is lost from your pack.');
       }
       if (sec.meal) {
-        if (LW.hunts(hero) && !sec.noHunt) events.push(`${LW.hunts(hero)}: you catch what you need and keep your Meals.`);
+        if (LW.hunts(hero) && !sec.noHunt) events.push(`${LW.hunts(hero)}: you catch what you need and keep your Meals.${LW.huntNote(hero)}`);
         else if (hero.meals > 0) { hero.meals -= 1; events.push('You eat a Meal.'); }
         else if (hero.backpack.some((b) => LW.ITEMS[b] && LW.ITEMS[b].meal)) {
           const food = hero.backpack.find((b) => LW.ITEMS[b] && LW.ITEMS[b].meal), heal = LW.ITEMS[food].heal || 0;

@@ -32,6 +32,7 @@ DATA = os.path.join(ROOT, 'data', 'projectaon')
 STATUS = os.path.join(ROOT, 'docs', 'book-status.json')
 CHECKLIST = os.path.join(ROOT, 'docs', 'book-checklist.md')
 IMPORTER = os.path.join(ROOT, 'tools', 'import_projectaon.py')
+PINS = os.path.join(ROOT, 'assets', 'plates', 'approved')  # the fight pictures approved at step 6 (tools/plates_pin.mjs)
 
 # Codes as Project Aon's /en/xhtml/lw/ listing names the folders (read 2026-10-08)
 CATALOGUE = [
@@ -148,6 +149,29 @@ def import_stats(code, js_path, plates_path):
     _cache.clear()
     _cache[key] = out
     return out
+
+
+_pin_cache = {}
+
+
+def pin_report():
+    """Each book with approved fight pictures, against what plates.json and its book.js would show now:
+    {code: {approved, fights, changed: [{key, was, now}], unpinned: [...], gone: [...]}} (tools/plates_pin.mjs --all)."""
+    files = sorted(glob.glob(os.path.join(PINS, '*.json')))
+    if not files:
+        return {}
+    codes = [os.path.basename(f)[:-5] for f in files]
+    key = tuple(mtime(f) for f in files) + tuple(mtime(os.path.join(DATA, c, 'book.js')) for c in codes) + (
+        tuple(codes), mtime(os.path.join(ROOT, 'assets', 'plates', 'plates.json')), mtime(os.path.join(ROOT, 'platepick.js')))
+    if key not in _pin_cache:
+        p = subprocess.run(['node', os.path.join('tools', 'plates_pin.mjs'), '--all', '--json'], cwd=ROOT, capture_output=True, text=True, timeout=120)
+        try:
+            out = json.loads(p.stdout)
+        except ValueError:
+            out = {}
+        _pin_cache.clear()
+        _pin_cache[key] = out
+    return _pin_cache[key]
 
 
 def map_stage(code, d, imp):
@@ -283,8 +307,19 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
         ev = f"{imp['bare']} of {imp['kinds']} kinds of enemy have no picture"
         st['pictures'] = {'state': 'warn' if m6 else 'todo', 'src': 'disk', 'num': imp['bare'],
                           'ev': f'Marked done {m6}, but {ev[0].lower()}{ev[1:]}' if m6 else ev}
+    elif m6 and not os.path.isfile(os.path.join(PINS, code + '.json')):
+        b['pins'] = {'waiting': imp['fights'], 'approved': m6, 'sections': ['all']}
+        st['pictures'] = {'state': 'warn', 'src': 'disk',
+                          'ev': f"Marked done {m6}, but the approved pictures are not kept yet: Approve picture changes to keep them"}
+    elif m6 and (pin_report().get(code) or {}).get('changed', []) + (pin_report().get(code) or {}).get('unpinned', []):
+        pr = pin_report()[code]
+        diff = pr['changed'] + pr['unpinned']
+        secs = sorted({d['key'].split('/')[0] for d in diff}, key=lambda s: int(s) if s.isdigit() else 0)
+        b['pins'] = {'waiting': len(diff), 'approved': pr.get('approved'), 'sections': secs}
+        st['pictures'] = {'state': 'warn', 'src': 'disk', 'num': len(diff),
+                          'ev': f"{len(diff)} fight{'s' if len(diff) > 1 else ''} would show another picture than you approved on {pr.get('approved')} (sections {', '.join(secs[:12])}{'...' if len(secs) > 12 else ''}); the player keeps the approved ones until you approve"}
     elif m6:
-        st['pictures'] = {'state': 'done', 'ev': f"All {imp['kinds']} kinds of enemy have a picture; sheet looked at, marked done {m6}", 'src': 'hand'}
+        st['pictures'] = {'state': 'done', 'ev': f"All {imp['kinds']} kinds of enemy have a picture; sheet looked at, marked done {m6}; those pictures are kept", 'src': 'hand'}
     else:
         st['pictures'] = {'state': 'warn', 'ev': f"All {imp['kinds']} kinds of enemy have a picture; waiting for your look at the sheet", 'src': 'disk'}
     st['testplay'] = handed(7, 'Every gate, fight and draw tried with test characters')
@@ -368,6 +403,12 @@ def mark(code, step, undo=False, run_checks=True):
         else:
             marks[str(step)] = datetime.date.today().isoformat()
         save_hand(data)
+        if step == 6:  # approved fight pictures are kept as they are now, and let go when unmarked
+            if undo:
+                if os.path.isfile(os.path.join(PINS, code + '.json')):
+                    os.remove(os.path.join(PINS, code + '.json'))
+            else:
+                subprocess.run(['node', os.path.join('tools', 'plates_pin.mjs'), code, '--approve'], cwd=ROOT, capture_output=True, timeout=120)
         write_checklist()
         return True, f"Book {n} step {step} ({STEPS[step][1].split(';')[0]}): {'unmarked' if undo else 'marked done'}"
     if undo:
