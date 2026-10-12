@@ -1,0 +1,13 @@
+{
+  "name": "lone-wolf",
+  "private": true,
+  "description": "Tooling only: the player itself needs nothing installed (spec principle 6, ADR 0022).",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "jsdom": "^30.1.2",
+    "vitest": "^5.0.3"
+  }
+}

@@ -1,0 +1,149 @@
+/* tools/check_items.mjs runs on import and takes its ROOT from its own location, so these tests copy it
+   (unchanged) with shared/core.js into a temporary project tree holding stand-in item tables and a
+   stand-in book.js, and run it there as a child process. Nothing from data/projectaon is used. */
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import { spawnSync } from 'child_process';
+import { ROOT } from './helpers.js';
+
+let tmp;
+const w = (rel, text) => { const f = path.join(tmp, rel); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, text); };
+
+const BOOK = `LW.BOOKS['t1'] = { sections: {
+  '1': { choices: [{ to: '2' }, { to: '3' }], rnt: true },
+  '2': { choices: [{ to: '4' }], combat: { csMod: -2, enemies: [{ name: 'Stand-in' }] } },
+  '3': { choices: [] },
+  '4': { choices: [{ to: '1' }], combat: { enemies: [{ name: 'Other' }] } },
+  '5': { choices: [] }
+} };`;
+
+const CLEAN = `export const ITEMS = {
+  thing: { name: 'Thing', kind: 'backpack', glyph: 'present' },
+  blade: { name: 'Blade', kind: 'weapon' },
+};
+export const SECTIONS = {
+  '1': { give: [{ item: 'thing' }, { gold: 5 }], loot: [{ item: 'dagger', or: true, pick: 1 }], take: [{ item: 'thing' }, { weapons: 'all' }], ep: -2, rolls: [{ range: [0, 4], ep: -1, take: [{ backpack: 'all' }] }], todo: 'a reminder', bowShot: { '2': [0, 4], '3': [5, 9] } },
+  '2': { fight: { csMod: -1, mindforce: true, unless: ['thing'], with: 'blade', ambush: true }, need: { '4': { item: 'thing' } } },
+  '4': { need: { '1': { any: [{ item: 'blade' }, { item: ['thing', 'meal'] }] } }, ep: 'full' }
+};`;
+
+beforeAll(() => {
+  tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'lw-check-items-'));
+  fs.mkdirSync(path.join(tmp, 'tools'));
+  fs.copyFileSync(path.join(ROOT, 'tools', 'check_items.mjs'), path.join(tmp, 'tools', 'check_items.mjs'));
+  fs.mkdirSync(path.join(tmp, 'shared'));
+  fs.copyFileSync(path.join(ROOT, 'shared', 'core.js'), path.join(tmp, 'shared', 'core.js'));
+  w('assets/icons/present.svg', '<svg/>');
+  w('items-t1.js', CLEAN);
+  w('items-t2.js', `export const ITEMS = { lamp: { name: 'Lamp', kind: 'backpack' } }; export const SECTIONS = {};`);
+  w('data/projectaon/t1/book.js', BOOK);
+});
+afterAll(() => fs.rmSync(tmp, { recursive: true, force: true }));
+
+const run = (...args) => {
+  const r = spawnSync(process.execPath, [path.join(tmp, 'tools', 'check_items.mjs'), ...args], { encoding: 'utf8' });
+  return { code: r.status, out: r.stdout.trim().split('\n'), stderr: r.stderr };
+};
+/* run the checker on a table with these section entries / items, returning the error lines */
+function errorsOf(sections, items = '') {
+  w('items-t1.js', `export const ITEMS = { thing: { name: 'Thing', kind: 'backpack', glyph: 'present' }, ${items} }; export const SECTIONS = ${JSON.stringify(sections)};`);
+  const r = run('t1');
+  w('items-t1.js', CLEAN);
+  const lines = r.out;
+  return lines[0] === 'no errors' ? [] : lines.slice(0, lines.findIndex((l) => /^\d+ book items/.test(l)));
+}
+
+describe('check_items.mjs', () => {
+  it('says there is no table yet for a book without one, and exits 0', () => {
+    const r = run('zz9');
+    expect(r.code).toBe(0);
+    expect(r.out[0]).toMatch(/^no items-zz9\.js yet/);
+  });
+
+  it('passes a clean table, then counts book items and the sections using each field', () => {
+    const r = run('t1');
+    expect(r.stderr).toBe('');
+    expect(r.out[0]).toBe('no errors');
+    expect(r.out[1]).toBe('2 book items; 3 sections: give 1, loot 1, take 1, ep 2, rolls 1, need 2, fight 1, todo 1');
+  });
+
+  it('defaults to Book 1 (01fftd) when no code is given, saying so when the table is absent here', () => {
+    expect(run().out[0]).toMatch(/^no items-01fftd\.js yet/);
+  });
+
+  it('accepts items defined in other tables and in the engine, and the Meal', () => {
+    // CLEAN already uses dagger (engine) and meal; this adds one from items-t2.js
+    expect(errorsOf({ '1': { give: [{ item: 'lamp' }, { item: 'meal' }] } })).toEqual([]);
+  });
+
+  it.each([
+    ['an item nobody defines in give', { '1': { give: [{ item: 'ghost' }] } }, '1 give: unknown item ghost'],
+    ['an item nobody defines in loot', { '1': { loot: [{ item: 'ghost' }] } }, '1 loot: unknown item ghost'],
+    ['an item nobody defines in take', { '1': { take: [{ item: 'ghost' }] } }, '1 take: unknown item ghost'],
+    ['an empty give entry', { '1': { give: [{}] } }, '1 give: give/loot entry with nothing in it'],
+    ['a section that does not exist', { '99': { ep: 1 } }, 'section 99 does not exist'],
+    ['an unknown field', { '1': { colour: 'red' } }, '1: unknown field colour'],
+    ['an unknown fight field', { '2': { fight: { speed: 3 } } }, '2 fight: unknown field speed'],
+    ['a fight on a section without combat', { '3': { fight: { csMod: -1 } } }, '3: fight, but the section has no combat'],
+    ['an ambush with no COMBAT SKILL lost', { '4': { fight: { ambush: true } } }, '4 fight: ambush, but no COMBAT SKILL lost'],
+    ['rolls where no number is drawn', { '3': { rolls: [{ range: [0, 9], ep: -1 }] } }, '3: rolls, but the section draws no Random Number'],
+    ['a bowShot where no number is drawn', { '3': { bowShot: { '4': [0, 9] } } }, '3: bowShot, but the section draws no Random Number'],
+    ['a bowShot for a choice that is not there', { '1': { bowShot: { '9': [0, 4] } } }, '1: bowShot range for a choice to 9, which it does not have'],
+    ['a bowShot range the wrong way round', { '1': { bowShot: { '2': [5, 1] } } }, '1: bowShot range for 2 must be [lo, hi]'],
+    ['a fight unless naming an unknown item', { '2': { fight: { unless: ['ghost'] } } }, '2 fight: unknown item ghost'],
+    ['a fight with something that is not a weapon', { '2': { fight: { with: 'thing' } } }, '2 fight: with thing, which is not a weapon'],
+    ['a loot pick without or', { '1': { loot: [{ item: 'thing', pick: 1 }] } }, '1 loot: pick without or'],
+    ['an ep that is neither a number nor full', { '1': { ep: 'lots' } }, "1: ep must be a number or 'full'"],
+    ['a need for a choice that is not there', { '1': { need: { '9': { item: 'thing' } } } }, '1: need for a choice to 9, which it does not have'],
+    ['a need for an unknown item', { '1': { need: { '2': { item: 'ghost' } } } }, '1: need for unknown item ghost'],
+    ['a need any-of with an unknown item', { '1': { need: { '2': { any: [{ item: 'ghost' }] } } } }, '1: need for unknown item ghost'],
+    ['a take of weapons other than all or one', { '1': { take: [{ weapons: 'some' }] } }, "1 take: weapons must be 'all' or 'one'"],
+    ['a take of the backpack other than all or items', { '1': { take: [{ backpack: 'some' }] } }, "1 take: backpack must be 'all' or 'items'"],
+    ['a take of special items other than all', { '1': { take: [{ special: 'one' }] } }, "1 take: special must be 'all'"],
+    ['an unknown item in a roll\'s take', { '1': { rolls: [{ range: [0, 9], take: [{ item: 'ghost' }] }] } }, '1 rolls[0]: unknown item ghost'],
+  ])('reports %s', (_, sections, line) => {
+    expect(errorsOf(sections)).toContain(line);
+  });
+
+  it('reports a bad item kind and a missing icon', () => {
+    const errs = errorsOf({}, "odd: { name: 'Odd', kind: 'ring' }, bare: { name: 'Bare', kind: 'special', glyph: 'no-such-icon' },");
+    expect(errs).toContain('item odd: kind must be weapon, backpack or special');
+    expect(errs).toContain('item bare: no icon assets/icons/no-such-icon.svg');
+  });
+
+  it('prints ids and counts only: no line of output holds anything but those', () => {
+    const r = run('t1');
+    expect(r.out.join('\n')).not.toMatch(/Stand-in/);
+  });
+
+  it('lists the flagged sections the table leaves out, from items-reading.txt', () => {
+    w('data/projectaon/t1/items-reading.txt', '#1 first\nbody\n#5 fifth\nmore\n#4 fourth\n');
+    const r = run('t1');
+    fs.rmSync(path.join(tmp, 'data/projectaon/t1/items-reading.txt'));
+    expect(r.out).toContain('1 flagged sections left out (read, and judged to need nothing):');
+    expect(r.out).toContain('5');
+  });
+
+  it('with --json writes check-items.json beside the book', () => {
+    const r = run('t1', '--json');
+    expect(r.out[r.out.length - 1]).toBe('wrote data/projectaon/t1/check-items.json');
+    const j = JSON.parse(fs.readFileSync(path.join(tmp, 'data/projectaon/t1/check-items.json'), 'utf8'));
+    expect(j).toEqual({
+      book: 't1', errors: [], items: 2, sections: 3,
+      counts: { give: 1, loot: 1, take: 1, ep: 2, rolls: 1, need: 2, fight: 1, todo: 1 }, leftOut: null,
+    });
+  });
+
+  it('with --json records errors and the left-out ids', () => {
+    w('data/projectaon/t1/items-reading.txt', '#5 x\n#1 y\n');
+    w('items-t1.js', `export const ITEMS = {}; export const SECTIONS = { '1': { give: [{ item: 'ghost' }] } };`);
+    run('t1', '--json');
+    const j = JSON.parse(fs.readFileSync(path.join(tmp, 'data/projectaon/t1/check-items.json'), 'utf8'));
+    fs.rmSync(path.join(tmp, 'data/projectaon/t1/items-reading.txt'));
+    w('items-t1.js', CLEAN);
+    expect(j.errors).toEqual(['1 give: unknown item ghost']);
+    expect(j.leftOut).toEqual(['5']);
+  });
+});

@@ -35,6 +35,11 @@ shared/                     used by the player and the prototypes (classic scrip
   ui.js                     LW.UI helpers: el, esc, wait, toast, createHero (Kai only), pickRandom, chart; LW.sfx (blips, prototypes only)
   ink.js                    ES module: procedural parchment, leather, wood, ink-wash scenes
   art.js, battle.js, flow.js, shared.css   pixel sprites, Dragon Quest battle, shared flow: prototypes A and B only
+tests/                      unit tests (ADR 0022), stand-in data only
+  js/                       Vitest (npm test; vitest.config.mjs, package.json): helpers.js loads shared/ into a
+                            test, fake-canvas.js stands in for a 2D context; one file per module
+  py/                       pytest (pytest.ini; conftest.py puts tools/ on the path); one file per tool. Tools that
+                            run on import are copied into tmp_path and run with runpy
 prototypes/                 earlier experiments, kept working, not developed
   index.html                chooser page for the three
   a-book/, b-map/, c-3d/    load ../../shared

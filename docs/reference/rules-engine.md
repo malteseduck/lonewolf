@@ -150,4 +150,4 @@ discipline's wider uses). Not: Grand Master rules (Books 13 on; listed in rules-
 work in docs/plan.md), any rule the importer leaves as
 text and no item table covers, Book 3's sledge food. Potions that help in a fight (Alether) are only
 described; their bonus is applied by hand. Bow shots and ambushes work only where a book's item
-table marks them (none yet: Books 1-2 have neither).
+table marks them (bow shots in Books 6-12, an ambush in Book 7).

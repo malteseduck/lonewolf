@@ -190,7 +190,7 @@ Nexus limited immunity to fire, gas and acid.
 ## Grand Master series (Books 13–20)
 
 Read from Book 13's rules pages (2026-10-10). **The engine applies none of this yet**: the importer
-does not know Book 13, and `rules-series.js` treats any series but Magnakai as Kai. What it would
+knows Book 13 (not imported yet), and `rules-series.js` treats any series but Magnakai as Kai. What it would
 take is in docs/plan.md ("Grand Master series"); the owner's readings are ADRs 0011, 0018 and 0019.
 
 Book 13's footnote points to Project Aon's Readers' Handbook for what the earlier disciplines still

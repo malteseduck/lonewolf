@@ -43,7 +43,16 @@ no service worker and no offline copy; for that, see `docs/reference/offline.md`
 `python tools/offline_check.py` prints what the offline copy would hold (sizes, largest files) and
 exits 1 if the page names a file that is missing; run it after adding or moving a file the page loads.
 
-There are no automated tests and no linter. `python tools/syntax_check.py` runs `node --check` on
+Unit tests (ADR 0022): Vitest for the JavaScript in `tests/js/`, pytest for the Python tools in
+`tests/py/`. Run both before committing; a change to a function updates its tests. Tests use stand-in
+data of their own, never book text, and need neither `data/projectaon/` nor the network.
+
+```sh
+npm test
+uv run --no-project --python tools/.venv/Scripts/python.exe python -m pytest
+```
+
+(`npm install` once for Vitest; pytest is in `tools/.venv`.) There is no linter. `python tools/syntax_check.py` runs `node --check` on
 every script and `py_compile` on the Python. Plain `node --check` on a root `.js` file misses a
 `const` declared twice, so the script checks each ES module through a `.mjs` copy (do the same by
 hand: copy the file to a `.mjs` name in the scratchpad).
@@ -166,7 +175,7 @@ pages (`docs/reference/rules-books.md`), and its text is not copied into the rep
 | `docs/reference/rules-books.md` | The books' rules: common, Kai, Magnakai, and an addendum per book; what the engine applies |
 | `docs/reference/dashboard.md` | The import dashboard (`tools/admin/`): its status rules, `book_status.py`, the `/api/admin` jobs, the prompts |
 | `docs/book-checklist.md` | Every step each book goes through; its table is generated. **Check it before starting work on a book. When a step is finished, run `python tools/book_status.py done <book> <step>`**: it records a hand step, checks a step read from the files, and rewrites the table. Never edit the table by hand. |
-| `docs/plan.md` | Work outside the book steps (engine gaps, notes for later), what the player can do. **Read this first in a new session.** Where each book stands is the dashboard's, not this file's. |
+| `docs/plan.md` | Work not yet done outside the book steps (engine gaps, what is not yet checked, notes for later), in order. **Read this first in a new session.** Not what the player does (that is `docs/reference/`) nor where each book stands (the dashboard's). |
 
 Keep them current: a change to behaviour updates the matching reference file in the same piece of
-work, and `plan.md` when work outside the book steps moves between done and not done.
+work; when work in `plan.md` is finished, take it out of `plan.md` (the reference file records it).
