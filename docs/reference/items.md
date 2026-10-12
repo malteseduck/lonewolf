@@ -161,7 +161,7 @@ stand-in that suits that book), and put book entries first. The sheet labels a b
 add is written some other way (`ice barbarian$`, `kalkoth`). Where to look, in order:
 
 1. **The owner's own picture**, if they give one. The owner puts it in on the picture sheet
-   (`tools/admin/fights.html?book=<code>`, also inline in the dashboard at step 6): drop a picture file on
+   (inline in the dashboard at step 6, "Open picture sheet"): drop a picture file on
    the enemy's card, paste it, or Choose; the page shrinks it to 2000 px on its long side as WebP and
    `POST /api/admin/plate` saves it as git-ignored `art/plates/<code>/<name>.webp` and writes the entry
    (`tools/plates_file.py`): `match` the enemy's exact name, escaped and anchored, `book` set, at the top
@@ -280,7 +280,7 @@ like Drakkarim but are its Tukodak Guardians.
    numbers. **Ask the owner before each download**, naming the picture, its source and its size.
 
 Show the owner each new picture as it will look before calling it done: the dashboard's sheet,
-`http://localhost:8766/tools/admin/fights.html?book=<book>`, shows every enemy of the book inked as in a
+opened from step 6 of `http://localhost:8766/tools/admin/`, shows every enemy of the book inked as in a
 fight (the owner's half of checklist step 6). The importer's report counts the library entries the book can use;
 after adding them, run it again and expect 0 "with none". Plates are drawn whole, cut only by the crop set
 by hand (Adjust; use it to leave out a ruled frame), and the edges are not faded (owner's request).

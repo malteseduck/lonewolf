@@ -45,7 +45,8 @@ tools/
   admin/                    the import dashboard, /tools/admin/ (docs/reference/dashboard.md): index.html,
                             admin.js, admin.css, prompts.js (the agent steps' prompts), fights.html (one
                             book's fight pictures on a sheet, where the owner drops, crops and removes
-                            pictures)
+                            pictures), parchment.js (the tool pages' parchment and charred-rim filter, from
+                            shared/ink.js; the map editor loads it too: ADR 0021)
   map-editor.html           the map steps' page (docs/reference/map-upscale.md); also shown inside the dashboard
   plates_file.py            reads and writes assets/plates/plates.json in its layout; the owner's pictures from the
                             picture sheet (api/admin/plate)

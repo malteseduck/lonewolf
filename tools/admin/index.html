@@ -19,7 +19,6 @@
   </div>
   <nav class="links">
     <a href="/">Player</a>
-    <a href="/tools/map-editor.html">Map editor</a>
   </nav>
 </header>
 
@@ -61,7 +60,7 @@
 </main>
 
 <section class="mapwrap" id="mapwrap" hidden>
-  <header><b id="map-title">Map editor</b><a id="map-alone" href="/tools/map-editor.html" target="_blank">Open on its own</a><button id="map-close">Close</button></header>
+  <header><b id="map-title">Map editor</b><button id="map-close">Close</button></header>
   <iframe id="mapframe" title="Map editor" allow="clipboard-read; clipboard-write"></iframe>
 </section>
 
@@ -83,6 +82,7 @@
 </dialog>
 
 <div class="toast" id="toast" hidden></div>
+<script type="module" src="parchment.js"></script>
 <script type="module" src="admin.js"></script>
 </body>
 </html>

@@ -58,7 +58,7 @@ STEPS = {
     8: ('map', 'Printed map repainted, labels checked, `map-4k.webp` made and shown in the player'),
 }
 HAND = {3, 4, 6, 7}  # judgements: recorded in book-status.json (4 and 6 also need their files)
-GROUPS = [('Getting the book', 1), ('Items and fights', 5), ('Playing it', 7), ('Pictures', 8)]
+GROUPS = [('Getting the book', 1), ('Items and fights', 5), ('Play', 7), ('Pictures', 8)]
 
 
 def mtime(path):

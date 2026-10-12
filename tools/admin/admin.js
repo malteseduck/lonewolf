@@ -15,7 +15,7 @@ const STAGES = [
   { id: 'reading', group: 'Items and fights', label: 'Reading copy', kind: 'script' },
   { id: 'items', group: 'Items and fights', label: 'Item table', kind: 'agent', step: 5 },
   { id: 'pictures', group: 'Items and fights', label: 'Fight pictures', kind: 'agent', step: 6 },  // then your look at the sheet
-  { id: 'testplay', group: 'Playing it', label: 'Test play', kind: 'agent', step: 7 },
+  { id: 'testplay', group: 'Play', label: 'Test play', kind: 'agent', step: 7 },
   { id: 'map', group: 'Map', label: 'Map', kind: 'owner', step: 8 },
 ];
 
@@ -105,10 +105,10 @@ const ACTIONS = {
   rules: () => [prompt('rules'), mark(4)],
   reading: () => [run('Make reading copy', 'reading')],
   items: (b) => [prompt('items'), run('Check items', 'check-items'), ...(b.items.check?.errors?.length ? [prompt('itemsFix', 'Copy fix prompt')] : [])],
-  pictures: (b) => [prompt('pictures'), { t: 'sheet', label: 'Open picture sheet here' }, link('On its own', `fights.html?book=${b.code}`), mark(6),
+  pictures: (b) => [prompt('pictures'), { t: 'sheet', label: 'Open picture sheet' }, mark(6),
     ...(b.pins?.waiting ? [run('Approve picture changes...', 'approve-pictures', { gate: 'pictures' })] : [])],
   testplay: () => [prompt('testplay'), link('Test address', 'http://127.0.0.1:8766/'), mark(7)],
-  map: () => [{ t: 'map', label: 'Open map editor here' }],
+  map: () => [{ t: 'map', label: 'Open map editor' }],
 };
 function run(label, stage, opt = {}) { return { t: 'run', label, stage, ...opt }; }
 function prompt(key, label = 'Copy prompt') { return { t: 'prompt', key, label }; }
@@ -204,7 +204,6 @@ function openInline(b, src, title) {
   const wrap = $('#mapwrap'), frame = $('#mapframe');
   if (!wrap.hidden && frame.dataset.src !== src && !leaveMap()) return;
   $('#map-title').textContent = title;
-  $('#map-alone').href = src.replace('&embed=1', '');
   if (frame.dataset.src !== src) { frame.src = src; frame.dataset.src = src; frame.dataset.book = b.code; }
   wrap.hidden = false;
   wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });

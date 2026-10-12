@@ -23,8 +23,8 @@ letter; see "How Book 1 got here" below.
 
 ## The chain, per book
 
-The map editor, `http://localhost:8766/tools/map-editor.html` (pick the book at the top, by number, title or code) (served by `python tools/serve.py`, on this PC
-only; also opened inside the import dashboard, `/tools/admin/`, under its grid, where `?embed=1` hides the
+The map editor, opened only inside the import dashboard (`http://localhost:8766/tools/admin/`, the Map cell or a map step's Open) (served by `python tools/serve.py`, on this PC
+only; under the dashboard's grid, where `?embed=1` hides the
 book picker and the dashboard follows the files it changes: `docs/reference/dashboard.md`), walks through every step below in one page: a rail of the ten stages (upscale, draft, labels,
 measure, lettering, erase and letter, Gemini, check, finish, import), each marked done, not done or
 out of date from the files' times. It edits the labels, runs the scripts, copies the prompt and the
@@ -133,7 +133,7 @@ Commands run from the project root as
 8. **Finish**: `map_upscale.py $W/map-gemini-<n>.jpg $W/map-gemini-<n>-x4.png --width <4x its width>`, then
    `map_letter.py $W/map-2k.png $L $W/map-gemini-<n>-x4.png $W/map-check-<n>/H.json $D/map-4k.webp --sheet $W/map-4k-sheet.png --only <numbers> --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"`
    with the numbers of the names Gemini garbled (or, leaving out `--only`, tick `reset` on them in
-   the map editor, `tools/map-editor.html?book=<code>`, and untick them before the next
+   the map editor (in the dashboard), and untick them before the next
    round's check). With nothing ticked reset it sets no place name again, only the `fix` labels:
    an upscale only, Gemini's names standing; `--all` (the Finish step's "Set every place name
    again", unchecked by default) sets every one again, which leaves doubled names wherever Gemini
