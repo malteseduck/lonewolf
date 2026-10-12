@@ -63,7 +63,7 @@ def stale(code):
     js, reading, listed = t(d, 'book.js'), t(d, 'reading.txt'), t(d, 'items-reading.txt')
     if js and (not reading or reading < js or not listed or listed < reading):
         return True
-    items, check = t(ROOT, f'items-{code}.js'), t(d, 'check-items.json')
+    items, check = t(ROOT, 'items', f'items-{code}.js'), t(d, 'check-items.json')
     return bool(items and (not check or check < max(items, js or 0)))
 
 
@@ -74,7 +74,7 @@ def refresh(code):
         rc, out = run(sys.executable, os.path.join('tools', script), code)
         if rc:
             bad.append(f'{script} failed ({rc})')
-    if os.path.isfile(os.path.join(ROOT, f'items-{code}.js')):
+    if os.path.isfile(os.path.join(ROOT, 'items', f'items-{code}.js')):
         rc, out = run('node', os.path.join('tools', 'check_items.mjs'), code, '--json')
         try:
             with open(os.path.join(DATA, code, 'check-items.json'), encoding='utf-8') as f:

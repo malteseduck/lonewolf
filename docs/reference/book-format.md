@@ -59,7 +59,7 @@ shows the book's printed map. Only the prototypes travel on a map.
 
 The importer cannot read reliably what a passage gives or takes away: the item's name is in the
 story sentence, the instruction in the next, and many are conditional. So each book's items are
-read and written down by hand in `items-<code>.js` at the project root (Book 1: `items-01fftd.js`,
+read and written down by hand in `items/items-<code>.js` (Book 1: `items/items-01fftd.js`,
 52 sections, 2026-10-01) It exports `ITEMS` (the book's own items: `name`,
 `kind` (`weapon` | `backpack` | `special`), optionally `glyph` (an icon in `assets/icons/`), `heal`,
 `ep`, `about`, `meal` (eaten when a Meal is due and he has none, healing its `heal`), `shot` (a bow of

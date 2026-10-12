@@ -16,15 +16,15 @@ const tables = {};
 let LW;
 beforeAll(async () => {
   LW = loadShared('core.js', 'rules-series.js');
-  for (const c of CODES) tables[c] = await import(pathToFileURL(path.join(ROOT, `items-${c}.js`)).href);
+  for (const c of CODES) tables[c] = await import(pathToFileURL(path.join(ROOT, 'items', `items-${c}.js`)).href);
   for (const c of CODES) LW.addItems(tables[c].ITEMS);
 });
 
 const known = (id) => id === 'meal' || !!LW.ITEMS[id];
 const arr = (v) => (Array.isArray(v) ? v : v == null ? [] : [v]);
 
-it('there is a table for every file items-*.js in the project root', () => {
-  const files = fs.readdirSync(ROOT).filter((f) => /^items-\w+\.js$/.test(f)).map((f) => f.slice(6, -3)).sort();
+it('there is a table for every file items/items-*.js', () => {
+  const files = fs.readdirSync(path.join(ROOT, 'items')).filter((f) => /^items-\w+\.js$/.test(f)).map((f) => f.slice(6, -3)).sort();
   expect(files).toEqual([...CODES].sort());
 });
 

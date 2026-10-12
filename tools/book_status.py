@@ -233,7 +233,7 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
     b['stale'] = stale
     b['rulesHeading'] = bool(re.search(rf'^### Book {n},', rules_md, re.M))
     reg = re.search(r'const ITEM_TABLES = \{([\s\S]*?)\};', main_js)
-    items_js = os.path.join(ROOT, f'items-{code}.js')
+    items_js = os.path.join(ROOT, 'items', f'items-{code}.js')
     check = None
     try:
         with open(os.path.join(d, 'check-items.json'), encoding='utf-8') as f:
@@ -413,7 +413,7 @@ def mark(code, step, undo=False, run_checks=True):
         return True, f"Book {n} step {step} ({STEPS[step][1].split(';')[0]}): {'unmarked' if undo else 'marked done'}"
     if undo:
         return False, f'step {step} is read from the files: change the files, not the mark'
-    if step == 5 and run_checks and os.path.isfile(os.path.join(ROOT, f'items-{code}.js')) and os.path.isdir(os.path.join(DATA, code)):
+    if step == 5 and run_checks and os.path.isfile(os.path.join(ROOT, 'items', f'items-{code}.js')) and os.path.isdir(os.path.join(DATA, code)):
         subprocess.run(['node', os.path.join('tools', 'check_items.mjs'), code, '--json'], cwd=ROOT, capture_output=True)
     b = book_status(code, title, n)
     write_checklist()

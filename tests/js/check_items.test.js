@@ -35,8 +35,8 @@ beforeAll(() => {
   fs.mkdirSync(path.join(tmp, 'shared'));
   fs.copyFileSync(path.join(ROOT, 'shared', 'core.js'), path.join(tmp, 'shared', 'core.js'));
   w('assets/icons/present.svg', '<svg/>');
-  w('items-t1.js', CLEAN);
-  w('items-t2.js', `export const ITEMS = { lamp: { name: 'Lamp', kind: 'backpack' } }; export const SECTIONS = {};`);
+  w('items/items-t1.js', CLEAN);
+  w('items/items-t2.js', `export const ITEMS = { lamp: { name: 'Lamp', kind: 'backpack' } }; export const SECTIONS = {};`);
   w('data/projectaon/t1/book.js', BOOK);
 });
 afterAll(() => fs.rmSync(tmp, { recursive: true, force: true }));
@@ -48,9 +48,9 @@ const run = async (book = '01fftd', json = false) => {
 };
 /* run the checker on a table with these section entries / items, returning the error lines */
 async function errorsOf(sections, items = '') {
-  w('items-t1.js', `export const ITEMS = { thing: { name: 'Thing', kind: 'backpack', glyph: 'present' }, ${items} }; export const SECTIONS = ${JSON.stringify(sections)};`);
+  w('items/items-t1.js', `export const ITEMS = { thing: { name: 'Thing', kind: 'backpack', glyph: 'present' }, ${items} }; export const SECTIONS = ${JSON.stringify(sections)};`);
   const r = await run('t1');
-  w('items-t1.js', CLEAN);
+  w('items/items-t1.js', CLEAN);
   const lines = r.out;
   return lines[0] === 'no errors' ? [] : lines.slice(0, lines.findIndex((l) => /^\d+ book items/.test(l)));
 }
@@ -137,11 +137,11 @@ describe('check_items.mjs', () => {
 
   it('with --json records errors and the left-out ids', async () => {
     w('data/projectaon/t1/items-reading.txt', '#5 x\n#1 y\n');
-    w('items-t1.js', `export const ITEMS = {}; export const SECTIONS = { '1': { give: [{ item: 'ghost' }] } };`);
+    w('items/items-t1.js', `export const ITEMS = {}; export const SECTIONS = { '1': { give: [{ item: 'ghost' }] } };`);
     await run('t1', true);
     const j = JSON.parse(fs.readFileSync(path.join(tmp, 'data/projectaon/t1/check-items.json'), 'utf8'));
     fs.rmSync(path.join(tmp, 'data/projectaon/t1/items-reading.txt'));
-    w('items-t1.js', CLEAN);
+    w('items/items-t1.js', CLEAN);
     expect(j.errors).toEqual(['1 give: unknown item ghost']);
     expect(j.leftOut).toEqual(['5']);
   });

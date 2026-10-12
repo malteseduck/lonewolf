@@ -187,7 +187,7 @@ def test_items_stage_walks_through_its_states(env):
     env.book(t=100)
     st = lambda **kw: env.status(main_js=kw.get('main_js', ''))['stages']['items']
     assert st()['state'] == 'todo'
-    env.write(f'items-{CODE}.js', 'export default { a: { todo: "x" }, b: { todo: "y" }, c: {} };', 200)
+    env.write(f'items/items-{CODE}.js', 'export default { a: { todo: "x" }, b: { todo: "y" }, c: {} };', 200)
     assert st()['state'] == 'warn' and 'not in main.js ITEM_TABLES' in st()['ev']
     assert st(main_js="const ITEM_TABLES = {\n '04tcod': T4,\n};")['state'] == 'warn'     # another book's entry
     s = st(main_js=REG)

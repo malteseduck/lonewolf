@@ -132,12 +132,12 @@ explaining it would cost more than doing it.
 - **The map is the book's own printed map**, restyled at runtime (`maps.js`). The owner dropped
   the custom maps on 2026-10-05: no replicas, made-up places, town plans or travel on the map.
   Their symbols are kept in git-ignored `art/reference/map-symbols/from-game/`.
-- **Our own work about a book is committed; the book is not.** Item tables are `items-<code>.js`;
+- **Our own work about a book is committed; the book is not.** Item tables are `items/items-<code>.js`;
   a map's label list, repaint style and step marks are in `maps/<code>/`. Anything copied or made
   from Project Aon's text or images (reading copies, upscales, repaints, prompts) stays in
   `data/projectaon/<code>/`.
 - **A book's items** (what each section gives, takes, or needs) are read and written by hand in
-  `items-<code>.js`, following `docs/reference/items.md`. Where the text leaves
+  `items/items-<code>.js`, following `docs/reference/items.md`. Where the text leaves
   the choice to the player, write a `todo`, never a guess. Every fight needs a picture: the same
   page says where to find one.
 - Art borrowed for personal use (Lone Wolf HD screenshots and the like) lives in `art/`, which is

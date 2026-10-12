@@ -53,7 +53,7 @@ def tail(out, n=15):
 
 def item_books():
     """The books with an item table and an imported book.js."""
-    for f in sorted(glob.glob(os.path.join(ROOT, 'items-*.js'))):
+    for f in sorted(glob.glob(os.path.join(ROOT, 'items', 'items-*.js'))):
         code = os.path.basename(f)[len('items-'):-len('.js')]
         if os.path.isfile(os.path.join(DATA, code, 'book.js')):
             yield code

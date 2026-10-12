@@ -12,8 +12,9 @@ plates.js                   ES module: ink creatures, inkPlate (restyles an illu
 maps.js                     ES module: printedCanvas, the book's printed map repainted in sepia
 platepick.js                ES module: which picture a fight shows (pins, plates.json, the book's own); also used
                             by the picture sheet and tools/plates_pin.mjs
-items-01fftd.js             ES module: Book 1's items and what each section gives, takes or gates, by hand
-                            (docs/reference/book-format.md, "Item tables")
+items/items-<code>.js       ES modules, one per book (items-01fftd.js for Book 1): its items and what each
+                            section gives, takes or gates, by hand (docs/reference/book-format.md, "Item
+                            tables"; kept out of the root: ADR 0025)
 sw.js                       service worker: the offline copy (docs/reference/offline.md)
 manifest.webmanifest        the Home Screen app: name, colours, icons (assets/app/)
 art/plates/<code>/          git-ignored. Fight pictures the owner gave on the picture sheet (WebP)
