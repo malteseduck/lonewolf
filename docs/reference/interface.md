@@ -188,24 +188,24 @@ nothing shows: the owner asked for no stand-in drawing (2026-10-03).
 
 ## Combat (`startBattle`, `updateBattle`, `battleAct`, `endBattle`)
 
-`B` holds the fight: `c` (the section's combat), `i`/`foe` (current enemy), `power` and `mind`
-(0 rest, 1 Mindblast, 2 Psi-surge), `rounds`, `log`, `over`, `fx`, `img`, `node`, `dial`.
+`B` is the fight: an `LW.Fight` (shared/fight.js; its rules: rules-engine.md, "Combat procedure")
+with the page's own drawing state added: `fx`, `img`, `node`, `dial`, `scene`, `lock` (input shut
+while a round plays), `fit`, `floor`.
 
 The panel is one `.fight` node: a canvas filling it, the enemy bar over its top, the command
 medallions and dial over its foot. `B.fit()` sizes the canvas to the node at device resolution.
 A requestAnimationFrame loop calls `drawCreature` each frame; the plate itself is still, only
 wound marks, the lunge scale and the death fade change.
 
-`battleAct(id)`: `fight` and `evade` spin the dial and resolve a round; `mind` cycles the mind
-attack (Psi-surge's numbers from `LW.psi`: an Archmaster's are +6, 1 a round, not at 4 or less);
-`item` drinks Laumspur; `cure` (an Archmaster with Curing, once a book, `LW.canCure`; the
-medallion is dim above 6 Endurance) restores 20 without costing a round. A fight marked `ambush`
-loses its `csMod` for a Magnakai hero with Huntmastery, and says so in the log; so does one whose
-`csUnless` he meets, and a `csIf` bonus he does not meet is not given (the log names the discipline).
-A foe `immune: 'mindblast'` takes Psi-surge but not Mindblast (the mind medallion reads "as
-Mindblast: no effect"); `deaf(foe)` is a foe no mind attack of his can touch. Evade is shut, "too
-late", once `evade.within` rounds are fought. When `B.over` is set the left page shows the outcome and a
-"Turn the page" button, which calls `endBattle` to move the story on.
+`battleAct(id)`: `fight` and `evade` spin the dial and play a round through the fight's steps,
+animating between them: `roll`, then for a blow `strike` (the foe's bar drops, a wound mark),
+`suffer` (his lunge), and when the foe has fallen its death fade, then `advance` (the next foe's
+picture: `showFoe`); for evading `flee`. `mind` (`focus`), `item` (`drink`, Laumspur) and `cure`
+(the medallion is dim above 6 Endurance) cost no round. The mind medallion reads "as Mindblast: no
+effect" against a foe immune to Mindblast only, and "no effect" when `B.deaf()`. Evade reads "take
+one blow" when `B.evadeOpen`, "too late" when `B.evadeLate`. When `B.over` is set the left page
+shows the outcome and a "Turn the page" button, which calls `endBattle` (`B.finish()`) to move the
+story on.
 
 ## Art pipeline (`plates.js`, `shared/ink.js`)
 
@@ -227,7 +227,7 @@ late", once `evade.within` rounds are fought. When `B.over` is set the left page
   medallions and the dial), so the picture never runs under them. Without, it draws a procedural silhouette (`kraan`,
   `giak`, `vordak`) or the crossed-swords `emblem`: the crossed-swords glyph (handed over by
   `setEmblem` once main.js has fetched it) over a blot of wash, or a plain ring and blades until then.
-- Which picture (`nextFoe` in main.js, by `pickPlate` in platepick.js): first the picture the owner
+- Which picture (`showFoe` in main.js, by `pickPlate` in platepick.js): first the picture the owner
   approved for that fight, once the book's step 6 is marked done (`assets/plates/approved/<code>.json`,
   ADR 0020: a later plates.json entry or re-import does not change it until approved); else a library entry marked `over` (the owner preferred another
   picture to the book's own; Book 1's Vordak), else the enemy's own `art` (its section's

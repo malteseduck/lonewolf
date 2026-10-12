@@ -1,8 +1,10 @@
 # Rules engine
 
-Where each rule in `docs/spec.md` section 4 is implemented. Two files: `shared/core.js` (series-
-independent rules and the Kai defaults) and `shared/rules-series.js` (loaded by the main page only; adds
-Magnakai and overrides some functions).
+Where each rule in `docs/spec.md` section 4 is implemented. Three files, loaded by the main page in
+this order: `shared/core.js` (series-independent rules and the Kai defaults), `shared/rules-series.js`
+(adds Magnakai and overrides some functions) and `shared/fight.js` (the fight). The prototypes load
+only `core.js`. `main.js` holds no rules: it draws, animates and takes input (ADR 0024). Each part
+has its tests in `tests/js/` (`core-*`, `rules-series`, `fight`).
 
 ## The hero object
 
@@ -47,6 +49,7 @@ Item (`LW.specialLimit`, which reads `LW.bookNumber`, set by the player in `useB
 | Kai disciplines, items, limits | `LW.DISCIPLINES`, `LW.ITEMS` (with the kit items: `shield` has `fightCs: 2`, `leatherWaistcoat` `ep: 2`, each book's map), `LW.WEAPONS`, `LW.MAX_WEAPONS`, `LW.MAX_BACKPACK`, `LW.MAX_ARROWS`, `LW.bookNumber`, `LW.specialLimit(hero)` |
 | New Kai character | `LW.makeHero({csRoll, epRoll, disciplines, bonusItem})`. Book 1's kit: Axe, one Meal, the map, gold = Random Number; Book 1's bonus item table. For a later book the dialog empties it and gives that book's kit |
 | Default hooks | `LW.has`, `LW.heals`, `LW.hunts`, `LW.rankCount`, `LW.heroCS` (all replaced by `rules-series.js` when it is loaded) |
+| Item tables | `LW.applyItems(book, table)`: lays a book's `items-<code>.js` over its sections, once (book-format.md, "Item tables"). `LW.itemByName(name, first)`: the item a typed name is, the open book's own (`first`) tried first |
 | Imported conditions | `LW.meets(hero, cond)`, `LW.condName(cond)`: disciplines (any, or all), rank, Lore-circles, Endurance now, items held (any; item tables only) (book-format.md, Conditions). `need.any` is a list of them, any one opening the choice (checked in `choices()`) |
 | Book runner | `class Game` |
 
@@ -58,6 +61,7 @@ Item (`LW.specialLimit`, which reads `LW.bookNumber`, set by the player in `useB
   Meal (hunting exempts, else eat a Meal, else a Backpack item with `meal: true` (healing its
   `heal`), else -3 EP), then +1 EP healing if the section has no combat.
   Gifts come before the Meal so food found in the passage can be eaten. It resets `s.rolled` and saves.
+- `lost`: he is dead, or at a `death` or `failed` ending (the page then offers the way back).
 - `combatPending`: the section has combat not yet won. `wonCombat()` marks it won.
 - `choices()`: the choices with `enabled` and `why` filled in. Returns none while dead, at an
   ending, or while combat is pending. Applies `need.disc` (one, or a list: any, or all with
@@ -103,7 +107,7 @@ Adds `bow` and `quiver` to `LW.ITEMS`.
 | Starting kits | `LW.KITS[number]`: `give`, `choose`, `from`, `store`, `storeGold`, `newOnly`, `wear` (rules-books.md, "Book addenda") |
 | Combat Skill | `LW.heroCS(hero, ctx)` returns `{total, parts: [{label, n}]}`. `ctx`: `mindblast`, `psiSurge`, `enemy`, `csMod`, `csNote`, `with`, `noShield`. A carried Special Item with `fightCs` (the Shield, +2) counts |
 | Weapon in hand | `LW.armedWith(hero, ctx)`: of his weapons and the Special Items that are weapons (`item.weapon`: the kinds it counts as), the one that adds most: its own `item.cs` (the Sommerswerd's 8) plus Weaponskill or Weaponmastery in any of its kinds. `ctx.with`: `'none'` (bare-handed, -4) or the one item that can harm this foe. Null: unarmed, -4 |
-| Carried character | `LW.Character.load()`, `.save(hero, book)`, `.clear()`, all on the storage key in `LW.Character.key` (the player points it at the open adventure's) |
+| Carried character | `LW.Character.load()`, `.save(hero, book)`, `.clear()`, `.carries(kept, bookId)` (not into a book he has completed), all on the storage key in `LW.Character.key` (the player points it at the open adventure's) |
 | Setting out | `LW.HeroSetup(book, carry)`: the scores, disciplines and Weaponmastery weapons chosen (`roll`, `toggle`, `toggleWeapon`, `auto`, `ready`), `build()` makes the hero; `.kit` is the book's kit or null. `LW.KitSetup(book, kit, hero)`: the kit's choices (`rollGold`, `choose`, `flip`, `problems`, `auto`, `ready`), `finish()` applies them. `LW.readyHero(hero)` settles Lore-circles and fills Endurance. `carry` null = roll a new one. The player draws them on its pages (interface.md, Setting out) |
 
 Setting-out rules: a new character picks `first` disciplines of the book's series; a
@@ -125,18 +129,40 @@ Disciplines (spec 4.2, ADR 0018). `hero.completed` is set when setting out; a he
 
 ## Combat procedure
 
-Implemented in `main.js` (`startBattle`, `battleAct`, `endBattle`), not in the
-shared engine. The fight's `csMod` applies unless the hero carries every item in `combat.unless`,
-or `combat.unarmed` is set and he has no weapon (the engine's -4 covers it). `combat.with` fixes
-the weapon (`B.weapon`, `LW.armedWith`). Per round: spin the dial, `LW.combatRound(B.ratio(), n)`,
-apply both losses (the foe's doubled when `combat.double`, or when it is `undead` and the weapon in
-hand has `undead`, as the Sommerswerd does), then the foe's `drain` in Endurance unless he is
-shielded, then Psi-surge's cost if it was active (dropping to Mindblast at its floor; `LW.psi`).
-Evade applies only the hero's loss. A foe `immune: 'psi'` ignores Mindblast and Psi-surge (only a Grand Master's Kai-surge, not in the engine yet, would tell). The house rule that Laumspur can be drunk mid-fight lives here,
-and an Archmaster's Curing (`cure`). Huntmastery drops a `combat.ambush` fight's negative `csMod`.
-The importer's `csIf` / `csUnless` give or spare the `csMod` by `LW.meets`. A foe `immune: true`
-ignores every mind attack; `immune: 'mindblast'` only Mindblast (Psi-surge, and so the +4, still
-tells). `evade.within` closes evasion once that many rounds are fought.
+`LW.Fight` in `shared/fight.js`: `new LW.Fight(game, bookId)` sets up the fight of the section the
+game is at; `main.js` draws it and animates between its steps. Tested in `tests/js/fight.test.js`.
+
+Set-up: the fight's `csMod` applies unless the hero carries every item in `combat.unless`, or
+`combat.unarmed` is set and he has no weapon (the engine's -4 covers it), or it is an `ambush`'s
+penalty and he is a Magnakai hero with Huntmastery, or the importer's `csIf` is not met, or its
+`csUnless` is (`LW.meets`). `combat.with` fixes the weapon (`weapon`, `LW.armedWith`). Each foe is a
+copy of the book's (`bring`), so the book's numbers stay as printed; `max` is its starting Endurance.
+The log opens with what applies: a foe's `mindforce` (or the shield that stops it), the `csMod` or
+why it is spared, a fixed weapon, a weapon with its own bonus.
+
+`cs()` is `LW.heroCS` with the mind attack in play and the foe; `ratio()` is `cs()` minus the foe's,
+**at most +10** (`LW.RATIO_CAP`): the owner's house rule against the Sommerswerd (ADR 0023), so the
+table's "+11 or more" column is never used. No floor.
+
+A round: `roll(n)` looks up `LW.combatRound(ratio(), n)` and counts the round; then either
+`flee(o)` (evading: only his loss; `over` is `'evade'`, or `'dead'`) or `strike(o)` (the foe's loss,
+doubled when `combat.double`, or when the foe is `undead` and the weapon in hand has `undead`, as the
+Sommerswerd does) and `suffer(o)` (his loss; then the foe's `drain` unless he is shielded, every
+round, the last too; then Psi-surge's cost if it is active, dropping to Mindblast at its floor:
+`LW.psi`). Losses never take either side below 0. His death ends the fight first; a fallen foe sets
+`o.down`, and `advance()` brings the next or sets `over = 'win'`. `round(n, how)` does all of it at
+once (the tests use it).
+
+Between rounds, at no cost: `focus()` cycles the mind attack (rest, Mindblast, Psi-surge; not
+Psi-surge at or below its floor; nothing against a foe it cannot touch: `deaf()`); `drink()` (the house
+rule that Laumspur can be drunk mid-fight, +4); `cure()` (an Archmaster's Curing, 20 back, once a
+book: `LW.canCure`). A foe `immune: true` ignores every mind attack; `immune: 'mindblast'` only
+Mindblast (Psi-surge, and so the +4, still tells); `immune: 'psi'` Mindblast and Psi-surge (only a
+Grand Master's Kai-surge, not in the engine yet, would tell). `evadeOpen`: `evade.after` rounds
+fought and, with `evade.within`, fewer than that (`evadeLate` once past it).
+
+`finish()`: a win marks the fight won (`game.wonCombat`) and takes `combat.to` if it has one; an
+evasion takes `evade.to`; a death only saves.
 
 Prototypes A and B have their own combat in `shared/battle.js`, and C in its `main.js`; those do
 not know about Magnakai.

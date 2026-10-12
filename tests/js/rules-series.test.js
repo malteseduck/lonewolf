@@ -168,6 +168,13 @@ describe('LW.Character (the carried hero)', () => {
     expect(LW.Character.load().completed).toEqual(['01fftd', '02fotw']);
     expect(LW.Character.load().from).toBe('02fotw');
   });
+  it('carries into a book he has not completed, not into one he has', () => {
+    LW.Character.save(kaiHero(), { id: '01fftd', title: 'One' });
+    const kept = LW.Character.load();
+    expect(LW.Character.carries(kept, '02fotw')).toBe(true);
+    expect(LW.Character.carries(kept, '01fftd')).toBe(false);
+    expect(LW.Character.carries(null, '02fotw')).toBe(false);
+  });
 });
 
 describe('LW.HeroSetup: a new character', () => {

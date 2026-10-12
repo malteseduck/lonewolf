@@ -5,6 +5,7 @@ import * as Ink from './shared/ink.js';
 import { drawCreature, setArt, setEmblem, newWound, heroFromArt, portraitFromArt, drawFrame, drawBanner, drawCrest, gearSVG } from './plates.js';
 import { printedCanvas } from './maps.js';
 import { compilePlates, pickPlate, pinKey } from './platepick.js';
+import * as Adv from './adventures.js';
 
 import * as ITEMS_01 from './items-01fftd.js';
 import * as ITEMS_02 from './items-02fotw.js';
@@ -20,6 +21,7 @@ import * as ITEMS_11 from './items-11tpot.js';
 import * as ITEMS_12 from './items-12tmod.js';
 
 const LW = window.LW;
+const ROMAN = LW.ROMAN;
 const BOOKS = Object.assign({}, LW.BOOKS || {});
 
 /* Each book's hand-made item table (items-<code>.js) is laid over its sections the first time the
@@ -30,90 +32,36 @@ const ITEM_TABLES = {
   '07cd': ITEMS_07, '08tjoh': ITEMS_08, '09tcof': ITEMS_09, '10tdot': ITEMS_10, '11tpot': ITEMS_11, '12tmod': ITEMS_12,
 };
 Object.values(ITEM_TABLES).forEach((t) => LW.addItems(t.ITEMS));
-function applyItems(b) {
-  const t = ITEM_TABLES[b.id];
-  if (!t || b.itemsApplied) return;
-  b.itemsApplied = true;
-  for (const [id, x] of Object.entries(t.SECTIONS)) {
-    const sec = b.sections[id];
-    if (!sec) continue;
-    const { need, fight, bowShot, ...rest } = x;
-    Object.assign(sec, rest);
-    // a bow shot: the ranges are for the total, so the importer could not read them; given here per choice
-    if (bowShot) { sec.bowShot = true; sec.rnt = 'auto'; for (const [to, r] of Object.entries(bowShot)) sec.choices.filter((c) => c.to === to).forEach((c) => { c.range = r; }); }
-    if (fight && sec.combat) {
-      const { mindforce, undead, drain, ...f } = fight; // these three belong to each enemy
-      Object.assign(sec.combat, f);
-      sec.combat.enemies.forEach((e) => Object.assign(e, mindforce && { mindforce }, undead && { undead }, drain && { drain }));
-    }
-    // a gate the importer set wrongly is cleared with null; an any-of gate replaces the importer's, which read one alternative as the whole
-    for (const [to, n] of Object.entries(need || {})) sec.choices.filter((c) => c.to === to).forEach((c) => { if (n === null) delete c.need; else c.need = n.any ? n : Object.assign({}, c.need, n); });
-  }
-}
+const applyItems = (b) => LW.applyItems(b, ITEM_TABLES[b.id]);
 
-/* ---------- adventures ----------
-   Each adventure is a game of its own: a save for every book, and the Lone Wolf it carries between
-   them. lw-adventures lists them, which one is open, and the last book each had open. */
+/* ---------- adventures (adventures.js) ---------- */
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* no storage: play on */ } },
   del(k) { try { localStorage.removeItem(k); } catch (e) { /* nothing to remove */ } },
   keys() { try { return Object.keys(localStorage); } catch (e) { return []; } },
 };
-const saveKey = (a, id) => `lw-a${a}-save-${id}`, charKey = (a) => `lw-a${a}-character`;
-function loadAdventures() {
-  let a = null;
-  try { a = JSON.parse(store.get('lw-adventures')); } catch (e) { /* made below */ }
-  if (a && a.list) return a;
-  // first run since there were adventures: the saves already made become the first one
-  a = { list: [], at: null };
-  const old = store.keys().filter((k) => k.startsWith('lw-save-')).map((k) => k.slice(8));
-  if (old.length || store.get('lw-character')) {
-    const move = (from, to) => { const v = store.get(from); if (v != null) { store.set(to, v); store.del(from); } };
-    old.forEach((id) => move('lw-save-' + id, saveKey(1, id)));
-    move('lw-character', charKey(1));
-    a.list.push({ id: '1', book: store.get('lw-book') }); a.at = '1';
-  }
-  store.del('lw-book');
-  store.set('lw-adventures', JSON.stringify(a));
-  return a;
-}
-const adv = loadAdventures();
+const { saveKey, charKey } = Adv;
+const adv = Adv.loadAdventures(store);
 const keepAdventures = () => store.set('lw-adventures', JSON.stringify(adv));
 const adventure = () => adv.list.find((a) => a.id === adv.at) || null;
 function useAdventure(id) { adv.at = id; keepAdventures(); LW.Character.key = charKey(id); }
-function newAdventure() { const id = String(Math.max(0, ...adv.list.map((a) => +a.id)) + 1); adv.list.push({ id, book: null }); useAdventure(id); }
+function newAdventure() { const id = Adv.nextId(adv.list); adv.list.push({ id, book: null }); useAdventure(id); }
 function forgetAdventure(id) {
-  store.keys().filter((k) => k.startsWith(`lw-a${id}-`)).forEach(store.del);
+  Adv.forgetKeys(store, id);
   adv.list = adv.list.filter((a) => a.id !== id);
   if (adv.at === id) adv.at = null;
   keepAdventures();
 }
 if (adventure()) useAdventure(adv.at);
 const advName = (id) => (adv.list.find((a) => a.id === id) || {}).name || `Adventure ${ROMAN[id - 1] || id}`;
-/* backups: an adventure's whole state (its list entry and every lw-a<n>-* key) as JSON, named
-   <name>.<yyyy>.<mm>.<dd>.<hh>.<mm>.json (local time, 24-hour). tools/serve.py keeps them in the project's backups/ folder (a page
-   cannot write to disk by itself); served any other way, the file is downloaded instead. */
-function backupOf(id) {
-  const a = adv.list.find((x) => x.id === id), keys = {};
-  store.keys().filter((k) => k.startsWith(`lw-a${id}-`)).sort().forEach((k) => { const v = store.get(k); try { keys[k] = JSON.parse(v); } catch (e) { keys[k] = v; } });
-  return { kind: 'lone-wolf adventure backup', version: 1, made: new Date().toISOString(), adventure: { ...a }, keys };
-}
-function backupName(id) {
-  const d = new Date(), two = (n) => String(n).padStart(2, '0');
-  const name = advName(id).replace(/[\\/:*?"<>|\x00-\x1f]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/^\.+|\.+$/g, '') || `adventure ${id}`;
-  return `${name}.${d.getFullYear()}.${two(d.getMonth() + 1)}.${two(d.getDate())}.${two(d.getHours())}.${two(d.getMinutes())}.json`;
-}
 // a call to the PC, given up after a while: over Tailscale a PC that is off can leave a request hanging
 function api(path, opts = {}, ms = 8000) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), ms);
   return fetch(path, { cache: 'no-store', ...opts, signal: ctl.signal }).finally(() => clearTimeout(t));
 }
 const postBackup = (name, text) => api(`api/backups/${encodeURIComponent(name)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: text }, 20000);
-/* backups made with the PC out of reach wait here (lw-pending-backups: [{name, text}]) and are sent
-   when it is next in reach; a newer one of the same name replaces the one waiting */
-const pending = () => { try { return JSON.parse(store.get('lw-pending-backups')) || []; } catch (e) { return []; } };
-const keepPending = (list) => (list.length ? store.set('lw-pending-backups', JSON.stringify(list)) : store.del('lw-pending-backups'));
+const pending = () => Adv.pending(store), keepPending = (list) => Adv.keepPending(store, list);
 let flushing = false;
 async function flushBackups() {
   if (flushing || !pending().length) return;
@@ -129,7 +77,7 @@ async function flushBackups() {
   if (sent) LW.UI.toast(`${sent} waiting backup${sent > 1 ? 's' : ''} sent to the PC`);
 }
 async function backupAdventure(id) {
-  const name = backupName(id), text = JSON.stringify(backupOf(id), null, 2);
+  const name = Adv.backupName(advName(id), id), text = JSON.stringify(Adv.backupOf(store, adv.list, id), null, 2);
   let r = null;
   try { r = await postBackup(name, text); } catch (e) { /* out of reach */ }
   if (r && r.ok) { return void LW.UI.toast(`Backed up to backups/${name}`); }
@@ -147,21 +95,8 @@ async function backupAdventure(id) {
    elsewhere). An adventure's own restore replaces its state; the one under "A new adventure" makes
    the backup a new adventure, so nothing kept is overwritten. `restoring` is {id ('' for a new one),
    files (the backups listed, or null), chosen (a file read from disk, waiting to be confirmed)}. */
-function parseBackup(text, file) {
-  let b = null;
-  try { b = JSON.parse(text); } catch (e) { /* told below */ }
-  if (!b || b.kind !== 'lone-wolf adventure backup' || b.version !== 1 || !b.adventure || !b.keys || typeof b.keys !== 'object') throw new Error(`${file} is not an adventure backup`);
-  const from = `lw-a${b.adventure.id}-`;
-  if (Object.keys(b.keys).some((k) => !k.startsWith(from))) throw new Error(`${file} holds keys of another adventure`);
-  return { file, b, from };
-}
-function putBackup(a, { b, from }) {
-  store.keys().filter((k) => k.startsWith(`lw-a${a.id}-`)).forEach(store.del);
-  Object.entries(b.keys).forEach(([k, v]) => store.set(`lw-a${a.id}-` + k.slice(from.length), typeof v === 'string' ? v : JSON.stringify(v)));
-  a.book = b.adventure.book && BOOKS[b.adventure.book] ? b.adventure.book : null;
-  if (b.adventure.name) a.name = String(b.adventure.name).slice(0, 40);
-  keepAdventures();
-}
+const { parseBackup } = Adv;
+function putBackup(a, got) { Adv.putBackup(store, a, got, BOOKS); keepAdventures(); }
 const restoreFailed = (e) => LW.UI.toast(`Nothing restored: ${(e && e.message) || e}`);
 async function openRestore(id) {
   let files = null;
@@ -284,7 +219,7 @@ let busy = false, gearTurn = 0, B = null;
 let intro = false;           // the book's introduction is showing: 'new' before section 1 of a new game, 'again' when re-read from the shelf
 const REWIND = 3;            // how many sections back a rewind reaches
 
-const isDead = () => game.dead || game.section.end === 'death' || game.section.end === 'failed'; // failed: the book's own ending short of death
+const isDead = () => game.lost;
 /* the book's own page references mean nothing here */
 const shown = (t) => {
   let s = t.replace(/[,;]?\s*(?:(?:now|then|and|so|please|by)\s+)*(?:turn(?:ing)?|go(?:ing)?) to \d+[.?!]?\s*$/i, '').trim(); // "..., turn to 12."
@@ -398,7 +333,7 @@ function adventuresHTML() {
         <span class="plaqmore">${restoring && !restoring.id && (restoring.files || restoring.chosen) ? restoreRow('') : '<button type="button" class="inkbtn" data-restore>restore</button>'}</span></div></div></div>`;
 }
 function shelfHTML() {
-  const kept = LW.Character.load(), can = (id) => kept && !kept.completed.includes(id);
+  const kept = LW.Character.load(), can = (id) => LW.Character.carries(kept, id);
   const plaque = (id) => {
     const at = savedAt(id), b = BOOKS[id];
     return `<div class="plaq ${at ? 'going' : ''}"><button type="button" class="plaqmain" data-book="${id}">
@@ -1028,45 +963,14 @@ async function goBack(k) {
 }
 
 /* ---------- combat, on the page ---------- */
-const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX'];
 const tween = (ms, fn) => new Promise((res) => { if (still) { fn(1); return res(); } const t0 = performance.now(); (function step(now) { const k = Math.min(1, (now - t0) / ms); fn(k); k < 1 ? requestAnimationFrame(step) : res(); })(t0); });
 
 async function startBattle() {
-  const sec = game.section, c = sec.combat, hero = game.hero;
-  // the fight's own adjustment, unless he carries what the text says spares him it (a torch), or
-  // it is the text's "unarmed" penalty and he has no weapon anyway (heroCS already counts that)
-  const spared = (c.unless || []).length && c.unless.every((i) => LW.hasItem(hero, i));
-  // Huntmastery: what a surprise attack or ambush costs (combat.ambush) is not lost
-  const ambush = c.ambush && c.csMod < 0 && hero.series === 'magnakai' && LW.has(hero, 'huntmastery');
-  // the text's own conditions: "if you have Animal Control, add 2" (csIf), "unless you have Mindshield, deduct 2" (csUnless)
-  const missed = c.csIf && !LW.meets(hero, c.csIf), excused = c.csUnless && LW.meets(hero, c.csUnless);
-  const csMod = spared || ambush || missed || excused || (c.unarmed && !LW.armedWith(hero)) ? 0 : c.csMod;
-  const note = c.csIf ? LW.condName(c.csIf) : c.csNote; // a discipline's bonus is named after it
   const node = el('div', 'fight');
   node.innerHTML = `<canvas width="600" height="800"></canvas><div class="foebar"><span data-b="name"></span><div class="bar"><i></i></div><small data-b="stats"></small></div><div class="cmds" data-b="cmds"></div>`;
-  const dial = makeDial();
-  // mind: 0 at rest, 1 Mindblast, 2 Psi-surge. power is the most this character can do.
-  B = { c, i: -1, foe: null, img: null, power: LW.mindPower(hero), mind: LW.mindPower(hero) ? 1 : 0, rounds: 0, log: [], over: null, lock: false, scene: sec.scene, node, dial,
-    fx: { lunge: 0, hit: 0, dead: 0, wounds: [] },
-    // immune: true, to every attack of the mind; 'mindblast', to Mindblast only (Psi-surge still tells);
-    // 'psi', to Mindblast and Psi-surge (only a Grand Master's Kai-surge tells, which the engine lacks yet)
-    blasting() { return allDeaf(this.foe) || (this.foe.immune && this.mind === 1) ? 0 : this.mind; },
-    cs() { return LW.heroCS(hero, { mindblast: this.blasting() === 1, psiSurge: this.blasting() === 2, enemy: this.foe, csMod, csNote: note, with: c.with }).total; },
-    weapon: LW.armedWith(hero, { with: c.with }),
-    ratio() {
-      const rawRatio = this.cs() - this.foe.cs;
-      // Hard cap the maximum advantage to prevent complete trivialization
-      return Math.min(10, rawRatio);
-    } };
-  nextFoe();
-  if (B.foe.mindforce) B.log.push(LW.shielded(hero) ? 'Its will breaks against your Mindshield.' : `Its will presses on yours: Combat Skill less ${B.foe.mindforce}.`);
-  if (csMod) B.log.push(`${note}: Combat Skill ${csMod > 0 ? 'plus' : 'less'} ${Math.abs(csMod)}.`);
-  else if (spared) B.log.push(`Your ${c.unless.map(LW.itemName).join(' and ')} spare you the penalty.`);
-  else if (ambush) B.log.push('Huntmastery: the ambush does not catch you off guard.');
-  else if (excused && c.csMod) B.log.push(`${LW.condName(c.csUnless)}: you are spared the penalty.`);
-  if (c.with === 'none') B.log.push('You fight bare-handed.');
-  else if (c.with) B.log.push(B.weapon ? `Only your ${LW.itemName(c.with)} can harm it.` : `Only the ${LW.itemName(c.with)} can harm it, and you do not have it.`);
-  if (B.weapon && LW.ITEMS[B.weapon] && LW.ITEMS[B.weapon].cs) B.log.push(`You fight with the ${LW.itemName(B.weapon)}.`);
+  // the fight's rules are LW.Fight's (shared/fight.js); the page adds its drawing state
+  B = Object.assign(new LW.Fight(game, book.id), { lock: false, scene: game.section.scene, node, dial: makeDial(), img: null, fx: { lunge: 0, hit: 0, dead: 0, wounds: [] } });
+  showFoe();
   mode = 'battle';
   await turn(render);
   updateBattle();
@@ -1085,11 +989,8 @@ async function startBattle() {
     requestAnimationFrame(loop);
   })();
 }
-/* the foe no mind attack of his can touch: immune to all, or to Mindblast when that is all he has */
-const allDeaf = (foe) => foe.immune === true || foe.immune === 'psi';
-const deaf = (foe) => allDeaf(foe) || (!!foe.immune && B.power === 1);
-function nextFoe() {
-  B.i++; B.foe = Object.assign({}, B.c.enemies[B.i]); B.foe.max = B.foe.ep;
+/* a new foe on the plate: its picture, unhurt */
+function showFoe() {
   B.fx.dead = 0; B.fx.wounds = []; B.img = null;
   // the approved picture, else the plate library's or the section's own, else the drawn emblem (platepick.js)
   const foe = B.foe, plate = pickPlate(foe, book, PLATES, PINS[book.id], pinKey(game.s.at, B.i));
@@ -1110,14 +1011,14 @@ function updateBattle() {
   q('name').textContent = foe.name;
   B.node.querySelector('.bar i').style.width = Math.max(0, (foe.ep / foe.max) * 100) + '%';
   q('stats').textContent = `CS ${foe.cs} · EP ${Math.max(0, foe.ep)} · Ratio ${r > 0 ? '+' : ''}${r}`;
-  const ev = B.c.evade, evadeOpen = ev && B.rounds >= ev.after && !(ev.within && B.rounds >= ev.within), locked = B.lock || B.over; // within: only in the first rounds
+  const ev = B.c.evade, locked = B.lock || B.over;
   const med = (id, ic, label, note, off, extra = '') => `<div class="medcap"><button type="button" class="med ${extra}" data-cmd="${id}" ${locked || off ? 'disabled' : ''} aria-label="${label}">${ic}</button>${label}<small>${note}</small></div>`;
   const n = hero.backpack.filter((b) => b === 'potion').length, psi = LW.psi(hero);
   const left = med('fight', B.weapon ? itemGlyph(B.weapon) : glyph('crossed-swords'), 'Strike', 'spin to attack')
-    + (B.power ? med('mind', glyph(B.power === 2 ? 'psychic-waves' : 'brainstorm'), B.power === 2 ? 'Psi-surge' : 'Mindblast', deaf(foe) ? 'no effect' : foe.immune && B.mind === 1 ? 'as Mindblast: no effect' : ['at rest', B.power === 2 ? `as Mindblast, +${psi.blast}` : 'focused, +2', `+${psi.surge}, costs ${psi.cost} a round`][B.mind], false, B.blasting() ? 'lit' : '') : '');
+    + (B.power ? med('mind', glyph(B.power === 2 ? 'psychic-waves' : 'brainstorm'), B.power === 2 ? 'Psi-surge' : 'Mindblast', B.deaf() ? 'no effect' : foe.immune && B.mind === 1 ? 'as Mindblast: no effect' : ['at rest', B.power === 2 ? `as Mindblast, +${psi.blast}` : 'focused, +2', `+${psi.surge}, costs ${psi.cost} a round`][B.mind], false, B.blasting() ? 'lit' : '') : '');
   const right = (n ? med('item', itemGlyph('potion'), 'Laumspur', `${n} left`, hero.ep >= hero.epMax) : '')
     + (LW.canCure(hero, book.id) ? med('cure', glyph('healing'), 'Curing', hero.ep <= 6 ? '20 back, once a book' : 'at 6 or less', hero.ep > 6) : '')
-    + (ev ? med('evade', glyph('run'), 'Evade', evadeOpen ? 'take one blow' : ev.within && B.rounds >= ev.within ? 'too late' : `after round ${ev.after}`, !evadeOpen) : '');
+    + (ev ? med('evade', glyph('run'), 'Evade', B.evadeOpen ? 'take one blow' : B.evadeLate ? 'too late' : `after round ${ev.after}`, !B.evadeOpen) : '');
   const cmds = q('cmds');
   cmds.innerHTML = left + '<span data-dial></span>' + right;
   cmds.querySelector('[data-dial]').replaceWith(B.dial.el);
@@ -1133,66 +1034,33 @@ async function lunge(n) {
 }
 async function battleAct(id) {
   if (!B || B.lock || B.over) return;
-  const hero = game.hero, foe = B.foe;
   B.lock = true; updateBattle();
-  if (id === 'mind') {
-    if (deaf(foe)) B.log.push(`${foe.name} is immune to ${foe.immune === true ? 'attacks of the mind' : foe.immune === 'psi' ? 'Mindblast and Psi-surge' : 'Mindblast'}.`);
+  if (id === 'mind') B.focus();
+  else if (id === 'cure') B.cure();
+  else if (id === 'item') B.drink();
+  else {
+    const o = B.roll(await B.dial.spin());
+    if (id === 'evade') { B.flee(o); await lunge(o.taken); }
     else {
-      B.mind = (B.mind + 1) % (B.power + 1);
-      if (B.mind === 2 && hero.ep <= LW.psi(hero).floor) { B.mind = 0; B.log.push('You are too weak to Psi-surge.'); }
-      else B.log.push(['You let your mind rest.', foe.immune ? `You gather your will to a point: Mindblast, to which ${foe.name} is immune.` : 'You gather your will to a point: Mindblast.', `You loose the full Psi-surge. It will cost you ${LW.psi(hero).cost} Endurance a round.`][B.mind]);
-    }
-  } else if (id === 'cure') {
-    const back = Math.min(20, hero.epMax - hero.ep);
-    hero.ep += back; hero.cured = book.id;
-    B.log.push(`Curing: you draw on your mastery and ${back} Endurance returns.`);
-  } else if (id === 'item') {
-    hero.backpack.splice(hero.backpack.indexOf('potion'), 1); hero.ep = Math.min(hero.epMax, hero.ep + 4);
-    B.log.push('The Laumspur burns going down. 4 Endurance restored.');
-  } else {
-    const n = await B.dial.spin(), res = LW.combatRound(B.ratio(), n);
-    B.rounds++;
-    const tag = `${ROMAN[B.rounds - 1] || B.rounds}. You drew ${n}.`;
-    if (id === 'evade') {
-      const loss = Math.min(res.hero, hero.ep);
-      await lunge(loss); hero.ep -= loss;
-      B.log.push(`${tag} You turn and run${loss ? `; it catches you for ${loss}` : ', untouched'}.`);
-      B.over = hero.ep > 0 ? 'evade' : 'dead';
-    } else {
-      // the text's own doubling (a blow meant to stun), or an undead foe struck with a blade that doubles against them
-      const twice = B.c.double || (foe.undead && LW.ITEMS[B.weapon] && LW.ITEMS[B.weapon].undead);
-      const dealt = Math.min(res.enemy * (twice ? 2 : 1), foe.ep), taken = Math.min(res.hero, hero.ep);
+      B.strike(o);
       await wait(still ? 0 : 140);
-      if (dealt) { B.fx.wounds.push(newWound()); B.fx.hit = 1; }
-      foe.ep -= dealt; updateBattle();
+      if (o.dealt) { B.fx.wounds.push(newWound()); B.fx.hit = 1; }
+      updateBattle();
       await wait(still ? 0 : 480);
-      if (foe.ep > 0 || taken) { await lunge(taken); hero.ep -= taken; }
-      B.log.push(`${tag} ${res.enemy === Infinity ? 'A killing blow' : dealt ? `${foe.name} loses ${dealt}` : 'Your blow is turned'}; ${res.hero === Infinity ? 'but it finds the gap in your guard' : taken ? `you lose ${taken}` : 'you are untouched'}.`);
-      if (foe.drain && hero.ep > 0) { // every round fought, the last one too
-        if (LW.shielded(hero)) { if (B.rounds === 1) B.log.push('Its mind attack breaks against your shield.'); }
-        else { hero.ep -= foe.drain; B.log.push(`Its mind attack costs you ${foe.drain} Endurance.`); }
-      }
-      if (B.blasting() === 2 && hero.ep > 0) {
-        const psi = LW.psi(hero);
-        hero.ep -= psi.cost; B.log.push(`The Psi-surge costs you ${psi.cost} Endurance.`);
-        if (hero.ep <= psi.floor && hero.ep > 0) { B.mind = 1; B.log.push('Too weak to hold it, you fall back on Mindblast.'); }
-      }
-      if (hero.ep <= 0) B.over = 'dead';
-      else if (foe.ep <= 0) {
+      const foeUp = B.foe.ep > 0;
+      B.suffer(o); // his losses are drawn with the lunge, as they land
+      if (foeUp || o.taken) await lunge(o.taken);
+      if (o.down) {
         updateBattle();
         await tween(1000, (k) => { B.fx.dead = k; });
-        if (B.i + 1 < B.c.enemies.length) { nextFoe(); B.log.push(`${foe.name} falls. ${B.foe.name} takes its place.`); }
-        else B.over = 'win';
+        if (B.advance()) showFoe();
       }
     }
   }
   B.lock = false; updateBattle();
 }
 async function endBattle() {
-  const out = B.over, c = B.c;
-  if (out === 'win') { game.wonCombat(); if (c.to) game.go(c.to, 'The fight is won'); }
-  else if (out === 'evade') game.go(c.evade.to, 'You break away from the fight');
-  else game.save();
+  B.finish();
   B = null; mode = 'story'; sel = null;
   await turn(render);
 }
@@ -1268,10 +1136,7 @@ bookEl.addEventListener('keydown', (e) => {
 function addItem(id) { const err = game.addItem(id); if (err) LW.UI.toast(err); render(); }
 /* a typed name that is a known item's (the Sommerswerd) adds that item, with its kind and powers;
    the open book's own items first, where two books share a name */
-function knownItem(name) {
-  const n = name.toLowerCase(), own = ITEM_TABLES[book.id] ? Object.keys(ITEM_TABLES[book.id].ITEMS) : [];
-  return [...own, ...Object.keys(LW.ITEMS)].find((id) => (LW.ITEMS[id].name || '').toLowerCase() === n) || null;
-}
+const knownItem = (name) => LW.itemByName(name, ITEM_TABLES[book.id] ? Object.keys(ITEM_TABLES[book.id].ITEMS) : []);
 pr.addEventListener('keydown', (e) => {
   if (e.target.id !== 'itemname' || (e.key !== 'Enter' && e.key !== 'Escape')) return;
   const name = e.key === 'Enter' && e.target.value.trim().replace(/[|"<>]/g, ''), prefix = e.target.dataset.prefix;
@@ -1291,7 +1156,7 @@ async function begin(id, fresh, anew, reread) {
   useBook(id);
   intro = false;
   if (!fresh && !anew && game.load()) { mode = 'story'; panel = 'kai'; sel = null; if (reread && book.intro && book.intro.length) intro = 'again'; return turn(render); }
-  const kept = LW.Character.load(), carry = !anew && kept && !kept.completed.includes(id) ? kept : null;
+  const kept = LW.Character.load(), carry = !anew && LW.Character.carries(kept, id) ? kept : null;
   SU = { step: 'hero', h: LW.HeroSetup(book, carry) }; // the save is cleared only when he sets out
   mode = 'setup'; sel = null;
   await turn(render);

@@ -11,8 +11,10 @@ every book can become a step or a check there.
 
 ## Next steps
 
-In order of importance. Books 1-12 are imported and being played, so the engine work that retires
-their `todo`s comes first; the Grand Master series is needed before Book 13 can be played, and Book
+In order of importance. The engine is in modules and tested before its rules change (ADR 0024:
+done 2026-10-11 for the fight, the item tables and the adventures; what is left is under "Code to
+make testable"). Books 1-12 are imported and being played, so the engine work that retires
+their `todo`s comes next; the Grand Master series is needed before Book 13 can be played, and Book
 13 is not imported yet (that is the owner's go-ahead). Each item ends with why it stands where it
 does: "Needs" is a hard dependency, "judgement" an order chosen, not forced. The owner picks what is
 done, and when.
@@ -39,7 +41,8 @@ made, replaces the `todo`s it covers and updates the matching reference file. No
    260; B4 62, 147, 153; B5 4, 106, 119, 159, 280, 316, 393; B6 12, 114, 155, 254, 270; B7 19, 27,
    219; B8 183, 251, 252, 298, 323; B9 46, 116, 148, 182, 285; B10 28, 251, 336; B11 10, 68, 77,
    220, 256, 319; B12 5, 8, 16, 23, 32, 58, 83, 136, 194, 224, 247, 259, 276, 292.
-   *Most `todo`s*, and the round-by-round fight state that 3 and 6 build on.
+   *Most `todo`s*, and the round-by-round fight state that 3 and 6 build on. In `LW.Fight`
+   (shared/fight.js), whose tests (`tests/js/fight.test.js`) guard what it does now.
 3. **The fight's length deciding the way on, or ending it** (about 40): won in N rounds or fewer
    goes one way; only N rounds are fought; one round, decided by who lost more; stop when he loses
    any ENDURANCE; break off when the enemy is down to N. B1 227, 231, 339; B3 32, 123, 138, 147,
@@ -214,14 +217,16 @@ without them; the importer marks the highest section `victory` even when it is a
 
 ### Code to make testable
 
-- `main.js` runs the page on import, so it has no tests. Move its pure parts into a module and test
-  them: `applyItems` first (lays an item table over a book), then backups (`parseBackup`, `backupOf`,
-  `backupName`, `pending`), adventures and save keys, `knownItem`, `shown`, `storyText`, `roman`,
-  `itemGlyph`, `kitName`/`kitAbout`, `deaf`/`allDeaf`.
+The engine's rules are out of `main.js` (ADR 0024, 2026-10-11): the fight is `LW.Fight`
+(shared/fight.js), the item tables `LW.applyItems` and `LW.itemByName` (core.js), an adventure lost
+(`game.lost`) and the character a book begins with (`LW.Character.carries`), adventures and backups
+`adventures.js`, each with tests, and each checked against the old code. Left:
+
+- `main.js` is drawing and input; `shown`, `storyText`, `roman`, `itemGlyph` and `kitName`/`kitAbout`
+  are wording and drawing, which ADR 0022 leaves untested.
 - `import_projectaon.py`, `item_sections.py`, `reading_copy.py` and `fetch_projectaon.py` do their
   work on import; their tests run a copy as a whole. (`check_items.mjs` and `plates_pin.mjs` export
   their work since 2026-10-11.)
-- No unit test fights a whole fight: the player's combat is in `main.js` (above).
 
 ### Not yet checked
 

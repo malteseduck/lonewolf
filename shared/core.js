@@ -97,6 +97,33 @@
     Object.assign(LW.ITEMS, items);
     LW.WEAPONS = Object.keys(LW.ITEMS).filter((k) => LW.ITEMS[k].kind === 'weapon');
   };
+  /* A book's hand-made item table (items-<code>.js: SECTIONS) laid over its imported sections, once
+     (docs/reference/book-format.md, "Item tables"). */
+  LW.applyItems = (b, t) => {
+    if (!t || b.itemsApplied) return;
+    b.itemsApplied = true;
+    for (const [id, x] of Object.entries(t.SECTIONS)) {
+      const sec = b.sections[id];
+      if (!sec) continue;
+      const { need, fight, bowShot, ...rest } = x;
+      Object.assign(sec, rest);
+      // a bow shot: the ranges are for the total, so the importer could not read them; given here per choice
+      if (bowShot) { sec.bowShot = true; sec.rnt = 'auto'; for (const [to, r] of Object.entries(bowShot)) sec.choices.filter((c) => c.to === to).forEach((c) => { c.range = r; }); }
+      if (fight && sec.combat) {
+        const { mindforce, undead, drain, ...f } = fight; // these three belong to each enemy
+        Object.assign(sec.combat, f);
+        sec.combat.enemies.forEach((e) => Object.assign(e, mindforce && { mindforce }, undead && { undead }, drain && { drain }));
+      }
+      // a gate the importer set wrongly is cleared with null; an any-of gate replaces the importer's, which read one alternative as the whole
+      for (const [to, n] of Object.entries(need || {})) sec.choices.filter((c) => c.to === to).forEach((c) => { if (n === null) delete c.need; else c.need = n.any ? n : Object.assign({}, c.need, n); });
+    }
+  };
+  /* The item a typed name is (the Sommerswerd), with its kind and powers; the ids in `first` (the open
+     book's own) are tried first, where two books share a name. */
+  LW.itemByName = (name, first = []) => {
+    const n = name.toLowerCase();
+    return [...first, ...Object.keys(LW.ITEMS)].find((id) => (LW.ITEMS[id].name || '').toLowerCase() === n) || null;
+  };
   const listOf = (hero, id) => ({ weapon: hero.weapons, backpack: hero.backpack, special: hero.special }[LW.itemKind(id)]);
   LW.hasItem = (hero, id) => (id === 'meal' ? hero.meals > 0 : listOf(hero, id).includes(id));
   /* Put an item where it belongs. Returns why it does not fit, or null. hero.noPack: the Backpack
@@ -210,6 +237,8 @@
     get hero() { return this.s.hero; }
     get section() { return this.book.sections[this.s.at]; }
     get dead() { return this.s.hero.ep <= 0; }
+    /* the adventure has ended short of the quest: he is dead, or at a death or failed ending */
+    get lost() { return this.dead || this.section.end === 'death' || this.section.end === 'failed'; }
 
     start(hero) {
       this.s = { hero, at: null, looted: {}, fought: {}, trail: [], events: [] };

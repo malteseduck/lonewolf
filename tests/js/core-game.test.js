@@ -115,6 +115,16 @@ describe('combat gating', () => {
   });
 });
 
+describe('the adventure lost', () => {
+  it('at no Endurance, or at a death or failed ending; not at the quest\'s own end', () => {
+    const g = play({ 2: { end: 'death' }, 3: { end: 'failed' }, 4: { end: 'victory' } });
+    expect(g.lost).toBe(false);
+    for (const [at, lost] of [['2', true], ['3', true], ['4', false]]) { g.go(at); expect(g.lost).toBe(lost); }
+    g.go('1'); g.hero.ep = 0;
+    expect(g.lost).toBe(true);
+  });
+});
+
 describe('choices()', () => {
   const ch = (g, i = 0) => g.choices()[i];
   it('keeps a choice with a discipline need disabled until he has it, saying which', () => {

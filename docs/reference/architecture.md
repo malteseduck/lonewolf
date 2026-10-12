@@ -6,7 +6,8 @@ How the code is laid out today. Intent lives in `docs/spec.md`.
 
 ```
 index.html                  the player: markup, all CSS, script tags
-main.js                     ES module: state, rendering, input, combat, title page
+main.js                     ES module: state, rendering, input, combat on the page, title page (no rules: ADR 0024)
+adventures.js               ES module: adventures and backups in storage (load, migrate, back up, restore, pending)
 plates.js                   ES module: ink creatures, inkPlate (restyles an illustration), figure, frame, gear
 maps.js                     ES module: printedCanvas, the book's printed map repainted in sepia
 platepick.js                ES module: which picture a fight shows (pins, plates.json, the book's own); also used
@@ -31,6 +32,7 @@ docs/                       spec, plan, reference
 shared/                     used by the player and the prototypes (classic scripts on a global LW)
   core.js                   rules data (Combat Results Table, Kai disciplines, items) and LW.Game, the book runner
   rules-series.js           per-series rules (Kai/Magnakai), Lore-circles, ranks, carried character, setting out (HeroSetup, KitSetup), starting kits
+  fight.js                  LW.Fight: a fight's set-up, rounds and end (the player only; docs/reference/rules-engine.md)
   book-demo.js              LW.BOOK_DEMO: the original 20-section demo chapter, with map locations (prototypes only)
   ui.js                     LW.UI helpers: el, esc, wait, toast, createHero (Kai only), pickRandom, chart; LW.sfx (blips, prototypes only)
   ink.js                    ES module: procedural parchment, leather, wood, ink-wash scenes
@@ -108,7 +110,8 @@ shared/core.js              defines LW, LW.Game, Kai rules
 data/projectaon/index.js    document.writes a <script> for each imported book -> LW.BOOKS[code]
 shared/ui.js                LW.UI (LW.sfx blips: prototypes only)
 shared/rules-series.js      adds Magnakai, overrides LW.has and LW.heroCS, adds LW.Character, LW.HeroSetup, LW.KitSetup, LW.KITS
-main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js, ./platepick.js
+shared/fight.js             LW.Fight, LW.ROMAN, LW.RATIO_CAP
+main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js, ./platepick.js, ./adventures.js
 ```
 
 Order matters: `rules-series.js` overrides functions defined in `core.js` and needs `LW.UI`.
@@ -137,7 +140,7 @@ and `back(k)` (the player, which keeps only the last `REWIND` = 3: `game.keep`).
 
 The player keeps its own view state in module variables in `main.js`:
 `mode` (`title` | `story` | `battle`), `panel` (`kai` | `pack` | `map`), `sel` (selected item or
-discipline), `B` (the fight in progress, or null), `busy` (input lock during animations),
+discipline), `B` (the fight in progress, an `LW.Fight` with the page's drawing state added, or null), `busy` (input lock during animations),
 `shelf` (the title page shows the open
 adventure's books rather than the list of adventures), `shelfSeries` (the series the shelf shows, chosen
 by its tabs; null: the adventure's own), `forgetting` (the adventure whose "forget" is
@@ -157,7 +160,8 @@ Play is kept in **adventures**: separate games, each with its own save for every
 carried character. `<n>` below is the adventure's id, `1`, `2`, ...; a new one takes the highest id
 plus one. Forgetting an adventure removes every `lw-a<n>-*` key.
 
-**Backups.** An adventure's "backup" button (`backupAdventure` in `main.js`) writes its whole state
+**Backups.** An adventure's "backup" button (`backupAdventure` in `main.js`; the file made by
+`backupOf` and named by `backupName` in `adventures.js`) writes its whole state
 as JSON: `{kind: 'lone-wolf adventure backup', version: 1, made, adventure: {id, book, name?}, keys:
 {<every lw-a<n>-* key>: its parsed value}}`, named `<name>.<yyyy>.<mm>.<dd>.<hh>.<mm>.json` (the adventure's
 name, or "Adventure II"; local time, 24-hour; a second backup in the same minute replaces the first). A page cannot write to
@@ -190,7 +194,7 @@ refused with a toast.
 | `lw-proto-book`, `lw-proto-map`, `lw-proto-3d` | saves for prototypes A, B, C |
 
 Before adventures, saves were `lw-save-<code>`, `lw-character` and `lw-book` (and `lw-save` for the
-demo chapter). On the first load without `lw-adventures`, `loadAdventures()` in `main.js` moves
+demo chapter). On the first load without `lw-adventures`, `loadAdventures()` in `adventures.js` moves
 the first three into adventure 1. An old `lw-save` is left where it is, unused.
 
 Every page is the same origin on localhost, so they share this storage. Each device and browser

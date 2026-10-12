@@ -133,6 +133,8 @@
       try { localStorage.setItem(this.key, JSON.stringify({ hero, from: book.id, fromTitle: book.title, completed: [...done] })); } catch (e) { /* not kept */ }
     },
     clear() { try { localStorage.removeItem(this.key); } catch (e) { /* nothing kept */ } },
+    /* the record kept (load()) carries into a book he has not completed yet (ADR 0011) */
+    carries: (kept, bookId) => !!kept && !kept.completed.includes(bookId),
   };
 
   /* ---------- a new character, or a returning one: the choices made before the book begins ----------

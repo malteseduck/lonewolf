@@ -76,7 +76,7 @@ an item id: the only weapon that can harm this foe), `double` (the foe's losses 
 shielded)), `ambush` (the `csMod` is a surprise attack's or ambush's, which Huntmastery spares), `evade`
 (`{after, to}`, as the importer writes it: an evasion the text gives outside a choice, Book 3's 108);
 plus `bowShot` (above). A `need` of `null` clears a gate the importer set wrongly; a `need` with `any` replaces the importer's gate whole (other needs are merged into it). `main.js` lays the table over the
-book (`applyItems`) when it is first opened. Where the text leaves the choice to the player (which
+book (`LW.applyItems` in core.js) when it is first opened. Where the text leaves the choice to the player (which
 weapon breaks, which item is stolen), the table gives a `todo`, not a guess. How to write one, and
 the tools: `items.md`.
 

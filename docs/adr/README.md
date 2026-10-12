@@ -49,3 +49,5 @@ choice, and why. Read this index before changing behaviour, art, or a tool's out
 | [0020](0020-approved-fight-pictures-pinned.md) | Approved fight pictures are pinned; a change waits for the owner; the sheet marks only those waiting | 2026-10-11 | Accepted, amended 2026-10-11 |
 | [0021](0021-tool-pages-on-burnt-parchment.md) | The tool pages are the map's burnt parchment, charred round the window | 2026-10-11 | Accepted, amended 2026-10-11 |
 | [0022](0022-unit-tests.md) | Unit tests for the main functionality (Vitest, pytest), and `check_all.py` that checks everything | 2026-10-11 | Accepted, amended 2026-10-11 |
+| [0023](0023-combat-ratio-cap.md) | The Combat Ratio counts for +10 at most (house rule against the Sommerswerd) | 2026-10-04 | Accepted |
+| [0024](0024-engine-tested-before-it-changes.md) | The engine is modular and tested before its rules change; the move changes nothing | 2026-10-11 | Accepted |
