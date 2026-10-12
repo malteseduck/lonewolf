@@ -306,8 +306,10 @@ button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background:
 /* inventory */
 /* inventory, after the HD equipment sheet */
 .kit { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 0.1em; }
-/* his figure, faint, as the warrior sketch behind the HD paper doll */
-.kit img { position: absolute; left: 50%; top: 42%; height: 88%; width: auto; max-width: 100%; object-fit: contain; transform: translate(-50%, -50%); opacity: 0.42; pointer-events: none; }
+/* the Kai wolf's head, faint in the page's ink, as a seal behind the paper doll (owner 2026-10-12: not his figure) */
+.kit .crestmark { position: absolute; left: 50%; top: 42%; width: 11em; height: 11em; transform: translate(-50%, -50%); opacity: 0.2; pointer-events: none; }
+.kit .crestmark .glyph { width: 100%; height: 100%; }
+.kit .crestmark .glyph i { background: var(--ink); }
 .doll { position: relative; display: grid; grid-template-columns: repeat(3, auto); justify-content: center; align-items: center; gap: 0 0.9em; }
 .doll > span { display: grid; place-items: center; }
 .doll .sh .disc { --s: 2.7em; }

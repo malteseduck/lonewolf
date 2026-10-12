@@ -2,7 +2,7 @@
    Left page: the story. Right page: a panel (Kai Disciplines, inventory, or the fight); the map is a modal.
    Plays the books imported by tools/import_projectaon.py. */
 import * as Ink from './shared/ink.js';
-import { drawCreature, setArt, setEmblem, newWound, heroFromArt, portraitFromArt, drawFrame, drawBanner, drawCrest, gearSVG } from './plates.js';
+import { drawCreature, setArt, setEmblem, newWound, portraitFromArt, drawFrame, drawBanner, drawCrest, gearSVG } from './plates.js';
 import { printedCanvas } from './maps.js';
 import { compilePlates, pickPlate, pinKey } from './platepick.js';
 import * as Adv from './adventures.js';
@@ -219,9 +219,6 @@ root.setProperty('--seal', `url("data:image/svg+xml,${encodeURIComponent(sealPla
 root.setProperty('--wood', `linear-gradient(rgba(10,7,6,0.55), rgba(10,7,6,0.55)), url(${Ink.leather(512).toDataURL('image/jpeg', 0.8)})`);
 gear.innerHTML = gearSVG();
 let portraitURL = null; // Lone Wolf's likeness over the Kai panel, if the owner has a picture of him (art/manifest.json "portrait")
-/* Lone Wolf's figure behind the inventory's slots: the owner's picture of him cut out, toned sepia
-   (art/manifest.json "hero": {src, crop}, or a file already cut out). Without one, none shows. */
-let dollURL = null;
 const vignettes = {};
 const vignette = (scene) => vignettes[scene] || (vignettes[scene] = Ink.inkScene(scene, 1000, 340).toDataURL());
 
@@ -542,7 +539,7 @@ function kaiHTML() {
       ${ruled('Endurance')}${row('Base', h.epMax - epParts.reduce((t, p) => t + p.n, 0))}${epParts.map((p) => row(p.label, signed(p.n))).join('')}</section></div>
     <div class="discs">${rows.map((r) => `<div class="drow">${r.map(disc).join(`<span class="linkwrap">${bar}</span>`)}</div>`).join('')}</div>`;
 }
-/* Inventory, after the HD equipment sheet: his figure faint behind a paper doll of slots (helmet
+/* Inventory, after the HD equipment sheet: the Kai wolf's head faint behind a paper doll of slots (helmet
    between two shoulder slots, weapons either side of the chest, two at the belt; Special Items fill
    the shoulder and belt slots), a row of five more for further Special Items under a flourish,
    then the Backpack as a grid of tiles beside its own medallion */
@@ -583,7 +580,7 @@ function packHTML() {
   for (let i = 0; i < h.meals; i++) cells.push(`<button type="button" class="disc item ${on('meal', 'meal')}" data-sel="meal|meal" aria-label="Meal">${itemGlyph('meal')}</button>`);
   h.backpack.forEach((b) => cells.push(slot('pack', b)));
   while (cells.length < LW.MAX_BACKPACK) cells.push(empty());
-  const kit = adding ? pickerHTML() : `<div class="kit">${dollURL ? `<img src="${dollURL}" alt="">` : ''}
+  const kit = adding ? pickerHTML() : `<div class="kit"><span class="crestmark">${glyph('wolf-head')}</span>
       <div class="doll"><span class="sh l">${around[0]}</span><span class="head">${worn('helmet')}</span><span class="sh r">${around[1]}</span>
         <span class="wl">${weapon(h.weapons[0])}</span><span class="body">${worn('chainmail')}</span><span class="wr">${weapon(h.weapons[1])}</span>
         <span class="belt">${around[2]}${around[3]}</span></div>
@@ -1222,14 +1219,6 @@ fetch('assets/icons/crossed-swords.svg').then((r) => r.text()).then((t) => {
 const portraitDone = () => { if (mode === 'title') renderLeft(); else if (mode === 'story' && panel === 'kai') renderRight(); };
 fetch('art/manifest.json').then((r) => r.json()).then((m) => {
   for (const kind in m.enemies || {}) { const im = new Image(); im.onload = () => setArt(kind, im); im.src = 'art/' + m.enemies[kind]; }
-  if (m.hero) {
-    const im = new Image();
-    im.onload = () => {
-      dollURL = m.hero.crop ? heroFromArt(im, m.hero.crop, m.hero.outline, true).toDataURL() : im.src;
-      if (mode === 'story' && panel === 'pack') renderRight();
-    };
-    im.src = 'art/' + (m.hero.src || m.hero);
-  }
   if (m.portrait) {
     const im = new Image();
     im.onload = () => { portraitURL = portraitFromArt(im, m.portrait.crop, m.portrait.fade).toDataURL(); portraitDone(); };

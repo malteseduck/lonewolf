@@ -119,11 +119,11 @@ on the same medallion again, or Escape closes it; touching another medallion mov
     Glyphs are game-icons.net SVGs in `assets/icons/` (`DISC_GLYPH`), used as CSS masks so they
     can take the ivory fill and ember glow.
   - The box explains the touched discipline, and says when it is not learned.
-- **pack** (`packHTML`), after the HD equipment sheet: in `.kit`, his full-length figure
-  faint behind a paper doll of slots: the helmet between two shoulder slots, the two weapons either
+- **pack** (`packHTML`), after the HD equipment sheet: in `.kit`, the Kai wolf's head
+  (`.crestmark`, large and faint in `--ink`; ADR 0009) behind a paper doll of slots: the helmet between two shoulder slots, the two weapons either
   side of the chainmail (a mastered weapon is lit), two belt slots below; the first four other
   Special Items fill the shoulder and belt slots, the rest a row of five rings (more in fives) under
-  a scrolled rule (`flourish`); empty slots are bare rings. The figure is `dollURL` (see "Lone Wolf's figure" below). Then a ruled "Backpack" heading, a knapsack medallion beside eight dark square tiles (one per Meal or
+  a scrolled rule (`flourish`); empty slots are bare rings. Then a ruled "Backpack" heading, a knapsack medallion beside eight dark square tiles (one per Meal or
   item) under the HD sheet's ironwork (`packLattice`: a curl in each tile's corners, diamond studs
   where they meet, a double frame, a scroll off each corner); a ledger (gold -/+, other coins he has met with their own -/+ (`hero.coins`), "Add an item by hand"); and, when anything is kept at the Kai Monastery
   (`hero.stored`, `hero.storedGold`), a line (`.kept`) saying what; likewise what was taken to be found again
@@ -179,19 +179,6 @@ The player once drew its own maps (replicas of the printed maps stamped with eng
 made-up places per section, town plans, travel on the map). The owner dropped them on 2026-10-05;
 the code is in git history before that date, and the symbols it used are kept in git-ignored
 `art/reference/map-symbols/from-game/`.
-
-### Lone Wolf's figure (`dollURL`)
-
-Shown faint behind the inventory's slots. The picture comes from `art/manifest.json` `hero`:
-either a file already cut out, or `{src, crop}`, in which case `heroFromArt(img, crop, outline,
-bare)` (plates.js) cuts the figure out of its plain, smoky ground at load: a flood fill in from the
-crop's edges through mid-toned greyish pixels close to their neighbour; a smooth colour surface
-fitted to that ground then keys out anything near it. An optional `outline` (a polygon traced by
-hand in crop pixels) overrides both: inside it is figure, outside ground, and only a 10 px band
-along it is left to the keying. Without an outline, the largest piece left is kept. Then it tones
-it sepia; `bare` leaves off the pointer and cuts above the feet. The owner's current picture is the
-full-length Lone Wolf from a Lone Wolf HD store screenshot (in git-ignored `art/`). Without one,
-nothing shows: the owner asked for no stand-in drawing (2026-10-03).
 
 ## Combat (`startBattle`, `updateBattle`, `battleAct`, `endBattle`)
 

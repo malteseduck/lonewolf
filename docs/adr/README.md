@@ -37,7 +37,7 @@ choice, and why. Read this index before changing behaviour, art, or a tool's out
 | [0006](0006-map-lettering-font.md) | Map lettering font: Cabin by default, or the map's own `font.txt` (Book 12: Architects Daughter) | 2026-10-07 | Accepted, amended 2026-10-10 |
 | [0007](0007-maps-in-sepia.md) | Maps shown in sepia | 2026-10-07 | Accepted |
 | [0008](0008-plates-whole-no-fade.md) | Fight pictures whole, as drawn, no faded edges | 2026-10-01 | Accepted |
-| [0009](0009-no-stand-in-hero-figure.md) | No stand-in drawing for Lone Wolf's figure | 2026-10-03 | Accepted |
+| [0009](0009-wolf-crest-behind-inventory.md) | A faint wolf's-head crest behind the inventory's slots, not Lone Wolf's figure | 2026-10-03 | Accepted |
 | [0010](0010-vary-plain-human-enemies.md) | Plain human enemies get varied pictures | 2026-10-09 | Accepted |
 | [0011](0011-carry-the-character-on.md) | Carry the character on by default; Backpack left behind, except Backpack Items into the Grand Master series | 2026-10-02 | Accepted, amended 2026-10-10 |
 | [0012](0012-page-reference-reads-continue.md) | A lone page-reference choice reads "Continue" | 2026-09-30 | Accepted |
