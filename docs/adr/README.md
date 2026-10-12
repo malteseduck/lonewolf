@@ -48,7 +48,9 @@ choice, and why. Read this index before changing behaviour, art, or a tool's out
 | [0019](0019-grand-master-readings.md) | Grand Master rule readings: other Special Items dropped, Deliverance once a book, no re-roll | 2026-10-10 | Accepted |
 | [0020](0020-approved-fight-pictures-pinned.md) | Approved fight pictures are pinned; a change waits for the owner; the sheet marks only those waiting | 2026-10-11 | Accepted, amended 2026-10-11 |
 | [0021](0021-tool-pages-on-burnt-parchment.md) | The tool pages are the map's burnt parchment, charred round the window | 2026-10-11 | Accepted, amended 2026-10-11 |
-| [0022](0022-unit-tests.md) | Unit tests for the main functionality (Vitest, pytest), and `check_all.py` that checks everything | 2026-10-11 | Accepted, amended 2026-10-11 |
+| [0022](0022-unit-tests.md) | Unit tests for the main functionality (Vitest, pytest), written first (TDD), and `check_all.py` that checks everything | 2026-10-11 | Accepted, amended 2026-10-12 |
 | [0023](0023-combat-ratio-cap.md) | The Combat Ratio counts for +10 at most (house rule against the Sommerswerd) | 2026-10-04 | Accepted |
 | [0024](0024-engine-tested-before-it-changes.md) | The engine is modular and tested before its rules change; the move changes nothing | 2026-10-11 | Accepted |
 | [0025](0025-item-tables-in-items-folder.md) | The item tables live in `items/`, out of the project root | 2026-10-11 | Accepted |
+| [0026](0026-fights-draw-out-of-sight.md) | A fight draws its Random Numbers out of sight: no medallion in the fight | 2026-10-12 | Accepted |
+| [0027](0027-by-hand-stop-wins-nothing.md) | Stopping a fight by hand wins nothing, except where the item table says the text ends it so | 2026-10-12 | Accepted |

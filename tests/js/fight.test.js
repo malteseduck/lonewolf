@@ -147,7 +147,7 @@ describe('the mind', () => {
     expect([f.power, f.mind, f.cs()]).toEqual([2, 1, 32]); // Mindblast through Psi-surge: +2
     f.focus();
     expect([f.mind, f.cs()]).toEqual([2, 34]);
-    const unhurt = drawWhere(10, (r) => r.hero === 0);
+    const unhurt = drawWhere(10, (r) => r.hero === 0 && r.enemy < 50); // not a killing blow: the fight goes on
     f.round(unhurt);
     expect([g.hero.ep, f.mind]).toEqual([8, 2]);
     f.round(unhurt);
@@ -160,7 +160,7 @@ describe('the mind', () => {
   it('a foe\'s mind attack drains every round, unless he is shielded', () => {
     const hero = (d) => mkHero({ cs: 30, disciplines: d });
     let { g, f } = fightAt({ enemies: [foe({ ep: 999, drain: 2 })] }, hero([]));
-    const unhurt = drawWhere(10, (r) => r.hero === 0);
+    const unhurt = drawWhere(10, (r) => r.hero === 0 && r.enemy < 50); // not a killing blow: the fight goes on
     f.round(unhurt); f.round(unhurt);
     expect(g.hero.ep).toBe(21);
     ({ g, f } = fightAt({ enemies: [foe({ ep: 999, drain: 2 })] }, hero(['mindshield'])));

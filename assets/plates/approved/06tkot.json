@@ -1,5 +1,5 @@
 {
- "_readme": "The fight pictures the owner approved for this book (step 6 marked done): the player shows these whatever plates.json or a re-import would now pick. Keyed by section/enemy number; name is a hash of the enemy's name, so a pin is not used for another enemy; plate is {src, crop?, levels?} or null for the drawn emblem. Written by tools/plates_pin.mjs; see docs/reference/interface.md, Art pipeline.",
+ "_readme": "The fight pictures the owner approved for this book (step 6 marked done): the player shows these whatever plates.json or a re-import would now pick. Keyed by section/enemy number; name is a hash of the enemy's name, so a pin is not used for another enemy; plate is {src, crop?, levels?, flip?} or null for the drawn emblem. Written by tools/plates_pin.mjs; see docs/reference/interface.md, Art pipeline.",
  "approved": "2026-10-11",
  "pins": {
   "12/0": {"name":"1gmtqma","plate":{"src":"assets/plates/beast-gevaudan.jpg"}},
@@ -28,6 +28,7 @@
   "283/0": {"name":"mejai1","plate":{"src":"data/projectaon/06tkot/ill11.png"}},
   "337/0": {"name":"e6hd03","plate":{"src":"data/projectaon/02fotw/ill16.png","crop":[0,0.15,1,0.73]}},
   "343/0": {"name":"1gmtqma","plate":{"src":"assets/plates/beast-gevaudan.jpg"}},
-  "344/0": {"name":"15lf82a","plate":{"src":"data/projectaon/06tkot/ill20.png","crop":[0.0066,0.0096,0.9894,0.9886]}}
+  "344/0": {"name":"15lf82a","plate":{"src":"data/projectaon/06tkot/ill20.png","crop":[0.0066,0.0096,0.9894,0.9886]}},
+  "26/0": {"name":"44axqj","plate":{"src":"data/projectaon/06tkot/ill2.png"}}
  }
 }

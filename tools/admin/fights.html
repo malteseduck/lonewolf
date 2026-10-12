@@ -23,6 +23,9 @@
   .card b { display: block; font: 16px var(--title); margin-top: 6px; }
   .card small { display: block; color: #6b553c; font-size: 12px; }
   .card.waiting { box-shadow: inset 0 0 0 3px var(--blood), 0 2px 8px rgba(40, 24, 10, .45); }
+  .card .was { position: absolute; top: 34px; right: 6px; z-index: 1; width: 78px; padding: 3px; background: #e2d3aa; border: 1px solid #7d1d14; text-align: center; }
+  .card .was canvas, .card .was .none { max-width: 100%; max-height: 90px; padding: 0; font-size: 11px; }
+  .card .was small { font: 11px var(--title); color: #7d1d14; }
   .card .badge { position: absolute; top: 6px; right: 6px; z-index: 1; font: 12px var(--title); color: #f3e6c4; background: #7d1d14; border-radius: 3px; padding: 2px 7px; }
   .card[hidden] { display: none; }
   .sheet-top .only { color: var(--fg); font-size: 13px; }
@@ -120,7 +123,7 @@
 
 <script type="module">
 import { inkPlate } from '../../plates.js';
-import { compilePlates, choosePlate, pickPlate, samePlate } from '../../platepick.js';
+import { compilePlates, pickPlate, pinState } from '../../platepick.js';
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -160,21 +163,25 @@ async function loadPlates() {
 
 /* Each kind of enemy, with what the player shows for it at its first fight (platepick.js: the approved
    picture, else an "over" library entry, the book's own picture, the library) and the owner's own entry,
-   if any. waiting: fights where plates.json or the book now pick another picture than the approved one. */
+   if any. waiting: fights where plates.json or the book now pick another picture than the approved one,
+   or that have no approved picture yet (pinState: 'changed', 'new'). */
 function choose() {
   for (const f of foes) {
     const fits = (p) => (!p.book || p.book === code) && p.re.test(f.name);
     const lib = plates.find((p) => p.over && fits(p)) || (!f.art && plates.find(fits));
     f.lib = lib && (lib.over || !f.art) ? lib : null;
-    const changed = pins ? f.fights.filter(([foe, key]) => !samePlate(pickPlate(foe, book, plates, pins, key), choosePlate(foe, book, plates))) : [];
+    const states = f.fights.map(([foe, key]) => pinState(foe, book, plates, pins, key)), changed = states.filter((s) => s.state !== 'same');
     f.waiting = changed.length;
-    // a card waiting for approval shows the new picture, the one to judge; the others what the player shows
-    const shown = changed.length ? choosePlate(changed[0][0], book, plates) : pickPlate(f.first, book, plates, pins, f.keys[0]);
+    // a card waiting for approval shows the new picture, the one to judge, and a changed one the approved
+    // picture beside it ("was"); the others what the player shows
+    const shown = changed.length ? changed[0].now : pickPlate(f.first, book, plates, pins, f.keys[0]);
     f.plate = shown; f.src = shown ? shown.src : null;
+    f.was = changed.length && changed[0].state === 'changed' ? changed[0].was : null;
+    f.isNew = changed.length && changed.every((s) => s.state === 'new');
     f.mine = plates.find((p) => p.book === code && p.match === anchored(f.name)) || null;
     f.from = (f.mine ? 'your picture' + (f.mine.src.startsWith('art/') ? '' : ` (re-cropped: ${f.mine.src.split('/').pop()})`)
       : f.lib ? `plates.json: "${f.lib.match}"${f.lib.over ? ' (over)' : ''}` : f.art ? `the book's ${f.art}` : 'none: the drawn emblem')
-      + (f.waiting ? `; the player still shows the approved picture${f.waiting < f.fights.length ? ` (${f.waiting} of ${f.fights.length} fights)` : ''}` : '');
+      + (f.waiting ? (f.isNew ? '; a fight with no approved picture yet' : `; the player still shows the approved picture${f.waiting < f.fights.length ? ` (${f.waiting} of ${f.fights.length} fights)` : ''}`) : '');
   }
 }
 
@@ -190,7 +197,8 @@ async function render() {
   if (!waiting) onlyWaiting = false;
   $('#only input').checked = onlyWaiting;
   $('#cards').innerHTML = foes.map((f, i) => `<div class="card ${f.src ? '' : 'missing'} ${f.waiting ? 'waiting' : ''}" data-i="${i}" ${onlyWaiting && !f.waiting ? 'hidden' : ''}>
-    ${f.waiting ? '<span class="badge">New picture: approve?</span>' : ''}
+    ${f.waiting ? `<span class="badge">${f.isNew ? 'New fight: approve?' : 'Changed: approve?'}</span>` : ''}
+    ${f.was ? `<div class="was" id="was${i}"><small>was</small></div>` : ''}
     <div class="pic" id="pic${i}">${f.src ? '' : '<div class="none">no picture<br><small>drop one here</small></div>'}</div>
     <b>${esc(f.name)}</b><small>section${f.secs.length > 1 ? 's' : ''} ${esc(f.secs.join(', '))}</small><small>${esc(f.from)}</small>
     <div class="tools"><button data-do="choose">Choose...</button><button data-do="standin">Stand-in...</button>${f.src ? '<button data-do="adjust">Adjust</button>' : ''}</div></div>`).join('');
@@ -202,6 +210,9 @@ async function render() {
     if (!box) return;  // drawn again meanwhile
     if (!im) { box.innerHTML = '<div class="none">file missing</div>'; continue; }
     box.append(copy(inkPlate(im)));
+    // before and after: the approved picture, small, in the corner of a changed card
+    const was = f.was && $('#was' + i), old = was && f.was.src && await image(url(f.was.src), f.was);
+    if (was) was.prepend(old ? copy(inkPlate(old)) : Object.assign(document.createElement('div'), { className: 'none', textContent: f.was.src ? 'file missing' : 'emblem' }));
   }
 }
 // inkPlate() hands back one cached canvas per picture; a second card using it would take it from the first

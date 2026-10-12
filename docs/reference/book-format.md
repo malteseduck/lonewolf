@@ -43,12 +43,30 @@ shows the book's printed map. Only the prototypes travel on a map.
 | `img` | `{file, full, at}` | imported: illustration file, whether it is a full-page plate, and the paragraph index it sits before |
 | `loc` | string | authored: key into `locations` |
 | `scene` | string | authored: which procedural ink scene to draw (`ruins`, `forest`, `hill`, `river`, `road`, `night`, `bridge`, `city`) |
-| `loot` | `[{item}\|{gold}\|{meal}\|{pack}\|{arrows}]` | authored, or from an item table: things that can be taken here, one button each. `or`: a group of which only `pick` (default 1) may be taken. `cost`: a shop's price in Gold Crowns; bought as often as he likes |
+| `loot` | `[{item}\|{gold}\|{meal}\|{pack}\|{arrows}\|{coin, n}]` | authored, or from an item table: things that can be taken here, one button each. `or`: a group of which only `pick` (default 1) may be taken. `cost`: a shop's price in Gold Crowns (in another coin with `coin`; `orAll`: or all he has if less); bought as often as he likes. `for`: his only in exchange for one of these ids, or `'weapon'` (any weapon of his); with several he chooses |
 | `give` | same shape as `loot` | item table: handed over or pocketed with no choice; taken on arrival if it fits, otherwise left as a button |
 | `take` | `[{item}\|{gold: n\|'all'}\|{weapons: 'all'\|'one'}\|{backpack: 'items'\|'all'}\|{special: 'all'}]` | item table: lost outright on arrival. `weapons: 'one'` takes the only weapon, or asks the player to choose when there are two. `backpack: 'all'` loses the Backpack itself (`hero.noPack`). `{arrows: n\|'all'}` empties the Quiver by that many |
-| `rolls` | `[{range: [lo, hi], ep, gold, take}]` | item table: what the Random Number drawn here does (`gold`: won, or lost when negative) |
+| `rolls` | `[{range: [lo, hi], ep, gold, take, dead, mark}]` | item table: what the Random Number drawn here does (`gold`: won, or lost when negative; `ep: 'drawn'`: the number drawn is lost, 0 counting as 10; `dead`: the end of him) |
 | `cs` | number | item table: COMBAT SKILL changed for good on arrival |
-| `todo` | string | item table: a by-hand reminder shown with the arrival events |
+| `todo` | string | item table: a by-hand reminder shown with the arrival events. Only for what the engine cannot do (below) |
+| `when` | `[{if, unless, ate, came, ep, epMax, cs, healLost, take, back, mark, unmark, settle}]` | item table: effects on arrival that hold only under a condition: `if` / `unless` are Conditions; `ate: false` holds unless he ate a Meal here or in the section before; `came` only when he came from one of these sections (an effect the text writes on a choice). `ep` is lost or gained once (`'full'` restores it); `epMax` changes his maximum for good. `healLost`, `epMax` may also stand at the top of a section |
+| `rnt` | `null` | item table: the section draws no Random Number after all (the importer read one into a description) |
+| `take` entries, more | `{pick: list \| [lists], n, else}` | he chooses `n` to lose (the page shows a medallion each, and the way on waits); lists are `backpack` (Meals too), `packItems` (no Meals), `special`, `weapon` (weapon-like Special Items too), `weapons`, `gold` (one Crown each). He has no more than `n`: all go. None: `else` (a `take` list) is lost instead |
+| | `{at: [positions], from, last, min, else}` | by place, 1 first, in the list as the Action Chart shows it (`from` as above, default `backpack`, Meals first). `last`: the last one when the list is shorter. `min`: with fewer than that, `else` instead |
+| | `{item, dose: true}` | one dose of an item that has several, not the whole of it |
+| | `{item: [ids]}`, `{meals \| gold: n \| 'half' \| 'all', round}`, `{coin, n \| 'half' \| 'all'}`, `{weapons: 'used'}`, `{weapons: 'one' \| 'all', special: true}` | the first held of a list; half his Meals or gold (round down, or `round: 'up'`); another coin; the weapon he fought with last, else the one in hand; a weapon-like Special Item counts as a weapon (lost when it is his only one, or with all) |
+| | `stash: key` on any entry | what is lost is kept under that name (`hero.stash`), to be given back by `back` |
+| `back` | `[key \| {stash, only: [weapon, backpack, special, gold]}]` | what was taken into that stash is given back (or the kinds listed); what does not fit is said so |
+| `mark`, `unmark` | id \| [ids] | a lasting condition set or ended (`hero.marks`), defined in the table's `MARKS` (below), or a bare flag a later book can test ("fought an Elix") |
+| `note` | string | a note put on the Action Chart (a number to remember), our words |
+| `stake` | `{key, min, max, coin, spend}` | the page asks for an amount before the way on opens (again on every visit). `spend`: given now (alms, a fee "as much as you like"). Otherwise kept as a stake under `key` (default the section) |
+| `settle` | `{key: by}` | a stake settled here: `by` times it won (2: doubled), or lost when negative (-1) |
+| `sell` | `{id: price}` | what a trader here buys, at that many Gold Crowns |
+| `mealCost` | n | where a Meal is due, one may be bought here for that much if he has none |
+| `meal` | n | more than one Meal asked for |
+| `lessen` | `[{n, if, min}]` | a loss drawn by `rolls` is `n` smaller when he meets `if`, never below `min` (0) |
+| `draws` | n | the text asks for that many numbers added: the page draws the others |
+| `ranges` | `{to: [lo, hi]}` | as `bowShot`'s, for a draw that is no shot: the ranges of the total for each choice, when `rntMod` changes the number in ways the importer could not read |
 | `ep` | number \| `'full'` | authored, or item table: Endurance change on arrival; `'full'` restores it to the maximum |
 | `lose` | `{meal: 1}` | authored: something lost on arrival |
 
@@ -92,7 +110,9 @@ the tools: `items.md`.
 | `need.rank` | minimum number of disciplines in the book's series |
 | `need.item`, `need.spend` | authored or item table: item required (any kind), and whether choosing consumes it. A list: any of them will do (and the first held is spent). `need.not`: open only without it (without any of them). `need.ever`: having once been given it is enough (`hero.had`) |
 | `need.ep` | item table: `[lo, hi]`, open only while his ENDURANCE is in that range (checked after the section's own `ep` change) |
-| `need.gold`, `need.spend` | item table: Gold Crowns required, and whether choosing pays them |
+| `need.gold`, `need.spend` | item table: Gold Crowns required, and whether choosing pays them. `need.orAll`: the price, or all he has if less (always open) |
+| `need.coin`, `need.n` | item table: so many of another coin (`LW.COINS`: `kika`, `lune`), spent with `need.spend` |
+| `need.came` | item table: open only when he came from one of these sections (a price that depends on where he came from) |
 | `range` | `[lo, hi]`: imported, in `rnt: 'auto'` sections: the Random Numbers that lead here |
 | `evade` | true: imported: this choice is the way out of the section's combat. Hidden from the list; used by the Evade control |
 | `random` | authored only: `{table: [[upTo, to], ...], mod: [{disc, plus}]}`. The choice itself draws a number and the table picks the target |
@@ -119,15 +139,52 @@ how the books are written: draw first, then one choice per range.
 }
 ```
 
-Enemies are fought in order, one at a time.
+Enemies are fought in order, one at a time. An item table's `fight` may also give (all in `LW.Fight`, shared/fight.js):
+
+| Field | Meaning |
+|---|---|
+| `rounds` | `[{from, upTo, fromFoe, if, unless, ambush, mind, csMod, note, unarmed, heroLoss, foeLoss, heroPlus, heroEach, foeEach, psi}]`: what holds in some rounds only (`from`/`upTo`, round numbers, 1 first; `fromFoe`, from that foe of the list on, 0 first), or the whole fight under a condition (`if`/`unless`, Conditions; `ambush`, spared by Huntmastery in a Magnakai book; `mind`, only while Mindblast or Psi-surge is used). `csMod` (named `note`); `unarmed` (bare-handed); `heroLoss`/`foeLoss` multiply each round's loss (0 ignores it, 2 doubles, 0.5 halves, rounding down); `heroPlus` more for every wound; `heroEach`/`foeEach` lost every round whatever the dice say; `psi` multiplies what Mindblast or Psi-surge adds |
+| `stop` | `{after, wound, foeAt, drawn: [n], to, by}` or a list: the text ends the fight after `after` rounds, at his first wound, when the foe is down to `foeAt`, or at once when a number in `drawn` is drawn; it leads to `to` (one of the section's choices), or opens the choices. `by: {hero, foe, even}`: the way on by who lost more |
+| `won` | `{within, to, else}`: a win in `within` rounds or fewer leads to `to`, a longer one to `else` |
+| `wounded` | once he has lost any Endurance in it, the fight (won or evaded) leads here |
+| `to` | the way on after a win |
+| `noEvade`, `evade.if`, `evade.free`, `evade.label` | no evading whatever the choices say; evading only with a Condition; evading without the blow. `evade` may be a list: several ways out, each a medallion of its own, a second named by its `label` |
+| `rounds` `barred` | in a round entry: weapons (ids or kinds) not to be used in those rounds |
+| `stop.if` | a stop rule that holds only under a Condition (a bow that breaks on a 0 only if it is the Jakan) |
+| `lose` | a contest, not a fight to the death: brought to 0 he has lost, keeps his Endurance (as it was with `restore`, else 1) and goes here |
+| `noShield`, `only`, `barred`, `plain`, `weaponCs`, `lend`, `noUnarmed` | no Shield; the weapon kinds that may (may not) be used (`'special'`: any weapon-like Special Item); weapon-like Special Items without their bonus; `{id: n, '*': n}`, what a weapon adds here in place of its bonus; a weapon he fights with that is not his yet; `true` or a Condition sparing the unarmed penalty |
+| `mind` | a fight of the mind: `{cs}` a fixed score, or `{each, over, items: {id: n}}` his base score plus `each` for every discipline of the series past `over` and so much for items carried. No weapon, armour or Shield |
+| `keep` | the foes' wounds kept under this name: a later fight with the same `keep` starts from them, without the dead, and only as many foes as fought before |
+| `healLost`, `restore` | after the fight (won, evaded or broken off), that share of the Endurance it cost him back; or all of it, as it was (a contest) |
+| `byHand` | why, in our words: the text ends this fight some way the engine cannot see, so the player's by-hand stop counts as its end and opens the choices. Without it the stop wins nothing (ADR 0027) |
+| `noBoost` | no draught (`boost` items) may be swallowed before it |
+| `points` | `{n, lose}`: a contest scored in target points, `n` on his side in place of his Endurance (which is untouched); spent, it leads to `lose` |
 
 ## Conditions
 
-The importer writes what a rule depends on as `{disc, every, rank, circle, ep}`, any of them (the item tables also use `item`):
+The importer writes what a rule depends on as `{disc, every, rank, circle, ep}`, any of them (the item tables also use the rest below):
 `disc` a discipline id or a list (any of them, or all with `every: true`), `rank` the number of
 disciplines of the book's series, `circle` a list of Lore-circle names (all needed), `ep` `[lo, hi]`
-his Endurance at the moment, `item` an item id or a list (any held, via `LW.hasItem`; authored in item tables only). `LW.meets(hero, cond)` tests one, `LW.condName(cond)` names it. Used
-by `need` on choices, `rntMod` and the fight's `csIf` / `csUnless`.
+his Endurance at the moment, `item` an item id or a list (any held, via `LW.hasItem`; authored in item tables only). Item tables also use:
+`items` (all of these held), `weapon` (a weapon of these kinds held, weapon-like Special Items by their kinds; `true`: any),
+`wield` (the weapon he fights with is of these kinds; `true`: he is armed), `mastery` (Weaponskill or Weaponmastery in that
+weapon), `skilled` (his skill counts for the weapon in hand), `meals` / `arrows` / `packItems` / `gold` (at least so many),
+`mark` (a lasting condition or flag, `hero.marks`, carried from book to book), `any` (a list: one of them), `not` (a
+Condition he must not meet). `LW.meets(hero, cond)` tests one, `LW.condName(cond)` names it. Used by `need` on choices
+(the item tables' new ones go in `need.any`, a single member being fine), `rntMod` (`{plus, ...cond}`; `{vsCS: true}`
+takes his COMBAT SKILL off the total), `when`, `lessen`, and the fight's `csIf` / `csUnless` and `rounds`.
+
+## Marks
+
+A table may export `MARKS`: `{id: {name, about, cs, noShield, ep, until, book}}`, lasting conditions a section sets with
+`mark`: `cs` in every fight, `noShield`, `ep` lost in every section he passes, `until` an item whose use ends it (a
+Laumspur Potion; a list: any of them), `book` lasting this adventure only. A mark's `ep` is lost from the section after the one that sets it. They are shown in the inventory. A mark with no definition is a
+plain flag for a later section or book to test.
+
+Item fields for the rules here: `boost` (COMBAT SKILL for one fight, swallowed before its first round), `boostAgain` and
+`addict: {key, upTo, again, epMax}` (Adgana's key is `'adgana'` in every book) (a later dose adds less; after the fight a number drawn at or under `upTo`, `again`
+for a later dose, costs `epMax` for good), `doses` (used that many times before it is gone), `free` (a Special Item outside
+the limit of 12), `arrow` (rides in the Quiver in an Arrow's place).
 
 ## Ids
 

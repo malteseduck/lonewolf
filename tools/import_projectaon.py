@@ -295,7 +295,7 @@ for n in numbers:
     page = open(os.path.join(src, f'sect{n}.htm'), encoding='utf-8', errors='replace').read()
     main = page[page.find('<div class="maintext'):page.find('<p id="page-navigation"')]
     sec = {'text': [], 'choices': []}
-    enemies, lost = [], False
+    enemies, lost, target = [], False, None
     # a list (what is on offer, what a body carries) is a paragraph per item; a signpost, one line;
     # verse set as lines with no paragraph of its own, a paragraph per line
     for m in re.finditer(r'<p(?: class="(\w+)")?>(.*?)</p>|<img[^>]+src="([^"]+)"|<div class="signpost">(.*?)</div>|<li>(.*?)</li>|<blockquote[^>]*>((?:(?!<p[ >]).)*?)</blockquote>', main, re.S):
@@ -307,11 +307,13 @@ for n in numbers:
         elif img:
             sec['img'] = {'file': img, 'full': img.startswith('ill'), 'at': len(sec['text'])}
         elif cls == 'combat':
-            # a door fought as an enemy: "ENDURANCE (RESISTANCE points) 35". Not "(TARGET points)": a contest
-            # that leaves his Endurance alone, which the engine cannot play
-            c = re.match(r'(.+?):\s*COMBAT\s*SKILL\s*(\d+)\s*ENDURANCE\s*(?:\(\s*RESISTANCE points\s*\)\s*)?(\d+)', plain(body))
+            # a door fought as an enemy: "ENDURANCE (RESISTANCE points) 35". "(TARGET points)": a contest
+            # scored in points on each side that leaves his Endurance alone (the combat's `points`)
+            c = re.match(r'(.+?):\s*COMBAT\s*SKILL\s*(\d+)\s*ENDURANCE\s*(?:\(\s*(RESISTANCE|TARGET) points\s*\)\s*)?(\d+)', plain(body))
             if c:
-                enemies.append({'name': c.group(1).strip(), 'cs': int(c.group(2)), 'ep': int(c.group(3))})
+                enemies.append({'name': c.group(1).strip(), 'cs': int(c.group(2)), 'ep': int(c.group(4))})
+                if c.group(3) == 'TARGET':
+                    target = int(c.group(4))
         elif cls == 'choice' and re.search(r'href="sect\d+\.htm"', body):
             text = plain(body)
             for to in re.findall(r'href="sect(\d+)\.htm"', body):
@@ -361,6 +363,8 @@ for n in numbers:
             c.pop('range', None)
     if enemies:
         combat = {'enemies': enemies}
+        if target:
+            combat['points'] = {'n': target}
         # the sentence that grants immunity; when it names some of the enemies, only they are immune
         said = next((x for x in re.split(r'(?<=\.)\s+', whole) if re.search(r'immune to (?:Mindblast|Psi-surge)', x, re.I)), '')
         named = [e for e in enemies if re.sub(r'\s+\d+$', '', e['name']).lower() in said.lower()]

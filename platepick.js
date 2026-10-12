@@ -37,3 +37,13 @@ export function pickPlate(foe, book, plates, pins, key) {
 }
 
 export const samePlate = (a, b) => JSON.stringify(a || null) === JSON.stringify(b || null);
+
+/* What the picture sheet asks the owner about (ADR 0020), once a book's pictures are approved: 'same';
+   'changed' (was: the approved picture, now: the one that would replace it); or 'new', a fight with no
+   approved picture yet (a re-import that adds a fight, a foe renamed). */
+export function pinState(foe, book, plates, pins, key) {
+  if (!pins) return { state: 'same' };
+  const pin = pins[key], now = choosePlate(foe, book, plates);
+  if (!pin || pin.name !== nameKey(foe.name)) return { state: 'new', now };
+  return samePlate(pin.plate, now) ? { state: 'same' } : { state: 'changed', was: pin.plate, now };
+}

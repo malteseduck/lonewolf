@@ -471,3 +471,14 @@ def test_report_counts_and_ids(tmp_path):
 
 
 
+
+
+def test_a_contest_in_target_points_is_a_combat_on_points(tmp_path):
+    # "ENDURANCE (TARGET points) 50": a contest scored in points on each side, his Endurance untouched
+    s = secs(tmp_path, {
+        1: '<p>The final.</p><p class="combat">Archer: <span class="cs">COMBAT SKILL</span> 28 '
+           '<span class="ep">ENDURANCE</span> (TARGET points) 50</p>' + choice('If you win, turn to', 2),
+        2: '<p>.</p>'})
+    c = s['1']['combat']
+    assert c['enemies'][0]['name'] == 'Archer' and c['enemies'][0]['cs'] == 28 and c['enemies'][0]['ep'] == 50
+    assert c['points'] == {'n': 50}

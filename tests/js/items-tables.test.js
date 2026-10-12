@@ -8,8 +8,10 @@ import { ROOT, loadShared } from './helpers.js';
 
 const CODES = ['01fftd', '02fotw', '03tcok', '04tcod', '05sots', '06tkot', '07cd', '08tjoh', '09tcof', '10tdot', '11tpot', '12tmod'];
 // from tools/check_items.mjs
-const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'noHunt', 'todo', 'need', 'fight', 'bowShot', 'rntMod']);
-const FIGHT = new Set(['csMod', 'csIf', 'csUnless', 'csNote', 'mindforce', 'unless', 'unarmed', 'undead', 'drain', 'with', 'double', 'ambush', 'evade']);
+const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'noHunt', 'todo', 'need', 'fight', 'bowShot', 'rntMod',
+  'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax']);
+const FIGHT = new Set(['csMod', 'csIf', 'csUnless', 'csNote', 'mindforce', 'unless', 'unarmed', 'undead', 'drain', 'with', 'double', 'ambush', 'evade',
+  'rounds', 'stop', 'won', 'wounded', 'noEvade', 'noShield', 'noUnarmed', 'weaponCs', 'plain', 'only', 'barred', 'lend', 'mind', 'keep', 'healLost', 'restore', 'noBoost', 'to', 'points', 'lose', 'byHand']);
 const KINDS = ['weapon', 'backpack', 'special'];
 
 const tables = {};
@@ -17,7 +19,7 @@ let LW;
 beforeAll(async () => {
   LW = loadShared('core.js', 'rules-series.js');
   for (const c of CODES) tables[c] = await import(pathToFileURL(path.join(ROOT, 'items', `items-${c}.js`)).href);
-  for (const c of CODES) LW.addItems(tables[c].ITEMS);
+  for (const c of CODES) LW.addItems(tables[c].ITEMS, tables[c].MARKS);
 });
 
 const known = (id) => id === 'meal' || !!LW.ITEMS[id];
@@ -70,17 +72,19 @@ describe.each(CODES)('items-%s.js', (code) => {
     const bad = [];
     const things = (list, where) => arr(list).forEach((l) => {
       if (l.item && !known(l.item)) bad.push(`${where}: unknown item ${l.item}`);
-      if (!l.item && l.gold == null && l.meal == null && !l.pack && !l.arrows) bad.push(`${where}: empty entry`);
+      if (!l.item && l.gold == null && l.meal == null && !l.pack && !l.arrows && !l.coin) bad.push(`${where}: empty entry`);
       if (l.pick && !l.or) bad.push(`${where}: pick without or`);
     });
     const losses = (list, where) => arr(list).forEach((t) => {
-      if (t.item && !known(t.item)) bad.push(`${where}: unknown item ${t.item}`);
-      if (t.weapons && !['all', 'one'].includes(t.weapons)) bad.push(`${where}: weapons ${t.weapons}`);
+      arr(t.item).forEach((i) => { if (!known(i)) bad.push(`${where}: unknown item ${i}`); });
+      if (t.weapons && !['all', 'one', 'used'].includes(t.weapons)) bad.push(`${where}: weapons ${t.weapons}`);
       if (t.backpack && !['all', 'items'].includes(t.backpack)) bad.push(`${where}: backpack ${t.backpack}`);
-      if (t.special && t.special !== 'all') bad.push(`${where}: special ${t.special}`);
+      if (t.special && t.special !== 'all' && !(t.special === true && t.weapons)) bad.push(`${where}: special ${t.special}`);
+      losses(t.else, `${where} else`);
     });
     for (const [id, x] of Object.entries(T().SECTIONS)) {
       things(x.give, `${id} give`); things(x.loot, `${id} loot`); losses(x.take, `${id} take`);
+      arr(x.when).forEach((w, i) => losses(w.take, `${id} when[${i}]`));
       arr(x.rolls).forEach((r, i) => {
         if (!Array.isArray(r.range) || r.range.length !== 2 || r.range[0] > r.range[1]) bad.push(`${id} rolls[${i}]: range`);
         losses(r.take, `${id} rolls[${i}]`);

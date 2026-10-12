@@ -31,7 +31,7 @@ const ITEM_TABLES = {
   '01fftd': ITEMS_01, '02fotw': ITEMS_02, '03tcok': ITEMS_03, '04tcod': ITEMS_04, '05sots': ITEMS_05, '06tkot': ITEMS_06,
   '07cd': ITEMS_07, '08tjoh': ITEMS_08, '09tcof': ITEMS_09, '10tdot': ITEMS_10, '11tpot': ITEMS_11, '12tmod': ITEMS_12,
 };
-Object.values(ITEM_TABLES).forEach((t) => LW.addItems(t.ITEMS));
+Object.values(ITEM_TABLES).forEach((t) => LW.addItems(t.ITEMS, t.MARKS));
 const applyItems = (b) => LW.applyItems(b, ITEM_TABLES[b.id]);
 
 /* ---------- adventures (adventures.js) ---------- */
@@ -150,6 +150,20 @@ function useBook(id) {
 const asset = (f) => (book.assets || '') + f;
 const saved = (id, a = adv.at) => { try { return JSON.parse(store.get(saveKey(a, id))); } catch (e) { return null; } };
 const hasSave = (id, a) => !!(saved(id, a) || {}).s;
+/* Flags an earlier book leaves for a later one (visited Ragadorn, fought an Elix) came on 2026-10-12, after
+   some adventures were played: for a hero saved before then (no flagsRead; LW.makeHero sets it), read them
+   once from this adventure's saves of the earlier books, only where the trail passed the section that sets
+   one (LW.flagsFrom), never for having finished a book. Returns whether it ran. */
+function backfillFlags(hero) {
+  if (hero.flagsRead) return false;
+  hero.flagsRead = true;
+  for (const [id, t] of Object.entries(ITEM_TABLES)) {
+    const sv = BOOKS[id] && BOOKS[id].number < book.number && saved(id);
+    if (!sv || !sv.s) continue;
+    for (const f of LW.flagsFrom(t.SECTIONS, sv.s.trail.map((x) => x.id))) (hero.marks = hero.marks || {})[f] = hero.marks[f] || true;
+  }
+  return true;
+}
 
 const { esc, el, wait } = LW.UI;
 const $ = (s) => document.querySelector(s);
@@ -172,7 +186,7 @@ const TAB_ART = { kai: glyph('wolf-head'), pack: glyph('locked-chest'), map: ROS
 /* items, drawn the same way; anything typed in by hand gets a pouch or a pendant by its kind */
 const ITEM_GLYPH = { dagger: 'plain-dagger', spear: 'barbed-spear', mace: 'mace-head', shortSword: 'gladius', warhammer: 'warhammer', sword: 'pointy-sword', axe: 'battle-axe', quarterstaff: 'wizard-staff', broadsword: 'two-handed-sword',
   bow: 'pocket-bow', quiver: 'quiver', arrows: 'arrow-flights', potion: 'health-potion', meal: 'meal', map: 'treasure-map', helmet: 'visored-helm', chainmail: 'mail-shirt' };
-const itemGlyph = (id) => glyph(ITEM_GLYPH[id] || (LW.ITEMS[id] && LW.ITEMS[id].glyph) || (id === 'gold' ? 'two-coins' : id === 'pack' ? 'backpack' : LW.itemKind(id) === 'special' ? 'gem-pendant' : LW.itemKind(id) === 'weapon' ? 'pointy-sword' : 'swap-bag'));
+const itemGlyph = (id) => glyph(ITEM_GLYPH[id] || (LW.ITEMS[id] && LW.ITEMS[id].glyph) || (id === 'gold' || id === 'coin' ? 'two-coins' : id === 'pack' ? 'backpack' : LW.itemKind(id) === 'special' ? 'gem-pendant' : LW.itemKind(id) === 'weapon' ? 'pointy-sword' : 'swap-bag'));
 
 /* The seal buttons' plate, of a piece with the medallions: a bronze bezel round a dark enamel field,
    a bronze lozenge pin at each end. Drawn 400 x 100 (given as its size, so border-image slices count
@@ -363,10 +377,14 @@ function leftHTML() {
   const badge = `<div class="badge"><div class="med" style="--s:3.300em"><span style="font:400 1em var(--title)">${esc(id)}</span></div></div>`;
 
   if (mode === 'battle') {
-    const over = B.over && { win: ['The way is clear', 'Your enemy lies dead at your feet.'], evade: ['You are away', 'You leave the fight behind you.'], dead: ['Your adventure ends here', 'The last of the Kai falls.'] }[B.over];
+    const over = B.over && { win: ['The way is clear', 'Your enemy lies dead at your feet.'], evade: ['You are away', 'You leave the fight behind you.'], stop: ['The fight ends', 'The fighting stops here.'], broken: ['Stopped by hand', 'The fight is not won. Turn to the section the text names.'], dead: ['Your adventure ends here', 'The last of the Kai falls.'] }[B.over];
     return `${badge}<div class="story"><div class="scroll" id="scroll">
         <div class="text"><p class="first">${esc(sec.text[0])}</p></div>
-        <div class="block"><span class="eyebrow">The fight</span><ol class="rounds">${B.log.map((l) => `<li>${esc(l)}</li>`).join('') || '<li>Choose your action.</li>'}</ol></div>
+        <div class="block"><span class="eyebrow">The fight</span><ol class="rounds">${B.log.map((l) => `<li>${esc(l)}</li>`).join('') || '<li>Choose your action.</li>'}</ol>${
+          // by hand, like the turn-to box: for an end the text gives that the page does not see
+          // where the item table says the text ends the fight a way the page cannot see, its reason; else a
+          // plain stop that wins nothing (Fight.stopHere)
+          B.over ? '' : `<button type="button" class="inkbtn byhand" data-cmd="stop" ${B.lock ? 'disabled' : ''}>${B.c.byHand ? `By hand: ${esc(B.c.byHand)}` : 'By hand: stop the fight (it is not won)'}</button>`}</div>
       </div>
       ${over ? `<div class="finis ${B.over === 'dead' ? 'dead' : ''}"><h2>${over[0]}</h2><p>${over[1]}</p><button type="button" class="seal" data-endbattle>Turn the page</button></div>` : ''}</div>`;
   }
@@ -379,6 +397,17 @@ function leftHTML() {
   const note = (l) => (l.taken ? 'yours' : l.closed ? (l.pick > 1 ? 'you have taken your share' : 'you took the other') : l.cost ? `buy it: ${l.cost} Gold Crown${l.cost > 1 ? 's' : ''}` : 'take it');
   if (loot.length && !isDead()) h += `<div class="block finds"><span class="eyebrow">${loot.every((l) => l.cost) ? 'For sale' : 'Found here'}</span>${loot.map((l) => `<button type="button" class="find ${l.taken ? 'got' : ''}" data-loot="${l.i}" ${l.taken || l.closed ? 'disabled' : ''}>
       <span class="med ${l.taken ? 'lit' : ''}">${itemGlyph(l.item)}</span><span>${esc(l.label)}<i>${note(l)}</i></span></button>`).join('')}</div>`;
+  // a loss he chooses (game.s.picks): what he can lose, a medallion each
+  const pickable = !isDead() ? game.pickable() : [];
+  if (pickable.length) h += `<div class="block finds"><span class="eyebrow">${game.s.picks[0].loot != null ? 'Give in exchange' : `Choose what you lose${game.s.picks[0].n > 1 ? ` (${game.s.picks[0].n} more)` : ''}`}</span>${[...new Set(pickable)].map((id) => `<button type="button" class="find" data-pick="${esc(id)}">
+      <span class="med">${itemGlyph(id === 'gold' ? 'gold' : id)}</span><span>${esc(id === 'meal' ? 'a Meal' : id === 'gold' ? 'a Gold Crown' : LW.itemName(id))}<i>lose it</i></span></button>`).join('')}</div>`;
+  // a stake, or a gift of what he will (sec.stake), set before the way on opens
+  const stake = sec.stake, staked = stake && (game.s.stakes || {})[stake.key || id];
+  if (stake && !isDead()) h += `<div class="block"><span class="eyebrow">${stake.spend ? 'What you give' : 'Your stake'}</span>${staked ? `<p class="staked">${staked.n} ${esc(stake.coin ? LW.COINS[stake.coin] : 'Gold Crowns')}${stake.spend ? ' given' : ' staked'}.</p>` : `<div class="puzzle"><label>${stake.spend ? 'Give' : 'Stake'} <input id="stakeamt" inputmode="numeric" autocomplete="off" value="${stake.min || 0}" aria-label="Amount"> ${esc(stake.coin ? LW.COINS[stake.coin] : 'Gold Crowns')}</label><button type="button" class="inkbtn" data-stake>${stake.spend ? 'give' : 'stake'}</button></div>`}</div>`;
+  // what a trader here buys (sec.sell), of what he has
+  const wares = Object.keys(sec.sell || {}).filter((w) => LW.hasItem(game.hero, w));
+  if (wares.length && !isDead()) h += `<div class="block finds"><span class="eyebrow">He will buy</span>${wares.map((w) => `<button type="button" class="find" data-sell="${esc(w)}">
+      <span class="med">${itemGlyph(w)}</span><span>${esc(LW.itemName(w))}<i>sell it: ${sec.sell[w]} Gold Crown${sec.sell[w] > 1 ? 's' : ''}</i></span></button>`).join('')}</div>`;
   if (game.combatPending && !isDead()) h += `<div class="block"><span class="eyebrow">You must fight</span>${sec.combat.enemies.map((f) => `<div class="foeline"><span>${esc(f.name)}</span><i>Combat Skill ${f.cs}, Endurance ${f.ep}</i></div>`).join('')}</div>`;
   h += '</div><div class="dialslot" id="dialslot"></div>';
 
@@ -388,6 +417,8 @@ function leftHTML() {
       bk.map(({ k, id }, i) => `<button type="button" class="${i ? 'inkbtn' : 'seal'}" data-back="${k}">${i ? 'or to' : 'Back to'} section ${esc(id)}</button>`).join('')}${
       bk.length ? '<button type="button" class="inkbtn" data-new>or begin again</button>' : '<button type="button" class="seal" data-new>Begin again</button>'}</div>`;
   }
+  // a fight stopped by hand and not won: only the by-hand turn box, or the fight after all
+  else if (game.combatPending && game.brokenOff) h += `<div class="puzzle"><label>Turn to section <input id="puzzleto" inputmode="numeric" autocomplete="off" aria-label="Section number"></label><button type="button" class="inkbtn" data-puzzle>turn</button></div><button type="button" class="inkbtn byhand" data-fight>or fight it after all</button>`;
   else if (game.combatPending) h += `<div class="compass"><div class="orn"><button type="button" class="med" data-fight aria-label="Begin the fight">${glyph('crossed-swords')}</button></div><span>Draw your weapon.</span></div>`;
   else if (sec.end) {
     const next = Object.keys(BOOKS).find((k) => BOOKS[k].number === book.number + 1);
@@ -398,8 +429,9 @@ function leftHTML() {
     const local = game.choices().map((c, i) => ({ c, i }));
     if (local.length) h += `<ul class="choices">${local.map(({ c, i }) => `<li><button type="button" class="choice" data-choice="${i}" ${c.enabled ? '' : 'disabled'}><span>${esc(shown(c.text))}${
       c.enabled ? (c.need && (c.need.disc || c.need.circle) ? `<em>${esc(LW.condName({ disc: c.need.disc, every: c.need.every, circle: c.need.circle }))}</em>` : c.need && c.need.any ? `<em>${esc(c.need.any.map(LW.condName).join(', or '))}</em>` : c.random ? '<em>Random Number</em>' : '') : `<em>${esc(c.why)}</em>`}</span></button></li>`).join('')}</ul>`;
-    // a puzzle's answer is a section number, which the book leaves the reader to turn to
-    if (sec.puzzle) h += `<div class="puzzle"><label>Turn to section <input id="puzzleto" inputmode="numeric" autocomplete="off" aria-label="Section number"></label><button type="button" class="inkbtn" data-puzzle>turn</button></div>`;
+    // a puzzle's answer is a section number, which the book leaves the reader to turn to; elsewhere the same
+    // box, smaller, is the by-hand way to any section, for a way on the page cannot see
+    h += `<div class="puzzle ${sec.puzzle ? '' : 'byhand'}"><label>${sec.puzzle ? 'Turn to section' : 'By hand: turn to'} <input id="puzzleto" inputmode="numeric" autocomplete="off" aria-label="Section number"></label><button type="button" class="inkbtn" data-puzzle>turn</button></div>`;
   }
   return h + '</div>';
 }
@@ -537,6 +569,8 @@ function packLattice(cols, rows) {
 function packHTML() {
   const h = game.hero, cells = [], on = (kind, id) => (sel && sel.kind === kind && sel.id === id ? 'sel' : '');
   const kept = [...(h.stored || []).map(LW.itemName), ...(h.storedGold ? [`${h.storedGold} Gold Crowns`] : [])]; // in safekeeping
+  const taken = Object.values(h.stash || {}).flatMap((st) => [...st.items.map((i) => (i === 'meal' ? 'a Meal' : LW.itemName(i))), ...(st.gold ? [`${st.gold} Gold Crowns`] : [])]);
+  const ails = LW.marksOf(h).map((m) => LW.MARKS[m].name + (LW.MARKS[m].about ? `: ${LW.MARKS[m].about}` : ''));
   const slot = (kind, id, extra = '') => `<button type="button" class="disc item ${on(kind, id)} ${extra}" data-sel="${kind}|${esc(id)}" aria-label="${esc(LW.itemName(id))}">${itemGlyph(id)}</button>`;
   const empty = (label) => `<span class="disc empty"${label ? ` title="${label}"` : ''}></span>`;
   const worn = (id) => (h.special.includes(id) ? slot('special', id) : empty(esc(LW.itemName(id))));
@@ -557,9 +591,14 @@ function packHTML() {
   return `${kit}
     ${ruled(h.noPack ? 'Backpack <small>lost: find another to carry anything</small>' : `Backpack <small>${h.backpack.length + h.meals} of ${LW.MAX_BACKPACK}</small>`)}
     <div class="bag"><span class="disc lit">${glyph('knapsack')}</span><div class="pack">${cells.map((c) => `<div class="cell">${c}</div>`).join('')}${packLattice(4, Math.ceil(cells.length / 4))}</div></div>
-    <div class="ledger"><span class="purse">${glyph('two-coins')}<b>${h.gold}</b> Gold Crowns ${stepper('gold')}</span>
+    <div class="ledger"><span class="purse">${glyph('two-coins')}<b>${h.gold}</b> Gold Crowns ${stepper('gold')}</span>${
+      Object.keys(LW.COINS).filter((c) => (h.coins || {})[c] != null).map((c) => `<span class="purse">${glyph('two-coins')}<b>${h.coins[c]}</b> ${esc(LW.COINS[c])} ${stepper(c)}</span>`).join('')}
       ${adding ? '' : '<button type="button" class="inkbtn" data-adding="open">Add an item by hand</button>'}</div>
-    ${kept.length && !adding ? `<p class="kept">At the Kai Monastery, taken up or left at the start of a book: ${esc(kept.join(', '))}.</p>` : ''}`;
+    ${kept.length && !adding ? `<p class="kept">At the Kai Monastery, taken up or left at the start of a book: ${esc(kept.join(', '))}.</p>` : ''}${
+      // what was taken from him to be given back later (hero.stash), lasting conditions, and the notes the text asks for
+      taken.length && !adding ? `<p class="kept">Taken from you, perhaps to be found again: ${esc(taken.join(', '))}.</p>` : ''}${
+      ails.length && !adding ? `<p class="kept">${esc(ails.join('. '))}.</p>` : ''}${
+      (h.notes || []).length && !adding ? `<p class="kept">Noted: ${esc(h.notes.join('; '))}.</p>` : ''}`;
 }
 /* Adding by hand: the items as medallions in place of the worn kit, so the Backpack below fills
    while you pick. "Something else" asks for a name on the line beneath. */
@@ -892,6 +931,7 @@ async function setOut() {
   }
   const hero = LW.readyHero(SU.step === 'kit' ? SU.k.finish() : SU.h.build());
   SU = null;
+  if (!hero.flagsRead) backfillFlags(hero); // a character carried from a save made before the flags
   game.clear(); game.start(hero); mode = 'story'; panel = 'kai'; sel = null; intro = book.intro && book.intro.length ? 'new' : false;
   await turn(render);
 }
@@ -966,10 +1006,11 @@ async function goBack(k) {
 const tween = (ms, fn) => new Promise((res) => { if (still) { fn(1); return res(); } const t0 = performance.now(); (function step(now) { const k = Math.min(1, (now - t0) / ms); fn(k); k < 1 ? requestAnimationFrame(step) : res(); })(t0); });
 
 async function startBattle() {
+  if (game.s.broken) delete game.s.broken[game.s.at]; // fought after all
   const node = el('div', 'fight');
   node.innerHTML = `<canvas width="600" height="800"></canvas><div class="foebar"><span data-b="name"></span><div class="bar"><i></i></div><small data-b="stats"></small></div><div class="cmds" data-b="cmds"></div>`;
   // the fight's rules are LW.Fight's (shared/fight.js); the page adds its drawing state
-  B = Object.assign(new LW.Fight(game, book.id), { lock: false, scene: game.section.scene, node, dial: makeDial(), img: null, fx: { lunge: 0, hit: 0, dead: 0, wounds: [] } });
+  B = Object.assign(new LW.Fight(game, book.id), { lock: false, scene: game.section.scene, node, img: null, fx: { lunge: 0, hit: 0, dead: 0, wounds: [] } });
   showFoe();
   mode = 'battle';
   await turn(render);
@@ -978,7 +1019,7 @@ async function startBattle() {
   B.fit = () => {
     const r = node.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = Math.max(200, Math.round(r.width * dpr)); cv.height = Math.max(200, Math.round(r.height * dpr));
     // the picture keeps above the controls, wherever the layout puts them
-    const tops = [...B.node.querySelectorAll('[data-cmd], .dial')].map((n) => n.getBoundingClientRect().top).filter((y) => y > r.top);
+    const tops = [...B.node.querySelectorAll('[data-cmd]')].map((n) => n.getBoundingClientRect().top).filter((y) => y > r.top);
     B.floor = tops.length && r.height ? Math.min(0.83, (Math.min(...tops) - r.top) / r.height) : 0.83;
   };
   B.fit();
@@ -993,7 +1034,7 @@ async function startBattle() {
 function showFoe() {
   B.fx.dead = 0; B.fx.wounds = []; B.img = null;
   // the approved picture, else the plate library's or the section's own, else the drawn emblem (platepick.js)
-  const foe = B.foe, plate = pickPlate(foe, book, PLATES, PINS[book.id], pinKey(game.s.at, B.i));
+  const foe = B.foe, plate = pickPlate(foe, book, PLATES, PINS[book.id], pinKey(game.s.at, B.foe.at));
   if (plate) { const im = new Image(); im.crop = plate.crop; im.levels = plate.levels; im.flip = plate.flip; im.onload = () => { if (B && B.foe === foe) B.img = im; }; im.src = plate.src; }
 }
 /* assets/plates/plates.json: pictures for enemies the book does not picture */
@@ -1011,17 +1052,18 @@ function updateBattle() {
   q('name').textContent = foe.name;
   B.node.querySelector('.bar i').style.width = Math.max(0, (foe.ep / foe.max) * 100) + '%';
   q('stats').textContent = `CS ${foe.cs} · EP ${Math.max(0, foe.ep)} · Ratio ${r > 0 ? '+' : ''}${r}`;
-  const ev = B.c.evade, locked = B.lock || B.over;
+  const locked = B.lock || B.over;
   const med = (id, ic, label, note, off, extra = '') => `<div class="medcap"><button type="button" class="med ${extra}" data-cmd="${id}" ${locked || off ? 'disabled' : ''} aria-label="${label}">${ic}</button>${label}<small>${note}</small></div>`;
   const n = hero.backpack.filter((b) => b === 'potion').length, psi = LW.psi(hero);
-  const left = med('fight', B.weapon ? itemGlyph(B.weapon) : glyph('crossed-swords'), 'Strike', 'spin to attack')
+  const left = med('fight', B.weapon ? itemGlyph(B.weapon) : glyph('crossed-swords'), 'Strike', 'attack')
     + (B.power ? med('mind', glyph(B.power === 2 ? 'psychic-waves' : 'brainstorm'), B.power === 2 ? 'Psi-surge' : 'Mindblast', B.deaf() ? 'no effect' : foe.immune && B.mind === 1 ? 'as Mindblast: no effect' : ['at rest', B.power === 2 ? `as Mindblast, +${psi.blast}` : 'focused, +2', `+${psi.surge}, costs ${psi.cost} a round`][B.mind], false, B.blasting() ? 'lit' : '') : '');
   const right = (n ? med('item', itemGlyph('potion'), 'Laumspur', `${n} left`, hero.ep >= hero.epMax) : '')
     + (LW.canCure(hero, book.id) ? med('cure', glyph('healing'), 'Curing', hero.ep <= 6 ? '20 back, once a book' : 'at 6 or less', hero.ep > 6) : '')
-    + (ev ? med('evade', glyph('run'), 'Evade', B.evadeOpen ? 'take one blow' : B.evadeLate ? 'too late' : `after round ${ev.after}`, !B.evadeOpen) : '');
+    + B.boosts().map((id) => med('boost:' + id, itemGlyph(id), esc(LW.itemName(id)), 'before you strike')).join('')
+    // one medallion for each way out the text allows (B.evades()); a second one is named by its own label
+    + B.evades().map((e) => med('evade:' + e.i, glyph(e.free ? 'invisible' : 'run'), e.label ? esc(e.label) : 'Evade', e.open ? (e.free ? 'untouched' : 'take one blow') : e.late ? 'too late' : e.if && !LW.meets(hero, e.if) ? `needs ${esc(LW.condName(e.if))}` : `after round ${e.after}`, !e.open)).join('');
   const cmds = q('cmds');
-  cmds.innerHTML = left + '<span data-dial></span>' + right;
-  cmds.querySelector('[data-dial]').replaceWith(B.dial.el);
+  cmds.innerHTML = left + right;
   renderLeft();
   const sc = $('#scroll'); if (sc) sc.scrollTop = 1e6;
   const gq = pr.querySelector('.gauges');
@@ -1038,9 +1080,13 @@ async function battleAct(id) {
   if (id === 'mind') B.focus();
   else if (id === 'cure') B.cure();
   else if (id === 'item') B.drink();
+  else if (id === 'stop') B.stopHere();
+  else if (id.startsWith('boost:')) B.boost(id.slice(6));
   else {
-    const o = B.roll(await B.dial.spin());
-    if (id === 'evade') { B.flee(o); await lunge(o.taken); }
+    // the Random Number is drawn out of sight: the owner wants no medallion in a fight (ADR 0026)
+    const o = B.roll(LW.rand10());
+    if (B.over) { /* the number drawn ended the fight (c.stop drawn) */ }
+    else if (id.startsWith('evade')) { B.flee(o, +id.split(':')[1] || 0); await lunge(o.taken); }
     else {
       B.strike(o);
       await wait(still ? 0 : 140);
@@ -1113,6 +1159,9 @@ bookEl.addEventListener('click', (e) => {
   else if ('intro' in d) { intro = false; guard(() => turn(render)); }
   else if (d.choice != null) guard(() => choose(+d.choice));
   else if ('puzzle' in d) turnTo();
+  else if (d.pick) { if (game.pickLoss(d.pick)) render(); }
+  else if ('stake' in d) { const box = $('#stakeamt'), err = game.setStake(parseInt(box && box.value, 10) || 0); if (err) LW.UI.toast(err); render(); }
+  else if (d.sell) { const err = game.sell(d.sell); if (err) LW.UI.toast(err); render(); }
   else if ('fight' in d) guard(startBattle);
   else if ('endbattle' in d) guard(endBattle);
   else if ('new' in d || 'home' in d) { toTitle('new' in d); }
@@ -1122,7 +1171,7 @@ function turnTo() {
   const box = $('#puzzleto'), to = box && box.value.trim();
   if (!to) return;
   if (!/^\d+$/.test(to) || !book.sections[to]) return void LW.UI.toast(`There is no section ${to}.`);
-  guard(async () => { game.choose({ text: 'Turn to the section you worked out' }, to); sel = null; await turn(render); });
+  guard(async () => { game.choose({ text: game.section.puzzle ? 'Turn to the section you worked out' : 'Turned to by hand' }, to); sel = null; await turn(render); });
 }
 bookEl.addEventListener('keydown', (e) => { if (e.target.id === 'puzzleto' && e.key === 'Enter') turnTo(); });
 window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && sel && mode === 'story' && !M) { sel = null; renderRight(); } });
@@ -1155,7 +1204,7 @@ function toTitle(toShelf) { B = null; mode = 'title'; intro = false; shelf = !!t
 async function begin(id, fresh, anew, reread) {
   useBook(id);
   intro = false;
-  if (!fresh && !anew && game.load()) { mode = 'story'; panel = 'kai'; sel = null; if (reread && book.intro && book.intro.length) intro = 'again'; return turn(render); }
+  if (!fresh && !anew && game.load()) { if (backfillFlags(game.hero)) game.save(); mode = 'story'; panel = 'kai'; sel = null; if (reread && book.intro && book.intro.length) intro = 'again'; return turn(render); }
   const kept = LW.Character.load(), carry = !anew && LW.Character.carries(kept, id) ? kept : null;
   SU = { step: 'hero', h: LW.HeroSetup(book, carry) }; // the save is cleared only when he sets out
   mode = 'setup'; sel = null;
@@ -1218,6 +1267,6 @@ window.__lw = { get game() { return game; }, render: () => render(), BOOKS, begi
 
 document.fonts.ready.then(() => {
   const last = adventure() && adventure().book;
-  if (last && BOOKS[last] && hasSave(last)) { useBook(last); if (game.load()) mode = 'story'; }
+  if (last && BOOKS[last] && hasSave(last)) { useBook(last); if (game.load()) { if (backfillFlags(game.hero)) game.save(); mode = 'story'; } }
   render();
 });

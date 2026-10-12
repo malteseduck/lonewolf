@@ -67,36 +67,50 @@
   const mastered = (hero) => hero.series === 'magnakai' && LW.has(hero, 'weaponmastery');
   /* What a weapon adds: its own bonus (item.cs, the Sommerswerd's 8) and his skill with it. A Special
      Item can be a weapon too; item.weapon lists the kinds it counts as for the skill. */
-  const weaponParts = (hero, w) => {
-    const it = LW.ITEMS[w] || {}, kinds = it.weapon || [w], parts = it.cs ? [{ label: it.name, n: it.cs }] : [];
+  /* ctx.weaponCs: {id: n, '*': n}, what a weapon adds in this fight in place of its own bonus; ctx.plain:
+     weapon-like Special Items fight as ordinary weapons (no bonus of their own) */
+  const weaponParts = (hero, w, ctx = {}) => {
+    const it = LW.ITEMS[w] || {}, kinds = it.weapon || [w], wc = ctx.weaponCs || {};
+    const own = w in wc ? wc[w] : '*' in wc ? wc['*'] : ctx.plain ? 0 : it.cs, parts = own ? [{ label: it.name || LW.itemName(w), n: own }] : [];
     if (mastered(hero) && kinds.some((k) => (hero.mastery || []).includes(k))) parts.push({ label: 'Weaponmastery', n: LW.mkRank(hero) >= 8 ? 4 : 3 }); // Scion-kai: +4
     else if (hero.series !== 'magnakai' && hero.weaponskill && kinds.includes(hero.weaponskill)) parts.push({ label: 'Weaponskill', n: 2 });
     return parts;
   };
   /* The weapon he fights with: whichever gives most. ctx.with: 'none' when the text has him fight
      bare-handed, or an item id when only that weapon can harm the enemy. Null: unarmed. */
+  /* ctx.lend: a weapon he fights with that is not (yet) his; ctx.only / ctx.barred: the weapon kinds
+     that may (may not) be used here, 'special' standing for any weapon-like Special Item */
+  const allowed = (w, ctx) => {
+    const it = LW.ITEMS[w] || {}, kinds = [w, ...(it.weapon || []), ...(it.kind === 'special' ? ['special'] : [])];
+    return (!ctx.only || kinds.some((k) => ctx.only.includes(k))) && !(ctx.barred && kinds.some((k) => ctx.barred.includes(k)));
+  };
   LW.armedWith = (hero, ctx = {}) => {
     if (ctx.with === 'none') return null;
+    if (ctx.lend) return ctx.lend;
     // a Bow fights only where the text names it (ctx.with)
-    const all = [...hero.weapons, ...hero.special.filter((s) => LW.ITEMS[s] && LW.ITEMS[s].weapon)].filter((w) => (ctx.with ? w === ctx.with : !(LW.ITEMS[w] || {}).ranged));
-    const sum = (w) => weaponParts(hero, w).reduce((t, p) => t + p.n, 0);
+    const all = [...hero.weapons, ...hero.special.filter((s) => LW.ITEMS[s] && LW.ITEMS[s].weapon)].filter((w) => (ctx.with ? w === ctx.with : !(LW.ITEMS[w] || {}).ranged) && allowed(w, ctx));
+    const sum = (w) => weaponParts(hero, w, ctx).reduce((t, p) => t + p.n, 0);
     return all.reduce((best, w) => (best == null || sum(w) > sum(best) ? w : best), null);
   };
   LW.heroCS = (hero, ctx = {}) => {
-    const parts = [{ label: 'Base', n: hero.cs }], w = LW.armedWith(hero, ctx);
-    if (w) parts.push(...weaponParts(hero, w));
-    // unarmed: -4; with Weaponmastery a Tutelary loses 2, a Scion-kai 1
-    else parts.push({ label: ctx.with === 'none' ? 'Bare-handed' : 'Unarmed', n: !mastered(hero) ? -4 : LW.mkRank(hero) >= 8 ? -1 : LW.mkRank(hero) >= 5 ? -2 : -4 });
-    // a Shield, carried, in any fight it can be used in
-    const shield = hero.special.find((s) => LW.ITEMS[s] && LW.ITEMS[s].fightCs);
-    if (shield && !ctx.noShield) parts.push({ label: LW.itemName(shield), n: LW.ITEMS[shield].fightCs });
+    const parts = [{ label: 'Base', n: hero.cs }], w = LW.armedWith(hero, ctx), marks = LW.marksOf(hero).map((m) => LW.MARKS[m]);
+    if (w) parts.push(...weaponParts(hero, w, ctx));
+    // unarmed: -4; with Weaponmastery a Tutelary loses 2, a Scion-kai 1; ctx.noUnarmed: the text spares it
+    else if (!ctx.noUnarmed) parts.push({ label: ctx.with === 'none' ? 'Bare-handed' : 'Unarmed', n: !mastered(hero) ? -4 : LW.mkRank(hero) >= 8 ? -1 : LW.mkRank(hero) >= 5 ? -2 : -4 });
+    // a Shield (and a helm that adds to the fight), carried, in any fight it can be used in; a lasting
+    // condition (a dead arm) or the text (ctx.noShield) can bar the Shield
+    const noShield = ctx.noShield || marks.some((m) => m.noShield);
+    for (const s of hero.special.filter((x) => LW.ITEMS[x] && LW.ITEMS[x].fightCs)) if (!(noShield && s === 'shield')) parts.push({ label: LW.itemName(s), n: LW.ITEMS[s].fightCs });
     const circles = LW.circlesOf(hero).reduce((t, c) => t + c.cs, 0);
     if (circles) parts.push({ label: 'Lore-circles', n: circles });
-    const psi = LW.psi(hero);
-    if (ctx.psiSurge) parts.push({ label: 'Psi-surge', n: psi.surge });
-    else if (ctx.mindblast) parts.push({ label: 'Mindblast', n: psi.blast });
+    marks.filter((m) => m.cs).forEach((m) => parts.push({ label: m.name, n: m.cs }));
+    // ctx.psiTimes: a foe that takes the mind's attack badly (or well) multiplies what it adds
+    const psi = LW.psi(hero), times = ctx.psiTimes || 1;
+    if (ctx.psiSurge) parts.push({ label: 'Psi-surge', n: psi.surge * times });
+    else if (ctx.mindblast) parts.push({ label: 'Mindblast', n: psi.blast * times });
     if (ctx.enemy && ctx.enemy.mindforce && !LW.shielded(hero)) parts.push({ label: 'Mind attack', n: -ctx.enemy.mindforce });
     if (ctx.csMod) parts.push({ label: ctx.csNote || 'Circumstance', n: ctx.csMod });
+    (ctx.more || []).forEach((p) => parts.push(p));
     return { total: parts.reduce((t, p) => t + p.n, 0), parts };
   };
   /* A bow shot (a section's bowShot): a Bow and an Arrow, and what is added to the Random Number:

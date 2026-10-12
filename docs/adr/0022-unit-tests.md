@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-11
-- Amended: 2026-10-11
+- Amended: 2026-10-12
 
 ## Context
 
@@ -15,6 +15,8 @@ data, the owner also wanted one run that puts the real books through every scrip
 
 ## Decision
 
+- Test first (TDD): a new rule or behaviour starts with a failing test that states it, then the code
+  that makes it pass; a bug fix starts with a test that shows the bug (the owner, 2026-10-12).
 - Unit tests guard the main functionality so a change cannot quietly break it: the rules engine,
   the item tables, the fight-picture choice, the offline sync, the importer's parsing, the book
   status, backups and jobs, releases, and each main map step. Not every function, not drawing
@@ -50,3 +52,4 @@ data, the owner also wanted one run that puts the real books through every scrip
 - 2026-10-11: main functionality, not every line; a couple of seconds a suite; no server or process
   in a unit test; a parse test per language replaces `syntax_check.py`; `check_all.py` added, and
   re-importing allowed within it.
+- 2026-10-12: tests are written first (TDD), at the owner's request.

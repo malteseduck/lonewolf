@@ -14,6 +14,8 @@
                  surprise attack or ambush costs, which Huntmastery spares)
      bowShot     the Random Number is a bow shot: {to: [lo, hi]}, the range of the total for each
                  choice it decides (a choice left out is open without shooting)
+   and the engine's later rules (docs/reference/book-format.md): when, stake, sell, mealCost, and the
+   fight's rounds, restore and evade.if.
    An item with meal: true is eaten when a Meal is due and he has none (the engine's own items are in
    shared/core.js; the starting kit, the Seal included, is LW.KITS in shared/rules-series.js).
    Item names are the book's own labels for them; everything else is in our words. */
@@ -35,14 +37,18 @@ export const ITEMS = {
 };
 
 const shop = (list) => list.map(([item, cost]) => (item === 'meal' ? { meal: 1, cost } : item === 'pack' ? { pack: true, cost } : { item, cost }));
-const firstRound = 'you took them by surprise: add 2 to your COMBAT SKILL for the first round only. The engine does not.';
+// you took them by surprise
+const firstRound = { csMod: 0, rounds: [{ upTo: 1, csMod: 2, note: 'Surprise attack' }] };
 // the knight's watchtower at the border holds the same things, whether he is given them or takes them
 const watchtower = [{ item: 'broadsword' }, { item: 'mace' }, { item: 'quarterstaff' }, { item: 'healingPotion' }, { meal: 3 }, { pack: true }, { gold: 12 }];
+
+// flags a later section or book tests (core.js, LW.MARKS)
+export const MARKS = { visitedRagadorn: { name: 'having been to Ragadorn', flag: true } };
 
 export const SECTIONS = {
   5: { fight: { undead: true } },
   // the importer read the first round's +2 as the whole fight's
-  7: { fight: { csMod: 0 }, todo: firstRound },
+  7: { fight: firstRound },
   10: { give: [{ item: 'ticket' }] },
   15: { loot: watchtower },
   17: { ep: -5, fight: { undead: true } },
@@ -56,19 +62,20 @@ export const SECTIONS = {
   // the Wildlands: Hunting finds nothing there (346 says so; the owner applied it to Ragadorn and its road)
   32: { noHunt: true },
   36: { need: { 145: { item: ['laumspurHerb', 'potion', 'rendalimPotion'], spend: true } } },
-  37: { noHunt: true },
+  // the ways into Ragadorn (37, 148 by coach; 194 by boat): Book 3 asks whether he has ever been there
+  37: { noHunt: true, mark: 'visitedRagadorn' },
   39: { need: { 346: { item: 'ticket' }, 156: { item: 'ticket', not: true } } },
   40: { ep: 'full', give: [{ item: 'rendalimPotion' }] },
-  41: { todo: 'if you take his advice and sleep, restore 1 ENDURANCE.' },
   52: { need: { 338: { item: 'magicSpear' } } },
   55: { loot: [{ item: 'broadsword', cost: 12 }] },
   57: { rolls: [{ range: [0, 0], gold: -10 }, ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => ({ range: [n, n], gold: -n }))] },
   58: { take: [{ gold: 10 }] },
   59: { need: { 332: { item: 'magicSpear' } } },
-  60: { todo: 'for the first two rounds he cannot strike back: restore any ENDURANCE you lose in them.' },
+  // he cannot strike back for the first two rounds
+  60: { fight: { rounds: [{ upTo: 2, heroLoss: 0 }] } },
   62: { need: { 263: { item: 'seal' }, 126: { item: 'papers' } } },
   66: { fight: { undead: true } },
-  69: { todo: 'unless you have Mindshield, lose 2 ENDURANCE.' },
+  69: { when: [{ unless: { disc: 'mindshield' }, ep: -2 }] },
   70: { need: { 219: { item: 'crystalStar' } } },
   72: { ep: 1, need: { 56: { gold: 2, spend: true } } },
   75: { need: { 142: { gold: 10, spend: true } } },
@@ -78,7 +85,8 @@ export const SECTIONS = {
   86: { give: [{ item: 'mace' }, { gold: 3 }] },
   // any two of the merchant's goods; each Meal counts as one
   91: { loot: [{ item: 'quarterstaff' }, { item: 'blanket' }, { meal: 1 }, { meal: 1 }, { pack: true }, { item: 'dagger' }, { item: 'rope' }].map((l) => ({ ...l, or: 'cargo', pick: 2 })) },
-  93: { todo: 'give the beggars as many Gold Crowns as you wish.' },
+  // alms: as many Gold Crowns as he likes
+  93: { stake: { spend: true } },
   // Healing, a healing potion or Laumspur will do; the importer saw only the discipline
   95: { need: { 239: null } },
   103: { give: [{ item: 'laumspurHerb' }] },
@@ -104,7 +112,7 @@ export const SECTIONS = {
   142: { give: [{ item: 'whitePass' }] },
   144: { give: [{ meal: 2 }], take: [{ gold: 'all' }] },
   145: { ep: -5 },
-  148: { noHunt: true },
+  148: { noHunt: true, mark: 'visitedRagadorn' },
   149: { need: { 223: { item: 'seal' } } },
   154: { ep: -2 },
   157: { fight: { unarmed: true } },
@@ -118,7 +126,8 @@ export const SECTIONS = {
   181: { loot: shop([['sword', 4], ['dagger', 2], ['shortSword', 3], ['warhammer', 6], ['spear', 5], ['mace', 4], ['blanket', 3], ['pack', 1]]) },
   187: { loot: [{ item: 'spear' }, { item: 'spear' }, { item: 'sword' }, { item: 'sword' }, { gold: 6 }] },
   189: { ep: -2 },
-  194: { take: [{ gold: 'all' }, { weapons: 'all' }, { backpack: 'all' }, { special: 'all' }] },
+  // the 1 Endurance for sleeping is on 41's choice; 194 is also reached from 251
+  194: { take: [{ gold: 'all' }, { weapons: 'all' }, { backpack: 'all' }, { special: 'all' }], when: [{ came: ['41'], ep: 1 }], mark: 'visitedRagadorn' },
   195: { need: { 249: { gold: 1, spend: true } } },
   196: { take: [{ item: 'seal' }], give: [{ item: 'sommerswerd' }] },
   198: { ep: -1 },
@@ -132,8 +141,9 @@ export const SECTIONS = {
   233: { need: { 37: { gold: 3, spend: true }, 148: { gold: 1, spend: true } } },
   235: { loot: [{ item: 'shortSword' }] },
   237: { fight: { undead: true } },
-  238: { todo: 'your weapons wait at the door (keep them on your Action Chart); you are given a token worth 1 Gold Crown here, once only. Play Cartwheel with the medallion and settle your gold by hand.' },
-  240: { todo: 'with Healing, restore all your ENDURANCE; without it, half of what you have lost in combat.' },
+  // the weapons left at the door stay on the Action Chart; the game is played round after round
+  238: { todo: 'you have a token worth 1 Gold Crown to play with here, once only. Play Cartwheel with the medallion and settle your gold by hand.' },
+  240: { when: [{ if: { disc: 'healing' }, ep: 'full' }, { unless: { disc: 'healing' }, healLost: 0.5 }] },
   246: { need: { 170: { item: 'whitePass' }, 202: { item: 'redPass' }, 327: { item: ['whitePass', 'redPass'], not: true } } },
   250: { need: { 223: { item: 'seal' } } },
   258: { ep: -1 },
@@ -142,11 +152,15 @@ export const SECTIONS = {
   263: { give: [{ item: 'redPass' }] },
   266: {
     loot: shop([['sword', 4], ['dagger', 2], ['broadsword', 7], ['shortSword', 3], ['warhammer', 6], ['spear', 5], ['mace', 4], ['axe', 3], ['quarterstaff', 3]]),
-    todo: 'the weaponsmith buys your weapons for 1 Gold Crown less than his price for them.',
+    // he buys weapons for 1 Gold Crown less than he sells them
+    sell: { sword: 3, dagger: 1, broadsword: 6, shortSword: 2, warhammer: 5, spear: 4, mace: 3, axe: 2, quarterstaff: 2 },
   },
-  270: { fight: { csMod: 0 }, todo: firstRound },
+  270: { fight: firstRound },
   274: { loot: [{ item: 'sword' }, { gold: 6 }, { item: 'mace' }] },
-  276: { todo: 'when the contest is over, put your ENDURANCE back to what it was before it.' },
+  // an arm-wrestling contest, his ENDURANCE as it was afterwards; with Mindblast he need not wrestle
+  276: {
+    fight: { restore: true, to: '305', lose: '192', evade: { after: 0, to: '14', if: { disc: 'mindblast' }, free: true } },
+  },
   283: { loot: shop([['sword', 4], ['dagger', 2], ['broadsword', 6], ['spear', 5], ['meal', 2], ['goldRing', 8], ['blanket', 3], ['pack', 1]]) },
   // footnotes: without the Seal he leaves the alchemist's at once; the refused food needs a Meal in its place
   289: { need: { 165: { item: 'seal' } } },
@@ -161,9 +175,9 @@ export const SECTIONS = {
   307: { need: { 140: { item: 'seal' } } },
   308: { todo: 'play Portholes with the medallion: 3 Gold Crowns a throw, 6 won when you beat both. Settle your gold by hand.' },
   313: { ep: -4, take: [{ item: 'magicSpear' }] },
-  321: { todo: 'unless you have food in your Backpack, lose 2 ENDURANCE.' },
+  321: { when: [{ unless: { meals: 1 }, ep: -2 }] },
   // a footnote: the boy takes whatever gold he has, even none
-  327: { loot: [{ item: 'papers' }], todo: 'the papers cost 6 Gold Crowns, or all you have if that is less: pay him by hand.' },
+  327: { loot: [{ item: 'papers', cost: 6, orAll: true }] },
   328: { need: { 113: { item: 'crystalStar', ever: true } } },
   329: { give: [{ gold: 10 }] },
   330: { ep: -5 },
@@ -174,6 +188,6 @@ export const SECTIONS = {
   339: { need: { 249: { gold: 1, spend: true } } },
   342: { need: { 72: { gold: 1, spend: true }, 56: { gold: 2, spend: true } } },
   // the Meal here is bought if he has none, and Hunting is no use in the Wildlands
-  346: { meal: false, todo: 'eat a Meal from your Backpack, or pay 1 Gold Crown for one here. Hunting does not help in the Wildlands.', need: { 280: { gold: 1, spend: true } } },
+  346: { mealCost: 1, noHunt: true, need: { 280: { gold: 1, spend: true } } },
   347: { ep: -1 },
 };

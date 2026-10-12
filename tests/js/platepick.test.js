@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { compilePlates, choosePlate, nameKey, pinKey, pickPlate, samePlate } from '../../platepick.js';
+import { compilePlates, choosePlate, nameKey, pinKey, pickPlate, samePlate, pinState } from '../../platepick.js';
 
 const book = { id: '04tcod', assets: 'data/projectaon/04tcod/' };
 const lib = compilePlates([
@@ -91,5 +91,21 @@ describe('samePlate', () => {
     expect(samePlate({ src: 'a' }, { src: 'b' })).toBe(false);
     expect(samePlate(null, undefined)).toBe(true);
     expect(samePlate(null, { src: 'a' })).toBe(false);
+  });
+});
+
+describe('pinState: what the owner has to look at on the picture sheet', () => {
+  const pins = { '7/0': { name: nameKey('Giak'), plate: { src: 'art/old-giak.png' } }, '8/0': { name: nameKey('Kraan'), plate: { src: 'art/kraan.png', flip: true } } };
+  it('a fight whose picture is as approved needs nothing', () => {
+    expect(pinState({ name: 'Kraan' }, book, lib, pins, '8/0')).toEqual({ state: 'same' });
+  });
+  it('a changed picture waits, with the approved one to compare', () => {
+    expect(pinState({ name: 'Giak' }, book, lib, pins, '7/0')).toEqual({ state: 'changed', was: { src: 'art/old-giak.png' }, now: { src: 'art/giak.png', crop: [0, 0, 1, 0.9] } });
+  });
+  it('a fight with no approved picture yet (a new one, or a re-import that added it) waits too', () => {
+    expect(pinState({ name: 'Drakkar' }, book, lib, pins, '9/0')).toEqual({ state: 'new', now: { src: 'art/drakkar.png', levels: [10, 200] } });
+  });
+  it('before any approval nothing waits', () => {
+    expect(pinState({ name: 'Drakkar' }, book, lib, null, '9/0')).toEqual({ state: 'same' });
   });
 });

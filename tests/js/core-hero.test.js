@@ -20,6 +20,10 @@ describe('LW.makeHero', () => {
     expect(h.ep).toBe(23);
     expect(h.epMax).toBe(23);
   });
+  it('tracks flags from the start, so the backfill for older saves (main.js) never runs for him', () => {
+    dice(LW, 0);
+    expect(LW.makeHero({ csRoll: 0, epRoll: 0, disciplines: [] }).flagsRead).toBe(true);
+  });
   it('gives Book 1\'s kit: an Axe, one Meal, the map, gold equal to a Random Number', () => {
     dice(LW, 6);
     const h = LW.makeHero({ csRoll: 0, epRoll: 0, disciplines: [] });

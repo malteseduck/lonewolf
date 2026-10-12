@@ -75,7 +75,7 @@ ember on hover and focus; disabled it is greyed.
   Animal Control: 7.").
   `makeDial()` builds it: a 4.6em medallion whose bronze bezel is engraved 0-9 and turns, while
   the black face shuffles digits, then shows the drawn one under the notch at the top, glowing.
-  The same medallion sits among the fight's commands.
+  A fight has none: its numbers are drawn out of sight (ADR 0026).
 - Then one of: death panel, the crossed-swords medallion ("Draw your weapon"), the ending panel,
   or the list of choices.
   The death panel (death in a fight, or a death section) offers to go back: a seal for the section
@@ -85,7 +85,13 @@ ember on hover and focus; disabled it is greyed.
   same panel, reading "Your mission has failed".
 - A puzzle section (`puzzle`: the answer is a section number) adds, under its choices, "Turn to
   section" with a box for the number and "turn" (Enter works too); a number the book does not have
-  is toasted. `turnTo()`.
+  is toasted. `turnTo()`. Every other section with choices has the same box, smaller and faint
+  (`.puzzle.byhand`, "By hand: turn to"), for a way on the page cannot see.
+- Above the fight notice, three blocks the item tables can call for: "Choose what you lose" (or
+  "Give in exchange"), a medallion per thing he may lose (`game.pickable()`, `data-pick`), shown while
+  a loss of his choosing is pending and the choices wait; "Your stake" / "What you give", an amount
+  box and a button (`sec.stake`, `game.setStake`, `data-stake`), then the amount set; "He will buy",
+  a medallion per item he has that the trader buys (`sec.sell`, `game.sell`, `data-sell`).
 - `shown(text)` strips "turn to N" from a choice; if nothing meaningful is left it shows "Continue".
 
 ## Right-page panels (`renderRight`)
@@ -119,8 +125,9 @@ on the same medallion again, or Escape closes it; touching another medallion mov
   Special Items fill the shoulder and belt slots, the rest a row of five rings (more in fives) under
   a scrolled rule (`flourish`); empty slots are bare rings. The figure is `dollURL` (see "Lone Wolf's figure" below). Then a ruled "Backpack" heading, a knapsack medallion beside eight dark square tiles (one per Meal or
   item) under the HD sheet's ironwork (`packLattice`: a curl in each tile's corners, diamond studs
-  where they meet, a double frame, a scroll off each corner); a ledger (gold -/+, "Add an item by hand"); and, when anything is kept at the Kai Monastery
-  (`hero.stored`, `hero.storedGold`), a line (`.kept`) saying what. A touched item's box has
+  where they meet, a double frame, a scroll off each corner); a ledger (gold -/+, other coins he has met with their own -/+ (`hero.coins`), "Add an item by hand"); and, when anything is kept at the Kai Monastery
+  (`hero.stored`, `hero.storedGold`), a line (`.kept`) saying what; likewise what was taken to be found again
+  (`hero.stash`), his lasting conditions (`LW.marksOf`), and the notes the text asked for (`hero.notes`). A touched item's box has
   Drink / Drop / Eat; the Quiver's counts its Arrows, with -/+ (`adjust('arrows')`). With
   the Backpack lost (`hero.noPack`) its heading says so. The box gives a book item's `about`;
   anything with `heal` can be drunk (the potion) or eaten (Laumspur herb). Icons: `ITEM_GLYPH` for the
@@ -189,21 +196,28 @@ nothing shows: the owner asked for no stand-in drawing (2026-10-03).
 ## Combat (`startBattle`, `updateBattle`, `battleAct`, `endBattle`)
 
 `B` is the fight: an `LW.Fight` (shared/fight.js; its rules: rules-engine.md, "Combat procedure")
-with the page's own drawing state added: `fx`, `img`, `node`, `dial`, `scene`, `lock` (input shut
+with the page's own drawing state added: `fx`, `img`, `node`, `scene`, `lock` (input shut
 while a round plays), `fit`, `floor`.
 
 The panel is one `.fight` node: a canvas filling it, the enemy bar over its top, the command
-medallions and dial over its foot. `B.fit()` sizes the canvas to the node at device resolution.
+medallions over its foot (no Random Number medallion: ADR 0026). `B.fit()` sizes the canvas to the node at device resolution.
 A requestAnimationFrame loop calls `drawCreature` each frame; the plate itself is still, only
 wound marks, the lunge scale and the death fade change.
 
-`battleAct(id)`: `fight` and `evade` spin the dial and play a round through the fight's steps,
+`battleAct(id)`: `fight` and `evade` draw a number (`LW.rand10()`, out of sight) and play a round through the fight's steps,
 animating between them: `roll`, then for a blow `strike` (the foe's bar drops, a wound mark),
 `suffer` (his lunge), and when the foe has fallen its death fade, then `advance` (the next foe's
 picture: `showFoe`); for evading `flee`. `mind` (`focus`), `item` (`drink`, Laumspur) and `cure`
-(the medallion is dim above 6 Endurance) cost no round. The mind medallion reads "as Mindblast: no
+(the medallion is dim above 6 Endurance) cost no round, nor do `boost:<id>` (a draught swallowed
+before the first round, one medallion each, `B.boosts()`) and `stop` (the faint "By hand: ..." link under the fight log: `B.stopHere()`; with `combat.byHand` it
+reads its reason and the section's choices open, otherwise it reads "stop the fight (it is not won)" and the
+section then offers only the turn box, or "fight it after all": ADR 0027). A number drawn that the text
+says ends the fight (`stop.drawn`) ends it before any blow. With six commands or more they are drawn
+smaller so the row stays on the panel. The mind medallion reads "as Mindblast: no
 effect" against a foe immune to Mindblast only, and "no effect" when `B.deaf()`. Evade reads "take
-one blow" when `B.evadeOpen`, "too late" when `B.evadeLate`. When `B.over` is set the left page
+one blow" (or "untouched" with `evade.free`) when `B.evadeOpen`, "too late" when `B.evadeLate`, "needs ..." without
+`evade.if`; it is not shown at all with `noEvade`. The log names each change for some rounds as it begins
+and ends. When `B.over` is set the left page
 shows the outcome and a "Turn the page" button, which calls `endBattle` (`B.finish()`) to move the
 story on.
 

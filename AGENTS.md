@@ -18,6 +18,11 @@ not extend them. `shared/` is used by all of them, so check A-C still load after
 
 ## Run it
 
+**Every Python run goes through uv**, the project's tools and one-off scripts alike, never plain
+`python` or the venv's own exe: `python tools/x.py` in this file means
+`uv run --no-project --python tools/.venv/Scripts/python.exe python tools/x.py`. Tell subagents the
+same. (Run with the system Python, `check_all.py` fails: pytest is only in `tools/.venv`.)
+
 ```sh
 python tools/serve.py
 ```
@@ -46,6 +51,8 @@ exits 1 if the page names a file that is missing; run it after adding or moving 
 Unit tests (ADR 0022) guard the main functionality: Vitest for the JavaScript in `tests/js/`, pytest
 for the Python tools in `tests/py/`, a couple of seconds each. Run both before committing.
 
+- **Test first (TDD)**: for a new rule or behaviour, write the failing test that states it, then the
+  code that makes it pass, then tidy. A bug fix starts with a test that shows the bug.
 - **New core or main functionality gets new tests in the same piece of work**: a new rule the engine
   applies, a new thing the importer reads, a new tool or dashboard job, a new item-table field. A
   change to existing main functionality updates its tests. Say in the report which tests were added.
@@ -65,7 +72,7 @@ uv run --no-project --python tools/.venv/Scripts/python.exe python -m pytest
 
 (`npm install` once for Vitest; pytest is in `tools/.venv`.) There is no linter.
 
-`python tools/check_all.py` (the dashboard's "Check everything") puts the real books through every
+`uv run --no-project --python tools/.venv/Scripts/python.exe python tools/check_all.py` (the dashboard's "Check everything") puts the real books through every
 script, and both suites alongside (about 6 s): re-import every book against its last report, every item table's
 check, the approved fight pictures, the offline copy. Run it after changing the importer, an item
 table or anything the books' data goes through.

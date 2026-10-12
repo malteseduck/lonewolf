@@ -1,15 +1,16 @@
 /* Book 4's items and the other bookkeeping its text asks of the player, read section by section and
    written down by hand (see items-01fftd.js for the fields, items-02fotw.js for the later ones, and
-   docs/reference/items.md for how). Nothing new in the fields. Notes on this book:
+   docs/reference/items.md for how). Notes on this book:
      - Hunting fails in the Wildlands, from the first section that says so (25 or 171) until the one
        that says it is over (120): the Meals asked for in between are marked noHunt. It also fails in
        the Maaken Mines (129, 185, 269).
      - The Pick and the Shovel take two Backpack spaces each in the text; the page counts one, so the
        player keeps the room by hand. The lit Torch at 79 and 123 is not recorded, so one Torch less is
        offered than the crate holds.
-     - Where a choice needs two things at once (a Torch and a Tinderbox) or a past visit (Gorn Cove),
-       the choice stays open and the player decides.
-     - Several fights end by how many rounds they lasted, or stop after a set number: left as todos.
+     - Where a choice needs a past visit (Gorn Cove), the choice stays open and the player decides.
+     - A Torch lit from the Backpack (22) leaves it, as the lit ones at 79 and 123 are never in it.
+     - The Elix fight (308) leaves the flag foughtElix, which Book 5 asks about.
+     - The underwater fights (194, 234) last as many rounds as a number drawn: still by hand.
      - The Firesphere, the Sommerswerd and the other Book 3 things are those of items-03tcok.js.
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {
@@ -34,6 +35,9 @@ const dval = { item: 'dvalSword' };
 const torches = (n) => Array.from({ length: n }, () => ({ item: 'torch' }));
 const camo = { disc: 'camouflage', rank: 7 };
 
+// flags a later section or book tests (core.js, LW.MARKS)
+export const MARKS = { foughtElix: { name: 'having fought an Elix', flag: true } };
+
 export const SECTIONS = {
   // what the bandits carried; he keeps what he wants and the Backpack if he has none
   2: { loot: [{ pack: true }, { item: 'sword' }, { item: 'mace' }, { item: 'dagger' }, { item: 'warhammer' }, { gold: 12 }, { meal: 2 }] },
@@ -44,16 +48,17 @@ export const SECTIONS = {
   // he declines the troupe's supper and eats from his Backpack instead
   13: { meal: true },
   19: { noHunt: true },
-  22: { todo: 'one Backpack Item of your choice falls into the crevasse; if you carry none, a Weapon is lost instead (the Torch in your hand does not count).' },
+  // a Torch lit from the Backpack (not with the Firesphere); then one other thing of his choice, else a weapon
+  22: { when: [{ if: { items: ['torch', 'tinderbox'], not: { item: 'firesphere' } }, take: [{ item: 'torch' }] }, { take: [{ pick: 'backpack', n: 1, else: [{ weapons: 'one' }] }] }] },
   23: { need: { 282: { item: 'brassKey4' }, 105: { item: 'brassKey4', not: true } } },
   29: { need: { 168: { item: 'firesphere' } } },
-  35: { todo: 'with Hunting, or from the rank of Guardian up (7 Disciplines), add 3 to the number drawn before choosing the way on.' },
+  35: { rntMod: [{ plus: 3, any: [{ disc: 'hunting' }, { rank: 7 }] }], ranges: { 147: [0, 7], 231: [8, 12] } },
   40: { need: { 349: { disc: 'tracking', rank: 6 } } },
   44: { loot: [{ gold: 12 }, { meal: 2 }] },
   52: { ep: -1 },
   54: { need: { 4: { disc: 'healing', rank: 8 } } },
   57: { need: { 327: dval, 289: { item: 'dvalSword', not: true } } },
-  62: { todo: 'take 2 off your COMBAT SKILL for the first 3 rounds only, while you are on the ground.' },
+  62: { fight: { rounds: [{ upTo: 3, csMod: -2, note: 'On the ground' }], noEvade: true } },
   67: { ep: -1, need: { 292: sommerswerd } },
   70: { need: { 305: { item: 'onyxMedallion' } } },
   73: { need: { 283: holy, 325: { item: 'holyWater4', not: true } } },
@@ -62,7 +67,7 @@ export const SECTIONS = {
   77: { fight: { drain: 1 } },
   78: { loot: [{ item: 'holyWater4' }], noHunt: true },
   // a crate by the tunnel mouth: Tinderbox and Torches
-  79: { loot: [{ item: 'tinderbox' }, ...torches(5)], todo: 'you need one Torch lit to go on; any others you take each fill a Backpack place.' },
+  79: { loot: [{ item: 'tinderbox' }, ...torches(5)] },
   84: { give: [{ item: 'scroll4' }] },
   // all his Backpack is lost with the boat
   94: { take: [{ backpack: 'all' }] },
@@ -70,39 +75,41 @@ export const SECTIONS = {
   102: { give: [{ gold: 12 }, { meal: 2 }] },
   103: { ep: -4 },
   109: { loot: [{ gold: 3 }, { item: 'dagger' }, { item: 'sword' }] },
-  117: { todo: 'with another Torch and a Tinderbox, or a Kalte Firesphere, you may take the way that needs no draw.' },
+  117: { need: { 22: { any: [{ items: ['torch', 'tinderbox'] }, { item: 'firesphere' }] } } },
   118: { loot: [{ item: 'whip4' }], need: { 308: { item: 'ironKey4' } } },
   122: { ep: -1, fight: { mindforce: 4 } },
-  123: { loot: [{ item: 'tinderbox' }, ...torches(6)], todo: 'you need one Torch lit to go on; any others you take each fill a Backpack place.' },
+  123: { loot: [{ item: 'tinderbox' }, ...torches(6)] },
   129: { noHunt: true },
-  133: { todo: 'once you have lost any ENDURANCE here, even while evading, the way on is 17: do not evade then, and take 17 after the fight.' },
+  // any wound, even in evading, leads to 17; an untouched win to 265
+  133: { fight: { wounded: '17', to: '265' } },
   137: { ep: 6 },
   141: { noHunt: true },
-  147: { todo: 'ignore the ENDURANCE you lose in the first round: the guard is taken by surprise.' },
+  147: { fight: { rounds: [{ upTo: 1, heroLoss: 0, note: 'Surprise' }] } },
   152: { loot: [{ item: 'sword' }, { gold: 6 }, { meal: 2 }, { item: 'brassKey4' }] },
-  153: { todo: 'take 4 off your COMBAT SKILL for the first 2 rounds only; your weapon is not drawn until the third.' },
+  153: { fight: { rounds: [{ upTo: 2, csMod: -4, note: 'Weapon not drawn' }], noEvade: true } },
   157: { ep: 1 },
   158: { ep: -3, take: [{ backpack: 'all' }] },
   159: { ep: -2 },
   167: { give: [{ pack: true }, { meal: 1 }], loot: [{ item: 'shovel4' }] },
   168: { need: { 34: sommerswerd, 85: noSword } },
-  173: { need: { 275: sommerswerd }, todo: 'if you do not have the Sommerswerd, add 2 to the number drawn when you carry a Pick or a Shovel.' },
+  // the draw is only for one without the Sommerswerd
+  173: { need: { 275: sommerswerd, 143: noSword, 179: noSword }, rntMod: [{ plus: 2, item: ['pick4', 'shovel4'] }], ranges: { 143: [0, 6], 179: [7, 11] } },
   176: { ep: -3 },
   182: { need: { 332: { disc: ['tracking', 'hunting'] } } },
   185: { noHunt: true },
   188: { noHunt: true },
-  193: { todo: 'only 2 rounds are fought; if you are still alive after them, the way on is open.' },
-  194: { todo: 'write down the number drawn (0 counts as 10; Mind Over Matter adds 2): it is how many rounds you may fight underwater. Every round after that costs 2 more ENDURANCE.' },
+  193: { fight: { stop: { after: 2, to: '311' } } },
+  194: { todo: 'the number drawn (0 is 10; Mind Over Matter adds 2) is how many rounds you last underwater: every round after that costs 2 more ENDURANCE.' },
   213: { loot: [{ item: 'pick4' }, { item: 'shovel4' }, { item: 'axe' }, { item: 'torch' }, { item: 'tinderbox' }, { item: 'hourglass4' }] },
   222: { loot: [{ item: 'dvalSword' }] },
   230: { loot: [{ item: 'sword' }, { item: 'dagger' }, { gold: 9 }, { meal: 2 }] },
   231: { loot: [{ gold: 3 }, { item: 'sword' }, { meal: 1 }] },
-  234: { todo: 'write down the number drawn (0 counts as 10; Mind Over Matter adds 2): it is how many rounds you may fight underwater. Every round after that costs 2 more ENDURANCE.' },
+  234: { todo: 'the number drawn (0 is 10; Mind Over Matter adds 2) is how many rounds you last underwater: every round after that costs 2 more ENDURANCE.' },
   236: { ep: -4 },
   // with no Sommerswerd the Daemonak's bite costs 8 before the way on
   246: { ep: -8, need: { 34: sommerswerd, 85: noSword } },
   258: { need: { 305: { item: 'onyxMedallion' }, 49: camo } },
-  260: { todo: 'only 3 rounds are fought; if you are still alive after them, the way on is open.' },
+  260: { fight: { stop: { after: 3, to: '311' } } },
   261: { loot: [{ gold: 8 }, { meal: 1 }] },
   263: { ep: -4 },
   268: { loot: [{ gold: 4 }, { item: 'spear' }, { item: 'broadsword' }, { item: 'ironKey4' }, { item: 'brassKey4' }, { meal: 2 }, { item: 'potion' }] },
@@ -124,9 +131,12 @@ export const SECTIONS = {
   // a Pick or a Shovel, not both
   322: { ep: 2, loot: [{ item: 'pick4', or: 'tool' }, { item: 'shovel4', or: 'tool' }] },
   324: { noHunt: true },
+  // the Elix: a flag for Book 5
+  308: { mark: 'foughtElix' },
   // the captain gets his sword back
   327: { take: [{ item: 'dvalSword' }] },
-  333: { todo: 'only one round is fought: the way on follows who lost more ENDURANCE in it, or neither.' },
+  // one round only: the way on by who lost more
+  333: { fight: { stop: { after: 1, by: { hero: '209', foe: '220', even: '344' } } } },
   339: { noHunt: true },
   340: { ep: -2 },
   341: { ep: -4 },

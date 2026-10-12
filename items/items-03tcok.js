@@ -1,12 +1,12 @@
 /* Book 3's items and the other bookkeeping its text asks of the player, read section by section and
    written down by hand (see items-01fftd.js for the fields, items-02fotw.js for the later ones, and
-   docs/reference/items.md for how). Nothing new in the fields. Notes on this book:
+   docs/reference/items.md for how). Notes on this book:
      - Kalte is icy desert: Hunting never provides a Meal there (noHunt on the sections that ask for one).
-     - Baknar oil is an item only so the choices that depend on it can be gated; it takes no room.
+     - Baknar oil is an item only so the choices and losses that depend on it can follow it; it takes no room.
      - The sledge's goods (Sleeping Furs, a Tent, a Rope) take more than one Backpack space in the
        text; the page counts each as one, so the player keeps the room by hand.
-     - Where a choice depends on a past adventure (the Graveyard of the Ancients, Ragadorn) or on
-       carrying any weapon, the choice stays open and the player decides.
+     - Where a choice depends on a past adventure (the Graveyard of the Ancients, Ragadorn), the
+       choice stays open and the player decides: no earlier table marks those visits yet.
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {
   baknarOil: { name: 'Baknar Oil', kind: 'special', glyph: 'round-bottom-flask', about: 'Rubbed into your skin for the rest of this adventure: it keeps out the cold. It takes no room.' },
@@ -23,17 +23,20 @@ export const ITEMS = {
   blackGraveweed: { name: 'Potion of Black Graveweed', kind: 'backpack', glyph: 'round-bottom-flask', about: 'A strong poison.' },
   greenGallowbrush: { name: 'Potion of Green Gallowbrush', kind: 'backpack', glyph: 'round-bottom-flask', about: 'A strong sleeping draught.' },
   redLaumspur: { name: 'Red Potion of Laumspur', kind: 'backpack', glyph: 'health-potion', heal: 5, about: 'Concentrated Laumspur. Drink it after a fight.' },
-  alether4: { name: 'Potion of Alether', kind: 'backpack', glyph: 'standing-potion', about: 'Swallow it just before a fight: +4 COMBAT SKILL for that fight. Apply it by hand.' },
+  alether4: { name: 'Potion of Alether', kind: 'backpack', glyph: 'standing-potion', boost: 4, about: 'Swallow it just before a fight: +4 COMBAT SKILL for that fight.' },
   sleepingFurs: { name: 'Sleeping Furs', kind: 'backpack', glyph: 'blanket', about: 'Take the room of two Backpack Items; the page counts one.' },
   tent: { name: 'Tent', kind: 'backpack', glyph: 'knapsack', about: 'Takes the room of three Backpack Items; the page counts one.' },
 };
 
 // what the wrecked sledge still holds, to take what fits in the Backpack
 const sledge = [{ meal: 1 }, { meal: 1 }, { meal: 1 }, { meal: 1 }, { meal: 1 }, { item: 'sleepingFurs' }, { item: 'tent' }, { item: 'rope' }];
-// the number drawn is the loss, 0 counting as 10
-const loss = (extra) => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => ({ range: [n, n], ep: -(n || 10), ...extra }));
 const sommerswerd = { item: 'sommerswerd' };
 const oil = { item: 'baknarOil' };
+const graveyard = { any: [{ mark: 'visitedGraveyard' }] };
+const notGraveyard = { any: [{ not: { mark: 'visitedGraveyard' } }] };
+
+// flags a later section or book tests (core.js, LW.MARKS)
+export const MARKS = { ateByFire: { name: 'having eaten by the fire', flag: true } };
 
 export const SECTIONS = {
   4: { loot: [{ item: 'boneSword' }, { item: 'blueDisc' }] },
@@ -42,16 +45,17 @@ export const SECTIONS = {
   // his share, and the evening Meal he eats at once
   12: { give: [{ meal: 3 }, { item: 'sleepingFurs' }, { item: 'rope' }], meal: true, noHunt: true },
   15: { need: { 86: { item: ['dagger', 'boneSword'] } } },
-  16: { todo: 'two of the items in your Backpack are crushed: choose which, or the one you have.' },
-  18: { ep: -3, take: [{ weapons: 'one' }], todo: 'if your only weapon is a weapon-like Special Item (a Bone Sword, the Sommerswerd), that is the one lost.' },
+  16: { take: [{ pick: 'backpack', n: 2 }] },
+  // the weapon he struck with, a weapon-like Special Item too
+  18: { ep: -3, take: [{ pick: 'weapon', n: 1 }] },
   21: { ep: -3 },
   24: { take: [{ item: 'diamond' }] },
   25: { loot: [{ item: 'blueTriangle' }] },
   26: { loot: [{ item: 'boneSword' }, { item: 'dagger' }, { item: 'mace' }] },
-  27: { todo: 'unless you have rubbed Baknar oil into your skin, lose 2 ENDURANCE.' },
+  27: { when: [{ unless: oil, ep: -2 }] },
   29: { need: { 43: sommerswerd } },
-  // met before at 138 or 263 (evaded there)
-  32: { todo: 'if you fought these Kalkoth before, the text carries over the wounds you gave them, and leaves out Kalkoth 3 if that fight had two: the page cannot, so they come at you fresh.' },
+  // met before at 138 or 263 (evaded there): the wounds carry over, and only as many as fought there
+  32: { fight: { keep: 'kalkoth', stop: { wound: true, to: '66' }, to: '25' } },
   33: { ep: -1 },
   38: { loot: [{ pack: true }, { item: 'rope' }] },
   43: { ep: -1 },
@@ -67,55 +71,66 @@ export const SECTIONS = {
   70: { need: { 209: oil, 339: { item: 'baknarOil', not: true } } },
   77: { ep: -1 },
   79: { ep: 6, take: [{ item: 'blackGraveweed' }] },
-  83: { todo: 'its controller attacks with Mindforce: unless you have Mindshield, lose 2 ENDURANCE (the text gives it once, not per round).' },
+  // its controller's Mindforce, once, not per round
+  83: { when: [{ unless: { disc: 'mindshield' }, ep: -2 }] },
   84: { loot: [{ item: 'blueTriangle' }] },
-  86: { todo: 'with Weaponskill for the weapon in your hand, add 3 to the number drawn before choosing the way on.' },
-  88: { todo: 'ENDURANCE lost in this fight is not taken from your total: after the fight give back (Endurance +) what the page took. Instead, for each round in which you lost any, spin the medallion on this page once: 0-8 and the padded arm saved you, a 9 is death.' },
+  // Weaponskill with the blade put in the lock
+  86: { rntMod: [{ any: [{ item: 'dagger', mastery: 'dagger' }, { item: 'boneSword', mastery: 'boneSword' }], plus: 3, label: 'Weaponskill' }], ranges: { 47: [0, 7], 194: [8, 12] } },
+  88: { fight: { rounds: [{ heroLoss: 0, note: 'Padded arm' }] }, todo: 'for each round in which the dice would have cost you ENDURANCE, spin the medallion once more: a 9 is death (the page does not draw it).' },
   91: { give: [oil] },
   92: { need: { 133: { item: 'rope' }, 297: { item: 'rope', not: true } } },
-  // a drowning on 7-9, which the draw cannot do for him
-  94: { rolls: [{ range: [0, 6], ep: -3 }], todo: 'a 7, 8 or 9 drowns you: your mission ends here.' },
-  96: { todo: 'if you have ever rubbed Baknar oil into your skin, add 2 to the number drawn before choosing the way on.' },
+  // a drowning on 7-9
+  94: { rolls: [{ range: [0, 6], ep: -3 }, { range: [7, 9], dead: true }] },
+  96: { rntMod: [{ item: 'baknarOil', plus: 2 }], ranges: { 59: [0, 8], 214: [9, 11] } },
   // the disc is the key to the door at the end of the corridor
   104: { need: { 135: { item: 'blueDisc' }, 330: { item: 'blueDisc', not: true } } },
   97: { need: { 24: { item: 'diamond' }, 152: { gold: 1 } } },
-  99: { fight: { undead: true } },
+  99: { fight: { undead: true, noBoost: true } },
   102: { loot: [{ item: 'effigy' }] },
   107: { need: { 202: oil, 284: { item: 'baknarOil', not: true } } },
   // the Doomstone and the empty vial are thrown away
   // "evade after one round" is in the text, not in a choice, so the importer missed it
-  108: { fight: { evade: { after: 1, to: '330' } }, todo: 'from the second round you may break off: Evade takes the south way (330); the north way (198) the page cannot take in mid-fight. After a win the way on is 282.' },
+  // up the stairs, then south or north: two ways out
+  108: { fight: { to: '282', evade: [{ after: 1, to: '330', label: 'Run south' }, { after: 1, to: '198', label: 'Run north' }] } },
   116: { take: [{ item: 'redLaumspur' }, { item: 'glowingCrystal' }] },
   119: { loot: sledge },
-  129: { todo: 'unless you have rubbed Baknar oil into your skin, lose 3 ENDURANCE.' },
+  // marks set in Books 2 (Ragadorn) and 1 (the Graveyard of the Ancients)
+  128: { need: { 11: { any: [{ mark: 'visitedRagadorn' }] } } },
+  129: { when: [{ unless: oil, ep: -3 }] },
   121: { ep: -1 },
-  132: { todo: 'unless you have just eaten, lose 3 ENDURANCE (Hunting does not help in Kalte).' },
+  // a first wound ends these fights
+  123: { fight: { stop: { wound: true, to: '66' }, to: '174' } },
+  // he has just eaten if he came by the old men's fire (295, 309)
+  132: { when: [{ unless: { mark: 'ateByFire' }, ate: false, ep: -3 }, { unmark: 'ateByFire' }] },
   // partly immune: Mindblast adds 1 here, not 2 (the importer marked the pair immune, so the engine adds nothing)
   137: { fight: { csMod: 1, csIf: { disc: ['mindblast'] } } },
-  138: { todo: 'once you have lost any ENDURANCE here, even while evading, the way on is 66: do not evade then, and take 66 after the fight.' },
+  138: { fight: { keep: 'kalkoth', stop: { wound: true, to: '66' }, wounded: '66', to: '25' } },
   139: { need: { 116: { item: 'redLaumspur' }, 239: { item: 'redLaumspur', not: true } } },
   140: { ep: -2 },
   146: { need: { 43: sommerswerd } },
-  150: { todo: 'unless you have rubbed Baknar oil into your skin, lose 2 ENDURANCE.', need: { 120: sommerswerd, 310: { item: 'firesphere' } } },
+  147: { fight: { stop: { wound: true, to: '66' }, to: '84' } },
+  150: { when: [{ unless: oil, ep: -2 }], need: { 120: sommerswerd, 310: { item: 'firesphere' } } },
   151: { need: { 209: oil, 339: { item: 'baknarOil', not: true } } },
   // the Crowns thrown are gone whether or not the draw works
-  152: { todo: 'write down how many Gold Crowns you throw before drawing; they are gone whatever the number, so take them off your gold by hand.' },
+  152: { stake: { min: 1, spend: true }, todo: 'the number drawn (0 counting as 10) against the Crowns thrown: no more, 319; more, 181.' },
   155: { noHunt: true },
   156: { loot: [{ item: 'greenGallowbrush' }] },
   157: { ep: 6, take: [{ item: 'greenGallowbrush' }] },
-  158: { todo: 'only one round is fought: the way on follows who lost more ENDURANCE in it, or neither. The page fights on, so after the fight give back (Endurance +) what you lost after the first round.' },
+  158: { fight: { stop: { after: 1, by: { hero: '165', foe: '271', even: '337' } } } },
   164: { fight: { undead: true } },
   169: { need: { 41: { item: 'blueTriangle' }, 265: { item: 'blueTriangle', not: true } } },
-  // reached when he is seized: no potion can be swallowed before the fight
-  170: { ep: -6, need: { 304: sommerswerd, 175: { item: 'sommerswerd', not: true } }, todo: 'you cannot swallow any potion before this fight.' },
+  // seized from behind: no potion before the fight (noBoost at 304 and 99, reached only from here and 328)
+  170: { ep: -6, need: { 304: sommerswerd, 175: { item: 'sommerswerd', not: true } } },
   173: { need: { 34: { item: 'effigy' }, 164: sommerswerd, 200: { item: ['effigy', 'sommerswerd'], not: true } } },
   177: { loot: [{ item: 'blackGraveweed' }] },
-  180: { todo: 'Fenor stabs the creature from behind: it loses 3 more ENDURANCE every round (the page does not). The text stops the fight at your first loss of ENDURANCE and sends you to 129; the page fights on, so then take 129 after the fight and give back (Endurance +) what you lost after that first wound.' },
+  // Fenor stabs it from behind every round
+  180: { fight: { rounds: [{ foeEach: 3, note: 'Fenor' }], stop: { wound: true, to: '129' }, to: '70' } },
   181: { need: { 152: { gold: 1 } } },
   187: { give: [{ item: 'bracelet' }] },
   192: { need: { 267: { item: 'glowingCrystal' }, 44: { item: 'glowingCrystal', not: true } } },
   193: { ep: -2 },
   196: { ep: -2, take: [{ weapons: 'all' }] },
+  200: { fight: { won: { within: 7, to: '272', else: '324' } } },
   206: { ep: -1 },
   209: { ep: -2 },
   210: { loot: [{ item: 'boneSword' }] },
@@ -128,17 +143,21 @@ export const SECTIONS = {
   233: { loot: [{ item: 'redLaumspur' }] },
   236: { give: [{ item: 'bracelet' }] },
   237: { noHunt: true },
-  241: { todo: 'ignore the ENDURANCE you lose in the first two rounds.' },
+  241: { fight: { rounds: [{ upTo: 2, heroLoss: 0 }] } },
   242: { need: { 42: sommerswerd, 145: { item: 'sommerswerd', not: true } } },
   247: { need: { 118: { item: 'rope' } } },
+  244: { need: { 150: { any: [{ weapon: true }] } } },
+  250: { need: { 77: graveyard, 10: notGraveyard } },
   251: { ep: -2 },
   // the number drawn is the loss, less 2 with Hunting or Sixth Sense (not below nothing)
-  258: { rolls: loss(), todo: 'with Hunting or Sixth Sense the loss is 2 less (never below 0): give back up to 2 ENDURANCE. The Bracelet is then gone.', take: [{ item: 'bracelet' }] },
-  259: { todo: 'the text stops the fight at your first loss of ENDURANCE and sends you to 129; the page fights on, so then take 129 after the fight and give back (Endurance +) what you lost after that first wound.' },
-  260: { todo: 'you lose no ENDURANCE in the first two rounds.' },
-  263: { todo: 'once you have lost any ENDURANCE here, even while evading, the way on is 66: do not evade then, and take 66 after the fight.' },
+  258: { rolls: [{ range: [0, 9], ep: 'drawn' }], lessen: [{ n: 2, if: { disc: ['hunting', 'sixthSense'] } }], take: [{ item: 'bracelet' }] },
+  259: { fight: { stop: { wound: true, to: '129' }, to: '151' } },
+  260: { fight: { rounds: [{ upTo: 2, heroLoss: 0 }] } },
+  263: { fight: { keep: 'kalkoth', stop: { wound: true, to: '66' }, wounded: '66', to: '25' } },
   267: { take: [{ item: 'glowingCrystal' }] },
+  268: { need: { 177: graveyard, 10: notGraveyard } },
   272: { need: { 213: sommerswerd } },
+  277: { need: { 142: { any: [{ weapon: true }] } } },
   280: { ep: -1, loot: [{ item: 'silverKey3' }] },
   282: { loot: [{ item: 'spear' }, { item: 'blueDisc' }] },
   // Hunting, Tracking or Animal Kinship (the importer read Hunting alone)
@@ -146,23 +165,25 @@ export const SECTIONS = {
   289: { need: { 156: { any: [{ disc: 'animalKinship' }, { rank: 6 }] } } },
   // a Guardian (seven Disciplines) is sent to 341, so the others come here only with Sixth Sense
   290: { need: { 124: { disc: 'sixthSense' } } },
-  294: { todo: 'after the six hours of labour eat two Meals or lose 6 ENDURANCE.' },
-  295: { loot: [{ item: 'firesphere' }] },
-  296: { todo: 'only three rounds are fought before the guards collapse. The page fights on, so after the fight give back (Endurance +) what you lost after the third round.' },
+  294: { meal: 2, noHunt: true },
+  295: { loot: [{ item: 'firesphere' }], mark: 'ateByFire' },
+  // the guards collapse after three rounds
+  296: { fight: { stop: { after: 3 } } },
   298: { loot: [{ item: 'blueTriangle' }] },
-  299: { todo: 'unless you used Mind Over Matter, lose 2 ENDURANCE.' },
+  // with Mind Over Matter he pressed the buttons by it (227)
+  299: { when: [{ unless: { disc: 'mindOverMatter' }, ep: -2 }] },
   303: { take: [{ item: 'silverKey3' }] },
-  304: { fight: { undead: true } },
+  304: { fight: { undead: true, noBoost: true } },
   // he swaps it for the helmet he was wearing, if any
   308: { give: [{ item: 'silverHelm' }], take: [{ item: 'helmet' }] },
-  309: { loot: [{ item: 'blueTriangle' }, { item: 'firesphere' }] },
+  309: { loot: [{ item: 'blueTriangle' }, { item: 'firesphere' }], mark: 'ateByFire' },
   311: { loot: [{ item: 'alether4' }] },
   321: { loot: [{ item: 'blueTriangle' }] },
   326: { ep: -1 },
-  328: { ep: -6, need: { 99: sommerswerd, 175: { item: 'sommerswerd', not: true } }, todo: 'you cannot swallow any potion before this fight.' },
+  328: { ep: -6, need: { 99: sommerswerd, 175: { item: 'sommerswerd', not: true } } },
   329: { need: { 202: oil, 284: { item: 'baknarOil', not: true } } },
   330: { need: { 100: { item: 'rope' }, 148: { item: 'rope', not: true } } },
-  331: { todo: 'unless you have Healing, lose 4 ENDURANCE.' },
+  331: { when: [{ unless: { disc: 'healing' }, ep: -4 }] },
   334: { loot: [{ item: 'glowingCrystal' }] },
   340: { ep: 6 },
   344: { need: { 41: { item: 'blueTriangle' }, 147: { item: 'blueTriangle', not: true } } },

@@ -2,8 +2,10 @@
    written down by hand (the importer cannot tell reliably what a passage gives or takes; see
    docs/reference/book-format.md, "Item tables"). The engine applies these:
      give   handed to him or pocketed without a choice: taken on arrival if they fit
-     loot   found, his to take or leave: a "take" button each; or: only one of a group
-     take   lost outright: {item}, {gold}, {weapons: 'all' | 'one'}, {backpack: 'items' | 'all'}
+     loot   found, his to take or leave: a "take" button each; or: only one of a group; for: his
+            only in exchange for one of his weapons
+     take   lost outright: {item}, {gold}, {weapons: 'all' | 'one'}, {backpack: 'items' | 'all'};
+            pick: one he chooses from a list, else: what goes when the list is empty
      ep     ENDURANCE gained or lost on arrival; cs: COMBAT SKILL changed for good
      rolls  what a Random Number drawn here does: [{range: [lo, hi], ep, take}]
      meal   a Meal the importer's pattern missed
@@ -11,7 +13,7 @@
      need   choices that open only with an item or gold: {to: {item | gold, not, spend}}
      fight  corrections to what the importer read of a fight: csMod, mindforce (blocked by
             Mindshield), unless (items that spare the csMod), unarmed (csMod is the no-weapon penalty),
-            undead (the text calls the enemy undead)
+            undead (the text calls the enemy undead), rounds (what holds in some rounds only)
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {
   vordakGem: { name: 'Vordak Gem', kind: 'backpack', glyph: 'cut-diamond', about: 'A large gem that burns to the touch.' },
@@ -21,12 +23,15 @@ export const ITEMS = {
   scroll: { name: 'Scroll', kind: 'special', glyph: 'scroll-unfurled' },
   message: { name: 'Message', kind: 'special', glyph: 'scroll-quill', about: 'Written on an animal skin.' },
   crystalStar: { name: 'Crystal Star Pendant', kind: 'special', glyph: 'gem-necklace', about: 'A talisman of good fortune, worn on a gold chain.' },
-  alether: { name: 'Potion of Alether', kind: 'backpack', glyph: 'standing-potion', about: 'Drink before a fight: +2 COMBAT SKILL for that fight. Apply it by hand.' },
+  alether: { name: 'Potion of Alether', kind: 'backpack', glyph: 'standing-potion', boost: 2, about: 'Swallow it just before a fight: +2 COMBAT SKILL for that fight.' },
   laumspurHerb: { name: 'Laumspur', kind: 'backpack', glyph: 'herbs-bundle', heal: 3, meal: true, about: 'A handful of the healing herb: eat it to restore 3 ENDURANCE. It serves as a Meal when you have none.' },
   soap: { name: 'Tablet of Perfumed Soap', kind: 'backpack', glyph: 'soap' },
   torch: { name: 'Torch', kind: 'backpack', glyph: 'torch' },
   tinderbox: { name: 'Tinderbox', kind: 'backpack', glyph: 'flint-spark' },
 };
+
+// flags a later section or book tests (core.js, LW.MARKS)
+export const MARKS = { visitedGraveyard: { name: 'having passed through the Graveyard of the Ancients', flag: true } };
 
 export const SECTIONS = {
   9: { need: { 236: { item: 'vordakGem' } } },
@@ -50,7 +55,8 @@ export const SECTIONS = {
   119: { ep: -2 },
   124: { give: [{ gold: 15 }], loot: [{ item: 'silverKey' }] },
   137: { give: [{ item: 'tombGems' }] },
-  144: { ep: -2, todo: 'one item is stolen from your Backpack: drop the one you choose. If you have no Backpack Items, you lose a weapon instead.' },
+  // one thing stolen from the Backpack, his to choose; with nothing in it, a weapon instead
+  144: { ep: -2, take: [{ pick: 'backpack', else: [{ weapons: 'one' }] }] },
   146: { ep: -3 },
   148: { loot: [{ item: 'warhammer' }] },
   158: { ep: -6, rolls: [{ range: [6, 9], ep: -4 }] },
@@ -83,13 +89,16 @@ export const SECTIONS = {
   // 276 and 343 give the loss on their one way on, so it is taken on arrival
   276: { ep: -1 },
   277: { take: [{ weapons: 'one' }] },
-  283: { fight: { csMod: 0, mindforce: 2, undead: true }, todo: 'first round only: add 2 to your COMBAT SKILL for the surprise, and without Mindshield 2 more, as his Mindforce strikes from the second round on. The engine does not.' },
+  // the surprise helps in the first round; his Mindforce strikes from the second
+  283: { fight: { undead: true, rounds: [{ upTo: 1, csMod: 2, note: 'Surprise' }, { from: 2, csMod: -2, unless: { disc: 'mindshield' }, note: 'Mindforce' }] } },
+  // every way through the Graveyard of the Ancients passes here: Book 3 asks whether he has ever been there
+  284: { mark: 'visitedGraveyard' },
   290: { loot: [{ item: 'quarterstaff' }] },
   291: { loot: [{ gold: 6 }, { item: 'dagger', or: 'weapon' }, { item: 'spear', or: 'weapon' }] },
   294: { take: [{ weapons: 'all' }, { backpack: 'all' }] },
   304: { ep: -2, give: [{ item: 'vordakGem' }] },
   305: { loot: [{ item: 'spear' }] },
-  307: { give: [{ meal: 1 }], loot: [{ item: 'warhammer' }], todo: 'the Warhammer is yours only in exchange for one of your weapons: drop that one first, then take it.' },
+  307: { give: [{ meal: 1 }], loot: [{ item: 'warhammer', for: 'weapon' }] },
   308: { ep: -1 },
   313: { ep: -1 },
   315: { loot: [{ gold: 6 }, { item: 'soap' }] },

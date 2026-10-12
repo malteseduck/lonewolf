@@ -399,7 +399,7 @@ Monastery). Clothing is named there but not tracked.
 - **Kit**: a map of Anari (Special). Choose any **5** of: Sword, Bow, Quiver (Special, six Arrows),
   Rope, Potion of Laumspur (4 after a fight, one dose), Lantern (lights itself), Mace, three Meals,
   Dagger, three Fireseeds (Special; burst into flame when thrown).
-- **Money**: Anari's Lune, 4 to the Gold Crown.
+- **Money**: Anari's Lune, 4 to the Gold Crown. Engine: Lune found, paid and lost are counted in their own purse (`hero.coins`, item tables), apart from the Gold Crowns.
 - **Improved Disciplines introduced: Principalin** (6): Animal Control calls a woodland animal to
   help; Invisibility makes no sound; Huntmastery sees far at will; Psi-surge sows doubt in an
   enemy; Nexus puts out fires by will.
@@ -446,6 +446,9 @@ Monastery). Clothing is named there but not tracked.
 - **Footnotes**: his base ENDURANCE itself can be lowered (240, 268), and at 0 he is dead even if
   armour keeps his current score above it; the Dagger of Vashna adds 7 COMBAT SKILL against a
   Darklord of Helgedad (75, 230); at 75 he cannot harm Kraagenskûl for three rounds without it.
+  *Engine*: the Dagger's 7 and those three rounds through the item table (`weaponCs`, `rounds`).
+- **Money**: Kika, 10 to the Gold Crown (in the text). *Engine*: counted in their own purse
+  (`hero.coins`), found, staked, paid and lost through the item table.
 
 ### Book 13, The Plague Lords of Ruel (Grand Master)
 

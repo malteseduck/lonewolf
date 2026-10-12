@@ -113,6 +113,11 @@ body { background: var(--void) var(--wood, none) center / 820px; color: var(--bo
 .puzzle { display: flex; align-items: baseline; gap: 0.8em; padding-top: 0.45em; font: 700 1.2em/1.25 var(--script); color: var(--ink); }
 .puzzle input { width: 3.2em; margin-left: 0.4em; padding: 0 0.1em; border: 0; border-bottom: 0.06em solid var(--ink); background: none; color: var(--ink); font: inherit; text-align: center; color-scheme: light; }
 .puzzle input:focus { outline: none; border-bottom-color: var(--blood); }
+.puzzle.byhand { font-size: 0.85em; opacity: 0.7; padding-top: 0.9em; }
+.puzzle.byhand:focus-within { opacity: 1; }
+.inkbtn.byhand { display: block; margin-top: 0.8em; font-size: 0.85em; opacity: 0.7; }
+.inkbtn.byhand:hover { opacity: 1; }
+.staked { font-style: italic; margin: 0.3em 0 0; }
 .finis { text-align: center; border-top: 3px double var(--ink-faint); padding-top: 0.6em; display: flex; flex-direction: column; align-items: center; gap: 0.3em; }
 .finis h2 { margin: 0; font: 400 2em/1.1 var(--cap); }
 .finis.dead h2 { color: var(--blood); }
@@ -377,7 +382,7 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 /* the shade that keeps the name and the controls legible over the plate, faded out at the sides too */
 .fight .foebar::before, .fight .cmds::before { content: ''; position: absolute; inset: 0 -1em; z-index: -1; -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); }
 .fight .foebar::before { background: linear-gradient(rgba(178, 154, 112, 0.95) 40%, rgba(178, 154, 112, 0)); }
-.fight .cmds::before { background: linear-gradient(rgba(178, 154, 112, 0), rgba(176, 152, 110, 0.95) 48%); }
+.fight .cmds::before { background: linear-gradient(rgba(178, 154, 112, 0), rgba(176, 152, 110, 0.95) 45%, rgba(176, 152, 110, 0.95) 72%, rgba(176, 152, 110, 0)); } /* faded at the foot too, so it meets the paper without an edge */
 .cmds .medcap .med { --s: 5.4em; }
 .cmds { display: flex; align-items: flex-end; justify-content: center; gap: 0.7em; }
 /* The Random Number: a medallion like the others, its bronze bezel engraved 0-9. The bezel turns;
@@ -395,7 +400,6 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 .dial-pin { position: absolute; left: 50%; top: -0.2em; width: 0.42em; height: 0.42em; margin-left: -0.21em; transform: rotate(45deg); background: linear-gradient(135deg, var(--bronze-hi), var(--bronze-lo)); box-shadow: 0 0 0 0.06em #140d08; }
 .dial:hover, .dial:focus-visible { outline: none; box-shadow: 0 0 0 0.08em #140d08, 0 0 0.9em 0.18em rgba(255, 220, 140, 0.8), inset 0 0 0 0.1em rgba(255, 240, 200, 0.3); }
 .dialslot { display: flex; align-items: center; justify-content: center; gap: 1em; }
-.cmds .dial { align-self: flex-start; margin-top: -0.4em; } /* level with the command medallions, its foot beside their labels */
 .dialslot p { margin: 0; font-size: 1.15em; color: var(--ink-dim); max-width: 10em; }
 .book.hurt { animation: hurt 0.38s; }
 .book.hurt .page { box-shadow: inset 0 0 5em rgba(150, 20, 10, 0.7); }

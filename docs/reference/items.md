@@ -73,10 +73,15 @@ Decide each section by what the text says, outright:
   `rntMod` (Book 6's 170: `[{disc: 'huntmastery', plus: 1}]`).
 - **food as a Meal**: an item the text says can be eaten as a Meal gets `meal: true` (Book 1's
   Laumspur).
-- **todo**: anything the player must decide, in our words, shown as "By hand: ...". Never guess.
-  Name only controls the page has: the Turn to section box shows only in puzzle sections, and a
-  fight cannot be stopped except by Evade, so a fight the text cuts short (after N rounds, at the
-  first wound) is fought on and the ENDURANCE lost past that point given back with Endurance +.
+- **the engine's rules first**: before a `todo`, use what the engine applies (book-format.md):
+  `when` for a change under a condition, `take` with `pick` / `at` / `stash` for losses he chooses or
+  counts by place, `back`, `mark`, `stake` / `settle` / `sell`, coins, and the fight's `rounds`, `stop`,
+  `won`, `wounded`, `mind`, `keep` and the rest. Conditions reach items, weapons in hand, counts and marks.
+- **todo**: what is left to the player, in our words, shown as "By hand: ...". Never guess.
+  Name only controls the page has: every section has a "By hand: turn to" box under its choices
+  (the puzzle box, smaller), and a fight has "By hand: stop the fight" under its log. That stop wins
+  nothing unless the fight has `byHand` (why, in our words): give it only where the text ends the fight
+  a way the engine cannot apply, and prefer teaching the engine the case (ADR 0027).
 - **shops** (Book 2 on): each ware is a `loot` entry with `cost`; "choose any two" is a group with
   `or` and `pick: 2`. Gold won or lost by a number is `rolls` with `gold`.
 - **book weapons**: a Special Item that fights (the Sommerswerd, the Magic Spear) gets `weapon`,
