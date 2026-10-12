@@ -77,7 +77,7 @@
   <nav class="links" style="margin-left:auto"><a href="./">Dashboard</a></nav>
 </header>
 <p class="note">Every enemy with the picture the player would show, inked as in a fight (checklist step 6: look, change what you want, then mark it done on the dashboard). Drop a
-  picture file on a card, paste one (the card under the mouse), or use Choose; Adjust crops it. Pictures you give
+  picture file on a card, paste one (the card under the mouse), or use Choose; Adjust crops or flips it. Pictures you give
   are kept in <code>art/plates/</code> (git-ignored) and entered in <code>assets/plates/plates.json</code>.
   Once approved, the line above says so; only a card whose picture has changed since is marked, showing the new picture.</p>
 <main class="cards" id="cards"></main>
@@ -91,6 +91,7 @@
       <canvas id="pv" width="420" height="600"></canvas>
       <div class="ctl">
         <small>As in the fight panel: the shaded foot is where the controls sit.</small>
+        <label><input type="checkbox" id="flip"> Flip left to right</label>
         <label><input type="checkbox" id="lv-on"> Levels, for a painting</label>
         <label>Ink <input type="range" id="lv-b" min="0" max="254" value="75"><output id="lv-bo">75</output></label>
         <label>Paper <input type="range" id="lv-w" min="1" max="255" value="225"><output id="lv-wo">225</output></label>
@@ -144,7 +145,7 @@ function script(src) {
   return new Promise((ok, bad) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = bad; document.head.append(s); });
 }
 function image(src, lib) {
-  return new Promise((ok) => { const im = new Image(); im.crop = lib?.crop; im.levels = lib?.levels; im.onload = () => ok(im); im.onerror = () => ok(null); im.src = src; });
+  return new Promise((ok) => { const im = new Image(); im.crop = lib?.crop; im.levels = lib?.levels; im.flip = lib?.flip; im.onload = () => ok(im); im.onerror = () => ok(null); im.src = src; });
 }
 // an owner's file is replaced in place, so its address changes after each save to pass the caches
 const url = (src) => '/' + src + (src.startsWith(`art/plates/${code}/`) ? `?v=${stamp}` : '');
@@ -347,6 +348,7 @@ async function edit(foe, upload) {
   if (!im) return toast('Could not load the picture.', 4000);
   ed.img = im;
   ed.crop = from?.crop ? [...from.crop] : [0, 0, 1, 1];
+  $('#flip').checked = !!from?.flip;
   const lv = from?.levels;
   $('#lv-on').checked = !!lv;
   $('#lv-b').value = lv ? lv[0] : 75; $('#lv-w').value = lv ? lv[1] : 225;
@@ -379,6 +381,7 @@ function drawPreview() {
   const [cx, cy, cw, ch] = ed.crop;
   ed.img.crop = cx || cy || cw < 1 || ch < 1 ? [cx, cy, cw, ch] : undefined;
   ed.img.levels = levels() || undefined;
+  ed.img.flip = $('#flip').checked || undefined;
   const pl = inkPlate(ed.img, false);
   // the same placing as drawCreature in plates.js
   const room = floor - 0.06, sc = Math.min((w * 0.94) / pl.width, (h * room) / pl.height);
@@ -413,13 +416,14 @@ $('#stage').addEventListener('pointermove', (e) => {
 });
 $('#stage').addEventListener('pointerup', () => { if (drag) { drag = null; preview(); } });
 window.addEventListener('resize', () => { if ($('#ed').open) place(); });
+$('#flip').addEventListener('input', preview);
 for (const id of ['lv-on', 'lv-b', 'lv-w']) $('#' + id).addEventListener('input', () => {
   if (+$('#lv-b').value >= +$('#lv-w').value) $('#lv-w').value = +$('#lv-b').value + 1;
   $('#lv-bo').value = $('#lv-b').value; $('#lv-wo').value = $('#lv-w').value; preview();
 });
 $('#ed-whole').onclick = () => { ed.crop = [0, 0, 1, 1]; place(); preview(); };
 $('#ed-cancel').onclick = () => $('#ed').close();
-$('#ed-save').onclick = () => send({ image: ed.webp || undefined, src: ed.src || undefined, crop: ed.crop.map((v) => +v.toFixed(4)), levels: levels() || undefined });
+$('#ed-save').onclick = () => send({ image: ed.webp || undefined, src: ed.src || undefined, crop: ed.crop.map((v) => +v.toFixed(4)), levels: levels() || undefined, flip: $('#flip').checked || undefined });
 $('#ed-remove').onclick = () => {
   if (window.confirm(`Remove your picture for ${ed.foe.name}? It goes back to what it had before.`)) send({ remove: true });
 };

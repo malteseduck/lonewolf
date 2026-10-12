@@ -30,7 +30,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   agent's work: the owner looks here and marks it. It opens
   inline under the grid like the map editor (Open picture sheet here, `?embed=1`; the step 6 cell
   only goes to that step's line in the book's list), and on its own. A picture file dropped, pasted or chosen on a card becomes that enemy's
-  picture; Adjust crops any card's picture and sets levels, with the fight panel previewed as it will look;
+  picture; Adjust crops any card's picture, flips it left to right and sets levels, with the fight panel previewed as it will look;
   Remove takes the owner's entry away. Each save redraws the cards and the "with none" count, and the
   dashboard's grid follows. The rules for the entry: `docs/reference/items.md`, "Fight pictures".
 - **Whole-project tools**: the offline check, check everything (`check_all.py`), the release.
@@ -82,7 +82,7 @@ agent run `show` instead).
 | `GET jobs` | the last ten jobs (in memory; gone when the server restarts) |
 | `GET jobs/<id>?from=<n>` | a job's state, exit code and lines from n; the page polls it every 0.8 s |
 | `POST mark/<book>/<step>` (`?undo=1`) | `book_status.mark()` |
-| `POST plate` | the picture sheet: `{book, enemy, image?, crop?, levels?, remove?}` (`image` base64 WebP, up to 25 MB): the owner's picture for one enemy, saved as `art/plates/<book>/<slug of the name>.webp` (never a path from the request) and entered in `plates.json` by `tools/plates_file.py`, which keeps the file's one-entry-per-line layout |
+| `POST plate` | the picture sheet: `{book, enemy, image?, crop?, levels?, flip?, remove?}` (`image` base64 WebP, up to 25 MB): the owner's picture for one enemy, saved as `art/plates/<book>/<slug of the name>.webp` (never a path from the request) and entered in `plates.json` by `tools/plates_file.py`, which keeps the file's one-entry-per-line layout |
 
 The stages are a fixed table, `ADMIN_STAGES`: the command is built from it and a code from
 `book_status.CATALOGUE`, never from the request. One job at a time, sharing the map editor's lock,

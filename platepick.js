@@ -8,7 +8,7 @@
    - else the first plates.json entry that matches (one with a book is for that book only);
    - else none: the drawn emblem.
 
-   A plate is {src, crop?, levels?} with src relative to the project root, or null for the emblem. */
+   A plate is {src, crop?, levels?, flip?} with src relative to the project root, or null for the emblem. */
 
 /* plates.json's entries with their match compiled */
 export const compilePlates = (list) => (list || []).map((p) => Object.assign({ re: new RegExp(p.match, 'i') }, p));
@@ -17,7 +17,7 @@ export const compilePlates = (list) => (list || []).map((p) => Object.assign({ r
 export function choosePlate(foe, book, plates) {
   const fits = (p) => (!p.book || p.book === book.id) && p.re.test(foe.name);
   const lib = plates.find((p) => p.over && fits(p)) || (!foe.art && plates.find(fits));
-  if (lib && (lib.over || !foe.art)) return Object.assign({ src: lib.src }, lib.crop && { crop: lib.crop }, lib.levels && { levels: lib.levels });
+  if (lib && (lib.over || !foe.art)) return Object.assign({ src: lib.src }, lib.crop && { crop: lib.crop }, lib.levels && { levels: lib.levels }, lib.flip && { flip: true });
   return foe.art ? { src: (book.assets || '') + foe.art } : null;
 }
 

@@ -5,7 +5,7 @@
   "4/0": {"name":"1i1lrgr","plate":{"src":"data/projectaon/05sots/ill13.png","crop":[0.05,0,0.9,0.62]}},
   "12/0": {"name":"2l4mp","plate":{"src":"data/projectaon/05sots/ill1.png"}},
   "20/0": {"name":"j2gk62","plate":{"src":"data/projectaon/05sots/ill2.png"}},
-  "46/0": {"name":"dodyjj","plate":{"src":"art/plates/guard-halberdier-plate.webp"}},
+  "46/0": {"name":"dodyjj","plate":{"src":"art/plates/guard-halberdier-plate.webp","crop":[0.0494,0.0105,0.8888,0.9817]}},
   "57/0": {"name":"1gwbpgd","plate":{"src":"data/projectaon/04tcod/ill18.png"}},
   "64/0": {"name":"1e8yii3","plate":{"src":"data/projectaon/05sots/ill4.png"}},
   "91/0": {"name":"1i1lrgr","plate":{"src":"data/projectaon/05sots/ill13.png","crop":[0.05,0,0.9,0.62]}},

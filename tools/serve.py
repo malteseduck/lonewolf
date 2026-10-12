@@ -40,7 +40,7 @@ Static files as `python -m http.server` serves them, from the project root, plus
                                       all), else 428. One job at a time, shared with the map steps (409 if busy)
     GET  /api/admin/jobs              the last ten jobs; GET /api/admin/jobs/<id>?from=n: its state and lines from n
     POST /api/admin/mark/<book>/<n>   book_status.py's done (or ?undo=1) for checklist step n
-    POST /api/admin/plate             the picture sheet: {book, enemy, image?: base64 WebP, crop?, levels?, remove?};
+    POST /api/admin/plate             the picture sheet: {book, enemy, image?: base64 WebP, crop?, levels?, flip?, remove?};
                                       the owner's picture for one enemy, saved as art/plates/<book>/<slug>.webp and
                                       written into assets/plates/plates.json (tools/plates_file.py). Or src: a picture
                                       already on disk (assets/, art/, data/) to stand in, instead of image
@@ -627,7 +627,7 @@ class Handler(SimpleHTTPRequestHandler):
     def _admin_plate(self, body):
         """The picture sheet's drop and adjust: the owner's own picture (or crop) for one enemy, written
         to plates.json by tools/plates_file.py. Body: {book, enemy, image?: base64 WebP, crop?, levels?,
-        remove?}. The file name is made from the enemy's name, never taken from the request."""
+        flip?, remove?}. The file name is made from the enemy's name, never taken from the request."""
         import base64
         import binascii
         import book_status
@@ -639,7 +639,7 @@ class Handler(SimpleHTTPRequestHandler):
             image = base64.b64decode(body['image'], validate=True) if body.get('image') else None
             entry, msg = plates_file.put(hit[0], book_status.load_book(hit[0]), str(body.get('enemy') or ''), image=image,
                                          crop=body.get('crop'), levels=body.get('levels'), remove=bool(body.get('remove')),
-                                         src=body.get('src'))
+                                         src=body.get('src'), flip=body.get('flip') is True)
         except (ValueError, binascii.Error) as e:
             return self._json(400, {'error': str(e)})
         # the owner's own change on the sheet is his approval for that enemy: re-pin it in a book already

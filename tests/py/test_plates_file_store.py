@@ -129,6 +129,14 @@ def test_put_crop(tree, crop, expect):
         assert [type(v) for v in entry['crop']] == [type(v) for v in expect]
 
 
+def test_put_flip_is_kept_only_when_set(tree):
+    entry, _ = pf.put(CODE, book('Rat'), 'Rat', image=WEBP, flip=True)
+    assert entry['flip'] is True
+    assert tree.plates()[0]['flip'] is True
+    entry, _ = pf.put(CODE, book('Rat'), 'Rat')                  # saved again unflipped
+    assert 'flip' not in entry
+
+
 @pytest.mark.parametrize('levels', [[200, 10], [10, 10], [-1, 100], [0, 256], [1], [1, 2, 3], 'ab', [0, 'x']])
 def test_put_levels_must_be_black_below_white_within_0_255(tree, levels):
     with pytest.raises(ValueError, match='levels must be'):

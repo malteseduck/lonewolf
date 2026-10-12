@@ -112,16 +112,20 @@ export function setArt(kind, img) { ART[kind] = img; }
    img.crop, if set, is the part to use, [x, y, w, h] as fractions of the image (a web engraving's
    caption, plate number or ruled frame). Nothing else is cut: what is set by hand is what shows.
    img.levels, if set, is [black, white]: the tones (0-255, after the paper lift) that become full ink
-   and bare paper. A painting needs it: its mid-tones would otherwise all turn to solid ink. */
+   and bare paper. A painting needs it: its mid-tones would otherwise all turn to solid ink.
+   img.flip, if set, mirrors it left to right, after the crop (so a foe faces the hero). */
 const inked = new Map();
 /* keep: false for a preview that changes as it is dragged (tools/admin/fights.html), so the cache does not fill */
 export function inkPlate(img, keep = true) {
-  const key = img.src + (img.crop || '') + (img.levels || '');
+  const key = img.src + (img.crop || '') + (img.levels || '') + (img.flip ? 'flip' : '');
   if (keep && inked.has(key)) return inked.get(key);
   const [cx, cy, cw, ch] = (img.crop || [0, 0, 1, 1]).map((f, i) => f * (i % 2 ? img.naturalHeight : img.naturalWidth));
   const S = Math.min(3, 1100 / cw);
   const w = Math.round(cw * S), h = Math.round(ch * S), c = Ink.canvas(w, h), x = c.getContext('2d');
-  x.imageSmoothingQuality = 'high'; x.drawImage(img, cx, cy, cw, ch, 0, 0, w, h);
+  x.imageSmoothingQuality = 'high';
+  if (img.flip) { x.translate(w, 0); x.scale(-1, 1); }
+  x.drawImage(img, cx, cy, cw, ch, 0, 0, w, h);
+  x.setTransform(1, 0, 0, 1, 0, 0);
   try {
     const d = x.getImageData(0, 0, w, h), p = d.data, A = new Float32Array(w * h);
     // an old scan's paper is grey or yellowed: take its tone (the brightest 5%, so a dark plate with

@@ -994,7 +994,7 @@ function showFoe() {
   B.fx.dead = 0; B.fx.wounds = []; B.img = null;
   // the approved picture, else the plate library's or the section's own, else the drawn emblem (platepick.js)
   const foe = B.foe, plate = pickPlate(foe, book, PLATES, PINS[book.id], pinKey(game.s.at, B.i));
-  if (plate) { const im = new Image(); im.crop = plate.crop; im.levels = plate.levels; im.onload = () => { if (B && B.foe === foe) B.img = im; }; im.src = plate.src; }
+  if (plate) { const im = new Image(); im.crop = plate.crop; im.levels = plate.levels; im.flip = plate.flip; im.onload = () => { if (B && B.foe === foe) B.img = im; }; im.src = plate.src; }
 }
 /* assets/plates/plates.json: pictures for enemies the book does not picture */
 let PLATES = [];

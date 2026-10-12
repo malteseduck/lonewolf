@@ -28,6 +28,6 @@
   "283/0": {"name":"mejai1","plate":{"src":"data/projectaon/06tkot/ill11.png"}},
   "337/0": {"name":"e6hd03","plate":{"src":"data/projectaon/02fotw/ill16.png","crop":[0,0.15,1,0.73]}},
   "343/0": {"name":"1gmtqma","plate":{"src":"assets/plates/beast-gevaudan.jpg"}},
-  "344/0": {"name":"15lf82a","plate":{"src":"data/projectaon/06tkot/ill20.png"}}
+  "344/0": {"name":"15lf82a","plate":{"src":"data/projectaon/06tkot/ill20.png","crop":[0.0066,0.0096,0.9894,0.9886]}}
  }
 }

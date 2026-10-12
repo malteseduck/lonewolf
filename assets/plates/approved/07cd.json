@@ -1,5 +1,5 @@
 {
- "_readme": "The fight pictures the owner approved for this book (step 6 marked done): the player shows these whatever plates.json or a re-import would now pick. Keyed by section/enemy number; name is a hash of the enemy's name, so a pin is not used for another enemy; plate is {src, crop?, levels?} or null for the drawn emblem. Written by tools/plates_pin.mjs; see docs/reference/interface.md, Art pipeline.",
+ "_readme": "The fight pictures the owner approved for this book (step 6 marked done): the player shows these whatever plates.json or a re-import would now pick. Keyed by section/enemy number; name is a hash of the enemy's name, so a pin is not used for another enemy; plate is {src, crop?, levels?, flip?} or null for the drawn emblem. Written by tools/plates_pin.mjs; see docs/reference/interface.md, Art pipeline.",
  "approved": "2026-10-11",
  "pins": {
   "8/0": {"name":"r5aruk","plate":{"src":"data/projectaon/07cd/ill5.png"}},
@@ -13,7 +13,7 @@
   "76/0": {"name":"1916e08","plate":{"src":"data/projectaon/07cd/ill12.png"}},
   "78/0": {"name":"r5aruk","plate":{"src":"data/projectaon/07cd/ill5.png"}},
   "81/0": {"name":"1h54tto","plate":{"src":"data/projectaon/07cd/ill7.png","crop":[0.05,0.12,0.9,0.55]}},
-  "93/0": {"name":"dv1su","plate":{"src":"assets/plates/spider-web-woodcut.jpg","levels":[40,190]}},
+  "93/0": {"name":"dv1su","plate":{"src":"assets/plates/spider-web-woodcut.jpg","crop":[0.0529,0.0297,0.8976,0.9162],"levels":[40,190]}},
   "118/0": {"name":"1y1ny3y","plate":{"src":"art/plates/07cd/lord-zahda.webp"}},
   "126/0": {"name":"1nf4gyx","plate":{"src":"art/plates/07cd/flame-man-wandering-dm.jpg"}},
   "142/0": {"name":"1hd39sc","plate":{"src":"data/projectaon/07cd/ill8.png"}},
@@ -23,7 +23,7 @@
   "202/0": {"name":"1y1ny3y","plate":{"src":"art/plates/07cd/lord-zahda.webp"}},
   "206/0": {"name":"1uqux3k","plate":{"src":"data/projectaon/07cd/ill7.png"}},
   "212/0": {"name":"16qx824","plate":{"src":"data/projectaon/07cd/ill8.png"}},
-  "212/1": {"name":"17kw151","plate":{"src":"data/projectaon/07cd/ill8.png","crop":[0.15,0.04,0.85,0.55]}},
+  "212/1": {"name":"17kw151","plate":{"src":"data/projectaon/07cd/ill8.png","crop":[0.15,0.04,0.8315,0.55],"flip":true}},
   "214/0": {"name":"ebci1l","plate":{"src":"assets/plates/portcullis-carcassonne.png"}},
   "219/0": {"name":"mt7yhx","plate":{"src":"data/projectaon/07cd/ill9.png"}},
   "221/0": {"name":"1qm2cdv","plate":{"src":"data/projectaon/07cd/ill13.png"}},

@@ -17,7 +17,7 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const { compilePlates, choosePlate, nameKey, pinKey, samePlate } = await import(pathToFileURL(path.join(ROOT, 'platepick.js')).href);
 const README = 'The fight pictures the owner approved for this book (step 6 marked done): the player shows these whatever '
   + 'plates.json or a re-import would now pick. Keyed by section/enemy number; name is a hash of the enemy\'s name, so a pin '
-  + 'is not used for another enemy; plate is {src, crop?, levels?} or null for the drawn emblem. Written by tools/plates_pin.mjs; '
+  + 'is not used for another enemy; plate is {src, crop?, levels?, flip?} or null for the drawn emblem. Written by tools/plates_pin.mjs; '
   + 'see docs/reference/interface.md, Art pipeline.';
 
 const require = createRequire(import.meta.url);

@@ -13,7 +13,7 @@ import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PLATES = os.path.join(ROOT, 'assets', 'plates', 'plates.json')
-FIRST = ('match', 'book', 'src', 'crop', 'levels', 'over')
+FIRST = ('match', 'book', 'src', 'crop', 'levels', 'flip', 'over')
 
 
 def load_plates():
@@ -143,9 +143,10 @@ def stand_in_ok(src):
     return os.path.isfile(os.path.join(ROOT, *src.split('/')))
 
 
-def put(code, book, name, image=None, crop=None, levels=None, remove=False, src=None):
+def put(code, book, name, image=None, crop=None, levels=None, remove=False, src=None, flip=False):
     """Write (or remove) the owner's entry for one enemy. image: WebP bytes, or None to keep the
-    picture it has; src: instead, a picture already on disk to stand in (see standins()).
+    picture it has; src: instead, a picture already on disk to stand in (see standins()); flip: mirror it
+    left to right (after the crop, which is on the picture as it is on disk).
     Returns (entry or None, message). Raises ValueError for a bad request."""
     if name not in enemy_names(book):
         raise ValueError('no enemy of that name in the book')
@@ -211,6 +212,8 @@ def put(code, book, name, image=None, crop=None, levels=None, remove=False, src=
         entry['crop'] = crop
     if levels:
         entry['levels'] = levels
+    if flip:
+        entry['flip'] = True
     others = [p for i, p in enumerate(plates) if i != mine]
     # over: needed where the book has its own picture, or another "over" entry would otherwise win
     if book_art(book, name) or any(p.get('over') and _fits(p, code, name) for p in others):

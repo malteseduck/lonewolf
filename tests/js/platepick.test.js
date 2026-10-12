@@ -6,6 +6,7 @@ const lib = compilePlates([
   { match: '^giak', src: 'art/giak.png', crop: [0, 0, 1, 0.9] },
   { match: 'drakkar', src: 'art/drakkar.png', over: true, levels: [10, 200] },
   { match: 'wolf', src: 'art/wolf-book5.png', book: '05sots' },
+  { match: 'kraan', src: 'art/kraan.png', flip: true },
 ]);
 
 describe('compilePlates', () => {
@@ -27,6 +28,7 @@ describe('choosePlate', () => {
   it('uses the library when the foe has no illustration, with crop and levels only when set', () => {
     expect(choosePlate({ name: 'Giak' }, book, lib)).toEqual({ src: 'art/giak.png', crop: [0, 0, 1, 0.9] });
     expect(choosePlate({ name: 'Drakkar' }, book, lib)).toEqual({ src: 'art/drakkar.png', levels: [10, 200] });
+    expect(choosePlate({ name: 'Kraan' }, book, lib)).toEqual({ src: 'art/kraan.png', flip: true });
   });
   it('lets an entry marked over win against the section illustration', () => {
     expect(choosePlate({ name: 'Drakkar', art: 'ill.png' }, book, lib).src).toBe('art/drakkar.png');

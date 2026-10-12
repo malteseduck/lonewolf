@@ -168,7 +168,7 @@ add is written some other way (`ice barbarian$`, `kalkoth`). Where to look, in o
    of the list so it wins; `over: true` where the book has its own picture, or a broader `over` entry would
    win. A second picture for the same enemy replaces the entry and the file. **Adjust** on any card opens
    the same editor on the picture it has (a book's own, a library entry's): a crop box on the original and
-   the fight panel as it will look, through `inkPlate`, with a levels control for paintings; saving a re-crop
+   the fight panel as it will look, through `inkPlate`, with a levels control for paintings and a left-to-right flip; saving a re-crop
    writes the owner's entry pointing at that same file. **Remove** drops the entry (and its file under
    `art/plates/<code>/`). A picture dragged from another site arrives as an address and is refused: save it
    first, or copy and paste it. **Stand-in...** on a card opens a picker of every picture already on disk
