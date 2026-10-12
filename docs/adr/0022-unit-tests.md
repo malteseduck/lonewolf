@@ -39,7 +39,9 @@ data, the owner also wanted one run that puts the real books through every scrip
 - Tests use stand-in data written for them, never Project Aon text or images, and do not need
   `data/projectaon/`, `art/`, `backups/` or the network. A tool that writes files is pointed at a
   temporary directory.
-- A change to main functionality updates or adds its test in the same piece of work.
+- New core or main functionality gets new tests in the same piece of work, and a change to main
+  functionality updates its tests. They test the main paths and higher-level behaviour, not every
+  function call or line (AGENTS.md says how).
 - Code that cannot be tested as it stands (`main.js` runs the page on import) gains tests as its
   pure parts are moved out into modules; `docs/plan.md` lists what is left.
 

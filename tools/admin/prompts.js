@@ -3,7 +3,7 @@
    never the book's words. `b` is a book's status from admin.js. */
 
 const HEAD = (b) => `Lone Wolf player, C:\\Projects\\lone-wolf. Read AGENTS.md first and keep its hard rules: no Project Aon text in anything you write or say (section ids and counts only), no downloads I have not approved, automate only what is certain. Book ${b.n}, ${b.title} (${b.code}, ${b.series}).`;
-const TAIL = 'Hand menial runs (importer, checkers, node --check) to a Sonnet subagent, as AGENTS.md says. Keep the matching reference doc current. The dashboard shows each book step, so add to docs/plan.md only what no step records (engine gaps, decisions, things for later). Do not commit; tell me what changed.';
+const TAIL = 'Hand menial runs (importer, checkers, node --check) to a Sonnet subagent, as AGENTS.md says. Keep the matching reference doc current. New core functionality (a phrasing the importer now reads, a rule the engine now applies) gets a test of its main path, not of every helper (AGENTS.md, Unit tests). The dashboard shows each book step, so add to docs/plan.md only what no step records (engine gaps, decisions, things for later). Do not commit; tell me what changed.';
 // every book step ends by marking itself; for a step read from the files, done checks them and says what is missing
 const DONE = (b, step) => `When the step is finished, run \`python tools/book_status.py done ${b.code} ${step}\` and include what it prints in your report (it rewrites the checklist table; if it says NOT done, finish what it names).`;
 

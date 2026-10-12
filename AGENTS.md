@@ -44,8 +44,17 @@ no service worker and no offline copy; for that, see `docs/reference/offline.md`
 exits 1 if the page names a file that is missing; run it after adding or moving a file the page loads.
 
 Unit tests (ADR 0022) guard the main functionality: Vitest for the JavaScript in `tests/js/`, pytest
-for the Python tools in `tests/py/`, a couple of seconds each. Run both before committing; a change to
-main functionality updates its test. Tests use stand-in data of their own, never book text, need
+for the Python tools in `tests/py/`, a couple of seconds each. Run both before committing.
+
+- **New core or main functionality gets new tests in the same piece of work**: a new rule the engine
+  applies, a new thing the importer reads, a new tool or dashboard job, a new item-table field. A
+  change to existing main functionality updates its tests. Say in the report which tests were added.
+- **Test the main paths and the higher-level behaviour**, as the player or the owner would see it
+  (a section's choices open or closed, a fight's result, a book imported with its gates, a backup
+  saved and listed), not every function call or every line. One test that drives a whole path beats
+  several that each check a helper. No tests for drawing details, wording or prototype-only code.
+
+Tests use stand-in data of their own, never book text, need
 neither `data/projectaon/` nor the network, and start no server. Each suite also parses every
 script of its language (`parse.test.js`, `test_parse.py`), which is the syntax check.
 
