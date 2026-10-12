@@ -186,18 +186,9 @@
     } else if (hero.weaponskill && hero.weapons.includes(hero.weaponskill)) {
       parts.push({ label: 'Weaponskill', n: 2 });
     }
-    
-    // TWO-HANDED WEAPON RULE EXCLUSION
-    const wieldsSommerswerd = hero.special.includes('sommerswerd');
-    const hasShield = hero.weapons.includes('shield') || hero.backpack.includes('shield') || hero.special.includes('shield');
-    
-    if (wieldsSommerswerd && hasShield) {
-      // The Sommerswerd forces two-handed use, completely rendering a shield useless for defense.
-      parts.push({ label: 'Shield (Disabled by Sommerswerd)', n: 0 });
-    } else if (hasShield) {
-      // Standard shield handling if the legendary sword isn't active
+    // the Sommerswerd fights one-handed (rules-books.md, Book 2), so a Shield still counts beside it
+    if (hero.weapons.includes('shield') || hero.backpack.includes('shield') || hero.special.includes('shield'))
       parts.push({ label: 'Shield', n: 2 });
-    }
 
     if (ctx.mindblast) parts.push({ label: 'Mindblast', n: 2 });
     if (ctx.enemy && ctx.enemy.mindforce && !LW.has(hero, 'mindshield'))

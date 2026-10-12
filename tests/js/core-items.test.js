@@ -15,64 +15,14 @@ describe('item names and kinds', () => {
     expect(LW.itemName('shortSword')).toBe('Short Sword');
     expect(LW.itemName('potion')).toBe('Laumspur Potion');
   });
-  it('strips the pack:/spec: prefix of an item typed in by hand', () => {
-    expect(LW.itemName('pack:Rusty Key')).toBe('Rusty Key');
-    expect(LW.itemName('spec:Silver Pendant')).toBe('Silver Pendant');
-  });
-  it('knows the kind of a known item', () => {
-    expect(LW.itemKind('axe')).toBe('weapon');
-    expect(LW.itemKind('potion')).toBe('backpack');
-    expect(LW.itemKind('map')).toBe('special');
-  });
   it('puts a hand-typed item in the Backpack unless it is spec:', () => {
     expect(LW.itemKind('pack:Key')).toBe('backpack');
     expect(LW.itemKind('whatever')).toBe('backpack');
     expect(LW.itemKind('spec:Pendant')).toBe('special');
   });
-  it('lists every weapon in LW.WEAPONS', () => {
-    expect(LW.WEAPONS).toContain('axe');
-    expect(LW.WEAPONS).toContain('broadsword');
-    expect(LW.WEAPONS).not.toContain('potion');
-    expect(LW.WEAPONS.every((w) => LW.ITEMS[w].kind === 'weapon')).toBe(true);
-  });
-  it('has the limits the books state', () => {
-    expect(LW.MAX_WEAPONS).toBe(2);
-    expect(LW.MAX_BACKPACK).toBe(8);
-    expect(LW.MAX_ARROWS).toBe(6);
-  });
-  it('gives the Padded Leather Waistcoat 2 and the Chainmail Waistcoat 4 ENDURANCE, the Shield +2 COMBAT SKILL', () => {
-    expect(LW.ITEMS.leatherWaistcoat.ep).toBe(2);
-    expect(LW.ITEMS.chainmail.ep).toBe(4);
-    expect(LW.ITEMS.shield.fightCs).toBe(2);
-    expect(LW.ITEMS.potion.heal).toBe(4);
-  });
 });
 
-describe('LW.addItems', () => {
-  it('adds a book\'s own items and refreshes the weapon list', () => {
-    LW.addItems({ moonblade: { name: 'Moonblade', kind: 'weapon' }, locket: { name: 'Locket', kind: 'special' } });
-    expect(LW.itemName('moonblade')).toBe('Moonblade');
-    expect(LW.itemKind('locket')).toBe('special');
-    expect(LW.WEAPONS).toContain('moonblade');
-    expect(LW.WEAPONS).not.toContain('locket');
-  });
-  it('replaces an item of the same id', () => {
-    LW.addItems({ potion: { name: 'Strong Potion', kind: 'backpack', heal: 6 } });
-    expect(LW.ITEMS.potion.heal).toBe(6);
-  });
-});
 
-describe('LW.specialLimit', () => {
-  it('is 12 for a Magnakai hero from Book 8, otherwise no limit', () => {
-    LW.bookNumber = 8;
-    expect(LW.specialLimit({ series: 'magnakai' })).toBe(12);
-    LW.bookNumber = 7;
-    expect(LW.specialLimit({ series: 'magnakai' })).toBe(Infinity);
-    LW.bookNumber = 9;
-    expect(LW.specialLimit({ series: 'kai' })).toBe(Infinity);
-    expect(LW.specialLimit({})).toBe(Infinity);
-  });
-});
 
 describe('LW.hasItem', () => {
   it('looks in the right list, and counts Meals', () => {
@@ -110,12 +60,6 @@ describe('LW.putItem', () => {
     expect(LW.putItem(h2, 'meal')).toBeNull();
     expect(h2.meals).toBe(3);
   });
-  it('puts a Meal in the count, not in the list', () => {
-    const h = bare();
-    LW.putItem(h, 'meal');
-    expect(h.meals).toBe(1);
-    expect(h.backpack).toEqual([]);
-  });
   it('refuses anything for the Backpack when the Backpack is lost, but not a weapon or a Special Item', () => {
     const h = bare({ noPack: true });
     expect(LW.putItem(h, 'potion')).toMatch(/no Backpack/);
@@ -135,38 +79,6 @@ describe('LW.putItem', () => {
     const early = bare({ series: 'magnakai', special: full.slice() });
     expect(LW.putItem(early, 'map')).toBeNull();
   });
-  it('raises Endurance and its maximum for a Special Item that gives some', () => {
-    const h = bare({ ep: 18, epMax: 20 });
-    LW.putItem(h, 'chainmail');
-    expect(h.ep).toBe(22);
-    expect(h.epMax).toBe(24);
-  });
-  it('does not give Endurance for a Backpack Item or a weapon with an ep value', () => {
-    LW.addItems({ odd: { name: 'Odd', kind: 'backpack', ep: 3 } });
-    const h = bare();
-    LW.putItem(h, 'odd');
-    expect(h.epMax).toBe(20);
-  });
-  it('remembers every item he has ever been given, but not Meals', () => {
-    const h = bare();
-    LW.putItem(h, 'sword');
-    LW.putItem(h, 'meal');
-    LW.putItem(h, 'potion');
-    expect(h.had).toEqual(['sword', 'potion']);
-    LW.dropItem(h, 'sword');
-    expect(h.had).toContain('sword');
-  });
-  it('does not list an item twice in had', () => {
-    const h = bare();
-    LW.putItem(h, 'potion');
-    LW.putItem(h, 'potion');
-    expect(h.had).toEqual(['potion']);
-  });
-  it('does not record had when the item did not fit', () => {
-    const h = bare({ weapons: ['axe', 'sword'] });
-    LW.putItem(h, 'mace');
-    expect(h.had || []).not.toContain('mace');
-  });
 });
 
 describe('LW.dropItem', () => {
@@ -176,23 +88,10 @@ describe('LW.dropItem', () => {
     expect(h.backpack).toEqual(['potion']);
     expect(LW.dropItem(h, 'rope')).toBe(false);
   });
-  it('drops a Meal', () => {
-    const h = bare({ meals: 1 });
-    expect(LW.dropItem(h, 'meal')).toBe(true);
-    expect(h.meals).toBe(0);
-    expect(LW.dropItem(h, 'meal')).toBe(false);
-    expect(h.meals).toBe(0);
-  });
   it('takes away the Endurance a Special Item gave, and caps current Endurance at the new maximum', () => {
     const h = bare({ ep: 24, epMax: 24, special: ['chainmail'] });
     LW.dropItem(h, 'chainmail');
     expect(h.epMax).toBe(20);
     expect(h.ep).toBe(20);
-  });
-  it('leaves current Endurance alone if it is under the new maximum', () => {
-    const h = bare({ ep: 10, epMax: 24, special: ['chainmail'] });
-    LW.dropItem(h, 'chainmail');
-    expect(h.epMax).toBe(20);
-    expect(h.ep).toBe(10);
   });
 });

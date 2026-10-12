@@ -129,10 +129,12 @@ def sheet(labels, faithful, aligned, out):
         cv2.putText(row, str(i), (4, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 200), 2)
         row[4:4 + h, 60:60 + w], row[4:4 + h, 76 + w:76 + 2 * w] = a, b
         rows.append(row)
+    if not rows:
+        return
     W = max(r.shape[1] for r in rows)
     rows = [np.pad(r, ((0, 0), (0, W - r.shape[1]), (0, 0)), constant_values=255) for r in rows]
     half = (len(rows) + 1) // 2  # two columns keep the sheet readable at a glance
-    cols = [np.vstack(rows[:half]), np.vstack(rows[half:])]
+    cols = [np.vstack(c) for c in (rows[:half], rows[half:]) if c]  # one label: one column
     H = max(c.shape[0] for c in cols)
     cols = [np.pad(c, ((0, H - c.shape[0]), (0, 20), (0, 0)), constant_values=255) for c in cols]
     cv2.imencode('.png', np.hstack(cols))[1].tofile(str(out))

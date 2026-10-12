@@ -6,5 +6,6 @@ export default defineConfig({
   test: {
     include: ['tests/js/**/*.test.{js,mjs}'],
     environment: 'node',
+    execArgv: ['--experimental-vm-modules', '--no-warnings'],  // parse.test.js compiles ES modules
   },
 });

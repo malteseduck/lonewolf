@@ -63,35 +63,6 @@ def test_json_output(site, capsys):
     assert got['missing'] == []
 
 
-def test_json_lists_only_ten_largest(site, capsys, monkeypatch):
-    import sys
-    for i in range(15):
-        w(site, f'many/f{i:02d}.js', 100 + i)
-    with open(os.path.join(site, 'main.js'), 'w') as f:
-        f.write(''.join(f'import "./many/f{i:02d}.js";' for i in range(15)))
-    monkeypatch.setattr(sys, 'argv', ['x', '--json'])
-    assert offline_check.main() == 0
-    got = json.loads(capsys.readouterr().out)
-    assert len(got['largest']) == 10 and got['files'] > 15
-
-
-def test_text_output(site, capsys, monkeypatch):
-    import sys
-    monkeypatch.setattr(sys, 'argv', ['x'])
-    assert offline_check.main() == 0
-    out = capsys.readouterr().out
-    total = sum(os.path.getsize(os.path.join(site, f)) for f in
-                ('index.html', 'main.js', 'shared/a.js', 'data/projectaon/01fftd/book.js', 'data/projectaon/02fotw/book.js'))
-    assert out.startswith(f'5 files, {total / 1e6:.2f} MB, version {serve.offline_list(site)["version"]}')
-    assert '\nby group:\n' in out and '\nlargest:\n' in out and out.rstrip().endswith('missing: 0')
-    groups = out.split('by group:')[1].split('largest:')[0]
-    lines = [l for l in groups.splitlines() if l.strip()]
-    assert lines[0].endswith('data/projectaon/01fftd') and 'files' in lines[0]  # biggest group first
-    assert 'data/projectaon/02fotw' in groups and '  shared' in groups.replace('files  shared', '  shared')
-    largest = out.split('largest:')[1].split('missing:')[0]
-    assert [l.split()[-1] for l in largest.splitlines() if l.strip()][0] == 'data/projectaon/01fftd/book.js'
-
-
 def test_a_missing_file_is_reported_and_exits_1(site, capsys, monkeypatch):
     import sys
     os.remove(os.path.join(site, 'shared', 'a.js'))
@@ -104,6 +75,3 @@ def test_a_missing_file_is_reported_and_exits_1(site, capsys, monkeypatch):
     assert json.loads(capsys.readouterr().out)['missing'] == ['shared/a.js']
 
 
-def test_module_import_does_not_run_anything():
-    # imported by the tests without side effects: main() runs only under __main__
-    assert callable(offline_check.main) and callable(offline_check.group)

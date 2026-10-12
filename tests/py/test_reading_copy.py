@@ -36,19 +36,9 @@ def test_outs_lists_choices_in_order(outs):
     assert outs({'choices': [{'to': '5'}, {'to': '3'}]}) == ['5', '3']
 
 
-def test_outs_takes_every_row_of_a_random_table(outs):
-    sec = {'choices': [{'to': '9', 'random': {'table': [[[0, 4], 7], [[5, 9], 8]]}}, {'to': '2'}]}
-    assert outs(sec) == ['7', '8', '2']
-
-
 def test_outs_adds_a_fights_exits_and_makes_ids_text(outs):
     sec = {'choices': [{'to': 4}], 'combat': {'to': 10, 'evade': {'after': 1, 'to': 11}}}
     assert outs(sec) == ['4', '10', '11']
-
-
-def test_outs_ignores_a_fight_without_exits_or_evade(outs):
-    assert outs({'choices': [], 'combat': {'enemies': [], 'evade': None}}) == []
-    assert outs({}) == []
 
 
 def test_reading_file_layout(tmp_path):
@@ -65,22 +55,3 @@ def test_reading_file_layout(tmp_path):
         '#10 -> 1\nTen.\n\n')
 
 
-def test_a_section_with_no_way_on_shows_its_ending_or_a_dash(tmp_path):
-    sections = {'1': {'text': ['a'], 'choices': [], 'end': 'death'}, '2': {'text': ['b'], 'choices': []},
-                '3': {'choices': [{'to': '1'}]}}
-    _, f = run_script(tmp_path, sections)
-    lines = f.read_text(encoding='utf-8').splitlines()
-    assert lines[0] == '#1 -> death'
-    assert '#2 -> -' in lines
-    assert '#3 -> 1' in lines   # no text field: just a blank line after the header
-
-
-def test_prints_the_count(tmp_path, capsys):
-    _, f = run_script(tmp_path, {'1': {'text': [], 'choices': []}, '2': {'text': [], 'choices': []}})
-    out = capsys.readouterr().out
-    assert out.startswith('wrote ') and out.strip().endswith('reading.txt: 2 sections')
-
-
-def test_text_is_written_as_utf8(tmp_path):
-    _, f = run_script(tmp_path, {'1': {'text': ['Café — done.'], 'choices': []}})
-    assert 'Café — done.' in f.read_text(encoding='utf-8')

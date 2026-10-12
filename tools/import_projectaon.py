@@ -144,7 +144,7 @@ def gate(text):
     """A choice open only to a hero with a discipline, rank or Lore-circle (need), or None.
     Negative phrasings ("if you do not have", "have yet to") are left open."""
     head = re.split(r',|\s+turn to\b', text, maxsplit=1)[0]
-    if re.search(r"\b(?:not|neither|nor|yet to|n't)\b", head, re.I):
+    if re.search(r"\b(?:not|neither|nor|yet to)\b|n't\b", head, re.I):
         return None
     # the whole condition, when it is only disciplines, a rank and Lore-circles ("... and have reached the rank of Primate")
     whole = re.fullmatch(r'If you (.+)', head.strip())
@@ -242,7 +242,7 @@ def number_rules(whole):
             over = 3 if re.search(r'\b(?:above|in excess of)\b', s) else 0
             mods.append({'plus': int(each.group(1)), 'each': 'magnakai', 'over': over})
             continue
-        m = re.match(r'(?:However, |Also, )?If (you .+?|your .+?),? (?:then )?(?:you may (?:also )?)?(add|deduct|subtract) (?:another |a further |an additional |an extra )?(\d+)(?: points?)?(?: (?:to|from) (?:the|this|your) (?:total |final )?(?:number|total|score|figure)\b.*)?\.?$', s)
+        m = re.match(r'(?:However, |Also, )?[Ii]f (you .+?|your .+?),? (?:then )?(?:you may (?:also )?)?(add|deduct|subtract) (?:another |a further |an additional |an extra )?(\d+)(?: points?)?(?: (?:to|from) (?:the|this|your) (?:total |final )?(?:number|total|score|figure)\b.*)?\.?$', s)
         if not m:
             return None
         cond = condition(re.sub(r'^you ', '', m.group(1)))

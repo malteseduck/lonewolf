@@ -1,12 +1,13 @@
-/* tools/check_items.mjs runs on import and takes its ROOT from its own location, so these tests copy it
-   (unchanged) with shared/core.js into a temporary project tree holding stand-in item tables and a
-   stand-in book.js, and run it there as a child process. Nothing from data/projectaon is used. */
+/* tools/check_items.mjs exports checkItems({ root, book, json }); these tests call it against a temporary
+   project tree holding shared/core.js, stand-in item tables and a stand-in book.js. One test runs the
+   command line for its printing and exit code. Nothing from data/projectaon is used. */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { spawnSync } from 'child_process';
 import { ROOT } from './helpers.js';
+import { checkItems } from '../../tools/check_items.mjs';
 
 let tmp;
 const w = (rel, text) => { const f = path.join(tmp, rel); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, text); };
@@ -31,8 +32,6 @@ export const SECTIONS = {
 
 beforeAll(() => {
   tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'lw-check-items-'));
-  fs.mkdirSync(path.join(tmp, 'tools'));
-  fs.copyFileSync(path.join(ROOT, 'tools', 'check_items.mjs'), path.join(tmp, 'tools', 'check_items.mjs'));
   fs.mkdirSync(path.join(tmp, 'shared'));
   fs.copyFileSync(path.join(ROOT, 'shared', 'core.js'), path.join(tmp, 'shared', 'core.js'));
   w('assets/icons/present.svg', '<svg/>');
@@ -42,40 +41,40 @@ beforeAll(() => {
 });
 afterAll(() => fs.rmSync(tmp, { recursive: true, force: true }));
 
-const run = (...args) => {
-  const r = spawnSync(process.execPath, [path.join(tmp, 'tools', 'check_items.mjs'), ...args], { encoding: 'utf8' });
-  return { code: r.status, out: r.stdout.trim().split('\n'), stderr: r.stderr };
+// the same shape the old child-process runner gave: exit code and output lines
+const run = async (book = '01fftd', json = false) => {
+  const r = await checkItems({ root: tmp, book, json });
+  return { code: r.code, out: r.text.trim().split('\n'), r };
 };
 /* run the checker on a table with these section entries / items, returning the error lines */
-function errorsOf(sections, items = '') {
+async function errorsOf(sections, items = '') {
   w('items-t1.js', `export const ITEMS = { thing: { name: 'Thing', kind: 'backpack', glyph: 'present' }, ${items} }; export const SECTIONS = ${JSON.stringify(sections)};`);
-  const r = run('t1');
+  const r = await run('t1');
   w('items-t1.js', CLEAN);
   const lines = r.out;
   return lines[0] === 'no errors' ? [] : lines.slice(0, lines.findIndex((l) => /^\d+ book items/.test(l)));
 }
 
 describe('check_items.mjs', () => {
-  it('says there is no table yet for a book without one, and exits 0', () => {
-    const r = run('zz9');
+  it('says there is no table yet for a book without one, and exits 0', async () => {
+    const r = await run('zz9');
     expect(r.code).toBe(0);
     expect(r.out[0]).toMatch(/^no items-zz9\.js yet/);
   });
 
-  it('passes a clean table, then counts book items and the sections using each field', () => {
-    const r = run('t1');
-    expect(r.stderr).toBe('');
-    expect(r.out[0]).toBe('no errors');
+  it('passes a clean table, then counts book items and the sections using each field', async () => {
+    const r = await run('t1');
+        expect(r.out[0]).toBe('no errors');
     expect(r.out[1]).toBe('2 book items; 3 sections: give 1, loot 1, take 1, ep 2, rolls 1, need 2, fight 1, todo 1');
   });
 
-  it('defaults to Book 1 (01fftd) when no code is given, saying so when the table is absent here', () => {
-    expect(run().out[0]).toMatch(/^no items-01fftd\.js yet/);
+  it('defaults to Book 1 (01fftd) when no code is given, saying so when the table is absent here', async () => {
+    expect((await run()).out[0]).toMatch(/^no items-01fftd\.js yet/);
   });
 
-  it('accepts items defined in other tables and in the engine, and the Meal', () => {
+  it('accepts items defined in other tables and in the engine, and the Meal', async () => {
     // CLEAN already uses dagger (engine) and meal; this adds one from items-t2.js
-    expect(errorsOf({ '1': { give: [{ item: 'lamp' }, { item: 'meal' }] } })).toEqual([]);
+    expect(await errorsOf({ '1': { give: [{ item: 'lamp' }, { item: 'meal' }] } })).toEqual([]);
   });
 
   it.each([
@@ -103,31 +102,31 @@ describe('check_items.mjs', () => {
     ['a take of the backpack other than all or items', { '1': { take: [{ backpack: 'some' }] } }, "1 take: backpack must be 'all' or 'items'"],
     ['a take of special items other than all', { '1': { take: [{ special: 'one' }] } }, "1 take: special must be 'all'"],
     ['an unknown item in a roll\'s take', { '1': { rolls: [{ range: [0, 9], take: [{ item: 'ghost' }] }] } }, '1 rolls[0]: unknown item ghost'],
-  ])('reports %s', (_, sections, line) => {
-    expect(errorsOf(sections)).toContain(line);
+  ])('reports %s', async (_, sections, line) => {
+    expect(await errorsOf(sections)).toContain(line);
   });
 
-  it('reports a bad item kind and a missing icon', () => {
-    const errs = errorsOf({}, "odd: { name: 'Odd', kind: 'ring' }, bare: { name: 'Bare', kind: 'special', glyph: 'no-such-icon' },");
+  it('reports a bad item kind and a missing icon', async () => {
+    const errs = await errorsOf({}, "odd: { name: 'Odd', kind: 'ring' }, bare: { name: 'Bare', kind: 'special', glyph: 'no-such-icon' },");
     expect(errs).toContain('item odd: kind must be weapon, backpack or special');
     expect(errs).toContain('item bare: no icon assets/icons/no-such-icon.svg');
   });
 
-  it('prints ids and counts only: no line of output holds anything but those', () => {
-    const r = run('t1');
+  it('prints ids and counts only: no line of output holds anything but those', async () => {
+    const r = await run('t1');
     expect(r.out.join('\n')).not.toMatch(/Stand-in/);
   });
 
-  it('lists the flagged sections the table leaves out, from items-reading.txt', () => {
+  it('lists the flagged sections the table leaves out, from items-reading.txt', async () => {
     w('data/projectaon/t1/items-reading.txt', '#1 first\nbody\n#5 fifth\nmore\n#4 fourth\n');
-    const r = run('t1');
+    const r = await run('t1');
     fs.rmSync(path.join(tmp, 'data/projectaon/t1/items-reading.txt'));
     expect(r.out).toContain('1 flagged sections left out (read, and judged to need nothing):');
     expect(r.out).toContain('5');
   });
 
-  it('with --json writes check-items.json beside the book', () => {
-    const r = run('t1', '--json');
+  it('with --json writes check-items.json beside the book', async () => {
+    const r = await run('t1', true);
     expect(r.out[r.out.length - 1]).toBe('wrote data/projectaon/t1/check-items.json');
     const j = JSON.parse(fs.readFileSync(path.join(tmp, 'data/projectaon/t1/check-items.json'), 'utf8'));
     expect(j).toEqual({
@@ -136,14 +135,24 @@ describe('check_items.mjs', () => {
     });
   });
 
-  it('with --json records errors and the left-out ids', () => {
+  it('with --json records errors and the left-out ids', async () => {
     w('data/projectaon/t1/items-reading.txt', '#5 x\n#1 y\n');
     w('items-t1.js', `export const ITEMS = {}; export const SECTIONS = { '1': { give: [{ item: 'ghost' }] } };`);
-    run('t1', '--json');
+    await run('t1', true);
     const j = JSON.parse(fs.readFileSync(path.join(tmp, 'data/projectaon/t1/check-items.json'), 'utf8'));
     fs.rmSync(path.join(tmp, 'data/projectaon/t1/items-reading.txt'));
     w('items-t1.js', CLEAN);
     expect(j.errors).toEqual(['1 give: unknown item ghost']);
     expect(j.leftOut).toEqual(['5']);
+  });
+});
+
+describe('command line', () => {
+  it('prints the text and exits 0, run from a copy placed inside the stand-in tree', async () => {
+    fs.mkdirSync(path.join(tmp, 'tools'), { recursive: true });
+    fs.copyFileSync(path.join(ROOT, 'tools', 'check_items.mjs'), path.join(tmp, 'tools', 'check_items.mjs'));
+    const r = spawnSync(process.execPath, [path.join(tmp, 'tools', 'check_items.mjs'), 't1'], { encoding: 'utf8' });
+    expect(r.status).toBe(0);
+    expect(r.stdout.split('\n').slice(0, 2)).toEqual(['no errors', '2 book items; 3 sections: give 1, loot 1, take 1, ep 2, rolls 1, need 2, fight 1, todo 1']);
   });
 });

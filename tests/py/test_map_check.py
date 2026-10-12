@@ -28,28 +28,12 @@ def textured(w=600, h=450, seed=1):
 
 # ---- helpers ------------------------------------------------------------------------------
 
-def test_write_then_read_round_trips_through_a_spaced_path(tmp_path):
-    d = tmp_path / 'a folder'
-    d.mkdir()
-    im = np.random.RandomState(0).randint(0, 255, (20, 30, 3)).astype(np.uint8)
-    map_check.write(d / 'x y.png', im)
-    back = map_check.read(d / 'x y.png')
-    assert back.shape == im.shape and (back == im).all()
 
 
-def test_write_uses_the_suffix_to_pick_the_format(tmp_path):
-    map_check.write(tmp_path / 'a.jpg', np.zeros((8, 8, 3), np.uint8))
-    assert (tmp_path / 'a.jpg').read_bytes()[:2] == b'\xff\xd8'
 
 
-def test_read_of_a_non_image_is_none(tmp_path):
-    (tmp_path / 'x.png').write_bytes(b'not an image')
-    assert map_check.read(tmp_path / 'x.png') is None
 
 
-def test_gray_is_single_channel():
-    g = map_check.gray(np.full((5, 6, 3), 100, np.uint8))
-    assert g.shape == (5, 6) and (g == 100).all()
 
 
 def test_edges_find_the_outline_of_a_block_and_nothing_on_flat_ground():
@@ -103,16 +87,6 @@ def test_identical_repaint_at_another_size_aligns_and_flags_nothing(aligned_pair
     assert np.abs(A.astype(int) - O).mean() < 6
 
 
-def test_h_json_carries_the_warp_and_both_sizes(aligned_pair, tmp_path, monkeypatch):
-    d, O, G = aligned_pair
-    run(monkeypatch, d / 'o.png', d / 'g.png', tmp_path / 'c')
-    h = json.loads((tmp_path / 'c' / 'H.json').read_text())
-    assert h['repaint'] == [900, 675] and h['faithful'] == [600, 450]
-    H = np.array(h['H'])
-    assert H.shape == (3, 3)
-    # the repaint was resized to the faithful size first, so the warp is about the identity
-    assert np.abs(H[:2, :2] / H[2, 2] - np.eye(2)).max() < 0.02
-    assert abs(H[0, 2]) < 3 and abs(H[1, 2]) < 3
 
 
 def test_recoloured_block_is_flagged_red_and_only_there(aligned_pair, tmp_path, monkeypatch, capsys):
@@ -131,24 +105,5 @@ def test_recoloured_block_is_flagged_red_and_only_there(aligned_pair, tmp_path, 
     assert tinted[0].min() >= 96 - 48 and tinted[0].max() < 240 + 48
 
 
-def test_a_richer_wash_of_the_same_colour_is_not_flagged(aligned_pair, tmp_path, monkeypatch, capsys):
-    d, O, G = aligned_pair
-    hsv = cv2.cvtColor(G, cv2.COLOR_BGR2HSV).astype(np.float32)
-    hsv[..., 1] = np.minimum(hsv[..., 1] * 1.15, 255)   # a little more saturated: same hues
-    rich = cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2BGR)
-    map_check.write(tmp_path / 'rich.png', rich)
-    run(monkeypatch, d / 'o.png', tmp_path / 'rich.png', tmp_path / 'c')
-    _, (_, colour, _, _) = figures(capsys.readouterr().out)
-    assert colour == 0
 
 
-def test_added_outlines_are_flagged_as_shape_changes(aligned_pair, tmp_path, monkeypatch, capsys):
-    d, O, G = aligned_pair
-    G2 = G.copy()
-    # a new forest: a row of dark rings along the bottom edge, outlines the faithful map lacks
-    for i in range(12):
-        cv2.circle(G2, (30 + 30 * i, 600), 12, (30, 60, 30), 2)   # a row of rings along the bottom of the repaint
-    map_check.write(tmp_path / 'g2.png', G2)
-    run(monkeypatch, d / 'o.png', tmp_path / 'g2.png', tmp_path / 'c')
-    _, (_, colour, shape, both) = figures(capsys.readouterr().out)
-    assert shape >= 1

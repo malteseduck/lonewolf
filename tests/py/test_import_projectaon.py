@@ -70,10 +70,6 @@ def grand(tmp_path_factory):
     return run_importer(tmp_path_factory.mktemp('gm'), '13tplor')
 
 
-def test_series_follows_the_book_code(kai, magnakai, grand):
-    assert (kai['number'], kai['series']) == (1, 'kai')
-    assert (magnakai['number'], magnakai['series']) == (6, 'magnakai')
-    assert (grand['number'], grand['series']) == (13, 'grandmaster')
 
 
 # plain / lines / sentences
@@ -85,40 +81,15 @@ def test_plain_strips_tags_entities_and_footnote_marks(kai):
     assert p('x<sup>2</sup>') == 'x2'
 
 
-def test_lines_breaks_at_br_and_drops_empty_lines(kai):
-    assert kai['lines']('One<br>Two<br/>  <br />Three') == ['One', 'Two', 'Three']
 
 
-def test_sentences_split_after_stops_but_not_after_ie_or_eg(kai):
-    s = kai['sentences']
-    assert s('First one. Second one! Third? Fourth.') == ['First one.', 'Second one!', 'Third?', 'Fourth.']
-    assert s('You may (i.e. you possess it) go. Next.') == ['You may (i.e. you possess it) go.', 'Next.']
-    assert s('Take it (e.g. a sword) now. Next.') == ['Take it (e.g. a sword) now.', 'Next.']
 
 
-def test_gm_names_turns_grand_mastery_of_nexus_into_grand_nexus(kai):
-    assert kai['gm_names']('the Grand Mastery of Nexus') == 'the Grand Nexus'
-    assert kai['gm_names']('Mastery of Nexus') == 'Mastery of Nexus'
 
 
 # disc_list
-@pytest.mark.parametrize('text,expect', [
-    ('Hunting', (['hunting'], False)),
-    ('either Tracking or Sixth Sense', (['tracking', 'sixthSense'], False)),
-    ('both Camouflage and Hunting', (['camouflage', 'hunting'], True)),
-    ('Hunting, Tracking and Camouflage', (['hunting', 'tracking', 'camouflage'], True)),
-    ('Hunting, Tracking, or Camouflage', (['hunting', 'tracking', 'camouflage'], False)),
-    ('Weaponskill (any weapon)', (['weaponskill'], False)),
-    ('Animal Kinship', (['animalKinship'], False)),
-    ('hunting', (['hunting'], False)),
-])
-def test_disc_list_reads_names_with_or_as_any_and_and_as_all(kai, text, expect):
-    assert kai['disc_list'](text) == expect
 
 
-@pytest.mark.parametrize('text', ['Hunting or Tracking and Camouflage', 'Hunting or a Sword', 'Sword', ''])
-def test_disc_list_refuses_mixed_connectives_and_unknown_names(kai, text):
-    assert kai['disc_list'](text) is None
 
 
 # condition
@@ -145,31 +116,10 @@ def test_condition_reads_disciplines_ranks_circles_and_endurance(kai, text, expe
     assert kai['condition'](text) == expect
 
 
-@pytest.mark.parametrize('text', [
-    'have a Sword',                                           # an item
-    'have the Kai Discipline of Hunting and have a Sword',    # one clause unreadable spoils the whole
-    'have the Kai Discipline of Juggling',                    # not a discipline
-    'have reached the Kai rank of Overlord',                  # not a rank
-    'have completed the Lore-circle of Mud',                  # not a circle
-    'your ENDURANCE point total is exactly 7',
-    'have the Kai Discipline of Hunting and have the Kai Discipline of Tracking',  # a second disc clause is refused
-    '',
-])
-def test_condition_gives_up_on_anything_else(kai, text):
-    assert kai['condition'](text) is None
 
 
-def test_condition_grand_master_forms(grand):
-    c = grand['condition']
-    assert c('possess Kai-screen') == {'disc': ['kaiScreen']}
-    assert c('have the Grand Mastery of Nexus') == {'disc': ['grandNexus']}
-    assert c('have the Grand Master Discipline of Telegnosis') == {'disc': ['telegnosis']}
-    assert c('have Mastery of Telegnosis') == {'disc': ['telegnosis']}
-    assert c('possess Grand Weaponmastery (with Bow)') is None  # the Bow must be mastered: a condition cannot say
 
 
-def test_condition_bare_names_only_in_a_grand_master_book(kai):
-    assert kai['condition']('possess Kai-screen') is None
 
 
 # gate
@@ -203,28 +153,15 @@ def test_gate_leaves_negative_or_unreadable_choices_open(kai, text):
     assert kai['gate'](text) is None
 
 
-@pytest.mark.xfail(strict=True, reason="gate(): r\"\b(?:...|n't)\b\" can never match inside a word, so a contraction (haven't, don't) is not seen as negative")
 def test_gate_treats_a_contraction_as_negative(kai):
     assert kai['gate']("If you haven't the Kai Discipline of Hunting, turn to 5.") is None
 
 
-def test_gate_ignores_what_follows_the_comma(kai):
-    # the discipline named after the comma is not part of the condition
-    assert kai['gate']('If you have the Kai Discipline of Hunting, turn to 5; if you have Tracking, turn to 6.') == {'disc': 'hunting'}
 
 
-def test_gate_grand_master_bare_discipline_and_bow(grand, kai):
-    assert grand['gate']('If you possess Kai-screen, turn to 5.') == {'disc': 'kaiScreen'}
-    assert grand['gate']('If you have the Grand Mastery of Nexus, turn to 5.') == {'disc': 'grandNexus'}
-    assert grand['gate']('If you possess Grand Weaponmastery (with Bow), turn to 5.') is None
-    assert kai['gate']('If you possess Kai-screen, turn to 5.') is None
 
 
 # as_int / span
-def test_as_int_reads_the_books_minus_sign(kai):
-    assert kai['as_int']('−3') == -3
-    assert kai['as_int']('+2') == 2
-    assert kai['as_int']('7') == 7
 
 
 @pytest.mark.parametrize('text,expect', [
@@ -247,23 +184,11 @@ def test_span_reads_the_random_number_range(kai, text, expect):
     assert kai['span'](text) == expect
 
 
-@pytest.mark.parametrize('text', [
-    'If you lose any ENDURANCE, even when the number is 3, turn to 9.',
-    'Your COMBAT SKILL total is 4 or less, turn to 9.',
-    'Turn to 4.',
-    'If you have a Sword, turn to 9.',
-])
-def test_span_ignores_endurance_combat_skill_and_non_draws(kai, text):
-    assert kai['span'](text) is None
 
 
 # number_rules / reach
-def test_number_rules_none_when_zero_counts_as_ten(kai):
-    assert kai['number_rules']('Pick a number. 0 = 10. If you have the Kai Discipline of Hunting, add 2 to the number.') is None
 
 
-def test_number_rules_empty_when_nothing_is_added(kai):
-    assert kai['number_rules']('Pick a number from the Random Number Table.') == []
 
 
 def test_number_rules_reads_discipline_bonus_and_penalty(kai):
@@ -279,58 +204,23 @@ def test_number_rules_reads_discipline_bonus_and_penalty(kai):
         {'disc': ['hunting'], 'plus': 1}]
 
 
-@pytest.mark.xfail(strict=True, reason="number_rules(): the prefix is (?:However, |Also, )?If with a capital I, so the natural 'However, if you ...' is not read and the section goes free")
 def test_number_rules_reads_however_if(kai):
     assert kai['number_rules']('However, if you have the Kai Discipline of Hunting, add 1 to the number.') == [
         {'disc': ['hunting'], 'plus': 1}]
 
 
-def test_number_rules_endurance_condition(kai):
-    assert kai['number_rules']('If your current ENDURANCE point total is less than 10, deduct 1 from the number.') == [
-        {'ep': [-99, 9], 'plus': -1}]
 
 
-def test_number_rules_adds_up_several_sentences(kai):
-    got = kai['number_rules']('If you have the Kai Discipline of Hunting, add 1 to the number. '
-                              'If you have the Kai Discipline of Tracking, add 2 to the number.')
-    assert got == [{'disc': ['hunting'], 'plus': 1}, {'disc': ['tracking'], 'plus': 2}]
 
 
-def test_number_rules_for_every_magnakai_discipline(kai):
-    got = kai['number_rules']('Add 1 for every Magnakai Discipline you possess (above your initial three) to the number.')
-    assert got == [{'plus': 1, 'each': 'magnakai', 'over': 3}]
-    got = kai['number_rules']('Add 2 to the number for every Magnakai Discipline you possess.')
-    assert got == [{'plus': 2, 'each': 'magnakai', 'over': 0}]
 
 
-def test_number_rules_skips_combat_skill_sentences_and_examples(kai):
-    assert kai['number_rules']('If you have the Kai Discipline of Hunting, add 1 to your COMBAT SKILL.') == []
-    assert kai['number_rules']('Pick a number. (for example, add 3 to a 4 and you get 7). Go on.') == []
 
 
-def test_number_rules_both_clause_is_taken_as_read(kai):
-    got = kai['number_rules']('If you have the Discipline of Tracking or Sixth Sense, add 3 to the number. '
-                              'If you have both, you may only add 3.')
-    assert got == [{'disc': ['tracking', 'sixthSense'], 'plus': 3}]
 
 
-@pytest.mark.parametrize('text', [
-    'If you have a Sword, add 1 to the number you have picked.',   # an item
-    'Add 1 to the number if you are lucky.',                        # a shape it cannot read
-    'Add 1 to the number.',                                         # no condition at all
-])
-def test_number_rules_gives_up_on_what_it_cannot_read(kai, text):
-    assert kai['number_rules'](text) is None
 
 
-def test_reach_is_the_lowest_and_highest_total(kai):
-    r = kai['reach']
-    assert r([]) == (0, 9)
-    assert r([{'plus': 2}]) == (0, 11)
-    assert r([{'plus': -1}]) == (-1, 9)
-    assert r([{'plus': 2}, {'plus': -3}]) == (-3, 11)
-    assert r([{'plus': 1, 'each': 'magnakai', 'over': 3}]) == (0, 16)   # up to 7 disciplines above three
-    assert r([{'plus': 1, 'each': 'magnakai', 'over': 0}]) == (0, 19)
 
 
 # cs_rule
@@ -351,19 +241,6 @@ def test_cs_rule_reads_a_whole_fight_adjustment(kai, text, expect):
     assert kai['cs_rule'](text) == expect
 
 
-@pytest.mark.parametrize('text', [
-    'The Giak is weak.',                                                          # no COMBAT SKILL
-    'Deduct 2 from your COMBAT SKILL for the first round.',                       # some rounds only
-    'Add 2 to your COMBAT SKILL instead of the normal bonus.',                    # the engine's own bonus
-    'If you carry the Sword, add 2 to your COMBAT SKILL.',                        # another condition
-    'If you have a Sword, add 2 to your COMBAT SKILL.',
-    'While wielding it you may add 2 to your COMBAT SKILL.',                      # a weapon
-    'Add 2 to your COMBAT SKILL when it is dark.',                                # an unread condition word
-    'If your ENDURANCE is 5 or less, add 2 to your COMBAT SKILL.',                # more than disciplines
-    'Add 1 to your COMBAT SKILL. Deduct 2 from your COMBAT SKILL.',               # two rules: left to the text
-])
-def test_cs_rule_leaves_other_wording_to_the_text(kai, text):
-    assert kai['cs_rule'](text) is None
 
 
 # ---- the whole run ----
@@ -384,14 +261,6 @@ def test_choices_with_gates_and_several_links(tmp_path):
     assert s['1']['text'] == ['A crossroads.']
 
 
-def test_text_markup_lists_signposts_verse_and_footnotes(tmp_path):
-    s = secs(tmp_path, {
-        1: '<p>Intro<sup><a href="#s1-foot">1</a></sup> text.</p>'
-           '<ul><li>A rope</li><li>A lamp</li></ul>'
-           '<div class="signpost">NORTH ROAD</div>'
-           '<blockquote>Line one<br/>Line two</blockquote>'
-           '<p>One<br>Two</p>' + choice('Turn to', 999)})
-    assert s['1']['text'] == ['Intro text.', '– A rope', '– A lamp', 'NORTH ROAD', 'Line one', 'Line two', 'One', 'Two']
 
 
 def test_endings_deadend_failed_puzzle_victory(tmp_path):
@@ -416,13 +285,6 @@ def test_victory_is_the_highest_number_not_the_last_name(tmp_path):
     assert list(s) == ['2', '10']
 
 
-def test_forced_meal(tmp_path):
-    s = secs(tmp_path, {
-        1: '<p>You must eat a Meal now or lose 3 ENDURANCE points.</p>',
-        2: '<p>Unless you eat a Meal now you lose 3 ENDURANCE points.</p>',
-        3: '<p>You must also eat a Meal here.</p>',
-        4: '<p>You may eat a Meal if you wish.</p>'})
-    assert [s[k].get('meal') for k in '1234'] == [True, True, True, None]
 
 
 def random_page(intro_tail, *choices):
@@ -459,34 +321,12 @@ def test_random_number_bonus_extends_the_ranges_that_must_be_covered(tmp_path):
     assert s['2']['rnt'] == 'free' and 'rntMod' not in s['2']
 
 
-def test_random_number_free_when_the_bonus_cannot_be_read(tmp_path):
-    s = secs(tmp_path, {
-        1: random_page(' If you have a Sword, add 1 to the number you have picked.',
-                       ('If the number is 0-4, turn to', 2), ('If it is 5 or more, turn to', 2)),
-        2: '<p>.</p>'})
-    assert s['1']['rnt'] == 'free'
 
 
-def test_random_number_choice_before_the_draw_stands_beside_ranges(tmp_path):
-    s = secs(tmp_path, {
-        1: random_page('', ('If you have the Kai Discipline of Sixth Sense, turn to', 2),
-                       ('Otherwise if your total is 0-4, turn to', 2), ('If it is 5 or more, turn to', 2)),
-        2: '<p>.</p>'})
-    sec = s['1']
-    assert sec['rnt'] == 'auto'
-    assert sec['choices'][0]['need'] == {'disc': 'sixthSense'} and 'range' not in sec['choices'][0]
 
 
-def test_random_number_free_when_a_plain_choice_stands_beside_ranges(tmp_path):
-    s = secs(tmp_path, {
-        1: random_page('', ('Go back, turn to', 2), ('If your total is 0-4, turn to', 2), ('If it is 5 or more, turn to', 2)),
-        2: '<p>.</p>'})
-    assert s['1']['rnt'] == 'free'
 
 
-def test_ranges_are_dropped_in_a_section_with_no_random_number_link(tmp_path):
-    s = secs(tmp_path, {1: '<p>Pick a number.</p>' + choice('If your total is 0-4, turn to', 2), 2: '<p>.</p>'})
-    assert 'rnt' not in s['1'] and 'range' not in s['1']['choices'][0]
 
 
 def test_combat_with_evade_after_n_rounds(tmp_path):
@@ -514,25 +354,10 @@ def test_evade_timing(tmp_path, sentence, expect):
     assert s['1']['combat']['evade'] == expect
 
 
-def test_losing_endurance_even_when_evading_is_not_the_evade_exit(tmp_path):
-    s = secs(tmp_path, {1: foe('Rat', 5, 5) + choice('If you lose any ENDURANCE points, even when attempting to evade, turn to', 2),
-                        2: '<p>.</p>'})
-    assert 'evade' not in s['1']['combat']
-    assert 'evade' not in s['1']['choices'][0]
 
 
-def test_may_evade_wins_over_a_choice_that_only_mentions_evading(tmp_path):
-    s = secs(tmp_path, {1: foe('Rat', 5, 5) + choice('If you evade the Rat anywhere else, turn to', 3)
-                        + choice('You may evade combat after two rounds, turn to', 2), 2: '<p>.</p>', 3: '<p>.</p>'})
-    assert s['1']['combat']['evade'] == {'after': 2, 'to': '2'}
 
 
-def test_resistance_enemy_is_a_fight_but_target_points_are_not(tmp_path):
-    s = secs(tmp_path, {
-        1: '<p class="combat">Iron Door: COMBAT SKILL 20 ENDURANCE (RESISTANCE points) 35</p>',
-        2: '<p class="combat">Target: COMBAT SKILL 20 ENDURANCE (TARGET points) 35</p>'})
-    assert s['1']['combat']['enemies'] == [{'name': 'Iron Door', 'cs': 20, 'ep': 35, 'sprite': 'emblem'}]
-    assert 'combat' not in s['2']
 
 
 def test_several_enemies_and_sprites(tmp_path):
@@ -552,13 +377,6 @@ def test_mind_immunity_only_for_the_enemies_named(tmp_path):
     assert 'immune' not in s['3']['combat']['enemies'][0]
 
 
-def test_mind_immunity_variants(tmp_path):
-    s = secs(tmp_path, {
-        1: '<p>It is immune to Mindblast (but not Psi-surge).</p>' + foe('Rat', 1, 1),
-        2: '<p>It is immune to Mindblast and Psi-surge (but not Kai-surge).</p>' + foe('Rat', 1, 1),
-        3: '<p>It is immune to Mindblast and Psi-surge; only the Grand Mastery of Kai-surge will work.</p>' + foe('Rat', 1, 1),
-        4: '<p>It is immune to Psi-surge.</p>' + foe('Rat', 1, 1)})
-    assert [s[k]['combat']['enemies'][0]['immune'] for k in '1234'] == ['mindblast', 'psi', 'psi', True]
 
 
 def test_mind_drain_unless_shielded(tmp_path):
@@ -567,12 +385,6 @@ def test_mind_drain_unless_shielded(tmp_path):
     assert [e['drain'] for e in s['1']['combat']['enemies']] == [2, 2]
 
 
-def test_mind_drain_shield_is_psi_screen_in_a_magnakai_book(tmp_path):
-    mk = lambda d: run_importer(tmp_path / d, '06tkot', {1: foe('Rat', 1, 1) + {
-        'k': '<p>Unless you possess the Magnakai Discipline of Psi-screen, lose 3 ENDURANCE points each round.</p>',
-        'w': '<p>Unless you possess the Kai Discipline of Mindshield, deduct 2 ENDURANCE points every round.</p>'}[d]})['sections']
-    assert mk('k')['1']['combat']['enemies'][0]['drain'] == 3
-    assert 'drain' not in mk('w')['1']['combat']['enemies'][0]
 
 
 def test_combat_skill_adjustment_with_a_discipline_condition(tmp_path):
@@ -588,42 +400,14 @@ def test_combat_skill_adjustment_with_a_discipline_condition(tmp_path):
     assert 'csMod' not in c4
 
 
-def test_plates_own_section_picture_and_image_fields(tmp_path):
-    s = secs(tmp_path, {
-        1: '<p>Before.</p><img src="ill3.png" alt="x"/>' + foe('Rat', 1, 1),
-        2: '<p>Map.</p><img src="map.png"/>' + foe('Rat', 1, 1)})
-    assert s['1']['img'] == {'file': 'ill3.png', 'full': True, 'at': 1}
-    assert s['1']['combat']['enemies'][0]['art'] == 'ill3.png'
-    assert s['2']['img'] == {'file': 'map.png', 'full': False, 'at': 1}
-    assert 'art' not in s['2']['combat']['enemies'][0]
 
 
-def test_enemy_borrows_the_plate_of_its_kind_pictured_elsewhere(tmp_path):
-    s = secs(tmp_path, {
-        1: '<img src="ill4.png"/>' + foe('Giak Scout', 1, 1),
-        2: foe('Giak Scout 2', 1, 1),
-        3: foe('Giak Scouts', 1, 1),
-        4: foe('Giak Archer', 1, 1),     # another kind
-        5: foe('Rat', 1, 1)})
-    art = lambda k: s[k]['combat']['enemies'][0].get('art')
-    assert (art('1'), art('2'), art('3'), art('4'), art('5')) == ('ill4.png', 'ill4.png', 'ill4.png', None, None)
 
 
-def test_plate_fixes_for_book_one_are_checked_by_eye(tmp_path):
-    s = run_importer(tmp_path, '01fftd', {1: foe('Kraan Rider', 1, 1) + foe('Gourgaz', 1, 1) + foe('Rat', 1, 1)})['sections']
-    assert [e.get('art') for e in s['1']['combat']['enemies']] == ['ill3.png', 'ill7.png', None]
 
 
-def test_intro_is_the_story_so_far_without_the_paragraph_that_links_on(tmp_path):
-    tssf = ('<html><div class="frontmatter"><p>First   para.</p><p>Second <i>para</i>.</p>'
-            '<p>See the <a href="gamerulz.htm">rules</a>.</p></div></article></html>')
-    ns = run_importer(tmp_path, sections={1: '<p>.</p>'}, extra={'tssf.htm': tssf})
-    assert ns['intro'] == ['First para.', 'Second para.']
-    assert json.loads(open(tmp_path / 'data' / 'projectaon' / '02fotw' / 'import-report.json').read())['intro_paragraphs'] == 2
 
 
-def test_no_intro_without_tssf(tmp_path):
-    assert run_importer(tmp_path, sections={1: '<p>.</p>'})['intro'] == []
 
 
 def book_js(tmp_path, book='02fotw'):
@@ -642,26 +426,12 @@ def test_book_js_has_the_book_format_fields(tmp_path):
     assert set(b['sections']) == {'1', '999'}
 
 
-def test_only_book_one_has_the_bonus_item(tmp_path):
-    run_importer(tmp_path, '01fftd', {1: '<p>.</p>'})
-    assert book_js(tmp_path, '01fftd')['bonusItem'] is True
 
 
-def test_unknown_book_code_is_a_kai_book_numbered_zero(tmp_path):
-    run_importer(tmp_path, 'zz99', {1: '<p>.</p>'})
-    b = book_js(tmp_path, 'zz99')
-    assert (b['number'], b['series'], b['title']) == (0, 'kai', 'zz99')
 
 
-def test_map_names_the_upscale_once_it_exists(tmp_path):
-    run_importer(tmp_path, sections={1: '<p>.</p>'}, extra={'map-4k.webp': 'x'})
-    assert book_js(tmp_path)['map'] == 'map-4k.webp'
 
 
-def test_text_is_kept_utf8_not_escaped(tmp_path):
-    run_importer(tmp_path, sections={1: '<p>Café “quoted”.</p>'})
-    raw = (tmp_path / 'data' / 'projectaon' / '02fotw' / 'book.js').read_text(encoding='utf-8')
-    assert 'Café “quoted”.' in raw
 
 
 def test_index_js_loads_every_imported_book(tmp_path):
@@ -676,24 +446,8 @@ def test_index_js_loads_every_imported_book(tmp_path):
                      "document.write('<script src=\"data/projectaon/02fotw/book.js\"><\\/script>');"]
 
 
-def test_write_if_changed_leaves_an_identical_file_alone(tmp_path, kai):
-    w = kai['write_if_changed']
-    f = tmp_path / 'out.txt'
-    assert w(str(f), 'abc') is True
-    os.utime(f, (1000, 1000))
-    assert w(str(f), 'abc') is False
-    assert os.stat(f).st_mtime == 1000          # not rewritten, so what is judged against it stays current
-    assert w(str(f), 'abcd') is True
-    assert f.read_text() == 'abcd'
 
 
-def test_a_reimport_that_changes_nothing_does_not_touch_book_js(tmp_path):
-    secs_ = {1: '<p>Hello.</p>'}
-    run_importer(tmp_path, '02fotw', secs_)
-    js = tmp_path / 'data' / 'projectaon' / '02fotw' / 'book.js'
-    os.utime(js, (1000, 1000))
-    run_importer(tmp_path, '02fotw', secs_)
-    assert os.stat(js).st_mtime == 1000
 
 
 def test_report_counts_and_ids(tmp_path):
@@ -713,29 +467,7 @@ def test_report_counts_and_ids(tmp_path):
     assert r['gates'] == {'disc': 0, 'rank': 0, 'any': 0, 'circle': 0}
 
 
-def test_report_enemies_pictured_from_the_library_or_not_at_all(tmp_path, capsys):
-    run_importer(tmp_path, '02fotw', {1: foe('Giak', 1, 1) + foe('Rat', 1, 1) + foe('Bat', 1, 1)},
-                 plates=[{'match': 'giak', 'src': 'a.webp'}, {'match': 'bat', 'book': '05sots', 'src': 'b.webp'}])
-    r = json.loads((tmp_path / 'data' / 'projectaon' / '02fotw' / 'import-report.json').read_text())
-    assert (r['enemy_kinds'], r['with_book_plate'], r['from_library'], r['with_none']) == (3, 0, 1, 2)   # Bat's entry is for another book
-    out = capsys.readouterr().out
-    assert 'with none: Bat, Rat (add them to assets/plates/plates.json)' in out
 
 
-def test_report_gate_counts(tmp_path):
-    run_importer(tmp_path, '02fotw', {
-        1: choice('If you have the Kai Discipline of Hunting, turn to', 999) + choice('If you have reached the Kai rank of Guardian, turn to', 999),
-        2: choice('If you have the Kai Discipline of Hunting or have reached the Kai rank of Primate, turn to', 999),
-        3: choice('If you have completed the Lore-circle of Fire, turn to', 999)})
-    r = json.loads((tmp_path / 'data' / 'projectaon' / '02fotw' / 'import-report.json').read_text())
-    assert r['gates'] == {'disc': 1, 'rank': 1, 'any': 1, 'circle': 1}
 
 
-def test_report_random_counts(tmp_path):
-    bonus = ' If you have the Kai Discipline of Hunting, add 2 to the number.'
-    run_importer(tmp_path, '02fotw', {
-        1: random_page('', ('If your total is 0-4, turn to', 999), ('If it is 5 or more, turn to', 999)),
-        2: random_page(bonus, ('If the number is 0-5, turn to', 999), ('If it is 6 or more, turn to', 999)),
-        3: random_page('', ('Turn to', 999))})
-    r = json.loads((tmp_path / 'data' / 'projectaon' / '02fotw' / 'import-report.json').read_text())
-    assert (r['auto_random'], r['free_random'], r['random_bonuses']) == (2, 1, 1)

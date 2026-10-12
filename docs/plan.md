@@ -206,27 +206,10 @@ For step 6 in the books still open (all git-ignored, personal use):
 - The illustration index (`data/projectaon/ill-index.json`, `ill-notes.json`) notes all 405 pictures
   of Books 1-20 (2026-10-11), for borrowing another book's picture (items.md, "Fight pictures").
 
-### Bugs the unit tests found (2026-10-11)
+### Oddities the unit tests noticed
 
-Each is a test marked as an expected failure (`it.fails` / `xfail(strict=True)`); fixing one turns
-its test red until the mark is taken off. Most important first.
-
-1. `serve.py` `do_POST`: a refused upload (backup name, 404, maplabels 400) answers without reading
-   the body, so on a kept-alive connection the next request gets a 400. `_map_upload` does it right.
-2. `import_projectaon.py:147` `gate()`: `n't` never matches, so a choice gated on lacking a
-   discipline written with "haven't"/"don't" reads as needing it. Check whether any book words it so.
-3. `import_projectaon.py:245` `number_rules()`: "However, if" (lower-case) is not read, so such a
-   Random Number section comes out free. Check the books for the wording before changing it.
-4. `map_labels.py:134` `sheet()`: one label (or none) crashes the check sheet.
-5. `release.py:84`: a borrowed file not committed, when none is git-ignored, is refused with git's
-   error instead of "Commit them first".
-6. `serve.py:80` `NAME` accepts a trailing newline; `serve.py:510` `release_dir()` raises on a
-   `CURRENT` file holding `[]` or `{"dir": null}`.
-7. `shared/core.js` ~197: the default `heroCS` drops the Shield with the Sommerswerd (it is
-   one-handed). Dead in the player (`rules-series.js` replaces it); prototypes only.
-
-Untested oddities, maybe deliberate: `plates_file.put()` drops an entry's earlier crop or levels when
-saved without them; the importer marks the highest section `victory` even when it is a dead end;
+Maybe deliberate, so left: `plates_file.put()` drops an entry's earlier crop or levels when saved
+without them; the importer marks the highest section `victory` even when it is a dead end;
 `map_labels.py` defines `norm` twice.
 
 ### Code to make testable
@@ -235,9 +218,10 @@ saved without them; the importer marks the highest section `victory` even when i
   them: `applyItems` first (lays an item table over a book), then backups (`parseBackup`, `backupOf`,
   `backupName`, `pending`), adventures and save keys, `knownItem`, `shown`, `storyText`, `roman`,
   `itemGlyph`, `kitName`/`kitAbout`, `deaf`/`allDeaf`.
-- `check_items.mjs`, `plates_pin.mjs`, `import_projectaon.py`, `item_sections.py`, `reading_copy.py`
-  and `fetch_projectaon.py` do their work on import; their tests run a copy as a whole. Functions
-  that can be imported would allow finer tests.
+- `import_projectaon.py`, `item_sections.py`, `reading_copy.py` and `fetch_projectaon.py` do their
+  work on import; their tests run a copy as a whole. (`check_items.mjs` and `plates_pin.mjs` export
+  their work since 2026-10-11.)
+- No unit test fights a whole fight: the player's combat is in `main.js` (above).
 
 ### Not yet checked
 

@@ -248,7 +248,7 @@ function gate(kind, b) {
         ${t.map4k ? `<tr><th>map-4k.webp made</th><td>${when(t.map4k)}</td></tr>` : ''}
       </table>
       <p class="${b.stale?.length ? 'stale' : ''}">${first ? 'Not imported yet.' : b.stale?.length ? 'Out of date: ' + esc(b.stale.join('; ')) + '.' : 'Up to date: nothing has changed since it was made.'}</p>
-      ${first ? '' : '<p class="hint">After an importer change, "Re-import all and compare" also checks no other book got worse.</p>'}`;
+      ${first ? '' : '<p class="hint">After an importer change, "Check everything" also checks no other book got worse.</p>'}`;
     ackText = `I approve ${first ? 'importing' : 're-importing'} Book ${b.n}.`;
     okText = first ? `Import Book ${b.n}` : `Re-import Book ${b.n}`;
   } else if (kind === 'pictures') {
@@ -271,14 +271,6 @@ function gate(kind, b) {
       ${same ? '<p class="hint">This commit is already released: only changed books or art would go.</p>' : ''}`;
     ackText = 'I approve releasing this to the iPad.';
     okText = 'Release';
-  } else {  // re-import all
-    const list = books.filter((x) => x.known && x.imp);
-    const stale = list.filter((x) => x.stale?.length).length;
-    title = 'Re-import every book?';
-    body = `<p>Rewrites <code>book.js</code> for ${list.length} imported books (${stale} out of date), then compares each report with the one before: a book with more broken links, sections with no way on or enemies with no picture is reported as worse.</p>
-      <table class="dates"><tr><th>Importer last changed</th><td>${when(list[0]?.times.importer)}</td></tr></table>`;
-    ackText = 'I approve re-importing every book.';
-    okText = 'Re-import all';
   }
   $('#confirm-title').textContent = title;
   $('#confirm-body').innerHTML = body;
@@ -333,7 +325,6 @@ $('#log-close').onclick = () => { $('#log').hidden = true; };
 document.querySelectorAll('[data-global]').forEach((btn) => btn.onclick = async () => {
   const stage = btn.dataset.global;
   let confirm;
-  if (stage === 'reimport-all') { confirm = await gate('all'); if (!confirm) return; }
   if (stage === 'release') {
     const { status, j } = await api('release');
     if (status !== 200) return toast(j.error || `Could not read the release (${status})`, 6000);

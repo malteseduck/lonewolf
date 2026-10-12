@@ -37,9 +37,10 @@ shared/                     used by the player and the prototypes (classic scrip
   art.js, battle.js, flow.js, shared.css   pixel sprites, Dragon Quest battle, shared flow: prototypes A and B only
 tests/                      unit tests (ADR 0022), stand-in data only
   js/                       Vitest (npm test; vitest.config.mjs, package.json): helpers.js loads shared/ into a
-                            test, fake-canvas.js stands in for a 2D context; one file per module
-  py/                       pytest (pytest.ini; conftest.py puts tools/ on the path); one file per tool. Tools that
-                            run on import are copied into tmp_path and run with runpy
+                            test; parse.test.js parses every script; the main functionality, by module
+  py/                       pytest (pytest.ini; conftest.py puts tools/ on the path); test_parse.py compiles every
+                            script; the main functionality, by tool. Tools that run on import are copied into
+                            tmp_path and run with runpy
 prototypes/                 earlier experiments, kept working, not developed
   index.html                chooser page for the three
   a-book/, b-map/, c-3d/    load ../../shared
@@ -61,7 +62,7 @@ tools/
   book_status.py            every book's checklist steps, from the files and docs/book-status.json; marks steps
                             done; writes the table in docs/book-checklist.md
   reimport_all.py           re-imports every imported book and compares each import-report.json with the last
-  syntax_check.py           node --check (modules via .mjs copies) and py_compile on every script
+  check_all.py              checks everything: the real books through every script, then both test suites
   offline_check.py          prints the offline list without a server: size per group, largest, missing
                             (docs/reference/offline.md)
   release.py                copies a commit's files (and the git-ignored books and art) into release/, which

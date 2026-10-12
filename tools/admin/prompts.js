@@ -13,7 +13,7 @@ export const PROMPTS = {
 Task: docs/book-checklist.md step 3, "the importer reads the book's own phrasings (gates, Random Number, combat)".
 - Last import, as the dashboard read book.js: ${b.imp ? `${b.imp.sections} sections, ${b.imp.fights} fights, ${b.imp.rnt} Random Number sections, ${b.imp.broken} broken links, ${b.imp.noway} with no way on` : 'not imported yet'}.
 - Compare what tools/import_projectaon.py made of each section (data/projectaon/${b.code}/book.js) with the section pages for choice gates, Random Number ranges and combat lines it left as text but could read with certainty. Procedure and past results: docs/reference/importer.md.
-- After any importer change, run \`python tools/reimport_all.py\` (it re-imports every imported book and compares each report with the last; re-importing to check an importer change is part of this task). No book may get worse.
+- After any importer change, run \`python tools/check_all.py\` (it re-imports every imported book, compares each report with the last, and runs the unit tests; re-importing to check an importer change is part of this task). No book may get worse.
 - Update docs/reference/importer.md (Results).
 Report: the phrasings added, by section id, and the before and after report figures.
 ${DONE(b, 3)}
@@ -60,7 +60,7 @@ ${TAIL}`,
 Task: docs/book-checklist.md step 7, play the book through with test characters.
 - Use http://127.0.0.1:8766/ (not localhost: a different origin, so my saves are not touched) and switch storage writes off first. The console hook is in AGENTS.md (__lw.game, __lw.render).
 - Step every section; try every gate, fight and Random Number draw against the text; reach section 350 at least once.${b.items.todos != null ? ` The item table leaves ${b.items.todos} todos to the player: check each still reads right on the page.` : ''}
-- Fix misreadings in the importer (then \`python tools/reimport_all.py\`; no book may get worse) or in items-${b.code}.js; list what stays left to the player, by section id.
+- Fix misreadings in the importer (then \`python tools/check_all.py\`; no book may get worse) or in items-${b.code}.js; list what stays left to the player, by section id.
 - Add what stays left to the player, if the engine could take it over, to docs/plan.md's engine work list.
 ${DONE(b, 7)}
 ${TAIL}`,

@@ -81,7 +81,7 @@ def main():
 
     got = offline_list(stage, fill)
     # what came from disk must be ignored by git: anything else is code not committed
-    ignored = set(git('check-ignore', '--stdin', '-z', data='\0'.join(borrowed).encode()).decode().split('\0')) if borrowed else set()
+    ignored = set(git('check-ignore', '--stdin', '-z', data='\0'.join(borrowed).encode(), ok=(0, 1)).decode().split('\0')) if borrowed else set()
     stray = sorted(set(borrowed) - ignored)
     problems = [f'  not in {sha}: {r}' for r in stray] + [f'  missing: {r}' for r in got['missing']]
     if problems:

@@ -33,7 +33,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   picture; Adjust crops any card's picture and sets levels, with the fight panel previewed as it will look;
   Remove takes the owner's entry away. Each save redraws the cards and the "with none" count, and the
   dashboard's grid follows. The rules for the entry: `docs/reference/items.md`, "Fight pictures".
-- **Whole-project tools**: the offline check, re-import all and compare, the syntax check.
+- **Whole-project tools**: the offline check, check everything (`check_all.py`), the release.
 - **The job log** at the foot: a job's output line by line while it runs. A job started in another
   tab, or before a reload, is followed too.
 
@@ -97,8 +97,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `check-items` | `node check_items.mjs <code> --json` | |
 | `approve-pictures` | `node plates_pin.mjs <code> --approve` | gated: the owner's approval of changed fight pictures |
 | `offline` | `offline_check.py` | |
-| `syntax` | `syntax_check.py` | |
-| `reimport-all` | `reimport_all.py` | yes |
+| `check` | `check_all.py` (re-imports every book, ADR 0022) | |
 | `release` | `release.py` (the last commit to the iPad, docs/reference/offline.md) | yes |
 
 **Gated stages** open a dialog first: the book, what is fetched or rewritten (about 400 files, 4 MB
@@ -123,9 +122,11 @@ downloads and imports still need the owner's word (AGENTS.md).
   if any book got worse. Run after any importer change.
 - `node tools/check_items.mjs <code> --json` also writes `check-items.json` beside the book.
 - `python tools/offline_check.py --json` prints its figures as one JSON object.
-- `tools/syntax_check.py`: `node --check` on every `.js`/`.mjs` (an ES module through a `.mjs`
-  copy in a temporary folder, which catches a `const` declared twice) and `py_compile` on every `.py`,
-  skipping `data/`, `art/`, `node_modules/` and the venvs. Exits 1 on any failure.
+- `tools/check_all.py`: `npm test` and pytest beside `reimport_all.py`; once the re-import is done,
+  together, `check_items.mjs --json` for every book with an item table, `plates_pin.mjs --all --json`
+  (pictures waiting for approval are a note, not a failure) and `offline_check.py`. A line as each
+  step ends, the tail of a failed one's output; exits 1 on any failure. About 6 s. The syntax check
+  is now each suite's parse test (ADR 0022).
 
 ## The prompts
 

@@ -43,19 +43,23 @@ no service worker and no offline copy; for that, see `docs/reference/offline.md`
 `python tools/offline_check.py` prints what the offline copy would hold (sizes, largest files) and
 exits 1 if the page names a file that is missing; run it after adding or moving a file the page loads.
 
-Unit tests (ADR 0022): Vitest for the JavaScript in `tests/js/`, pytest for the Python tools in
-`tests/py/`. Run both before committing; a change to a function updates its tests. Tests use stand-in
-data of their own, never book text, and need neither `data/projectaon/` nor the network.
+Unit tests (ADR 0022) guard the main functionality: Vitest for the JavaScript in `tests/js/`, pytest
+for the Python tools in `tests/py/`, a couple of seconds each. Run both before committing; a change to
+main functionality updates its test. Tests use stand-in data of their own, never book text, need
+neither `data/projectaon/` nor the network, and start no server. Each suite also parses every
+script of its language (`parse.test.js`, `test_parse.py`), which is the syntax check.
 
 ```sh
 npm test
 uv run --no-project --python tools/.venv/Scripts/python.exe python -m pytest
 ```
 
-(`npm install` once for Vitest; pytest is in `tools/.venv`.) There is no linter. `python tools/syntax_check.py` runs `node --check` on
-every script and `py_compile` on the Python. Plain `node --check` on a root `.js` file misses a
-`const` declared twice, so the script checks each ES module through a `.mjs` copy (do the same by
-hand: copy the file to a `.mjs` name in the scratchpad).
+(`npm install` once for Vitest; pytest is in `tools/.venv`.) There is no linter.
+
+`python tools/check_all.py` (the dashboard's "Check everything") puts the real books through every
+script, and both suites alongside (about 6 s): re-import every book against its last report, every item table's
+check, the approved fight pictures, the offline copy. Run it after changing the importer, an item
+table or anything the books' data goes through.
 
 ## Verify a change
 

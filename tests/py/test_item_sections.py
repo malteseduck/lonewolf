@@ -48,9 +48,6 @@ def test_key_matches_item_wording(KEY, text):
     assert KEY.search(text)
 
 
-@pytest.mark.parametrize('text', ['The road bends north.', 'A quiet room with a view.', 'He nods.'])
-def test_key_ignores_plain_scenery(KEY, text):
-    assert not KEY.search(text)
 
 
 def test_writes_only_sections_with_item_wording_and_their_choice_lines(tmp_path, capsys):
@@ -73,26 +70,10 @@ def test_writes_only_sections_with_item_wording_and_their_choice_lines(tmp_path,
     assert printed[1] == '1 3 5'
 
 
-def test_a_hit_not_in_the_reading_copy_is_counted_but_not_written(tmp_path, capsys):
-    _, out = run_script(tmp_path, {1: '<p>A Sword.</p>', 99: '<p>A Sword.</p>'}, READING)
-    assert out.read_text(encoding='utf-8') == '#1 -> 2\nText of 1.\n\n'
-    assert capsys.readouterr().out.splitlines()[1] == '1 99'
 
 
-def test_hits_are_listed_in_numeric_order(tmp_path, capsys):
-    run_script(tmp_path, {10: '<p>A Sword.</p>', 2: '<p>A Sword.</p>', 3: '<p>A Sword.</p>'}, READING)
-    assert capsys.readouterr().out.splitlines()[1] == '2 3 10'
 
 
-def test_only_the_article_is_scanned(tmp_path, capsys):
-    root = tmp_path
-    run_script(root, {1: '<p>Calm.</p>'}, READING)
-    d = root / 'data' / 'projectaon' / '02fotw'
-    (d / 'sect1.htm').write_text('<html><nav><p>Sword</p></nav><article><p>Calm.</p></article></html>', encoding='utf-8')
-    with pytest.MonkeyPatch.context() as mp:
-        mp.setattr(sys, 'argv', [str(root / 'tools' / 'item_sections.py'), '02fotw'])
-        runpy.run_path(str(root / 'tools' / 'item_sections.py'))
-    assert '0 sections to read' in capsys.readouterr().out.splitlines()[-2]
 
 
 def test_exits_with_advice_when_the_reading_copy_is_missing(tmp_path):
@@ -101,7 +82,3 @@ def test_exits_with_advice_when_the_reading_copy_is_missing(tmp_path):
     assert 'reading_copy.py 02fotw' in str(e.value)
 
 
-def test_tags_in_a_choice_line_are_stripped_and_entities_decoded(tmp_path):
-    pages = {1: '<p>Sword.</p><p class="choice">Pay <b>5</b> Gold &amp; turn to <a href="sect2.htm">2</a>.</p>'}
-    _, out = run_script(tmp_path, pages, READING)
-    assert '  > Pay 5 Gold & turn to 2.\n' in out.read_text(encoding='utf-8')

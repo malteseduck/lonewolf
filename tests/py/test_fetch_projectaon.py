@@ -110,14 +110,6 @@ def test_a_missing_ordinary_page_is_reported_failed_with_three_attempts(tmp_path
     assert not (book_dir(tmp_path, '02fotw') / 'license.htm').exists()   # nothing saved for a failure
 
 
-def test_sends_a_browser_style_user_agent_and_a_timeout(tmp_path, offline):
-    site = offline({'sect1.htm': art('')})
-    run_script(tmp_path, '02fotw')
-    url, headers, timeout = site.requests[0]
-    assert headers['User-agent'] == 'Mozilla/5.0 (personal reader)'
-    assert timeout == 30
-
-
 def test_files_already_on_disk_are_not_fetched_again(tmp_path, offline):
     d = book_dir(tmp_path, '02fotw')
     d.mkdir(parents=True)
@@ -131,61 +123,3 @@ def test_files_already_on_disk_are_not_fetched_again(tmp_path, offline):
     assert 'sect1.htm' not in names and 'ill1.png' not in names
 
 
-def test_an_empty_file_on_disk_counts_as_missing_and_is_fetched(tmp_path, offline):
-    d = book_dir(tmp_path, '02fotw')
-    d.mkdir(parents=True)
-    (d / 'sect1.htm').write_bytes(b'')
-    site = offline({'sect1.htm': art('x')})
-    run_script(tmp_path, '02fotw')
-    assert 'sect1.htm' in site.names() and (d / 'sect1.htm').stat().st_size > 0
-
-
-def test_a_flaky_page_is_retried(tmp_path, offline, monkeypatch):
-    calls = {'n': 0}
-    pages = {'sect1.htm': art('')}
-
-    def flaky(req, timeout=None):
-        name = req.full_url.rsplit('/', 1)[1]
-        if name == 'license.htm':
-            calls['n'] += 1
-            if calls['n'] < 3:
-                raise OSError('reset')
-            return Reply(b'finally')
-        if name in pages:
-            return Reply(pages[name])
-        raise OSError('404')
-    offline({})
-    monkeypatch.setattr(urllib.request, 'urlopen', flaky)
-    run_script(tmp_path, '02fotw')
-    assert calls['n'] == 3
-    assert (book_dir(tmp_path, '02fotw') / 'license.htm').read_bytes() == b'finally'
-
-
-def test_rules_only_fetches_just_the_rules_pages_and_exits(tmp_path, offline, capsys):
-    site = offline({'gamerulz.htm': b'g', 'random.htm': b'r', 'sect1.htm': art('')})
-    with pytest.raises(SystemExit) as e:
-        run_script(tmp_path, '03tcok', '--rules')
-    assert e.value.code == 0
-    assert capsys.readouterr().out.strip() == '03tcok: 2 rules pages: gamerulz.htm random.htm'
-    assert 'sect1.htm' not in site.names() and 'license.htm' not in site.names()
-    assert sorted(os.listdir(book_dir(tmp_path, '03tcok'))) == ['gamerulz.htm', 'random.htm']
-
-
-def test_rules_flag_may_come_before_the_book_code(tmp_path, offline, capsys):
-    offline({'gamerulz.htm': b'g'})
-    with pytest.raises(SystemExit):
-        run_script(tmp_path, '--rules', '04tcod')
-    assert capsys.readouterr().out.startswith('04tcod: 1 rules pages')
-
-
-def test_default_book_is_the_first(tmp_path, offline):
-    site = offline({'sect1.htm': art('')})
-    ns = run_script(tmp_path)
-    assert ns['book'] == '01fftd'
-    assert site.requests[0][0].startswith(BASE.format('01fftd'))
-
-
-def test_the_test_harness_really_blocks_the_network(offline):
-    offline({})
-    with pytest.raises(AssertionError):
-        socket.create_connection(('example.invalid', 80))

@@ -1,6 +1,7 @@
-/* tools/plates_pin.mjs runs on import and takes its ROOT from its own location, so these tests copy it
-   (unchanged) with platepick.js into a temporary project tree that holds a stand-in plates.json and a
-   stand-in book.js, and run it there as a child process. Pins are written into that tree only. */
+/* tools/plates_pin.mjs exports comparePins, compareText, compareAll and approvePins, each taking a root;
+   these tests call them against a temporary project tree that holds a stand-in plates.json and a
+   stand-in book.js. Pins are written into that tree only. The usage test and one smoke test run the
+   command line (a copy of the tool placed in the tree). */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fs from 'fs';
 import os from 'os';
@@ -8,6 +9,7 @@ import path from 'path';
 import { spawnSync } from 'child_process';
 import { ROOT } from './helpers.js';
 import { nameKey } from '../../platepick.js';
+import { comparePins, compareText, compareAll, approvePins } from '../../tools/plates_pin.mjs';
 
 let tmp;
 const w = (rel, text) => { const f = path.join(tmp, rel); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, text); };
@@ -22,25 +24,40 @@ const PIN_FILE = 'assets/plates/approved/t1.json';
 
 beforeEach(() => {
   tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'lw-plates-pin-'));
-  fs.mkdirSync(path.join(tmp, 'tools'));
-  fs.copyFileSync(path.join(ROOT, 'tools', 'plates_pin.mjs'), path.join(tmp, 'tools', 'plates_pin.mjs'));
-  fs.copyFileSync(path.join(ROOT, 'platepick.js'), path.join(tmp, 'platepick.js'));
   w('assets/plates/plates.json', PLATES());
   w('data/projectaon/t1/book.js', BOOK);
 });
 afterEach(() => fs.rmSync(tmp, { recursive: true, force: true }));
 
+/* the old command-line runner's shape, over the exported functions: args as the command line takes them */
 const run = (...args) => {
-  const r = spawnSync(process.execPath, [path.join(tmp, 'tools', 'plates_pin.mjs'), ...args], { encoding: 'utf8' });
-  return { code: r.status, out: r.stdout.trim(), lines: r.stdout.trim().split('\n'), stderr: r.stderr };
+  const nameAt = args.indexOf('--approve-name');
+  const code = args.find((a, i) => !a.startsWith('--') && !(nameAt >= 0 && i === nameAt + 1));
+  let r;
+  if (args.includes('--all')) {
+    const all = compareAll({ root: tmp });
+    r = { code: 0, text: args.includes('--json') ? JSON.stringify(all) : Object.values(all).map((x) => `${x.book}: ${x.changed.length} changed, ${x.unpinned.length} unpinned`).join('\n') };
+  } else if (args.includes('--approve') || nameAt >= 0) {
+    r = approvePins({ root: tmp, book: code, onlyName: args.includes('--approve') ? undefined : (args[nameAt + 1] || '') });
+  } else {
+    r = { code: 0, text: compareText(code, comparePins({ root: tmp, book: code })) };
+  }
+  return { code: r.code, out: r.text.trim(), lines: r.text.trim().split('\n'), stderr: '' };
 };
 const pins = () => JSON.parse(read(PIN_FILE));
 
-describe('usage', () => {
+describe('command line', () => {
+  // a copy of the tool beside a copy of platepick.js: its ROOT is where it sits
+  const cli = (...args) => {
+    fs.mkdirSync(path.join(tmp, 'tools'), { recursive: true });
+    fs.copyFileSync(path.join(ROOT, 'tools', 'plates_pin.mjs'), path.join(tmp, 'tools', 'plates_pin.mjs'));
+    fs.copyFileSync(path.join(ROOT, 'platepick.js'), path.join(tmp, 'platepick.js'));
+    return spawnSync(process.execPath, [path.join(tmp, 'tools', 'plates_pin.mjs'), ...args], { encoding: 'utf8' });
+  };
   it('prints the usage and exits 2 with no book', () => {
-    const r = run();
-    expect(r.code).toBe(2);
-    expect(r.out).toMatch(/^usage: node tools\/plates_pin\.mjs/);
+    const r = cli();
+    expect(r.status).toBe(2);
+    expect(r.stdout.trim()).toMatch(/^usage: node tools\/plates_pin\.mjs/);
   });
 });
 
