@@ -322,7 +322,7 @@ function showPool() {
     || [...o.who, ...(o.near || []), o.shows || ''].some((w) => w.toLowerCase().includes(q))));
   $('#si-n').textContent = `${hits.length} of ${pool.length}`;
   const shown = hits.slice(0, 300);  // lazy images, but the page stays light
-  $('#si-grid').innerHTML = shown.map((o) => `<button class="it" data-src="${esc(o.src)}" title="${esc(o.src)}">
+  $('#si-grid').innerHTML = shown.map((o) => `<button class="it" data-src="${esc(o.src)}" title="${esc((o.shows ? o.shows + '\n' : '') + o.src)}">
     <img loading="lazy" src="/${esc(o.src)}" alt=""><span>${esc(o.src.split('/').slice(-2).join('/'))}</span>
     ${o.who.length ? `<span class="who">${esc(o.who.join(', '))}</span>` : ''}
     ${o.shows ? `<span class="who">${esc(o.shows)}</span>` : ''}</button>`).join('')
