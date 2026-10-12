@@ -10,7 +10,9 @@ choice, and why. Read this index before changing behaviour, art, or a tool's out
 - **An accepted ADR is binding.** Do not reverse or work around one without the owner's say-so in
   chat. If a task seems to need it, stop and ask.
 - **When the owner decides something, record it in the same piece of work.** Change
-  `docs/spec.md` too only when the intent itself changes.
+  `docs/spec.md` too only when the intent itself changes, but always search it for the ADR's
+  subject and bring any sentence it contradicts into line. The spec keeps to intent; how a thing
+  looks or is laid out goes in the ADR.
   - **A refinement or extension of an existing decision amends that ADR in place**: rewrite its
     Decision and Consequences to the current answer, add what prompted it to Context, set
     `Amended:` to the date, add a dated line to its Changes list, and update the index row. One
@@ -37,7 +39,7 @@ choice, and why. Read this index before changing behaviour, art, or a tool's out
 | [0006](0006-map-lettering-font.md) | Map lettering font: Cabin by default, or the map's own `font.txt` (Book 12: Architects Daughter) | 2026-10-07 | Accepted, amended 2026-10-10 |
 | [0007](0007-maps-in-sepia.md) | Maps shown in sepia | 2026-10-07 | Accepted |
 | [0008](0008-plates-whole-no-fade.md) | Fight pictures whole, as drawn, no faded edges | 2026-10-01 | Accepted |
-| [0009](0009-wolf-crest-behind-inventory.md) | A faint wolf's-head crest behind the inventory's slots, not Lone Wolf's figure | 2026-10-03 | Accepted |
+| [0009](0009-wolf-crest-behind-inventory.md) | A faint wolf's-head crest in the inventory, between the weapons, not Lone Wolf's figure | 2026-10-03 | Accepted, amended 2026-10-12 |
 | [0010](0010-vary-plain-human-enemies.md) | Plain human enemies get varied pictures | 2026-10-09 | Accepted |
 | [0011](0011-carry-the-character-on.md) | Carry the character on by default; Backpack left behind, except Backpack Items into the Grand Master series | 2026-10-02 | Accepted, amended 2026-10-10 |
 | [0012](0012-page-reference-reads-continue.md) | A lone page-reference choice reads "Continue" | 2026-09-30 | Accepted |
@@ -54,3 +56,5 @@ choice, and why. Read this index before changing behaviour, art, or a tool's out
 | [0025](0025-item-tables-in-items-folder.md) | The item tables live in `items/`, out of the project root | 2026-10-11 | Accepted |
 | [0026](0026-fights-draw-out-of-sight.md) | A fight draws its Random Numbers out of sight: no medallion in the fight | 2026-10-12 | Accepted |
 | [0027](0027-by-hand-stop-wins-nothing.md) | Stopping a fight by hand wins nothing, except where the item table says the text ends it so | 2026-10-12 | Accepted |
+| [0028](0028-inventory-is-a-ledger.md) | The inventory is a ledger like the Kai panel (named weapons, a Special Items list, a Backpack sized to the book), not a paper doll | 2026-10-12 | Accepted |
+| [0029](0029-twelve-special-items-in-every-book.md) | At most 12 Special Items in every book, Kai ones too | 2026-10-12 | Accepted |

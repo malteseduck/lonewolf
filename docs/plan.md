@@ -51,7 +51,7 @@ from this work.
 
 - G1. A third series in `LW.SERIES` (`grandmaster`: twelve disciplines, `first: 4`, field
   `grandmaster`, the twelve ranks), and every `series === 'magnakai'` test in `rules-series.js`,
-  `core.js` (`specialLimit`) and `main.js` (Lore-circles row, `skilled`, the ambush) made to say what
+  `main.js` (Lore-circles row, `skilled`, the ambush) made to say what
   a Grand Master book does. Not started (2026-10-11: `LW.SERIES` has `kai` and `magnakai` only).
 - G2. Setting out: a new character 25 + RN / 30 + RN, holding all Kai and Magnakai Disciplines; four
   Grand Master Disciplines; Grand Weaponmastery's two weapons (then one a book, as Weaponmastery's
@@ -61,9 +61,9 @@ from this work.
 - G3. Carrying into the series: the Backpack's items kept, Meals not (ADR 0011); Special Items cut
   to the ten listed, the others dropped (ADR 0019); Lore-circle COMBAT SKILL folded into his base
   score (the engine adds it per fight, and only in Magnakai books). Needs: G1.
-- G4. Book 13's kit in `LW.KITS[13]` (gold 20 + RN; choose 5), a Backpack of 10 (`LW.MAX_BACKPACK`,
-  8 for every book now, made per series), the 12 Special Item limit and Monastery storage in this
-  series too. Needs: G1; after G3 (judgement: the same setting-out step).
+- G4. Book 13's kit in `LW.KITS[13]` (gold 20 + RN; choose 5), and Monastery storage in this series
+  too (the Backpack of 10, `LW.backpackMax`, and the 12 Special Items, `LW.specialLimit`, are done:
+  they wait only on `series: 'grandmaster'` from G1). Needs: G1; after G3 (judgement: the same setting-out step).
 - G5. Disciplines with numbers: Grand Weaponmastery +5 (replacing Weaponmastery, not added; Bow +5,
   Mentora's +2 not added), Kai-surge (+8 at 1 a round, Mindblast +4, not at 6 or less) in `LW.psi` and
   the fight's medallions, Deliverance (20 back at 8 or less, in the fight like Archmaster Curing; once

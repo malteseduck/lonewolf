@@ -28,7 +28,8 @@ table, not here.
 | Rule | Engine |
 |---|---|
 | At most 2 Weapons; only one is used in a fight | `LW.MAX_WEAPONS`, `LW.armedWith` |
-| At most 8 Backpack Items, Meals included (each Meal is one) | `LW.MAX_BACKPACK` |
+| At most 8 Backpack Items, Meals included (each Meal is one) | `LW.backpackMax` |
+| *Owner*: at most 12 Special Items, as from Book 8 (the Kai books set no limit; ADR 0029) | `LW.specialLimit` |
 | One Backpack only (a footnote, Book 2) | yes (`noPack`) |
 | Special Items are not in the Backpack; the text says how each is carried | yes |
 | At most 50 Gold Crowns, in the Belt Pouch | yes |
@@ -225,8 +226,8 @@ three Topical Guide pages) were downloaded on 2026-10-10 into git-ignored
 
 | Rule | Engine |
 |---|---|
-| At most 2 Weapons; at most **10** Backpack Items, Meals included | no (`LW.MAX_BACKPACK` is 8 for every book) |
-| At most 12 Special Items; more may be left at the Monastery | `LW.specialLimit` reads only a Magnakai book |
+| At most 2 Weapons; at most **10** Backpack Items, Meals included | `LW.backpackMax` (for `series: 'grandmaster'`, which G1 adds) |
+| At most 12 Special Items; more may be left at the Monastery | `LW.specialLimit` (12 in every book, ADR 0029) |
 | Gold: at most 50; more may be left at the Monastery | no |
 | Bow: as in the Magnakai series (a Quiver and an Arrow a shot, useless hand to hand) | no |
 | Some sections give Grand Weaponmastery with Bow its own bonus (3 to 5); the Handbook advises using the section's number in place of the +5 | no |

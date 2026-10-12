@@ -108,11 +108,13 @@
   LW.WEAPONS = Object.keys(LW.ITEMS).filter((k) => LW.ITEMS[k].kind === 'weapon');
   LW.MAX_WEAPONS = 2;
   LW.MAX_BACKPACK = 8;
+  /* 8 Backpack Items, Meals included; 10 in the Grand Master series (the books' rules) */
+  LW.backpackMax = (hero) => (hero && hero.series === 'grandmaster' ? 10 : LW.MAX_BACKPACK);
   LW.MAX_ARROWS = 6; // a Quiver's load
   /* the book being played (main.js sets it): the Special Item limit depends on it */
   LW.bookNumber = 0;
-  /* At most 12 Special Items from Book 8 on (the books' rules); no limit before. */
-  LW.specialLimit = (hero) => (hero.series === 'magnakai' && LW.bookNumber >= 8 ? 12 : Infinity);
+  /* At most 12 Special Items. The books set it from Book 8; the owner holds every book to it (ADR 0029). */
+  LW.specialLimit = () => 12;
   /* A book's own items (name, kind, and optionally heal, ep, glyph, about) join the list. */
   LW.addItems = (items, marks) => {
     Object.assign(LW.ITEMS, items);
@@ -159,7 +161,7 @@
     const kind = id === 'meal' ? 'backpack' : LW.itemKind(id);
     if (kind === 'weapon' && hero.weapons.length >= LW.MAX_WEAPONS) return 'You can carry only two weapons. Drop one first.';
     if (kind === 'backpack' && hero.noPack) return 'You have no Backpack to carry it in.';
-    if (kind === 'backpack' && hero.backpack.length + hero.meals >= LW.MAX_BACKPACK) return 'Your backpack is full.';
+    if (kind === 'backpack' && hero.backpack.length + hero.meals >= LW.backpackMax(hero)) return 'Your backpack is full.';
     const it = LW.ITEMS[id] || {};
     // it.free: a Special Item the text keeps out of the limit; it.arrow: it rides in the Quiver in an Arrow's place
     if (kind === 'special' && !it.free && LW.counted(hero) >= LW.specialLimit(hero)) return 'You can carry at most 12 Special Items. Drop one first.';
@@ -654,7 +656,7 @@
       }
       else if (l.meal) {
         if (hero.noPack) return 'You have no Backpack to carry it in.';
-        const room = LW.MAX_BACKPACK - hero.backpack.length - hero.meals;
+        const room = LW.backpackMax(hero) - hero.backpack.length - hero.meals;
         if (room < l.meal) return room ? `Your backpack has room for only ${room}.` : 'Your backpack is full.';
         hero.meals += l.meal;
       } else { const err = LW.putItem(hero, l.item); if (err) { if (swap) LW.putItem(hero, swap[0]); return err; } }

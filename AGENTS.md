@@ -7,7 +7,10 @@ Read `docs/spec.md` and the index in `docs/adr/README.md` before changing behavi
 tool's output. The spec is the statement of intent; the ADRs are the owner's decisions, and they
 are binding: never reverse or work around one without the owner's say-so in chat. When the owner
 decides something, write an ADR in the same piece of work (rules in `docs/adr/README.md`), and
-change the spec too only if the intent itself changed. `docs/reference/` describes the code as it is.
+change the spec too only if the intent itself changed. When you write or amend an ADR, search
+`docs/spec.md` for its subject and bring any sentence it contradicts into line. The spec says what
+a thing must achieve, not how it looks or is laid out: that belongs in an ADR or the reference.
+`docs/reference/` describes the code as it is.
 
 ## What is live
 

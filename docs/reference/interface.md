@@ -119,13 +119,15 @@ on the same medallion again, or Escape closes it; touching another medallion mov
     Glyphs are game-icons.net SVGs in `assets/icons/` (`DISC_GLYPH`), used as CSS masks so they
     can take the ivory fill and ember glow.
   - The box explains the touched discipline, and says when it is not learned.
-- **pack** (`packHTML`), after the HD equipment sheet: in `.kit`, the Kai wolf's head
-  (`.crestmark`, large and faint in `--ink`; ADR 0009) behind a paper doll of slots: the helmet between two shoulder slots, the two weapons either
-  side of the chainmail (a mastered weapon is lit), two belt slots below; the first four other
-  Special Items fill the shoulder and belt slots, the rest a row of five rings (more in fives) under
-  a scrolled rule (`flourish`); empty slots are bare rings. Then a ruled "Backpack" heading, a knapsack medallion beside eight dark square tiles (one per Meal or
-  item) under the HD sheet's ironwork (`packLattice`: a curl in each tile's corners, diamond studs
-  where they meet, a double frame, a scroll off each corner); a ledger (gold -/+, other coins he has met with their own -/+ (`hero.coins`), "Add an item by hand"); and, when anything is kept at the Kai Monastery
+- **pack** (`packHTML`), a ledger like the Kai panel (ADR 0028), its parts close together
+  (`.panel:has(> .pack)`): `.arms`, the two weapons each named under its medallion (a mastered one
+  lit, "+2" by its name; an empty hand a faint sword, `.disc.vacant`, "No weapon"), the Kai wolf's
+  head (`.crestmark`, faint in `--ink`; ADR 0009) between them; a ruled "Special Items n of 12"
+  heading (`LW.counted`, `LW.specialLimit`) over `.specs`, every Special Item as a small medallion
+  and its name, three to a row, no empty slots; it takes the space left and scrolls within it past
+  what fits (twelve fit on the iPad). Then a ruled "Backpack n of N" heading over the tiles, as many
+  as `LW.backpackMax` in two rows (`--cols`), each item its glyph alone in the tile, under the HD sheet's ironwork (`packLattice`: a curl in each tile's corners, diamond studs
+  where they meet, a double frame, a scroll off each corner); a `.ledger` line (gold -/+, other coins he has met with their own -/+ (`hero.coins`), and "Add an item by hand" at its right); and, when anything is kept at the Kai Monastery
   (`hero.stored`, `hero.storedGold`), a line (`.kept`) saying what; likewise what was taken to be found again
   (`hero.stash`), his lasting conditions (`LW.marksOf`), and the notes the text asked for (`hero.notes`). A touched item's box has
   Drink / Drop / Eat; the Quiver's counts its Arrows, with -/+ (`adjust('arrows')`). With
@@ -133,13 +135,13 @@ on the same medallion again, or Escape closes it; touching another medallion mov
   anything with `heal` can be drunk (the potion) or eaten (Laumspur herb). Icons: `ITEM_GLYPH` for the
   standard items, else the item's own `glyph` from its book's item table, else a pouch or pendant
   by kind; gold and a found Backpack have their own.
-  "Add an item by hand" (`adding`) swaps the worn kit for `pickerHTML()`: rows of small medallions
+  "Add an item by hand" (`adding`) swaps the weapons and Special Items for `pickerHTML()`: rows of small medallions
   (weapons, Backpack Items, Special Items, and folded under "View Special Items from Past Books" the
   Special Items of earlier books' item tables) that add on a touch and stay open, with "+" medallions
   for something else, which ask for a name on an inked line (`naming`; Enter adds, Escape cancels).
   A typed name that is a known item's (`knownItem`: "Sommerswerd") adds that item, with its kind and
   powers; any other becomes a plain Backpack or Special Item of that name.
-  The picker takes exactly the doll's space and scrolls within it (overriding the fixed height
+  The picker takes exactly their space and scrolls within it (overriding the fixed height
   `shared/shared.css` gives `.picker`), so the Backpack below does not move; its row labels are one
   width, wrapping when long, top-aligned. The picker's own line names whatever is under the pointer.
   Item glyphs are game-icons.net SVGs (`ITEM_GLYPH`); items typed in by hand get a pouch or a

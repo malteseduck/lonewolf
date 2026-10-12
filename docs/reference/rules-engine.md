@@ -46,9 +46,9 @@ has its tests in `tests/js/` (`core-*`, `rules-series`, `fight`).
 Item ids are keys of `LW.ITEMS`, or `pack:Name` / `spec:Name` for items typed in by hand.
 `LW.itemName(id)` and `LW.itemKind(id)` handle both. A book's own items join `LW.ITEMS` through
 `LW.addItems` (from its item table). `LW.putItem(hero, id)` puts one where it belongs, or returns why
-it does not fit (two weapons, eight Backpack slots, no Backpack); `LW.dropItem(hero, id)` takes one
-away; both handle Special Items' Endurance. From Book 8 `putItem` also refuses a thirteenth Special
-Item (`LW.specialLimit`, which reads `LW.bookNumber`, set by the player in `useBook`). `LW.hasItem(hero, id)` checks any list.
+it does not fit (two weapons, a full Backpack: `LW.backpackMax(hero)`, 8, or 10 in the Grand Master series; no Backpack); `LW.dropItem(hero, id)` takes one
+away; both handle Special Items' Endurance. `putItem` also refuses a thirteenth Special
+Item (`LW.specialLimit`: 12 in every book, ADR 0029). `LW.hasItem(hero, id)` checks any list.
 
 ## core.js
 
@@ -56,7 +56,7 @@ Item (`LW.specialLimit`, which reads `LW.bookNumber`, set by the player in `useB
 |---|---|
 | Random Number | `LW.rand10()` |
 | Combat Results Table | `CRT_ROWS` -> `LW.CRT`; `LW.crtColumn(ratio)`; `LW.combatRound(ratio, roll)` returns `{enemy, hero}` losses, `Infinity` for a kill. Checked against the books' table (2026-10-02) |
-| Kai disciplines, items, limits | `LW.DISCIPLINES`, `LW.ITEMS` (with the kit items: `shield` has `fightCs: 2`, `leatherWaistcoat` `ep: 2`, each book's map), `LW.WEAPONS`, `LW.MAX_WEAPONS`, `LW.MAX_BACKPACK`, `LW.MAX_ARROWS`, `LW.bookNumber`, `LW.specialLimit(hero)` |
+| Kai disciplines, items, limits | `LW.DISCIPLINES`, `LW.ITEMS` (with the kit items: `shield` has `fightCs: 2`, `leatherWaistcoat` `ep: 2`, each book's map), `LW.WEAPONS`, `LW.MAX_WEAPONS`, `LW.MAX_BACKPACK`, `LW.backpackMax(hero)`, `LW.MAX_ARROWS`, `LW.bookNumber`, `LW.specialLimit(hero)` |
 | New Kai character | `LW.makeHero({csRoll, epRoll, disciplines, bonusItem})`. Book 1's kit: Axe, one Meal, the map, gold = Random Number; Book 1's bonus item table. For a later book the dialog empties it and gives that book's kit |
 | Default hooks | `LW.has`, `LW.heals`, `LW.hunts`, `LW.rankCount`, `LW.heroCS` (all replaced by `rules-series.js` when it is loaded) |
 | Item tables | `LW.applyItems(book, table)`: lays a book's `items-<code>.js` over its sections, once (book-format.md, "Item tables"). `LW.itemByName(name, first)`: the item a typed name is, the open book's own (`first`) tried first |

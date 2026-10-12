@@ -303,30 +303,30 @@ h4.ruled small { font-size: 0.7em; color: var(--ink-dim); margin-left: 0.3em; }
 button.disc:hover, button.disc:focus-visible, .disc.sel { outline: none; box-shadow: 0 0 0 0.07em var(--enamel-lo), 0 0 0.8em 0.15em rgba(255, 220, 140, 0.85), inset 0 0.08em 0.1em rgba(255, 245, 220, 0.35); }
 button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background: rgba(233, 224, 200, 0.45); }
 
-/* inventory */
-/* inventory, after the HD equipment sheet */
-.kit { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 0.1em; }
-/* the Kai wolf's head, faint in the page's ink, as a seal behind the paper doll (owner 2026-10-12: not his figure) */
-.kit .crestmark { position: absolute; left: 50%; top: 42%; width: 11em; height: 11em; transform: translate(-50%, -50%); opacity: 0.2; pointer-events: none; }
-.kit .crestmark .glyph { width: 100%; height: 100%; }
-.kit .crestmark .glyph i { background: var(--ink); }
-.doll { position: relative; display: grid; grid-template-columns: repeat(3, auto); justify-content: center; align-items: center; gap: 0 0.9em; }
-.doll > span { display: grid; place-items: center; }
-.doll .sh .disc { --s: 2.7em; }
-.doll .sh { align-self: end; }
-.doll .head .disc { --s: 2.9em; }
-.doll .wl .disc, .doll .wr .disc { --s: 3.5em; }
-.doll .body .disc { --s: 4.2em; }
-.doll .belt { grid-column: 2; display: flex; gap: 0.5em; }
-.doll .belt .disc { --s: 2.5em; }
-.doll .belt .disc::after, .doll .sh .disc::after { display: none; }
-/* the HD sheet's scrolled rule, a curl at each end and a lozenge in the middle */
-.flourish { flex: none; height: 1em; margin: 0.15em 0.6em; }
-.flourish svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.flourish path { fill: none; stroke: var(--ink); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
-.flourish path.gem { fill: var(--ink); }
-.specials { position: relative; flex: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35em 0.75em; }
-.specials .disc { --s: 2.4em; }
+/* inventory: a ledger like the Kai panel (ADR 0028) */
+/* the two weapons, named, with the Kai wolf's head faint between them as a seal (ADR 0009) */
+/* the inventory's parts close together, so twelve Special Items fit without scrolling */
+.panel:has(> .pack) { gap: 0.4em; justify-content: flex-start; }
+.panel:has(> .pack) > h4.ruled { margin-top: 0.35em; }
+.arms { flex: none; position: relative; display: grid; grid-template-columns: 1fr 6em 1fr; align-items: start; }
+.arm { display: flex; flex-direction: column; align-items: center; gap: 0.4em; min-width: 0; }
+.arm .disc { --s: 3.2em; }
+.arm .name { font: 700 1.05em/1.1 var(--script); color: var(--ink); text-align: center; }
+.arm .name small { font: 400 0.7em var(--title); color: var(--ink-dim); margin-left: 0.2em; }
+.arms .crestmark { justify-self: center; align-self: center; width: 5.2em; height: 5.2em; opacity: 0.25; pointer-events: none; }
+.arms .crestmark .glyph { width: 100%; height: 100%; }
+.arms .crestmark .glyph i { background: var(--ink); }
+.disc.vacant { opacity: 0.45; }
+.disc.vacant::after { display: none; }
+.disc.vacant .glyph i { background: rgba(233, 224, 200, 0.3); }
+/* the Special Items as a named list in two columns: it scrolls in its own place when long */
+.specs { flex: 1 1 0; min-height: 4em; overflow-y: auto; scrollbar-width: thin; }
+.specs ul { margin: 0; padding: 0.1em 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.25em 0.5em; }
+.specs li { display: flex; align-items: center; gap: 0.35em; min-width: 0; }
+.specs li .disc { --s: 1.95em; }
+.specs li .disc::after { display: none; }
+.specs li span { min-width: 0; font: 400 0.68em/1.12 var(--title); color: var(--ink); }
+.specs .none { margin: 0.3em 0; font-size: 1.05em; color: var(--ink-dim); font-style: italic; }
 .disc.item .glyph i { background: linear-gradient(var(--silver-hi), var(--silver) 55%, var(--silver-lo)); }
 .disc.item.lit .glyph i { background: radial-gradient(circle at 50% 45%, var(--glyph) 45%, #f3d6a0 80%, var(--ember)); }
 /* an empty slot: the ring alone, open to whatever lies under it */
@@ -335,10 +335,8 @@ button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background:
     radial-gradient(circle closest-side, transparent 0 89%, rgba(20, 12, 8, 0.6) 90% 92%, transparent 93%),
     repeating-conic-gradient(var(--pewter) 0 5deg, var(--pewter-lo) 5deg 7.5deg, var(--pewter) 7.5deg 10deg);
   opacity: 0.8; box-shadow: 0 0 0 0.07em rgba(20, 12, 8, 0.5); }
-.disc.empty::after, .bag > .disc::after, .pack .disc::after, .specials .disc::after { display: none; }
-.bag { flex: none; display: flex; align-items: center; justify-content: center; gap: 1.1em; }
-.bag > .disc { --s: 3.4em; }
-.pack { position: relative; flex: none; display: grid; grid-template-columns: repeat(4, 1fr); background: var(--enamel); box-shadow: 0 0 0 0.16em var(--enamel-lo), 0 0.15em 0.4em rgba(0, 0, 0, 0.4); }
+.disc.empty::after, .pack .disc::after { display: none; }
+.pack { position: relative; flex: none; align-self: center; width: calc(var(--cols) * 3.5em); display: grid; grid-template-columns: repeat(var(--cols), 1fr); background: var(--enamel); box-shadow: 0 0 0 0.16em var(--enamel-lo), 0 0.15em 0.4em rgba(0, 0, 0, 0.4); }
 /* the ironwork over the tiles (packLattice): pewter lines and curls, the discs above them */
 .pack .lattice { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .lattice .sq, .lattice .frame, .lattice .curl, .lattice .sweep { fill: none; stroke: var(--bronze); stroke-width: 1.3; vector-effect: non-scaling-stroke; }
@@ -351,9 +349,12 @@ button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background:
 .pack .cell > * { position: relative; z-index: 1; }
 /* each tile: dark leather with an engraved inner line, as the HD Backpack grid */
 .pack .cell { aspect-ratio: 1; display: grid; place-items: center; padding: 0.4em; background: radial-gradient(circle, #3b2b21, #22170f 75%); }
-.pack .disc { --s: 2.8em; }
+.pack .disc { --s: 2.6em; }
+/* in a tile the item is the glyph alone: the tile is its frame */
+.pack .disc.item { background: none; box-shadow: none; }
+.pack .disc.item .glyph { width: 74%; height: 74%; }
 /* adding by hand: rows of small medallions where the worn kit was */
-.page .picker { flex: 1; min-height: 0; max-height: none; margin-bottom: 0; display: flex; flex-direction: column; gap: 0.35em; } /* the doll's space exactly, scrolling within it, so the Backpack below stays put */
+.page .picker { flex: 1; min-height: 0; max-height: none; margin-bottom: 0; display: flex; flex-direction: column; gap: 0.35em; } /* the weapons' and Special Items' space exactly, scrolling within it, so the Backpack below stays put */
 .picker h4.ruled .inkbtn { font: 400 0.75em var(--script); margin-left: 0.6em; }
 .pickrow { display: grid; grid-template-columns: 5.2em minmax(0, 1fr); align-items: center; gap: 0.5em; }
 .pickrow em { font: 400 0.7em var(--title); letter-spacing: 0.08em; color: var(--ink-dim); font-style: normal; text-align: right; }
@@ -488,8 +489,8 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 .step { display: inline-flex; gap: 0.2em; margin-left: 0.4em; vertical-align: middle; }
 .step button { width: 1.5em; height: 1.5em; padding: 0; border: 1px solid var(--ink-faint); border-radius: 50%; background: rgba(51, 35, 26, 0.08); color: var(--ink); font: 400 0.8em/1 var(--title); }
 .step button:hover { background: var(--ink); color: var(--page); }
-.ledger { display: flex; align-items: center; justify-content: space-between; gap: 0.4em 1em; font-size: 1.05em; }
-.ledger .inkbtn { font-size: 0.78em; white-space: nowrap; }
+.ledger { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.3em 0.8em; margin-top: 0.3em; font-size: 1em; }
+.ledger .addhand { margin-left: auto; font: 400 0.95em var(--script); white-space: nowrap; }
 .maphint { position: absolute; inset: 0; margin: 0; display: grid; place-items: center; font-size: 1.4em; color: var(--ink-dim); }
 /* the place's name on a ribbon with scrolled ends (drawBanner), its ends kept whole by border-image */
 .place { min-width: 0; height: 2.6em; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0.95em 0.6em 0; font: 400 1em/1.2 var(--title); color: var(--ink); text-align: center;

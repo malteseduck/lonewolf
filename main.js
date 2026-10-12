@@ -539,14 +539,9 @@ function kaiHTML() {
       ${ruled('Endurance')}${row('Base', h.epMax - epParts.reduce((t, p) => t + p.n, 0))}${epParts.map((p) => row(p.label, signed(p.n))).join('')}</section></div>
     <div class="discs">${rows.map((r) => `<div class="drow">${r.map(disc).join(`<span class="linkwrap">${bar}</span>`)}</div>`).join('')}</div>`;
 }
-/* Inventory, after the HD equipment sheet: the Kai wolf's head faint behind a paper doll of slots (helmet
-   between two shoulder slots, weapons either side of the chest, two at the belt; Special Items fill
-   the shoulder and belt slots), a row of five more for further Special Items under a flourish,
-   then the Backpack as a grid of tiles beside its own medallion */
-const flourish = '<div class="flourish" aria-hidden="true"><svg viewBox="0 0 240 16" preserveAspectRatio="xMidYMid meet">'
-  + '<path d="M110 8H44C34 8 30 13 24 12.5 18 12 17.5 5.5 22.5 4.5 26.5 3.8 28 8 25 9 23 9.6 21.8 8 22.8 7M130 8h66c10 0 14 5 20 4.5 6-.5 6.5-7 1.5-8-4-.7-5.5 3.5-2.5 4.5 2 .6 3.2-1 2.2-2"/>'
-  + '<path d="M78 8c3-4.5 9-5.5 13-3.5-4 .8-7 2.2-9 3.5M162 8c-3-4.5-9-5.5-13-3.5 4 .8 7 2.2 9 3.5M58 8c2 2.6 6 3.2 9 2-3-.4-5.5-1-7-2M182 8c-2 2.6-6 3.2-9 2 3-.4 5.5-1 7-2"/>'
-  + '<path class="gem" d="M120 3l5 5-5 5-5-5z"/></svg></div>';
+/* Inventory, a ledger like the Kai panel (ADR 0028): the two weapons named either side of the faint
+   Kai crest, the Special Items as a named list (it scrolls within its place past what fits, so the
+   page never shifts), the Backpack as a grid of tiles sized to the book's limit, then the purse */
 /* The HD Backpack's ironwork, drawn over the grid: each tile a square with a scrolled curl in every
    corner, diamond studs where the squares meet, a double frame, and a sweep of scroll off each
    corner. In units of 100 a tile; stretched to the grid, the strokes keep their width. */
@@ -569,28 +564,24 @@ function packHTML() {
   const taken = Object.values(h.stash || {}).flatMap((st) => [...st.items.map((i) => (i === 'meal' ? 'a Meal' : LW.itemName(i))), ...(st.gold ? [`${st.gold} Gold Crowns`] : [])]);
   const ails = LW.marksOf(h).map((m) => LW.MARKS[m].name + (LW.MARKS[m].about ? `: ${LW.MARKS[m].about}` : ''));
   const slot = (kind, id, extra = '') => `<button type="button" class="disc item ${on(kind, id)} ${extra}" data-sel="${kind}|${esc(id)}" aria-label="${esc(LW.itemName(id))}">${itemGlyph(id)}</button>`;
-  const empty = (label) => `<span class="disc empty"${label ? ` title="${label}"` : ''}></span>`;
-  const worn = (id) => (h.special.includes(id) ? slot('special', id) : empty(esc(LW.itemName(id))));
   const skilled = (w) => h.weaponskill === w || (h.series === 'magnakai' && LW.has(h, 'weaponmastery') && (h.mastery || []).includes(w));
-  const weapon = (w) => (w ? slot('weapon', w, skilled(w) ? 'lit' : '') : empty('Weapon'));
-  const others = h.special.filter((s) => s !== 'helmet' && s !== 'chainmail').map((s) => slot('special', s));
-  const around = others.slice(0, 4), rest = others.slice(4);
-  while (around.length < 4) around.push(empty('Special Item'));
-  while (rest.length < 5 || rest.length % 5) rest.push(empty('Special Item'));
+  // an empty hand shows a faint sword, not a bare ring
+  const arm = (w) => `<div class="arm">${w ? slot('weapon', w, skilled(w) ? 'lit' : '') : `<span class="disc vacant">${itemGlyph('sword')}</span>`}
+    <span class="name">${w ? esc(LW.itemName(w)) : 'No weapon'}${w && skilled(w) ? ' <small>+2</small>' : ''}</span></div>`;
+  const specs = h.special.map((s) => `<li>${slot('special', s)}<span>${esc(LW.itemName(s))}</span></li>`).join('');
+  const room = LW.backpackMax(h), cols = Math.ceil(room / 2);
   for (let i = 0; i < h.meals; i++) cells.push(`<button type="button" class="disc item ${on('meal', 'meal')}" data-sel="meal|meal" aria-label="Meal">${itemGlyph('meal')}</button>`);
   h.backpack.forEach((b) => cells.push(slot('pack', b)));
-  while (cells.length < LW.MAX_BACKPACK) cells.push(empty());
-  const kit = adding ? pickerHTML() : `<div class="kit"><span class="crestmark">${glyph('wolf-head')}</span>
-      <div class="doll"><span class="sh l">${around[0]}</span><span class="head">${worn('helmet')}</span><span class="sh r">${around[1]}</span>
-        <span class="wl">${weapon(h.weapons[0])}</span><span class="body">${worn('chainmail')}</span><span class="wr">${weapon(h.weapons[1])}</span>
-        <span class="belt">${around[2]}${around[3]}</span></div>
-      ${flourish}<div class="specials">${rest.join('')}</div></div>`;
+  while (cells.length < room) cells.push('');
+  const kit = adding ? pickerHTML() : `<div class="arms">${arm(h.weapons[0])}<span class="crestmark">${glyph('wolf-head')}</span>${arm(h.weapons[1])}</div>
+    ${ruled(`Special Items <small>${LW.counted(h)} of ${LW.specialLimit(h)}</small>`)}
+    <div class="specs">${specs ? `<ul>${specs}</ul>` : '<p class="none">None carried.</p>'}</div>`;
   return `${kit}
-    ${ruled(h.noPack ? 'Backpack <small>lost: find another to carry anything</small>' : `Backpack <small>${h.backpack.length + h.meals} of ${LW.MAX_BACKPACK}</small>`)}
-    <div class="bag"><span class="disc lit">${glyph('knapsack')}</span><div class="pack">${cells.map((c) => `<div class="cell">${c}</div>`).join('')}${packLattice(4, Math.ceil(cells.length / 4))}</div></div>
+    ${ruled(h.noPack ? 'Backpack <small>lost: find another to carry anything</small>' : `Backpack <small>${h.backpack.length + h.meals} of ${room}</small>`)}
+    <div class="pack" style="--cols:${cols}">${cells.map((c) => `<div class="cell">${c}</div>`).join('')}${packLattice(cols, Math.ceil(cells.length / cols))}</div>
     <div class="ledger"><span class="purse">${glyph('two-coins')}<b>${h.gold}</b> Gold Crowns ${stepper('gold')}</span>${
       Object.keys(LW.COINS).filter((c) => (h.coins || {})[c] != null).map((c) => `<span class="purse">${glyph('two-coins')}<b>${h.coins[c]}</b> ${esc(LW.COINS[c])} ${stepper(c)}</span>`).join('')}
-      ${adding ? '' : '<button type="button" class="inkbtn" data-adding="open">Add an item by hand</button>'}</div>
+      ${adding ? '' : '<button type="button" class="inkbtn addhand" data-adding="open">Add an item by hand</button>'}</div>
     ${kept.length && !adding ? `<p class="kept">At the Kai Monastery, taken up or left at the start of a book: ${esc(kept.join(', '))}.</p>` : ''}${
       // what was taken from him to be given back later (hero.stash), lasting conditions, and the notes the text asks for
       taken.length && !adding ? `<p class="kept">Taken from you, perhaps to be found again: ${esc(taken.join(', '))}.</p>` : ''}${

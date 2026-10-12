@@ -71,8 +71,8 @@ apply.
 - The character dies when Endurance reaches 0.
 - **Gold Crowns**: at most 50.
 - **Weapons**: at most 2.
-- **Backpack**: at most 8 items. Meals are Backpack Items.
-- **Special Items**: no limit until Book 8, then at most 12. Some raise maximum Endurance while carried
+- **Backpack**: at most 8 items (10 in the Grand Master series). Meals are Backpack Items.
+- **Special Items**: at most 12 (from Book 8 in the books; in every book here, ADR 0029). Some raise maximum Endurance while carried
   (Helmet +2, Chainmail Waistcoat +4); dropping the item removes the bonus.
 
 ### 4.2 Disciplines
@@ -202,65 +202,50 @@ shown and the by-hand controls do it. Each object has one identity across all bo
 
 ## 6. Presentation
 
+This section says what the presentation must achieve. How each page is laid out is a decision
+(`docs/adr/`) or a fact of the code (`docs/reference/interface.md`), not intent, and is not repeated here.
+
 ### 6.1 Layout
 
-- One open book fills the window on a dark surface with warm light from the left. The whole spread
-  scales with the window. Decoration around the book (the bronze clockwork) must not cost the
-  pages space.
-- **Title page**: the adventures (section 7), then an adventure's books, each with continue,
-  start over or new character. Books not yet downloaded wait on the shelf.
-- **Left page: the story.** Aged parchment inside an ornate ink frame. Script hand, drop capital,
-  the section number in a medallion at the top-left corner. Illustrations sit in the text where
-  the book places them.
-- **Right page: a panel.** The same parchment and frame as the story page, mirrored, so the spread
-  reads as one open book: the pages meet at a fine shadowed fold, and the edges of the pages
-  beneath show at the far left and right. Round bronze tab medallions on its outer edge choose
-  between the character, the inventory and the map. During combat the fight takes the whole panel.
-- **Page turn**: the right-hand leaf lifts at the spine and falls onto the left, the new section
-  on its back, as a book read left to right.
-- Controls are round bronze medallions with a pale icon; an active or owned one glows. Actions
-  that belong to the story (start a fight, open the map) appear as a centred medallion in the text.
+- One open book is the whole interface, and it scales with the window. Decoration around it never
+  costs the pages space (ADR 0013).
+- **Title page**: the adventures (section 7), then an adventure's books, each with continue, start
+  over or new character. Books not yet downloaded wait on the shelf.
+- **Left page: the story**, with its illustrations where the book places them.
+- **Right page: a panel** that matches the story page so the spread reads as one open book. Tabs on
+  its outer edge choose between the character, the inventory and the map. During combat the fight
+  takes the whole panel.
+- Moving to a new section turns the page.
+- Actions that belong to the story (start a fight, open the map) are in the text, where they happen.
 
 ### 6.2 Character panel
 
-Laid out after the Lone Wolf HD character sheet: an ink-wash likeness of Lone Wolf across the top
-with his name in script beneath it; two ruled ledgers, "Attributes" (scores, rank, Lore-circles)
-and the make-up of Combat Skill and Endurance; then every discipline of the series as a medallion
-in a framed grid, linked by bars, the learned ones glowing. Touching a discipline opens a small
-box beside it that explains it; a touch elsewhere closes it.
+Everything about the character at a glance, as in the Lone Wolf HD character sheet: who he is, his
+scores and where each comes from, and every discipline of the series, the learned ones set apart.
+Touching a discipline explains it.
 
 ### 6.3 Inventory panel
 
-After the HD equipment sheet: weapon and Special Item slots over Lone Wolf's ink likeness, the
-Backpack as a grid of eight dark tiles, gold. Items are drawn glyphs, each book item with its own.
-Touching an item explains it and offers what can be done with it. Controls to add or remove
-anything by hand; the list to add from offers the open book's own items.
+Everything he carries, readable at a glance without touching each item: weapons, Special Items and
+Backpack, each against its limit, and his gold. It must hold the most a book allows (section 4.1)
+without the page shifting. Every item has its own icon. Touching an item explains it and offers what
+can be done with it. Anything can be added or removed by hand, and the list to add from offers the
+open book's own items.
 
 ### 6.4 Map
 
-- The map is the one printed in the book, and only that. No map is drawn or redrawn for a book: no
-  made-up places, town plans or travel on the map. Every choice is made on the story page.
-- Each printed map is upscaled to 4K on the owner's machine (personal use; never committed): the
-  place names are erased and set again in type that suits the map's own lettering (ADR 0006),
-  the land is repainted around them in the map's own style, any name the repaint garbles is set
-  again, and the result is enlarged to 4K (ADR 0005).
-- It is shown in sepia like the rest of the book, opened in a framed view the player drags and
-  zooms. A book with no upscale yet shows its printed scan the same way.
+- The map is the one printed in the book, and only that: no made-up places, town plans or travel on
+  the map (ADR 0004). Every choice is made on the story page.
+- It is shown sharp and in keeping with the rest of the book (ADRs 0005-0007), and the player can
+  pan and zoom it.
 
 ### 6.5 Combat
 
-- Fought on the book's pages, not in a separate 3D scene.
-- Every fight has a picture. The enemy is a still plate filling the panel: the book's own
-  illustration where one exists, restyled to sit on the parchment. Where the book has none, one is
-  borrowed: another book's illustration of a plain human enemy (soldiers, guards, robbers; never
-  another book's special creature or set-piece fight, unless it is the very same creature), a free
-  old engraving of what is described, or a picture the owner supplies. A borrowed picture can be
-  limited to one book. If a picture is missing, a drawn emblem stands in.
-- The picture is shown whole, as drawn, a little smaller than the panel, cut only where its crop
-  is set by hand (a frame line, a caption), and the edges are not faded. Wounds appear on the plate in red ink.
-- Controls are medallions: strike, mind attack, potion, evade. The Random Number medallion spins
-  for each round.
-- Each round is written on the story page as a line of the fight's record.
+- Fought on the book's pages, not in a separate scene (ADR 0003).
+- Every fight has a picture of the enemy: the book's own where there is one, otherwise a fitting
+  borrowed one (ADRs 0008, 0010, 0020). Wounds show on it.
+- The player strikes, uses a mind attack, drinks a potion or evades; each round is written on the
+  story page as a line of the fight's record.
 
 ### 6.6 Feel
 

@@ -262,7 +262,7 @@
       problems() {
         const t = this.totals(), out = [];
         if (t.weapon > LW.MAX_WEAPONS) out.push('Two Weapons at most: leave one behind.');
-        if (t.backpack > LW.MAX_BACKPACK) out.push('Eight Backpack Items at most, Meals included.');
+        if (t.backpack > LW.backpackMax(hero)) out.push(`${LW.backpackMax(hero)} Backpack Items at most, Meals included.`);
         if (t.special > this.limit) out.push(`${this.limit} Special Items at most: leave some at the Monastery.`);
         return out;
       },

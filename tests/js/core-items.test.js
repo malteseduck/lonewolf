@@ -67,17 +67,20 @@ describe('LW.putItem', () => {
     expect(LW.putItem(h, 'sword')).toBeNull();
     expect(LW.putItem(h, 'map')).toBeNull();
   });
-  it('refuses a thirteenth Special Item from Book 8 in the Magnakai series only', () => {
-    LW.bookNumber = 8;
+  it('refuses a thirteenth Special Item in every book, Kai ones too (owner, ADR 0029)', () => {
     const full = Array.from({ length: 12 }, (_, i) => 'spec:Thing' + i);
-    const h = bare({ series: 'magnakai', special: full.slice() });
-    expect(LW.putItem(h, 'map')).toMatch(/at most 12/);
-    expect(h.special).toHaveLength(12);
-    const kai = bare({ special: full.slice() });
-    expect(LW.putItem(kai, 'map')).toBeNull();
-    LW.bookNumber = 7;
-    const early = bare({ series: 'magnakai', special: full.slice() });
-    expect(LW.putItem(early, 'map')).toBeNull();
+    for (const [n, series] of [[1, 'kai'], [7, 'magnakai'], [8, 'magnakai']]) {
+      LW.bookNumber = n;
+      const h = bare({ series, special: full.slice() });
+      expect(LW.putItem(h, 'map')).toMatch(/at most 12/);
+      expect(h.special).toHaveLength(12);
+    }
+  });
+  it('a Backpack of 8, and of 10 in the Grand Master series', () => {
+    const fill = (series) => { const h = bare({ series }); let n = 0; while (!LW.putItem(h, 'meal')) n++; return n; };
+    expect(fill('kai')).toBe(8);
+    expect(fill('magnakai')).toBe(8);
+    expect(fill('grandmaster')).toBe(10);
   });
 });
 
