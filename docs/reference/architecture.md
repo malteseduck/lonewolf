@@ -44,7 +44,7 @@ tests/                      unit tests (ADR 0022), stand-in data only
   py/                       pytest (pytest.ini; conftest.py puts tools/ on the path); test_parse.py compiles every
                             script; the main functionality, by tool. Tools that run on import are copied into
                             tmp_path and run with runpy
-prototypes/                 earlier experiments, kept working, not developed
+prototypes/                 historical, for reference only: not run, tested or changed (ADR 0002)
   index.html                chooser page for the three
   a-book/, b-map/, c-3d/    load ../../shared
 tools/

@@ -32,7 +32,7 @@ choice, and why. Read this index before changing behaviour, art, or a tool's out
 | # | Decision | Date | Status |
 |---|---|---|---|
 | [0001](0001-record-decisions-as-adrs.md) | Record the owner's decisions as ADRs | 2026-10-10 | Accepted |
-| [0002](0002-the-tome-direction.md) | The Tome (prototype D) is the player; A-C rejected | 2026-09-30 | Accepted |
+| [0002](0002-the-tome-direction.md) | The Tome (prototype D) is the player; A-C rejected and historical (not read, run or changed) | 2026-09-30 | Accepted, amended 2026-10-12 |
 | [0003](0003-flat-pages-no-3d.md) | Flat pages, no 3D; combat on the book's pages | 2026-09-30 | Accepted |
 | [0004](0004-printed-map-only.md) | The map is the book's own printed map | 2026-10-05 | Accepted |
 | [0005](0005-map-upscale-gemini-over-set-type.md) | Maps upscaled by a Gemini repaint over names set in type; Finish sets again only what is ticked | 2026-10-06 | Accepted, amended 2026-10-10 |
@@ -58,3 +58,4 @@ choice, and why. Read this index before changing behaviour, art, or a tool's out
 | [0027](0027-by-hand-stop-wins-nothing.md) | Stopping a fight by hand wins nothing, except where the item table says the text ends it so | 2026-10-12 | Accepted |
 | [0028](0028-inventory-is-a-ledger.md) | The inventory is a ledger like the Kai panel (named weapons, a Special Items list, a Backpack sized to the book), not a paper doll | 2026-10-12 | Accepted, amended 2026-10-12 |
 | [0029](0029-twelve-special-items-in-every-book.md) | At most 12 Special Items in every book, Kai ones too | 2026-10-12 | Accepted |
+| [0030](0030-ipad-not-phones.md) | The iPad is the device to fit; phones are not supported | 2026-10-12 | Accepted |

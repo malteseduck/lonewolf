@@ -11,7 +11,7 @@ then go to http://localhost:8766/. It must be served, not opened as a file: `mai
 an adventure's "backup" writes `backups/<name>.<date>.<time>.json`, and "restore" lists them. Served any
 other way, backups are downloaded instead.
 
-To play from other devices at home (an iPad, a phone), serve it on the home network instead:
+To play from the iPad at home, serve it on the home network instead:
 
     python tools/serve.py 8766 --bind 0.0.0.0
 
@@ -27,7 +27,7 @@ in reach, see `docs/reference/offline.md` (Tailscale).
 | `shared/` | Rules and widgets, see below |
 | `tools/` | Downloader and importer for the Project Aon editions |
 | `docs/` | Spec, plan and reference |
-| `prototypes/` | Three earlier looks that were not taken further (open book, map journey, 3D). They still run |
+| `prototypes/` | Three earlier looks that were not taken further. Kept for reference only, not maintained |
 
 In `shared/`:
 

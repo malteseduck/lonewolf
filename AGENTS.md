@@ -15,9 +15,11 @@ a thing must achieve, not how it looks or is laid out: that belongs in an ADR or
 ## What is live
 
 The player is the page at the project root: `index.html`, `main.js`, `plates.js`, `maps.js`
-(it began as "prototype D", the Tome). `prototypes/` holds three earlier experiments the owner
-rejected (A and B "feel like kid games", C is 3D, which is not wanted). Leave them working but do
-not extend them. `shared/` is used by all of them, so check A-C still load after changing it.
+(it began as "prototype D", the Tome). `prototypes/` and the `shared/` files only they use
+(`art.js`, `battle.js`, `flow.js`, `book-demo.js`) are historical (ADR 0002): do not read, mention,
+run, check or change them. A change to `shared/` is checked against the player only.
+
+The devices are the iPad, mainly, and the PC; phones are not supported (ADR 0030).
 
 ## Run it
 

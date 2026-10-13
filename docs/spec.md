@@ -17,8 +17,8 @@ Project Aon web edition beside a separate action chart. It should feel like the 
 *Joe Dever's Lone Wolf HD Remastered*: a dark, aged book that is itself the interface.
 
 The owner is the only user. Nothing here is published or released. The player runs in a browser,
-served from the owner's PC; it is played on the PC, on other devices on the home network, and on
-the owner's iPad, with or without a connection (section 7).
+served from the owner's PC; it is played on the owner's iPad, mainly, with or without a connection
+(section 7), and on the PC. Phones are not supported.
 
 ## 2. Principles
 
@@ -269,7 +269,6 @@ open book's own items.
   adventure.
 - **Backup and restore**: a backup is written to the PC. Restore lists the PC's backups, or takes a
   file when the PC is out of reach.
-- The demo chapter is not offered by the player. It stays in the repository for the prototypes.
 
 ### 7.1 Offline on the iPad
 
@@ -306,7 +305,8 @@ All run by the owner on their own machine.
 - Real-time or 3D combat, or 3D anywhere.
 - Sound.
 - Rewriting or abridging the books' text.
-- Developing the rejected prototypes (`prototypes/`); they are kept working only.
+- The rejected prototypes (`prototypes/`): kept for reference only, not maintained.
+- Phones.
 
 ## 10. Open questions
 

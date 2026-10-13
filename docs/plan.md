@@ -93,9 +93,6 @@ Things to check while a book goes through its steps, which no step asks for:
 - Book 3's sledge food is left to the text.
 - Book 3's play-through (2026-10-09): what it left to the player is now applied (Sixth Sense below
   Guardian, the Effigy or the Sommerswerd at 173, 108's two ways out in mid-fight); check it in the next play.
-- Book 4's `work/` still holds the trial files from the first map experiments (`map-esrgan-*`,
-  `map-gemini-esrgan-4k.webp`, `map-repaint-2k-test1.png`, the first `compare.html`). Book 4's map is
-  done (checklist step 8), so they can be deleted when the owner says.
 - Book 2's map files are copies of Book 1's (2026-10-09), kept apart so Book 2 can gain its own city
   maps. Its `style.txt` is its own (written for a repaint never made), not the one the map was
   painted with.
@@ -142,12 +139,8 @@ The engine's rules are out of `main.js` (ADR 0024, 2026-10-11): the fight is `LW
   (2026-10-03) a few real sections of Books 6 and 12 (a Random Number bonus, a fight with a
   discipline's bonus, a foe immune to Mindblast only, evasion in the first round only); not played
   through a real Magnakai book.
-- The phone layout.
-- Prototypes A-C after the changes to `shared/core.js` and `shared/ui.js` (loaded once after the move
-  to `prototypes/`, not played).
 - The 4K map's fit, zoom and 4096 px canvas cap on the iPad.
 
 ### Other
 
 - Other Project Aon pictures (illustrations, plates) stay at their own resolution for now.
-- Delete `prototypes/` (and `shared/art.js`, `battle.js`, `flow.js`) once the owner is sure.
