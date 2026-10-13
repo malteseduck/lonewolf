@@ -184,7 +184,7 @@ describe('actions', () => {
   it('upscales a book\'s illustrations at once, and offers the re-import that shows them once they are made', async () => {
     await setup(withStages(book(1), { ills: stage('warn') }), { 'POST admin/run/*': () => [200, { id: 8, title: 'Upscale illustrations' }], 'GET admin/jobs/*': () => [200, { lines: [], from: 0, state: 'done', code: 0, started: 0, ended: 1000 }] });
     const step = $('#detail .step[data-stage="ills"]');
-    expect([...step.querySelectorAll('button')].map((b) => b.textContent)).toEqual(['Upscale illustrations', 'Open illustration sheet', 'Re-import...']);
+    expect([...step.querySelectorAll('button')].map((b) => b.textContent)).toEqual(['Upscale 2x', 'Open illustration sheet', 'Re-import...']);
     step.querySelector('button').click();
     await until(() => expect(post('POST admin/run/ills')).toHaveLength(1));
     expect(post('POST admin/run/ills')[0].search).toBe('?book=01book1');
@@ -193,7 +193,7 @@ describe('actions', () => {
 
   it('upscales a book\'s fight pictures from step 7, at once', async () => {
     await setup(book(1), { 'POST admin/run/*': () => [200, { id: 9, title: 'Upscale fight pictures' }], 'GET admin/jobs/*': () => [200, { lines: [], from: 0, state: 'done', code: 0, started: 0, ended: 1000 }] });
-    [...$('#detail .step[data-stage="pictures"]').querySelectorAll('button')].find((b) => b.textContent === 'Upscale fight pictures').click();
+    [...$('#detail .step[data-stage="pictures"]').querySelectorAll('button')].find((b) => b.textContent === 'Upscale 2x').click();
     await until(() => expect(post('POST admin/run/fights-up')).toHaveLength(1));
     expect(post('POST admin/run/fights-up')[0].search).toBe('?book=01book1');
     expect(post('POST admin/run/fights-up')[0].body).toEqual({});

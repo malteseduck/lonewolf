@@ -105,7 +105,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `reading` | `reading_copy.py <code>`, then `item_sections.py <code>` | |
 | `check-items` | `node check_items.mjs <code> --json` | |
 | `approve-pictures` | `node plates_pin.mjs <code> --approve` | gated: the owner's approval of changed fight pictures |
-| `fights-up` | `ill_upscale.py --fights <code>` (step 7's Upscale fight pictures: every picture the book's fights can show, now or approved; about 5-10 s a picture) | |
+| `fights-up` | `ill_upscale.py --fights <code>` (step 7's Upscale 2x: every picture the book's fights can show, now or approved; about 5-10 s a picture) | |
 | `ills` | `ill_upscale.py <code>` (Real-ESRGAN on this PC; about 3 s a picture) | |
 | `offline` | `offline_check.py` | |
 | `check` | `check_all.py` (re-imports every book, ADR 0022) | |

@@ -59,7 +59,7 @@ Each step's buttons and prompt are in the dashboard, `http://localhost:8766/tool
    `art/plates/`). The mark is the owner's, and takes only once every enemy has a picture.
 8. `docs/reference/map-upscale.md`. Never overwrite `map.png`: it is the original.
     Read from the files: done once `map-4k.webp` exists and `book.js` names it (a re-import).
-9. `tools/ill_upscale.py <code>` (the dashboard's Upscale illustrations), then a re-import. Never
+9. `tools/ill_upscale.py <code>` (the dashboard's Upscale 2x at step 9), then a re-import. Never
    overwrite an original: each `<name>-2x.webp` sits beside its `.png` (ADR 0033). Read from the files:
    done once every illustration has its WebP and `book.js` names them.
 

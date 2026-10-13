@@ -1042,12 +1042,15 @@ async function startBattle() {
     // the picture keeps above the controls, wherever the layout puts them
     const tops = [...B.node.querySelectorAll('[data-cmd]')].map((n) => n.getBoundingClientRect().top).filter((y) => y > r.top);
     B.floor = tops.length && r.height ? Math.min(0.83, (Math.min(...tops) - r.top) / r.height) : 0.83;
+    // and below the enemy's name and stats (their line, not the fade beneath it)
+    const bars = [...B.node.querySelectorAll('.foebar > *')].map((n) => n.getBoundingClientRect().bottom);
+    B.ceil = bars.length && r.height ? Math.max(0, Math.min(0.3, (Math.max(...bars) - r.top) / r.height)) : 0.03;
   };
   B.fit();
   (function loop() {
     if (!B || B.node !== node) return;
     B.fx.hit *= 0.86; B.fx.wounds.forEach((w) => { w.k += 0.14; });
-    drawCreature(cv, B.foe.sprite, B.scene, 0.4, B.fx, B.img, B.floor); // a still plate: only wounds and the lunge move
+    drawCreature(cv, B.foe.sprite, B.scene, 0.4, B.fx, B.img, B.floor, B.ceil); // a still plate: only wounds and the lunge move
     requestAnimationFrame(loop);
   })();
 }

@@ -24,7 +24,7 @@ by a step in the dashboard.
   downloads nothing.
 - The dashboard's illustration sheet shows every illustration of a book, and any one's original
   beside its upscale, to compare them (2026-10-13).
-- A book's fight pictures are upscaled the same way, all at once, by "Upscale fight pictures" at
+- A book's fight pictures are upscaled the same way, all at once, by "Upscale 2x" at
   checklist step 7 (not one by one on the picture sheet): every picture its fights can show, now or
   as approved, each copy beside its source. The book's list of them, `assets/plates/upscaled/<code>.json`,
   makes the player and the sheet show the copy; `plates.json` and the approved pictures keep naming the
