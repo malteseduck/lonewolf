@@ -79,9 +79,9 @@ def env(tmp_path, monkeypatch):
 
 
 def test_steps_and_hand_marks():
-    assert sorted(bs.STEPS) == list(range(1, 9))
+    assert sorted(bs.STEPS) == list(range(1, 10))
     assert bs.HAND == {3, 4, 6, 7}
-    assert [s[0] for s in bs.STEPS.values()] == ['fetch', 'import', 'phrasings', 'rules', 'items', 'pictures', 'testplay', 'map']
+    assert [s[0] for s in bs.STEPS.values()] == ['fetch', 'import', 'phrasings', 'rules', 'items', 'pictures', 'testplay', 'map', 'ills']
 
 
 # ---- import_stats ----
@@ -238,6 +238,31 @@ def test_map_stage_in_the_book_status(env):
     assert m['state'] == 'done' and m['ev'] == 'map-4k.webp made and shown in the player'
 
 
+def test_ills_stage_upscaled_beside_the_originals_then_shown(env):
+    env.downloaded()
+    d = f'data/projectaon/{CODE}'
+    assert env.status()['stages']['ills'] == {'state': 'na', 'ev': 'No illustrations', 'src': 'disk'}
+    for f in ('ill1.png', 'ill2.png', 'small1.png'):
+        env.touch(f'{d}/{f}')
+    s = env.status()['stages']['ills']
+    assert s['state'] == 'todo' and s['num'] == 3 and s['ev'] == '3 of 3 illustrations not upscaled yet'
+    env.touch(f'{d}/ill1-2x.webp')
+    s = env.status()['stages']['ills']
+    assert s['state'] == 'todo' and s['num'] == 2
+    env.touch(f'{d}/ill2-2x.webp')
+    env.touch(f'{d}/small1-2x.webp')
+    sec = lambda f: {'text': [], 'choices': [{'to': '2'}], 'img': {'file': f, 'full': f.startswith('ill'), 'at': 0}}
+    # made, but book.js still names the originals: the import is out of date, the step waits for it
+    env.book(sections={'1': sec('ill1.png'), '2': {**sec('small1.png'), 'choices': [], 'end': 'victory'}})
+    b = env.status()
+    assert b['stages']['ills'] == {'state': 'warn', 'ev': '3 illustrations upscaled; re-import to show them', 'src': 'disk'}
+    assert 'upscaled illustrations not named yet' in b['stale']
+    env.book(sections={'1': sec('ill1-2x.webp'), '2': {**sec('small1-2x.webp'), 'choices': [], 'end': 'victory'}}, t=200)
+    b = env.status()
+    assert b['stages']['ills'] == {'state': 'done', 'ev': '3 illustrations upscaled and shown in the player', 'src': 'disk'}
+    assert b['stale'] == []
+
+
 # ---- pin_report ----
 
 
@@ -253,7 +278,7 @@ def test_checklist_table_layout():
     table = bs.checklist_table(fake_books((1, True, ['done']), (2, True, ['todo', 'warn'])))
     lines = table.split('\n')
     assert lines[0] == '| Step | 1 | 2 |' and lines[1] == '|---|---|---|'
-    assert len(lines) == 2 + 4 + 8
+    assert len(lines) == 2 + 4 + 9
     assert lines[2] == '| **Getting the book** | | |'
     assert lines[3] == f'| 1. Downloaded | ✅ | ⬜ |'
     assert lines[4].startswith('| 2. Imported; report clean') and lines[4].endswith('| ✅ | ⚠️ |')

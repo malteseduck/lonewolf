@@ -138,7 +138,3 @@ The engine's rules are out of `main.js` (ADR 0024, 2026-10-11): the fight is `LW
   discipline's bonus, a foe immune to Mindblast only, evasion in the first round only); not played
   through a real Magnakai book.
 - The 4K map's fit, zoom and 4096 px canvas cap on the iPad.
-
-### Other
-
-- Other Project Aon pictures (illustrations, plates) stay at their own resolution for now.

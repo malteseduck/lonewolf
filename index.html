@@ -79,9 +79,9 @@ body { background: var(--void) var(--wood, none) center / 820px; color: var(--bo
 .text p { margin: 0 0 0.35em; text-indent: 1.2em; }
 .text p.first { text-indent: 0; }
 .text p.first::first-letter { float: left; font: 400 3.1em/0.86 var(--title); padding: 0.04em 0.1em 0 0; color: var(--ink); }
-.vignette.full { width: 56%; opacity: 0.9; -webkit-mask-image: radial-gradient(ellipse 74% 72% at 50% 50%, #000 76%, transparent 100%); mask-image: radial-gradient(ellipse 74% 72% at 50% 50%, #000 76%, transparent 100%); }
+.vignette.full { width: auto; height: 21em; max-width: 100%; opacity: 0.9; -webkit-mask-image: radial-gradient(ellipse 74% 72% at 50% 50%, #000 76%, transparent 100%); mask-image: radial-gradient(ellipse 74% 72% at 50% 50%, #000 76%, transparent 100%); }
 .vignette { display: block; width: 72%; margin: 0.1em auto; mix-blend-mode: multiply; }
-.vignette.full.wide { width: 100%; }
+.vignette.full.wide { width: 100%; height: auto; }
 /* the books' small pictures, cut to the drawing (trimSmall): one height, never wider than the column */
 .vignette.small { width: auto; max-width: 100%; height: 7.5em; object-fit: contain; }
 .vignette.small[data-trim] { visibility: hidden; }

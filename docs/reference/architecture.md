@@ -54,7 +54,8 @@ tools/
   admin/                    the import dashboard, /tools/admin/ (docs/reference/dashboard.md): index.html,
                             admin.js, admin.css, prompts.js (the agent steps' prompts), fights.html (one
                             book's fight pictures on a sheet, where the owner drops, crops and removes
-                            pictures), parchment.js (the tool pages' parchment and charred-rim filter, from
+                            pictures), ills.html (one book's illustrations, each original beside its
+                            2x upscale), parchment.js (the tool pages' parchment and charred-rim filter, from
                             shared/ink.js; the map editor loads it too: ADR 0021)
   map-editor.html           the map steps' page (docs/reference/map-upscale.md); also shown inside the dashboard
   plates_file.py            reads and writes assets/plates/plates.json in its layout; the owner's pictures from the
@@ -80,9 +81,10 @@ tools/
   fetch_icons.py            fetches game-icons.net glyphs into assets/icons/, background removed
                             (the four above: docs/reference/items.md)
   map_upscale.py            Real-ESRGAN upscale of a printed map to a set width, saved as WebP or PNG
+  ill_upscale.py            Real-ESRGAN upscale of a book's illustrations to 2x, each saved as <name>-2x.webp beside it
   map_check.py              aligns a repainted map to the faithful one, flags colour and shape changes
                             (both: docs/reference/map-upscale.md; Python in tools/.venv)
-  realesrgan/               git-ignored. Real-ESRGAN's Windows build, used by map_upscale.py
+  realesrgan/               git-ignored. Real-ESRGAN's Windows build, used by map_upscale.py and ill_upscale.py
 maps/<code>/                the owner's work on each book's printed map, committed: labels.json (the label
                             list), style.txt (the repaint's look), labels-checked.txt (step 3 done);
                             labels.json.bak is git-ignored (docs/reference/map-upscale.md)

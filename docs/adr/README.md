@@ -59,5 +59,6 @@ choice, and why. Read this index before changing behaviour, art, or a tool's out
 | [0028](0028-inventory-is-a-ledger.md) | The inventory is a ledger like the Kai panel (named weapons, a Special Items list, a Backpack sized to the book), not a paper doll | 2026-10-12 | Accepted, amended 2026-10-12 |
 | [0029](0029-twelve-special-items-in-every-book.md) | At most 12 Special Items in every book, Kai ones too | 2026-10-12 | Accepted |
 | [0030](0030-ipad-not-phones.md) | The iPad is the device to fit; phones are not supported | 2026-10-12 | Accepted |
-| [0031](0031-wide-plates-span-the-column.md) | A double-width (landscape) plate spans the story column; the others keep their size | 2026-10-12 | Accepted |
+| [0031](0031-wide-plates-span-the-column.md) | Full-page plates shown large: a double-width one spans the column, a portrait one nearly fills the page's height | 2026-10-12 | Accepted, amended 2026-10-12 |
 | [0032](0032-by-hand-turn-behind-a-link.md) | The by-hand turn box is folded behind a faint link | 2026-10-12 | Accepted |
+| [0033](0033-illustrations-upscaled-2x-webp.md) | Illustrations upscaled 2x by Real-ESRGAN, as WebP beside the originals (checklist step 9) | 2026-10-13 | Accepted |

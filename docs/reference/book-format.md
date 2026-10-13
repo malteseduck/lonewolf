@@ -40,7 +40,7 @@ shows the book's printed map. Only the prototypes travel on a map.
 | `meal` | true | a Meal must be eaten on arrival |
 | `noHunt` | true | item table: Hunting does not excuse that Meal (Book 2's Wildlands) |
 | `bowShot` | true | from an item table's `bowShot: {to: [lo, hi]}`: the Random Number is a bow shot. It needs a Bow and an Arrow, spends the Arrow, and has `LW.bowShot`'s bonus added; the ranges (set on the choices, `rnt` made `auto`) are for the total. A choice with no range stays open without shooting |
-| `img` | `{file, full, at}` | imported: illustration file, whether it is a full-page plate, and the paragraph index it sits before |
+| `img` | `{file, full, at}` | imported: illustration file (its `-2x.webp` once `ill_upscale.py` has made it, ADR 0033), whether it is a full-page plate, and the paragraph index it sits before |
 | `loc` | string | authored: key into `locations` |
 | `scene` | string | authored: which procedural ink scene to draw (`ruins`, `forest`, `hill`, `river`, `road`, `night`, `bridge`, `city`) |
 | `loot` | `[{item}\|{gold}\|{meal}\|{pack}\|{arrows}\|{coin, n}]` | authored, or from an item table: things that can be taken here, one button each. `or`: a group of which only `pick` (default 1) may be taken. `cost`: a shop's price in Gold Crowns (in another coin with `coin`; `orAll`: or all he has if less); bought as often as he likes. `for`: his only in exchange for one of these ids, or `'weapon'` (any weapon of his); with several he chooses |

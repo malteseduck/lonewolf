@@ -312,9 +312,10 @@ def stage(monkeypatch, name, cmds=(('run',),), timeout=30, **spec):
 
 def test_admin_stage_table_has_every_stage_with_the_right_gates():
     assert set(serve.ADMIN_STAGES) == {'fetch', 'fetch-rules', 'import', 'reading', 'check-items', 'approve-pictures',
-                                       'offline', 'check', 'release'}
+                                       'ills', 'offline', 'check', 'release'}
     gated = {k for k, v in serve.ADMIN_STAGES.items() if v.get('gated')}
-    assert gated == {'fetch', 'fetch-rules', 'import', 'approve-pictures', 'release'}
+    assert gated == {'fetch', 'fetch-rules', 'import', 'approve-pictures', 'release'}  # upscaling fetches nothing
+    assert serve.ADMIN_STAGES['ills']['cmds']('02fotw') == [serve.PY + ['tools/ill_upscale.py', '02fotw']]
     for spec in serve.ADMIN_STAGES.values():
         assert spec['timeout'] > 0 and spec['title']
         assert all(isinstance(a, str) for argv in spec['cmds']('01fftd') for a in argv)

@@ -61,14 +61,14 @@ ember on hover and focus; disabled it is greyed.
 - Section number in a medallion (`.badge`).
 - Paragraphs in `.text`, the first with a drop capital. The illustration is placed before the
   paragraph index in `sec.img.at` (imported) or after the first paragraph (demo vignette).
-  Full-page illustrations (`ill*`) are `.vignette.full`, 56% of the column wide; a landscape one
+  Full-page illustrations (`ill*`) are `.vignette.full`, 21em high (portrait); a landscape one
   (Project Aon's double-width plates, 772 px) gets `.wide` from `widenPlates()` once loaded and
   spans the column (ADR 0031). The books' small
   pictures (`small*`) come as 386x150 strips with the drawing often filling half of it or less, so
   `trimSmall()` (after each `renderLeft`) cuts each to its drawing plus a 3% margin (cached as a data
   URL) and `.vignette.small` shows it 7.5em high, never wider than the column. Hidden until cut.
-  Checked on every illustrated section of Book 1 (2026-10-01): small ones 195px high, full ones
-  about 243x425, in a 1274x914 window.
+  Checked on every illustrated section of Book 1 (2026-10-01): small ones 195px high, in a 1274x914
+  window. A portrait plate is 308x548 in a 1463x914 window (2026-10-12).
 - `.scroll` holds the text and scrolls if the section is long. What follows is pinned below it.
 - `#dialslot`: for `rnt` sections the Random Number medallion is mounted here by `mountRnt()`.
   In a bow shot (`bowShot`) the line under it says what the shot costs, or why he cannot shoot

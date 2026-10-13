@@ -33,6 +33,13 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   picture; Adjust crops any card's picture, flips it left to right and sets levels, with the fight panel previewed as it will look;
   Remove takes the owner's entry away. Each save redraws the cards and the "with none" count, and the
   dashboard's grid follows. The rules for the entry: `docs/reference/items.md`, "Fight pictures".
+- **The illustration sheet** ("Open illustration sheet" at step 9), inline under the grid like the
+  others and only there (`tools/admin/ills.html`): every `ill*` and `small*` picture of the book on
+  a card, with the sections it is in, marked "not upscaled" until its `-2x.webp` is made, and the
+  sizes before and after in its top line. Clicking a card shows the original and the upscale side
+  by side at one size; "1:1" draws both at the upscale's own pixels (the original stretched by the
+  browser, as the player would) and the two scroll together; the arrow keys go to the next picture.
+  It only looks: nothing on it changes a file.
 - **Whole-project tools**: the offline check, check everything (`check_all.py`), the release.
 - **The job log** at the foot: a job's output line by line while it runs. A job started in another
   tab, or before a reload, is followed too.
@@ -52,6 +59,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
 | 6 Fight pictures | both | every enemy in `book.js` has a plate of its own or a `plates.json` match (the importer's "0 with none", worked out afresh, so a new `plates.json` entry counts at once), and the owner's hand mark once they have looked at the sheet. All pictured but not marked is a warning. Marking it done pins every fight's picture (`assets/plates/approved/<code>.json`, `plates_pin.mjs --approve`); unmarking lets them go. A fight that would now show another picture (a `plates.json` change, a re-import) is a warning naming its sections, with **Approve picture changes...** (gated); until then the player keeps the approved picture. The owner's own change on the sheet re-pins that enemy at once. The sheet says once, in its top line, whether the book is approved ("all approved <date>", "N wait for your approval", "not approved yet"); only a card waiting for approval is marked (a badge, showing the new picture), with "Show only these" to hide the rest |
 | 7 Test play | hand | marked |
 | 8 Map | files | `map-4k.webp` made and named by `book.js` |
+| 9 Illustrations | files | every `ill*.png` and `small*.png` has its `-2x.webp` beside it (`ill_upscale.py`), and `book.js` names them (a warning, and the import out of date, until a re-import does) |
 
 `docs/book-status.json` (committed) holds only the hand marks: `{"books": {"<code>": {"<step>":
 "<date>"}}}`. The checklist's table is generated from all of this (`book_status.py checklist`, run
@@ -60,7 +68,7 @@ by every mark), so there is one source; edit the files or the marks, never the t
 ### Marking a step
 
 ```sh
-python tools/book_status.py done <book> <step>     # book: code or number; step: 1-8
+python tools/book_status.py done <book> <step>     # book: code or number; step: 1-9
 python tools/book_status.py undo <book> <step>     # a hand mark only
 python tools/book_status.py show <book>            # every step with its evidence
 python tools/book_status.py                        # one line per book
@@ -82,6 +90,7 @@ agent run `show` instead).
 | `GET jobs` | the last ten jobs (in memory; gone when the server restarts) |
 | `GET jobs/<id>?from=<n>` | a job's state, exit code and lines from n; the page polls it every 0.8 s |
 | `POST mark/<book>/<step>` (`?undo=1`) | `book_status.mark()` |
+| `GET ills?book=<code>` | the illustration sheet's list, `ill_upscale.listing()`: `[{name, bytes, big, bigBytes, sections}]`, file names, sizes and section ids only |
 | `POST plate` | the picture sheet: `{book, enemy, image?, crop?, levels?, flip?, remove?}` (`image` base64 WebP, up to 25 MB): the owner's picture for one enemy, saved as `art/plates/<book>/<slug of the name>.webp` (never a path from the request) and entered in `plates.json` by `tools/plates_file.py`, which keeps the file's one-entry-per-line layout |
 
 The stages are a fixed table, `ADMIN_STAGES`: the command is built from it and a code from
@@ -96,6 +105,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `reading` | `reading_copy.py <code>`, then `item_sections.py <code>` | |
 | `check-items` | `node check_items.mjs <code> --json` | |
 | `approve-pictures` | `node plates_pin.mjs <code> --approve` | gated: the owner's approval of changed fight pictures |
+| `ills` | `ill_upscale.py <code>` (Real-ESRGAN on this PC; about 3 s a picture) | |
 | `offline` | `offline_check.py` | |
 | `check` | `check_all.py` (re-imports every book, ADR 0022) | |
 | `release` | `release.py` (the last commit to the iPad, docs/reference/offline.md) | yes |

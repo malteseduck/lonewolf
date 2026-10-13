@@ -443,6 +443,13 @@ if os.path.exists(tssf):
     front = page[page.find('<div class="frontmatter">'):page.find('</article')]
     intro = [plain(p) for p in re.findall(r'<p[^>]*>(.*?)</p>', front, re.S) if 'href=' not in p and plain(p)]
 
+# an illustration's 2x WebP beside it once tools/ill_upscale.py has made it (ADR 0033); a fight's plate
+# (its 'art', set above) keeps the original, so the approved fight pictures do not move
+for sec in sections.values():
+    big = sec.get('img', {}).get('file', '')[:-4] + '-2x.webp'
+    if 'img' in sec and os.path.exists(os.path.join(src, big)):
+        sec['img']['file'] = big
+
 # the upscaled map once it is done (docs/reference/map-upscale.md), else the scan as served
 map_file = 'map-4k.webp' if os.path.exists(os.path.join(src, 'map-4k.webp')) else 'map.png'
 out = {'id': book, 'number': number, 'series': series, 'title': title, 'subtitle': 'Project Aon edition, imported for personal use',

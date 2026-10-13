@@ -8,7 +8,7 @@ can show, which are kept in docs/book-status.json (committed).
     python tools/book_status.py undo <book> <step>   take a hand mark back
     python tools/book_status.py checklist            rewrite the table in docs/book-checklist.md
 
-<book> is a code (03tcok) or a number (3). <step> is the checklist's number, 1-8.
+<book> is a code (03tcok) or a number (3). <step> is the checklist's number, 1-9.
 
 Steps 3 and 7 are judgements, so `done` records them (with today's date) in book-status.json;
 step 4 is too, once its "Book N" heading is in docs/reference/rules-books.md, and step 6 (the owner's
@@ -56,6 +56,7 @@ STEPS = {
     6: ('pictures', 'Every enemy has a fight picture (importer: "0 with none"), shown to the owner on one sheet, changes made'),
     7: ('testplay', 'Played through with test characters; misreadings and item gaps fixed'),
     8: ('map', 'Printed map repainted, labels checked, `map-4k.webp` made and shown in the player'),
+    9: ('ills', 'Illustrations upscaled 2x (`<name>-2x.webp` beside each) and shown in the player'),
 }
 HAND = {3, 4, 6, 7}  # judgements: recorded in book-status.json (4 and 6 also need their files)
 GROUPS = [('Getting the book', 1), ('Items and fights', 5), ('Play', 7), ('Pictures', 8)]
@@ -145,6 +146,7 @@ def import_stats(code, js_path, plates_path):
         'broken': sum(1 for s in secs.values() for c in s['choices'] if c['to'] not in secs),
         'noway': sum(1 for s in secs.values() if not s['choices'] and 'end' not in s and 'puzzle' not in s),
         'kinds': len(foes), 'bare': len(bare), 'map': book.get('map'),
+        'ills': sorted({s['img']['file'] for s in secs.values() if s.get('img')}),
     }
     _cache.clear()
     _cache[key] = out
@@ -221,6 +223,12 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
         except (ValueError, KeyError) as e:
             b['impError'] = str(e)
     b['imp'] = imp
+    # the illustrations on disk, those with their 2x WebP beside them (tools/ill_upscale.py), and those
+    # book.js still names by the original although the WebP is made
+    ills = sorted(f for f in os.listdir(d) if re.fullmatch(r'(?:ill|small)\d+\.png', f)) if b['folder'] else []
+    big = lambda f: os.path.isfile(os.path.join(d, f[:-4] + '-2x.webp'))
+    left = [f for f in ills if not big(f)]
+    unnamed = [f for f in (imp or {}).get('ills', []) if f.endswith('.png') and big(f)]
     # why the import is out of date, if it is
     stale = []
     if imp:
@@ -230,6 +238,8 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
             stale.append('a source page is newer')
         if t['map4k'] and imp.get('map') != 'map-4k.webp':
             stale.append('map-4k.webp is not named yet')
+        if unnamed:
+            stale.append('upscaled illustrations not named yet')
     b['stale'] = stale
     b['rulesHeading'] = bool(re.search(rf'^### Book {n},', rules_md, re.M))
     reg = re.search(r'const ITEM_TABLES = \{([\s\S]*?)\};', main_js)
@@ -335,6 +345,17 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
                      'ev': 'map-4k.webp made and shown in the player' if shown else 'map-4k.webp made; re-import to show it'}
     else:
         st['map'] = {'state': 'todo', 'ev': f'Map: {ms}', 'src': 'disk', 'num': ms}
+    # 9 illustrations
+    if not b['folder']:
+        st['ills'] = {'state': 'todo', 'ev': 'After download', 'src': 'disk'}
+    elif not ills:
+        st['ills'] = {'state': 'na', 'ev': 'No illustrations', 'src': 'disk'}
+    elif left:
+        st['ills'] = {'state': 'todo', 'ev': f'{len(left)} of {len(ills)} illustrations not upscaled yet', 'src': 'disk', 'num': len(left)}
+    elif unnamed or not imp:
+        st['ills'] = {'state': 'warn', 'ev': f'{len(ills)} illustrations upscaled; re-import to show them', 'src': 'disk'}
+    else:
+        st['ills'] = {'state': 'done', 'ev': f'{len(ills)} illustrations upscaled and shown in the player', 'src': 'disk'}
     if series == 'grand master':  # no rules in the engine: only the download means anything yet
         for k, v in st.items():
             if k != 'fetch' and v['state'] in ('todo', 'warn'):

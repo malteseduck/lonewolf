@@ -482,3 +482,15 @@ def test_a_contest_in_target_points_is_a_combat_on_points(tmp_path):
     c = s['1']['combat']
     assert c['enemies'][0]['name'] == 'Archer' and c['enemies'][0]['cs'] == 28 and c['enemies'][0]['ep'] == 50
     assert c['points'] == {'n': 50}
+
+
+def test_an_upscaled_illustration_beside_the_original_is_named_but_fights_keep_the_original(tmp_path):
+    s = secs(tmp_path, {
+        1: '<p>A.</p><img src="ill1.png"/><p>B.</p>' + foe('Giak', 10, 10) + choice('Turn to', 2),
+        2: '<img src="small1.png"/><p>C.</p>' + choice('Turn to', 3),
+        3: '<img src="ill2.png"/><p>D.</p>' + choice('Turn to', 999)},
+        extra={'ill1-2x.webp': 'x', 'small1-2x.webp': 'x'})
+    assert s['1']['img'] == {'file': 'ill1-2x.webp', 'full': True, 'at': 1}
+    assert s['2']['img']['file'] == 'small1-2x.webp' and s['2']['img']['full'] is False
+    assert s['3']['img']['file'] == 'ill2.png'  # no upscale beside it
+    assert s['1']['combat']['enemies'][0]['art'] == 'ill1.png'  # the fight's plate is inked from the original

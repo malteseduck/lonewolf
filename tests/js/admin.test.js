@@ -13,7 +13,7 @@ const BODY = (() => {
   return html.slice(html.indexOf('<body>') + 6, html.indexOf('</body>')).replace(/<script[\s\S]*?<\/script>/g, '');
 })();
 
-const STAGE_IDS = ['fetch', 'import', 'phrasings', 'rules', 'reading', 'items', 'pictures', 'testplay', 'map'];
+const STAGE_IDS = ['fetch', 'import', 'phrasings', 'rules', 'reading', 'items', 'pictures', 'testplay', 'map', 'ills'];
 const stage = (state = 'done', ev = 'evidence', o = {}) => ({ state, ev, src: 'disk', ...o });
 const book = (n, o = {}) => ({
   n, title: `Stand-in ${n}`, code: `${String(n).padStart(2, '0')}book${n}`, series: 'kai', known: true, folder: true,
@@ -93,8 +93,8 @@ describe('the grid', () => {
 
   it('has a header with the stage groups and one column per stage', async () => {
     await boot({ books: books(), running: null });
-    expect($$('#grid thead tr.groups th').map((t) => t.textContent).filter(Boolean)).toEqual(['Getting the book', 'Items and fights', 'Play', 'Map']);
-    expect($$('#grid thead tr:nth-child(2) th').map((t) => t.textContent)).toEqual(['Book', 'Download', 'Import', 'Phrasings', 'Rules', 'Reading copy', 'Item table', 'Fight pictures', 'Test play', 'Map', 'Next']);
+    expect($$('#grid thead tr.groups th').map((t) => t.textContent).filter(Boolean)).toEqual(['Getting the book', 'Items and fights', 'Play', 'Pictures']);
+    expect($$('#grid thead tr:nth-child(2) th').map((t) => t.textContent)).toEqual(['Book', 'Download', 'Import', 'Phrasings', 'Rules', 'Reading copy', 'Item table', 'Fight pictures', 'Test play', 'Map', 'Illustrations', 'Next']);
   });
 
   it('has a row per book and folds the Grand Master books not downloaded', async () => {
@@ -126,7 +126,7 @@ describe('one book', () => {
     await pickBook('01book1');
     expect($('tr[data-code="01book1"]').classList.contains('sel')).toBe(true);
     expect($('#detail h2').textContent).toBe('1. Stand-in 1');
-    expect($$('#detail .step:not(.sub)')).toHaveLength(9);
+    expect($$('#detail .step:not(.sub)')).toHaveLength(10);
     expect($('#detail .meta').textContent).toContain('350 sections, 40 fights, 25 kinds of enemy');
     expect($('#detail .nextup').textContent).toBe('Every step done.');
   });
@@ -179,6 +179,25 @@ describe('actions', () => {
     await until(() => expect(post('POST admin/run/reading')).toHaveLength(1));
     expect(post('POST admin/run/reading')[0].search).toBe('?book=01book1');
     expect(post('POST admin/run/reading')[0].body).toEqual({});
+  });
+
+  it('upscales a book\'s illustrations at once, and offers the re-import that shows them once they are made', async () => {
+    await setup(withStages(book(1), { ills: stage('warn') }), { 'POST admin/run/*': () => [200, { id: 8, title: 'Upscale illustrations' }], 'GET admin/jobs/*': () => [200, { lines: [], from: 0, state: 'done', code: 0, started: 0, ended: 1000 }] });
+    const step = $('#detail .step[data-stage="ills"]');
+    expect([...step.querySelectorAll('button')].map((b) => b.textContent)).toEqual(['Upscale illustrations', 'Open illustration sheet', 'Re-import...']);
+    step.querySelector('button').click();
+    await until(() => expect(post('POST admin/run/ills')).toHaveLength(1));
+    expect(post('POST admin/run/ills')[0].search).toBe('?book=01book1');
+    expect(post('POST admin/run/ills')[0].body).toEqual({});
+  });
+
+  it('opens the illustration sheet for the book inline under the grid', async () => {
+    await setup(book(1));
+    const step = $('#detail .step[data-stage="ills"]');
+    [...step.querySelectorAll('button')].find((b) => b.textContent === 'Open illustration sheet').click();
+    expect($('#mapwrap').hidden).toBe(false);
+    expect($('#mapframe').dataset.src).toBe('/tools/admin/ills.html?book=01book1&embed=1');
+    expect($('#map-title').textContent).toBe('Illustrations: 1. Stand-in 1');
   });
 
   describe('a gated job', () => {

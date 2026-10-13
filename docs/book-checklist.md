@@ -5,7 +5,7 @@ files named under each step; what is left inside a step (counts, sections) is sh
 dashboard (`tools/admin/`). Work outside the steps is in `docs/plan.md`.
 
 **The table is generated: do not edit it.** `tools/book_status.py` works each step out from the
-files on disk (steps 1, 2, 5, 8, and the file halves of 4 and 6) or from `docs/book-status.json`
+files on disk (steps 1, 2, 5, 8, 9, and the file halves of 4 and 6) or from `docs/book-status.json`
 (steps 3, 4, 6, 7, which no file can show), and rewrites the table whenever a step is marked.
 When a step is finished, run `python tools/book_status.py done <book> <step>` (or use Mark done in
 the dashboard, `http://localhost:8766/tools/admin/`); for a step read from the files it checks the
@@ -29,6 +29,7 @@ files instead and says what is missing. `undo` takes a hand mark back. See
 | 7. Played through with test characters; misreadings and item gaps fixed | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ |
 | **Pictures** | | | | | | | | | | | | | | | | | | | | |
 | 8. Printed map repainted, labels checked, `map-4k.webp` made and shown in the player | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ✅ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ |
+| 9. Illustrations upscaled 2x (`<name>-2x.webp` beside each) and shown in the player | ⬜ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ |
 <!-- end of status table -->
 
 Books: 1 Flight from the Dark · 2 Fire on the Water · 3 The Caverns of Kalte · 4 The Chasm of Doom ·
@@ -58,6 +59,9 @@ Each step's buttons and prompt are in the dashboard, `http://localhost:8766/tool
    A hand mark (the agent's).
 8. `docs/reference/map-upscale.md`. Never overwrite `map.png`: it is the original.
     Read from the files: done once `map-4k.webp` exists and `book.js` names it (a re-import).
+9. `tools/ill_upscale.py <code>` (the dashboard's Upscale illustrations), then a re-import. Never
+   overwrite an original: each `<name>-2x.webp` sits beside its `.png` (ADR 0033). Read from the files:
+   done once every illustration has its WebP and `book.js` names them.
 
 ## Notes
 

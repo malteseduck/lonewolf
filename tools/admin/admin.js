@@ -16,7 +16,8 @@ const STAGES = [
   { id: 'items', group: 'Items and fights', label: 'Item table', kind: 'agent', step: 5 },
   { id: 'pictures', group: 'Items and fights', label: 'Fight pictures', kind: 'agent', step: 6 },  // then your look at the sheet
   { id: 'testplay', group: 'Play', label: 'Test play', kind: 'agent', step: 7 },
-  { id: 'map', group: 'Map', label: 'Map', kind: 'owner', step: 8 },
+  { id: 'map', group: 'Pictures', label: 'Map', kind: 'owner', step: 8 },
+  { id: 'ills', group: 'Pictures', label: 'Illustrations', kind: 'script', step: 9 },
 ];
 
 const $ = (s) => document.querySelector(s);
@@ -109,6 +110,8 @@ const ACTIONS = {
     ...(b.pins?.waiting ? [run('Approve picture changes...', 'approve-pictures', { gate: 'pictures' })] : [])],
   testplay: () => [prompt('testplay'), link('Test address', 'http://127.0.0.1:8766/'), mark(7)],
   map: () => [{ t: 'map', label: 'Open map editor' }],
+  // made beside the originals, then shown by a re-import (gated, as always)
+  ills: (b) => [run('Upscale illustrations', 'ills'), { t: 'ills', label: 'Open illustration sheet' }, ...(b.stages.ills.state === 'warn' && b.known ? [run('Re-import...', 'import', { gate: 'import' })] : [])],
 };
 function run(label, stage, opt = {}) { return { t: 'run', label, stage, ...opt }; }
 function prompt(key, label = 'Copy prompt') { return { t: 'prompt', key, label }; }
@@ -118,7 +121,7 @@ function mark(step) { return { t: 'mark', step }; }
 let acts = [];
 function actHtml(a, b) {
   const i = acts.push({ ...a, b }) - 1;
-  if (a.t === 'sheet') return `<button data-act="${i}">${esc(a.label)}</button>`;
+  if (a.t === 'sheet' || a.t === 'ills') return `<button data-act="${i}">${esc(a.label)}</button>`;
   if (a.t === 'link') return `<a class="btn" href="${esc(a.href)}" target="_blank">${esc(a.label)}</a>`;
   if (a.t === 'mark') return `<button data-act="${i}">${b.marks[a.step] ? 'Mark not done' : 'Mark done'}</button>`;
   return `<button data-act="${i}" ${a.t === 'run' && running ? 'disabled title="a job is running"' : ''}>${esc(a.label)}</button>`;
@@ -175,6 +178,7 @@ $('#detail').addEventListener('click', async (e) => {
   if (a.t === 'prompt') return copy(PROMPTS[a.key](a.b), 'Prompt copied: paste it into Claude Code');
   if (a.t === 'map') return openMap(a.b, a.step);
   if (a.t === 'sheet') return openSheet(a.b);
+  if (a.t === 'ills') return openIlls(a.b);
   if (a.t === 'mark') {
     const undo = !!a.b.marks[a.step];
     const { j } = await api(`mark/${a.b.code}/${a.step}${undo ? '?undo=1' : ''}`, { method: 'POST' });
@@ -195,6 +199,10 @@ $('#detail').addEventListener('click', async (e) => {
 function openSheet(b) {
   if (!b?.imp) return toast('Import the book first', 3000);
   openInline(b, `/tools/admin/fights.html?book=${encodeURIComponent(b.code)}&embed=1`, `Fight pictures: ${b.n}. ${b.title}`);
+}
+function openIlls(b) {  // every illustration, and each one's original beside its upscale (step 9)
+  if (!b?.folder) return toast('Download the book first', 3000);
+  openInline(b, `/tools/admin/ills.html?book=${encodeURIComponent(b.code)}&embed=1`, `Illustrations: ${b.n}. ${b.title}`);
 }
 function openMap(b, step) {
   if (!b?.folder) return toast('Download the book first', 3000);

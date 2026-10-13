@@ -45,6 +45,7 @@ Static files as `python -m http.server` serves them, from the project root, plus
                                       written into assets/plates/plates.json (tools/plates_file.py). Or src: a picture
                                       already on disk (assets/, art/, data/) to stand in, instead of image
     GET  /api/admin/standins          every picture a fight can borrow: [{src, group, size, shows?, near?}]
+    GET  /api/admin/ills?book=<code>  the illustration sheet: [{name, bytes, big, bigBytes, sections}] (tools/ill_upscale.py)
 
     GET  /api/offline          what the offline copy holds: {version, files: {path: hash}}
 
@@ -418,6 +419,8 @@ ADMIN_STAGES = {
     'check-items': {'title': 'Check items', 'folder': True, 'timeout': 300, 'cmds': lambda c: [['node', 'tools/check_items.mjs', c, '--json']]},
     # the fight pictures that now differ from those approved at step 6 become the approved ones (the owner's go-ahead)
     'approve-pictures': {'title': 'Approve fight pictures', 'folder': True, 'gated': True, 'timeout': 120, 'cmds': lambda c: [['node', 'tools/plates_pin.mjs', c, '--approve']]},
+    # Real-ESRGAN on the PC: fetches nothing, writes only <name>-2x.webp beside each original (ADR 0033)
+    'ills': {'title': 'Upscale illustrations', 'folder': True, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/ill_upscale.py', c]]},
     'offline': {'title': 'Offline check', 'book': False, 'timeout': 300, 'cmds': lambda c: [PY + ['tools/offline_check.py']]},
     # the real books through every script, then both unit-test suites (ADR 0022: re-importing here needs no go-ahead)
     'check': {'title': 'Check everything', 'book': False, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/check_all.py']]},
@@ -614,6 +617,10 @@ class Handler(SimpleHTTPRequestHandler):
             if err:
                 return self._json(code, {'error': err})
             return self._json(200, _job_view(job))
+        if method == 'GET' and parts == ['ills']:
+            import ill_upscale
+            got = ill_upscale.listing(q.get('book', [''])[0])
+            return self._json(200, got) if got is not None else self._json(404, {'error': 'not a downloaded book'})
         if method == 'GET' and parts == ['standins']:
             import plates_file
             return self._json(200, plates_file.standins())
