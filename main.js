@@ -424,7 +424,7 @@ function leftHTML() {
       bk.length ? '<button type="button" class="inkbtn" data-new>or begin again</button>' : '<button type="button" class="seal" data-new>Begin again</button>'}</div>`;
   }
   // a fight stopped by hand and not won: only the by-hand turn box, or the fight after all
-  else if (game.combatPending && game.brokenOff) h += `<div class="puzzle"><label>Turn to section <input id="puzzleto" inputmode="numeric" autocomplete="off" aria-label="Section number"></label><button type="button" class="inkbtn" data-puzzle>turn</button></div><button type="button" class="inkbtn byhand" data-fight>or fight it after all</button>`;
+  else if (game.combatPending && game.brokenOff) h += `${turnBox('Turn to section', '')}<button type="button" class="inkbtn byhand" data-fight>or fight it after all</button>`;
   else if (game.combatPending) h += `<div class="compass"><div class="orn"><button type="button" class="med" data-fight aria-label="Begin the fight">${glyph('crossed-swords')}</button></div><span>Draw your weapon.</span></div>`;
   else if (sec.end) {
     const next = Object.keys(BOOKS).find((k) => BOOKS[k].number === book.number + 1);
@@ -436,11 +436,13 @@ function leftHTML() {
     if (local.length) h += `<ul class="choices">${local.map(({ c, i }) => `<li><button type="button" class="choice" data-choice="${i}" ${c.enabled ? '' : 'disabled'}><span>${esc(shown(c.text))}${
       c.enabled ? (c.need && (c.need.disc || c.need.circle) ? `<em>${esc(LW.condName({ disc: c.need.disc, every: c.need.every, circle: c.need.circle }))}</em>` : c.need && c.need.any ? `<em>${esc(c.need.any.map(LW.condName).join(', or '))}</em>` : c.random ? '<em>Random Number</em>' : '') : `<em>${esc(c.why)}</em>`}</span></button></li>`).join('')}</ul>`;
     // a puzzle's answer is a section number, which the book leaves the reader to turn to; elsewhere the same
-    // box, smaller, is the by-hand way to any section, for a way on the page cannot see
-    h += `<div class="puzzle ${sec.puzzle ? '' : 'byhand'}"><label>${sec.puzzle ? 'Turn to section' : 'By hand: turn to'} <input id="puzzleto" inputmode="numeric" autocomplete="off" aria-label="Section number"></label><button type="button" class="inkbtn" data-puzzle>turn</button></div>`;
+    // box, smaller, is the by-hand way to any section, for a way on the page cannot see, folded into a faint link until touched
+    h += sec.puzzle ? turnBox('Turn to section', '') : '<button type="button" class="inkbtn byhand" data-byhand>By hand: turn to a section…</button>';
   }
   return h + '</div>';
 }
+const turnBox = (label, cls) => `<div class="puzzle ${cls}"><label>${label} <input id="puzzleto" inputmode="numeric" autocomplete="off" aria-label="Section number"></label>${
+  cls === 'byhand' ? '<button type="button" class="seal" data-puzzle>go</button>' : '<button type="button" class="inkbtn" data-puzzle>turn</button>'}</div>`;
 /* Sections that call for a Random Number get the medallion on the page. */
 function mountRnt() {
   const sec = mode === 'story' && game.section, slot = $('#dialslot');
@@ -464,7 +466,15 @@ function mountRnt() {
   if (game.game) { const why = game.gameWhy(false), gs = sec.game; note.textContent = why || (typeof gs.stake === 'number' ? `Touch the medallion to throw: ${gs.stake} Gold Crowns a throw${gs.coin ? ` (or ${gs.stake * gs.rate} ${LW.COINS[gs.coin]})` : ''}.` : 'Touch the medallion to throw.'); }
   slot.append(dial.el, note);
 }
-function renderLeft() { pl.innerHTML = leftHTML(); mountRnt(); mountSetup(); trimSmall(); }
+function renderLeft() { pl.innerHTML = leftHTML(); mountRnt(); mountSetup(); trimSmall(); widenPlates(); }
+/* Project Aon draws its plates one column wide (portrait) or across both columns (landscape); a
+   landscape one at the portrait width came out cramped, so it spans the column (CSS .vignette.wide). */
+function widenPlates() {
+  pl.querySelectorAll('img.vignette.full').forEach((img) => {
+    const fit = () => img.classList.toggle('wide', img.naturalWidth > img.naturalHeight);
+    if (img.complete) fit(); else img.addEventListener('load', fit, { once: true });
+  });
+}
 /* The books' small pictures sit in a wide strip of blank paper, some filling less than half of it,
    which drawn at the column's width left the drawing tiny. Each is cut to its drawing (with a little
    paper round it) and shown at one height (CSS .vignette.small). Hidden until cut, so it does not jump. */
@@ -1170,6 +1180,7 @@ bookEl.addEventListener('click', (e) => {
   else if ('intro' in d) { intro = false; guard(() => turn(render)); }
   else if (d.choice != null) guard(() => choose(+d.choice));
   else if ('puzzle' in d) turnTo();
+  else if ('byhand' in d) { t.outerHTML = turnBox('By hand: turn to', 'byhand'); $('#puzzleto').focus(); }
   else if (d.pick) { if (game.pickLoss(d.pick)) render(); }
   else if ('stake' in d) { const box = $('#stakeamt'), err = game.setStake(parseInt(box && box.value, 10) || 0); if (err) LW.UI.toast(err); render(); }
   else if ('bet' in d) { const n = (s) => { const b = $(s); return b && b.value.trim() !== '' ? parseInt(b.value, 10) : NaN; }, err = game.bet(n('#betamt'), n('#betpick')); if (err) LW.UI.toast(err); render(); }

@@ -61,7 +61,9 @@ ember on hover and focus; disabled it is greyed.
 - Section number in a medallion (`.badge`).
 - Paragraphs in `.text`, the first with a drop capital. The illustration is placed before the
   paragraph index in `sec.img.at` (imported) or after the first paragraph (demo vignette).
-  Full-page illustrations (`ill*`) are `.vignette.full`, 56% of the column wide. The books' small
+  Full-page illustrations (`ill*`) are `.vignette.full`, 56% of the column wide; a landscape one
+  (Project Aon's double-width plates, 772 px) gets `.wide` from `widenPlates()` once loaded and
+  spans the column (ADR 0031). The books' small
   pictures (`small*`) come as 386x150 strips with the drawing often filling half of it or less, so
   `trimSmall()` (after each `renderLeft`) cuts each to its drawing plus a 3% margin (cached as a data
   URL) and `.vignette.small` shows it 7.5em high, never wider than the column. Hidden until cut.
@@ -86,7 +88,9 @@ ember on hover and focus; disabled it is greyed.
 - A puzzle section (`puzzle`: the answer is a section number) adds, under its choices, "Turn to
   section" with a box for the number and "turn" (Enter works too); a number the book does not have
   is toasted. `turnTo()`. Every other section with choices has the same box, smaller and faint
-  (`.puzzle.byhand`, "By hand: turn to"), for a way on the page cannot see.
+  (`.puzzle.byhand`, "By hand: turn to"), for a way on the page cannot see, folded into a faint link
+  ("By hand: turn to a section…", `data-byhand`) that opens it and focuses it when touched; both centred, last on the page, the box's button a small
+  `.seal` reading "go" (ADR 0032).
 - Above the fight notice, three blocks the item tables can call for: "Choose what you lose" (or
   "Give in exchange"), a medallion per thing he may lose (`game.pickable()`, `data-pick`), shown while
   a loss of his choosing is pending and the choices wait; "Your stake" / "What you give", an amount
