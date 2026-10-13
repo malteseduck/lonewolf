@@ -41,7 +41,7 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
   // every book's items are known in the page (an item from Book 1 can gate a choice in Book 2)
   for (const f of fs.readdirSync(path.join(root, 'items')).filter((f) => /^items-\w+\.js$/.test(f))) { const t = await imp(path.join(root, 'items', f)); LW.addItems(t.ITEMS, t.MARKS); }
   const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'noHunt', 'todo', 'need', 'fight', 'bowShot', 'rntMod',
-    'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax']);
+    'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax', 'game']);
   const FIGHT = new Set(['csMod', 'csIf', 'csUnless', 'csNote', 'mindforce', 'unless', 'unarmed', 'undead', 'drain', 'with', 'double', 'ambush', 'evade',
     'rounds', 'stop', 'won', 'wounded', 'noEvade', 'noShield', 'noUnarmed', 'weaponCs', 'plain', 'only', 'barred', 'lend', 'mind', 'keep', 'healLost', 'restore', 'noBoost', 'to', 'points', 'lose', 'byHand']);
   const WHEN = new Set(['if', 'unless', 'ate', 'came', 'ep', 'epMax', 'cs', 'healLost', 'take', 'back', 'mark', 'unmark', 'settle']);
@@ -86,14 +86,18 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
     (x.when || []).forEach((w, i) => { Object.keys(w).filter((f) => !WHEN.has(f)).forEach((f) => bad.push(`${id} when[${i}]: unknown field ${f}`)); losses(w.take, `${id} when[${i}]`); });
     ((x.fight && x.fight.rounds) || []).forEach((r, i) => Object.keys(r).filter((f) => !ROUND.has(f)).forEach((f) => bad.push(`${id} fight rounds[${i}]: unknown field ${f}`)));
     [].concat((x.fight && x.fight.stop) || []).forEach((r) => Object.keys(r).filter((f) => !STOP.has(f)).forEach((f) => bad.push(`${id} fight stop: unknown field ${f}`)));
-    // a way on named by the fight, the stake's outcome or a range must be one of the section's choices
+    // a way on named by the fight, the stake's outcome, a game's state or a range must be one of the section's choices
     const ways = [x.fight && x.fight.to, x.fight && x.fight.wounded, x.fight && x.fight.won && x.fight.won.to, x.fight && x.fight.won && x.fight.won.else,
-      ...[].concat((x.fight && x.fight.stop) || []).flatMap((s) => [s.to, ...Object.values(s.by || {})]), ...Object.keys(x.ranges || {}), ...[].concat((x.fight && x.fight.evade) || []).map((e) => e.to)].filter(Boolean);
+      ...[].concat((x.fight && x.fight.stop) || []).flatMap((s) => [s.to, ...Object.values(s.by || {})]), ...Object.keys(x.ranges || {}), ...[].concat((x.fight && x.fight.evade) || []).map((e) => e.to),
+      ...(x.game ? [x.game.broke, x.game.done, x.game.quit] : [])].filter(Boolean);
     ways.forEach((to) => { if (!(sec.choices || []).some((c) => c.to === to)) bad.push(`${id}: leads to ${to}, which is not one of its choices`); });
     [].concat(x.mark || [], x.unmark || [], ...(x.when || []).map((w) => [].concat(w.mark || [], w.unmark || []))).forEach((m) => { if (!/^\w+$/.test(m)) bad.push(`${id}: bad mark id ${m}`); });
     Object.keys(x.sell || {}).forEach((i) => { if (!known(i)) bad.push(`${id} sell: unknown item ${i}`); });
     if (x.fight && x.fight.with && x.fight.with !== 'none' && !(LW.ITEMS[x.fight.with] && (LW.ITEMS[x.fight.with].kind === 'weapon' || LW.ITEMS[x.fight.with].weapon))) bad.push(`${id} fight: with ${x.fight.with}, which is not a weapon`);
     (x.loot || []).forEach((l) => { if (l.pick && !l.or) bad.push(`${id} loot: pick without or`); });
+    if (x.game && !['wheel', 'dice', 'higher'].includes(x.game.kind)) bad.push(`${id} game: kind must be wheel, dice or higher`);
+    if (x.game && !sec.rnt) bad.push(`${id}: game, but the section draws no Random Number`);
+    if (x.game && x.game.coin && !LW.COINS[x.game.coin]) bad.push(`${id} game: unknown coin ${x.game.coin}`);
     if ('rnt' in x && x.rnt !== null) bad.push(`${id}: rnt may only be null (no Random Number here)`);
     if (x.ep != null && x.ep !== 'full' && typeof x.ep !== 'number') bad.push(`${id}: ep must be a number or 'full'`);
     for (const [to, n] of Object.entries(x.need || {})) {

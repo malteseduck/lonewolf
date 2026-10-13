@@ -91,7 +91,10 @@ ember on hover and focus; disabled it is greyed.
   "Give in exchange"), a medallion per thing he may lose (`game.pickable()`, `data-pick`), shown while
   a loss of his choosing is pending and the choices wait; "Your stake" / "What you give", an amount
   box and a button (`sec.stake`, `game.setStake`, `data-stake`), then the amount set; "He will buy",
-  a medallion per item he has that the trader buys (`sec.sell`, `game.sell`, `data-sell`).
+  a medallion per item he has that the trader buys (`sec.sell`, `game.sell`, `data-sell`); "The game"
+  (`sec.game`): the throws so far, the bets left, the token and the table's limit, and where the stake
+  is his to set a Stake box (and "on", the number, for Cartwheel) with a bet button (`game.bet`,
+  `data-bet`). The medallion's note says what to do next; it throws for the bet, again and again.
 - `shown(text)` strips "turn to N" from a choice; if nothing meaningful is left it shows "Continue".
 
 ## Right-page panels (`renderRight`)

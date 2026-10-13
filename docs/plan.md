@@ -22,19 +22,17 @@ done, and when.
 ### The item tables' last todos
 
 The engine work that retires the tables' `todo`s was done on 2026-10-12 (rules-engine.md, book-format.md;
-ADRs 0026, 0027): 323 todos then, 24 now. The rest, in order of how often they come up; teach the engine a
+ADRs 0026, 0027): 323 todos then, 17 now (the games of chance done the same day). The rest, in order of how often they come up; teach the engine a
 case when it is met in play, rather than flagging it (ADR 0027):
 
-1. **Games of chance played over several throws** (B2 238, 308; B6 284; B10 218): a stake, repeated draws
-   and a payout table. Judgement: one shape covers four.
-2. **Shops**: one item only (B6 10), at most N (B6 123), selling Arrows by the four (B6 98), paying with an
+1. **Shops**: one item only (B6 10), at most N (B6 123), selling Arrows by the four (B6 98), paying with an
    item when short of gold (B6 17), a price in Special Items or gold (B6 212).
-3. **Fights**: rounds set by a number drawn (B4 194, 234), a draw after each round he would have lost
+2. **Fights**: rounds set by a number drawn (B4 194, 234), a draw after each round he would have lost
    Endurance in (B3 88), losses that come off his maximum after round 1 (B12 268).
-4. **Items**: a Helmet and the Silver Helm not counting together (B7 148, a series rule); a stake of items
+3. **Items**: a Helmet and the Silver Helm not counting together (B7 148, a series rule); a stake of items
    (B9 115, 204); the Backpack halved by a coin (B9 91); which remedy was used when he has several (B8
    178, 331, 349); a draw against the Crowns thrown (B3 152); a weapon the text does not name (B11 8).
-5. **Display**: during a contest in target points (Book 6's final) the Endurance gauge shows the points.
+4. **Display**: during a contest in target points (Book 6's final) the Endurance gauge shows the points.
 
 Left to the player whatever the engine does: whether to sleep (B2 41 is now applied by `came`), the Arrows
 spent at B8 164 (the text gives no number), the puzzles, and B5 162's climb (a by-hand stop, `byHand`).

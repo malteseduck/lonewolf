@@ -113,7 +113,8 @@ export const SECTIONS = {
   213: { ep: -5, need: { 147: bow } },
   215: { ep: -2 },
   217: { loot: [{ item: 'gorodonHorn' }] },
-  218: { todo: 'each throw costs a stake of 3 Gold Crowns, won or lost by the dice as the text says; take it off your gold by hand.' },
+  // Portholes by another name: 12 Lune or 3 Gold Crowns a throw
+  218: { game: { kind: 'dice', stake: 3, win: 2, foes: 2, coin: 'lune', rate: 4 } },
   223: { need: { 185: whip, 342: notWhip } },
   228: { ep: -2, need: ghosts },
   233: { when: [{ unless: { disc: 'nexus' }, ep: -3 }] },

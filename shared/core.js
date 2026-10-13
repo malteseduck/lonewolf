@@ -332,6 +332,8 @@
       }
       const had = LW.marksOf(hero); // a condition set here costs nothing until the next section
       if (sec.stake && this.s.stakes) delete this.s.stakes[sec.stake.key || id]; // asked again on a return
+      // a game of chance starts afresh on every visit; its token is given on the first only
+      if (sec.game) this.s.game = null;
       // what the section gives and takes away, once only (before any Meal, so food found here can be eaten)
       if (!this.s.looted[id + ':arrive']) { this.s.looted[id + ':arrive'] = true; this.arrive(sec, events); }
       if (sec.lose && sec.lose.meal && hero.meals > 0) {
@@ -547,6 +549,98 @@
       return null;
     }
 
+    /* A game of chance played over several throws (sec.game: {kind, stake, win, near, vs, foes, bets,
+       cap, token, coin, rate, broke, done, quit}). kind 'wheel': a number bet on, paid `win` a Crown
+       when it falls, `near` when a neighbour does (0 sits between 9 and 1); 'dice': two numbers each
+       against `foes` other players, two noughts winning outright; 'higher': the number drawn against
+       a second plus `vs`. `stake` is fixed, or {min, max} set with bet(). A win gives the stake back
+       and `win` times it; a level throw gives the stake back; a loss keeps it. `cap`: no more won at
+       this table; `token`: Crowns to play with here only, given once; `coin`/`rate`: paid in that coin,
+       `rate` to the Crown, when he has a stake's worth. s.game is the game in hand, from arrival. */
+    get game() {
+      const g = this.section.game, at = this.s.at;
+      if (!g) return null;
+      if (!this.s.game || this.s.game.at !== at) {
+        const t = this.s.tokens = this.s.tokens || {};
+        if (t[at] == null) t[at] = g.token || 0;
+        this.s.game = { at, bets: 0, won: 0, log: [], bet: null };
+      }
+      return this.s.game;
+    }
+    /* what a stake of n is paid from: the other coin when he has n's worth of it, else token and gold;
+       `most` is the largest stake it holds, in Crowns */
+    gamePurse(n) {
+      const g = this.section.game, hero = this.s.hero, coins = g.coin ? (hero.coins || {})[g.coin] || 0 : 0;
+      if (g.coin && coins >= n * g.rate) return { coin: g.coin, rate: g.rate, most: Math.floor(coins / g.rate) };
+      return { rate: 1, most: hero.gold + this.s.tokens[this.s.at] };
+    }
+    get gameMin() { const g = this.section.game; return typeof g.stake === 'number' ? g.stake : g.stake.min || 1; }
+    /* he can stake no more: the game's ways on for a lost purse open, the others shut */
+    get gameBroke() { return !!this.game && !this.game.bet && this.gamePurse(this.gameMin).most < this.gameMin; }
+    /* why a bet (forBet) or a throw cannot be made now, or null */
+    gameWhy(forBet) {
+      const g = this.section.game, st = this.game, fixed = typeof g.stake === 'number';
+      if (st.bets >= (g.bets || Infinity)) return 'No more bets.';
+      if (forBet && st.bet) return 'Throw for the bet you have down first.';
+      if (!forBet && !fixed && !st.bet) return 'Place your bet first.';
+      if (this.gameBroke) return fixed ? 'You cannot place the stake.' : 'You have nothing to stake.';
+      return null;
+    }
+    bet(n, pick) {
+      const g = this.section.game, st = this.game, why = this.gameWhy(true);
+      if (why) return why;
+      const max = Math.min(g.stake.max == null ? Infinity : g.stake.max, this.gamePurse(n).most);
+      if (!(n >= (g.stake.min || 1) && n <= max)) return `Stake between ${g.stake.min || 1} and ${max}.`;
+      if (g.kind === 'wheel' && !(pick >= 0 && pick <= 9)) return 'Choose a number from 0 to 9.';
+      st.bet = this.ante(n, pick);
+      this.save();
+      return null;
+    }
+    /* the stake put down: from the token first, then the purse */
+    ante(n, pick) {
+      const hero = this.s.hero, p = this.gamePurse(n);
+      if (p.coin) { hero.coins[p.coin] -= n * p.rate; return { n, pick, coin: p.coin, rate: p.rate }; }
+      const tk = this.s.tokens, token = Math.min(tk[this.s.at], n);
+      tk[this.s.at] -= token; hero.gold -= n - token;
+      return { n, pick, token, rate: 1 };
+    }
+    play(n) {
+      const g = this.section.game, st = this.game, hero = this.s.hero, fixed = typeof g.stake === 'number';
+      const why = this.gameWhy(false);
+      if (why) return why;
+      const bet = fixed ? this.ante(g.stake) : st.bet, r = LW.rand10;
+      this.s.rolled = n; this.s.drawn = n; this.s.shot = null;
+      let by = -1, line; // by: times the stake won, 0 level, -1 lost
+      if (g.kind === 'wheel') {
+        const off = Math.min((n - bet.pick + 10) % 10, (bet.pick - n + 10) % 10);
+        by = off === 0 ? g.win : off === 1 ? g.near : -1;
+        line = `${bet.n} on ${bet.pick}, the ball falls on ${n}`;
+      } else if (g.kind === 'dice') {
+        const two = () => [r(), r()], mine = [n, r()], foes = Array.from({ length: g.foes || 1 }, two);
+        const sum = (d) => d[0] + d[1], zero = (d) => !d[0] && !d[1], best = Math.max(...foes.map(sum));
+        by = zero(mine) ? (foes.some(zero) ? 0 : g.win) : foes.some(zero) ? -1 : sum(mine) > best ? g.win : sum(mine) < best ? -1 : 0;
+        const said = (d) => `${d.join(' and ')} (${zero(d) ? 'two noughts' : sum(d)})`;
+        line = `You throw ${said(mine)}, they throw ${foes.map(said).join(', ')}`;
+      } else {
+        const m = r() + (g.vs || 0);
+        by = n > m ? g.win : n < m ? -1 : 0;
+        line = `${bet.n} staked, ${n} against ${m}`;
+      }
+      // the stake back on a win or a level throw, and what is won on top, short of the table's limit
+      let won = by > 0 ? bet.n * by : 0;
+      if (g.cap != null) won = Math.max(0, Math.min(won, g.cap - st.won));
+      st.won += won;
+      const what = bet.coin ? LW.COINS[bet.coin] : 'Gold Crowns';
+      if (by >= 0) {
+        if (bet.coin) hero.coins[bet.coin] += (bet.n + won) * bet.rate;
+        else { this.s.tokens[this.s.at] += bet.token; hero.gold = Math.min(50, hero.gold + bet.n - bet.token + won); }
+      }
+      st.log.push(`${line}: ${by > 0 ? (won ? `you win ${won * bet.rate} ${what}` : 'you win, but the table pays no more') : by ? `you lose ${bet.n * bet.rate} ${what}` : 'level, the stake back'}.`);
+      st.bet = null; st.bets += 1;
+      this.save();
+      return null;
+    }
+
     /* Combat blocks the way on until it is won. */
     get combatPending() {
       const sec = this.section;
@@ -564,7 +658,7 @@
       if (this.dead || sec.end) return [];
       if (this.combatPending) return [];
       if (sec.combat && sec.combat.to) return [{ text: 'Continue', to: sec.combat.to, enabled: true }];
-      const fought = !!sec.combat, rolled = this.s.rolled, came = this.came();
+      const fought = !!sec.combat, rolled = this.s.rolled, came = this.came(), game = this.game && sec.game, broke = this.gameBroke;
       // a loss he must choose, or a stake he must set, comes first
       const first = (this.s.picks || []).length ? 'Choose what you lose first' : sec.stake && !(this.s.stakes || {})[sec.stake.key || this.s.at] ? (sec.stake.spend ? 'Give what you will first' : 'Set your stake first') : '';
       return (sec.choices || []).filter((c) => !(fought && c.evade)).map((c) => {
@@ -590,6 +684,14 @@
         if (c.need && c.need.coin && ((hero.coins || {})[c.need.coin] || 0) < (c.need.n || 1)) { enabled = false; why = `Needs ${c.need.n || 1} ${LW.COINS[c.need.coin]}`; }
         // came: open only when he came from one of these sections
         if (c.need && c.need.came && !c.need.came.includes(came)) { enabled = false; why = 'Not the way you came'; }
+        // a game of chance: its ways on by how it stands (a bet down, the purse lost, every bet made)
+        if (game) {
+          const done = game.bets && this.game.bets >= game.bets;
+          if (this.game.bet) { enabled = false; why = 'Throw for your bet first'; }
+          else if (broke ? game.broke && c.to !== game.broke : c.to === game.broke) { enabled = false; why = broke ? 'You have nothing left to stake' : 'You still have something to stake'; }
+          else if (!broke && c.to === game.done && !done) { enabled = false; why = `Not before all ${game.bets} bets`; }
+          else if (!broke && c.to === game.quit && done) { enabled = false; why = 'You have made every bet'; }
+        }
         return Object.assign({}, c, { enabled, why });
       });
     }
@@ -677,6 +779,7 @@
       return (this.section.rntMod || []).filter((m) => LW.meets(hero, m) && times(m)).map((m) => (m.vsCS ? { label: 'Your Combat Skill', n: -LW.heroCS(hero).total } : { label: m.label || LW.condName(m) || 'Added', n: m.plus * times(m) }));
     }
     setRolled(n) {
+      if (this.game) return this.play(n);
       const shot = this.shot();
       if (shot && shot.why) return shot.why;
       if (shot) this.s.hero.arrows -= 1;

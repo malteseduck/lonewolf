@@ -401,6 +401,15 @@ function leftHTML() {
   // a stake, or a gift of what he will (sec.stake), set before the way on opens
   const stake = sec.stake, staked = stake && (game.s.stakes || {})[stake.key || id];
   if (stake && !isDead()) h += `<div class="block"><span class="eyebrow">${stake.spend ? 'What you give' : 'Your stake'}</span>${staked ? `<p class="staked">${staked.n} ${esc(stake.coin ? LW.COINS[stake.coin] : 'Gold Crowns')}${stake.spend ? ' given' : ' staked'}.</p>` : `<div class="puzzle"><label>${stake.spend ? 'Give' : 'Stake'} <input id="stakeamt" inputmode="numeric" autocomplete="off" value="${stake.min || 0}" aria-label="Amount"> ${esc(stake.coin ? LW.COINS[stake.coin] : 'Gold Crowns')}</label><button type="button" class="inkbtn" data-stake>${stake.spend ? 'give' : 'stake'}</button></div>`}</div>`;
+  // a game of chance (sec.game): the throws so far, the token, the table's limit, and a bet to place
+  const gm = !isDead() && game.game, gs = sec.game;
+  if (gm) {
+    const token = (game.s.tokens || {})[id] || 0, left = [gs.bets && `bet ${Math.min(gm.bets + 1, gs.bets)} of ${gs.bets}`, token && `a token worth ${token} Gold Crown${token > 1 ? 's' : ''} to play with here`, gs.cap != null && `${gm.won} of the ${gs.cap} Gold Crowns this table pays won`].filter(Boolean);
+    const form = typeof gs.stake !== 'number' && !gm.bet && !game.gameWhy(true) ? `<div class="puzzle"><label>Stake <input id="betamt" inputmode="numeric" autocomplete="off" value="${gs.stake.min || 1}" aria-label="Stake in Gold Crowns">${gs.kind === 'wheel' ? '' : ' Gold Crowns'}</label>${
+      gs.kind === 'wheel' ? `<label>on <input id="betpick" inputmode="numeric" autocomplete="off" aria-label="Number from 0 to 9"></label>` : ''}<button type="button" class="inkbtn" data-bet>bet</button></div>` : '';
+    h += `<div class="block"><span class="eyebrow">The game</span>${gm.log.length ? `<ol class="rounds">${gm.log.map((l) => `<li>${esc(l)}</li>`).join('')}</ol>` : ''}${
+      left.length ? `<p class="staked">${esc(left.join('; '))}.</p>` : ''}${gm.bet ? `<p class="staked">${gm.bet.n} staked${gm.bet.pick != null ? ` on ${gm.bet.pick}` : ''}.</p>` : form}</div>`;
+  }
   // what a trader here buys (sec.sell), of what he has
   const wares = Object.keys(sec.sell || {}).filter((w) => LW.hasItem(game.hero, w));
   if (wares.length && !isDead()) h += `<div class="block finds"><span class="eyebrow">He will buy</span>${wares.map((w) => `<button type="button" class="find" data-sell="${esc(w)}">
@@ -441,6 +450,7 @@ function mountRnt() {
   const dial = makeDial(async () => {
     if (busy || (sec.rnt === 'auto' && game.s.rolled != null)) return;
     if (shot && shot.why) return void LW.UI.toast(shot.why);
+    if (game.game && game.gameWhy(false)) return void LW.UI.toast(game.gameWhy(false));
     busy = true;
     const n = await dial.spin();
     game.setRolled(n); busy = false;
@@ -450,6 +460,8 @@ function mountRnt() {
   const plus = (game.s.shot || []).map((p) => `, ${p.n < 0 ? '−' : '+'}${Math.abs(p.n)} ${p.label}`).join(''), drawn = game.s.drawn != null ? game.s.drawn : game.s.rolled;
   if (game.s.rolled != null) { dial.show(drawn); note.textContent = plus ? `You drew ${drawn}${plus}: ${game.s.rolled}.` : `You drew ${drawn}.`; }
   else note.textContent = shot ? shot.why || `Touch the medallion to shoot. It spends an Arrow (${game.hero.arrows} left).` : 'Touch the medallion for your Random Number.';
+  // a game of chance: the medallion throws for the bet, over and over
+  if (game.game) { const why = game.gameWhy(false), gs = sec.game; note.textContent = why || (typeof gs.stake === 'number' ? `Touch the medallion to throw: ${gs.stake} Gold Crowns a throw${gs.coin ? ` (or ${gs.stake * gs.rate} ${LW.COINS[gs.coin]})` : ''}.` : 'Touch the medallion to throw.'); }
   slot.append(dial.el, note);
 }
 function renderLeft() { pl.innerHTML = leftHTML(); mountRnt(); mountSetup(); trimSmall(); }
@@ -1160,6 +1172,7 @@ bookEl.addEventListener('click', (e) => {
   else if ('puzzle' in d) turnTo();
   else if (d.pick) { if (game.pickLoss(d.pick)) render(); }
   else if ('stake' in d) { const box = $('#stakeamt'), err = game.setStake(parseInt(box && box.value, 10) || 0); if (err) LW.UI.toast(err); render(); }
+  else if ('bet' in d) { const n = (s) => { const b = $(s); return b && b.value.trim() !== '' ? parseInt(b.value, 10) : NaN; }, err = game.bet(n('#betamt'), n('#betpick')); if (err) LW.UI.toast(err); render(); }
   else if (d.sell) { const err = game.sell(d.sell); if (err) LW.UI.toast(err); render(); }
   else if ('fight' in d) guard(startBattle);
   else if ('endbattle' in d) guard(endBattle);

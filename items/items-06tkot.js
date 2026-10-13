@@ -11,7 +11,7 @@
      - The archery tournament: the qualifying round (340) is three numbers added, and the bow
        borrowed at 18 is a mark for this adventure (214, 298), ended where the tournament ends. The
        final (26) is not imported as a fight (its foe's line counts Target points), so it stays by
-       hand. The wager game at 284 (up to three bets) stays by hand too.
+       hand. The wager game at 284 (up to three bets) is a game.
      - Bribes, fees and the Amory cess are paid at the choice that pays them (need ... spend). The
        dormitory at 17 can also be paid with goods (a footnote), so it alone is left as a note.
    Item names are the book's own labels for them; everything else is in our words. */
@@ -200,7 +200,7 @@ export const SECTIONS = {
   278: { ep: -3, need: withBow('198', '343') },
   282: { ep: -1 },
   // a bet on the rider's feat, up to three rounds, 10 Crowns at most
-  284: { todo: 'the wager game is played by hand: stake up to 10 Gold Crowns, draw a number, then draw another and add 3; if the first is higher you win twice your stake, if the second is higher you lose it. Up to three bets. Add or take off the gold yourself.' },
+  284: { game: { kind: 'higher', stake: { min: 1, max: 10 }, win: 2, vs: 3, bets: 3, broke: '76', done: '347', quit: '336' } },
   295: { need: { 321: { item: 'sommerswerd' } } },
   298: { mark: 'jakan6' },
   301: { take: [{ arrows: 1 }] },

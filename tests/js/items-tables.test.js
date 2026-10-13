@@ -9,7 +9,7 @@ import { ROOT, loadShared } from './helpers.js';
 const CODES = ['01fftd', '02fotw', '03tcok', '04tcod', '05sots', '06tkot', '07cd', '08tjoh', '09tcof', '10tdot', '11tpot', '12tmod'];
 // from tools/check_items.mjs
 const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'noHunt', 'todo', 'need', 'fight', 'bowShot', 'rntMod',
-  'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax']);
+  'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax', 'game']);
 const FIGHT = new Set(['csMod', 'csIf', 'csUnless', 'csNote', 'mindforce', 'unless', 'unarmed', 'undead', 'drain', 'with', 'double', 'ambush', 'evade',
   'rounds', 'stop', 'won', 'wounded', 'noEvade', 'noShield', 'noUnarmed', 'weaponCs', 'plain', 'only', 'barred', 'lend', 'mind', 'keep', 'healLost', 'restore', 'noBoost', 'to', 'points', 'lose', 'byHand']);
 const KINDS = ['weapon', 'backpack', 'special'];

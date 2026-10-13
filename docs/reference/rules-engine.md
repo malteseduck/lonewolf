@@ -85,13 +85,19 @@ Item (`LW.specialLimit`: 12 in every book, ADR 0029). `LW.hasItem(hero, id)` che
   gives it back (or the kinds in `only`), saying what will not fit.
 - `setStake(n)` (`sec.stake`: paid now with `spend`, else kept in `s.stakes` until a `settle`),
   `settle(key, by)`, `sell(id)` (`sec.sell` prices), `came()` (the section before).
+- A game of chance (`sec.game`, book-format.md): `game` is the game in hand (`s.game`, begun afresh on
+  each visit; its token kept in `s.tokens` by section), `bet(n, pick)` puts a stake down (token
+  first, then gold, or the other coin), `play(n)` throws for it (`setRolled` hands the medallion's
+  number over; the other numbers are `LW.rand10()`), and logs the throw. `gameWhy(forBet)` says why a
+  bet or throw cannot be made; `gameBroke` that he can stake no more. Choices shut while a bet is
+  down, and open by `broke` / `done` / `quit`.
   Gifts come before the Meal so food found in the passage can be eaten. It resets `s.rolled` and saves.
 - `lost`: he is dead, or at a `death` or `failed` ending (the page then offers the way back).
 - `combatPending`: the section has combat not yet won. `wonCombat()` marks it won.
 - `choices()`: the choices with `enabled` and `why` filled in. Returns none while dead, at an
   ending, or while combat is pending. Applies `need.disc` (one, or a list: any, or all with
   `every`), `need.circle`, `need.rank`, `need.item` (with `not`), `need.gold` (`orAll`), `need.coin`,
-  `need.came`, and shuts them all while a chosen loss or a stake is pending; the `rnt: 'auto'`
+  `need.came`, and shuts them all while a chosen loss or a stake is pending (a game's, as above); the `rnt: 'auto'`
   gate, and hides `evade` choices in sections that have combat. For authored combat with `to`,
   returns a single "Continue". `choose` pays `need.spend` items or gold. Only the choices with a
   range wait for the draw: in a bow shot the others are for not shooting, elsewhere the way taken

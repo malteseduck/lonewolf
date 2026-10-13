@@ -14,7 +14,7 @@
                  surprise attack or ambush costs, which Huntmastery spares)
      bowShot     the Random Number is a bow shot: {to: [lo, hi]}, the range of the total for each
                  choice it decides (a choice left out is open without shooting)
-   and the engine's later rules (docs/reference/book-format.md): when, stake, sell, mealCost, and the
+   and the engine's later rules (docs/reference/book-format.md): when, stake, sell, mealCost, game, and the
    fight's rounds, restore and evade.if.
    An item with meal: true is eaten when a Meal is due and he has none (the engine's own items are in
    shared/core.js; the starting kit, the Seal included, is LW.KITS in shared/rules-series.js).
@@ -142,7 +142,8 @@ export const SECTIONS = {
   235: { loot: [{ item: 'shortSword' }] },
   237: { fight: { undead: true } },
   // the weapons left at the door stay on the Action Chart; the game is played round after round
-  238: { todo: 'you have a token worth 1 Gold Crown to play with here, once only. Play Cartwheel with the medallion and settle your gold by hand.' },
+  // Cartwheel: weapons are left at the door and given back on leaving, so none are taken
+  238: { game: { kind: 'wheel', stake: { min: 1 }, win: 8, near: 5, cap: 40, token: 1, broke: '169' } },
   240: { when: [{ if: { disc: 'healing' }, ep: 'full' }, { unless: { disc: 'healing' }, healLost: 0.5 }] },
   246: { need: { 170: { item: 'whitePass' }, 202: { item: 'redPass' }, 327: { item: ['whitePass', 'redPass'], not: true } } },
   250: { need: { 223: { item: 'seal' } } },
@@ -173,7 +174,7 @@ export const SECTIONS = {
   // he means only to knock the guard out
   306: { fight: { double: true } },
   307: { need: { 140: { item: 'seal' } } },
-  308: { todo: 'play Portholes with the medallion: 3 Gold Crowns a throw, 6 won when you beat both. Settle your gold by hand.' },
+  308: { game: { kind: 'dice', stake: 3, win: 2, foes: 2 } },
   313: { ep: -4, take: [{ item: 'magicSpear' }] },
   321: { when: [{ unless: { meals: 1 }, ep: -2 }] },
   // a footnote: the boy takes whatever gold he has, even none
