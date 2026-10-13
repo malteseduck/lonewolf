@@ -1,6 +1,10 @@
 {
   "_readme": "Pictures for fights whose section has no illustration of its own. The first entry whose match (a regular expression, case ignored) is found in the enemy's name is used, so put the narrower ones first. book, if given, limits an entry to that book (its own characters, or a stand-in that would be wrong elsewhere); book entries go first. src is relative to the project root: files in assets/plates/ are free to redistribute (sources in README.txt); files under data/projectaon/ are Project Aon illustrations on the owner's machine only, from the same book or borrowed from another, and files under art/ are pictures the owner supplied for personal use (git-ignored); a missing one falls back to the drawn emblem. crop, if given, is the part of the picture to use, [x, y, w, h] as fractions. over: true makes the entry win even where the section has an illustration of its own (the owner preferred another picture). levels, if given, is [black, white] (0-255): the tones that become full ink and bare paper, for a painting whose mid-tones would otherwise all turn to solid ink. See docs/reference/interface.md, Art pipeline, and docs/reference/items.md, Fight pictures.",
   "plates": [
+    { "match": "^giaks$", "book": "02fotw", "src": "data/projectaon/01fftd/ill4.png", "crop": [0.5, 0.6, 0.5, 0.4] },
+    { "match": "^drakkar 1$", "book": "02fotw", "src": "data/projectaon/02fotw/ill19.png", "flip": true, "over": true },
+    { "match": "^town guard corporal$", "book": "02fotw", "src": "art/plates/town-guards-group-nets.png", "crop": [0.6023, 0.3083, 0.3977, 0.5005] },
+    { "match": "^town guard sergeant$", "book": "02fotw", "src": "art/plates/town-guards-group-nets.png", "crop": [0.1184, 0.393, 0.5681, 0.5887] },
     { "match": "^altan$", "book": "06tkot", "src": "data/projectaon/06tkot/ill2.png", "over": true },
     { "match": "^tower guard and sergeant$", "book": "09tcof", "src": "art/plates/guard-halberdier-plate.webp", "crop": [0.0742, 0.0096, 0.7824, 0.9459], "flip": true },
     { "match": "^pickpocket$", "book": "09tcof", "src": "art/plates/rogue-sneaking.webp", "crop": [0.0235, 0.1947, 0.916, 0.7031] },

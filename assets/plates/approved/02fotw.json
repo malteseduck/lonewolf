@@ -1,5 +1,5 @@
 {
- "_readme": "The fight pictures the owner approved for this book (step 7 marked done): the player shows these whatever plates.json or a re-import would now pick. Keyed by section/enemy number; name is a hash of the enemy's name, so a pin is not used for another enemy; plate is {src, crop?, levels?} or null for the drawn emblem. Written by tools/plates_pin.mjs; see docs/reference/interface.md, Art pipeline.",
+ "_readme": "The fight pictures the owner approved for this book (step 7 marked done): the player shows these whatever plates.json or a re-import would now pick. Keyed by section/enemy number; name is a hash of the enemy's name, so a pin is not used for another enemy; plate is {src, crop?, levels?, flip?} or null for the drawn emblem. Written by tools/plates_pin.mjs; see docs/reference/interface.md, Art pipeline.",
  "approved": "2026-10-11",
  "pins": {
   "5/0": {"name":"6xttzh","plate":{"src":"data/projectaon/02fotw/ill8.png"}},
@@ -25,7 +25,7 @@
   "157/0": {"name":"cu62vw","plate":{"src":"art/plates/guard-sword-shield-tower.png","crop":[0.0745,0.02,0.8713,0.7705]}},
   "158/0": {"name":"1a0mcm2","plate":{"src":"data/projectaon/02fotw/ill15.png","crop":[0.585,0.37,0.39,0.27]}},
   "162/0": {"name":"6vzh9q","plate":{"src":"art/plates/knight-shield-pencil.webp","crop":[0.05,0.14,0.92,0.56]}},
-  "185/0": {"name":"1gbnbfw","plate":{"src":"data/projectaon/02fotw/ill19.png"}},
+  "185/0": {"name":"1gbnbfw","plate":{"src":"data/projectaon/02fotw/ill19.png","flip":true}},
   "185/1": {"name":"1h5m4it","plate":{"src":"data/projectaon/02fotw/ill19.png"}},
   "237/0": {"name":"136mpjj","plate":{"src":"data/projectaon/02fotw/ill8.png"}},
   "241/0": {"name":"1xe1enk","plate":{"src":"art/plates/rogue-helmeted-dagger.png","crop":[0.19,0.015,0.62,0.63]}},
@@ -34,8 +34,8 @@
   "276/0": {"name":"1t1nwsp","plate":{"src":"art/plates/sailor-on-deck.png","crop":[0.2,0.06,0.6,0.72]}},
   "282/0": {"name":"18r38be","plate":{"src":"art/plates/guard-halberdier-plate.webp","crop":[0.1,0.02,0.68,0.8]}},
   "282/1": {"name":"18h3mmf","plate":{"src":"art/plates/guard-halberd-portcullis.png","crop":[0.33,0.3,0.6,0.6]}},
-  "296/0": {"name":"1v3btzn","plate":{"src":"art/plates/town-guards-group-nets.png"}},
-  "296/1": {"name":"1m0cb1g","plate":{"src":"art/plates/town-guards-group-nets.png"}},
+  "296/0": {"name":"1v3btzn","plate":{"src":"art/plates/town-guards-group-nets.png","crop":[0.1184,0.393,0.5681,0.5887]}},
+  "296/1": {"name":"1m0cb1g","plate":{"src":"art/plates/town-guards-group-nets.png","crop":[0.6023,0.3083,0.3977,0.5005]}},
   "296/2": {"name":"1bb0j3j","plate":{"src":"art/plates/town-guards-group-nets.png"}},
   "296/3": {"name":"1bl04si","plate":{"src":"art/plates/town-guards-group-nets.png"}},
   "296/4": {"name":"1buzqhh","plate":{"src":"art/plates/town-guards-group-nets.png"}},

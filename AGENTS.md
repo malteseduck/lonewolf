@@ -4,12 +4,12 @@ A personal-use player for the Lone Wolf gamebooks, styled after *Lone Wolf HD Re
 Plain HTML/CSS/JS, no build step, no dependencies to install.
 
 Read `docs/spec.md` and the index in `docs/adr/README.md` before changing behaviour, art, or a
-tool's output. The spec is the statement of intent; the ADRs are the owner's decisions, and they
+tool's output. The spec is the statement of intent, design, and architecture; the ADRs are the owner's decisions, and they
 are binding: never reverse or work around one without the owner's say-so in chat. When the owner
 decides something, write an ADR in the same piece of work (rules in `docs/adr/README.md`), and
-change the spec too only if the intent itself changed. When you write or amend an ADR, search
+change the spec too if the intent/design/architecture itself changed. When you write or amend an ADR, search
 `docs/spec.md` for its subject and bring any sentence it contradicts into line. The spec says what
-a thing must achieve, not how it looks or is laid out: that belongs in an ADR or the reference.
+a thing must achieve, not details of how it looks, is laid out, or implementation details: that belongs in an ADR or the reference.
 `docs/reference/` describes the code as it is.
 
 ## What is live
