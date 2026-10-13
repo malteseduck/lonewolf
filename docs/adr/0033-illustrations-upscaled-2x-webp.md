@@ -24,6 +24,12 @@ by a step in the dashboard.
   downloads nothing.
 - The dashboard's illustration sheet shows every illustration of a book, and any one's original
   beside its upscale, to compare them (2026-10-13).
+- A book's fight pictures are upscaled the same way, all at once, by "Upscale fight pictures" at
+  checklist step 7 (not one by one on the picture sheet): every picture its fights can show, now or
+  as approved, each copy beside its source. The book's list of them, `assets/plates/upscaled/<code>.json`,
+  makes the player and the sheet show the copy; `plates.json` and the approved pictures keep naming the
+  originals, so nothing waits for approval, and a crop (in fractions) fits both. Adjust's "Show
+  original" swaps in the picture before the upscale, to compare (2026-10-13).
 
 ## Consequences
 
@@ -31,4 +37,4 @@ by a step in the dashboard.
 redoes all). `tools/import_projectaon.py` names a section's `-2x.webp` when it exists, and
 `tools/book_status.py` reports step 9 and an import out of date while one is made but not named.
 The offline copy carries the WebP instead of the PNG, except where a fight uses the PNG. Book 2:
-50 pictures, 1.7 MB of originals to 5.5 MB. The sheet is `tools/admin/ills.html`, opened from step 9. See `docs/reference/dashboard.md` and `importer.md`.
+50 pictures, 1.7 MB of originals to 5.5 MB. The sheet is `tools/admin/ills.html`, opened from step 9. Fight pictures: `ill_upscale.py --fights`, `upscaledSrc()` in `platepick.js`. See `docs/reference/dashboard.md` and `importer.md`.

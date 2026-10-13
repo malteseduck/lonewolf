@@ -30,7 +30,7 @@
   .card[hidden] { display: none; }
   .sheet-top .only { color: var(--fg); font-size: 13px; }
   .card.missing { box-shadow: inset 0 0 0 2px var(--blood), 0 2px 8px rgba(40, 24, 10, .45); }
-  .card .tools { display: flex; gap: 6px; margin-top: 6px; }
+  .card .tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
   .card .tools button { font-size: 12px; padding: 2px 8px; }
   body.embed .sheet-top h1, body.embed .sheet-top select, body.embed .sheet-top nav { display: none; }
   /* inside the dashboard's frame: plain parchment, the charred rim is the dashboard's */
@@ -94,6 +94,7 @@
       <canvas id="pv" width="420" height="600"></canvas>
       <div class="ctl">
         <small>As in the fight panel: the shaded foot is where the controls sit.</small>
+        <label id="orig-l" hidden title="The picture before the upscale, to compare; Save keeps the upscale"><input type="checkbox" id="orig"> Show original</label>
         <label><input type="checkbox" id="flip"> Flip left to right</label>
         <label><input type="checkbox" id="lv-on"> Levels, for a painting</label>
         <label>Ink <input type="range" id="lv-b" min="0" max="254" value="75"><output id="lv-bo">75</output></label>
@@ -123,7 +124,7 @@
 
 <script type="module">
 import { inkPlate } from '../../plates.js';
-import { compilePlates, pickPlate, pinState } from '../../platepick.js';
+import { compilePlates, pickPlate, pinState, upscaledSrc } from '../../platepick.js';
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -151,7 +152,10 @@ function image(src, lib) {
   return new Promise((ok) => { const im = new Image(); im.crop = lib?.crop; im.levels = lib?.levels; im.flip = lib?.flip; im.onload = () => ok(im); im.onerror = () => ok(null); im.src = src; });
 }
 // an owner's file is replaced in place, so its address changes after each save to pass the caches
-const url = (src) => '/' + src + (src.startsWith(`art/plates/${code}/`) ? `?v=${stamp}` : '');
+const url = (src) => '/' + sharp(src) + (src.startsWith(`art/plates/${code}/`) ? `?v=${stamp}` : '');
+// assets/plates/upscaled/<book>.json: the pictures with a Real-ESRGAN 2x copy beside them (step 7's Upscale)
+let ups = null;
+const sharp = (src) => upscaledSrc(src, ups);
 
 async function loadPlates() {
   plates = compilePlates((await (await fetch('/assets/plates/plates.json', { cache: 'no-store' })).json()).plates);
@@ -159,6 +163,8 @@ async function loadPlates() {
   const r = await fetch(`/assets/plates/approved/${code}.json`, { cache: 'no-store' }).catch(() => null);
   const j = r && r.ok ? await r.json() : null;
   pins = (j && j.pins) || null; approvedOn = j && j.approved;
+  const u = await fetch(`/assets/plates/upscaled/${code}.json`, { cache: 'no-store' }).catch(() => null);
+  ups = u && u.ok ? ((await u.json().catch(() => null))?.srcs || null) : null;
 }
 
 /* Each kind of enemy, with what the player shows for it at its first fight (platepick.js: the approved
@@ -181,6 +187,7 @@ function choose() {
     f.mine = plates.find((p) => p.book === code && p.match === anchored(f.name)) || null;
     f.from = (f.mine ? 'your picture' + (f.mine.src.startsWith('art/') ? '' : ` (re-cropped: ${f.mine.src.split('/').pop()})`)
       : f.lib ? `plates.json: "${f.lib.match}"${f.lib.over ? ' (over)' : ''}` : f.art ? `the book's ${f.art}` : 'none: the drawn emblem')
+      + (f.src && sharp(f.src) !== f.src ? ', upscaled 2x' : '')
       + (f.waiting ? (f.isNew ? '; a fight with no approved picture yet' : `; the player still shows the approved picture${f.waiting < f.fights.length ? ` (${f.waiting} of ${f.fights.length} fights)` : ''}`) : '');
   }
 }
@@ -358,6 +365,11 @@ async function edit(foe, upload) {
   const im = await image(src);
   if (!im) return toast('Could not load the picture.', 4000);
   ed.img = im;
+  // a picture shown as its 2x copy can be swapped for the original, to compare: view only
+  const plain = foe.mine?.src || foe.src;
+  ed.up = !upload && sharp(plain) !== plain ? im : null;
+  ed.orig = null;
+  $('#orig-l').hidden = !ed.up; $('#orig').checked = false;
   ed.crop = from?.crop ? [...from.crop] : [0, 0, 1, 1];
   $('#flip').checked = !!from?.flip;
   const lv = from?.levels;
@@ -432,6 +444,18 @@ for (const id of ['lv-on', 'lv-b', 'lv-w']) $('#' + id).addEventListener('input'
   if (+$('#lv-b').value >= +$('#lv-w').value) $('#lv-w').value = +$('#lv-b').value + 1;
   $('#lv-bo').value = $('#lv-b').value; $('#lv-wo').value = $('#lv-w').value; preview();
 });
+$('#orig').onchange = async () => {
+  const want = $('#orig').checked;
+  if (want && !ed.orig) {
+    const plain = ed.foe.mine?.src || ed.foe.src;
+    ed.orig = await image('/' + plain + (plain.startsWith(`art/plates/${code}/`) ? `?v=${stamp}` : ''));
+    if (!ed.orig) { $('#orig').checked = false; return toast('The original is not on disk.', 4000); }
+  }
+  ed.img = want ? ed.orig : ed.up;
+  $('#ed-img').src = ed.img.src;
+  await $('#ed-img').decode().catch(() => {});
+  place(); preview();
+};
 $('#ed-whole').onclick = () => { ed.crop = [0, 0, 1, 1]; place(); preview(); };
 $('#ed-cancel').onclick = () => $('#ed').close();
 $('#ed-save').onclick = () => send({ image: ed.webp || undefined, src: ed.src || undefined, crop: ed.crop.map((v) => +v.toFixed(4)), levels: levels() || undefined, flip: $('#flip').checked || undefined });

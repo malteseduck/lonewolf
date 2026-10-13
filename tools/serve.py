@@ -335,9 +335,11 @@ def offline_list(root=ROOT, fill=None):
 
     seen, missing, todo = set(), set(), [OFFLINE_ENTRY]
     # main.js asks for assets/plates/approved/${book}.json, a path the walk cannot see
-    pins = os.path.join(root, 'assets', 'plates', 'approved')
-    if os.path.isdir(pins):
-        todo += [f'assets/plates/approved/{e.name}' for e in os.scandir(pins) if e.is_file() and e.name.endswith('.json')]
+    # and assets/plates/upscaled/${book}.json, the same way
+    for sub in ('approved', 'upscaled'):
+        pins = os.path.join(root, 'assets', 'plates', sub)
+        if os.path.isdir(pins):
+            todo += [f'assets/plates/{sub}/{e.name}' for e in os.scandir(pins) if e.is_file() and e.name.endswith('.json')]
 
     def add(base, url):
         """Queue url as read from a file in folder base ('' for the page itself); not data:, other
@@ -389,6 +391,9 @@ def offline_list(root=ROOT, fill=None):
             for pin in as_json(rel).get('pins', {}).values():
                 if (pin or {}).get('plate'):
                     add('', pin['plate'].get('src', ''))
+        elif rel.startswith('assets/plates/upscaled/'):  # fight pictures shown from their 2x copy (ADR 0033)
+            for src in as_json(rel).get('srcs', []):
+                add('', posixpath.splitext(src)[0] + '-2x.webp')
         elif rel == 'art/manifest.json':
             art = as_json(rel)
             hero, portrait = art.get('hero'), art.get('portrait')
@@ -420,6 +425,8 @@ ADMIN_STAGES = {
     # the fight pictures that now differ from those approved at step 7 become the approved ones (the owner's go-ahead)
     'approve-pictures': {'title': 'Approve fight pictures', 'folder': True, 'gated': True, 'timeout': 120, 'cmds': lambda c: [['node', 'tools/plates_pin.mjs', c, '--approve']]},
     # Real-ESRGAN on the PC: fetches nothing, writes only <name>-2x.webp beside each original (ADR 0033)
+    # every picture the book's fights can show, the same way; listed in assets/plates/upscaled/<code>.json
+    'fights-up': {'title': 'Upscale fight pictures', 'folder': True, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/ill_upscale.py', '--fights', c]]},
     'ills': {'title': 'Upscale illustrations', 'folder': True, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/ill_upscale.py', c]]},
     'offline': {'title': 'Offline check', 'book': False, 'timeout': 300, 'cmds': lambda c: [PY + ['tools/offline_check.py']]},
     # the real books through every script, then both unit-test suites (ADR 0022: re-importing here needs no go-ahead)

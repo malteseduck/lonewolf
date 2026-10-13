@@ -255,6 +255,18 @@ def test_offline_list_names_the_files_the_page_uses_and_reports_a_missing_one(tm
     assert len(got['version']) == 16 and all(len(h) == 16 for h in got['files'].values())
 
 
+def test_offline_list_carries_a_books_upscaled_fight_pictures(tmp_path):
+    s = tmp_path / 'pub'
+    write(str(s / 'index.html'), '<script src="main.js"></script>')
+    write(str(s / 'main.js'), 'fetch(`assets/plates/upscaled/${id}.json`)')  # a path the walk cannot follow
+    write(str(s / 'assets/plates/upscaled/02fotw.json'), json.dumps({'srcs': ['art/plates/02fotw/giak.webp', 'data/projectaon/02fotw/ill5.png']}))
+    write(str(s / 'art/plates/02fotw/giak-2x.webp'), 'x')
+    write(str(s / 'data/projectaon/02fotw/ill5-2x.webp'), 'x')
+    got = serve.offline_list(str(s))
+    assert {'assets/plates/upscaled/02fotw.json', 'art/plates/02fotw/giak-2x.webp', 'data/projectaon/02fotw/ill5-2x.webp'} <= set(got['files'])
+    assert got['missing'] == []
+
+
 # ---------------------------------------------------------------- admin jobs (a fake stands in for the subprocess)
 
 @pytest.fixture
@@ -312,10 +324,11 @@ def stage(monkeypatch, name, cmds=(('run',),), timeout=30, **spec):
 
 def test_admin_stage_table_has_every_stage_with_the_right_gates():
     assert set(serve.ADMIN_STAGES) == {'fetch', 'fetch-rules', 'import', 'reading', 'check-items', 'approve-pictures',
-                                       'ills', 'offline', 'check', 'release'}
+                                       'ills', 'fights-up', 'offline', 'check', 'release'}
     gated = {k for k, v in serve.ADMIN_STAGES.items() if v.get('gated')}
     assert gated == {'fetch', 'fetch-rules', 'import', 'approve-pictures', 'release'}  # upscaling fetches nothing
     assert serve.ADMIN_STAGES['ills']['cmds']('02fotw') == [serve.PY + ['tools/ill_upscale.py', '02fotw']]
+    assert serve.ADMIN_STAGES['fights-up']['cmds']('02fotw') == [serve.PY + ['tools/ill_upscale.py', '--fights', '02fotw']]
     for spec in serve.ADMIN_STAGES.values():
         assert spec['timeout'] > 0 and spec['title']
         assert all(isinstance(a, str) for argv in spec['cmds']('01fftd') for a in argv)

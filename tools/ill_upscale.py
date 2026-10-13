@@ -2,6 +2,7 @@
 
 Run (from the project root):
   uv run --no-project --python tools/.venv/Scripts/python.exe python tools/ill_upscale.py <book> [--force]
+  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/ill_upscale.py --fights <book>
 
 <book> is a code (02fotw) or a number (2). Every ill*.png and small*.png in data/projectaon/<code>/
 goes through realesrgan-x4plus (tools/realesrgan/, git-ignored) once, is reduced LANCZOS to exactly
@@ -9,6 +10,12 @@ twice its size and saved as <name>-2x.webp, lossy at quality 80 (Book 2's ill1: 
 200 KB at 2x; quality 90 looked no different). One already newer than its original is skipped
 unless --force. The importer names the -2x.webp in book.js once it is there (a re-import).
 Prints file names and sizes only.
+
+--fights does the same for every picture the book's fights can show (checklist step 7's Upscale):
+what plates.json and the book pick for each enemy now, and the pictures approved for its fights. Each
+copy goes beside its picture, wherever that is (data/, art/, assets/plates/), and the pictures with a
+copy are listed in assets/plates/upscaled/<code>.json, from which the player and the picture sheet show
+the copy. plates.json and the approved pictures keep naming the originals; a crop, in fractions, fits both.
 """
 import os
 import re
@@ -74,7 +81,70 @@ def listing(book):
     return out
 
 
+def upscale_one(rel):
+    """One picture, rel from the project root, to <stem>-2x.webp beside it. Returns the copy's rel, or
+    None if rel is not a picture that can be upscaled (missing, outside assets/ art/ data/, an upscale)."""
+    parts = rel.replace('\\', '/').split('/')
+    stem, ext = os.path.splitext(parts[-1])
+    if '..' in parts or parts[0] not in ('assets', 'art', 'data') or ext.lower() not in ('.png', '.jpg', '.jpeg', '.webp') or stem.endswith('-2x'):
+        return None
+    src = os.path.join(ROOT, *parts)
+    if not os.path.isfile(src):
+        return None
+    out_rel = '/'.join(parts[:-1] + [stem + '-2x.webp'])
+    out = os.path.join(ROOT, *out_rel.split('/'))
+    if not (os.path.isfile(out) and os.path.getmtime(out) >= os.path.getmtime(src)):
+        with tempfile.TemporaryDirectory() as tmp:
+            upscale(src, out, tmp)
+    return out_rel
+
+
+def fight_srcs(code):
+    """Every picture the book's fights can show: what each enemy gets now (plates_file.current, as the
+    player picks it) and each approved picture (assets/plates/approved/<code>.json), sorted."""
+    import json
+    import plates_file
+    book = load_book(code, os.path.join(DATA, code, 'book.js'))
+    plates = plates_file.load_plates()['plates']
+    srcs = {plates_file.current(plates, code, book, n)[0] for n in plates_file.enemy_names(book)}
+    try:
+        with open(os.path.join(ROOT, 'assets', 'plates', 'approved', code + '.json'), encoding='utf-8') as f:
+            srcs |= {(pin.get('plate') or {}).get('src') for pin in json.load(f).get('pins', {}).values() if pin}
+    except (OSError, ValueError):
+        pass
+    return sorted(s for s in srcs if s)
+
+
+def fights(code):
+    """Upscale the book's fight pictures and list those with a copy in assets/plates/upscaled/<code>.json."""
+    import json
+    srcs = fight_srcs(code)
+    made = []
+    for src in srcs:
+        t = time.time()
+        out = upscale_one(src)
+        print(f'{src} -> {out}, {time.time() - t:.1f} s' if out else f'{src}: not a picture that can be upscaled', flush=True)
+        if out:
+            made.append(src)
+    d = os.path.join(ROOT, 'assets', 'plates', 'upscaled')
+    os.makedirs(d, exist_ok=True)
+    with open(os.path.join(d, code + '.part'), 'w', encoding='utf-8', newline='\n') as f:
+        f.write(json.dumps({'_readme': 'The fight pictures of this book with a Real-ESRGAN 2x copy beside them, '
+                            '<name>-2x.webp, which the player and the picture sheet show instead (platepick.js '
+                            'upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0033.', 'srcs': made}, indent=1) + '\n')
+    os.replace(os.path.join(d, code + '.part'), os.path.join(d, code + '.json'))
+    print(f'{code}: {len(made)} fight pictures upscaled' + (f', {len(srcs) - len(made)} could not be' if len(made) < len(srcs) else '')
+          + f'; listed in assets/plates/upscaled/{code}.json')
+    return 0
+
+
 def main(argv):
+    if argv[:1] == ['--fights'] and len(argv) == 2:
+        hit = find(argv[1])
+        if not hit or not os.path.isfile(os.path.join(DATA, hit[0], 'book.js')):
+            print(f'{argv[1]}: not an imported book')
+            return 1
+        return fights(hit[0])
     force = '--force' in argv
     args = [a for a in argv if a != '--force']
     hit = find(args[0]) if len(args) == 1 else None

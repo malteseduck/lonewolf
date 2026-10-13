@@ -4,7 +4,7 @@
 import * as Ink from './shared/ink.js';
 import { drawCreature, setArt, setEmblem, newWound, portraitFromArt, drawFrame, drawBanner, drawCrest, gearSVG } from './plates.js';
 import { printedCanvas } from './maps.js';
-import { compilePlates, pickPlate, pinKey } from './platepick.js';
+import { compilePlates, pickPlate, pinKey, upscaledSrc } from './platepick.js';
 import * as Adv from './adventures.js';
 
 import * as ITEMS_01 from './items/items-01fftd.js';
@@ -1056,17 +1056,19 @@ function showFoe() {
   B.fx.dead = 0; B.fx.wounds = []; B.img = null;
   // the approved picture, else the plate library's or the section's own, else the drawn emblem (platepick.js)
   const foe = B.foe, plate = pickPlate(foe, book, PLATES, PINS[book.id], pinKey(game.s.at, B.foe.at));
-  if (plate) { const im = new Image(); im.crop = plate.crop; im.levels = plate.levels; im.flip = plate.flip; im.onload = () => { if (B && B.foe === foe) B.img = im; }; im.src = plate.src; }
+  if (plate) { const im = new Image(); im.crop = plate.crop; im.levels = plate.levels; im.flip = plate.flip; im.onload = () => { if (B && B.foe === foe) B.img = im; }; im.src = upscaledSrc(plate.src, UPSCALED[book.id]); }
 }
 /* assets/plates/plates.json: pictures for enemies the book does not picture */
 let PLATES = [];
 fetch('assets/plates/plates.json').then((r) => r.json()).then((j) => { PLATES = compilePlates(j.plates); }).catch(() => {});
-/* assets/plates/approved/<book>.json: the pictures the owner approved, kept whatever plates.json now picks */
-const PINS = {};
+/* assets/plates/approved/<book>.json: the pictures the owner approved, kept whatever plates.json now picks;
+   assets/plates/upscaled/<book>.json: those of its fight pictures shown from their 2x copy (ADR 0033) */
+const PINS = {}, UPSCALED = {};
 function loadPins(id) {
   if (id in PINS) return;
-  PINS[id] = null;
+  PINS[id] = null; UPSCALED[id] = null;
   fetch(`assets/plates/approved/${id}.json`).then((r) => (r.ok ? r.json() : null)).then((j) => { PINS[id] = (j && j.pins) || null; }).catch(() => {});
+  fetch(`assets/plates/upscaled/${id}.json`).then((r) => (r.ok ? r.json() : null)).then((j) => { UPSCALED[id] = (j && j.srcs) || null; }).catch(() => {});
 }
 function updateBattle() {
   const hero = game.hero, foe = B.foe, q = (k) => B.node.querySelector(`[data-b=${k}]`), r = B.ratio();

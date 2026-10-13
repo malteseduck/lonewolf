@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { compilePlates, choosePlate, nameKey, pinKey, pickPlate, samePlate, pinState } from '../../platepick.js';
+import { compilePlates, choosePlate, nameKey, pinKey, pickPlate, samePlate, pinState, upscaledSrc } from '../../platepick.js';
 
 const book = { id: '04tcod', assets: 'data/projectaon/04tcod/' };
 const lib = compilePlates([
@@ -107,5 +107,15 @@ describe('pinState: what the owner has to look at on the picture sheet', () => {
   });
   it('before any approval nothing waits', () => {
     expect(pinState({ name: 'Drakkar' }, book, lib, null, '9/0')).toEqual({ state: 'same' });
+  });
+});
+
+describe('upscaledSrc: a fight picture shown as its 2x copy once step 7 has made it', () => {
+  const list = ['data/projectaon/02fotw/ill5.png', 'art/plates/02fotw/giak.webp'];
+  it('names the -2x.webp beside a picture on the book\'s list, any other unchanged', () => {
+    expect(upscaledSrc('data/projectaon/02fotw/ill5.png', list)).toBe('data/projectaon/02fotw/ill5-2x.webp');
+    expect(upscaledSrc('art/plates/02fotw/giak.webp', list)).toBe('art/plates/02fotw/giak-2x.webp');
+    expect(upscaledSrc('assets/plates/troll.png', list)).toBe('assets/plates/troll.png');
+    expect(upscaledSrc('data/projectaon/02fotw/ill5.png', null)).toBe('data/projectaon/02fotw/ill5.png');
   });
 });

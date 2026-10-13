@@ -81,3 +81,38 @@ def test_listing_gives_each_illustration_its_upscale_and_sections_for_the_sheet(
 def test_listing_of_a_book_not_downloaded_is_none(tmp_path, monkeypatch):
     monkeypatch.setattr(ill_upscale, 'DATA', str(tmp_path))
     assert ill_upscale.listing(CODE) is None and ill_upscale.listing('nosuch') is None
+
+
+def test_fights_upscales_every_picture_the_books_fights_can_show_and_lists_them(book, tmp_path, monkeypatch, capsys):
+    import json
+    import plates_file
+    monkeypatch.setattr(ill_upscale, 'ROOT', str(tmp_path))
+    monkeypatch.setattr(plates_file, 'ROOT', str(tmp_path))
+    monkeypatch.setattr(plates_file, 'PLATES', str(tmp_path / 'assets' / 'plates' / 'plates.json'))
+    pic = lambda rel, size=(30, 20): (tmp_path.joinpath(*rel.split('/')).parent.mkdir(parents=True, exist_ok=True),
+                                      Image.new('RGB', size, 'white').save(tmp_path.joinpath(*rel.split('/'))))
+    # the book's own picture (ill1.png, from the fixture), a library one, the owner's, and an approved one
+    pic('assets/plates/troll.png')
+    pic(f'art/plates/{CODE}/giak.webp')
+    pic(f'art/plates/{CODE}/old.webp')
+    (tmp_path / 'assets' / 'plates' / 'plates.json').write_text(json.dumps({'plates': [
+        {'match': '^giak$', 'book': CODE, 'src': f'art/plates/{CODE}/giak.webp', 'crop': [0, 0, 0.5, 0.5]},
+        {'match': 'troll', 'src': 'assets/plates/troll.png'}]}), encoding='utf-8')
+    secs = {'1': {'combat': {'enemies': [{'name': 'Kraan', 'art': 'ill1.png'}, {'name': 'Giak'}, {'name': 'Cave Troll'}, {'name': 'Nobody'}]}}}
+    (book.dir / 'book.js').write_text('(window.LW = window.LW || {}).BOOKS = Object.assign(window.LW.BOOKS || {}, '
+                                      + json.dumps({CODE: {'assets': f'data/projectaon/{CODE}/', 'sections': secs}}) + ');\n', encoding='utf-8')
+    (tmp_path / 'data' / 'projectaon').mkdir(parents=True, exist_ok=True)
+    os.replace(book.dir, tmp_path / 'data' / 'projectaon' / CODE)
+    monkeypatch.setattr(ill_upscale, 'DATA', str(tmp_path / 'data' / 'projectaon'))
+    (tmp_path / 'assets' / 'plates' / 'approved').mkdir()
+    (tmp_path / 'assets' / 'plates' / 'approved' / f'{CODE}.json').write_text(json.dumps({'pins': {
+        '1/1': {'name': 'x', 'plate': {'src': f'art/plates/{CODE}/old.webp'}}, '1/3': {'name': 'y', 'plate': None}}}), encoding='utf-8')
+    assert ill_upscale.main(['--fights', CODE]) == 0
+    want = [f'art/plates/{CODE}/giak.webp', f'art/plates/{CODE}/old.webp', 'assets/plates/troll.png', f'data/projectaon/{CODE}/ill1.png']
+    got = json.loads((tmp_path / 'assets' / 'plates' / 'upscaled' / f'{CODE}.json').read_text(encoding='utf-8'))
+    assert got['srcs'] == want
+    for rel in want:  # each copy beside its picture, twice its size
+        assert Image.open(tmp_path.joinpath(*rel.split('/')).with_name(rel.split('/')[-1].rsplit('.', 1)[0] + '-2x.webp')).width == 2 * Image.open(tmp_path.joinpath(*rel.split('/'))).width
+    assert '4 fight pictures upscaled' in capsys.readouterr().out
+    book.calls.clear()
+    assert ill_upscale.main(['--fights', CODE]) == 0 and book.calls == []  # done already

@@ -30,7 +30,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   agent's work: the owner looks here and marks it. It opens
   inline under the grid like the map editor (Open picture sheet here, `?embed=1`; the step 7 cell
   only goes to that step's line in the book's list), and on its own. A picture file dropped, pasted or chosen on a card becomes that enemy's
-  picture; Adjust crops any card's picture, flips it left to right and sets levels, with the fight panel previewed as it will look;
+  picture; Adjust crops any card's picture, flips it left to right and sets levels, with the fight panel previewed as it will look (and, for a picture shown from its 2x copy, Show original to compare);
   Remove takes the owner's entry away. Each save redraws the cards and the "with none" count, and the
   dashboard's grid follows. The rules for the entry: `docs/reference/items.md`, "Fight pictures".
 - **The illustration sheet** ("Open illustration sheet" at step 9), inline under the grid like the
@@ -105,6 +105,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `reading` | `reading_copy.py <code>`, then `item_sections.py <code>` | |
 | `check-items` | `node check_items.mjs <code> --json` | |
 | `approve-pictures` | `node plates_pin.mjs <code> --approve` | gated: the owner's approval of changed fight pictures |
+| `fights-up` | `ill_upscale.py --fights <code>` (step 7's Upscale fight pictures: every picture the book's fights can show, now or approved; about 5-10 s a picture) | |
 | `ills` | `ill_upscale.py <code>` (Real-ESRGAN on this PC; about 3 s a picture) | |
 | `offline` | `offline_check.py` | |
 | `check` | `check_all.py` (re-imports every book, ADR 0022) | |

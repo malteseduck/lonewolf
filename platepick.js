@@ -47,3 +47,8 @@ export function pinState(foe, book, plates, pins, key) {
   if (!pin || pin.name !== nameKey(foe.name)) return { state: 'new', now };
   return samePlate(pin.plate, now) ? { state: 'same' } : { state: 'changed', was: pin.plate, now };
 }
+
+/* assets/plates/upscaled/<book>.json lists the pictures step 7's Upscale has made a Real-ESRGAN 2x copy of,
+   beside each (ADR 0033): those are shown from the copy. A crop is in fractions, so it fits either; pins
+   and plates.json keep naming the original. */
+export const upscaledSrc = (src, list) => (src && list && list.includes(src) ? src.replace(/\.[^./]+$/, '') + '-2x.webp' : src);

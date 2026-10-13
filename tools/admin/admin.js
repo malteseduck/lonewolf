@@ -106,7 +106,7 @@ const ACTIONS = {
   rules: () => [prompt('rules'), mark(4)],
   reading: () => [run('Make reading copy', 'reading')],
   items: (b) => [prompt('items'), run('Check items', 'check-items'), ...(b.items.check?.errors?.length ? [prompt('itemsFix', 'Copy fix prompt')] : [])],
-  pictures: (b) => [prompt('pictures'), { t: 'sheet', label: 'Open picture sheet' }, mark(7),
+  pictures: (b) => [prompt('pictures'), { t: 'sheet', label: 'Open picture sheet' }, run('Upscale fight pictures', 'fights-up'), mark(7),
     ...(b.pins?.waiting ? [run('Approve picture changes...', 'approve-pictures', { gate: 'pictures' })] : [])],
   testplay: () => [prompt('testplay'), link('Test address', 'http://127.0.0.1:8766/'), mark(6)],
   map: () => [{ t: 'map', label: 'Open map editor' }],

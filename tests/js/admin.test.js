@@ -191,6 +191,14 @@ describe('actions', () => {
     expect(post('POST admin/run/ills')[0].body).toEqual({});
   });
 
+  it('upscales a book\'s fight pictures from step 7, at once', async () => {
+    await setup(book(1), { 'POST admin/run/*': () => [200, { id: 9, title: 'Upscale fight pictures' }], 'GET admin/jobs/*': () => [200, { lines: [], from: 0, state: 'done', code: 0, started: 0, ended: 1000 }] });
+    [...$('#detail .step[data-stage="pictures"]').querySelectorAll('button')].find((b) => b.textContent === 'Upscale fight pictures').click();
+    await until(() => expect(post('POST admin/run/fights-up')).toHaveLength(1));
+    expect(post('POST admin/run/fights-up')[0].search).toBe('?book=01book1');
+    expect(post('POST admin/run/fights-up')[0].body).toEqual({});
+  });
+
   it('opens the illustration sheet for the book inline under the grid', async () => {
     await setup(book(1));
     const step = $('#detail .step[data-stage="ills"]');
