@@ -120,12 +120,14 @@ on the same medallion again, or Escape closes it; touching another medallion mov
     can take the ivory fill and ember glow.
   - The box explains the touched discipline, and says when it is not learned.
 - **pack** (`packHTML`), a ledger like the Kai panel (ADR 0028), its parts close together
-  (`.panel:has(> .pack)`): `.arms`, the two weapons each named under its medallion (a mastered one
-  lit, "+2" by its name; an empty hand a faint sword, `.disc.vacant`, "No weapon"), the Kai wolf's
+  (`.panel:has(> .pack)`): `.arms`, the two weapons each named under its medallion (lit when his
+  skill counts with it, `LW.weaponBonus`; its box gives the item table's `about`, else the rules'
+  words for a bow or any weapon, and what it adds; a Special Item that fights as a weapon (`weapon`
+  in its item table: the Sommerswerd) likewise. What an item adds is never shown on the page; an empty hand a faint sword, `.disc.vacant`, "No weapon"), the Kai wolf's
   head (`.crestmark`, faint in `--ink`; ADR 0009) between them; a ruled "Special Items n of 12"
   heading (`LW.counted`, `LW.specialLimit`) over `.specs`, every Special Item as a small medallion
-  and its name, three to a row, no empty slots; it takes the space left and scrolls within it past
-  what fits (twelve fit on the iPad). Then a ruled "Backpack n of N" heading over the tiles, as many
+  and its name (the Quiver's with its Arrows, "4 of 6", `LW.quiverRoom`), three to a row, no empty slots; as tall as its items, the Backpack right under it,
+  scrolling within itself past what fits (twelve fit on the iPad). Then a ruled "Backpack n of N" heading over the tiles, as many
   as `LW.backpackMax` in two rows (`--cols`), each item its glyph alone in the tile, under the HD sheet's ironwork (`packLattice`: a curl in each tile's corners, diamond studs
   where they meet, a double frame, a scroll off each corner); a `.ledger` line (gold -/+, other coins he has met with their own -/+ (`hero.coins`), and "Add an item by hand" at its right); and, when anything is kept at the Kai Monastery
   (`hero.stored`, `hero.storedGold`), a line (`.kept`) saying what; likewise what was taken to be found again

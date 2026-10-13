@@ -56,5 +56,5 @@ choice, and why. Read this index before changing behaviour, art, or a tool's out
 | [0025](0025-item-tables-in-items-folder.md) | The item tables live in `items/`, out of the project root | 2026-10-11 | Accepted |
 | [0026](0026-fights-draw-out-of-sight.md) | A fight draws its Random Numbers out of sight: no medallion in the fight | 2026-10-12 | Accepted |
 | [0027](0027-by-hand-stop-wins-nothing.md) | Stopping a fight by hand wins nothing, except where the item table says the text ends it so | 2026-10-12 | Accepted |
-| [0028](0028-inventory-is-a-ledger.md) | The inventory is a ledger like the Kai panel (named weapons, a Special Items list, a Backpack sized to the book), not a paper doll | 2026-10-12 | Accepted |
+| [0028](0028-inventory-is-a-ledger.md) | The inventory is a ledger like the Kai panel (named weapons, a Special Items list, a Backpack sized to the book), not a paper doll | 2026-10-12 | Accepted, amended 2026-10-12 |
 | [0029](0029-twelve-special-items-in-every-book.md) | At most 12 Special Items in every book, Kai ones too | 2026-10-12 | Accepted |

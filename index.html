@@ -312,20 +312,21 @@ button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background:
 .arm { display: flex; flex-direction: column; align-items: center; gap: 0.4em; min-width: 0; }
 .arm .disc { --s: 3.2em; }
 .arm .name { font: 700 1.05em/1.1 var(--script); color: var(--ink); text-align: center; }
-.arm .name small { font: 400 0.7em var(--title); color: var(--ink-dim); margin-left: 0.2em; }
 .arms .crestmark { justify-self: center; align-self: center; width: 5.2em; height: 5.2em; opacity: 0.25; pointer-events: none; }
 .arms .crestmark .glyph { width: 100%; height: 100%; }
 .arms .crestmark .glyph i { background: var(--ink); }
 .disc.vacant { opacity: 0.45; }
 .disc.vacant::after { display: none; }
 .disc.vacant .glyph i { background: rgba(233, 224, 200, 0.3); }
-/* the Special Items as a named list in two columns: it scrolls in its own place when long */
-.specs { flex: 1 1 0; min-height: 4em; overflow-y: auto; scrollbar-width: thin; }
+/* the Special Items as a named list, the Backpack right under it; past what fits, it scrolls in its own place */
+/* scrolling clips at its edges, so room is kept round the medallions (their rim and shadow) */
+.specs { flex: 0 1 auto; min-height: 2.4em; margin: 0 -0.35em; padding: 0.15em 0.35em; overflow-y: auto; scrollbar-width: thin; }
 .specs ul { margin: 0; padding: 0.1em 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.25em 0.5em; }
 .specs li { display: flex; align-items: center; gap: 0.35em; min-width: 0; }
 .specs li .disc { --s: 1.95em; }
 .specs li .disc::after { display: none; }
 .specs li span { min-width: 0; font: 400 0.68em/1.12 var(--title); color: var(--ink); }
+.specs li small { font-size: 1em; color: var(--ink-dim); white-space: nowrap; }
 .specs .none { margin: 0.3em 0; font-size: 1.05em; color: var(--ink-dim); font-style: italic; }
 .disc.item .glyph i { background: linear-gradient(var(--silver-hi), var(--silver) 55%, var(--silver-lo)); }
 .disc.item.lit .glyph i { background: radial-gradient(circle at 50% 45%, var(--glyph) 45%, #f3d6a0 80%, var(--ember)); }
@@ -336,7 +337,7 @@ button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background:
     repeating-conic-gradient(var(--pewter) 0 5deg, var(--pewter-lo) 5deg 7.5deg, var(--pewter) 7.5deg 10deg);
   opacity: 0.8; box-shadow: 0 0 0 0.07em rgba(20, 12, 8, 0.5); }
 .disc.empty::after, .pack .disc::after { display: none; }
-.pack { position: relative; flex: none; align-self: center; width: calc(var(--cols) * 3.5em); display: grid; grid-template-columns: repeat(var(--cols), 1fr); background: var(--enamel); box-shadow: 0 0 0 0.16em var(--enamel-lo), 0 0.15em 0.4em rgba(0, 0, 0, 0.4); }
+.pack { position: relative; flex: none; align-self: center; width: calc(var(--cols) * 2.9em); display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); background: var(--enamel); box-shadow: 0 0 0 0.16em var(--enamel-lo), 0 0.15em 0.4em rgba(0, 0, 0, 0.4); }
 /* the ironwork over the tiles (packLattice): pewter lines and curls, the discs above them */
 .pack .lattice { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .lattice .sq, .lattice .frame, .lattice .curl, .lattice .sweep { fill: none; stroke: var(--bronze); stroke-width: 1.3; vector-effect: non-scaling-stroke; }
@@ -348,8 +349,8 @@ button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background:
 .lattice .stud { fill: var(--bronze); stroke: var(--enamel-lo); stroke-width: 0.8; vector-effect: non-scaling-stroke; }
 .pack .cell > * { position: relative; z-index: 1; }
 /* each tile: dark leather with an engraved inner line, as the HD Backpack grid */
-.pack .cell { aspect-ratio: 1; display: grid; place-items: center; padding: 0.4em; background: radial-gradient(circle, #3b2b21, #22170f 75%); }
-.pack .disc { --s: 2.6em; }
+.pack .cell { aspect-ratio: 1; display: grid; place-items: center; padding: 0.2em; background: radial-gradient(circle, #3b2b21, #22170f 75%); }
+.pack .disc { --s: 2.2em; }
 /* in a tile the item is the glyph alone: the tile is its frame */
 .pack .disc.item { background: none; box-shadow: none; }
 .pack .disc.item .glyph { width: 74%; height: 74%; }

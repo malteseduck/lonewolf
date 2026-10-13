@@ -282,3 +282,16 @@ describe('LW.KitSetup', () => {
     expect(hero.storedGold).toBeUndefined();
   });
 });
+
+describe('LW.weaponBonus: what a weapon adds, as the inventory shows it', () => {
+  it('Weaponskill +2 in a Kai book, Weaponmastery +3 in a Magnakai one, a weapon\'s own bonus, a bow\'s shot', () => {
+    const sum = (h, w) => LW.weaponBonus(h, w).reduce((t, p) => t + p.n, 0);
+    expect(sum(kaiHero({ weaponskill: 'sword' }), 'sword')).toBe(2);
+    expect(sum(kaiHero({ weaponskill: 'sword' }), 'axe')).toBe(0);
+    expect(sum(mkHero(['weaponmastery'], { mastery: ['sword', 'bow'] }), 'sword')).toBe(3);
+    LW.addItems({ sunblade: { name: 'Sunblade', kind: 'special', weapon: ['sword'], cs: 8 }, longbow: { name: 'Longbow', kind: 'weapon', ranged: true, shot: 3 } });
+    expect(sum(kaiHero({ weaponskill: 'sword' }), 'sunblade')).toBe(10);
+    expect(sum(mkHero(['weaponmastery'], { mastery: ['bow'] }), 'longbow')).toBe(6); // its own +3 to the shot, Weaponmastery's +3
+    expect(sum(kaiHero(), 'bow')).toBe(0);
+  });
+});

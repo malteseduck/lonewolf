@@ -494,13 +494,20 @@ function captionHTML() {
     const mastered = id === 'weaponmastery' && (h.mastery || []).length ? ` Mastered: ${esc(h.mastery.map(LW.itemName).join(', '))}.` : '';
     return `<div><h3>${esc(d.name)}${extra}</h3><p>${esc(d.blurb)}${mastered}${LW.has(h, id) ? '' : ' <i>Not yet learned.</i>'}</p></div>`;
   }
-  if (sel && sel.kind === 'weapon' && h.weapons.includes(id)) return `<div><h3>${esc(LW.itemName(id))}</h3><p>${h.weaponskill === id ? 'Your mastered weapon: +2 Combat Skill.' : 'A weapon. You may carry two.'}</p></div>${drop()}`;
   const it = LW.ITEMS[id] || {}, about = it.about ? ` ${esc(it.about)}` : '';
+  // what a weapon (or a Special Item that fights as one) adds, said in its box only
+  const parts = it.ranged || it.weapon || sel && sel.kind === 'weapon' ? LW.weaponBonus(h, id) : [];
+  const adds = parts.length ? ` ${it.ranged ? 'To the number for a shot' : 'In a fight'}: ${parts.map((p) => `${esc(p.label)} +${p.n}`).join(', ')}.` : '';
+  if (sel && sel.kind === 'weapon' && h.weapons.includes(id)) {
+    // what it is: the item table's words, else the rules' for a bow or any weapon
+    const what = it.about ? esc(it.about) : it.ranged ? 'Shoots only where the story allows, one Arrow from a Quiver a shot. No use hand to hand: with only a Bow, you fight unarmed.' : 'A weapon. You may carry two.';
+    return `<div><h3>${esc(LW.itemName(id))}</h3><p>${what}${adds}</p></div>${drop()}`;
+  }
   if (sel && sel.kind === 'pack' && it.heal && h.backpack.includes(id)) return `<div><h3>${esc(it.name)}</h3><p>Restores ${it.heal} Endurance.${id === 'potion' ? '' : about}</p></div><button type="button" class="seal" data-drink="${esc(id)}" ${h.ep >= h.epMax ? 'disabled' : ''}>${id === 'potion' ? 'Drink' : 'Eat'}</button>${drop()}`;
   if (sel && sel.kind === 'pack' && h.backpack.includes(id)) return `<div><h3>${esc(LW.itemName(id))}</h3><p>A Backpack Item.${about}</p></div>${drop()}`;
   if (sel && sel.kind === 'meal' && h.meals) return `<div><h3>Meal</h3><p>Eaten when the story calls for it. Go hungry and you lose 3 Endurance.</p></div>${drop('Eat')}`;
   const arrows = id === 'quiver' ? ` ${h.arrows || 0} of ${LW.MAX_ARROWS} Arrows ${stepper('arrows')}` : '';
-  if (sel && sel.kind === 'special' && h.special.includes(id)) return `<div><h3>${esc(LW.itemName(id))}</h3><p>A Special Item${it.ep ? `: +${it.ep} Endurance while you carry it` : ''}.${about}${arrows}</p></div>${drop()}`;
+  if (sel && sel.kind === 'special' && h.special.includes(id)) return `<div><h3>${esc(LW.itemName(id))}</h3><p>A Special Item${it.ep ? `: +${it.ep} Endurance while you carry it` : ''}.${about}${adds}${arrows}</p></div>${drop()}`;
   return '';
 }
 /* the box a touched medallion opens beside itself: below it, or above when the page runs out */
@@ -564,11 +571,13 @@ function packHTML() {
   const taken = Object.values(h.stash || {}).flatMap((st) => [...st.items.map((i) => (i === 'meal' ? 'a Meal' : LW.itemName(i))), ...(st.gold ? [`${st.gold} Gold Crowns`] : [])]);
   const ails = LW.marksOf(h).map((m) => LW.MARKS[m].name + (LW.MARKS[m].about ? `: ${LW.MARKS[m].about}` : ''));
   const slot = (kind, id, extra = '') => `<button type="button" class="disc item ${on(kind, id)} ${extra}" data-sel="${kind}|${esc(id)}" aria-label="${esc(LW.itemName(id))}">${itemGlyph(id)}</button>`;
-  const skilled = (w) => h.weaponskill === w || (h.series === 'magnakai' && LW.has(h, 'weaponmastery') && (h.mastery || []).includes(w));
-  // an empty hand shows a faint sword, not a bare ring
+  // lit when his skill counts with it (what it adds is in its box only). An empty hand shows a faint sword, not a bare ring
+  const skilled = (w) => LW.weaponBonus(h, w).some((p) => /^Weapon/.test(p.label));
   const arm = (w) => `<div class="arm">${w ? slot('weapon', w, skilled(w) ? 'lit' : '') : `<span class="disc vacant">${itemGlyph('sword')}</span>`}
-    <span class="name">${w ? esc(LW.itemName(w)) : 'No weapon'}${w && skilled(w) ? ' <small>+2</small>' : ''}</span></div>`;
-  const specs = h.special.map((s) => `<li>${slot('special', s)}<span>${esc(LW.itemName(s))}</span></li>`).join('');
+    <span class="name">${w ? esc(LW.itemName(w)) : 'No weapon'}</span></div>`;
+  // the Quiver shows its Arrows (its room is less what rides in it in their place)
+  const count = (s) => (s === 'quiver' ? ` <small>${h.arrows || 0} of ${LW.quiverRoom(h)}</small>` : '');
+  const specs = h.special.map((s) => `<li>${slot('special', s)}<span>${esc(LW.itemName(s))}${count(s)}</span></li>`).join('');
   const room = LW.backpackMax(h), cols = Math.ceil(room / 2);
   for (let i = 0; i < h.meals; i++) cells.push(`<button type="button" class="disc item ${on('meal', 'meal')}" data-sel="meal|meal" aria-label="Meal">${itemGlyph('meal')}</button>`);
   h.backpack.forEach((b) => cells.push(slot('pack', b)));

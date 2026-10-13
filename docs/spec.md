@@ -228,7 +228,7 @@ Touching a discipline explains it.
 
 Everything he carries, readable at a glance without touching each item: weapons, Special Items and
 Backpack, each against its limit, and his gold. It must hold the most a book allows (section 4.1)
-without the page shifting. Every item has its own icon. Touching an item explains it and offers what
+without running off the page. Every item has its own icon. Touching an item explains it and offers what
 can be done with it. Anything can be added or removed by hand, and the list to add from offers the
 open book's own items.
 

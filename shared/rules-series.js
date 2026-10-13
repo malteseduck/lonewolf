@@ -120,13 +120,20 @@
     const bows = hero.weapons.filter((w) => (LW.ITEMS[w] || {}).ranged), shot = (w) => LW.ITEMS[w].shot || 0;
     if (!bows.length) return { why: 'You need a Bow to shoot.' };
     if (!(hero.arrows > 0)) return { why: 'You have no Arrows left.' };
-    const bow = bows.reduce((a, b) => (shot(b) > shot(a) ? b : a)), parts = [];
-    if (shot(bow)) parts.push({ label: LW.itemName(bow), n: shot(bow) });
-    if (mastered(hero) && (LW.ITEMS[bow].weapon || [bow]).concat('bow').some((k) => (hero.mastery || []).includes(k))) {
+    const bow = bows.reduce((a, b) => (shot(b) > shot(a) ? b : a)), parts = LW.weaponBonus(hero, bow);
+    return { bow, parts, plus: parts.reduce((t, p) => t + p.n, 0) };
+  };
+  /* What one weapon adds, for the inventory to show: a bow's to the number for a shot, any other's
+     to COMBAT SKILL in a fight (its own bonus and his skill with it). */
+  LW.weaponBonus = (hero, w) => {
+    const it = LW.ITEMS[w] || {};
+    if (!it.ranged) return weaponParts(hero, w);
+    const parts = it.shot ? [{ label: LW.itemName(w), n: it.shot }] : [];
+    if (mastered(hero) && (it.weapon || [w]).concat('bow').some((k) => (hero.mastery || []).includes(k))) {
       parts.push({ label: 'Weaponmastery with Bow', n: 3 });
       if (LW.mkRank(hero) >= 7) parts.push({ label: 'Mentora', n: 2 });
     }
-    return { bow, parts, plus: parts.reduce((t, p) => t + p.n, 0) };
+    return parts;
   };
   /* Curing at Archmaster (Book 12): once in a book (the books say once in 100 days), at 6 ENDURANCE or
      less in a fight, 20 back. hero.cured holds the book it was used in. */
