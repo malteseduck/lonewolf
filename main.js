@@ -577,7 +577,9 @@ function packHTML() {
     <span class="name">${w ? esc(LW.itemName(w)) : 'No weapon'}</span></div>`;
   // the Quiver shows its Arrows (its room is less what rides in it in their place)
   const count = (s) => (s === 'quiver' ? ` <small>${h.arrows || 0} of ${LW.quiverRoom(h)}</small>` : '');
-  const specs = h.special.map((s) => `<li>${slot('special', s)}<span>${esc(LW.itemName(s))}${count(s)}</span></li>`).join('');
+  // a name with a word too long for its column (Sommerswerd) set smaller, rather than broken mid-word
+  const tight = (s) => (LW.itemName(s).split(/\s+/).some((w) => w.length > 10) ? ' class="tight"' : '');
+  const specs = h.special.map((s) => `<li>${slot('special', s)}<span${tight(s)}>${esc(LW.itemName(s))}${count(s)}</span></li>`).join('');
   const room = LW.backpackMax(h), cols = Math.ceil(room / 2);
   for (let i = 0; i < h.meals; i++) cells.push(`<button type="button" class="disc item ${on('meal', 'meal')}" data-sel="meal|meal" aria-label="Meal">${itemGlyph('meal')}</button>`);
   h.backpack.forEach((b) => cells.push(slot('pack', b)));

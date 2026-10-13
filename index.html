@@ -311,7 +311,8 @@ button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background:
 .arms { flex: none; position: relative; display: grid; grid-template-columns: 1fr 6em 1fr; align-items: start; }
 .arm { display: flex; flex-direction: column; align-items: center; gap: 0.4em; min-width: 0; }
 .arm .disc { --s: 3.2em; }
-.arm .name { font: 700 1.05em/1.1 var(--script); color: var(--ink); text-align: center; }
+/* a long name stops at two lines (the whole name is in its box), so the list below never shifts */
+.arm .name { font: 700 1.05em/1.1 var(--script); color: var(--ink); text-align: center; max-width: 100%; overflow-wrap: anywhere; hyphens: auto; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
 .arms .crestmark { justify-self: center; align-self: center; width: 5.2em; height: 5.2em; opacity: 0.25; pointer-events: none; }
 .arms .crestmark .glyph { width: 100%; height: 100%; }
 .arms .crestmark .glyph i { background: var(--ink); }
@@ -321,11 +322,14 @@ button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background:
 /* the Special Items as a named list, the Backpack right under it; past what fits, it scrolls in its own place */
 /* scrolling clips at its edges, so room is kept round the medallions (their rim and shadow) */
 .specs { flex: 0 1 auto; min-height: 2.4em; margin: 0 -0.35em; padding: 0.15em 0.35em; overflow-y: auto; scrollbar-width: thin; }
-.specs ul { margin: 0; padding: 0.1em 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.25em 0.5em; }
-.specs li { display: flex; align-items: center; gap: 0.35em; min-width: 0; }
-.specs li .disc { --s: 1.95em; }
+.specs ul { margin: 0; padding: 0.1em 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.25em 0.35em; }
+.specs li { display: flex; align-items: center; gap: 0.25em; min-width: 0; }
+.specs li .disc { --s: 1.75em; flex: none; }
 .specs li .disc::after { display: none; }
-.specs li span { min-width: 0; font: 400 0.68em/1.12 var(--title); color: var(--ink); }
+/* three lines at most (the whole name is in its box), and a word too long for its column (Sommerswerd)
+   broken rather than run under its neighbour */
+.specs li > span { flex: 1; min-width: 0; font: 400 0.65em/1.1 var(--title); color: var(--ink); overflow-wrap: anywhere; hyphens: auto; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
+.specs li > span.tight { font-size: 0.58em; }
 .specs li small { font-size: 1em; color: var(--ink-dim); white-space: nowrap; }
 .specs .none { margin: 0.3em 0; font-size: 1.05em; color: var(--ink-dim); font-style: italic; }
 .disc.item .glyph i { background: linear-gradient(var(--silver-hi), var(--silver) 55%, var(--silver-lo)); }

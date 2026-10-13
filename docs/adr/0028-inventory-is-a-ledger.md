@@ -46,3 +46,6 @@ not a target; the iPad is.
 - 2026-10-12: the Backpack sits right under a short Special Items list instead of at the page's
   foot, and its tiles are smaller (owner).
 - 2026-10-12: bonuses only in an item's box, not by its name (owner).
+- 2026-10-12: long names no longer push the layout about: a Special Item's name stops at three lines,
+  a weapon's at two, the rest in its box; a single long word is set smaller, not broken (owner asked
+  for the labels to stop upsetting the layout).
