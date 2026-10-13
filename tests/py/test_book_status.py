@@ -81,7 +81,7 @@ def env(tmp_path, monkeypatch):
 def test_steps_and_hand_marks():
     assert sorted(bs.STEPS) == list(range(1, 10))
     assert bs.HAND == {3, 4, 6, 7}
-    assert [s[0] for s in bs.STEPS.values()] == ['fetch', 'import', 'phrasings', 'rules', 'items', 'pictures', 'testplay', 'map', 'ills']
+    assert [s[0] for s in bs.STEPS.values()] == ['fetch', 'import', 'phrasings', 'rules', 'items', 'testplay', 'pictures', 'map', 'ills']
 
 
 # ---- import_stats ----
@@ -209,7 +209,7 @@ def test_pictures_stage(env):
     env.book(sections=sections_bare, t=100)
     p = env.status()['stages']['pictures']
     assert p['state'] == 'todo' and p['num'] == 1 and p['ev'] == '1 of 2 kinds of enemy have no picture'
-    p = env.status(hand={'books': {CODE: {'6': '2026-03-04'}}})['stages']['pictures']
+    p = env.status(hand={'books': {CODE: {'7': '2026-03-04'}}})['stages']['pictures']
     assert p['state'] == 'warn' and p['ev'] == 'Marked done 2026-03-04, but 1 of 2 kinds of enemy have no picture'
 
 
@@ -220,7 +220,7 @@ def pictured_book(env):
 
 def test_testplay_follows_the_mark(env):
     assert env.status()['stages']['testplay']['state'] == 'todo'
-    t = env.status(hand={'books': {CODE: {'7': '2026-05-06'}}})['stages']['testplay']
+    t = env.status(hand={'books': {CODE: {'6': '2026-05-06'}}})['stages']['testplay']
     assert t['state'] == 'done' and t['ev'].endswith('. Marked done 2026-05-06')
 
 
@@ -283,9 +283,11 @@ def test_checklist_table_layout():
     assert lines[3] == f'| 1. Downloaded | ✅ | ⬜ |'
     assert lines[4].startswith('| 2. Imported; report clean') and lines[4].endswith('| ✅ | ⚠️ |')
     groups = [l for l in lines if l.startswith('| **')]
-    assert [g.split('**')[1] for g in groups] == ['Getting the book', 'Items and fights', 'Play', 'Pictures']
+    assert [g.split('**')[1] for g in groups] == ['Getting the book', 'Items', 'Play', 'Pictures']
     # a group heading comes just before its first step
-    assert lines[lines.index(next(l for l in lines if '5. Item table' in l)) - 1].startswith('| **Items and fights**')
+    assert lines[lines.index(next(l for l in lines if '5. Item table' in l)) - 1].startswith('| **Items**')
+    # the picture work comes last, together: fight pictures, map, illustrations
+    assert lines[lines.index(next(l for l in lines if l.startswith('| 7. Every enemy has a fight picture'))) - 1].startswith('| **Pictures**')
 
 
 def test_checklist_table_marks_each_state():
@@ -324,10 +326,10 @@ def test_mark_a_hand_step_records_today(marking):
 
 def test_mark_undo_takes_a_hand_mark_back(marking):
     bs.mark(CODE, 3)
-    bs.mark(CODE, 7)
+    bs.mark(CODE, 6)
     ok, msg = bs.mark(CODE, 3, undo=True)
     assert ok and msg.endswith('unmarked')
-    assert marks(marking) == {CODE: {'7': datetime.date.today().isoformat()}}
+    assert marks(marking) == {CODE: {'6': datetime.date.today().isoformat()}}
     assert bs.mark(CODE, 3, undo=True)[0]       # taking back a mark that is not there is harmless
 
 

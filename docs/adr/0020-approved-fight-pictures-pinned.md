@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-11
-- Amended: 2026-10-11
+- Amended: 2026-10-13
 
 ## Context
 
@@ -14,13 +14,13 @@ unseen.
 
 ## Decision
 
-- When a book's step 6 (fight pictures) is marked done, the picture each fight shows is pinned. The
+- When a book's step 7 (fight pictures) is marked done, the picture each fight shows is pinned. The
   player shows the pinned picture whatever `plates.json` or a re-import would now pick.
-- A fight that would now show another picture is listed on the dashboard (step 6 becomes a warning,
+- A fight that would now show another picture is listed on the dashboard (step 7 becomes a warning,
   naming the sections) and waits for the owner's **Approve picture changes**, a gated button.
   Agents never press it nor run `plates_pin.mjs --approve` on their own.
 - The owner's own change to an enemy on the picture sheet is his approval for that enemy.
-- Unmarking step 6 lets the pins go.
+- Unmarking step 7 lets the pins go.
 - The picture sheet says once, at the top, whether the book is approved; only cards waiting for
   approval are marked (showing the new picture), with a filter to show only those. No mark on every
   approved card.
@@ -36,3 +36,4 @@ unseen.
 ## Changes
 
 - 2026-10-11: the sheet marks only the cards waiting for approval, and says the book's state once.
+- 2026-10-13: fight pictures became checklist step 7 (they were 6), with the other picture work (ADR 0034).

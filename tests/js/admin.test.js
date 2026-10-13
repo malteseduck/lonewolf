@@ -13,7 +13,7 @@ const BODY = (() => {
   return html.slice(html.indexOf('<body>') + 6, html.indexOf('</body>')).replace(/<script[\s\S]*?<\/script>/g, '');
 })();
 
-const STAGE_IDS = ['fetch', 'import', 'phrasings', 'rules', 'reading', 'items', 'pictures', 'testplay', 'map', 'ills'];
+const STAGE_IDS = ['fetch', 'import', 'phrasings', 'rules', 'reading', 'items', 'testplay', 'pictures', 'map', 'ills'];
 const stage = (state = 'done', ev = 'evidence', o = {}) => ({ state, ev, src: 'disk', ...o });
 const book = (n, o = {}) => ({
   n, title: `Stand-in ${n}`, code: `${String(n).padStart(2, '0')}book${n}`, series: 'kai', known: true, folder: true,
@@ -93,8 +93,8 @@ describe('the grid', () => {
 
   it('has a header with the stage groups and one column per stage', async () => {
     await boot({ books: books(), running: null });
-    expect($$('#grid thead tr.groups th').map((t) => t.textContent).filter(Boolean)).toEqual(['Getting the book', 'Items and fights', 'Play', 'Pictures']);
-    expect($$('#grid thead tr:nth-child(2) th').map((t) => t.textContent)).toEqual(['Book', 'Download', 'Import', 'Phrasings', 'Rules', 'Reading copy', 'Item table', 'Fight pictures', 'Test play', 'Map', 'Illustrations', 'Next']);
+    expect($$('#grid thead tr.groups th').map((t) => t.textContent).filter(Boolean)).toEqual(['Getting the book', 'Items', 'Play', 'Pictures']);
+    expect($$('#grid thead tr:nth-child(2) th').map((t) => t.textContent)).toEqual(['Book', 'Download', 'Import', 'Phrasings', 'Rules', 'Reading copy', 'Item table', 'Test play', 'Fights', 'Map', 'Illustrations', 'Next']);
   });
 
   it('has a row per book and folds the Grand Master books not downloaded', async () => {

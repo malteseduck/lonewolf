@@ -10,8 +10,8 @@ can show, which are kept in docs/book-status.json (committed).
 
 <book> is a code (03tcok) or a number (3). <step> is the checklist's number, 1-9.
 
-Steps 3 and 7 are judgements, so `done` records them (with today's date) in book-status.json;
-step 4 is too, once its "Book N" heading is in docs/reference/rules-books.md, and step 6 (the owner's
+Steps 3 and 6 are judgements, so `done` records them (with today's date) in book-status.json;
+step 4 is too, once its "Book N" heading is in docs/reference/rules-books.md, and step 7 (the owner's
 look at the picture sheet) once every enemy has a picture. The other steps are read
 from the files, so `done` checks them instead (step 5 runs check_items.mjs first) and exits 1, saying
 why, if they are not done. Either way the checklist table is rewritten. Agents finishing a step run
@@ -32,7 +32,7 @@ DATA = os.path.join(ROOT, 'data', 'projectaon')
 STATUS = os.path.join(ROOT, 'docs', 'book-status.json')
 CHECKLIST = os.path.join(ROOT, 'docs', 'book-checklist.md')
 IMPORTER = os.path.join(ROOT, 'tools', 'import_projectaon.py')
-PINS = os.path.join(ROOT, 'assets', 'plates', 'approved')  # the fight pictures approved at step 6 (tools/plates_pin.mjs)
+PINS = os.path.join(ROOT, 'assets', 'plates', 'approved')  # the fight pictures approved at step 7 (tools/plates_pin.mjs)
 
 # Codes as Project Aon's /en/xhtml/lw/ listing names the folders (read 2026-10-08)
 CATALOGUE = [
@@ -53,13 +53,13 @@ STEPS = {
     3: ('phrasings', "Importer reads the book's own phrasings (gates, Random Number, combat)"),
     4: ('rules', 'Rules addendum written, Engine column true'),
     5: ('items', 'Item table (`items-<code>.js`): read, `check_items.mjs` clean, registered'),
-    6: ('pictures', 'Every enemy has a fight picture (importer: "0 with none"), shown to the owner on one sheet, changes made'),
-    7: ('testplay', 'Played through with test characters; misreadings and item gaps fixed'),
+    6: ('testplay', 'Played through with test characters; misreadings and item gaps fixed'),
+    7: ('pictures', 'Every enemy has a fight picture (importer: "0 with none"), shown to the owner on one sheet, changes made'),
     8: ('map', 'Printed map repainted, labels checked, `map-4k.webp` made and shown in the player'),
     9: ('ills', 'Illustrations upscaled 2x (`<name>-2x.webp` beside each) and shown in the player'),
 }
-HAND = {3, 4, 6, 7}  # judgements: recorded in book-status.json (4 and 6 also need their files)
-GROUPS = [('Getting the book', 1), ('Items and fights', 5), ('Play', 7), ('Pictures', 8)]
+HAND = {3, 4, 6, 7}  # judgements: recorded in book-status.json (4 and 7 also need their files)
+GROUPS = [('Getting the book', 1), ('Items', 5), ('Play', 6), ('Pictures', 7)]  # the picture work last, together
 
 
 def mtime(path):
@@ -309,30 +309,30 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
         st['items'] = {'state': 'warn', 'ev': f"{it['todos']} todos; the table or book changed since the last check (Check items)", 'src': 'disk', 'num': it['todos']}
     else:
         st['items'] = {'state': 'done', 'ev': f"Registered, check clean; {it['todos']} todo entries left to the player", 'src': 'disk', 'num': it['todos']}
-    # 6 fight pictures: every enemy has one (from the files), then the owner's look at the sheet (a mark)
-    m6 = hand_mark(6)
+    # 7 fight pictures: every enemy has one (from the files), then the owner's look at the sheet (a mark)
+    m7 = hand_mark(7)
     if not imp:
         st['pictures'] = {'state': 'todo', 'ev': 'After import', 'src': 'disk'}
     elif imp['bare']:
         ev = f"{imp['bare']} of {imp['kinds']} kinds of enemy have no picture"
-        st['pictures'] = {'state': 'warn' if m6 else 'todo', 'src': 'disk', 'num': imp['bare'],
-                          'ev': f'Marked done {m6}, but {ev[0].lower()}{ev[1:]}' if m6 else ev}
-    elif m6 and not os.path.isfile(os.path.join(PINS, code + '.json')):
-        b['pins'] = {'waiting': imp['fights'], 'approved': m6, 'sections': ['all']}
+        st['pictures'] = {'state': 'warn' if m7 else 'todo', 'src': 'disk', 'num': imp['bare'],
+                          'ev': f'Marked done {m7}, but {ev[0].lower()}{ev[1:]}' if m7 else ev}
+    elif m7 and not os.path.isfile(os.path.join(PINS, code + '.json')):
+        b['pins'] = {'waiting': imp['fights'], 'approved': m7, 'sections': ['all']}
         st['pictures'] = {'state': 'warn', 'src': 'disk',
-                          'ev': f"Marked done {m6}, but the approved pictures are not kept yet: Approve picture changes to keep them"}
-    elif m6 and (pin_report().get(code) or {}).get('changed', []) + (pin_report().get(code) or {}).get('unpinned', []):
+                          'ev': f"Marked done {m7}, but the approved pictures are not kept yet: Approve picture changes to keep them"}
+    elif m7 and (pin_report().get(code) or {}).get('changed', []) + (pin_report().get(code) or {}).get('unpinned', []):
         pr = pin_report()[code]
         diff = pr['changed'] + pr['unpinned']
         secs = sorted({d['key'].split('/')[0] for d in diff}, key=lambda s: int(s) if s.isdigit() else 0)
         b['pins'] = {'waiting': len(diff), 'approved': pr.get('approved'), 'sections': secs}
         st['pictures'] = {'state': 'warn', 'src': 'disk', 'num': len(diff),
                           'ev': f"{len(diff)} fight{'s' if len(diff) > 1 else ''} would show another picture than you approved on {pr.get('approved')} (sections {', '.join(secs[:12])}{'...' if len(secs) > 12 else ''}); the player keeps the approved ones until you approve"}
-    elif m6:
-        st['pictures'] = {'state': 'done', 'ev': f"All {imp['kinds']} kinds of enemy have a picture; sheet looked at, marked done {m6}; those pictures are kept", 'src': 'hand'}
+    elif m7:
+        st['pictures'] = {'state': 'done', 'ev': f"All {imp['kinds']} kinds of enemy have a picture; sheet looked at, marked done {m7}; those pictures are kept", 'src': 'hand'}
     else:
         st['pictures'] = {'state': 'warn', 'ev': f"All {imp['kinds']} kinds of enemy have a picture; waiting for your look at the sheet", 'src': 'disk'}
-    st['testplay'] = handed(7, 'Every gate, fight and draw tried with test characters')
+    st['testplay'] = handed(6, 'Every gate, fight and draw tried with test characters')
     # 8 map
     ms = b['mapStage']
     if not ms:
@@ -415,8 +415,8 @@ def mark(code, step, undo=False, run_checks=True):
         b = book_status(code, title, n)
         if not undo and step == 4 and not b['rulesHeading']:
             return False, f'step 4: write "### Book {n}, {title}" in docs/reference/rules-books.md first'
-        if not undo and step == 6 and b['stages']['pictures']['state'] == 'todo':
-            return False, f"Book {n} step 6 is NOT done (read from the files): {b['stages']['pictures']['ev']}"
+        if not undo and step == 7 and b['stages']['pictures']['state'] == 'todo':
+            return False, f"Book {n} step 7 is NOT done (read from the files): {b['stages']['pictures']['ev']}"
         data = load_hand()
         marks = data.setdefault('books', {}).setdefault(code, {})
         if undo:
@@ -424,7 +424,7 @@ def mark(code, step, undo=False, run_checks=True):
         else:
             marks[str(step)] = datetime.date.today().isoformat()
         save_hand(data)
-        if step == 6:  # approved fight pictures are kept as they are now, and let go when unmarked
+        if step == 7:  # approved fight pictures are kept as they are now, and let go when unmarked
             if undo:
                 if os.path.isfile(os.path.join(PINS, code + '.json')):
                     os.remove(os.path.join(PINS, code + '.json'))

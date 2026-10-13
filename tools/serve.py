@@ -417,7 +417,7 @@ ADMIN_STAGES = {
     'import': {'title': 'Import', 'gated': True, 'timeout': 900, 'known': True, 'cmds': lambda c: [PY + ['tools/import_projectaon.py', c]]},
     'reading': {'title': 'Reading copy', 'folder': True, 'timeout': 600, 'cmds': lambda c: [PY + ['tools/reading_copy.py', c], PY + ['tools/item_sections.py', c]]},
     'check-items': {'title': 'Check items', 'folder': True, 'timeout': 300, 'cmds': lambda c: [['node', 'tools/check_items.mjs', c, '--json']]},
-    # the fight pictures that now differ from those approved at step 6 become the approved ones (the owner's go-ahead)
+    # the fight pictures that now differ from those approved at step 7 become the approved ones (the owner's go-ahead)
     'approve-pictures': {'title': 'Approve fight pictures', 'folder': True, 'gated': True, 'timeout': 120, 'cmds': lambda c: [['node', 'tools/plates_pin.mjs', c, '--approve']]},
     # Real-ESRGAN on the PC: fetches nothing, writes only <name>-2x.webp beside each original (ADR 0033)
     'ills': {'title': 'Upscale illustrations', 'folder': True, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/ill_upscale.py', c]]},

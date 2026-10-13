@@ -1,5 +1,5 @@
 {
- "_readme": "The fight pictures the owner approved for this book (step 6 marked done): the player shows these whatever plates.json or a re-import would now pick. Keyed by section/enemy number; name is a hash of the enemy's name, so a pin is not used for another enemy; plate is {src, crop?, levels?} or null for the drawn emblem. Written by tools/plates_pin.mjs; see docs/reference/interface.md, Art pipeline.",
+ "_readme": "The fight pictures the owner approved for this book (step 7 marked done): the player shows these whatever plates.json or a re-import would now pick. Keyed by section/enemy number; name is a hash of the enemy's name, so a pin is not used for another enemy; plate is {src, crop?, levels?} or null for the drawn emblem. Written by tools/plates_pin.mjs; see docs/reference/interface.md, Art pipeline.",
  "approved": "2026-10-11",
  "pins": {
   "14/0": {"name":"14u4zj1","plate":{"src":"art/plates/rogue-masked-blades.webp","crop":[0.162,0.0338,0.7823,0.6034]}},

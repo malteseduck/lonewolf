@@ -242,7 +242,7 @@ story on.
   `giak`, `vordak`) or the crossed-swords `emblem`: the crossed-swords glyph (handed over by
   `setEmblem` once main.js has fetched it) over a blot of wash, or a plain ring and blades until then.
 - Which picture (`showFoe` in main.js, by `pickPlate` in platepick.js): first the picture the owner
-  approved for that fight, once the book's step 6 is marked done (`assets/plates/approved/<code>.json`,
+  approved for that fight, once the book's step 7 is marked done (`assets/plates/approved/<code>.json`,
   ADR 0020: a later plates.json entry or re-import does not change it until approved); else a library entry marked `over` (the owner preferred another
   picture to the book's own; Book 1's Vordak), else the enemy's own `art` (its section's
   illustration, or one the importer borrowed from the same book), else the first entry of `assets/plates/plates.json`

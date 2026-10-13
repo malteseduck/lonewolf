@@ -97,7 +97,7 @@ Things to check while a book goes through its steps, which no step asks for:
 
 ### Pictures in hand for later fights
 
-For step 6 in the books still open (all git-ignored, personal use):
+For step 7 in the books still open (all git-ignored, personal use):
 
 - The owner's drawings in `art/plates/` not yet used (2026-10-11): an elf swordsman, two swordswomen
   (Book 4's hooded bandit leader, section 233, may suit the hooded swordsman too) and two painted

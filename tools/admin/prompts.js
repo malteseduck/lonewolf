@@ -48,21 +48,21 @@ ${TAIL}`,
 
   pictures: (b) => `${HEAD(b)}
 
-Task: docs/book-checklist.md step 6, a fight picture for every enemy.
+Task: docs/book-checklist.md step 7, a fight picture for every enemy.
 - The dashboard counts ${b.imp ? `${b.imp.bare} of ${b.imp.kinds} kinds of enemy with no picture` : 'an unknown number of enemies with no picture'} (book.js plates plus assets/plates/plates.json, as the importer's report does).
 - Follow docs/reference/items.md, "Fight pictures": the owner's pictures in art/plates/ first, then this book's own illustrations, then another book's only for plain humans, then a free engraving (ask me before downloading any).
-- plates.json is read at play time, so no re-import is needed; the dashboard's sheet, http://localhost:8766/tools/admin/fights.html?book=${b.code}, shows every enemy as the player would. Marking step 6 done is mine, after I have looked at that sheet: do not mark it.
-When every enemy has a picture, run \`python tools/book_status.py show ${b.code}\` and include its step 6 line in your report (it should say all have a picture, waiting for my look).
+- plates.json is read at play time, so no re-import is needed; the dashboard's sheet, http://localhost:8766/tools/admin/fights.html?book=${b.code}, shows every enemy as the player would. Marking step 7 done is mine, after I have looked at that sheet: do not mark it.
+When every enemy has a picture, run \`python tools/book_status.py show ${b.code}\` and include its step 7 line in your report (it should say all have a picture, waiting for my look).
 ${TAIL}`,
 
   testplay: (b) => `${HEAD(b)}
 
-Task: docs/book-checklist.md step 7, play the book through with test characters.
+Task: docs/book-checklist.md step 6, play the book through with test characters.
 - Use http://127.0.0.1:8766/ (not localhost: a different origin, so my saves are not touched) and switch storage writes off first. The console hook is in AGENTS.md (__lw.game, __lw.render).
 - Step every section; try every gate, fight and Random Number draw against the text; reach section 350 at least once.${b.items.todos != null ? ` The item table leaves ${b.items.todos} todos to the player: check each still reads right on the page.` : ''}
 - Fix misreadings in the importer (then \`python tools/check_all.py\`; no book may get worse) or in items-${b.code}.js; list what stays left to the player, by section id.
 - Add what stays left to the player, if the engine could take it over, to docs/plan.md's engine work list.
-${DONE(b, 7)}
+${DONE(b, 6)}
 ${TAIL}`,
 
   mapStyle: (b) => `${HEAD(b)}

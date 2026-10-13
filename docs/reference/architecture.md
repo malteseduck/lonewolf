@@ -24,7 +24,7 @@ assets/fonts/               the page's three fonts and fonts.css, from Google Fo
 assets/app/                 the Home Screen icon (README.txt says how it was made)
 assets/plates/              plates.json: pictures for enemies their book does not picture; free pictures,
                             mostly engravings from Wikimedia Commons (credited in README.txt)
-  approved/<code>.json      the fight pictures the owner approved (step 6 marked done), pinned per fight:
+  approved/<code>.json      the fight pictures the owner approved (step 7 marked done), pinned per fight:
                             section/enemy number -> picture; no book text (ADR 0020)
 CLAUDE.md, README.md
 docs/                       spec, plan, reference

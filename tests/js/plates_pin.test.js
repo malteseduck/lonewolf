@@ -65,7 +65,7 @@ describe('comparing', () => {
   it('says there are no approved pictures when there is no pin file, exit 0', () => {
     const r = run('t1');
     expect(r.code).toBe(0);
-    expect(r.out).toBe('t1: no approved pictures (step 6 not marked done), or not imported');
+    expect(r.out).toBe('t1: no approved pictures (step 7 not marked done), or not imported');
   });
   it('says the same for a book that is not imported', () => {
     expect(run('nope').out).toMatch(/no approved pictures/);

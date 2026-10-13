@@ -79,7 +79,7 @@
   <label class="only" id="only" hidden><input type="checkbox"> Show only these</label>
   <nav class="links" style="margin-left:auto"><a href="./">Dashboard</a></nav>
 </header>
-<p class="note">Every enemy with the picture the player would show, inked as in a fight (checklist step 6: look, change what you want, then mark it done on the dashboard). Drop a
+<p class="note">Every enemy with the picture the player would show, inked as in a fight (checklist step 7: look, change what you want, then mark it done on the dashboard). Drop a
   picture file on a card, paste one (the card under the mouse), or use Choose; Adjust crops or flips it. Pictures you give
   are kept in <code>art/plates/</code> (git-ignored) and entered in <code>assets/plates/plates.json</code>.
   Once approved, the line above says so; only a card whose picture has changed since is marked, showing the new picture.</p>
@@ -155,7 +155,7 @@ const url = (src) => '/' + src + (src.startsWith(`art/plates/${code}/`) ? `?v=${
 
 async function loadPlates() {
   plates = compilePlates((await (await fetch('/assets/plates/plates.json', { cache: 'no-store' })).json()).plates);
-  // the pictures approved when step 6 was marked done: the player keeps showing these (platepick.js)
+  // the pictures approved when step 7 was marked done: the player keeps showing these (platepick.js)
   const r = await fetch(`/assets/plates/approved/${code}.json`, { cache: 'no-store' }).catch(() => null);
   const j = r && r.ok ? await r.json() : null;
   pins = (j && j.pins) || null; approvedOn = j && j.approved;
@@ -191,8 +191,8 @@ async function render() {
   // approval is told once, here; only the cards that need the owner are marked (ADR 0020)
   const waiting = foes.filter((f) => f.waiting).length;
   $('#sum').textContent = `${foes.length} kinds of enemy, ${none} with no picture; `
-    + (!pins ? 'not approved yet (mark step 6 done on the dashboard)'
-      : waiting ? `${waiting} wait${waiting === 1 ? 's' : ''} for your approval (Approve picture changes, step 6 on the dashboard)` : `all approved ${approvedOn || ''}`);
+    + (!pins ? 'not approved yet (mark step 7 done on the dashboard)'
+      : waiting ? `${waiting} wait${waiting === 1 ? 's' : ''} for your approval (Approve picture changes, step 7 on the dashboard)` : `all approved ${approvedOn || ''}`);
   $('#only').hidden = !waiting;
   if (!waiting) onlyWaiting = false;
   $('#only input').checked = onlyWaiting;
