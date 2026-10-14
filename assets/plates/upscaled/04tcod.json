@@ -1,0 +1,31 @@
+{
+ "_readme": "The fight pictures of this book with a Real-ESRGAN 2x copy beside them, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0033.",
+ "srcs": [
+  "art/plates/guard-halberd-portcullis.png",
+  "art/plates/rogue-masked-blades.webp",
+  "assets/plates/demons-schongauer.jpg",
+  "data/projectaon/04tcod/ill11.png",
+  "data/projectaon/04tcod/ill12.png",
+  "data/projectaon/04tcod/ill14.png",
+  "data/projectaon/04tcod/ill15.png",
+  "data/projectaon/04tcod/ill17.png",
+  "data/projectaon/04tcod/ill18.png",
+  "data/projectaon/04tcod/ill2.png",
+  "data/projectaon/04tcod/ill20.png",
+  "data/projectaon/04tcod/ill4.png",
+  "data/projectaon/04tcod/ill6.png",
+  "data/projectaon/04tcod/ill8.png",
+  "data/projectaon/04tcod/ill9.png",
+  "data/projectaon/05sots/ill11.png",
+  "data/projectaon/05sots/ill13.png",
+  "data/projectaon/05sots/ill2.png",
+  "data/projectaon/05sots/ill22.png",
+  "data/projectaon/05sots/ill6.png",
+  "data/projectaon/06tkot/ill1.png",
+  "data/projectaon/06tkot/ill13.png",
+  "data/projectaon/06tkot/ill14.png",
+  "data/projectaon/06tkot/ill7.png",
+  "data/projectaon/08tjoh/ill11.png",
+  "data/projectaon/09tcof/ill18.png"
+ ]
+}

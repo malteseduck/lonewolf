@@ -213,6 +213,37 @@ def test_pictures_stage(env):
     assert p['state'] == 'warn' and p['ev'] == 'Marked done 2026-03-04, but 1 of 2 kinds of enemy have no picture'
 
 
+def test_pictures_stage_needs_every_fight_picture_upscaled(env):
+    env.write('assets/plates/plates.json', json.dumps({'plates': [{'match': 'rat', 'src': 'assets/plates/rat.png'}]}), 0)
+    env.book(sections={'1': fight(('Rat', None), ('Bat', 'ill1.png')), '2': {'text': [], 'choices': [], 'end': 'victory'}}, t=100)
+    env.touch('assets/plates/rat.png', 0)
+    env.touch(f'data/projectaon/{CODE}/ill1.png', 0)
+    p = env.status()['stages']['pictures']
+    assert p['state'] == 'todo' and p['num'] == 2 and p['ev'] == '2 of 2 fight pictures not upscaled 2x yet (Upscale 2x)'
+    # a copy beside each, listed: one listed but missing, then both
+    env.write(f'assets/plates/upscaled/{CODE}.json', json.dumps({'srcs': ['assets/plates/rat.png', f'data/projectaon/{CODE}/ill1.png']}))
+    env.touch('assets/plates/rat-2x.webp', 10)
+    assert env.status()['stages']['pictures']['num'] == 1
+    env.touch(f'data/projectaon/{CODE}/ill1-2x.webp', 10)
+    assert env.status()['stages']['pictures']['state'] == 'warn'                 # waiting for the owner's look
+    # the original replaced since: its copy is out of date
+    env.touch('assets/plates/rat.png', 20)
+    env.write(f'assets/plates/approved/{CODE}.json', json.dumps({'pins': {}}))
+    p = env.status(hand={'books': {CODE: {'7': '2026-03-04'}}})['stages']['pictures']
+    assert p['state'] == 'warn' and p['ev'] == 'Marked done 2026-03-04, but 1 of 2 fight pictures not upscaled 2x yet (Upscale 2x)'
+
+
+def test_mark_step_7_refused_until_the_fight_pictures_are_upscaled(marking):
+    pictured_book(marking)
+    marking.touch(f'data/projectaon/{CODE}/ill1.png', 0)
+    ok, msg = bs.mark(CODE, 7)
+    assert not ok and msg.endswith('1 of 1 fight pictures not upscaled 2x yet (Upscale 2x)')
+    assert not marking.path('docs', 'book-status.json').exists()
+    marking.write(f'assets/plates/upscaled/{CODE}.json', json.dumps({'srcs': [f'data/projectaon/{CODE}/ill1.png']}))
+    marking.touch(f'data/projectaon/{CODE}/ill1-2x.webp', 10)
+    assert bs.mark(CODE, 7)[0] and '7' in marks(marking)[CODE]
+
+
 def pictured_book(env):
     env.write('assets/plates/plates.json', '{"plates": []}', 0)
     env.book(sections={'1': fight(('Rat', 'ill1.png')), '2': {'text': [], 'choices': [], 'end': 'victory'}}, t=100)

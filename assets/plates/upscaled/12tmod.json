@@ -1,0 +1,29 @@
+{
+ "_readme": "The fight pictures of this book with a Real-ESRGAN 2x copy beside them, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0033.",
+ "srcs": [
+  "art/plates/12tmod/mind-reaper-smoke-spirit.webp",
+  "data/projectaon/01fftd/ill4.png",
+  "data/projectaon/02fotw/ill19.png",
+  "data/projectaon/05sots/ill14.png",
+  "data/projectaon/05sots/ill20.png",
+  "data/projectaon/09tcof/ill13.png",
+  "data/projectaon/10tdot/ill5.png",
+  "data/projectaon/12tmod/ill1.png",
+  "data/projectaon/12tmod/ill10.png",
+  "data/projectaon/12tmod/ill12.png",
+  "data/projectaon/12tmod/ill13.png",
+  "data/projectaon/12tmod/ill15.png",
+  "data/projectaon/12tmod/ill19.png",
+  "data/projectaon/12tmod/ill2.png",
+  "data/projectaon/12tmod/ill20.png",
+  "data/projectaon/12tmod/ill3.png",
+  "data/projectaon/12tmod/ill4.png",
+  "data/projectaon/12tmod/ill5.png",
+  "data/projectaon/12tmod/ill7.png",
+  "data/projectaon/12tmod/ill8.png",
+  "data/projectaon/12tmod/ill9.png",
+  "data/projectaon/14tcok/ill16.png",
+  "data/projectaon/14tcok/ill5.png",
+  "data/projectaon/15tdc/ill7.png"
+ ]
+}

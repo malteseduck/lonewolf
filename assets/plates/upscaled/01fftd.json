@@ -1,0 +1,20 @@
+{
+ "_readme": "The fight pictures of this book with a Real-ESRGAN 2x copy beside them, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0033.",
+ "srcs": [
+  "art/plates/bestiary-gourgaz-zlanbeast-vordak-doomwolf.webp",
+  "art/plates/citadel-c41-flyer-1984.jpg",
+  "art/plates/guard-veteran-pencil.webp",
+  "art/plates/rogue-masked-grey.png",
+  "art/winged-serpent.png",
+  "assets/plates/grizzly-brehm.png",
+  "assets/plates/water-snake.jpg",
+  "data/projectaon/01fftd/ill11.png",
+  "data/projectaon/01fftd/ill14.png",
+  "data/projectaon/01fftd/ill3.png",
+  "data/projectaon/01fftd/ill4.png",
+  "data/projectaon/01fftd/ill6.png",
+  "data/projectaon/01fftd/ill7.png",
+  "data/projectaon/05sots/ill14.png",
+  "data/projectaon/06tkot/ill3.png"
+ ]
+}

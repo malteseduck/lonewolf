@@ -175,7 +175,8 @@ add is written some other way (`ice barbarian$`, `kalkoth`). Where to look, in o
    the same editor on the picture it has (a book's own, a library entry's): a crop box on the original and
    the fight panel as it will look, through `inkPlate`, with a levels control for paintings and a left-to-right flip; saving a re-crop
    writes the owner's entry pointing at that same file. Once step 7's **Upscale 2x** has run, a
-   card shows its picture's 2x copy ("upscaled 2x"), and in Adjust **Show original** swaps it for the
+   card shows its picture's 2x copy ("upscaled 2x"); one still shown from its original is badged
+   **Not upscaled** (step 7 cannot be marked done while any is), and in Adjust **Show original** swaps it for the
    picture it was made from, in the editor and the preview, to compare (only to look: Save keeps the
    entry as it is). **Remove** drops the entry (and its file under `art/plates/<code>/`). A picture dragged from another site arrives as an address and is refused: save it
    first, or copy and paste it. **Stand-in...** on a card opens a picker of every picture already on disk

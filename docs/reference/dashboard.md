@@ -75,7 +75,8 @@ python tools/book_status.py                        # one line per book
 ```
 
 For a hand step `done` records today's date (step 4 only once the addendum's heading exists, step 7
-only once every enemy has a picture). For a
+only once every enemy has a picture and every picture its fights can show has an up-to-date 2x copy
+listed in `assets/plates/upscaled/<code>.json`). For a
 step read from the files it checks them instead (step 5 runs `check_items.mjs --json` first) and
 exits 1 naming what is missing. Every copy-prompt but step 7's ends with this command, so an agent marks its own
 step; step 7 is the owner's to mark, from the page, after looking at the sheet (its prompt has the

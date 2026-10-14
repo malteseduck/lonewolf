@@ -30,6 +30,9 @@ by a step in the dashboard.
   makes the player and the sheet show the copy; `plates.json` and the approved pictures keep naming the
   originals, so nothing waits for approval, and a crop (in fractions) fits both. Adjust's "Show
   original" swaps in the picture before the upscale, to compare (2026-10-13).
+- Step 7 cannot be marked done while any of those pictures lacks an up-to-date 2x copy (one older than
+  its original counts as missing), and a book marked done with one missing shows a warning. The picture
+  sheet badges each card shown from its original "Not upscaled", as it badges changed ones (2026-10-13).
 
 ## Consequences
 

@@ -1,0 +1,32 @@
+{
+ "_readme": "The fight pictures of this book with a Real-ESRGAN 2x copy beside them, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0033.",
+ "srcs": [
+  "art/plates/05sots/darklord-haakon.webp",
+  "art/plates/bestiary-gourgaz-zlanbeast-vordak-doomwolf.webp",
+  "art/plates/guard-gold-trim-painted.png",
+  "art/plates/guard-halberdier-plate.webp",
+  "art/plates/guard-sword-shield-tower.png",
+  "art/plates/villager-spear-pencil.png",
+  "assets/plates/water-snake.jpg",
+  "data/projectaon/01fftd/ill14.png",
+  "data/projectaon/02fotw/ill19.png",
+  "data/projectaon/04tcod/ill13.png",
+  "data/projectaon/04tcod/ill18.png",
+  "data/projectaon/05sots/ill1.png",
+  "data/projectaon/05sots/ill10.png",
+  "data/projectaon/05sots/ill11.png",
+  "data/projectaon/05sots/ill12.png",
+  "data/projectaon/05sots/ill13.png",
+  "data/projectaon/05sots/ill14.png",
+  "data/projectaon/05sots/ill15.png",
+  "data/projectaon/05sots/ill17.png",
+  "data/projectaon/05sots/ill2.png",
+  "data/projectaon/05sots/ill22.png",
+  "data/projectaon/05sots/ill23.png",
+  "data/projectaon/05sots/ill4.png",
+  "data/projectaon/05sots/ill6.png",
+  "data/projectaon/05sots/ill7.png",
+  "data/projectaon/05sots/ill8.png",
+  "data/projectaon/09tcof/ill19.png"
+ ]
+}

@@ -27,9 +27,9 @@ files instead and says what is missing. `undo` takes a hand mark back. See
 | **Play** | | | | | | | | | | | | | | | | | | | | |
 | 6. Played through with test characters; misreadings and item gaps fixed | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ |
 | **Pictures** | | | | | | | | | | | | | | | | | | | | |
-| 7. Every enemy has a fight picture (importer: "0 with none"), shown to the owner on one sheet, changes made | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ |
+| 7. Every enemy has a fight picture (importer: "0 with none"), upscaled 2x, shown to the owner on one sheet, changes made | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ |
 | 8. Printed map repainted, labels checked, `map-4k.webp` made and shown in the player | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ✅ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ |
-| 9. Illustrations upscaled 2x (`<name>-2x.webp` beside each) and shown in the player | ⬜ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ |
+| 9. Illustrations upscaled 2x (`<name>-2x.webp` beside each) and shown in the player | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ |
 <!-- end of status table -->
 
 Books: 1 Flight from the Dark · 2 Fire on the Water · 3 The Caverns of Kalte · 4 The Chasm of Doom ·
@@ -54,9 +54,9 @@ Each step's buttons and prompt are in the dashboard, `http://localhost:8766/tool
 6. Play in the browser on a test address (`http://127.0.0.1:8766/`), never over the owner's saves.
    A hand mark (the agent's).
 7. `docs/reference/items.md`, "Fight pictures": every enemy has a plate of its own or a `plates.json`
-   match (read from the files), then the owner looks at the picture sheet,
+   match, and each picture is upscaled 2x (Upscale 2x; read from the files), then the owner looks at the picture sheet,
    inline in the dashboard (step 7, "Open picture sheet"), picks changes, and may supply drawings (kept in git-ignored
-   `art/plates/`). The mark is the owner's, and takes only once every enemy has a picture.
+   `art/plates/`). The mark is the owner's, and takes only once every enemy has a picture, upscaled.
 8. `docs/reference/map-upscale.md`. Never overwrite `map.png`: it is the original.
     Read from the files: done once `map-4k.webp` exists and `book.js` names it (a re-import).
 9. `tools/ill_upscale.py <code>` (the dashboard's Upscale 2x at step 9), then a re-import. Never

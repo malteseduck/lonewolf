@@ -12,7 +12,7 @@ can show, which are kept in docs/book-status.json (committed).
 
 Steps 3 and 6 are judgements, so `done` records them (with today's date) in book-status.json;
 step 4 is too, once its "Book N" heading is in docs/reference/rules-books.md, and step 7 (the owner's
-look at the picture sheet) once every enemy has a picture. The other steps are read
+look at the picture sheet) once every enemy has a picture, upscaled 2x. The other steps are read
 from the files, so `done` checks them instead (step 5 runs check_items.mjs first) and exits 1, saying
 why, if they are not done. Either way the checklist table is rewritten. Agents finishing a step run
 this; the dashboard (tools/admin/) does the same through serve.py.
@@ -54,7 +54,7 @@ STEPS = {
     4: ('rules', 'Rules addendum written, Engine column true'),
     5: ('items', 'Item table (`items-<code>.js`): read, `check_items.mjs` clean, registered'),
     6: ('testplay', 'Played through with test characters; misreadings and item gaps fixed'),
-    7: ('pictures', 'Every enemy has a fight picture (importer: "0 with none"), shown to the owner on one sheet, changes made'),
+    7: ('pictures', 'Every enemy has a fight picture (importer: "0 with none"), upscaled 2x, shown to the owner on one sheet, changes made'),
     8: ('map', 'Printed map repainted, labels checked, `map-4k.webp` made and shown in the player'),
     9: ('ills', 'Illustrations upscaled 2x (`<name>-2x.webp` beside each) and shown in the player'),
 }
@@ -140,6 +140,12 @@ def import_stats(code, js_path, plates_path):
         except re.error:
             return False
     bare = [n for n, art in foes.items() if not art and not any(matches(p, n) for p in library)]
+    # what the player shows for each enemy now (plates_file.current): an "over" entry, the book's own
+    # picture, else the first entry that fits
+    def shown(name):
+        art = next((e['art'] for s in secs.values() for e in s.get('combat', {}).get('enemies', []) if e['name'] == name and e.get('art')), None)
+        lib = next((p for p in library if p.get('over') and matches(p, name)), None) or (None if art else next((p for p in library if matches(p, name)), None))
+        return lib['src'] if lib else f'data/projectaon/{code}/{art}' if art else None
     out = {
         'sections': len(secs), 'fights': sum('combat' in s for s in secs.values()),
         'rnt': sum(bool(s.get('rnt')) for s in secs.values()),
@@ -147,6 +153,7 @@ def import_stats(code, js_path, plates_path):
         'noway': sum(1 for s in secs.values() if not s['choices'] and 'end' not in s and 'puzzle' not in s),
         'kinds': len(foes), 'bare': len(bare), 'map': book.get('map'),
         'ills': sorted({s['img']['file'] for s in secs.values() if s.get('img')}),
+        'plateSrcs': sorted({s for s in map(shown, foes) if s}),
     }
     _cache.clear()
     _cache[key] = out
@@ -174,6 +181,29 @@ def pin_report():
         _pin_cache.clear()
         _pin_cache[key] = out
     return _pin_cache[key]
+
+
+def fights_not_upscaled(code, imp):
+    """(left, all): the pictures the book's fights can show (each enemy's now, and the approved ones, as
+    tools/ill_upscale.py --fights takes them) and those without an up-to-date 2x copy listed in
+    assets/plates/upscaled/<code>.json (ADR 0033)."""
+    srcs = set(imp.get('plateSrcs', []))
+    try:
+        with open(os.path.join(PINS, code + '.json'), encoding='utf-8') as f:
+            srcs |= {(pin.get('plate') or {}).get('src') for pin in json.load(f).get('pins', {}).values() if pin}
+    except (OSError, ValueError):
+        pass
+    try:
+        with open(os.path.join(ROOT, 'assets', 'plates', 'upscaled', code + '.json'), encoding='utf-8') as f:
+            listed = set(json.load(f).get('srcs', []))
+    except (OSError, ValueError):
+        listed = set()
+
+    def sharp(src):
+        big = mtime(os.path.join(ROOT, *(os.path.splitext(src)[0] + '-2x.webp').split('/')))
+        return src in listed and big is not None and big >= (mtime(os.path.join(ROOT, *src.split('/'))) or 0)
+    srcs = sorted(s for s in srcs if s)
+    return [s for s in srcs if not sharp(s)], srcs
 
 
 def map_stage(code, d, imp):
@@ -309,8 +339,10 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
         st['items'] = {'state': 'warn', 'ev': f"{it['todos']} todos; the table or book changed since the last check (Check items)", 'src': 'disk', 'num': it['todos']}
     else:
         st['items'] = {'state': 'done', 'ev': f"Registered, check clean; {it['todos']} todo entries left to the player", 'src': 'disk', 'num': it['todos']}
-    # 7 fight pictures: every enemy has one (from the files), then the owner's look at the sheet (a mark)
+    # 7 fight pictures: every enemy has one and each is upscaled 2x (from the files), then the owner's
+    # look at the sheet (a mark, refused until then)
     m7 = hand_mark(7)
+    blunt, plate_srcs = fights_not_upscaled(code, imp) if imp else ([], [])
     if not imp:
         st['pictures'] = {'state': 'todo', 'ev': 'After import', 'src': 'disk'}
     elif imp['bare']:
@@ -328,10 +360,14 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
         b['pins'] = {'waiting': len(diff), 'approved': pr.get('approved'), 'sections': secs}
         st['pictures'] = {'state': 'warn', 'src': 'disk', 'num': len(diff),
                           'ev': f"{len(diff)} fight{'s' if len(diff) > 1 else ''} would show another picture than you approved on {pr.get('approved')} (sections {', '.join(secs[:12])}{'...' if len(secs) > 12 else ''}); the player keeps the approved ones until you approve"}
+    elif blunt:
+        ev = f"{len(blunt)} of {len(plate_srcs)} fight pictures not upscaled 2x yet (Upscale 2x)"
+        st['pictures'] = {'state': 'warn' if m7 else 'todo', 'src': 'disk', 'num': len(blunt),
+                          'ev': f'Marked done {m7}, but {ev}' if m7 else ev}
     elif m7:
-        st['pictures'] = {'state': 'done', 'ev': f"All {imp['kinds']} kinds of enemy have a picture; sheet looked at, marked done {m7}; those pictures are kept", 'src': 'hand'}
+        st['pictures'] = {'state': 'done', 'ev': f"All {imp['kinds']} kinds of enemy have a picture, upscaled 2x; sheet looked at, marked done {m7}; those pictures are kept", 'src': 'hand'}
     else:
-        st['pictures'] = {'state': 'warn', 'ev': f"All {imp['kinds']} kinds of enemy have a picture; waiting for your look at the sheet", 'src': 'disk'}
+        st['pictures'] = {'state': 'warn', 'ev': f"All {imp['kinds']} kinds of enemy have a picture, upscaled 2x; waiting for your look at the sheet", 'src': 'disk'}
     st['testplay'] = handed(6, 'Every gate, fight and draw tried with test characters')
     # 8 map
     ms = b['mapStage']

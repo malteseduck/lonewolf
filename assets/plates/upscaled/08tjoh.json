@@ -1,0 +1,21 @@
+{
+ "_readme": "The fight pictures of this book with a Real-ESRGAN 2x copy beside them, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0033.",
+ "srcs": [
+  "art/plates/08tjoh/kezoor-necromancer-pen.jpg",
+  "art/plates/08tjoh/korkuna-egg-ink.jpg",
+  "assets/plates/hounds-stag-wellcome.jpg",
+  "data/projectaon/02fotw/ill4.png",
+  "data/projectaon/06tkot/ill2.png",
+  "data/projectaon/08tjoh/ill1.png",
+  "data/projectaon/08tjoh/ill10.png",
+  "data/projectaon/08tjoh/ill11.png",
+  "data/projectaon/08tjoh/ill12.png",
+  "data/projectaon/08tjoh/ill13.png",
+  "data/projectaon/08tjoh/ill14.png",
+  "data/projectaon/08tjoh/ill17.png",
+  "data/projectaon/08tjoh/ill20.png",
+  "data/projectaon/08tjoh/ill4.png",
+  "data/projectaon/08tjoh/ill6.png",
+  "data/projectaon/08tjoh/ill8.png"
+ ]
+}

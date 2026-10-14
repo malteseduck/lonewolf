@@ -27,6 +27,8 @@
   .card .was canvas, .card .was .none { max-width: 100%; max-height: 90px; padding: 0; font-size: 11px; }
   .card .was small { font: 11px var(--title); color: #7d1d14; }
   .card .badge { position: absolute; top: 6px; right: 6px; z-index: 1; font: 12px var(--title); color: #f3e6c4; background: #7d1d14; border-radius: 3px; padding: 2px 7px; }
+  /* not upscaled 2x yet: top left, so it never covers the approval badge and "was" corner */
+  .card .badge.blunt { right: auto; left: 6px; background: #6b553c; }
   .card[hidden] { display: none; }
   .sheet-top .only { color: var(--fg); font-size: 13px; }
   .card.missing { box-shadow: inset 0 0 0 2px var(--blood), 0 2px 8px rgba(40, 24, 10, .45); }
@@ -184,6 +186,8 @@ function choose() {
     f.plate = shown; f.src = shown ? shown.src : null;
     f.was = changed.length && changed[0].state === 'changed' ? changed[0].was : null;
     f.isNew = changed.length && changed.every((s) => s.state === 'new');
+    // shown from the original, not a 2x copy: step 7 waits for its Upscale 2x (book_status.py)
+    f.blunt = !!f.src && sharp(f.src) === f.src;
     f.mine = plates.find((p) => p.book === code && p.match === anchored(f.name)) || null;
     f.from = (f.mine ? 'your picture' + (f.mine.src.startsWith('art/') ? '' : ` (re-cropped: ${f.mine.src.split('/').pop()})`)
       : f.lib ? `plates.json: "${f.lib.match}"${f.lib.over ? ' (over)' : ''}` : f.art ? `the book's ${f.art}` : 'none: the drawn emblem')
@@ -196,8 +200,8 @@ async function render() {
   choose();
   const none = foes.filter((f) => !f.src).length;
   // approval is told once, here; only the cards that need the owner are marked (ADR 0020)
-  const waiting = foes.filter((f) => f.waiting).length;
-  $('#sum').textContent = `${foes.length} kinds of enemy, ${none} with no picture; `
+  const waiting = foes.filter((f) => f.waiting).length, blunt = foes.filter((f) => f.blunt).length;
+  $('#sum').textContent = `${foes.length} kinds of enemy, ${none} with no picture, ${blunt} not upscaled; `
     + (!pins ? 'not approved yet (mark step 7 done on the dashboard)'
       : waiting ? `${waiting} wait${waiting === 1 ? 's' : ''} for your approval (Approve picture changes, step 7 on the dashboard)` : `all approved ${approvedOn || ''}`);
   $('#only').hidden = !waiting;
@@ -205,6 +209,7 @@ async function render() {
   $('#only input').checked = onlyWaiting;
   $('#cards').innerHTML = foes.map((f, i) => `<div class="card ${f.src ? '' : 'missing'} ${f.waiting ? 'waiting' : ''}" data-i="${i}" ${onlyWaiting && !f.waiting ? 'hidden' : ''}>
     ${f.waiting ? `<span class="badge">${f.isNew ? 'New fight: approve?' : 'Changed: approve?'}</span>` : ''}
+    ${f.blunt ? '<span class="badge blunt">Not upscaled</span>' : ''}
     ${f.was ? `<div class="was" id="was${i}"><small>was</small></div>` : ''}
     <div class="pic" id="pic${i}">${f.src ? '' : '<div class="none">no picture<br><small>drop one here</small></div>'}</div>
     <b>${esc(f.name)}</b><small>section${f.secs.length > 1 ? 's' : ''} ${esc(f.secs.join(', '))}</small><small>${esc(f.from)}</small>
