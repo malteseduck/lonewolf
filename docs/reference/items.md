@@ -163,9 +163,9 @@ the enemy's name wins, so narrower ones first). Give an entry `"book": "<code>"`
 for that book only (its own characters, a generic name such as "Priest" or "guard" given a
 stand-in that suits that book), and put book entries first. The sheet labels a book entry whose
 `match` is exactly the enemy's anchored name (`^name$`) as the owner's own picture, so an entry you
-add is written some other way (`ice barbarian$`, `kalkoth`). Where to look, in order:
+add is written some other way (`ice barbarian$`, `kalkoth`).
 
-1. **The owner's own picture**, if they give one. The owner puts it in on the picture sheet
+**The owner's own picture** stands whatever the order below (ADR 0035). The owner puts it in on the picture sheet
    (inline in the dashboard at step 7, "Open picture sheet"): drop a picture file on
    the enemy's card, paste it, or Choose; the page shrinks it to 2000 px on its long side as WebP and
    `POST /api/admin/plate` saves it as git-ignored `art/plates/<code>/<name>.webp` and writes the entry
@@ -185,28 +185,34 @@ add is written some other way (`ice barbarian$`, `kalkoth`). Where to look, in o
    has been built, what it shows); filter by name, enemy, a nearby fight's enemy or a word of the note,
    click one, crop it in the same editor, Save. The entry points `src` at that file (no copy), so a creature
    met in several books needs one picture found once. Older owner pictures sit in `art/` and `art/plates/` (Book 1's Winged Serpent).
-2. **The same book's own illustrations**, also those outside fights: a page of portraits, or a
-   creature pictured where it is met but not fought. A `crop` cuts one figure out (Book 2's
-   council of travellers, cut from its portrait page). The small ones (`small*.png`) are too low to
-   make a plate.
+
+Where a fight's picture comes from, first that applies (ADR 0035):
+
+1. **The fight's own picture**, which the importer gives it from its section (above).
+2. **The same creature in the same book**: any of its illustrations, fight pictures included (another
+   fight's: Book 9's lone Doomwolf is the front wolf cropped from its Doomwolves and Giak riders), a
+   page of portraits, or a creature pictured where it is met but not fought. A `crop` cuts one figure
+   out (Book 2's council of travellers, cut from its portrait page). The small ones (`small*.png`) are
+   too low to make a plate.
 
    **The illustration index** saves looking through every book again. `python tools/ill_index.py`
    writes git-ignored `data/projectaon/ill-index.json`: for each `ill*.png` of every downloaded book
-   (imported or not), its section, the fight there, the sections it links to and from, the fights
+   (imported or not), its section, the fight there, the fights an imported book gives it in other
+   sections (`fought_at`, read from `book.js`: the importer's `PLATE_FIXES` and name match, such as Book 1's
+   Gourgaz, pictured one section from its fight), the sections it links to and from, the fights
    within two links either way (`near`, with `steps`, negative for fights that lead to it), the
    `plates.json` entries already borrowing it, and `shows`, a few words of our own on what it shows.
    The notes are kept by hand in git-ignored `data/projectaon/ill-notes.json` and merged in, so a
    re-run keeps them; `--missing` lists pictures with none. All 405 pictures of Books 1-20 have a
    note (2026-10-11); when a new book is downloaded, look at its pictures once and add theirs. Search
-   the index for a creature's name or a word ("hound", "robed", "dwarf"), then look at the few hits.
-   The Stand-in picker searches the same notes and nearby fights.
-3. **Another downloaded book's illustration**, only for plain human enemies (soldiers, guards,
-   robbers, bodyguards), by path under `data/projectaon/`. Never another book's special creature
-   or set-piece fight: the owner would meet the same picture twice. The exception is the very same
-   creature (Book 1's Crypt Spawn uses Book 5's; the owner accepted it, 2026-10-01). To see which illustrations sit
-   in which fights, list each book's sections that have both an `ill*.png` and a combat line
-   (section numbers, picture names and enemy names only). Book 2's Giaks and Szalls (a breed of
-   Giak) use Book 1's Giak, cropped to the one on foot.
+   the index for a creature's name (in `fight`, `fought_at` and `shows`) or a word ("hound", "robed",
+   "dwarf"), then look at the few hits. The Stand-in picker searches the same notes and nearby fights.
+3. **The same creature in another downloaded book**, by path under `data/projectaon/`, found the same
+   way in the index: Book 1's Crypt Spawn uses Book 5's, Book 2's Giaks and Szalls (a breed of Giak)
+   Book 1's Giak cropped to the one on foot, Book 9's Gourgaz Book 1's. Never another book's
+   different creature or set-piece fight. Plain human enemies (soldiers, guards, robbers, bodyguards)
+   may take another book's plain humans; for them these and the stand-ins in 4 rank alike, chosen
+   for variety (ADR 0010).
 
 **Vary the plain humans.** The broad library entries (`soldier|...|guard`, `robber|...|bandit`) are a
 last resort: a book full of guards would show the same picture in every fight (the owner asked for
@@ -250,6 +256,18 @@ necromancer, gaunt as the wiki describes him, and the Korkuna an ink alien egg s
 (both in `art/plates/08tjoh/`); the Hunting Dogs a Wellcome engraving of hounds pouncing on a stag.
 An already-downloaded free engraving can serve a second creature by a different crop (Book 4's Tunnel
 Fiends are other demons from the Schongauer print that gives Book 3 its Mutant).
+Book 9 pictures Zakhan Kimah (all three fights) from its non-fight picture of him walking through the
+West Gate, two links before his fights; the Ghoul Pack takes the book's Zaaryx ghoul whole, and the
+Psi-ghoul, a less human kind, a close crop of its head (a near miss). The Doomwolf is the front wolf
+cropped from the book's Doomwolves and Giak riders, one link before its fight (the owner's choice
+over the bestiary page); the Gourgaz Book 1's Gourgaz, the very same creature, leading Giaks with a two-handed
+axe as here (Book 1 fights it one section from that picture). Its nine guard and mercenary kinds,
+which all fell to the broad `soldier|...` entry, each have a picture of their own: the Senate Guards
+the book's courtiers and soldiers on the steps, the Anarian Rangers Book 8's pointing horseman (the
+refugees cropped off), the Strongroom Guard Book 8's soldier in a crested surcoat, the Deldenian
+Mercenaries Book 2's helmeted soldier, Tower Guards 1 and 2 Book 1's two helmeted soldiers, the
+Sergeant and Guard the armoured soldier cropped from Book 10's map table, and the rest the owner's
+`art/plates/` guards and rogues.
 Book 12 pictures its Darklords from its own non-fight pictures: Gnaag (the fly-headed figure where he
 summons the Mind Reaper), Kraagenskûl in all four of his fights (cropped from the throne scene), and the
 Xargath from the serpent at the ship's rail. Its Drakkarim Sailors are cropped from the burning-ship
@@ -267,7 +285,8 @@ that forms out of a haze, is an ink sketch of a spirit rising from smoke (`art/p
 `levels` to darken the pencil-grey lines); Darklord Taktaal is left to the owner, who is searching for
 him. Check a borrowed picture's `fight` in the index first: Book 15's armoured warriors at a wall look
 like Drakkarim but are its Tukodak Guardians.
-4. **A picture found by searching**, anywhere: Wikimedia Commons, a general image search, fan art,
+4. **A stand-in**: one of the owner's `art/plates/` pictures or the library's in `assets/plates/`
+   (the Stand-in picker shows them all), or else a picture found by searching, anywhere: Wikimedia Commons, a general image search, fan art,
    game art, modern fantasy illustration. Read the enemy's page on the Lone Wolf fandom wiki first
    (see AGENTS.md, Lore) for what it looks like: the book's text at its fight often says little
    (Book 7's Lord Zahda is gaunt and white-haired). The player is for personal use, so a picture need

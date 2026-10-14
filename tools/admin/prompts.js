@@ -50,8 +50,8 @@ ${TAIL}`,
 
 Task: docs/book-checklist.md step 7, a fight picture for every enemy.
 - The dashboard counts ${b.imp ? `${b.imp.bare} of ${b.imp.kinds} kinds of enemy with no picture` : 'an unknown number of enemies with no picture'} (book.js plates plus assets/plates/plates.json, as the importer's report does).
-- Follow docs/reference/items.md, "Fight pictures": the owner's pictures in art/plates/ first, then this book's own illustrations, then another book's only for plain humans, then a free engraving (ask me before downloading any).
-- plates.json is read at play time, so no re-import is needed; the dashboard's sheet, http://localhost:8766/tools/admin/fights.html?book=${b.code}, shows every enemy as the player would. Marking step 7 done is mine, after I have looked at that sheet: do not mark it.
+- Follow docs/reference/items.md, "Fight pictures": the fight's own picture; else the same creature in this book (any illustration, fight pictures too); else the same creature in another book; else a stand-in: my pictures in art/plates/, the library, or one found by searching (ask me before downloading any). Plain humans may take another book's humans or a stand-in alike (ADR 0010). Find the creature in data/projectaon/ill-index.json (python tools/ill_index.py) by name.
+- plates.json is read at play time, so no re-import is needed; the picture sheet shows every enemy as the player would. Open it inside the dashboard, http://localhost:8766/tools/admin/: Book ${b.n}'s row, step 7, "Open picture sheet" (fights.html at its own address shows nothing). Marking step 7 done is mine, after I have looked at that sheet: do not mark it.
 When every enemy has a picture, run \`python tools/book_status.py show ${b.code}\` and include its step 7 line in your report (it should say all have a picture, waiting for my look).
 ${TAIL}`,
 

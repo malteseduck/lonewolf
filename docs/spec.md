@@ -242,8 +242,8 @@ open book's own items.
 ### 6.5 Combat
 
 - Fought on the book's pages, not in a separate scene (ADR 0003).
-- Every fight has a picture of the enemy: the book's own where there is one, otherwise a fitting
-  borrowed one (ADRs 0008, 0010, 0020). Wounds show on it.
+- Every fight has a picture of the enemy: the book's own where there is one, otherwise the same
+  creature pictured elsewhere, otherwise a fitting stand-in (ADRs 0008, 0010, 0020, 0035). Wounds show on it.
 - The player strikes, uses a mind attack, drinks a potion or evades; each round is written on the
   story page as a line of the fight's record.
 

@@ -257,8 +257,8 @@ story on.
   pictures the owner supplied or that were found by search and are not free, in git-ignored `art/`
   (Winged Serpent; sources of found ones in `art/plates/SOURCES.txt`), or Project Aon
   illustrations by path under `data/projectaon/`: the same book's, often cropped to one figure
-  (Book 2's portrait page), or another book's (plain human enemies only: another book's special
-  creature would be seen twice, the very same creature excepted).
+  (Book 2's portrait page), or another book's picture of the same creature, or of a plain human
+  (the order is ADR 0035).
 - The shaded bands behind the enemy's name and the controls are `::before` layers faded out at
   the sides too, so no straight edge shows over the plate.
 - The fight's command medallions use glyphs too: Strike shows the weapon in hand (`itemGlyph`),

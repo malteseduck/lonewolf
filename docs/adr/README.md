@@ -63,3 +63,4 @@ choice, and why. Read this index before changing behaviour, art, or a tool's out
 | [0032](0032-by-hand-turn-behind-a-link.md) | The by-hand turn box is folded behind a faint link | 2026-10-12 | Accepted |
 | [0033](0033-illustrations-upscaled-2x-webp.md) | Illustrations upscaled 2x by Real-ESRGAN, as WebP beside the originals (checklist step 9) | 2026-10-13 | Accepted |
 | [0034](0034-picture-steps-last-together.md) | Checklist order: test play is step 6; fight pictures (7), map (8) and illustrations (9) come last, together | 2026-10-13 | Accepted |
+| [0035](0035-fight-picture-source-order.md) | A fight's picture: its own, then the same creature in this book, then in another book, then a stand-in | 2026-10-14 | Accepted |

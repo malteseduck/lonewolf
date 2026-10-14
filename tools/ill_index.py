@@ -5,7 +5,8 @@ through each book again (docs/reference/items.md, Fight pictures).
     python tools/ill_index.py --missing  # also lists the pictures with no note yet
 
 Read from the books' own section files, so books fetched but not imported are in it too. For each
-`ill*.png`: its section, the fight there (enemy names), the sections it links to and from, the fights
+`ill*.png`: its section, the fight there (enemy names), the fights an imported book gives it in other
+sections (fought_at, from book.js), the sections it links to and from, the fights
 within two links either way, and the plates.json entries that borrow it. `shows` is what the picture
 shows, in our own words, kept by hand in data/projectaon/ill-notes.json ({"08tjoh/ill6.png": "..."})
 and merged in here, so re-running never loses it. Both files are git-ignored with the books: they
@@ -43,6 +44,28 @@ def read_book(code):
     return out
 
 
+def fought_at(code):
+    """{ill: [{section, enemies}]}: the fights the imported book.js gives a picture from another section
+    (the importer's PLATE_FIXES and name match), which the section pages alone do not show."""
+    p = os.path.join(PA, code, 'book.js')
+    if not os.path.exists(p):
+        return {}
+    with open(p, encoding='utf-8') as f:
+        t = f.read()
+    head = '.BOOKS || {}, '  # book.js is one Object.assign(window.LW.BOOKS || {}, <JSON>);
+    sections = json.loads(t[t.index(head) + len(head):t.rindex(')')])[code]['sections']
+    out = {}
+    for s, sec in sorted(sections.items(), key=lambda kv: int(kv[0])):
+        here = re.sub(r'(-2x)?\.\w+$', '', sec.get('img', {}).get('file', ''))  # its own picture, maybe as the 2x copy
+        arts = {}
+        for e in sec.get('combat', {}).get('enemies', []):
+            if e.get('art') and re.sub(r'\.\w+$', '', e['art']) != here:
+                arts.setdefault(e['art'], []).append(e['name'])
+        for art, names in arts.items():
+            out.setdefault(art, []).append({'section': int(s), 'enemies': names})
+    return out
+
+
 def near(book, start, back):
     """Fights within NEAR links of start: [{section, enemies, steps}], forwards or (back) backwards."""
     edges = {}
@@ -77,6 +100,7 @@ def main():
         if not os.path.isdir(os.path.join(PA, code)) or not re.match(r'\d\d', code):
             continue
         book = read_book(code)
+        elsewhere = fought_at(code)
         sources = {}
         for s, (links, _, _) in book.items():
             for t in links:
@@ -86,7 +110,8 @@ def main():
             for ill in ills:
                 key = f'{code}/{ill}'
                 index[key] = {
-                    'book': code, 'section': s, 'fight': foes, 'to': links, 'from': sorted(sources.get(s, [])),
+                    'book': code, 'section': s, 'fight': foes, 'fought_at': elsewhere.get(ill, []),
+                    'to': links, 'from': sorted(sources.get(s, [])),
                     'near': near(book, s, False) + near(book, s, True),
                     'used_by': [{k: e[k] for k in ('book', 'match') if k in e}
                                 for e in plates if e.get('src') == f'data/projectaon/{key}'],
@@ -96,7 +121,8 @@ def main():
         for fn in sorted(os.listdir(os.path.join(PA, code))):
             key = f'{code}/{fn}'
             if re.fullmatch(r'ill\d+\.png', fn) and key not in index:
-                index[key] = {'book': code, 'section': None, 'fight': [], 'to': [], 'from': [], 'near': [],
+                index[key] = {'book': code, 'section': None, 'fight': [], 'fought_at': elsewhere.get(fn, []),
+                              'to': [], 'from': [], 'near': [],
                               'used_by': [{k: e[k] for k in ('book', 'match') if k in e}
                                           for e in plates if e.get('src') == f'data/projectaon/{key}'],
                               'shows': notes.get(key, '')}

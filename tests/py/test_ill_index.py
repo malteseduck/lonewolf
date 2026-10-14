@@ -92,6 +92,16 @@ def test_main_builds_the_index_entry_for_each_picture(tree, capsys):
     assert capsys.readouterr().out.strip() == '1 illustrations in 1 books, 0 with a note'
 
 
+def test_main_lists_the_fights_an_imported_book_gives_a_picture_from_another_section(tree):
+    # the importer's PLATE_FIXES: the creature is pictured at 1, where it is not fought, and fought at 3
+    d = tree.book('01xx', {1: sect(links=[2], ills=['ill1.png']), 2: sect(links=[3]), 3: sect(foes=['Lizard'])})
+    book = {'01xx': {'sections': {'1': {}, '3': {'combat': {'enemies': [{'name': 'Lizard', 'art': 'ill1.png'}]}}}}}
+    (d / 'book.js').write_text('(window.LW = window.LW || {}).BOOKS = Object.assign(window.LW.BOOKS || {}, '
+                               + json.dumps(book) + ');\n', encoding='utf-8')
+    e = tree.run()['01xx/ill1.png']
+    assert e['fight'] == [] and e['fought_at'] == [{'section': 3, 'enemies': ['Lizard']}]
+
+
 def test_main_merges_the_notes_and_reports_stale_ones(tree, capsys):
     tree.book('01xx', {1: sect(ills=['ill1.png']), 2: sect(ills=['ill2.png'])})
     tree.notes({'01xx/ill1.png': 'a drawn thing', '01xx/ill9.png': 'gone'})
