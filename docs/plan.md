@@ -14,10 +14,38 @@ every book can become a step or a check there.
 In order of importance. The engine is in modules and tested before its rules change (ADR 0024:
 done 2026-10-11 for the fight, the item tables and the adventures; what is left is under "Code to
 make testable"). Books 1-12 are imported and being played; the engine now applies nearly all their
-`todo`s (2026-10-12). The Grand Master series is needed before Book 13 can be played, and Book 13 is not
-imported yet (that is the owner's go-ahead). Each item ends with why it stands where it
+`todo`s (2026-10-12). The Grand Master series is needed before Book 13 can be played; Book 13 is
+imported (2026-10-14). Each item ends with why it stands where it
 does: "Needs" is a hard dependency, "judgement" an order chosen, not forced. The owner picks what is
 done, and when.
+
+### Dashboard: a script for every step (ADR 0036)
+
+Every book step gets a button that runs a script; where judgement is needed the script writes a
+draft or a report (certain readings filled in, the rest `todo` or listed by section id), and the
+agent's Copy prompt refines it. In the owner's order (2026-10-14):
+
+- D1. **Setup** from a fresh checkout: a requirements file for `tools/.venv`, a `setup.py` that checks
+  and installs uv packages, `npm install`, and (gated) Real-ESRGAN and the OCR models; a Setup panel
+  on the dashboard showing what is present. The git-ignored owner files (`art/`) cannot be restored
+  by it: it says so.
+- D2. **Item table draft** (step 5): `items-<code>.js` from what is certain (Gold Crowns, Meals,
+  Endurance changes, items with a known id), the rest `todo`; `check_items` clean.
+- D3. **Fight pictures auto-assign** (step 7): ADR 0035's order by name against `ill-index.json`,
+  then a library stand-in, written to `plates.json`; the owner reviews on the sheet.
+- D4. **Phrasings leftover scan** (step 3): sections whose text still looks like a gate, Random Number
+  or combat line the importer left as text, by id. None left: the owner marks it.
+- D5. **Walker** (step 6): the engine run over every section with stand-in characters in Node;
+  crashes, gates that never open, fights that cannot end, unreachable sections, by id.
+- D6. **Rules diff** (step 4): the book's rules pages against the previous book's, page by page, and
+  a skeleton addendum (kit numbers, new pages) for the owner to check.
+- D7. A book the importer does not know: added to its table from the catalogue by script.
+- D8. Map: a default `style.txt` and a heuristic for the retype ticks (the key, scale, title).
+  The Gemini repaint stays the owner's (ADR 0036).
+
+Each new script gets tests of its main path and a line in `docs/reference/dashboard.md`; each prompt
+tells the agent to start from the script's output. Judgement: before the Grand Master work, so the
+scripts are tried on Books 10-12's open steps first.
 
 ### The item tables' last todos
 
