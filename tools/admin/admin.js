@@ -92,7 +92,7 @@ function render() {
     `<tr><th class="book">Book</th>${STAGES.map((s) => `<th title="${esc(s.kind)}"><span class="kind" data-kind="${s.kind}"></span>${esc(s.label)}</th>`).join('')}<th class="book">Next</th></tr>`;
   const row = (b) => {
     const nx = nextStage(b);
-    return `<tr data-code="${b.code}" class="${b.code === selected ? 'sel' : ''} ${b.series === 'grand master' ? 'later' : ''}">
+    return `<tr data-code="${b.code}" class="${b.code === selected ? 'sel' : ''} ${!b.folder ? 'later' : ''}">
       <td class="book"><b>${b.n}</b><span>${esc(b.title)}</span><small>${b.code} · ${b.series}</small></td>
       ${STAGES.map((s, i) => {
         const x = b.stages[s.id];
@@ -101,9 +101,12 @@ function render() {
       }).join('')}
       <td class="next">${nx ? `<span class="kind" data-kind="${nx.kind}" style="width:12px;height:12px;vertical-align:-1px"></span> ${esc(nx.label)}` : 'done'}</td></tr>`;
   };
-  const now = books.filter((b) => b.series !== 'grand master' || b.folder), later = books.filter((b) => b.series === 'grand master' && !b.folder);
+  // a book not downloaded has only the download to offer, so it is folded away (ADR 0039)
+  const now = books.filter((b) => b.folder), later = books.filter((b) => !b.folder);
+  const runs = [...later].sort((a, b) => a.n - b.n).reduce((r, b) => { const last = r.at(-1); if (last && last[1] === b.n - 1) last[1] = b.n; else r.push([b.n, b.n]); return r; }, [])
+    .map(([a, z]) => (a === z ? `${a}` : `${a}-${z}`)).join(', ');
   $('#grid tbody').innerHTML = now.map(row).join('') + (later.length
-    ? `<tr class="fold"><td colspan="${STAGES.length + 2}">${showLater ? '▾' : '▸'} Books ${later[0].n}-${later.at(-1).n}, Grand Master: not downloaded; the engine has no Grand Master rules yet, so a downloaded one gets every step but test play</td></tr>` +
+    ? `<tr class="fold"><td colspan="${STAGES.length + 2}">${showLater ? '▾' : '▸'} Books ${runs}: not downloaded; each is offered every step that works for it once it is</td></tr>` +
       (showLater ? later.map(row).join('') : '') : '');
   if (selected) renderDetail(books.find((b) => b.code === selected));
 }
@@ -274,7 +277,7 @@ function gate(kind, b) {
   if (kind === 'download' || kind === 'rules') {
     title = kind === 'download' ? `Download Book ${b.n}?` : `Fetch Book ${b.n}'s rules pages?`;
     body = `<p><b>${esc(b.title)}</b> (${b.code}) from projectaon.org: ${kind === 'download' ? `section pages, rules pages and illustrations, ${SIZE}` : 'its rules pages only (a dozen small files)'}, into <code>data/projectaon/${b.code}/</code> (git-ignored, never committed). Files already there are not fetched again.</p>
-      <ul><li>Personal use only, under Project Aon's licence.</li>${b.series === 'grand master' ? '<li>The engine has no Grand Master rules yet: this book will not be playable after download.</li>' : ''}</ul>`;
+      <ul><li>Personal use only, under Project Aon's licence.</li>${b.playable === false ? `<li>The engine has no ${esc(b.series)} rules yet: this book will not be playable after download.</li>` : ''}</ul>`;
     ackText = `I approve downloading from projectaon.org for Book ${b.n}.`;
     okText = kind === 'download' ? `Download Book ${b.n}` : 'Fetch rules pages';
   } else if (kind === 'import') {

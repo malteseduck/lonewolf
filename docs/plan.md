@@ -98,8 +98,8 @@ from this work.
   243) are read by the importer and already deaf to the first two; Kai-surge must get through (295
   is Mindblast only). Needs: G1. The psychic multipliers it builds on (fight `rounds` `psi`) are done.
 - G6. The Kai sheet's grid of twelve disciplines and their glyphs, and the ranks. Needs: G1.
-- G7. Then register the Grand Master item tables in `main.js` and open their test play (ADR 0039: the
-  dashboard already offers every other step). Needs: G1-G5.
+- G7. Then register the Grand Master item tables in `main.js`. The dashboard opens their test play and
+  registering by itself once `LW.SERIES` has the series (ADR 0039). Needs: G1-G5.
 
 **Decided 2026-10-10** (the Readers' Handbook downloaded that day, then the owner): ADR 0018 (which
 earlier disciplines keep their numbers: a carried character's chosen Magnakai ones, replaced by

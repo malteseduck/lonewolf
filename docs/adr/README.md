@@ -67,4 +67,4 @@ choice, and why. Read this index before changing behaviour, art, or a tool's out
 | [0036](0036-scripts-first-agent-refines.md) | Every book step has a script the owner runs (a draft where judgement is needed); an agent only refines; Setup from a fresh checkout | 2026-10-14 | Accepted |
 | [0037](0037-tools-are-a-uv-project.md) | The Python tools are a uv project (`tools/pyproject.toml`, `uv.lock`, venv `tools/.venv`); run with `uv run --project tools` | 2026-10-14 | Accepted |
 | [0038](0038-art-keeps-its-source-links.md) | Pictures added to `art/` keep their source link where there is one (optional, aimed at most), so Setup can fetch them again | 2026-10-14 | Accepted |
-| [0039](0039-grand-master-books-get-engine-free-steps.md) | A Grand Master book gets every dashboard step but test play before the engine has the series; its item table is not registered yet | 2026-10-14 | Accepted |
+| [0039](0039-grand-master-books-get-engine-free-steps.md) | Every book is offered each dashboard step that can work for it; test play and registering its item table wait for the engine to have its series (read from `LW.SERIES`) | 2026-10-14 | Accepted, amended 2026-10-14 |

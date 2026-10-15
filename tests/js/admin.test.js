@@ -97,10 +97,10 @@ describe('the grid', () => {
     expect($$('#grid thead tr:nth-child(2) th').map((t) => t.textContent)).toEqual(['Book', 'Download', 'Import', 'Phrasings', 'Rules', 'Reading copy', 'Item table', 'Test play', 'Fights', 'Map', 'Illustrations', 'Next']);
   });
 
-  it('has a row per book and folds the Grand Master books not downloaded', async () => {
-    await boot({ books: books(), running: null });
+  it('has a row per book and folds the books not downloaded, whatever their series', async () => {
+    await boot({ books: [...books(), book(4, { folder: false, imp: null })], running: null });
     expect($$('#grid tbody tr[data-code]').map((r) => r.dataset.code)).toEqual(['01book1', '02book2', '03book3']);
-    expect($('tr.fold').textContent).toMatch(/Books 13-14, Grand Master: not downloaded/);
+    expect($('tr.fold').textContent).toMatch(/Books 4, 13-14: not downloaded/);
   });
 
 

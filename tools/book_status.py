@@ -46,6 +46,14 @@ CATALOGUE = [
 ]
 SERIES = lambda n: 'kai' if n <= 5 else 'magnakai' if n <= 12 else 'grand master'
 
+
+def engine_series():
+    """The series the engine has rules for: the keys of LW.SERIES in shared/rules-series.js. A book of
+    another series gets every step that works without them, but no test play or registered item table
+    (ADR 0039); once the engine adds its series, it gets those too."""
+    m = re.search(r'LW\.SERIES = \{(.*?)\n  \};', read(os.path.join(ROOT, 'shared', 'rules-series.js')), re.S)
+    return set(re.findall(r'^    (\w+):', m.group(1), re.M)) if m else set()
+
 # The checklist's steps, in its words (the descriptions under the table say where each is done)
 STEPS = {
     1: ('fetch', 'Downloaded'),
@@ -234,8 +242,11 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
     series = SERIES(n)
     d = os.path.join(DATA, code)
     marks = hand.get('books', {}).get(code, {})
+    # the engine plays the book only once it has the book's series (ADR 0039)
+    playable = series.replace(' ', '') in engine_series()
+    waits = f"the engine's {series.title()} rules (docs/plan.md)"
     b = {'code': code, 'title': title, 'n': n, 'series': series, 'folder': os.path.isdir(d), 'known': code in known,
-         'marks': marks}
+         'marks': marks, 'playable': playable}
     sect = glob.glob(os.path.join(d, 'sect*.htm'))
     js_path = os.path.join(d, 'book.js')
     # imported: when the importer last ran (it rewrites import-report.json every time, book.js only when
@@ -333,7 +344,7 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
         st['items'] = {'state': 'todo', 'ev': f'No items-{code}.js', 'src': 'disk'}
     elif it['draft']:
         st['items'] = {'state': 'todo', 'ev': f"The script's draft, {it['todos']} todos: not read yet (Copy prompt)", 'src': 'disk', 'num': it['todos']}
-    elif not it['registered'] and series != 'grand master':  # ADR 0039: a Grand Master table is not registered yet
+    elif not it['registered'] and playable:  # ADR 0039: a table the engine cannot play is not registered yet
         st['items'] = {'state': 'warn', 'ev': f'items-{code}.js is not in main.js ITEM_TABLES', 'src': 'disk'}
     elif not check:
         st['items'] = {'state': 'warn', 'ev': f"{it['todos']} todos; check_items.mjs not run yet (Check items)", 'src': 'disk', 'num': it['todos']}
@@ -341,8 +352,8 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
         st['items'] = {'state': 'bad', 'ev': f"check_items.mjs: {len(check['errors'])} errors", 'src': 'disk', 'num': len(check['errors'])}
     elif it['checkTime'] < max(it['time'] or 0, t['bookjs'] or 0):
         st['items'] = {'state': 'warn', 'ev': f"{it['todos']} todos; the table or book changed since the last check (Check items)", 'src': 'disk', 'num': it['todos']}
-    elif series == 'grand master':
-        st['items'] = {'state': 'warn', 'ev': f"{it['todos']} todos; read and checked clean. Registering it waits for the Grand Master engine (plan.md G1-G5)", 'src': 'disk', 'num': it['todos']}
+    elif not playable:
+        st['items'] = {'state': 'warn', 'ev': f"{it['todos']} todos; read and checked clean. Registering it waits for {waits}", 'src': 'disk', 'num': it['todos']}
     else:
         st['items'] = {'state': 'done', 'ev': f"Registered, check clean; {it['todos']} todo entries left to the player", 'src': 'disk', 'num': it['todos']}
     # 7 fight pictures: every enemy has one and each is upscaled 2x (from the files), then the owner's
@@ -398,8 +409,8 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
         st['ills'] = {'state': 'warn', 'ev': f'{len(ills)} illustrations upscaled; re-import to show them', 'src': 'disk'}
     else:
         st['ills'] = {'state': 'done', 'ev': f'{len(ills)} illustrations upscaled and shown in the player', 'src': 'disk'}
-    if series == 'grand master':  # ADR 0039: the engine has no Grand Master rules, so no test play yet
-        st['testplay'] = {'state': 'na', 'ev': 'Waits for the Grand Master engine (plan.md G1-G5)', 'src': 'hand'}
+    if not playable:  # ADR 0039: no test play until the engine has the series
+        st['testplay'] = {'state': 'na', 'ev': f'Waits for {waits}', 'src': 'hand'}
     b['stages'] = st
     return b
 
@@ -453,8 +464,8 @@ def mark(code, step, undo=False, run_checks=True):
     sid = STEPS[step][0]
     if step in HAND:
         b = book_status(code, title, n)
-        if not undo and step == 6 and SERIES(n) == 'grand master':
-            return False, f'Book {n} step 6: test play waits for the Grand Master engine (plan.md G1-G5; ADR 0039)'
+        if not undo and step == 6 and not b['playable']:
+            return False, f"Book {n} step 6: test play waits for the engine's {b['series'].title()} rules (docs/plan.md; ADR 0039)"
         if not undo and step == 4 and not b['rulesHeading']:
             return False, f'step 4: write "### Book {n}, {title}" in docs/reference/rules-books.md first'
         if not undo and step == 7 and b['stages']['pictures']['state'] == 'todo':

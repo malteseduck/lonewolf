@@ -55,9 +55,17 @@ class Env:
         return bs.book_status(code, title, n, **kw)
 
 
+SERIES_JS = """  LW.SERIES = {
+    kai: { name: 'Kai', first: 5 },
+    magnakai: { name: 'Magnakai', first: 3 },
+  };
+"""
+
+
 @pytest.fixture
 def env(tmp_path, monkeypatch):
     e = Env(tmp_path)
+    e.write('shared/rules-series.js', SERIES_JS)
     monkeypatch.setattr(bs, 'ROOT', str(tmp_path))
     monkeypatch.setattr(bs, 'DATA', str(tmp_path / 'data' / 'projectaon'))
     monkeypatch.setattr(bs, 'STATUS', str(tmp_path / 'docs' / 'book-status.json'))
@@ -267,8 +275,9 @@ def test_testplay_follows_the_mark(env):
     assert t['state'] == 'done' and t['ev'].endswith('. Marked done 2026-05-06')
 
 
-def test_a_grand_master_book_gets_the_steps_the_engine_is_not_needed_for(env):
-    # ADR 0039: everything but test play, and an item table read and checked but not registered
+def test_a_book_whose_series_the_engine_lacks_gets_every_step_that_works(env):
+    # ADR 0039: everything but test play, and an item table read and checked but not registered;
+    # the engine's series are read from shared/rules-series.js (the fixture's stand-in has kai and magnakai)
     gm = dict(code='13tplor', title='The Plague Lords', n=13)
     env.downloaded(code='13tplor')
     env.book(code='13tplor', t=100)
@@ -279,8 +288,14 @@ def test_a_grand_master_book_gets_the_steps_the_engine_is_not_needed_for(env):
     env.write('items/items-13tplor.js', 'export const SECTIONS = { 1: { todo: "x" } };', 200)
     env.write('data/projectaon/13tplor/check-items.json', json.dumps({'errors': []}), 300)
     s = env.status(**gm)['stages']['items']
-    assert s['state'] == 'warn' and s['ev'] == '1 todos; read and checked clean. Registering it waits for the Grand Master engine (plan.md G1-G5)'
+    assert s['state'] == 'warn' and s['ev'] == "1 todos; read and checked clean. Registering it waits for the engine's Grand Master rules (docs/plan.md)"
     assert env.status(**gm, hand={'books': {'13tplor': {'6': '2026-05-06'}}})['stages']['testplay']['state'] == 'na'
+    assert env.status(**gm)['playable'] is False and env.status()['playable'] is True
+    # once the engine has the series, the same book is played and registered like any other
+    env.write('shared/rules-series.js', SERIES_JS.replace('    magnakai:', '    grandmaster: {},\n    magnakai:'))
+    assert env.status(**gm)['playable'] is True
+    assert env.status(**gm)['stages']['testplay']['state'] == 'todo'
+    assert 'not in main.js ITEM_TABLES' in env.status(**gm)['stages']['items']['ev']
 
 
 def test_mark_step_6_refused_for_a_grand_master_book(marking):
