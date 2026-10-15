@@ -429,6 +429,8 @@ ADMIN_STAGES = {
     'approve-pictures': {'title': 'Approve fight pictures', 'folder': True, 'gated': True, 'timeout': 120, 'cmds': lambda c: [['node', 'tools/plates_pin.mjs', c, '--approve']]},
     # Real-ESRGAN on the PC: fetches nothing, writes only <name>-2x.webp beside each original (ADR 0033)
     # every picture the book's fights can show, the same way; listed in assets/plates/upscaled/<code>.json
+    # step 7's draft (ADR 0035, 0036): the index afresh, then a picture for each enemy with none, entered in plates.json
+    'pictures-draft': {'title': 'Draft fight pictures', 'folder': True, 'timeout': 300, 'cmds': lambda c: [PY + ['tools/ill_index.py'], PY + ['tools/plates_draft.py', c]]},
     'fights-up': {'title': 'Upscale fight pictures', 'folder': True, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/ill_upscale.py', '--fights', c]]},
     'ills': {'title': 'Upscale illustrations', 'folder': True, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/ill_upscale.py', c]]},
     'offline': {'title': 'Offline check', 'book': False, 'timeout': 300, 'cmds': lambda c: [PY + ['tools/offline_check.py']]},

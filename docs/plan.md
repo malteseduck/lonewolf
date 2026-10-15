@@ -23,11 +23,9 @@ done, and when.
 
 Every book step gets a button that runs a script; where judgement is needed the script writes a
 draft or a report (certain readings filled in, the rest `todo` or listed by section id), and the
-agent's Copy prompt refines it. In the owner's order (2026-10-14; D1, Setup, and D2, the item table's
-draft, done that day: dashboard.md, items.md "The draft"):
+agent's Copy prompt refines it. In the owner's order (2026-10-14; D1, Setup, D2, the item table's
+draft, and D3, the fight pictures' draft, done that day: dashboard.md, items.md "The draft" twice):
 
-- D3. **Fight pictures auto-assign** (step 7): ADR 0035's order by name against `ill-index.json`,
-  then a library stand-in, written to `plates.json`; the owner reviews on the sheet.
 - D4. **Phrasings leftover scan** (step 3): sections whose text still looks like a gate, Random Number
   or combat line the importer left as text, by id. None left: the owner marks it.
 - D5. **Walker** (step 6): the engine run over every section with stand-in characters in Node;

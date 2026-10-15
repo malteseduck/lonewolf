@@ -65,7 +65,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
 | Reading copy | files | `reading.txt` and `items-reading.txt` newer than `book.js` (not a checklist step) |
 | 5 Item table | files | `items-<code>.js` registered in `main.js` `ITEM_TABLES`, and `check-items.json` (from `check_items.mjs --json`) clean and newer than the table and `book.js`. A table that still starts with the draft's line (`// DRAFT by tools/items_draft.mjs`) is not done, however clean |
 | 6 Test play | hand | marked |
-| 7 Fight pictures | both | every enemy in `book.js` has a plate of its own or a `plates.json` match (the importer's "0 with none", worked out afresh, so a new `plates.json` entry counts at once), and the owner's hand mark once they have looked at the sheet. All pictured but not marked is a warning. Marking it done pins every fight's picture (`assets/plates/approved/<code>.json`, `plates_pin.mjs --approve`); unmarking lets them go. A fight that would now show another picture (a `plates.json` change, a re-import) is a warning naming its sections, with **Approve picture changes...** (gated); until then the player keeps the approved picture. The owner's own change on the sheet re-pins that enemy at once. The sheet says once, in its top line, whether the book is approved ("all approved <date>", "N wait for your approval", "not approved yet"); only a card waiting for approval is marked (a badge, showing the new picture), with "Show only these" to hide the rest |
+| 7 Fight pictures | both | every enemy in `book.js` has a plate of its own or a `plates.json` match (the importer's "0 with none", worked out afresh, so a new `plates.json` entry counts at once), and the owner's hand mark once they have looked at the sheet. All pictured but not marked is a warning (saying how many are the script's picks, `draft` entries not yet adjusted or removed). Marking it done pins every fight's picture (`assets/plates/approved/<code>.json`, `plates_pin.mjs --approve`); unmarking lets them go. A fight that would now show another picture (a `plates.json` change, a re-import) is a warning naming its sections, with **Approve picture changes...** (gated); until then the player keeps the approved picture. The owner's own change on the sheet re-pins that enemy at once. The sheet says once, in its top line, whether the book is approved ("all approved <date>", "N wait for your approval", "not approved yet"); only a card waiting for approval is marked (a badge, showing the new picture), with "Show only these" to hide the rest |
 | 8 Map | files | `map-4k.webp` made and named by `book.js` |
 | 9 Illustrations | files | every `ill*.png` and `small*.png` has its `-2x.webp` beside it (`ill_upscale.py`), and `book.js` names them (a warning, and the import out of date, until a re-import does) |
 
@@ -116,6 +116,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `items-draft` | `node items_draft.mjs <code>`: step 5's draft (items.md, "The draft"); with a table already there, only `items-draft.js` beside the book and the comparison | |
 | `check-items` | `node check_items.mjs <code> --json` | |
 | `approve-pictures` | `node plates_pin.mjs <code> --approve` | gated: the owner's approval of changed fight pictures |
+| `pictures-draft` | `ill_index.py`, then `plates_draft.py <code>`: step 7's draft (items.md, "The draft"), a `plates.json` entry marked `draft` for each enemy with no picture that it can match; shown while any has none ("Draft pictures") | |
 | `fights-up` | `ill_upscale.py --fights <code>` (step 7's Upscale 2x: every picture the book's fights can show, now or approved; about 5-10 s a picture) | |
 | `ills` | `ill_upscale.py <code>` (Real-ESRGAN on this PC; about 3 s a picture) | |
 | `offline` | `offline_check.py` | |
@@ -151,6 +152,9 @@ downloads and imports still need the owner's word (AGENTS.md).
 - `node tools/items_draft.mjs <code>`: step 5's draft of the item table (ADR 0036; `docs/reference/items.md`,
   "The draft"). Writes `items/items-<code>.js` only where there is none, else `items-draft.js` beside the
   book, compared with the table; counts and section ids only.
+- `python tools/plates_draft.py <code>`: step 7's draft of the fight pictures (ADR 0035, 0036; `docs/reference/items.md`,
+  "Fight pictures", "The draft"). `--dry` prints only; `--compare` drafts a book whose pictures are set afresh, without
+  its own entries, and counts how often it picks the same picture. Names and file names only.
 - `node tools/check_items.mjs <code> --json` also writes `check-items.json` beside the book.
 - `python tools/offline_check.py --json` prints its figures as one JSON object.
 - `tools/check_all.py`: `npm test` and pytest beside `reimport_all.py`; once the re-import is done,

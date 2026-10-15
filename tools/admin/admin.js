@@ -142,7 +142,8 @@ const ACTIONS = {
   reading: () => [run('Make reading copy', 'reading')],
   // the draft first (ADR 0036); over a hand-made table it only writes items-draft.js beside the book, to compare
   items: (b) => [run(b.items.exists && !b.items.draft ? 'Draft and compare' : 'Draft table', 'items-draft'), prompt('items'), run('Check items', 'check-items'), ...(b.items.check?.errors?.length ? [prompt('itemsFix', 'Copy fix prompt')] : [])],
-  pictures: (b) => [prompt('pictures'), { t: 'sheet', label: 'Open picture sheet' }, run('Upscale 2x', 'fights-up'), mark(7),
+  // the draft first (ADR 0036), while an enemy has no picture: the script's picks, judged on the sheet
+  pictures: (b) => [...(b.imp?.bare ? [run('Draft pictures', 'pictures-draft')] : []), prompt('pictures'), { t: 'sheet', label: 'Open picture sheet' }, run('Upscale 2x', 'fights-up'), mark(7),
     ...(b.pins?.waiting ? [run('Approve picture changes...', 'approve-pictures', { gate: 'pictures' })] : [])],
   testplay: () => [prompt('testplay'), link('Test address', 'http://127.0.0.1:8766/'), mark(6)],
   map: () => [{ t: 'map', label: 'Open map editor' }],

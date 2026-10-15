@@ -33,4 +33,4 @@ A picture the owner sets on the picture sheet is the owner's choice and stands w
   fight pictures too, and a picture's fights in other sections (`fought_at`), so steps 2 and 3 are
   a search of it by the creature's name.
 - The procedure is `docs/reference/items.md`, "Fight pictures"; the step 7 prompt in
-  `tools/admin/prompts.js` gives the same order.
+  `tools/admin/prompts.js` gives the same order, and `tools/plates_draft.py` (ADR 0036) drafts it by name.

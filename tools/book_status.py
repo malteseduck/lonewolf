@@ -160,6 +160,8 @@ def import_stats(code, js_path, plates_path):
         'broken': sum(1 for s in secs.values() for c in s['choices'] if c['to'] not in secs),
         'noway': sum(1 for s in secs.values() if not s['choices'] and 'end' not in s and 'puzzle' not in s),
         'kinds': len(foes), 'bare': len(bare), 'map': book.get('map'),
+        # tools/plates_draft.py's picks not yet adjusted or removed on the sheet
+        'drafted': sum(1 for p in library if p.get('book') == code and p.get('draft')),
         'ills': sorted({s['img']['file'] for s in secs.values() if s.get('img')}),
         'plateSrcs': sorted({s for s in map(shown, foes) if s}),
     }
@@ -384,7 +386,8 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
     elif m7:
         st['pictures'] = {'state': 'done', 'ev': f"All {imp['kinds']} kinds of enemy have a picture, upscaled 2x; sheet looked at, marked done {m7}; those pictures are kept", 'src': 'hand'}
     else:
-        st['pictures'] = {'state': 'warn', 'ev': f"All {imp['kinds']} kinds of enemy have a picture, upscaled 2x; waiting for your look at the sheet", 'src': 'disk'}
+        drafted = f" ({imp['drafted']} the script's picks)" if imp.get('drafted') else ''
+        st['pictures'] = {'state': 'warn', 'ev': f"All {imp['kinds']} kinds of enemy have a picture{drafted}, upscaled 2x; waiting for your look at the sheet", 'src': 'disk'}
     st['testplay'] = handed(6, 'Every gate, fight and draw tried with test characters')
     # 8 map
     ms = b['mapStage']

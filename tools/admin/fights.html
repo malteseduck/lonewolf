@@ -189,7 +189,9 @@ function choose() {
     // shown from the original, not a 2x copy: step 7 waits for its Upscale 2x (book_status.py)
     f.blunt = !!f.src && sharp(f.src) === f.src;
     f.mine = plates.find((p) => p.book === code && p.match === anchored(f.name)) || null;
-    f.from = (f.mine ? 'your picture' + (f.mine.src.startsWith('art/') ? '' : ` (re-cropped: ${f.mine.src.split('/').pop()})`)
+    // tools/plates_draft.py writes its picks as the owner's would be, marked draft: Adjust or Remove makes them yours
+    f.from = (f.mine?.draft ? `the script's pick (${f.mine.draft}: ${f.mine.src.split('/').pop()}); Adjust makes it yours, Remove drops it`
+      : f.mine ? 'your picture' + (f.mine.src.startsWith('art/') ? '' : ` (re-cropped: ${f.mine.src.split('/').pop()})`)
       : f.lib ? `plates.json: "${f.lib.match}"${f.lib.over ? ' (over)' : ''}` : f.art ? `the book's ${f.art}` : 'none: the drawn emblem')
       + (f.src && sharp(f.src) !== f.src ? ', upscaled 2x' : '')
       + (f.waiting ? (f.isNew ? '; a fight with no approved picture yet' : `; the player still shows the approved picture${f.waiting < f.fights.length ? ` (${f.waiting} of ${f.fights.length} fights)` : ''}`) : '');

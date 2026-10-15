@@ -218,6 +218,25 @@ add is written some other way (`ice barbarian$`, `kalkoth`).
    click one, crop it in the same editor, Save. The entry points `src` at that file (no copy), so a creature
    met in several books needs one picture found once. Older owner pictures sit in `art/` and `art/plates/` (Book 1's Winged Serpent).
 
+**The draft** (ADR 0036): `python tools/plates_draft.py <code>`, the dashboard's **Draft pictures** at step 7
+(shown while any enemy has none; it re-runs `ill_index.py` first), gives each enemy with no picture one in the
+order below and adds its entry to `plates.json`, written as the owner's would be (the exact name, anchored,
+`book` set, at the top) plus `"draft"`, where it came from ("this book", "Book 3", "stand-in", "this book, a
+picture 1 link before the fight"). The sheet labels such a card "the script's pick"; Adjust there makes it
+the owner's (the entry is rewritten without `draft`), Remove drops it. It matches by name only: numbers,
+notes in brackets and group words ("pack", "patrol") dropped, plurals made singular, then one name held in
+the other ("Vazhag" in "Fat Vazhag", "Drakkarim" as "Drakkar"); the same kind in this book (an enemy with a
+picture now, as shown, crop and all, or an illustration whose note names it), then in another imported book
+(nearest first) or a fetched book's index; then a picture of this book with no fight of its own one or two
+links before the fight (a guess); then a library or `art/plates/` picture with a word of the name in its file
+name (the one this book uses least). A plain human (a person's word last, "guard", "swordsman", with no
+creature named before it: "Giak Officer" is a Giak) takes this book's same kind, else a stand-in, else
+another book's only by the very same name (ADR 0010). It never takes another draft as a source. What it
+cannot match is listed, for the agent's prompt or the sheet's Stand-in.... `--compare` on Books 2-12 (their
+own entries left out) (106 enemies, 2026-10-14) gives the owner's very picture for a third of them and some picture
+for two thirds; the rest of the owner's choices were by eye (variety, a better figure), which is what the
+sheet is for.
+
 Where a fight's picture comes from, first that applies (ADR 0035):
 
 1. **The fight's own picture**, which the importer gives it from its section (above).

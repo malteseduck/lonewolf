@@ -246,6 +246,9 @@ def test_pictures_stage_needs_every_fight_picture_upscaled(env):
     assert env.status()['stages']['pictures']['num'] == 1
     env.touch(f'data/projectaon/{CODE}/ill1-2x.webp', 10)
     assert env.status()['stages']['pictures']['state'] == 'warn'                 # waiting for the owner's look
+    # the rat's picture made the script's pick (tools/plates_draft.py): the sheet's line says so
+    env.write('assets/plates/plates.json', json.dumps({'plates': [{'match': '^rat$', 'book': CODE, 'src': 'assets/plates/rat.png', 'draft': 'stand-in'}]}), 5)
+    assert "picture (1 the script's picks), upscaled" in env.status()['stages']['pictures']['ev']
     # the original replaced since: its copy is out of date
     env.touch('assets/plates/rat.png', 20)
     env.write(f'assets/plates/approved/{CODE}.json', json.dumps({'pins': {}}))
