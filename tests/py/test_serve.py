@@ -10,7 +10,6 @@ import sys
 import threading
 import time
 import types
-import urllib.parse
 
 import pytest
 
@@ -412,19 +411,6 @@ def test_admin_run_route_starts_a_job_and_serves_its_lines(root, procs, monkeypa
     wait_done(serve._jobs[got['id']])
     st, got = jsend('GET', f"/api/admin/jobs/{got['id']}")
     assert st == 200 and got['state'] == 'done' and got['lines'][1:] == ['alpha', 'beta']
-
-
-def test_admin_agent_opens_a_claude_desktop_session_in_the_project(root, monkeypatch):
-    opened = []
-    monkeypatch.setattr(serve, '_open_url', opened.append)
-    assert jsend('POST', '/api/admin/agent', {'prompt': 'Book 1: do step 4 & mark it'}) == (200, {'ok': True})
-    u = urllib.parse.urlsplit(opened[0])
-    q = urllib.parse.parse_qs(u.query)
-    assert (u.scheme, u.netloc + u.path) == ('claude', 'code/new')
-    assert q == {'q': ['Book 1: do step 4 & mark it'], 'folder': [serve.ROOT]}
-    assert jsend('POST', '/api/admin/agent', {'prompt': ' '})[0] == 400
-    assert jsend('POST', '/api/admin/agent', {'prompt': 'x'}, addr='192.168.1.5')[0] == 403
-    assert len(opened) == 1
 
 
 # ---------------------------------------------------------------- map editor

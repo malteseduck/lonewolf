@@ -23,7 +23,7 @@ done, and when.
 
 Every book step gets a button that runs a script; where judgement is needed the script writes a
 draft or a report (certain readings filled in, the rest `todo` or listed by section id), and the
-agent's Send to agent refines it. In the owner's order (2026-10-14; D1, Setup, D2, the item table's
+agent's Copy prompt refines it. In the owner's order (2026-10-14; D1, Setup, D2, the item table's
 draft, D3, the fight pictures' draft, and D4, the phrasings scan, done that day, and D5, the walk,
 on 2026-10-15: dashboard.md, items.md "The draft" twice, importer.md "The leftover scan",
 rules-engine.md "The walk"):

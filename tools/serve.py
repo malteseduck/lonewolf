@@ -41,7 +41,6 @@ Static files as `python -m http.server` serves them, from the project root, plus
     GET  /api/admin/setup             what the tools need and have: tools/setup.py's status() (setup-<part> stages install)
     GET  /api/admin/jobs              the last ten jobs; GET /api/admin/jobs/<id>?from=n: its state and lines from n
     POST /api/admin/mark/<book>/<n>   book_status.py's done (or ?undo=1) for checklist step n
-    POST /api/admin/agent             {prompt}: opens a new Claude Code session in Claude Desktop, in this folder
     POST /api/admin/plate             the picture sheet: {book, enemy, image?: base64 WebP, crop?, levels?, flip?, remove?};
                                       the owner's picture for one enemy, saved as art/plates/<book>/<slug>.webp and
                                       written into assets/plates/plates.json (tools/plates_file.py). Or src: a picture
@@ -75,7 +74,7 @@ import threading
 import time
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import parse_qs, quote, unquote, urlencode
+from urllib.parse import parse_qs, unquote
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BACKUPS = os.path.join(ROOT, 'backups')
@@ -451,7 +450,6 @@ for _part, _title, _gated in (('venv', 'Install Python packages', False), ('npm'
     ADMIN_STAGES['setup-' + _part] = {'title': _title, 'book': False, 'gated': _gated, 'timeout': 3600,
                                       'cmds': lambda c, part=_part: [['uv', 'run', '--no-project', 'python', 'tools/setup.py', 'install', part]]}
 _jobs, _jobs_lock, _job_seq = {}, threading.Lock(), [0]
-_open_url = getattr(os, 'startfile', None)  # hands a claude:// link to Claude Desktop (POST /api/admin/agent)
 JOB_LINES = 20000
 
 
@@ -623,7 +621,6 @@ class Handler(SimpleHTTPRequestHandler):
         if method == 'GET' and parts == ['status']:
             st = book_status.all_status()
             st['running'] = _job[0]
-            st['root'] = ROOT  # the folder an agent prompt's new Claude Code session opens in
             return self._json(200, st)
         if method == 'GET' and parts == ['setup']:
             import setup
@@ -654,15 +651,6 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(200, plates_file.standins())
         if method == 'POST' and parts == ['plate']:
             return self._admin_plate(body)
-        if method == 'POST' and parts == ['agent']:
-            # opened here, through Windows, because Desktop's own browser pane drops claude:// links
-            prompt = str(body.get('prompt') or '').strip()
-            if not prompt:
-                return self._json(400, {'error': 'no prompt'})
-            if not _open_url:
-                return self._json(501, {'error': 'only on Windows'})
-            _open_url('claude://code/new?' + urlencode({'q': prompt, 'folder': ROOT}, quote_via=quote))
-            return self._json(200, {'ok': True})
         if method == 'POST' and len(parts) == 3 and parts[0] == 'mark' and parts[2].isdigit():
             ok, msg = book_status.mark(parts[1], int(parts[2]), undo=q.get('undo', [''])[0] == '1', run_checks=False)
             return self._json(200 if ok else 409, {'ok': ok, 'message': msg})

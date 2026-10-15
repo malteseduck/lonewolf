@@ -23,7 +23,7 @@ const STAGES = [
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const when = (t) => (t ? new Date(t).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) : 'never');
-let books = [], selected = null, showLater = false, running = null, root = '';
+let books = [], selected = null, showLater = false, running = null;
 
 // ---------- status ----------
 async function api(path, opts) {
@@ -41,7 +41,6 @@ async function load() {
   }
   books = j.books;
   running = j.running;
-  root = j.root;
   render();
   loadSetup();
 }
@@ -143,7 +142,7 @@ const ACTIONS = {
   rules: () => [prompt('rules'), mark(4)],
   reading: () => [run('Make reading copy', 'reading')],
   // the draft first (ADR 0036); over a hand-made table it only writes items-draft.js beside the book, to compare
-  items: (b) => [run(b.items.exists && !b.items.draft ? 'Draft and compare' : 'Draft table', 'items-draft'), prompt('items'), run('Check items', 'check-items'), ...(b.items.check?.errors?.length ? [prompt('itemsFix', 'Send fix to agent')] : [])],
+  items: (b) => [run(b.items.exists && !b.items.draft ? 'Draft and compare' : 'Draft table', 'items-draft'), prompt('items'), run('Check items', 'check-items'), ...(b.items.check?.errors?.length ? [prompt('itemsFix', 'Copy fix prompt')] : [])],
   // the draft first (ADR 0036), while an enemy has no picture: the script's picks, judged on the sheet
   pictures: (b) => [...(b.imp?.bare ? [run('Draft pictures', 'pictures-draft')] : []), prompt('pictures'), { t: 'sheet', label: 'Open picture sheet' }, run('Upscale 2x', 'fights-up'), mark(7),
     ...(b.pins?.waiting ? [run('Approve picture changes...', 'approve-pictures', { gate: 'pictures' })] : [])],
@@ -154,7 +153,7 @@ const ACTIONS = {
   ills: (b) => [run('Upscale 2x', 'ills'), { t: 'ills', label: 'Open illustration sheet' }, ...(b.stages.ills.state === 'warn' && b.known ? [run('Re-import...', 'import', { gate: 'import' })] : [])],
 };
 function run(label, stage, opt = {}) { return { t: 'run', label, stage, ...opt }; }
-function prompt(key, label = 'Send to agent') { return { t: 'prompt', key, label }; }
+function prompt(key, label = 'Copy prompt') { return { t: 'prompt', key, label }; }
 function link(label, href) { return { t: 'link', label, href }; }
 function mark(step) { return { t: 'mark', step }; }
 
@@ -180,7 +179,7 @@ async function renderDetail(b) {
   }).join('');
   $('#detail').innerHTML = `<h2>${b.n}. ${esc(b.title)}</h2>
     <div class="meta">${b.code} · ${b.series}${b.imp ? ` · ${b.imp.sections} sections, ${b.imp.fights} fights, ${b.imp.kinds} kinds of enemy` : ''}</div>
-    ${nx ? `<div class="nextup">Next: <b>${esc(nx.label)}</b> (${nx.kind === 'agent' ? 'Claude Code: send it to an agent' : nx.kind === 'owner' ? 'yours' : 'a script'})</div>` : '<div class="nextup">Every step done.</div>'}
+    ${nx ? `<div class="nextup">Next: <b>${esc(nx.label)}</b> (${nx.kind === 'agent' ? 'Claude Code: copy the prompt' : nx.kind === 'owner' ? 'yours' : 'a script'})</div>` : '<div class="nextup">Every step done.</div>'}
     <h3>Steps</h3>${steps}<h3>Map, step by step</h3><div id="mapsteps"><p class="hint">${b.folder ? 'Reading the map files...' : 'After download.'}</p></div>`;
   if (b.folder) renderMap(b, await (await fetch(`/api/map/${b.code}/state`, { cache: 'no-store' }).catch(() => null))?.json().catch(() => null));
 }
@@ -215,7 +214,7 @@ $('#detail').addEventListener('click', async (e) => {
   const btn = e.target.closest('button[data-act]');
   if (!btn) return;
   const a = acts[+btn.dataset.act];
-  if (a.t === 'prompt') return sendToAgent(PROMPTS[a.key](a.b));
+  if (a.t === 'prompt') return copy(PROMPTS[a.key](a.b), 'Prompt copied: paste it into Claude Code');
   if (a.t === 'map') return openMap(a.b, a.step);
   if (a.t === 'sheet') return openSheet(a.b);
   if (a.t === 'ills') return openIlls(a.b);
@@ -389,23 +388,11 @@ document.querySelectorAll('[data-global]').forEach((btn) => btn.onclick = async 
 });
 
 // ---------- small things ----------
-// A new Claude Code session in Claude Desktop, in the project folder, with the prompt in its composer
-// (claude://code/new; Desktop asks to confirm the folder each time). Copied too, in case Desktop is missing.
-// The server opens the link, through Windows, since Desktop's own browser pane drops claude:// links silently;
-// failing that, the page opens it, except in the pane (its user agent says Claude/), where it only copies.
-async function sendToAgent(t) {
-  copy(t, 'Prompt copied');  // while the page still has the focus
-  if ((await api('agent', { method: 'POST', body: JSON.stringify({ prompt: t }) })).status === 200) return toast('Opening a Claude Code session (prompt also copied)', 3500);
-  if (/\bClaude\//.test(navigator.userAgent)) return toast("Prompt copied: paste it into a new session (Desktop's browser pane cannot open one)", 8000);
-  toast('Opening a Claude Code session (prompt also copied)', 3500);
-  window.open('claude://code/new?q=' + encodeURIComponent(t) + (root ? '&folder=' + encodeURIComponent(root) : ''), '_self');
-}
-async function copy(t, done, ms = 3500) {
-  toast(done, ms);  // first: once Desktop takes the focus, the clipboard write may never settle
-  try { await navigator.clipboard.writeText(t); }
+async function copy(t, done) {
+  try { await navigator.clipboard.writeText(t); toast(done, 3500); }
   catch {  // a page that is not focused cannot write the clipboard: copy through a selection instead
     const ta = Object.assign(document.createElement('textarea'), { value: t });
-    document.body.append(ta); ta.select(); document.execCommand('copy'); ta.remove();
+    document.body.append(ta); ta.select(); document.execCommand('copy'); ta.remove(); toast(done, 3500);
   }
 }
 let toastTimer;

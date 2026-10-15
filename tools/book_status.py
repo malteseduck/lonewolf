@@ -352,7 +352,7 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
     elif not ph:
         st['phrasings'] = {'state': 'todo', 'ev': 'Not scanned yet (Scan phrasings)', 'src': 'hand'}
     elif ph['stale'] or ph['look']:
-        st['phrasings'] = {'state': 'todo', 'ev': said + ('' if ph['stale'] else '; judge each (Send to agent), then mark'), 'src': 'hand',
+        st['phrasings'] = {'state': 'todo', 'ev': said + ('' if ph['stale'] else '; judge each (Copy prompt), then mark'), 'src': 'hand',
                            **({} if ph['stale'] else {'num': len(ph['look'])})}
     else:  # none left: the owner's mark (ADR 0036)
         st['phrasings'] = {'state': 'warn', 'ev': f'{said}; yours to mark', 'src': 'hand'}
@@ -376,7 +376,7 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
     if not it['exists']:
         st['items'] = {'state': 'todo', 'ev': f'No items-{code}.js', 'src': 'disk'}
     elif it['draft']:
-        st['items'] = {'state': 'todo', 'ev': f"The script's draft, {it['todos']} todos: not read yet (Send to agent)", 'src': 'disk', 'num': it['todos']}
+        st['items'] = {'state': 'todo', 'ev': f"The script's draft, {it['todos']} todos: not read yet (Copy prompt)", 'src': 'disk', 'num': it['todos']}
     elif not it['registered'] and playable:  # ADR 0039: a table the engine cannot play is not registered yet
         st['items'] = {'state': 'warn', 'ev': f'items-{code}.js is not in main.js ITEM_TABLES', 'src': 'disk'}
     elif not check:
@@ -427,8 +427,8 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
         st['testplay'] = handed(6, 'Every gate, fight and draw tried with test characters' + (f'. {walked}' if walked and imp else ''))
     elif not wk:
         st['testplay'] = {'state': 'todo', 'ev': 'Not walked yet (Walk the book)', 'src': 'hand'}
-    else:  # the walk is the start; the play-through (Send to agent) and its mark are the agent's
-        st['testplay'] = {'state': 'todo', 'ev': walked + ('' if wk['stale'] else '; then play it through (Send to agent)'), 'src': 'hand',
+    else:  # the walk is the start; the play-through (Copy prompt) and its mark are the agent's
+        st['testplay'] = {'state': 'todo', 'ev': walked + ('' if wk['stale'] else '; then play it through (Copy prompt)'), 'src': 'hand',
                           **({'num': len(wk['look'])} if wk['look'] and not wk['stale'] else {})}
     # 8 map
     ms = b['mapStage']
