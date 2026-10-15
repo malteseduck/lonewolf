@@ -7,8 +7,9 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
 
 ## The page
 
-- **The grid**: books 1-12 (13-20, Grand Master, folded below: download only, since the engine has
-  no Grand Master rules), one column per step, grouped as in `docs/book-checklist.md`. Each cell is
+- **The grid**: books 1-12, and each Grand Master book once downloaded (13-20 not yet downloaded are
+  folded below, download only). The engine has no Grand Master rules yet, so a Grand Master book gets
+  every step but test play, and its item table stops short of registering (ADR 0039). One column per step, grouped as in `docs/book-checklist.md`. Each cell is
   a seal: done, not yet, a warning (stale, or the files and the marks disagree), failed, or not
   needed. The number under a cell is what is left (todos, enemies with no picture, the map's stage).
   "Next" is the first step not done. The icon over each column says who does it: a cog (a script),

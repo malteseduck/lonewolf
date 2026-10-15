@@ -103,7 +103,7 @@ function render() {
   };
   const now = books.filter((b) => b.series !== 'grand master' || b.folder), later = books.filter((b) => b.series === 'grand master' && !b.folder);
   $('#grid tbody').innerHTML = now.map(row).join('') + (later.length
-    ? `<tr class="fold"><td colspan="${STAGES.length + 2}">${showLater ? '▾' : '▸'} Books ${later[0].n}-${later.at(-1).n}, Grand Master: not downloaded; the engine has no Grand Master rules yet, so only the download is offered</td></tr>` +
+    ? `<tr class="fold"><td colspan="${STAGES.length + 2}">${showLater ? '▾' : '▸'} Books ${later[0].n}-${later.at(-1).n}, Grand Master: not downloaded; the engine has no Grand Master rules yet, so a downloaded one gets every step but test play</td></tr>` +
       (showLater ? later.map(row).join('') : '') : '');
   if (selected) renderDetail(books.find((b) => b.code === selected));
 }

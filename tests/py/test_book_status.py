@@ -267,6 +267,29 @@ def test_testplay_follows_the_mark(env):
     assert t['state'] == 'done' and t['ev'].endswith('. Marked done 2026-05-06')
 
 
+def test_a_grand_master_book_gets_the_steps_the_engine_is_not_needed_for(env):
+    # ADR 0039: everything but test play, and an item table read and checked but not registered
+    gm = dict(code='13tplor', title='The Plague Lords', n=13)
+    env.downloaded(code='13tplor')
+    env.book(code='13tplor', t=100)
+    st = env.status(**gm)['stages']
+    assert st['testplay']['state'] == 'na' and 'Grand Master' in st['testplay']['ev']
+    assert {k: st[k]['state'] for k in ('phrasings', 'rules', 'reading', 'items')} == {k: 'todo' for k in ('phrasings', 'rules', 'reading', 'items')}
+    assert st['pictures']['state'] == 'warn'     # no fights in the stand-in: all pictured, waiting for the owner's mark
+    env.write('items/items-13tplor.js', 'export const SECTIONS = { 1: { todo: "x" } };', 200)
+    env.write('data/projectaon/13tplor/check-items.json', json.dumps({'errors': []}), 300)
+    s = env.status(**gm)['stages']['items']
+    assert s['state'] == 'warn' and s['ev'] == '1 todos; read and checked clean. Registering it waits for the Grand Master engine (plan.md G1-G5)'
+    assert env.status(**gm, hand={'books': {'13tplor': {'6': '2026-05-06'}}})['stages']['testplay']['state'] == 'na'
+
+
+def test_mark_step_6_refused_for_a_grand_master_book(marking):
+    marking.downloaded(code='13tplor')
+    marking.book(code='13tplor', t=100)
+    ok, msg = bs.mark('13tplor', 6)
+    assert not ok and 'Grand Master' in msg
+
+
 def test_map_stage_in_the_book_status(env):
     env.downloaded()
     assert env.status()['stages']['map'] == {'state': 'na', 'ev': 'No printed map', 'src': 'disk'}

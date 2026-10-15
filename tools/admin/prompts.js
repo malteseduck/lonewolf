@@ -37,9 +37,12 @@ Task: docs/book-checklist.md step 5, the item table, by docs/reference/items.md 
 - The reading list is data/projectaon/${b.code}/items-reading.txt (the dashboard's "Reading copy" step makes it: tools/reading_copy.py then tools/item_sections.py).
 - Where the text leaves a choice to the player, write a todo, never a guess.${b.series === 'magnakai' ? ' This is a Magnakai book: mark ambushes and bow shots.' : ''} One id per object across books.
 - Icons from game-icons.net via tools/fetch_icons.py are part of this step: fetch the ones the new items need and credit them in assets/icons/README.txt.
-- node tools/check_items.mjs ${b.code} --json must be clean; register the table in main.js ITEM_TABLES.
+${b.series === 'grand master'
+    ? `- node tools/check_items.mjs ${b.code} --json must be clean. Do NOT register the table in main.js ITEM_TABLES: the engine has no Grand Master rules yet (docs/plan.md G1-G5, ADR 0039), so the step stays short of done until then. Write nothing that needs those rules; leave it as a todo.
+Report: sections with entries, book items, todos, sections left out, and what waits for the Grand Master engine.`
+    : `- node tools/check_items.mjs ${b.code} --json must be clean; register the table in main.js ITEM_TABLES.
 Report: sections with entries, book items, todos, sections left out.
-${DONE(b, 5)}
+${DONE(b, 5)}`}
 ${TAIL}`,
 
   itemsFix: (b) => `${HEAD(b)}
