@@ -31,7 +31,9 @@ ${TAIL}`,
   items: (b) => `${HEAD(b)}
 
 Task: docs/book-checklist.md step 5, the item table, by docs/reference/items.md (read all of it).
-- ${b.items.exists ? `items-${b.code}.js exists (${b.items.todos} todo entries${b.items.registered ? ', registered in main.js' : ', NOT yet registered in main.js ITEM_TABLES'}). Re-read it against the reading list and finish what is missing.` : `There is no items-${b.code}.js yet. Write it.`}
+- ${b.items.draft ? `items-${b.code}.js is the script's draft (tools/items_draft.mjs, the dashboard's "Draft table"; ${b.items.todos} todo entries). Start from it: its readings are the plain ones (Gold Crowns, Meals and known items found or lost, Endurance on arrival, gates on a known item or a fee); check them, and replace every todo it wrote ("...: as the text says") by reading that section. Then read the rest of the reading list, which the draft does not cover (the book's own items, fights, rolls, bow shots, marks). Take out the file's first line (// DRAFT ...) when done.`
+    : b.items.exists ? `items-${b.code}.js exists (${b.items.todos} todo entries${b.items.registered ? ', registered in main.js' : ', NOT yet registered in main.js ITEM_TABLES'}). Re-read it against the reading list and finish what is missing.`
+    : `There is no items-${b.code}.js yet. Make the draft first: node tools/items_draft.mjs ${b.code} (the dashboard's "Draft table"), then refine it as below.`}
 - The reading list is data/projectaon/${b.code}/items-reading.txt (the dashboard's "Reading copy" step makes it: tools/reading_copy.py then tools/item_sections.py).
 - Where the text leaves a choice to the player, write a todo, never a guess.${b.series === 'magnakai' ? ' This is a Magnakai book: mark ambushes and bow shots.' : ''} One id per object across books.
 - Icons from game-icons.net via tools/fetch_icons.py are part of this step: fetch the ones the new items need and credit them in assets/icons/README.txt.

@@ -203,6 +203,18 @@ def test_items_stage_walks_through_its_states(env):
     assert s['state'] == 'done' and s['num'] == 2 and s['ev'] == 'Registered, check clean; 2 todo entries left to the player'
 
 
+def test_items_stage_a_script_draft_is_not_done_even_registered_and_clean(env):
+    env.book(t=100)
+    st = lambda **kw: env.status(main_js=kw.get('main_js', ''))['stages']['items']
+    env.write(f'items/items-{CODE}.js', '// DRAFT by tools/items_draft.mjs (2026-10-14): 3 sections, 2 with a todo.\n'
+              'export const SECTIONS = { 1: { todo: "x" }, 2: { todo: "y" }, 3: { ep: -2 } };', 200)
+    s = st()
+    assert s['state'] == 'todo' and s['num'] == 2 and s['ev'] == "The script's draft, 2 todos: not read yet (Copy prompt)"
+    env.write(f'data/projectaon/{CODE}/check-items.json', json.dumps({'errors': []}), 300)
+    assert st(main_js=REG)['state'] == 'todo'
+    assert env.status(main_js='')['items']['draft'] is True
+
+
 def test_pictures_stage(env):
     sections_bare = {'1': fight(('Rat', None), ('Bat', 'ill1.png')), '2': {'text': [], 'choices': [], 'end': 'victory'}}
     env.write('assets/plates/plates.json', '{"plates": []}', 0)

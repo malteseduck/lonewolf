@@ -23,10 +23,9 @@ done, and when.
 
 Every book step gets a button that runs a script; where judgement is needed the script writes a
 draft or a report (certain readings filled in, the rest `todo` or listed by section id), and the
-agent's Copy prompt refines it. In the owner's order (2026-10-14; D1, Setup, done that day: dashboard.md):
+agent's Copy prompt refines it. In the owner's order (2026-10-14; D1, Setup, and D2, the item table's
+draft, done that day: dashboard.md, items.md "The draft"):
 
-- D2. **Item table draft** (step 5): `items-<code>.js` from what is certain (Gold Crowns, Meals,
-  Endurance changes, items with a known id), the rest `todo`; `check_items` clean.
 - D3. **Fight pictures auto-assign** (step 7): ADR 0035's order by name against `ill-index.json`,
   then a library stand-in, written to `plates.json`; the owner reviews on the sheet.
 - D4. **Phrasings leftover scan** (step 3): sections whose text still looks like a gate, Random Number

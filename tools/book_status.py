@@ -280,7 +280,9 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
             check = json.load(f)
     except (OSError, ValueError):
         pass
-    b['items'] = {'exists': os.path.isfile(items_js), 'todos': len(re.findall(r'\btodo:', read(items_js))) if os.path.isfile(items_js) else None,
+    # a table tools/items_draft.mjs wrote keeps that first line until it has been read (ADR 0036)
+    b['items'] = {'draft': os.path.isfile(items_js) and read(items_js).startswith('// DRAFT by tools/items_draft.mjs'),
+                  'exists': os.path.isfile(items_js),'todos': len(re.findall(r'\btodo:', read(items_js))) if os.path.isfile(items_js) else None,
                   'registered': bool(reg and f"'{code}':" in reg.group(1)), 'check': check,
                   'checkTime': mtime(os.path.join(d, 'check-items.json')), 'time': mtime(items_js)}
     b['mapStage'] = map_stage(code, d, imp) if b['folder'] else None
@@ -329,6 +331,8 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
     it = b['items']
     if not it['exists']:
         st['items'] = {'state': 'todo', 'ev': f'No items-{code}.js', 'src': 'disk'}
+    elif it['draft']:
+        st['items'] = {'state': 'todo', 'ev': f"The script's draft, {it['todos']} todos: not read yet (Copy prompt)", 'src': 'disk', 'num': it['todos']}
     elif not it['registered']:
         st['items'] = {'state': 'warn', 'ev': f'items-{code}.js is not in main.js ITEM_TABLES', 'src': 'disk'}
     elif not check:

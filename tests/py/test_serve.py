@@ -323,7 +323,7 @@ def stage(monkeypatch, name, cmds=(('run',),), timeout=30, **spec):
 
 
 def test_admin_stage_table_has_every_stage_with_the_right_gates():
-    assert set(serve.ADMIN_STAGES) == {'fetch', 'fetch-rules', 'import', 'reading', 'check-items', 'approve-pictures',
+    assert set(serve.ADMIN_STAGES) == {'fetch', 'fetch-rules', 'import', 'reading', 'items-draft', 'check-items', 'approve-pictures',
                                        'ills', 'fights-up', 'offline', 'check', 'release',
                                        'setup-venv', 'setup-npm', 'setup-realesrgan', 'setup-ocr'}
     gated = {k for k, v in serve.ADMIN_STAGES.items() if v.get('gated')}
@@ -332,6 +332,8 @@ def test_admin_stage_table_has_every_stage_with_the_right_gates():
     # setup runs before tools/.venv exists, so not through PY
     assert serve.ADMIN_STAGES['setup-ocr']['cmds']('') == [['uv', 'run', '--no-project', 'python', 'tools/setup.py', 'install', 'ocr']]
     assert serve.ADMIN_STAGES['ills']['cmds']('02fotw') == [serve.PY + ['tools/ill_upscale.py', '02fotw']]
+    # the item table's draft: written only where there is no table yet (tools/items_draft.mjs), so not gated
+    assert serve.ADMIN_STAGES['items-draft']['cmds']('02fotw') == [['node', 'tools/items_draft.mjs', '02fotw']]
     assert serve.ADMIN_STAGES['fights-up']['cmds']('02fotw') == [serve.PY + ['tools/ill_upscale.py', '--fights', '02fotw']]
     for spec in serve.ADMIN_STAGES.values():
         assert spec['timeout'] > 0 and spec['title']

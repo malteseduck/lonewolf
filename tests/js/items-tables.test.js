@@ -25,8 +25,9 @@ beforeAll(async () => {
 const known = (id) => id === 'meal' || !!LW.ITEMS[id];
 const arr = (v) => (Array.isArray(v) ? v : v == null ? [] : [v]);
 
-it('there is a table for every file items/items-*.js', () => {
-  const files = fs.readdirSync(path.join(ROOT, 'items')).filter((f) => /^items-\w+\.js$/.test(f)).map((f) => f.slice(6, -3)).sort();
+it('there is a table for every file items/items-*.js (a script draft not yet read aside)', () => {
+  const files = fs.readdirSync(path.join(ROOT, 'items')).filter((f) => /^items-\w+\.js$/.test(f))
+    .filter((f) => !fs.readFileSync(path.join(ROOT, 'items', f), 'utf8').startsWith('// DRAFT by tools/items_draft.mjs')).map((f) => f.slice(6, -3)).sort();
   expect(files).toEqual([...CODES].sort());
 });
 

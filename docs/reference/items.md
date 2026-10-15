@@ -15,7 +15,8 @@ counts, the table holds only the book's short item names, and everything else is
 |---|---|---|---|
 | 1 | Import, and write the reading copy | `tools/import_projectaon.py`, `tools/reading_copy.py` | certain |
 | 2 | List the sections to read | `tools/item_sections.py <book>` | certain |
-| 3 | Read them and write `items-<book>.js` | by hand | judgement |
+| 2b | Draft the table from the plain readings | `node tools/items_draft.mjs <book>` | certain |
+| 3 | Read them and finish `items-<book>.js` from the draft | by hand | judgement |
 | 4 | Icons for the book's new items | `tools/fetch_icons.py` | choice |
 | 5 | Check the table | `node tools/check_items.mjs <book> --json` | certain |
 | 6 | Try it in the page | the console hook, storage off | certain |
@@ -32,6 +33,37 @@ Combat Skill wording and writes those sections, from the reading copy, to
 wide (Book 1: 168 of 350, of which 65 needed an entry). Read all of it: the item's name is often
 in one sentence and the instruction in the next. Choice lines like "If you have a Golden Key" or
 "If you wish to pay 10 Gold Crowns" are the gates (`need`).
+
+### 2b. The draft
+
+`node tools/items_draft.mjs <book>` (the dashboard's **Draft table** at step 5; ADR 0036) reads the
+imported sections a sentence at a time and writes `items/items-<book>.js` with only what a sentence says
+outright, in no condition: Gold Crowns and Meals found (`give` when pocketed or handed over, `loot` when
+offered; Meals found are `loot`), known items found, offered or erased, `{arrows: n}` where the text says
+to deduct them, `{weapons: 'all'}` and the like, Endurance lost or restored on arrival (a wound in
+brackets counts; a potion's "restores 3" in brackets does not), and the gates on a choice: a known item
+(`{item}`, `not` for "if you do not have"; one of a list, `item: [...]`), a weapon by its kind
+(`{any: [{weapon: ['sword']}]}`, so a weapon-like item such as the Sommerswerd or the Silver Bow counts),
+or a fee (`{gold, spend: true}`). Endurance written on a choice goes where the tables put it: a Random
+Number's range is a `rolls` entry, a lone way on is taken here, otherwise on the section it leads to (on
+arrival when nothing else leads there, else `when: [{came}]`).
+
+A known item is one id with that name in `LW.ITEMS` or another book's table. Left out: a name two ids
+share, an id with a book's number (`skeletonKey7`: another book's key is another key), a name inside a
+longer one ("Magic Spear", "Jar of Laumspur"), and a place a thing is kept ("in your Quiver"). What a
+sentence says under a condition (if, unless, a Discipline named in the paragraph, a Random Number, what
+someone says), a shop or a list of wares, an Arrow shot (it may have been spent a section earlier), or an
+item no table knows yet, becomes a `todo` naming it ("Gold Crowns and Endurance: as the text says"). The
+file's first line (`// DRAFT by tools/items_draft.mjs`) marks it unread: step 5 is not done while it is
+there, and the items-tables test leaves such a file out. The draft writes no book items, fights,
+`bowShot`, marks or stakes: those, and the reading list's other sections, are step 3's.
+
+With a table already there the draft never touches it: it goes to `data/projectaon/<book>/items-draft.js`
+and is compared with the table, reading by reading. On Books 1-12 (2026-10-14) the tables agree with 457
+of its 473 readings (Endurance 220 of 226, gates 194 of 202, finds 38 of 40, losses 5 of 5); most of the
+rest are gates the tables leave open. Its todos name a section the table also has an entry for in 630 of
+794 cases. It leaves 372 of the tables' 1,292 sections untouched, chiefly fights, bow shots and the
+books' own items.
 
 ### 3. What each section gets
 

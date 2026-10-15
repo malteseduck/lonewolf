@@ -422,6 +422,8 @@ ADMIN_STAGES = {
     'fetch-rules': {'title': 'Fetch rules pages', 'gated': True, 'timeout': 600, 'cmds': lambda c: [PY + ['tools/fetch_projectaon.py', c, '--rules']]},
     'import': {'title': 'Import', 'gated': True, 'timeout': 900, 'known': True, 'cmds': lambda c: [PY + ['tools/import_projectaon.py', c]]},
     'reading': {'title': 'Reading copy', 'folder': True, 'timeout': 600, 'cmds': lambda c: [PY + ['tools/reading_copy.py', c], PY + ['tools/item_sections.py', c]]},
+    # step 5's draft (ADR 0036): written to items/ only where there is no table yet, else beside the book
+    'items-draft': {'title': 'Draft item table', 'folder': True, 'timeout': 300, 'cmds': lambda c: [['node', 'tools/items_draft.mjs', c]]},
     'check-items': {'title': 'Check items', 'folder': True, 'timeout': 300, 'cmds': lambda c: [['node', 'tools/check_items.mjs', c, '--json']]},
     # the fight pictures that now differ from those approved at step 7 become the approved ones (the owner's go-ahead)
     'approve-pictures': {'title': 'Approve fight pictures', 'folder': True, 'gated': True, 'timeout': 120, 'cmds': lambda c: [['node', 'tools/plates_pin.mjs', c, '--approve']]},
