@@ -64,7 +64,7 @@ choice, and why. Read this index before changing behaviour, art, or a tool's out
 | [0033](0033-illustrations-upscaled-2x-webp.md) | Illustrations upscaled 2x by Real-ESRGAN, as WebP beside the originals (checklist step 9) | 2026-10-13 | Accepted |
 | [0034](0034-picture-steps-last-together.md) | Checklist order: test play is step 6; fight pictures (7), map (8) and illustrations (9) come last, together | 2026-10-13 | Accepted |
 | [0035](0035-fight-picture-source-order.md) | A fight's picture: its own, then the same creature in this book, then in another book, then a stand-in | 2026-10-14 | Accepted |
-| [0036](0036-scripts-first-agent-refines.md) | Every book step has a script the owner runs (a draft where judgement is needed); an agent only refines; Setup from a fresh checkout | 2026-10-14 | Accepted |
+| [0036](0036-scripts-first-agent-refines.md) | Every book step has a script the owner runs (a draft where judgement is needed); an agent only refines; Setup from a fresh checkout; prompts go to a new Desktop session | 2026-10-14 | Accepted, amended 2026-10-15 |
 | [0037](0037-tools-are-a-uv-project.md) | The Python tools are a uv project (`tools/pyproject.toml`, `uv.lock`, venv `tools/.venv`); run with `uv run --project tools` | 2026-10-14 | Accepted |
 | [0038](0038-art-keeps-its-source-links.md) | Pictures added to `art/` keep their source link where there is one (optional, aimed at most), so Setup can fetch them again | 2026-10-14 | Accepted |
 | [0039](0039-grand-master-books-get-engine-free-steps.md) | Every book is offered each dashboard step that can work for it; test play and registering its item table wait for the engine to have its series (read from `LW.SERIES`) | 2026-10-14 | Accepted, amended 2026-10-14 |

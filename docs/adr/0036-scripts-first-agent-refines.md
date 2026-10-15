@@ -2,6 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-14
+- Amended: 2026-10-15
 
 ## Context
 
@@ -10,13 +11,19 @@ are download-only until the engine has the series). The owner wants to take a fr
 through most of a book's steps from the dashboard alone, without asking an agent what to do, with
 "good enough" first attempts made by scripts that an agent can refine when one is available.
 
+On 2026-10-15 the owner asked for the prompt to open a new Claude Code session itself, instead of
+being copied and pasted.
+
 ## Decision
 
 - Each book step on the dashboard has a button that runs a script. Where the step needs judgement,
   the script makes a draft or a report that is good enough to look at and mark: what it can read
   with certainty is filled in, everything else is left as a `todo` or listed by section id (spec
   principle 2, "automate only what is certain", still holds: a draft never guesses).
-- **Copy prompt** stays beside it, as the refinement: the agent starts from the script's draft.
+- **Send to agent** stays beside it, as the refinement: the agent starts from the script's draft.
+  The button opens a new Claude Code session in Claude Desktop, in the project folder, with the
+  prompt in its composer (`claude://code/new?q=...&folder=...`); Desktop asks to confirm the folder
+  and the owner sends it. The prompt is copied to the clipboard as well.
 - A fresh checkout is set up from the dashboard: a Setup panel checks and installs each tool (uv,
   npm), and downloads the tools' own files (Real-ESRGAN, OCR models) behind a gated button.
 - Order of work (owner, 2026-10-14): Setup, then drafts for the item table (5), fight pictures (7),
@@ -29,3 +36,8 @@ through most of a book's steps from the dashboard alone, without asking an agent
 - Each new script gets tests of its main path (ADR 0022) and a line in `docs/reference/dashboard.md`.
 - Each agent prompt in `tools/admin/prompts.js` tells the agent to start from the script's output.
 - The plan of the work is in `docs/plan.md`, "Dashboard: a script for every step".
+
+## Changes
+
+- 2026-10-15: "Copy prompt" became "Send to agent", which opens a Claude Desktop Code session with
+  the prompt seeded (the owner).

@@ -621,6 +621,7 @@ class Handler(SimpleHTTPRequestHandler):
         if method == 'GET' and parts == ['status']:
             st = book_status.all_status()
             st['running'] = _job[0]
+            st['root'] = ROOT  # the folder an agent prompt's new Claude Code session opens in
             return self._json(200, st)
         if method == 'GET' and parts == ['setup']:
             import setup

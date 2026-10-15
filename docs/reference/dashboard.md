@@ -16,7 +16,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   "Next" is the first step not done. The icon over each column says who does it: a cog (a script),
   a hand (the owner), a quill (Claude Code).
 - **A book** (click its row): every step with its evidence, where it came from (the files, or a hand
-  mark), and its buttons: **Run** for a script, **Copy prompt** for an agent step, **Mark done** for a
+  mark), and its buttons: **Run** for a script, **Send to agent** for an agent step, **Mark done** for a
   hand step, links to the player, the test address and the picture sheet. Under it, the map's own
   steps, as the map editor's rail shows them. Clicking a step's cell scrolls the panel to that step
   and lights it briefly (the map and picture cells open their editor inline instead).
@@ -175,8 +175,11 @@ downloads and imports still need the owner's word (AGENTS.md).
 
 `tools/admin/prompts.js`, one per agent step: phrasings (3), rules addendum (4), item table (5, and
 a fix prompt when `check_items` reports errors), test play-through (6), fight pictures (7), the map's
-style and its retype ticks, and a new book the importer does not know. Each is pasted into a fresh
-Claude Code session in the project, which loads AGENTS.md by itself, so a prompt does not repeat its
+style and its retype ticks, and a new book the importer does not know. **Send to agent** opens
+`claude://code/new?q=<prompt>&folder=<project root>` (the root comes from `/api/admin/status`), a
+new Claude Code session in Claude Desktop with the prompt in its composer, and copies the prompt
+too. Desktop asks to confirm the folder every time (a link's folder is untrusted); the owner presses
+send. The session is in the project, which loads AGENTS.md by itself, so a prompt does not repeat its
 rules: it gives the book, the figures the dashboard has (counts only, never the books' words), the
 procedure's file, and the `book_status.py done` line. Where a step has a script (ADR 0036), its prompt
 says the script's output is a head start, not the whole job: the agent judges it, makes its own pass

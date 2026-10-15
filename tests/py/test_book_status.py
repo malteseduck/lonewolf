@@ -217,7 +217,7 @@ def test_items_stage_a_script_draft_is_not_done_even_registered_and_clean(env):
     env.write(f'items/items-{CODE}.js', '// DRAFT by tools/items_draft.mjs (2026-10-14): 3 sections, 2 with a todo.\n'
               'export const SECTIONS = { 1: { todo: "x" }, 2: { todo: "y" }, 3: { ep: -2 } };', 200)
     s = st()
-    assert s['state'] == 'todo' and s['num'] == 2 and s['ev'] == "The script's draft, 2 todos: not read yet (Copy prompt)"
+    assert s['state'] == 'todo' and s['num'] == 2 and s['ev'] == "The script's draft, 2 todos: not read yet (Send to agent)"
     env.write(f'data/projectaon/{CODE}/check-items.json', json.dumps({'errors': []}), 300)
     assert st(main_js=REG)['state'] == 'todo'
     assert env.status(main_js='')['items']['draft'] is True
@@ -229,7 +229,7 @@ def test_phrasings_stage_follows_the_scan_and_the_mark(env):
     assert ph() == {'state': 'todo', 'ev': 'Not scanned yet (Scan phrasings)', 'src': 'hand'}
     # tools/phrasings_scan.py --json: sections left to judge
     env.write(f'data/projectaon/{CODE}/phrasings.json', json.dumps({'look': [7, 21]}), 200)
-    assert ph() == {'state': 'todo', 'num': 2, 'src': 'hand', 'ev': 'Scan: 2 sections to look at (7, 21); judge each (Copy prompt), then mark'}
+    assert ph() == {'state': 'todo', 'num': 2, 'src': 'hand', 'ev': 'Scan: 2 sections to look at (7, 21); judge each (Send to agent), then mark'}
     # none left: the owner's mark
     env.write(f'data/projectaon/{CODE}/phrasings.json', json.dumps({'look': []}), 200)
     assert ph()['state'] == 'warn' and ph()['ev'] == 'Scan: none left to look at; yours to mark'
@@ -248,9 +248,9 @@ def test_testplay_stage_follows_the_walk_and_the_mark(env):
     # tools/walk_book.mjs --json: sections to look at, by id
     walk = lambda look: json.dumps({'look': look, 'sections': 350, 'standIns': [{'reached': 340}, {'reached': 200}]})
     env.write(f'data/projectaon/{CODE}/walk.json', walk(['7', '21']), 200)
-    assert tp() == {'state': 'todo', 'num': 2, 'src': 'hand', 'ev': 'Walk: 2 sections to look at (7, 21); then play it through (Copy prompt)'}
+    assert tp() == {'state': 'todo', 'num': 2, 'src': 'hand', 'ev': 'Walk: 2 sections to look at (7, 21); then play it through (Send to agent)'}
     env.write(f'data/projectaon/{CODE}/walk.json', walk([]), 200)
-    assert tp() == {'state': 'todo', 'src': 'hand', 'ev': 'Walk: nothing to look at (340 of 350 sections reached); then play it through (Copy prompt)'}
+    assert tp() == {'state': 'todo', 'src': 'hand', 'ev': 'Walk: nothing to look at (340 of 350 sections reached); then play it through (Send to agent)'}
     # the play-through's mark, with the walk's line beside it
     assert tp(hand={'books': {CODE: {'6': '2026-10-15'}}}) == {'state': 'done', 'src': 'hand',
         'ev': 'Every gate, fight and draw tried with test characters. Walk: nothing to look at (340 of 350 sections reached). Marked done 2026-10-15'}

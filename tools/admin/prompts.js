@@ -1,4 +1,4 @@
-/* The "copy prompt" texts: one per stage that needs an agent's judgement, pasted into a fresh Claude Code
+/* The "send to agent" texts: one per stage that needs an agent's judgement, pasted into a fresh Claude Code
    session in the project, which loads AGENTS.md (through CLAUDE.md) by itself: so they do not repeat its
    rules, only what is particular to the step. They name sections by id and give counts only, never the
    book's words. `b` is a book's status from admin.js. */

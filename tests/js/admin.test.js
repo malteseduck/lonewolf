@@ -135,7 +135,21 @@ describe('one book', () => {
   it('says what is next and who does it', async () => {
     await setup(withStages(book(1), { phrasings: stage('todo') }));
     await pickBook('01book1');
-    expect($('#detail .nextup').textContent).toBe('Next: Phrasings (Claude Code: copy the prompt)');
+    expect($('#detail .nextup').textContent).toBe('Next: Phrasings (Claude Code: send it to an agent)');
+  });
+
+  it("sends an agent step's prompt to a new Claude Desktop session in the project folder", async () => {
+    const b = withStages(book(1), { rules: stage('todo') });
+    await boot({ books: [b], running: null, root: 'C:\Proj\lw' }, { 'GET map/*': state });
+    await pickBook(b.code);
+    const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+    btn('Send to agent').click();
+    const [url, target] = open.mock.calls[0];
+    const u = new URL(url);
+    expect([u.protocol, u.host + u.pathname, target]).toEqual(['claude:', 'code/new', '_self']);
+    expect(u.searchParams.get('q')).toMatch(/^Book 1, Stand-in 1 \(01book1/);
+    expect(u.searchParams.get('folder')).toBe('C:\Proj\lw');
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(u.searchParams.get('q'));
   });
 
 
