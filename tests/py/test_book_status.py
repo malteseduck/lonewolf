@@ -223,6 +223,23 @@ def test_items_stage_a_script_draft_is_not_done_even_registered_and_clean(env):
     assert env.status(main_js='')['items']['draft'] is True
 
 
+def test_phrasings_stage_follows_the_scan_and_the_mark(env):
+    env.book(t=100)
+    ph = lambda **kw: env.status(**kw)['stages']['phrasings']
+    assert ph() == {'state': 'todo', 'ev': 'Not scanned yet (Scan phrasings)', 'src': 'hand'}
+    # tools/phrasings_scan.py --json: sections left to judge
+    env.write(f'data/projectaon/{CODE}/phrasings.json', json.dumps({'look': [7, 21]}), 200)
+    assert ph() == {'state': 'todo', 'num': 2, 'src': 'hand', 'ev': 'Scan: 2 sections to look at (7, 21); judge each (Copy prompt), then mark'}
+    # none left: the owner's mark
+    env.write(f'data/projectaon/{CODE}/phrasings.json', json.dumps({'look': []}), 200)
+    assert ph()['state'] == 'warn' and ph()['ev'] == 'Scan: none left to look at; yours to mark'
+    assert ph(hand={'books': {CODE: {'3': '2026-10-14'}}}) == {'state': 'done', 'src': 'hand',
+                                                               'ev': 'Judged by reading the sections against the importer. Scan: none left to look at. Marked done 2026-10-14'}
+    # a re-import since: the scan is out of date
+    env.book(t=300)
+    assert ph()['ev'] == 'Scan out of date: book.js or the importer changed since (Scan phrasings)'
+
+
 def test_pictures_stage(env):
     sections_bare = {'1': fight(('Rat', None), ('Bat', 'ill1.png')), '2': {'text': [], 'choices': [], 'end': 'victory'}}
     env.write('assets/plates/plates.json', '{"plates": []}', 0)

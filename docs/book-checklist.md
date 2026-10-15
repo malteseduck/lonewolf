@@ -44,8 +44,9 @@ Each step's buttons and prompt are in the dashboard, `http://localhost:8766/tool
 1. `tools/fetch_projectaon.py <code>`. Needs the owner's go-ahead for each book. Read from the files.
 2. `tools/import_projectaon.py <code>`, then read its report. Needs the owner's go-ahead too.
    Read from the files; out of date (a warning) once the importer or a source page is newer than `book.js`.
-3. `docs/reference/importer.md`. After any importer change, `python tools/check_all.py`: no book's
-   report may get worse. A hand mark.
+3. `docs/reference/importer.md`. Start from the leftover scan (`tools/phrasings_scan.py`, "Scan
+   phrasings"): each section it lists to look at is judged. After any importer change,
+   `python tools/check_all.py`: no book's report may get worse. A hand mark.
 4. `docs/reference/rules-books.md`, "Book addenda", from the book's own rules pages. Its heading is read
    from the file; that it is checked is a hand mark.
 5. `docs/reference/items.md`. Where the text leaves a choice to the player, a `todo`, never a guess.

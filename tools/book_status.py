@@ -298,6 +298,14 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
                   'exists': os.path.isfile(items_js),'todos': len(re.findall(r'\btodo:', read(items_js))) if os.path.isfile(items_js) else None,
                   'registered': bool(reg and f"'{code}':" in reg.group(1)), 'check': check,
                   'checkTime': mtime(os.path.join(d, 'check-items.json')), 'time': mtime(items_js)}
+    # step 3's leftover scan (tools/phrasings_scan.py --json): out of date once book.js or the importer is newer
+    scan_path = os.path.join(d, 'phrasings.json')
+    try:
+        with open(scan_path, encoding='utf-8') as f:
+            look = json.load(f)['look']
+        b['phrasings'] = {'look': look, 'stale': mtime(scan_path) < max(t['bookjs'] or 0, t['importer'] or 0)}
+    except (OSError, ValueError, KeyError):
+        b['phrasings'] = None
     b['mapStage'] = map_stage(code, d, imp) if b['folder'] else None
 
     st = {}
@@ -324,7 +332,20 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
         st['import'] = {'state': 'bad' if not clean else 'warn' if stale else 'done', 'src': 'disk',
                         'ev': ev + ('. Out of date: ' + '; '.join(stale) if stale else '')}
     # 3 phrasings, 4 rules
-    st['phrasings'] = handed(3, 'Judged by reading the sections against the importer') if imp else {'state': 'todo', 'ev': 'After import', 'src': 'hand'}
+    ph = b['phrasings']
+    said = (None if not ph else 'Scan out of date: book.js or the importer changed since (Scan phrasings)' if ph['stale']
+            else f"Scan: {len(ph['look'])} section{'s' * (len(ph['look']) != 1)} to look at ({', '.join(map(str, ph['look']))})" if ph['look'] else 'Scan: none left to look at')
+    if not imp:
+        st['phrasings'] = {'state': 'todo', 'ev': 'After import', 'src': 'hand'}
+    elif hand_mark(3):
+        st['phrasings'] = handed(3, 'Judged by reading the sections against the importer' + (f'. {said}' if said else ''))
+    elif not ph:
+        st['phrasings'] = {'state': 'todo', 'ev': 'Not scanned yet (Scan phrasings)', 'src': 'hand'}
+    elif ph['stale'] or ph['look']:
+        st['phrasings'] = {'state': 'todo', 'ev': said + ('' if ph['stale'] else '; judge each (Copy prompt), then mark'), 'src': 'hand',
+                           **({} if ph['stale'] else {'num': len(ph['look'])})}
+    else:  # none left: the owner's mark (ADR 0036)
+        st['phrasings'] = {'state': 'warn', 'ev': f'{said}; yours to mark', 'src': 'hand'}
     r = handed(4, 'Addendum in rules-books.md' if b['rulesHeading'] else 'No addendum in rules-books.md')
     if b['rulesHeading'] and r['state'] != 'done':
         r = {**r, 'state': 'warn', 'ev': 'Addendum written in rules-books.md; not marked checked'}

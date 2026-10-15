@@ -136,6 +136,30 @@ shots and their "missile bonuses", item or weapon conditions on a Random Number,
 counted from the number, starting equipment. These stay as text;
 the player applies them with the by-hand controls, or a book's item table does.
 
+## The leftover scan (step 3)
+
+`python tools/phrasings_scan.py <code> [--json]` (ADR 0036; the dashboard's "Scan phrasings") runs the
+importer's own readers (`gate`, `span`, `number_rules`, `cs_rule`, `condition`, loaded from the
+importer's source without running the import) over the text in `book.js`, and lists by id each section
+whose text still looks like something it reads, with why it was left. Two lists:
+
+- **look**, for step 3's judgement: a gate naming a discipline, rank or Lore-circle left open
+  (`gate`); a draw that speaks of the Random Number Table without a link (`rn-unlinked`), whose ranges
+  miss or overlap a total (`rn-ranges`), with a choice neither a range nor taken before drawing
+  (`rn-choice`), or with a bonus on a discipline, rank or Lore-circle not read (`rn-bonus`); a stat line
+  not read as an enemy (`combat-line`); a fight's COMBAT SKILL change on a discipline not read (`cs`),
+  evasion offered but not read (`evade`: "you may/can evade", "evade combat", not "you cannot" or
+  "too late"), immunity or a mind drain said but not set (`immune`, `drain`).
+- **design**, left on purpose (below, "What it does not read"): negative gates, gates on an item or
+  gold (a discipline tied to a weapon carried counts as one), draws changed by an item, weapon,
+  wound or "0 = 10", draws with no ranges, COMBAT SKILL changes for some rounds, from a weapon, or
+  two in a section.
+
+Each "look" is judged against the section page: a phrasing the importer can learn for certain, or
+one rightly left (say which). None left, or each judged: the owner marks step 3. `--json` writes
+`phrasings.json` beside the book (ids and kinds, no text), which the dashboard reads. First run
+(2026-10-14): Books 1-12, 0 to 5 sections each to look at (19 in all); Book 13, 10.
+
 ## Results (for comparison when changing the importer)
 
 As of 2026-10-03. Random: auto (with bonuses) / free. Gates: discipline / rank / Lore-circle.

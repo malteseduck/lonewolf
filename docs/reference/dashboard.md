@@ -60,7 +60,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
 |---|---|---|
 | 1 Download | files | `sect*.htm` and `gamerulz.htm` in `data/projectaon/<code>/` |
 | 2 Import | files | `book.js` there, no broken links, no section without a way on. A warning when it is out of date: the importer or a source page is newer than the last import (`import-report.json`, written every run), or `map-4k.webp` is not named yet |
-| 3 Phrasings | hand | marked in `docs/book-status.json` |
+| 3 Phrasings | hand | marked in `docs/book-status.json`. Until then it shows the leftover scan (`phrasings.json`, from `phrasings_scan.py --json`): not scanned, out of date (older than `book.js` or the importer), N sections to look at (by id), or none left, a warning: the owner's to mark. Once marked, the scan's line is shown beside the mark |
 | 4 Rules | both | a `### Book N,` heading in `rules-books.md` and a hand mark |
 | Reading copy | files | `reading.txt` and `items-reading.txt` newer than `book.js` (not a checklist step) |
 | 5 Item table | files | `items-<code>.js` registered in `main.js` `ITEM_TABLES`, and `check-items.json` (from `check_items.mjs --json`) clean and newer than the table and `book.js`. A table that still starts with the draft's line (`// DRAFT by tools/items_draft.mjs`) is not done, however clean |
@@ -113,6 +113,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `fetch-rules` | `fetch_projectaon.py <code> --rules` | yes: a download |
 | `import` | `import_projectaon.py <code>` (books the importer knows) | yes, every time: it rewrites `book.js` |
 | `reading` | `reading_copy.py <code>`, then `item_sections.py <code>` | |
+| `phrasings-scan` | `phrasings_scan.py <code> --json`: step 3's leftover scan (importer.md, "The leftover scan"), written to `phrasings.json` beside the book ("Scan phrasings", once imported) | |
 | `items-draft` | `node items_draft.mjs <code>`: step 5's draft (items.md, "The draft"); with a table already there, only `items-draft.js` beside the book and the comparison | |
 | `check-items` | `node check_items.mjs <code> --json` | |
 | `approve-pictures` | `node plates_pin.mjs <code> --approve` | gated: the owner's approval of changed fight pictures |
@@ -149,6 +150,9 @@ downloads and imports still need the owner's word (AGENTS.md).
   listed. Where `book.js` changed, or the reading copy or item check is older than it, it makes the
   reading copy again and re-runs `check_items.mjs --json`; item-check errors count as worse. Exits 1
   if any book got worse. Run after any importer change.
+- `python tools/phrasings_scan.py <code>`: step 3's scan of what the importer left as text (ADR 0036;
+  `docs/reference/importer.md`, "The leftover scan"); `--json` also writes `phrasings.json` beside the book. Kinds and
+  section ids only.
 - `node tools/items_draft.mjs <code>`: step 5's draft of the item table (ADR 0036; `docs/reference/items.md`,
   "The draft"). Writes `items/items-<code>.js` only where there is none, else `items-draft.js` beside the
   book, compared with the table; counts and section ids only.

@@ -12,10 +12,11 @@ export const PROMPTS = {
 
 Task: docs/book-checklist.md step 3, "the importer reads the book's own phrasings (gates, Random Number, combat)".
 - Last import, as the dashboard read book.js: ${b.imp ? `${b.imp.sections} sections, ${b.imp.fights} fights, ${b.imp.rnt} Random Number sections, ${b.imp.broken} broken links, ${b.imp.noway} with no way on` : 'not imported yet'}.
+- Start from the scan: python tools/phrasings_scan.py ${b.code} --json (the dashboard's "Scan phrasings")${b.phrasings && !b.phrasings.stale ? `, which last listed ${b.phrasings.look.length} sections to look at${b.phrasings.look.length ? ` (${b.phrasings.look.join(', ')})` : ''}` : ''}. It runs the importer's own readers over book.js and lists, by kind, what still looks like a gate, a draw or a combat rule left as text: the "look" kinds are yours to judge against the section pages (teach the importer the phrasing when it can be read with certainty, else say why it is rightly left); the "design" kinds are the item table's or the player's by design, not this step's.
 - Compare what tools/import_projectaon.py made of each section (data/projectaon/${b.code}/book.js) with the section pages for choice gates, Random Number ranges and combat lines it left as text but could read with certainty. Procedure and past results: docs/reference/importer.md.
 - After any importer change, run \`python tools/check_all.py\` (it re-imports every imported book, compares each report with the last, and runs the unit tests; re-importing to check an importer change is part of this task). No book may get worse.
 - Update docs/reference/importer.md (Results).
-Report: the phrasings added, by section id, and the before and after report figures.
+Report: the phrasings added, by section id; each "look" section the scan still lists and why it is rightly left; the before and after report figures. Run the scan again with --json at the end, so the dashboard shows what is left.
 ${DONE(b, 3)}
 ${TAIL}`,
 

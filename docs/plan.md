@@ -24,10 +24,9 @@ done, and when.
 Every book step gets a button that runs a script; where judgement is needed the script writes a
 draft or a report (certain readings filled in, the rest `todo` or listed by section id), and the
 agent's Copy prompt refines it. In the owner's order (2026-10-14; D1, Setup, D2, the item table's
-draft, and D3, the fight pictures' draft, done that day: dashboard.md, items.md "The draft" twice):
+draft, D3, the fight pictures' draft, and D4, the phrasings scan, done that day: dashboard.md,
+items.md "The draft" twice, importer.md "The leftover scan"):
 
-- D4. **Phrasings leftover scan** (step 3): sections whose text still looks like a gate, Random Number
-  or combat line the importer left as text, by id. None left: the owner marks it.
 - D5. **Walker** (step 6): the engine run over every section with stand-in characters in Node;
   crashes, gates that never open, fights that cannot end, unreachable sections, by id.
 - D6. **Rules diff** (step 4): the book's rules pages against the previous book's, page by page, and

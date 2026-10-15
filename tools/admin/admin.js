@@ -137,7 +137,8 @@ const ACTIONS = {
     : [run('Fetch rules pages...', 'fetch-rules', { gate: 'rules' })],
   import: (b) => !b.known ? (b.folder ? [prompt('newBook')] : [])
     : !b.folder ? [] : [run(b.imp ? 'Re-import...' : 'Import...', 'import', { gate: 'import' })],
-  phrasings: () => [prompt('phrasings'), mark(3)],
+  // the scan first (ADR 0036): what the importer left as text, by id; the agent judges each
+  phrasings: (b) => [...(b.imp ? [run('Scan phrasings', 'phrasings-scan')] : []), prompt('phrasings'), mark(3)],
   rules: () => [prompt('rules'), mark(4)],
   reading: () => [run('Make reading copy', 'reading')],
   // the draft first (ADR 0036); over a hand-made table it only writes items-draft.js beside the book, to compare
