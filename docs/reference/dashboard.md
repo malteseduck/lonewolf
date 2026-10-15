@@ -171,6 +171,10 @@ downloads and imports still need the owner's word (AGENTS.md).
 
 `tools/admin/prompts.js`, one per agent step: phrasings (3), rules addendum (4), item table (5, and
 a fix prompt when `check_items` reports errors), test play-through (6), fight pictures (7), the map's
-style and its retype ticks, and a new book the importer does not know. Each is self-contained: the
-hard rules, the book, the figures the dashboard has (counts only, never the books' words), the
-procedure's file, and the `book_status.py done` line. Change a procedure, change its prompt.
+style and its retype ticks, and a new book the importer does not know. Each is pasted into a fresh
+Claude Code session in the project, which loads AGENTS.md by itself, so a prompt does not repeat its
+rules: it gives the book, the figures the dashboard has (counts only, never the books' words), the
+procedure's file, and the `book_status.py done` line. Where a step has a script (ADR 0036), its prompt
+says the script's output is a head start, not the whole job: the agent judges it, makes its own pass
+for what the script cannot know, and fixes what it finds in the importer or the table, never by
+widening the script for one book's case. Change a procedure, change its prompt.
