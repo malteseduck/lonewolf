@@ -64,7 +64,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
 | 4 Rules | both | a `### Book N,` heading in `rules-books.md` and a hand mark |
 | Reading copy | files | `reading.txt` and `items-reading.txt` newer than `book.js` (not a checklist step) |
 | 5 Item table | files | `items-<code>.js` registered in `main.js` `ITEM_TABLES`, and `check-items.json` (from `check_items.mjs --json`) clean and newer than the table and `book.js`. A table that still starts with the draft's line (`// DRAFT by tools/items_draft.mjs`) is not done, however clean |
-| 6 Test play | hand | marked |
+| 6 Test play | hand | marked. Until then it shows the walk (`walk.json`, from `walk_book.mjs --json`): not walked, out of date (older than `book.js`, the item table or the engine), N sections to look at (by id), or nothing to look at with how many sections were reached; the play-through and its mark stay the agent's. Once marked, the walk's line is shown beside the mark |
 | 7 Fight pictures | both | every enemy in `book.js` has a plate of its own or a `plates.json` match (the importer's "0 with none", worked out afresh, so a new `plates.json` entry counts at once), and the owner's hand mark once they have looked at the sheet. All pictured but not marked is a warning (saying how many are the script's picks, `draft` entries not yet adjusted or removed). Marking it done pins every fight's picture (`assets/plates/approved/<code>.json`, `plates_pin.mjs --approve`); unmarking lets them go. A fight that would now show another picture (a `plates.json` change, a re-import) is a warning naming its sections, with **Approve picture changes...** (gated); until then the player keeps the approved picture. The owner's own change on the sheet re-pins that enemy at once. The sheet says once, in its top line, whether the book is approved ("all approved <date>", "N wait for your approval", "not approved yet"); only a card waiting for approval is marked (a badge, showing the new picture), with "Show only these" to hide the rest |
 | 8 Map | files | `map-4k.webp` made and named by `book.js` |
 | 9 Illustrations | files | every `ill*.png` and `small*.png` has its `-2x.webp` beside it (`ill_upscale.py`), and `book.js` names them (a warning, and the import out of date, until a re-import does) |
@@ -114,6 +114,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `import` | `import_projectaon.py <code>` (books the importer knows) | yes, every time: it rewrites `book.js` |
 | `reading` | `reading_copy.py <code>`, then `item_sections.py <code>` | |
 | `phrasings-scan` | `phrasings_scan.py <code> --json`: step 3's leftover scan (importer.md, "The leftover scan"), written to `phrasings.json` beside the book ("Scan phrasings", once imported) | |
+| `walk` | `node walk_book.mjs <code> --json`: step 6's walk (rules-engine.md, "The walk"), written to `walk.json` beside the book ("Walk the book", once imported) | |
 | `items-draft` | `node items_draft.mjs <code>`: step 5's draft (items.md, "The draft"); with a table already there, only `items-draft.js` beside the book and the comparison | |
 | `check-items` | `node check_items.mjs <code> --json` | |
 | `approve-pictures` | `node plates_pin.mjs <code> --approve` | gated: the owner's approval of changed fight pictures |
@@ -153,6 +154,9 @@ downloads and imports still need the owner's word (AGENTS.md).
 - `python tools/phrasings_scan.py <code>`: step 3's scan of what the importer left as text (ADR 0036;
   `docs/reference/importer.md`, "The leftover scan"); `--json` also writes `phrasings.json` beside the book. Kinds and
   section ids only.
+- `node tools/walk_book.mjs <code>`: step 6's walk of the book with the engine, two stand-in characters (ADR 0036;
+  `docs/reference/rules-engine.md`, "The walk"); `--json` also writes `walk.json` beside the book. Section ids, counts and
+  the engine's own reasons only.
 - `node tools/items_draft.mjs <code>`: step 5's draft of the item table (ADR 0036; `docs/reference/items.md`,
   "The draft"). Writes `items/items-<code>.js` only where there is none, else `items-draft.js` beside the
   book, compared with the table; counts and section ids only.

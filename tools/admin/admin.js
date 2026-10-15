@@ -146,7 +146,8 @@ const ACTIONS = {
   // the draft first (ADR 0036), while an enemy has no picture: the script's picks, judged on the sheet
   pictures: (b) => [...(b.imp?.bare ? [run('Draft pictures', 'pictures-draft')] : []), prompt('pictures'), { t: 'sheet', label: 'Open picture sheet' }, run('Upscale 2x', 'fights-up'), mark(7),
     ...(b.pins?.waiting ? [run('Approve picture changes...', 'approve-pictures', { gate: 'pictures' })] : [])],
-  testplay: () => [prompt('testplay'), link('Test address', 'http://127.0.0.1:8766/'), mark(6)],
+  // the walk first (ADR 0036): the engine over every section in Node, what is wrong by id; then the agent plays
+  testplay: (b) => [...(b.imp ? [run('Walk the book', 'walk')] : []), prompt('testplay'), link('Test address', 'http://127.0.0.1:8766/'), mark(6)],
   map: () => [{ t: 'map', label: 'Open map editor' }],
   // made beside the originals, then shown by a re-import (gated, as always)
   ills: (b) => [run('Upscale 2x', 'ills'), { t: 'ills', label: 'Open illustration sheet' }, ...(b.stages.ills.state === 'warn' && b.known ? [run('Re-import...', 'import', { gate: 'import' })] : [])],

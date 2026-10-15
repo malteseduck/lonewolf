@@ -221,6 +221,38 @@ one; an evasion goes there; a death only saves. Evasion also needs `evade.if`, c
 Prototypes A and B have their own combat in `shared/battle.js`, and C in its `main.js`; those do
 not know about Magnakai.
 
+## The walk (step 6)
+
+`node tools/walk_book.mjs <code> [--json]` (ADR 0036; the dashboard's "Walk the book") plays an imported
+book with these three files in Node, its item table laid over it, for two stand-in characters: a
+master (every discipline of the series and the series before, every weapon mastered, a Bow and Quiver
+where the kit offers them, 50 Gold Crowns, the earlier books completed and their tables' flags, and
+the Special Items of earlier books that this book's table names but does not give) and a novice
+(disciplines and kit drawn, as "Choose for me" would). Each section is walked again only when he
+arrives with other items or marks than before (only those the book tests), at most six times, or
+with the section before where the way he came matters. From a section it tries:
+
+- every choice open; a gate on Endurance at an Endurance that opens it; a gate still shut, with what
+  it asks for lent (the item put in, or for "if you have no ...", taken away; gold or coins made up);
+- every Random Number 0-9 where one is drawn, and a range no number reached (his bonuses carry the
+  total past it) at its own number;
+- each fight from full Endurance, up to three times before it counts as lost; each evasion, as soon
+  as it opens; a contest lost (`lose`); then, by hand, every other way the fight leads (wounded or
+  not, won in so many rounds or more, a stop's ways) and a win where none came, so the walk goes on;
+  a fight with `byHand` past 100 rounds is stopped by hand;
+- a game of chance as it stands, and played out; a stake at its least; losses chosen; what is free
+  to take, taken (the master buys what a shop has that he lacks).
+
+He sets out from every section at full Endurance. The draws are seeded, so two walks agree. The
+report, by section id: crashes (the engine threw), gates that never opened even lent, gates opened
+only with an item lent that this book, its kit and the earlier books' Weapons and Special Items never
+give (or a range no total can make), sections with no way on, fights past 100 rounds, sections linked
+from the start but never reached. Listed apart, as information: the fights no stand-in won (a hard
+fight, or one he came to unarmed), the sections no link leads to (puzzle answers, turns by hand) and
+those only past them. `look` is the first list's ids; `--json` writes it all to `walk.json` beside
+the book. A book whose series is not in `LW.SERIES` is not walked (ADR 0039). First run, 2026-10-15:
+Books 1-9, 11 and 12 nothing to look at; Book 10 two gates on items it never gives (246, 285).
+
 ## Not implemented
 
 The books' rules the engine does not apply are marked in rules-books.md (Engine column).

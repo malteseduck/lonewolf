@@ -306,6 +306,16 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
         b['phrasings'] = {'look': look, 'stale': mtime(scan_path) < max(t['bookjs'] or 0, t['importer'] or 0)}
     except (OSError, ValueError, KeyError):
         b['phrasings'] = None
+    # step 6's walk (tools/walk_book.mjs --json): out of date once book.js, the item table or the engine is newer
+    walk_path = os.path.join(d, 'walk.json')
+    try:
+        with open(walk_path, encoding='utf-8') as f:
+            wk = json.load(f)
+        engine = max(mtime(os.path.join(ROOT, 'shared', f)) or 0 for f in ('core.js', 'rules-series.js', 'fight.js'))
+        b['walk'] = {'look': wk['look'], 'reached': max(x['reached'] for x in wk['standIns']), 'sections': wk['sections'],
+                     'stale': mtime(walk_path) < max(t['bookjs'] or 0, mtime(items_js) or 0, engine)}
+    except (OSError, ValueError, KeyError):
+        b['walk'] = None
     b['mapStage'] = map_stage(code, d, imp) if b['folder'] else None
 
     st = {}
@@ -409,7 +419,17 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
     else:
         drafted = f" ({imp['drafted']} the script's picks)" if imp.get('drafted') else ''
         st['pictures'] = {'state': 'warn', 'ev': f"All {imp['kinds']} kinds of enemy have a picture{drafted}, upscaled 2x; waiting for your look at the sheet", 'src': 'disk'}
-    st['testplay'] = handed(6, 'Every gate, fight and draw tried with test characters')
+    wk = b['walk']
+    walked = (None if not wk else 'Walk out of date: book.js, the item table or the engine changed since (Walk the book)' if wk['stale']
+              else f"Walk: {len(wk['look'])} section{'s' * (len(wk['look']) != 1)} to look at ({', '.join(map(str, wk['look']))})" if wk['look']
+              else f"Walk: nothing to look at ({wk['reached']} of {wk['sections']} sections reached)")
+    if hand_mark(6) or not imp:
+        st['testplay'] = handed(6, 'Every gate, fight and draw tried with test characters' + (f'. {walked}' if walked and imp else ''))
+    elif not wk:
+        st['testplay'] = {'state': 'todo', 'ev': 'Not walked yet (Walk the book)', 'src': 'hand'}
+    else:  # the walk is the start; the play-through (Copy prompt) and its mark are the agent's
+        st['testplay'] = {'state': 'todo', 'ev': walked + ('' if wk['stale'] else '; then play it through (Copy prompt)'), 'src': 'hand',
+                          **({'num': len(wk['look'])} if wk['look'] and not wk['stale'] else {})}
     # 8 map
     ms = b['mapStage']
     if not ms:

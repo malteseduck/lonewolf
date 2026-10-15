@@ -71,9 +71,10 @@ ${TAIL}`,
   testplay: (b) => `${HEAD(b)}
 
 Task: docs/book-checklist.md step 6, play the book through with test characters.
+- First, the walk: node tools/walk_book.mjs ${b.code} --json (the dashboard's "Walk the book")${b.walk && !b.walk.stale ? `, which last listed ${b.walk.look.length} sections to look at${b.walk.look.length ? ` (${b.walk.look.join(', ')})` : ''}, ${b.walk.reached} of ${b.walk.sections} reached` : ''}. It plays every section with the engine in Node, for two stand-in characters, and lists by id: crashes, gates that never open (or open only with an item found nowhere), sections with no way on, endless fights, sections never reached; the fights no stand-in won are listed apart. Judge each against the section pages and fix what is wrong; what the walk cannot see (whether a gate, a draw or a fight reads right) is the play-through's.
 - Use http://127.0.0.1:8766/ (not localhost: a different origin, so my saves are not touched) and switch storage writes off first. Reach a state with the console hook (__lw.game, __lw.render).
 - Step every section; try every gate, fight and Random Number draw against the text; reach section 350 at least once.${b.items.todos != null ? ` The item table leaves ${b.items.todos} todos to the player: check each still reads right on the page.` : ''}
-- Fix misreadings in the importer (then \`python tools/check_all.py\`; no book may get worse) or in items-${b.code}.js; list what stays left to the player, by section id.
+- Fix misreadings in the importer (then \`python tools/check_all.py\`; no book may get worse) or in items-${b.code}.js; list what stays left to the player, by section id. Run the walk again with --json at the end, so the dashboard shows what is left.
 - Add what stays left to the player, if the engine could take it over, to docs/plan.md's engine work list.
 ${DONE(b, 6)}
 ${TAIL}`,

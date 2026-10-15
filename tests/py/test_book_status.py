@@ -240,6 +240,25 @@ def test_phrasings_stage_follows_the_scan_and_the_mark(env):
     assert ph()['ev'] == 'Scan out of date: book.js or the importer changed since (Scan phrasings)'
 
 
+def test_testplay_stage_follows_the_walk_and_the_mark(env):
+    env.book(t=100)
+    env.write('shared/rules-series.js', SERIES_JS, 0)  # the engine, older than the walk
+    tp = lambda **kw: env.status(**kw)['stages']['testplay']
+    assert tp() == {'state': 'todo', 'ev': 'Not walked yet (Walk the book)', 'src': 'hand'}
+    # tools/walk_book.mjs --json: sections to look at, by id
+    walk = lambda look: json.dumps({'look': look, 'sections': 350, 'standIns': [{'reached': 340}, {'reached': 200}]})
+    env.write(f'data/projectaon/{CODE}/walk.json', walk(['7', '21']), 200)
+    assert tp() == {'state': 'todo', 'num': 2, 'src': 'hand', 'ev': 'Walk: 2 sections to look at (7, 21); then play it through (Copy prompt)'}
+    env.write(f'data/projectaon/{CODE}/walk.json', walk([]), 200)
+    assert tp() == {'state': 'todo', 'src': 'hand', 'ev': 'Walk: nothing to look at (340 of 350 sections reached); then play it through (Copy prompt)'}
+    # the play-through's mark, with the walk's line beside it
+    assert tp(hand={'books': {CODE: {'6': '2026-10-15'}}}) == {'state': 'done', 'src': 'hand',
+        'ev': 'Every gate, fight and draw tried with test characters. Walk: nothing to look at (340 of 350 sections reached). Marked done 2026-10-15'}
+    # the engine changed since: out of date
+    env.write('shared/fight.js', '', 300)
+    assert tp()['ev'] == 'Walk out of date: book.js, the item table or the engine changed since (Walk the book)'
+
+
 def test_pictures_stage(env):
     sections_bare = {'1': fight(('Rat', None), ('Bat', 'ill1.png')), '2': {'text': [], 'choices': [], 'end': 'victory'}}
     env.write('assets/plates/plates.json', '{"plates": []}', 0)

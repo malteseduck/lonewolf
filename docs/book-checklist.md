@@ -52,7 +52,8 @@ Each step's buttons and prompt are in the dashboard, `http://localhost:8766/tool
 5. `docs/reference/items.md`. Where the text leaves a choice to the player, a `todo`, never a guess.
    In the Magnakai books, mark ambushes and bow shots. Read from the files: registered in `main.js`,
    `node tools/check_items.mjs <code> --json` clean.
-6. Play in the browser on a test address (`http://127.0.0.1:8766/`), never over the owner's saves.
+6. Start from the walk (`tools/walk_book.mjs`, "Walk the book"): each section it lists is judged. Then
+   play in the browser on a test address (`http://127.0.0.1:8766/`), never over the owner's saves.
    A hand mark (the agent's).
 7. `docs/reference/items.md`, "Fight pictures": every enemy has a plate of its own or a `plates.json`
    match, and each picture is upscaled 2x (Upscale 2x; read from the files), then the owner looks at the picture sheet,

@@ -427,6 +427,8 @@ ADMIN_STAGES = {
     'check-items': {'title': 'Check items', 'folder': True, 'timeout': 300, 'cmds': lambda c: [['node', 'tools/check_items.mjs', c, '--json']]},
     # the fight pictures that now differ from those approved at step 7 become the approved ones (the owner's go-ahead)
     'approve-pictures': {'title': 'Approve fight pictures', 'folder': True, 'gated': True, 'timeout': 120, 'cmds': lambda c: [['node', 'tools/plates_pin.mjs', c, '--approve']]},
+    # step 6's walk (ADR 0036): the engine over every section in Node, writes only walk.json beside the book
+    'walk': {'title': 'Walk the book', 'folder': True, 'timeout': 300, 'cmds': lambda c: [['node', 'tools/walk_book.mjs', c, '--json']]},
     # step 3's scan (ADR 0036): reads book.js, writes only phrasings.json beside it
     'phrasings-scan': {'title': 'Scan phrasings', 'folder': True, 'timeout': 120, 'cmds': lambda c: [PY + ['tools/phrasings_scan.py', c, '--json']]},
     # Real-ESRGAN on the PC: fetches nothing, writes only <name>-2x.webp beside each original (ADR 0033)
