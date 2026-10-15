@@ -23,7 +23,8 @@ being copied and pasted.
 - **Send to agent** stays beside it, as the refinement: the agent starts from the script's draft.
   The button opens a new Claude Code session in Claude Desktop, in the project folder, with the
   prompt in its composer (`claude://code/new?q=...&folder=...`); Desktop asks to confirm the folder
-  and the owner sends it. The prompt is copied to the clipboard as well.
+  and the owner sends it. The prompt is copied to the clipboard as well. The dashboard's server opens
+  the link, so it works from Desktop's own browser pane too, which drops `claude://` links.
 - A fresh checkout is set up from the dashboard: a Setup panel checks and installs each tool (uv,
   npm), and downloads the tools' own files (Real-ESRGAN, OCR models) behind a gated button.
 - Order of work (owner, 2026-10-14): Setup, then drafts for the item table (5), fight pictures (7),
@@ -41,3 +42,4 @@ being copied and pasted.
 
 - 2026-10-15: "Copy prompt" became "Send to agent", which opens a Claude Desktop Code session with
   the prompt seeded (the owner).
+- 2026-10-15: the server opens the link, since Desktop's browser pane drops it (the owner).

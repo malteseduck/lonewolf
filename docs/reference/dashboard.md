@@ -179,7 +179,10 @@ style and its retype ticks, and a new book the importer does not know. **Send to
 `claude://code/new?q=<prompt>&folder=<project root>` (the root comes from `/api/admin/status`), a
 new Claude Code session in Claude Desktop with the prompt in its composer, and copies the prompt
 too. Desktop asks to confirm the folder every time (a link's folder is untrusted); the owner presses
-send. The session is in the project, which loads AGENTS.md by itself, so a prompt does not repeat its
+send. The server opens the link (`POST /api/admin/agent` with `{prompt}`, through Windows'
+`os.startfile`), because Claude Desktop's own browser pane drops `claude://` links without a word.
+If the server cannot, the page opens the link itself, except in the pane (its user agent says
+`Claude/`), where the button only copies the prompt and its toast says to paste it into a new session. The session is in the project, which loads AGENTS.md by itself, so a prompt does not repeat its
 rules: it gives the book, the figures the dashboard has (counts only, never the books' words), the
 procedure's file, and the `book_status.py done` line. Where a step has a script (ADR 0036), its prompt
 says the script's output is a head start, not the whole job: the agent judges it, makes its own pass

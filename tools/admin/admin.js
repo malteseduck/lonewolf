@@ -391,15 +391,21 @@ document.querySelectorAll('[data-global]').forEach((btn) => btn.onclick = async 
 // ---------- small things ----------
 // A new Claude Code session in Claude Desktop, in the project folder, with the prompt in its composer
 // (claude://code/new; Desktop asks to confirm the folder each time). Copied too, in case Desktop is missing.
-function sendToAgent(t) {
-  copy(t, 'Opening a Claude Code session (prompt also copied)');
+// The server opens the link, through Windows, since Desktop's own browser pane drops claude:// links silently;
+// failing that, the page opens it, except in the pane (its user agent says Claude/), where it only copies.
+async function sendToAgent(t) {
+  copy(t, 'Prompt copied');  // while the page still has the focus
+  if ((await api('agent', { method: 'POST', body: JSON.stringify({ prompt: t }) })).status === 200) return toast('Opening a Claude Code session (prompt also copied)', 3500);
+  if (/\bClaude\//.test(navigator.userAgent)) return toast("Prompt copied: paste it into a new session (Desktop's browser pane cannot open one)", 8000);
+  toast('Opening a Claude Code session (prompt also copied)', 3500);
   window.open('claude://code/new?q=' + encodeURIComponent(t) + (root ? '&folder=' + encodeURIComponent(root) : ''), '_self');
 }
-async function copy(t, done) {
-  try { await navigator.clipboard.writeText(t); toast(done, 3500); }
+async function copy(t, done, ms = 3500) {
+  toast(done, ms);  // first: once Desktop takes the focus, the clipboard write may never settle
+  try { await navigator.clipboard.writeText(t); }
   catch {  // a page that is not focused cannot write the clipboard: copy through a selection instead
     const ta = Object.assign(document.createElement('textarea'), { value: t });
-    document.body.append(ta); ta.select(); document.execCommand('copy'); ta.remove(); toast(done, 3500);
+    document.body.append(ta); ta.select(); document.execCommand('copy'); ta.remove();
   }
 }
 let toastTimer;

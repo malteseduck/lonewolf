@@ -138,18 +138,44 @@ describe('one book', () => {
     expect($('#detail .nextup').textContent).toBe('Next: Phrasings (Claude Code: send it to an agent)');
   });
 
-  it("sends an agent step's prompt to a new Claude Desktop session in the project folder", async () => {
+  it("has the server open an agent step's prompt in a new Claude Desktop session", async () => {
+    const b = withStages(book(1), { rules: stage('todo') });
+    await boot({ books: [b], running: null }, { 'GET map/*': state, 'POST admin/agent': () => [200, { ok: true }] });
+    await pickBook(b.code);
+    const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+    btn('Send to agent').click();
+    await until(() => expect($('#toast').textContent).toBe('Opening a Claude Code session (prompt also copied)'));
+    const prompt = post('POST admin/agent')[0].body.prompt;
+    expect(prompt).toMatch(/^Book 1, Stand-in 1 \(01book1/);
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(prompt);
+    expect(open).not.toHaveBeenCalled();
+  });
+
+  it('falls back to opening the claude:// link itself when the server cannot', async () => {
     const b = withStages(book(1), { rules: stage('todo') });
     await boot({ books: [b], running: null, root: 'C:\Proj\lw' }, { 'GET map/*': state });
     await pickBook(b.code);
     const open = vi.spyOn(window, 'open').mockImplementation(() => null);
     btn('Send to agent').click();
+    await until(() => expect(open).toHaveBeenCalled());
     const [url, target] = open.mock.calls[0];
     const u = new URL(url);
     expect([u.protocol, u.host + u.pathname, target]).toEqual(['claude:', 'code/new', '_self']);
     expect(u.searchParams.get('q')).toMatch(/^Book 1, Stand-in 1 \(01book1/);
     expect(u.searchParams.get('folder')).toBe('C:\Proj\lw');
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(u.searchParams.get('q'));
+  });
+
+  it("only copies the prompt when the server cannot and the page is in Desktop's browser pane", async () => {
+    const b = withStages(book(1), { rules: stage('todo') });
+    await boot({ books: [b], running: null }, { 'GET map/*': state });
+    await pickBook(b.code);
+    navigator.userAgent = 'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 Claude/2.1 Chrome/152.0 Safari/537.36';
+    const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+    btn('Send to agent').click();
+    await until(() => expect($('#toast').textContent).toMatch(/paste it into a new session/));
+    expect(open).not.toHaveBeenCalled();
+    expect(navigator.clipboard.writeText.mock.calls.at(-1)[0]).toMatch(/^Book 1, Stand-in 1/);
   });
 
 
