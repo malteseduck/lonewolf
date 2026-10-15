@@ -1,8 +1,8 @@
 """Upscale a book's illustrations 2x, each saved as WebP beside its original (ADR 0033).
 
 Run (from the project root):
-  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/ill_upscale.py <book> [--force]
-  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/ill_upscale.py --fights <book>
+  uv run --project tools python tools/ill_upscale.py <book> [--force]
+  uv run --project tools python tools/ill_upscale.py --fights <book>
 
 <book> is a code (02fotw) or a number (2). Every ill*.png and small*.png in data/projectaon/<code>/
 goes through realesrgan-x4plus (tools/realesrgan/, git-ignored) once, is reduced LANCZOS to exactly

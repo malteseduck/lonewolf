@@ -63,7 +63,7 @@ player loads (the map editor and `serve.py` make `work/` when a step first needs
 | `work/compare.html` | The comparison page (below) |
 
 Commands run from the project root as
-`uv run --no-project --python tools/.venv/Scripts/python.exe python tools/<script> ...`; `D` below is
+`uv run --project tools python tools/<script> ...`; `D` below is
 `data/projectaon/<code>`, `W` is `$D/work` and `L` is `maps/<code>/labels.json`.
 
 1. **Upscale the scan**: `map_upscale.py $D/map.png $W/map-2k.png --width 2048`.

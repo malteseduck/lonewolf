@@ -3,8 +3,12 @@
   "configurations": [
     {
       "name": "lone-wolf",
-      "runtimeExecutable": "python",
+      "runtimeExecutable": "uv",
       "runtimeArgs": [
+        "run",
+        "--project",
+        "tools",
+        "python",
         "tools/serve.py",
         "8766",
         "--bind",
@@ -14,8 +18,12 @@
     },
     {
       "name": "lone-wolf-lan",
-      "runtimeExecutable": "python",
+      "runtimeExecutable": "uv",
       "runtimeArgs": [
+        "run",
+        "--project",
+        "tools",
+        "python",
         "tools/serve.py",
         "8766",
         "--bind",
@@ -25,8 +33,12 @@
     },
     {
       "name": "lone-wolf-release",
-      "runtimeExecutable": "python",
+      "runtimeExecutable": "uv",
       "runtimeArgs": [
+        "run",
+        "--project",
+        "tools",
+        "python",
         "tools/serve.py",
         "8765",
         "--release"

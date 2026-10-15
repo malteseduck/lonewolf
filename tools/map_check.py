@@ -1,7 +1,7 @@
 """Check a repainted map against the faithful one: align it, then flag colour and shape changes.
 
 Run (from the project root):
-  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_check.py <faithful> <repaint> <out_dir>
+  uv run --project tools python tools/map_check.py <faithful> <repaint> <out_dir>
 
 Writes <out_dir>/aligned.png (the repaint, warped onto the faithful map), H.json (that warp) and <out_dir>/flags.png
 (red cells: a different hue; blue cells: outlines added or lost), and prints counts only.

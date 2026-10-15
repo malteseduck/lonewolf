@@ -1,7 +1,7 @@
 """Upscale a printed map with Real-ESRGAN, then size it and save it.
 
 Run (from the project root):
-  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_upscale.py <in> <out> [--width 3840]
+  uv run --project tools python tools/map_upscale.py <in> <out> [--width 3840]
 
 Runs realesrgan-x4plus (tools/realesrgan/, git-ignored) in 4x passes until the image is at least
 --width wide, then LANCZOS down to exactly --width. An <out> ending .webp is saved lossy at quality

@@ -2,7 +2,7 @@
 Gemini was not trusted with, and save the 4K WebP.
 
 Run (from the project root):
-  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_letter.py <map-2k.png> <maps/<book>/labels.json> <repaint-x4.png> <H.json> <out.webp> [--mark x0,y0,x1,y1 ...] [--hand FONT] [--caps FONT] [--sheet PATH]
+  uv run --project tools python tools/map_letter.py <map-2k.png> <maps/<book>/labels.json> <repaint-x4.png> <H.json> <out.webp> [--mark x0,y0,x1,y1 ...] [--hand FONT] [--caps FONT] [--sheet PATH]
 
 <repaint-x4.png> is map_upscale.py's 4x of the Gemini round kept; <H.json> is map_check.py's warp
 for that round. Boxes, in the label list and --mark, are in map-2k.png's px.

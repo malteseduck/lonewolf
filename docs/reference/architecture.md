@@ -64,6 +64,9 @@ tools/
   ill_index.py              writes data/projectaon/ill-index.json: every book's illustrations, the fights near
                             each, and a hand note of what each shows (data/projectaon/ill-notes.json); both
                             git-ignored (docs/reference/items.md, Fight pictures)
+  setup.py                  what the tools need on this PC and installing it (the dashboard's Setup; standard
+                            library only, run with --no-project); pyproject.toml and uv.lock: the tools as a uv project, its
+                            packages and their exact versions, venv tools/.venv (ADR 0037)
   book_status.py            every book's checklist steps, from the files and docs/book-status.json; marks steps
                             done; writes the table in docs/book-checklist.md
   reimport_all.py           re-imports every imported book and compares each import-report.json with the last
@@ -86,6 +89,7 @@ tools/
   map_check.py              aligns a repainted map to the faithful one, flags colour and shape changes
                             (both: docs/reference/map-upscale.md; Python in tools/.venv)
   realesrgan/               git-ignored. Real-ESRGAN's Windows build, used by map_upscale.py and ill_upscale.py
+                            (setup.py install realesrgan fetches it)
 maps/<code>/                the owner's work on each book's printed map, committed: labels.json (the label
                             list), style.txt (the repaint's look), labels-checked.txt (step 3 done);
                             labels.json.bak is git-ignored (docs/reference/map-upscale.md)

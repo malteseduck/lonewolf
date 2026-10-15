@@ -38,6 +38,7 @@ Static files as `python -m http.server` serves them, from the project root, plus
     POST /api/admin/run/<stage>       start a job: a stage of ADMIN_STAGES, ?book=<code or number> for a book's.
                                       Gated stages need the JSON body {"confirm": "<code>"} ("all" for re-import
                                       all), else 428. One job at a time, shared with the map steps (409 if busy)
+    GET  /api/admin/setup             what the tools need and have: tools/setup.py's status() (setup-<part> stages install)
     GET  /api/admin/jobs              the last ten jobs; GET /api/admin/jobs/<id>?from=n: its state and lines from n
     POST /api/admin/mark/<book>/<n>   book_status.py's done (or ?undo=1) for checklist step n
     POST /api/admin/plate             the picture sheet: {book, enemy, image?: base64 WebP, crop?, levels?, flip?, remove?};
@@ -141,7 +142,7 @@ def _labels_ok(data):
 
 # ---- the map editor's steps ----
 MAP_MAX = 30 * 1024 * 1024
-PY = ['uv', 'run', '--no-project', '--python', 'tools/.venv/Scripts/python.exe', 'python']
+PY = ['uv', 'run', '--project', 'tools', 'python']
 LOCAL = ('127.0.0.1', '::1', '::ffff:127.0.0.1')
 FONTS = ['--hand', 'Cabin.ttf|SemiBold', '--caps', 'Cabin.ttf|SemiBold']
 
@@ -434,6 +435,12 @@ ADMIN_STAGES = {
     # the last commit to the iPad (the release server, docs/reference/offline.md); gated: the owner's go-ahead
     'release': {'title': 'Release to the iPad', 'book': False, 'gated': True, 'timeout': 600, 'cmds': lambda c: [PY + ['tools/release.py']]},
 }
+# Setup (ADR 0036): tools/setup.py installs a part. Not through PY: tools/.venv may not exist yet.
+# realesrgan and ocr download files, so they are gated.
+for _part, _title, _gated in (('venv', 'Install Python packages', False), ('npm', 'Install npm packages', False),
+                              ('realesrgan', 'Download Real-ESRGAN', True), ('ocr', 'Install the map OCR', True)):
+    ADMIN_STAGES['setup-' + _part] = {'title': _title, 'book': False, 'gated': _gated, 'timeout': 3600,
+                                      'cmds': lambda c, part=_part: [['uv', 'run', '--no-project', 'python', 'tools/setup.py', 'install', part]]}
 _jobs, _jobs_lock, _job_seq = {}, threading.Lock(), [0]
 JOB_LINES = 20000
 
@@ -607,6 +614,9 @@ class Handler(SimpleHTTPRequestHandler):
             st = book_status.all_status()
             st['running'] = _job[0]
             return self._json(200, st)
+        if method == 'GET' and parts == ['setup']:
+            import setup
+            return self._json(200, setup.status())
         if method == 'GET' and parts == ['release']:
             import release
             return self._json(200, release.status())

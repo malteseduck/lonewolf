@@ -3,7 +3,7 @@
    map editor inline, and the agent steps' prompts. docs/reference/dashboard.md. */
 import { PROMPTS } from './prompts.js';
 
-const PY = 'uv run --no-project --python tools/.venv/Scripts/python.exe python';
+const PY = 'uv run --project tools python';
 const SIZE = 'about 400 files, about 4 MB';  // Books 1, 6 and 12 as downloaded
 
 /* The columns, in the checklist's order. kind: who does it. step: its row in docs/book-checklist.md. */
@@ -42,7 +42,39 @@ async function load() {
   books = j.books;
   running = j.running;
   render();
+  loadSetup();
 }
+
+// ---------- setup: what the tools need on this PC (tools/setup.py, ADR 0036) ----------
+let setup = [], showSetup = false;
+async function loadSetup() {
+  const { status, j } = await api('setup');
+  if (status !== 200 || !Array.isArray(j)) return;
+  setup = j;
+  renderSetup();
+}
+function renderSetup() {
+  const el = $('#setup'), lack = setup.filter((r) => r.state === 'missing');
+  const open = showSetup || lack.length > 0;
+  const seal = (s) => (s === 'ok' ? 'done' : s === 'missing' ? 'todo' : 'na');
+  el.hidden = false;
+  el.innerHTML = `<header><span class="kind" data-kind="script"></span><b>Setup</b>
+      <span class="say">${lack.length ? `${lack.length} part${lack.length === 1 ? '' : 's'} missing on this PC` : 'Everything the tools need is here'}</span>
+      <button id="setup-toggle">${open ? 'Hide' : 'Show'}</button></header>` +
+    (open ? setup.map((r, i) => `<div class="part"><span class="st ${seal(r.state)}"></span>
+      <span class="kind" data-kind="${r.install ? 'script' : 'owner'}"></span><b>${esc(r.label)}</b>
+      <div>${esc(r.detail)}<small>${esc(r.what)}</small></div>
+      <div>${r.state === 'missing' && r.install ? `<button data-setup="${i}" ${running ? 'disabled title="a job is running"' : ''}>${r.gated ? 'Download...' : 'Install'}</button>` : ''}</div></div>`).join('') : '');
+  $('#setup-toggle').onclick = () => { showSetup = !open; renderSetup(); };
+}
+$('#setup').addEventListener('click', async (e) => {
+  const btn = e.target.closest('button[data-setup]');
+  if (!btn) return;
+  const r = setup[+btn.dataset.setup];
+  let confirm;
+  if (r.gated) { confirm = await gate('setup', r); if (!confirm) return; }
+  startJob('setup-' + r.id, '', confirm);
+});
 let reloadTimer;
 const reloadSoon = () => { clearTimeout(reloadTimer); reloadTimer = setTimeout(load, 400); };
 
@@ -266,6 +298,12 @@ function gate(kind, b) {
       <p class="hint">Look at them first on the picture sheet: each changed card says so.</p>`;
     ackText = `I approve the new fight pictures for Book ${b.n}.`;
     okText = 'Approve';
+  } else if (kind === 'setup') {
+    value = 'all';
+    title = `${b.label}: download?`;
+    body = `<p><b>${esc(b.label)}</b>: ${esc(b.what)}.</p><p>Fetches ${esc(b.size)}, onto this PC only (git-ignored, never committed).</p>`;
+    ackText = `I approve this download for ${b.label}.`;
+    okText = 'Download';
   } else if (kind === 'release') {
     const r = b, cur = r.current || {}, same = cur.commit === r.head.commit;
     value = 'all';
@@ -299,6 +337,7 @@ async function startJob(stage, book, confirm) {
   if (status !== 200) return toast(j.error || `Could not start (${status})`, 6000);
   running = j.title;
   render();
+  renderSetup();
   follow(j);
 }
 function follow(job) {

@@ -1,0 +1,19 @@
+# The Python tools as a uv project (ADR 0037): its venv is tools/.venv, its exact versions in uv.lock.
+# Run a tool with `uv run --project tools python tools/<tool>.py` (from the project root); uv installs
+# what uv.lock says first. The map OCR keeps its own venv (tools/.venv-paddle, Python 3.12: setup.py).
+[project]
+name = "lone-wolf-tools"
+version = "0"
+requires-python = ">=3.14"
+dependencies = [
+    "numpy>=2.5.2",
+    "opencv-python-headless>=5.0.0.93",
+    "pillow>=12.3.0",
+]
+
+[dependency-groups]
+dev = ["pytest>=9.1.1"]
+
+[tool.uv]
+package = false
+system-certs = true  # Windows' certificate store: on this PC PyPI's certificate fails without it

@@ -71,6 +71,14 @@ button.danger:hover:not(:disabled) { border-color: var(--bad); color: var(--bad)
 .tool > div { flex: 1; min-width: 0; }
 .tool b { display: block; font-weight: 600; }
 .tool small { display: block; color: var(--dim); }
+/* Setup (tools/setup.py): one line while everything is there, a row per part otherwise */
+.setup { margin: 0 24px 14px; padding: 8px 12px; border-radius: 3px; background: rgba(255, 248, 226, .22); border: 1px solid var(--line); }
+.setup > header { display: flex; gap: 10px; align-items: center; }
+.setup > header b { font-weight: 600; }
+.setup > header .say { flex: 1; color: var(--dim); }
+.setup .part { display: grid; grid-template-columns: 20px 18px 150px 1fr auto; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid var(--line); }
+.setup .part:first-of-type { margin-top: 8px; }
+.setup .part small { display: block; color: var(--dim); }
 .legend { margin-left: auto; display: flex; gap: 14px; align-items: center; color: var(--dim); font-size: 12px; }
 .legend > span { display: inline-flex; gap: 5px; align-items: center; }
 

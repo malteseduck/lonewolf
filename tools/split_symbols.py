@@ -2,7 +2,7 @@
 make numbered contact sheets for quick viewing.
 
 Run (from the project root):
-  python -m uv run --no-project --python tools/.venv/Scripts/python.exe python tools/split_symbols.py [in_dir] [out_dir] [--merge F]
+  python -m uv run --project tools python tools/split_symbols.py [in_dir] [out_dir] [--merge F]
 
 Defaults: art/reference/map-symbols -> art/reference/map-symbols/_split.
 Writes <out>/<stem>/<n>.png, <out>/<stem>_sheet[N].png and <out>/index.json.

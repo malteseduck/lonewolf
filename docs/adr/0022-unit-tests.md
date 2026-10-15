@@ -36,7 +36,7 @@ data, the owner also wanted one run that puts the real books through every scrip
 - `package.json` holds the dev dependencies (Vitest, jsdom); `node_modules/` stays git-ignored.
   pytest is installed in `tools/.venv`.
 - Tests live in `tests/js/` (`*.test.js`, `npm test`) and `tests/py/` (`test_*.py`,
-  `uv run --no-project --python tools/.venv/Scripts/python.exe python -m pytest`). Both pass before a
+  `uv run --project tools python -m pytest`). Both pass before a
   commit; `check_all.py` after a change to the importer or the books' data.
 - Tests use stand-in data written for them, never Project Aon text or images, and do not need
   `data/projectaon/`, `art/`, `backups/` or the network. A tool that writes files is pointed at a

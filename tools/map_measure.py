@@ -2,7 +2,7 @@
 so the map editor's preview starts from what map_letter.py will set.
 
 Run (from the project root):
-  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_measure.py <map-2k.png> <maps/<book>/labels.json>
+  uv run --project tools python tools/map_measure.py <map-2k.png> <maps/<book>/labels.json>
 
 Writes "ink": {"at": [x, y] (centre), "angle" (degrees, y down, the reading direction), "length",
 "thick" (px on map-2k), "box" (the box it was measured in)} into every "retype" or "fix" label. It

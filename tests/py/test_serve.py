@@ -189,7 +189,7 @@ def test_map_and_admin_apis_are_refused_from_other_machines(root, monkeypatch):
     for method, path in [('GET', '/api/map/books'), ('POST', '/api/map/01fftd/run/import')]:
         st, got = jsend(method, path)
         assert st == 403 and got == {'error': 'the map editor runs from this machine only'}, path
-    for method, path in [('GET', '/api/admin/status'), ('POST', '/api/admin/run/release')]:
+    for method, path in [('GET', '/api/admin/status'), ('GET', '/api/admin/setup'), ('POST', '/api/admin/run/release')]:
         st, got = jsend(method, path)
         assert st == 403 and got == {'error': 'the dashboard runs from this machine only'}, path
     assert serve._jobs == {} and not (root / 'maps').exists()
@@ -324,9 +324,13 @@ def stage(monkeypatch, name, cmds=(('run',),), timeout=30, **spec):
 
 def test_admin_stage_table_has_every_stage_with_the_right_gates():
     assert set(serve.ADMIN_STAGES) == {'fetch', 'fetch-rules', 'import', 'reading', 'check-items', 'approve-pictures',
-                                       'ills', 'fights-up', 'offline', 'check', 'release'}
+                                       'ills', 'fights-up', 'offline', 'check', 'release',
+                                       'setup-venv', 'setup-npm', 'setup-realesrgan', 'setup-ocr'}
     gated = {k for k, v in serve.ADMIN_STAGES.items() if v.get('gated')}
-    assert gated == {'fetch', 'fetch-rules', 'import', 'approve-pictures', 'release'}  # upscaling fetches nothing
+    # upscaling fetches nothing; setup's downloads of files are gated, its package installs not
+    assert gated == {'fetch', 'fetch-rules', 'import', 'approve-pictures', 'release', 'setup-realesrgan', 'setup-ocr'}
+    # setup runs before tools/.venv exists, so not through PY
+    assert serve.ADMIN_STAGES['setup-ocr']['cmds']('') == [['uv', 'run', '--no-project', 'python', 'tools/setup.py', 'install', 'ocr']]
     assert serve.ADMIN_STAGES['ills']['cmds']('02fotw') == [serve.PY + ['tools/ill_upscale.py', '02fotw']]
     assert serve.ADMIN_STAGES['fights-up']['cmds']('02fotw') == [serve.PY + ['tools/ill_upscale.py', '--fights', '02fotw']]
     for spec in serve.ADMIN_STAGES.values():

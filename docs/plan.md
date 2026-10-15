@@ -23,12 +23,8 @@ done, and when.
 
 Every book step gets a button that runs a script; where judgement is needed the script writes a
 draft or a report (certain readings filled in, the rest `todo` or listed by section id), and the
-agent's Copy prompt refines it. In the owner's order (2026-10-14):
+agent's Copy prompt refines it. In the owner's order (2026-10-14; D1, Setup, done that day: dashboard.md):
 
-- D1. **Setup** from a fresh checkout: a requirements file for `tools/.venv`, a `setup.py` that checks
-  and installs uv packages, `npm install`, and (gated) Real-ESRGAN and the OCR models; a Setup panel
-  on the dashboard showing what is present. The git-ignored owner files (`art/`) cannot be restored
-  by it: it says so.
 - D2. **Item table draft** (step 5): `items-<code>.js` from what is certain (Gold Crowns, Meals,
   Endurance changes, items with a known id), the rest `todo`; `check_items` clean.
 - D3. **Fight pictures auto-assign** (step 7): ADR 0035's order by name against `ill-index.json`,
@@ -42,6 +38,10 @@ agent's Copy prompt refines it. In the owner's order (2026-10-14):
 - D7. A book the importer does not know: added to its table from the catalogue by script.
 - D8. Map: a default `style.txt` and a heuristic for the retype ticks (the key, scale, title).
   The Gemini repaint stays the owner's (ADR 0036).
+- D9. **Art source links** (ADR 0038): a committed list of each `art/` picture's link; the picture
+  sheet takes a picture by URL (fetched by the server, link recorded) and asks for a link on drop or
+  paste ("no link" allowed); Setup counts what can be fetched again and fetches it (gated). The
+  pictures already there get links from the owner.
 
 Each new script gets tests of its main path and a line in `docs/reference/dashboard.md`; each prompt
 tells the agent to start from the script's output. Judgement: before the Grand Master work, so the

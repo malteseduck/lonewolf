@@ -40,6 +40,12 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   by side at one size; "1:1" draws both at the upscale's own pixels (the original stretched by the
   browser, as the player would) and the two scroll together; the arrow keys go to the next picture.
   It only looks: nothing on it changes a file.
+- **Setup** (ADR 0036), above the tools: what the tools need on this PC, from `tools/setup.py`. One line
+  while everything is there ("Show" opens it); a row per part, open, while any is missing: uv and
+  Node (yours to install), the Python packages (`tools/.venv`, from `tools/pyproject.toml` and `uv.lock`), the npm
+  packages, Real-ESRGAN and the map OCR (downloads: gated), the books (a count; each downloaded from
+  its row) and `art/` (git-ignored: copied from the old checkout, nothing can make it). A missing
+  part that a script can install has **Install** (or **Download...**, gated).
 - **Whole-project tools**: the offline check, check everything (`check_all.py`), the release.
 - **The job log** at the foot: a job's output line by line while it runs. A job started in another
   tab, or before a reload, is followed too.
@@ -88,6 +94,7 @@ agent run `show` instead).
 |---|---|
 | `GET status` | `book_status.all_status()`, and the job running |
 | `POST run/<stage>?book=<code or number>` | starts a job; `{"confirm": "<code>"}` in the body for a gated stage (`"all"` for re-import all), else 428 |
+| `GET setup` | `setup.status()`: `[{id, label, what, state: ok\|missing\|info, detail, install, gated, size}]` |
 | `GET jobs` | the last ten jobs (in memory; gone when the server restarts) |
 | `GET jobs/<id>?from=<n>` | a job's state, exit code and lines from n; the page polls it every 0.8 s |
 | `POST mark/<book>/<step>` (`?undo=1`) | `book_status.mark()` |
@@ -111,6 +118,9 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `offline` | `offline_check.py` | |
 | `check` | `check_all.py` (re-imports every book, ADR 0022) | |
 | `release` | `release.py` (the last commit to the iPad, docs/reference/offline.md) | yes |
+| `setup-venv`, `setup-npm` | `setup.py install venv` (`uv sync --project tools`), `install npm` (`npm ci`); through `uv run --no-project`, so that setup.py reports what is missing rather than uv installing it first | |
+| `setup-realesrgan` | `setup.py install realesrgan`: the v0.2.5.0 Windows zip from GitHub (about 45 MB); only the program, its DLLs and `models/` are written into `tools/realesrgan/` | yes: a download |
+| `setup-ocr` | `setup.py install ocr`: `tools/.venv-paddle` (Python 3.12) with PaddleOCR (about 1 GB) | yes: a download |
 
 **Gated stages** open a dialog first: the book, what is fetched or rewritten (about 400 files, 4 MB
 for a download), and for an import the dates (when `book.js` was made, the newest source page, when
@@ -124,6 +134,9 @@ downloads and imports still need the owner's word (AGENTS.md).
 ## Scripts behind it
 
 - `tools/book_status.py`: above.
+- `tools/setup.py`: what a checkout needs (above, Setup); `setup.py` lists it, `--json` as the page
+  reads it, `install <part>` installs one, `install all` the venv and the npm packages (a fresh
+  checkout's first step, before the server can run from tools/.venv: AGENTS.md, Run it).
 - `tools/import_projectaon.py` also writes `data/projectaon/<code>/import-report.json`: the figures
   its report prints, counts and ids only.
 - `tools/reimport_all.py [book ...]`: re-imports every imported book (or those named) and compares

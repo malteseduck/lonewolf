@@ -1,9 +1,9 @@
 """Draft a map's label list, and check a repaint's labels against it.
 
 Run (from the project root):
-  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_labels.py draft <map-2k.png> <maps/<book>/labels.json>
-  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_labels.py check <maps/<book>/labels.json> <aligned.png> [<map-2k.png>]
-  uv run --no-project --python tools/.venv/Scripts/python.exe python tools/map_labels.py prompt <maps/<book>/labels.json> <prompt.txt> [--lettered]
+  uv run --project tools python tools/map_labels.py draft <map-2k.png> <maps/<book>/labels.json>
+  uv run --project tools python tools/map_labels.py check <maps/<book>/labels.json> <aligned.png> [<map-2k.png>]
+  uv run --project tools python tools/map_labels.py prompt <maps/<book>/labels.json> <prompt.txt> [--lettered]
 
 draft: OCR finds each label's box and guesses its wording: PaddleOCR (map_ocr_paddle.py, in
 tools/.venv-paddle) when that venv exists, else EasyOCR. The guesses are only a start:

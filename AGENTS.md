@@ -25,14 +25,19 @@ The devices are the iPad, mainly, and the PC; phones are not supported (ADR 0030
 
 **Every Python run goes through uv**, the project's tools and one-off scripts alike, never plain
 `python` or the venv's own exe: `python tools/x.py` in this file means
-`uv run --no-project --python tools/.venv/Scripts/python.exe python tools/x.py`. Tell subagents the
-same. (Run with the system Python, `check_all.py` fails: pytest is only in `tools/.venv`.)
+`uv run --project tools python tools/x.py`, from the project root. Tell subagents the
+same. `tools/` is a uv project (ADR 0037): its packages are in `tools/pyproject.toml`, their exact
+versions in `tools/uv.lock`, its venv is `tools/.venv`, and `uv run --project tools` installs what
+the lock says before running. Add a package with `uv add --project tools <name>`, never `uv pip install`.
+(`tools/setup.py` alone runs with `--no-project`, so it reports what is missing instead.)
 
 ```sh
 python tools/serve.py
 ```
 
-Then open http://localhost:8766/. It is `http.server` plus the backups API (`backups/`, git-ignored;
+On a fresh checkout, `uv run --no-project python tools/setup.py install all` installs the venv and
+the npm packages (`setup.py` alone lists what is there); the dashboard's Setup panel does the same
+and the downloads. Then open http://localhost:8766/. It is `http.server` plus the backups API (`backups/`, git-ignored;
 see Storage in `docs/reference/architecture.md`). `.claude/launch.json` has the same
 server as `lone-wolf` for the preview tools. It must be served: `main.js` is an ES module.
 
@@ -72,12 +77,12 @@ script of its language (`parse.test.js`, `test_parse.py`), which is the syntax c
 
 ```sh
 npm test
-uv run --no-project --python tools/.venv/Scripts/python.exe python -m pytest
+uv run --project tools python -m pytest
 ```
 
 (`npm install` once for Vitest; pytest is in `tools/.venv`.) There is no linter.
 
-`uv run --no-project --python tools/.venv/Scripts/python.exe python tools/check_all.py` (the dashboard's "Check everything") puts the real books through every
+`uv run --project tools python tools/check_all.py` (the dashboard's "Check everything") puts the real books through every
 script, and both suites alongside (about 6 s): re-import every book against its last report, every item table's
 check, the approved fight pictures, the offline copy. Run it after changing the importer, an item
 table or anything the books' data goes through.
