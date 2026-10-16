@@ -111,6 +111,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 |---|---|---|
 | `fetch` | `fetch_projectaon.py <code>` | yes: a download |
 | `fetch-rules` | `fetch_projectaon.py <code> --rules` | yes: a download |
+| `add-book` | `add_book.py <code>`: a downloaded book the importer does not know gets its `BOOKS` entry ("Add to importer", beside the new-book prompt) | |
 | `import` | `import_projectaon.py <code>` (books the importer knows) | yes, every time: it rewrites `book.js` |
 | `reading` | `reading_copy.py <code>`, then `item_sections.py <code>` | |
 | `phrasings-scan` | `phrasings_scan.py <code> --json`: step 3's leftover scan (importer.md, "The leftover scan"), written to `phrasings.json` beside the book ("Scan phrasings", once imported) | |
@@ -144,6 +145,11 @@ downloads and imports still need the owner's word (AGENTS.md).
 - `tools/setup.py`: what a checkout needs (above, Setup); `setup.py` lists it, `--json` as the page
   reads it, `install <part>` installs one, `install all` the venv and the npm packages (a fresh
   checkout's first step, before the server can run from tools/.venv: AGENTS.md, Run it).
+- `python tools/add_book.py <code>`: a book the importer does not know is added to its `BOOKS` table
+  (ADR 0036): number, series and title from `book_status.CATALOGUE`, one line before the table's
+  closing brace. Writes the importer only, imports nothing; refuses a book already there or not in the
+  catalogue. The new-book prompt has the agent check the rules pages for what the entry cannot
+  supply (discipline, rank and Lore-circle names).
 - `tools/import_projectaon.py` also writes `data/projectaon/<code>/import-report.json`: the figures
   its report prints, counts and ids only.
 - `tools/reimport_all.py [book ...]`: re-imports every imported book (or those named) and compares

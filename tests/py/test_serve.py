@@ -323,7 +323,7 @@ def stage(monkeypatch, name, cmds=(('run',),), timeout=30, **spec):
 
 
 def test_admin_stage_table_has_every_stage_with_the_right_gates():
-    assert set(serve.ADMIN_STAGES) == {'fetch', 'fetch-rules', 'import', 'reading', 'items-draft', 'check-items', 'approve-pictures', 'pictures-draft', 'phrasings-scan', 'rules-diff', 'walk',
+    assert set(serve.ADMIN_STAGES) == {'fetch', 'fetch-rules', 'import', 'reading', 'items-draft', 'check-items', 'approve-pictures', 'pictures-draft', 'phrasings-scan', 'rules-diff', 'walk', 'add-book',
                                        'ills', 'fights-up', 'offline', 'check', 'release',
                                        'setup-venv', 'setup-npm', 'setup-realesrgan', 'setup-ocr'}
     gated = {k for k, v in serve.ADMIN_STAGES.items() if v.get('gated')}
@@ -340,6 +340,7 @@ def test_admin_stage_table_has_every_stage_with_the_right_gates():
     assert serve.ADMIN_STAGES['phrasings-scan']['cmds']('02fotw') == [serve.PY + ['tools/phrasings_scan.py', '02fotw', '--json']]
     assert serve.ADMIN_STAGES['rules-diff']['cmds']('02fotw') == [serve.PY + ['tools/rules_diff.py', '02fotw', '--json']]
     # step 6's walk: reads book.js and the item table, writes walk.json beside the book (tools/walk_book.mjs), not gated
+    assert serve.ADMIN_STAGES['add-book']['cmds']('14tcok') == [serve.PY + ['tools/add_book.py', '14tcok']]
     assert serve.ADMIN_STAGES['walk']['cmds']('02fotw') == [['node', 'tools/walk_book.mjs', '02fotw', '--json']]
     assert serve.ADMIN_STAGES['fights-up']['cmds']('02fotw') == [serve.PY + ['tools/ill_upscale.py', '--fights', '02fotw']]
     for spec in serve.ADMIN_STAGES.values():

@@ -25,10 +25,9 @@ Every book step gets a button that runs a script; where judgement is needed the 
 draft or a report (certain readings filled in, the rest `todo` or listed by section id), and the
 agent's Copy prompt refines it. In the owner's order (2026-10-14; D1, Setup, D2, the item table's
 draft, D3, the fight pictures' draft, and D4, the phrasings scan, done that day, and D5, the walk,
-and D6, the rules diff, on 2026-10-15: dashboard.md, items.md "The draft" twice, importer.md "The
+D6, the rules diff, and D7, a new book added to the importer, on 2026-10-15: dashboard.md, items.md "The draft" twice, importer.md "The
 leftover scan", rules-engine.md "The walk"):
 
-- D7. A book the importer does not know: added to its table from the catalogue by script.
 - D8. Map: a default `style.txt` and a heuristic for the retype ticks (the key, scale, title).
   The Gemini repaint stays the owner's (ADR 0036).
 - D9. **Art source links** (ADR 0038): a committed list of each `art/` picture's link; the picture

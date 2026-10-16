@@ -420,6 +420,8 @@ def offline_list(root=ROOT, fill=None):
 ADMIN_STAGES = {
     'fetch': {'title': 'Download', 'gated': True, 'timeout': 1800, 'cmds': lambda c: [PY + ['tools/fetch_projectaon.py', c]]},
     'fetch-rules': {'title': 'Fetch rules pages', 'gated': True, 'timeout': 600, 'cmds': lambda c: [PY + ['tools/fetch_projectaon.py', c, '--rules']]},
+    # D7 (ADR 0036): a downloaded book the importer does not know gets its BOOKS entry from the catalogue; imports nothing
+    'add-book': {'title': 'Add to importer', 'folder': True, 'timeout': 60, 'cmds': lambda c: [PY + ['tools/add_book.py', c]]},
     'import': {'title': 'Import', 'gated': True, 'timeout': 900, 'known': True, 'cmds': lambda c: [PY + ['tools/import_projectaon.py', c]]},
     'reading': {'title': 'Reading copy', 'folder': True, 'timeout': 600, 'cmds': lambda c: [PY + ['tools/reading_copy.py', c], PY + ['tools/item_sections.py', c]]},
     # step 5's draft (ADR 0036): written to items/ only where there is no table yet, else beside the book

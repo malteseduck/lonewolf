@@ -135,7 +135,7 @@ const ACTIONS = {
   fetch: (b) => b.stages.fetch.state === 'todo'
     ? [run('Download...', 'fetch', { gate: 'download' })]
     : [run('Fetch rules pages...', 'fetch-rules', { gate: 'rules' })],
-  import: (b) => !b.known ? (b.folder ? [prompt('newBook')] : [])
+  import: (b) => !b.known ? (b.folder ? [run('Add to importer', 'add-book'), prompt('newBook')] : [])
     : !b.folder ? [] : [run(b.imp ? 'Re-import...' : 'Import...', 'import', { gate: 'import' })],
   // the scan first (ADR 0036): what the importer left as text, by id; the agent judges each
   phrasings: (b) => [...(b.imp ? [run('Scan phrasings', 'phrasings-scan')] : []), prompt('phrasings'), mark(3)],

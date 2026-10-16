@@ -91,6 +91,6 @@ Map editor, step 3, book ${b.code}: in maps/${b.code}/labels.json, untick "retyp
 
   newBook: (b) => `${HEAD(b)}
 
-Task: Book ${b.n} is downloaded but the importer does not know it yet (tools/import_projectaon.py, BOOKS). It is a ${b.series} book${b.series === 'grand master' ? ', and the engine has no Grand Master rules: read its rules pages and tell me what the series would need (docs/reference/rules-books.md, rules-engine.md) before any code' : ''}. Propose the importer change; do not import until I say so (the dashboard's Import button asks me).
+Task: Book ${b.n} is downloaded but the importer does not know it yet (tools/import_projectaon.py, BOOKS). First, the script: python tools/add_book.py ${b.code} (the dashboard's "Add to importer") writes its BOOKS entry from the catalogue (number, series, title). Then check what the entry cannot: read the book's rules pages for discipline, rank or Lore-circle names the importer's DISC, RANKS and CIRCLES lack, and anything else the importer would misread${b.series === 'grand master' ? '; the Grand Master engine work still to do is in docs/plan.md (G1-G7): say if this book adds to it' : ''}. Propose any importer change beyond the entry; do not import until I say so (the dashboard's Import button asks me).
 ${TAIL}`,
 };
