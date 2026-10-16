@@ -139,7 +139,8 @@ const ACTIONS = {
     : !b.folder ? [] : [run(b.imp ? 'Re-import...' : 'Import...', 'import', { gate: 'import' })],
   // the scan first (ADR 0036): what the importer left as text, by id; the agent judges each
   phrasings: (b) => [...(b.imp ? [run('Scan phrasings', 'phrasings-scan')] : []), prompt('phrasings'), mark(3)],
-  rules: () => [prompt('rules'), mark(4)],
+  // the diff first (ADR 0036): each rules page against the book before, and a skeleton addendum
+  rules: (b) => [...(b.rulesPage ? [run('Diff rules', 'rules-diff')] : []), prompt('rules'), mark(4)],
   reading: () => [run('Make reading copy', 'reading')],
   // the draft first (ADR 0036); over a hand-made table it only writes items-draft.js beside the book, to compare
   items: (b) => [run(b.items.exists && !b.items.draft ? 'Draft and compare' : 'Draft table', 'items-draft'), prompt('items'), run('Check items', 'check-items'), ...(b.items.check?.errors?.length ? [prompt('itemsFix', 'Copy fix prompt')] : [])],

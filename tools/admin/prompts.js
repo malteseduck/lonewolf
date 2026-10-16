@@ -29,7 +29,8 @@ ${TAIL}`,
   rules: (b) => `${HEAD(b)}
 
 Task: docs/book-checklist.md step 4, the book's rules addendum.
-- Read this book's own rules pages in data/projectaon/${b.code}/ (gamerulz.htm, discplnz.htm, equipmnt.htm, cmbtrulz.htm and those of levels.htm, lorecrcl.htm, imprvdsc.htm, kaiwisdm.htm present).
+- First, the diff: python tools/rules_diff.py ${b.code} --json (the dashboard's "Diff rules")${b.rulesDiff && !b.rulesDiff.stale ? `, which last listed ${b.rulesDiff.look} paragraphs to read against ${b.rulesDiff.against || 'nothing'}` : ''}. It compares each rules page with the previous book's, paragraph by paragraph, and writes beside the book rules-diff.txt (the changed and new paragraphs, old and new) and rules-draft.md (a skeleton addendum: the gold, the kit's choice and list, the footnotes' sections, the rest todo). Read every paragraph rules-diff.txt lists, and the footnotes and the kit's first paragraph, which it does not compare; the skeleton is a head start, not the addendum.
+- Then the book's own rules pages in data/projectaon/${b.code}/ where the diff leaves you unsure (gamerulz.htm, discplnz.htm, equipmnt.htm, cmbtrulz.htm and those of levels.htm, lorecrcl.htm, imprvdsc.htm, kaiwisdm.htm present), and the previous book's addendum in rules-books.md for what carried over unchanged.
 - ${b.rulesHeading ? `docs/reference/rules-books.md already has a "Book ${b.n}" addendum: check it against those pages and correct it.` : `Write "Book ${b.n}, ${b.title}" under "Book addenda" in docs/reference/rules-books.md.`} In our words, numbers as printed; list this book's specifics in full, never "as Book N".
 - Keep its Engine column true: what the engine applies, what is left to the player. The starting kit belongs in LW.KITS (shared/rules-series.js); change engine code only if I agree.
 ${DONE(b, 4)}

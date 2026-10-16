@@ -61,7 +61,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
 | 1 Download | files | `sect*.htm` and `gamerulz.htm` in `data/projectaon/<code>/` |
 | 2 Import | files | `book.js` there, no broken links, no section without a way on. A warning when it is out of date: the importer or a source page is newer than the last import (`import-report.json`, written every run), or `map-4k.webp` is not named yet |
 | 3 Phrasings | hand | marked in `docs/book-status.json`. Until then it shows the leftover scan (`phrasings.json`, from `phrasings_scan.py --json`): not scanned, out of date (older than `book.js` or the importer), N sections to look at (by id), or none left, a warning: the owner's to mark. Once marked, the scan's line is shown beside the mark |
-| 4 Rules | both | a `### Book N,` heading in `rules-books.md` and a hand mark |
+| 4 Rules | both | a `### Book N,` heading in `rules-books.md` and a hand mark. Beside it, the rules diff (`rules-diff.json`, from `rules_diff.py --json`): not diffed, out of date (older than a rules page or the script), or N paragraphs to read against the book before (the number under the cell while there is no addendum) |
 | Reading copy | files | `reading.txt` and `items-reading.txt` newer than `book.js` (not a checklist step) |
 | 5 Item table | files | `items-<code>.js` registered in `main.js` `ITEM_TABLES`, and `check-items.json` (from `check_items.mjs --json`) clean and newer than the table and `book.js`. A table that still starts with the draft's line (`// DRAFT by tools/items_draft.mjs`) is not done, however clean |
 | 6 Test play | hand | marked. Until then it shows the walk (`walk.json`, from `walk_book.mjs --json`): not walked, out of date (older than `book.js`, the item table or the engine), N sections to look at (by id), or nothing to look at with how many sections were reached; the play-through and its mark stay the agent's. Once marked, the walk's line is shown beside the mark |
@@ -114,6 +114,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `import` | `import_projectaon.py <code>` (books the importer knows) | yes, every time: it rewrites `book.js` |
 | `reading` | `reading_copy.py <code>`, then `item_sections.py <code>` | |
 | `phrasings-scan` | `phrasings_scan.py <code> --json`: step 3's leftover scan (importer.md, "The leftover scan"), written to `phrasings.json` beside the book ("Scan phrasings", once imported) | |
+| `rules-diff` | `rules_diff.py <code> --json`: step 4's diff (below, Scripts), written to `rules-diff.json`, `rules-diff.txt` and `rules-draft.md` beside the book ("Diff rules", once the rules pages are on disk) | |
 | `walk` | `node walk_book.mjs <code> --json`: step 6's walk (rules-engine.md, "The walk"), written to `walk.json` beside the book ("Walk the book", once imported) | |
 | `items-draft` | `node items_draft.mjs <code>`: step 5's draft (items.md, "The draft"); with a table already there, only `items-draft.js` beside the book and the comparison | |
 | `check-items` | `node check_items.mjs <code> --json` | |
@@ -154,6 +155,14 @@ downloads and imports still need the owner's word (AGENTS.md).
 - `python tools/phrasings_scan.py <code>`: step 3's scan of what the importer left as text (ADR 0036;
   `docs/reference/importer.md`, "The leftover scan"); `--json` also writes `phrasings.json` beside the book. Kinds and
   section ids only.
+- `python tools/rules_diff.py <code>`: step 4's diff (ADR 0036): each rules page against the previous
+  book's, paragraph by paragraph (same, changed with the numbers that moved, new, gone; the footnotes
+  and errata are the book's own and not compared). `--json` writes beside the book `rules-diff.json`
+  (the figures), `rules-diff.txt` (the changed and new paragraphs, old and new, for the agent) and
+  `rules-draft.md`, a skeleton addendum: what reads with certainty from its usual shape (the gold, "a
+  Random Number" plus N in the Gold Crowns paragraph; the kit, the list above "List the N items you
+  choose"; the footnotes' section ids), every other line and every Engine line a todo. Page names,
+  paragraph numbers and figures only on the console.
 - `node tools/walk_book.mjs <code>`: step 6's walk of the book with the engine, two stand-in characters (ADR 0036;
   `docs/reference/rules-engine.md`, "The walk"); `--json` also writes `walk.json` beside the book. Section ids, counts and
   the engine's own reasons only.

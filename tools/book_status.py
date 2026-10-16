@@ -306,6 +306,16 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
         b['phrasings'] = {'look': look, 'stale': mtime(scan_path) < max(t['bookjs'] or 0, t['importer'] or 0)}
     except (OSError, ValueError, KeyError):
         b['phrasings'] = None
+    # step 4's rules diff (tools/rules_diff.py --json): out of date once a rules page or the script is newer
+    rd_path = os.path.join(d, 'rules-diff.json')
+    try:
+        with open(rd_path, encoding='utf-8') as f:
+            rd = json.load(f)
+        pages = max((mtime(os.path.join(d, p)) or 0 for p in ('gamerulz.htm', 'discplnz.htm', 'equipmnt.htm')), default=0)
+        b['rulesDiff'] = {'look': rd['look'], 'against': rd.get('against'),
+                          'stale': mtime(rd_path) < max(pages, mtime(os.path.join(ROOT, 'tools', 'rules_diff.py')) or 0)}
+    except (OSError, ValueError, KeyError):
+        b['rulesDiff'] = None
     # step 6's walk (tools/walk_book.mjs --json): out of date once book.js, the item table or the engine is newer
     walk_path = os.path.join(d, 'walk.json')
     try:
@@ -356,11 +366,19 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
                            **({} if ph['stale'] else {'num': len(ph['look'])})}
     else:  # none left: the owner's mark (ADR 0036)
         st['phrasings'] = {'state': 'warn', 'ev': f'{said}; yours to mark', 'src': 'hand'}
+    rd = b['rulesDiff']
+    diffed = (None if not b['rulesPage'] else 'Not diffed yet (Diff rules)' if not rd
+              else 'Diff out of date: a rules page is newer (Diff rules)' if rd['stale']
+              else f"Diff: {rd['look']} paragraph{'s' * (rd['look'] != 1)} to read against {rd['against'] or 'nothing'}")
     r = handed(4, 'Addendum in rules-books.md' if b['rulesHeading'] else 'No addendum in rules-books.md')
     if b['rulesHeading'] and r['state'] != 'done':
-        r = {**r, 'state': 'warn', 'ev': 'Addendum written in rules-books.md; not marked checked'}
+        r = {**r, 'state': 'warn', 'ev': 'Addendum written in rules-books.md; not marked checked' + (f'. {diffed}' if diffed else '')}
     elif not b['rulesHeading'] and r['state'] == 'done':
         r = {**r, 'state': 'warn', 'ev': 'Marked done, but there is no "Book N" heading in rules-books.md'}
+    elif not b['rulesHeading'] and diffed:
+        fresh = rd and not rd['stale']
+        r = {**r, 'ev': f"{r['ev']}. {diffed}" + ('; its draft is rules-draft.md (Copy prompt)' if fresh else ''),
+             **({'num': rd['look']} if fresh else {})}
     st['rules'] = r
     # the reading copy is made from book.js: stale once the book is imported again
     if not imp:

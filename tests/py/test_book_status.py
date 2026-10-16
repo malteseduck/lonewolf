@@ -174,6 +174,21 @@ def test_rules_stage(env):
     assert r['state'] == 'warn' and 'there is no "Book N" heading' in r['ev']
 
 
+def test_rules_stage_shows_the_rules_diff(env):
+    env.downloaded(t=100)
+    r = lambda **kw: env.status(**kw)['stages']['rules']
+    assert r()['ev'] == 'No addendum in rules-books.md. Not diffed yet (Diff rules)'
+    # tools/rules_diff.py --json: the paragraphs to read, against the book before
+    env.write(f'data/projectaon/{CODE}/rules-diff.json', json.dumps({'look': 31, 'against': '02fotw'}), 200)
+    assert r() == {'state': 'todo', 'num': 31, 'src': 'hand',
+                   'ev': 'No addendum in rules-books.md. Diff: 31 paragraphs to read against 02fotw; its draft is rules-draft.md (Copy prompt)'}
+    assert r(rules_md='### Book 3, The Caverns of Kalte\n')['ev'] == ('Addendum written in rules-books.md; not marked checked. '
+                                                                       'Diff: 31 paragraphs to read against 02fotw')
+    # a rules page fetched again since: out of date
+    env.touch(f'data/projectaon/{CODE}/gamerulz.htm', 300)
+    assert r()['ev'] == 'No addendum in rules-books.md. Diff out of date: a rules page is newer (Diff rules)'
+
+
 def test_reading_copy_stage(env):
     env.book(t=100)
     s = lambda: env.status()['stages']['reading']
