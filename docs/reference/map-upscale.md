@@ -75,11 +75,19 @@ Commands run from the project root as
    agent does not review the draft, which costs tokens on every map image it looks at; it helps
    only with names the owner asks about). Each entry: `text` (exact, as printed), `box` [x0, y0, x1, y1],
    `where` (its place in words), `small` (hand-lettered), and `retype: true` on every *place name* (erased from the scan and set again in clean type;
-   the draft ticks it on every label except one worded like a label another book's list keeps as
-   drawn, which catches the key and recurring captions; untick the title, banner and the rest, and
-   tick any place name it caught by mistake: a few names are a place on one map and a caption on
-   another). **Copy request for Claude** in step 3 saves the list and copies a ready request for
-   that unticking, to paste into Claude Code (the page cannot reach the agent itself); reload the
+   the draft ticks it on every label except those `captions()` finds are surely not a place name
+   (D8, 2026-10-15): worded like a label two other maps keep as drawn and none has as a place;
+   holding a caption word (map, being, banner, arms, key, legend, scale, miles, leagues); a title's
+   other lines, stacked on a line with "map" or "being" or starting "&" (and a panel caption's on
+   its caption word); and a key's entries, in a column or row with two recurring ones and one step
+   of the key's pitch from them. Scale numbers are not judged. Leave-one-out on Books 1-6 and 12's
+   checked lists it found 64 of the 83 labels the owner left as drawn, and unticked no place
+   name; what it misses is a title with none of those words (Kalte, the Stornlands) and a key entry
+   in a column with fewer than two recurring ones. Untick the rest, and tick any place name it
+   caught by mistake. **Untick captions** in step 3 saves the list and runs the same judgement on it
+   (`map_labels.py retype`), once OCR's wording is corrected: it unticks only, never ticks.
+   **Copy request for Claude** in step 3 saves the list and copies a ready request for what the
+   script missed, to paste into Claude Code (the page cannot reach the agent itself); reload the
    editor after the agent has written the file. The editor groups each label's fields by the step that uses them and hides those that
    do not apply. The **Labels checked** button in step 3 marks this step done (it writes
    `maps/<code>/labels-checked.txt`; drafting again removes it). A name printed over two lines that OCR read as two
@@ -112,7 +120,15 @@ Commands run from the project root as
    with `maps/<code>/style.txt` when the book has one: the default asks for forests and water, and on Book 3
    Gemini painted the snowfields as green woodland and the white sea deep teal (Book 5: the desert
    came back green). Every book 1-12 has one since 2026-10-08, written from its map, key and text
-   (each region's ground, trees as drawn, what must not appear); read it before a book's first round. It asks
+   (each region's ground, trees as drawn, what must not appear); read it before a book's first round.
+   For a new book, `map_labels.py style $L` (the dashboard's "Draft style", once the labels are
+   checked) writes a first `style.txt` where there is none or only its draft: the map's title (the
+   labels `captions()` reads as one) and a stock sentence for each kind of ground the key names
+   (desert, wastelands, snow and ice, volcanoes, marsh, salt lakes, oases, rock spires, mountains,
+   hills, plains, forest, lakes), around the default's look. Its first line, `# DRAFT by
+   tools/map_labels.py style`, names any key entry it had no sentence for; lines starting `#` are
+   left out of the prompt, and the dashboard counts the style done once that line is deleted. The
+   regions' own ground and what must not appear are the agent's to add (the map's Copy prompt). It asks
    for a richly painted repaint (shaded mountains, dense forests, textured water), every label as
    listed, the place names kept in clean sans-serif on clear ground (or as `font.txt`'s second line
    describes them), every object already drawn kept in place, and nothing added (no fruit,
@@ -156,7 +172,8 @@ Commands run from the project root as
 - `tools/map_ocr_paddle.py`: PaddleOCR's reading of a map, run by `map_labels.py` in its own venv,
   `tools/.venv-paddle` (Python 3.12, git-ignored; set-up commands in its docstring). Models in
   `~/.paddlex`.
-- `tools/map_labels.py`: `draft` (OCR boxes for a first list), `prompt` (the Gemini prompt,
+- `tools/map_labels.py`: `draft` (OCR boxes for a first list), `retype` (untick what is surely not
+  a place name on the corrected list), `style` (a first `style.txt`), `prompt` (the Gemini prompt,
   `--lettered` for step 5) and `check` (OCR hint plus the `labels.png` eye-check sheet).
 - `tools/map_measure.py`: measures each lettered label's ink with the same code `map_letter.py` uses and
   stores it as `ink` in `labels.json`, for the map editor's preview.

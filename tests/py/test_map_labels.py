@@ -164,6 +164,69 @@ def test_main_draft_sorts_by_band_and_unticks_retype_for_other_books_captions(tm
     assert '4 boxes, 2 under 0.5 confidence, 1 unticked retype' in capsys.readouterr().out
 
 
+# A made-up map: a stacked title, a key of three columns' worth of entries, a scale, places
+TITLE = [lab('A MAP OF', (400, 20, 600, 50)), lab('THE WESTLANDS', (350, 55, 650, 100)),
+         lab('BEING THE SOUTHERN REALMS', (360, 105, 640, 130))]
+KEY = [lab('KEY', (900, 20, 950, 45)), lab('PLAINS', (910, 60, 990, 85)), lab('HILLS', (910, 120, 980, 145)),
+       lab('TUNDRA', (911, 180, 1000, 205)), lab('SCALE IN MILES', (900, 300, 1000, 320))]
+PLACES = [lab('0 50 100', (900, 330, 1000, 345)),
+          lab('HOLMGARD', (909, 500, 1010, 530)),   # in the key's column, but far below it
+          lab('ARDEN', (100, 400, 200, 430)),
+          lab('TORAN', (100, 600, 200, 630))]
+
+
+def other_keys(root):  # two other maps whose keys keep Plains and Hills as drawn, and one with an Oasis
+    write_labels(root, '02', [lab('Plains', retype=False), lab('Hills', retype=False), lab('Oasis', retype=False)])
+    write_labels(root, '03', [lab('Plains', retype=False), lab('Hills', retype=False), lab('Holm', retype=True)])
+
+
+def test_kept_elsewhere_needs_two_other_maps_and_no_place_of_that_name(tmp_path):
+    mine = write_labels(tmp_path, '01', [])
+    other_keys(tmp_path)
+    write_labels(tmp_path, '04', [lab('Holm', retype=False), lab('Plains', retype=False)])
+    assert map_labels.kept_elsewhere(mine) == {'PLAINS', 'HILLS'}   # Oasis once, Holm a place on 03
+    assert map_labels.kept_elsewhere(mine, skip={'03'}) == {'PLAINS'}
+
+
+def test_main_retype_unticks_title_key_and_scale_but_no_place(tmp_path, monkeypatch, capsys):
+    other_keys(tmp_path)
+    labels = [dict(x, retype=True) for x in TITLE + KEY + PLACES]
+    labels[-1]['retype'] = False                    # the owner's own untick stays
+    mine = write_labels(tmp_path, '01', labels)
+    main_with(monkeypatch, 'retype', mine)
+    got = json.loads(mine.read_text(encoding='utf-8'))
+    assert [x['text'] for x in got if x['retype']] == ['0 50 100', 'HOLMGARD', 'ARDEN']
+    out = capsys.readouterr().out
+    assert '  1 unticked: title' in out and '  6 unticked: in line with the key' in out
+    assert '8 unticked; 3 of 12 labels left as place names' in out
+    assert 'WESTLANDS' not in out                   # numbers and reasons only
+
+
+def test_main_style_drafts_title_and_key_and_never_replaces_the_books_own(tmp_path, monkeypatch, capsys):
+    labels = [dict(x, retype=False) for x in TITLE + KEY] + [dict(x, retype=True) for x in PLACES]
+    labels.append(lab('ROCK SPIRES', (912, 240, 990, 265), retype=False))  # a key entry with no sentence
+    other_keys(tmp_path)
+    mine = write_labels(tmp_path, '01', labels)
+    labels[-1]['text'] = 'ODD GROUND'
+    mine.write_text(json.dumps(labels), encoding='utf-8')
+    main_with(monkeypatch, 'style', mine)
+    first, text = (mine.parent / 'style.txt').read_text(encoding='utf-8').splitlines()
+    assert first.startswith(map_labels.DRAFT) and 'Key entries with no sentence: ODD GROUND.' in first
+    assert text.startswith('Repaint this map of The Westlands being the Southern Realms as a richly')
+    assert 'tundra stay white' in text and 'The hills are' in text and 'The plains are' in text
+    assert 'desert' not in text
+    # the prompt leaves the draft's note out
+    main_with(monkeypatch, 'prompt', mine, tmp_path / 'p.txt')
+    p = (tmp_path / 'p.txt').read_text(encoding='utf-8')
+    assert p.startswith('Repaint this map of The Westlands') and 'DRAFT' not in p
+    # a draft is written again; the book's own style is not
+    main_with(monkeypatch, 'style', mine)
+    (mine.parent / 'style.txt').write_text('Our own look.\n', encoding='utf-8')
+    with pytest.raises(SystemExit):
+        main_with(monkeypatch, 'style', mine)
+    assert (mine.parent / 'style.txt').read_text(encoding='utf-8') == 'Our own look.\n'
+
+
 def test_main_check_prints_the_comparison_and_writes_the_sheet_only_with_a_faithful_map(tmp_path, monkeypatch, capsys):
     lf = write_labels(tmp_path, '01', [lab('HOLM', (10, 10, 60, 30)), lab('RIVER', (10, 35, 60, 55))])
     png(tmp_path / 'aligned.png', np.zeros((60, 100, 3), np.uint8))

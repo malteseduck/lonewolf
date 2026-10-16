@@ -323,7 +323,7 @@ def stage(monkeypatch, name, cmds=(('run',),), timeout=30, **spec):
 
 
 def test_admin_stage_table_has_every_stage_with_the_right_gates():
-    assert set(serve.ADMIN_STAGES) == {'fetch', 'fetch-rules', 'import', 'reading', 'items-draft', 'check-items', 'approve-pictures', 'pictures-draft', 'phrasings-scan', 'rules-diff', 'walk', 'add-book',
+    assert set(serve.ADMIN_STAGES) == {'fetch', 'fetch-rules', 'import', 'reading', 'items-draft', 'check-items', 'approve-pictures', 'pictures-draft', 'phrasings-scan', 'rules-diff', 'walk', 'add-book', 'map-style',
                                        'ills', 'fights-up', 'offline', 'check', 'release',
                                        'setup-venv', 'setup-npm', 'setup-realesrgan', 'setup-ocr'}
     gated = {k for k, v in serve.ADMIN_STAGES.items() if v.get('gated')}
@@ -427,6 +427,16 @@ def test_map_books_and_state(root):
     st, got = jsend('GET', '/api/map/01fftd/state')
     assert st == 200 and got['rounds'] == [2] and got['files']['map.png']['size'] == 3 and 'labels.json' in got['files']
     assert jsend('GET', '/api/map/nope/state') == (404, {'error': 'not a book folder'})
+    assert got['styleDraft'] is False
+    write(str(root / 'maps' / '01fftd' / 'style.txt'), '# DRAFT by tools/map_labels.py style: ...\nRepaint')
+    assert jsend('GET', '/api/map/01fftd/state')[1]['styleDraft'] is True
+
+
+def test_map_retype_step_needs_a_label_list(root):
+    book(root)
+    assert serve.map_commands('retype', '01fftd', {}) == (None, 'no labels.json yet', 404)
+    write(str(root / 'maps' / '01fftd' / 'labels.json'), '[]')
+    assert serve.map_commands('retype', '01fftd', {})[0] == [serve.PY + ['tools/map_labels.py', 'retype', 'maps/01fftd/labels.json']]
 
 
 def test_map_commands_builds_a_step_and_refuses_a_bad_one(root):

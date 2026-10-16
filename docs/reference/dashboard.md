@@ -114,6 +114,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `add-book` | `add_book.py <code>`: a downloaded book the importer does not know gets its `BOOKS` entry ("Add to importer", beside the new-book prompt) | |
 | `import` | `import_projectaon.py <code>` (books the importer knows) | yes, every time: it rewrites `book.js` |
 | `reading` | `reading_copy.py <code>`, then `item_sections.py <code>` | |
+| `map-style` | `map_labels.py style maps/<code>/labels.json`: a first `style.txt` from the label list's title and key (map-upscale.md, step 5), never over the book's own ("Draft style" in the map's steps, once the labels are checked) | |
 | `phrasings-scan` | `phrasings_scan.py <code> --json`: step 3's leftover scan (importer.md, "The leftover scan"), written to `phrasings.json` beside the book ("Scan phrasings", once imported) | |
 | `rules-diff` | `rules_diff.py <code> --json`: step 4's diff (below, Scripts), written to `rules-diff.json`, `rules-diff.txt` and `rules-draft.md` beside the book ("Diff rules", once the rules pages are on disk) | |
 | `walk` | `node walk_book.mjs <code> --json`: step 6's walk (rules-engine.md, "The walk"), written to `walk.json` beside the book ("Walk the book", once imported) | |
@@ -178,6 +179,11 @@ downloads and imports still need the owner's word (AGENTS.md).
 - `python tools/plates_draft.py <code>`: step 7's draft of the fight pictures (ADR 0035, 0036; `docs/reference/items.md`,
   "Fight pictures", "The draft"). `--dry` prints only; `--compare` drafts a book whose pictures are set afresh, without
   its own entries, and counts how often it picks the same picture. Names and file names only.
+- `python tools/map_labels.py retype|style maps/<code>/labels.json`: the map's two drafts (D8, ADR 0036;
+  `docs/reference/map-upscale.md`, steps 2 and 5): `retype` unticks what is surely not a place name
+  (the map editor's Untick captions, step 3), `style` writes a first `style.txt` marked as a draft,
+  which the map's "Style for the prompt" shows as the agent's until its first line is deleted.
+  Label numbers and reasons only on the console.
 - `node tools/check_items.mjs <code> --json` also writes `check-items.json` beside the book.
 - `python tools/offline_check.py --json` prints its figures as one JSON object.
 - `tools/check_all.py`: `npm test` and pytest beside `reimport_all.py`; once the re-import is done,

@@ -23,7 +23,7 @@ Static files as `python -m http.server` serves them, from the project root, plus
                                       work/, named without the folder, and work/map-check-<n>/*, and
                                       maps/<book>/'s labels.json, style.txt, labels-checked.txt, font.txt) with
                                       size and mtime, the Gemini rounds present, the job running, when book.js was written
-    POST /api/map/<book>/run/<step>   run one step: upscale, draft, measure, erase, letter, prompt,
+    POST /api/map/<book>/run/<step>   run one step: upscale, draft, retype, measure, erase, letter, prompt,
                                       check, finish, import. ?round=n for prompt, check, finish;
                                       ?force=1 for draft over an existing list; ?width=n for finish;
                                       ?all=1 for finish to set every place name again when none is ticked reset.
@@ -237,7 +237,12 @@ def map_state(d):
     rounds = sorted({int(m.group(1)) for f in (os.listdir(w) if os.path.isdir(w) else [])
                      if (m := re.fullmatch(r'map-gemini-(\d+)\.(png|jpg|webp)', f))})
     book_js = os.path.join(d, 'book.js')  # when the book was last imported
-    return {'files': files, 'rounds': rounds, 'running': _job[0],
+    style = os.path.join(own, 'style.txt')  # map_labels.py style's draft, until its first line is deleted
+    draft = False
+    if os.path.isfile(style):
+        with open(style, encoding='utf-8') as f:
+            draft = f.readline().startswith('# DRAFT')
+    return {'files': files, 'rounds': rounds, 'running': _job[0], 'styleDraft': draft,
             'book': int(os.stat(book_js).st_mtime * 1000) if os.path.isfile(book_js) else None}
 
 
@@ -282,6 +287,10 @@ def map_commands(step, book, q):
             os.remove(os.path.join(own, 'labels-checked.txt'))
         os.makedirs(own, exist_ok=True)
         return [PY + [t('map_labels.py'), 'draft', f'{wk}/map-2k.png', labels]], None, 0
+    if step == 'retype':  # step 3's Untick captions (D8): unticks what is surely not a place name
+        if not os.path.isfile(os.path.join(MAPS, book, 'labels.json')):
+            return None, 'no labels.json yet', 404
+        return [PY + [t('map_labels.py'), 'retype', labels]], None, 0
     if step == 'measure':
         return [PY + [t('map_measure.py'), f'{wk}/map-2k.png', labels]], None, 0
     if step == 'erase':
@@ -433,6 +442,8 @@ ADMIN_STAGES = {
     'walk': {'title': 'Walk the book', 'folder': True, 'timeout': 300, 'cmds': lambda c: [['node', 'tools/walk_book.mjs', c, '--json']]},
     # step 4's diff (ADR 0036): reads the rules pages, writes only rules-diff.json, .txt and rules-draft.md beside the book
     'rules-diff': {'title': 'Diff rules', 'folder': True, 'timeout': 120, 'cmds': lambda c: [PY + ['tools/rules_diff.py', c, '--json']]},
+    # the map's style draft (D8, ADR 0036): title and key from the label list, into maps/<code>/style.txt, never over the book's own
+    'map-style': {'title': 'Draft map style', 'folder': True, 'timeout': 60, 'cmds': lambda c: [PY + ['tools/map_labels.py', 'style', f'maps/{c}/labels.json']]},
     # step 3's scan (ADR 0036): reads book.js, writes only phrasings.json beside it
     'phrasings-scan': {'title': 'Scan phrasings', 'folder': True, 'timeout': 120, 'cmds': lambda c: [PY + ['tools/phrasings_scan.py', c, '--json']]},
     # Real-ESRGAN on the PC: fetches nothing, writes only <name>-2x.webp beside each original (ADR 0033)
