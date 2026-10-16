@@ -151,7 +151,7 @@ carried one picks one more (or `first` if it has none in this series yet). Choos
 asks for three weapons; a character that already has it picks one more. A new Magnakai character
 is given all ten Kai disciplines. A new character at Book 2 or later starts with nothing but the
 book's kit. Then, where the book has a kit (`LW.KITS`; not for a carried character in Book 11),
-a second step (`KitSetup`): the gold (10 + a Random Number added, at most 50; from Book 6 the rest
+a second step (`KitSetup`): the gold (the kit's `gold`, 10 if absent, + a Random Number added, at most 50; from Book 6 the rest
 goes to `storedGold`, which can be drawn on), the given items (one he has is skipped), the
 "choose N" list ("Choose for me" fills it), his weapons (any may be left behind), and where the
 book allows, Special Items left at or taken from the Monastery. Begin waits until the limits hold

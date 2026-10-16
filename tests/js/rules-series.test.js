@@ -238,9 +238,9 @@ describe('LW.HeroSetup: a carried character', () => {
 });
 
 describe('the starting kits', () => {
-  it('has a kit for Books 2 to 12, not 1', () => {
+  it('has a kit for Books 2 to 13, not 1', () => {
     expect(LW.KITS[1]).toBeUndefined();
-    for (let n = 2; n <= 12; n++) {
+    for (let n = 2; n <= 13; n++) {
       expect(LW.KITS[n].give.length).toBeGreaterThan(0);
       expect(LW.KITS[n].choose).toBeGreaterThan(0);
       expect(LW.KITS[n].from.length).toBeGreaterThanOrEqual(LW.KITS[n].choose);
@@ -250,6 +250,19 @@ describe('the starting kits', () => {
     expect(LW.KITS[2].choose).toBe(2);
     expect(LW.KITS[2].give).toEqual(['map', 'seal']);
     expect(LW.KITS[2].from).toHaveLength(10);
+  });
+});
+
+describe('Book 13 kit', () => {
+  it('is the map of Ruel and any 5 of the nine things the rules page prints, with the Monastery for Special Items and gold', () => {
+    const k = LW.KITS[13];
+    expect(k.give).toEqual(['mapRuel']);
+    expect(k.gold).toBe(20);
+    expect(k.choose).toBe(5);
+    expect(k.from).toEqual(['sword', 'bow', 'quiver', 'axe', { meal: 4 }, 'rope', 'potion', 'spear', 'dagger']);
+    expect(k.store && k.storeGold && !k.newOnly).toBe(true);
+    expect(LW.ITEMS.mapRuel.kind).toBe('special');
+    k.from.filter((x) => typeof x === 'string').forEach((id) => expect(LW.ITEMS[id]).toBeDefined());
   });
 });
 
@@ -280,6 +293,15 @@ describe('LW.KitSetup', () => {
     expect(hero.meals).toBe(2);
     expect(hero.gold).toBe(17);
     expect(hero.storedGold).toBeUndefined();
+  });
+});
+
+describe('Book 13 gold', () => {
+  it('is 20 + the roll, over 50 going to the Monastery', () => {
+    const hero = { cs: 30, ep: 30, epMax: 30, weapons: [], backpack: [], special: [], meals: 0, gold: 40, series: 'kai', disciplines: [] };
+    const k = LW.KitSetup({}, LW.KITS[13], hero);
+    k.rollGold(5);
+    expect(k.gold()).toEqual({ purse: 50, over: 15, bank: 15 });
   });
 });
 

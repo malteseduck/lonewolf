@@ -862,8 +862,8 @@ function setupLeftHTML() {
       ${suFoot(say, h.ready(), h.kit ? 'On to your equipment' : 'Begin')}</div>`;
   }
   const k = SU.k, kit = k.kit, g = k.gold(), hero = k.hero;
-  const gold = k.roll == null ? `${hero.gold} carried, and the book adds 10 + the number drawn.`
-    : `${hero.gold} carried + 10 + ${k.roll}: <em>${g.purse}</em> in your Belt Pouch${g.over ? kit.storeGold ? `, and ${g.over} over its 50 go to the Monastery` : `; it holds 50, so ${g.over} are lost` : ''}.`;
+  const gold = k.roll == null ? `${hero.gold} carried, and the book adds ${kit.gold || 10} + the number drawn.`
+    : `${hero.gold} carried + ${kit.gold || 10} + ${k.roll}: <em>${g.purse}</em> in your Belt Pouch${g.over ? kit.storeGold ? `, and ${g.over} over its 50 go to the Monastery` : `; it holds 50, so ${g.over} are lost` : ''}.`;
   const given = [...k.gifts.map((x) => ({ x, note: 'given' })), ...k.had.map((x) => ({ x, note: 'yours already' }))];
   const say = k.roll == null ? 'Draw your gold.' : k.problems()[0] || (k.chosen.size < kit.choose ? `You may take ${kit.choose - k.chosen.size} more.` : 'Your equipment is ready.');
   const taken = [...k.chosen].map((i) => `<button type="button" class="disc item lit" data-sukit="${i}" title="${esc(kitName(k.from[i]))}" aria-label="Put back ${esc(kitName(k.from[i]))}">${kitArt(k.from[i])}</button>`);

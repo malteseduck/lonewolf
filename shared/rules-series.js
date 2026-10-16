@@ -216,7 +216,7 @@
   LW.readyHero = (out) => { settleCircles(out); out.ep = out.epMax; return out; };
 
   /* ---------- each book's starting kit (rules-books.md, "Book addenda") ----------
-     give: handed over (an item he already has is skipped). choose: how many of `from` he may take; an
+     gold: the book's base gold, 10 if absent; give: handed over (an item he already has is skipped). choose: how many of `from` he may take; an
      entry is an item id, {item, n} or {meal, n, name}. store: Special Items may be left at the Kai
      Monastery (Book 5 on); storeGold: gold over 50 too (Book 6 on). newOnly: a carried character gets
      none of it (Book 11). wear: clothing the engine does not track. Book 1's kit is makeHero's. */
@@ -234,6 +234,7 @@
     10: magnakai('mapGhatan', 'alether'),
     11: { give: [{ meal: 2 }], choose: 6, from: later, newOnly: true },
     12: { give: ['mapDarklands'], choose: 6, from: [...later.filter((x) => !x.meal), { meal: 4 }, 'quarterstaff', 'axe'], store: true, storeGold: true, wear: 'cold-weather clothing and a waterproof cape' },
+    13: { give: ['mapRuel'], gold: 20, choose: 5, from: ['sword', 'bow', 'quiver', 'axe', { meal: 4 }, 'rope', 'potion', 'spear', 'dagger'], store: true, storeGold: true },
   };
   const entry = (x) => (typeof x === 'string' ? { item: x, n: 1 } : Object.assign({ n: 1 }, x));
   const entryName = (x) => (x.meal ? x.name || (x.meal > 1 ? `${x.meal} Meals` : 'a Meal') : x.n > 1 ? `${x.n} × ${LW.itemName(x.item)}` : LW.itemName(x.item));
@@ -254,7 +255,7 @@
       rollGold(n = LW.rand10()) { if (this.roll == null) this.roll = n; return this.roll; },
       /* the Belt Pouch after the book's 10 + the roll, what is over its 50, and the gold at the Monastery */
       gold() {
-        const all = hero.gold + 10 + (this.roll || 0), purse = Math.min(50, all), over = all - purse;
+        const all = hero.gold + (kit.gold || 10) + (this.roll || 0), purse = Math.min(50, all), over = all - purse;
         return { purse, over, bank: (hero.storedGold || 0) + (kit.storeGold ? over : 0) };
       },
       picks() { return [...this.chosen].map((i) => from[i]); },
