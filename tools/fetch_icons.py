@@ -8,7 +8,9 @@ new name under its author in assets/icons/README.txt. Downloading icons for a ne
 the owner's go-ahead (CLAUDE.md). To find a name, search https://game-icons.net, or try likely
 names with this tool: a missing one prints "not found".
 """
-import os, re, sys, urllib.error, urllib.request
+import os, sys, urllib.error, urllib.request
+
+from item_icons import strip
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'assets', 'icons')
 for arg in sys.argv[1:]:
@@ -18,7 +20,7 @@ for arg in sys.argv[1:]:
     except urllib.error.HTTPError:
         print('not found', arg)
         continue
-    svg = re.sub(r'<path d="M0 0h512v512H0z"\s*/>', '', svg).replace(' fill="#fff"', '')
+    svg = strip(svg)
     name = arg.split('/')[-1]
     with open(os.path.join(OUT, name + '.svg'), 'w', encoding='utf-8') as f:
         f.write(svg)

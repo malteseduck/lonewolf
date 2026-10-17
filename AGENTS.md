@@ -115,6 +115,15 @@ the main model: deciding what to change, reading the books' rules, design and la
 pictures by eye, and anything the owner is waiting to discuss. Do not split a small step off when
 explaining it would cost more than doing it.
 
+## Separate sessions work in a worktree (ADR 0041)
+
+A new session started for a separate piece of work (not this one's own task) runs in its own git
+worktree, on its own branch, never in the main checkout. It commits only when the owner asks; when it
+does, it also merges the branch back into `main` with any conflicts resolved (both sides' changes kept, then `npm test` and
+`uv run --project tools python -m pytest` run again on the result); the worktree's session does the
+merge itself (in the app, its `sync_with_base_branch` brings `main` in first). Nothing is pushed and
+no release is made: those stay the owner's call.
+
 ## Hard rules
 
 - **No book content in the repository or in your output.** Project Aon's text and images live in

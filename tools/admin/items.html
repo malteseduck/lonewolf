@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Items</title>
+<link rel="stylesheet" href="admin.css">
+<script type="module" src="parchment.js"></script>
+<style>
+  :root { --enamel: #2f211a; --enamel-lo: #140c08; --pewter: #8a7b64; --pewter-lo: #4a3f31; --silver-hi: #fbf8f0; --silver: #cdc6b6; --silver-lo: #7d766a; }
+  .sheet-top { display: flex; gap: 12px; align-items: center; padding: 16px 24px 8px; flex-wrap: wrap; }
+  .sheet-top .sum { color: var(--dim); flex: 1; min-width: 20em; }
+  .sheet-top input { font: inherit; background: rgba(255, 248, 226, .5); color: var(--fg); border: 1px solid var(--line); border-radius: 4px; padding: 4px 8px; width: 18em; }
+  .note { margin: 0 24px 6px; color: var(--dim); font-size: 12px; }
+  h2.group { margin: 14px 24px 0; font: 18px var(--title); color: var(--rubric); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; padding: 8px 24px 16px; }
+  /* the book's tan, as the other sheets */
+  .card { background: linear-gradient(#e2d3aa, #cfbb89); color: var(--ink); border-radius: 3px; padding: 10px; box-shadow: 0 2px 8px rgba(40, 24, 10, .45); display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 4px 12px; }
+  .card[hidden] { display: none; }
+  .card.dflt { box-shadow: inset 0 0 0 2px var(--warn), 0 2px 8px rgba(40, 24, 10, .45); }
+  .card .look { display: grid; gap: 6px; justify-items: center; align-content: start; }
+  .card b { font: 16px var(--title); }
+  .card small, .card .ln { display: block; color: #6b553c; font-size: 12px; }
+  .card .about { font-size: 13px; margin: 4px 0; }
+  .card .chips { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0; }
+  .card .chips span { font-size: 11px; background: rgba(51, 35, 26, .1); border: 1px solid var(--line-lo); border-radius: 3px; padding: 0 5px; }
+  .card .ln em { font-style: normal; color: var(--ink); }
+  .card .ln.warn { color: var(--warn); }
+  .card .tools { margin-top: 6px; }
+  .card .tools button { font-size: 12px; padding: 2px 8px; }
+
+  /* an icon as the inventory draws it: silver on enamel in a pewter ring (index.html .disc.item) */
+  .disc { --s: 52px; width: var(--s); height: var(--s); border-radius: 50%; display: grid; place-items: center; flex: none;
+    background: radial-gradient(circle closest-side, var(--enamel) 0, var(--enamel-lo) 76%, #0c0705 77% 79%, transparent 80%),
+      radial-gradient(circle closest-side, transparent 0 89%, rgba(20, 12, 8, .7) 90% 92%, transparent 93%),
+      radial-gradient(circle at 40% 25%, rgba(255, 245, 220, .35), transparent 60%),
+      repeating-conic-gradient(var(--pewter) 0 5deg, var(--pewter-lo) 5deg 7.5deg, var(--pewter) 7.5deg 10deg), var(--pewter);
+    box-shadow: 0 0 0 1px var(--enamel-lo), 0 2px 5px rgba(0, 0, 0, .45); }
+  .disc i, .bare i { display: block; -webkit-mask: var(--g) center / contain no-repeat; mask: var(--g) center / contain no-repeat; }
+  .disc i { width: 56%; height: 56%; background: linear-gradient(var(--silver-hi), var(--silver) 55%, var(--silver-lo)); }
+  /* and large, in ink, to see its drawing */
+  .bare { width: 64px; height: 64px; display: grid; }
+  .bare i { width: 100%; height: 100%; background: var(--ink); }
+  body.embed { padding: 0; }
+  body.embed::before, body.embed::after { display: none; }
+
+  /* the icon picker */
+  #ed { max-width: min(1200px, 96vw); width: 96vw; box-sizing: border-box; }
+  #ed .head { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+  #ed .head h2 { margin: 0; flex: 1; }
+  #ed .pair { display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--dim); }
+  #ed .pair figure { margin: 0; display: grid; justify-items: center; gap: 4px; }
+  #ed .pair .bare { width: 80px; height: 80px; }
+  #ed .tabs { display: flex; gap: 6px; margin: 12px 0 6px; }
+  #ed .tabs button[aria-selected=true] { outline: 2px solid var(--blood); }
+  #ed .bar { display: flex; gap: 8px; margin: 6px 0; flex-wrap: wrap; align-items: center; }
+  #ed .bar input, #ed .bar select { font: inherit; background: rgba(255, 248, 226, .5); color: var(--fg); border: 1px solid var(--line); border-radius: 4px; padding: 4px 8px; }
+  #ed .bar input { flex: 1; min-width: 160px; }
+  #ed .count { color: var(--dim); font-size: 12px; }
+  /* min-width: 0 over admin.css's .grid, the dashboard's table */
+  #ed .grid { min-width: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; max-height: 56vh; overflow: auto; padding: 2px; }
+  #ed .it { min-width: 0; background: rgba(255, 248, 226, .4); color: var(--ink); border: 2px solid var(--line-lo); border-radius: 3px; padding: 6px 4px 4px; cursor: pointer; font: inherit; font-size: 11px; display: grid; justify-items: center; gap: 3px; }
+  #ed .it:hover { border-color: var(--bronze); }
+  #ed .it.sel { border-color: var(--blood); background: rgba(125, 29, 20, .1); }
+  #ed .it .bare { width: 44px; height: 44px; }
+  #ed .it span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #ed .it .who { color: #6b553c; }
+  #ed .it .here { color: var(--blood); }
+  #ed menu { display: flex; gap: 8px; padding: 0; margin: 12px 0 0; align-items: center; }
+  #ed menu .sp { flex: 1; font-size: 12px; color: var(--dim); }
+</style>
+</head>
+<body>
+<header class="sheet-top">
+  <span class="sum" id="sum">Reading the item tables...</span>
+  <input type="search" id="q" placeholder="Filter: name, id, icon..." aria-label="Filter">
+</header>
+<p class="note">Every item the book's table defines, then the ones from elsewhere (the engine's, another book's) its sections name, each
+  with its icon as the inventory draws it and large. A card ringed in brown shows its kind's default icon: none is chosen for it.
+  Change icon... picks another, from the icons here or from game-icons.net (fetched into <code>assets/icons/</code> and credited in its
+  README); the item's <code>glyph</code> is rewritten in its table, or in <code>itemglyphs.js</code> for the engine's own items, which every book shares.</p>
+<div id="groups"></div>
+
+<dialog id="ed">
+  <div class="head">
+    <h2 id="ed-title"></h2>
+    <div class="pair"><figure id="ed-now"></figure><span>&rarr;</span><figure id="ed-new"></figure></div>
+  </div>
+  <div class="tabs" role="tablist">
+    <button role="tab" data-tab="local" aria-selected="true">On this PC</button>
+    <button role="tab" data-tab="remote" aria-selected="false">game-icons.net</button>
+  </div>
+  <div class="bar">
+    <input type="search" id="ed-q" placeholder="Filter by name (key, jar, scroll...)" aria-label="Filter icons">
+    <select id="ed-who" aria-label="Author"></select>
+    <span class="count" id="ed-n"></span>
+  </div>
+  <div class="grid" id="ed-grid"></div>
+  <menu>
+    <span class="sp" id="ed-hint"></span>
+    <button id="ed-cancel">Cancel</button>
+    <button id="ed-save" disabled>Use this icon</button>
+  </menu>
+</dialog>
+<div class="toast" id="toast" hidden></div>
+
+<script type="module">
+import { cards, glyphUsers, HOW } from './itemsheet.js';
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const params = new URLSearchParams(location.search);
+const code = params.get('book') || '';
+// like the other sheets, it opens only inside the dashboard (ADR 0021)
+if (!(params.get('embed') === '1' && window.parent !== window)) {
+  document.body.innerHTML = '<p style="padding:24px">This page opens only inside the import dashboard, <a href="/tools/admin/">/tools/admin/</a>.</p>';
+  throw new Error('not embedded');
+}
+document.body.classList.add('embed');
+const icon = (name, cls = 'bare') => `<span class="${cls}"><i style="--g:url(/assets/icons/${encodeURIComponent(name)}.svg)"></i></span>`;
+const remoteIcon = (path) => `<span class="bare"><i style="--g:url(/api/admin/icons/preview?path=${encodeURIComponent(path)})"></i></span>`;
+let tables = {}, books = [], local = [], authors = {}, list = [], users = {}, glyphName, ITEM_GLYPH, stamp = Date.now();
+
+function script(src) {
+  return new Promise((ok, bad) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = bad; document.head.append(s); });
+}
+const bookName = (c) => { const b = books.find((x) => x.code === c); return b ? `Book ${b.number}` : c; };
+
+// the engine's items once; the tables and the glyph list afresh after each change (a new address passes the module cache)
+async function loadEngine() {
+  for (const f of ['core.js', 'ui.js', 'rules-series.js']) await script(`/shared/${f}`);
+  books = await fetch('/api/map/books', { cache: 'no-store' }).then((r) => r.json()).catch(() => []);
+}
+async function loadTables() {
+  stamp = Date.now();
+  ({ glyphName, ITEM_GLYPH } = await import(`/itemglyphs.js?v=${stamp}`));
+  const icons = await fetch('/api/admin/icons', { cache: 'no-store' }).then((r) => r.json());
+  local = icons.local;
+  tables = {};
+  await Promise.all(icons.tables.map(async (c) => { tables[c] = await import(`/items/items-${c}.js?v=${stamp}`); }));
+  for (const t of Object.values(tables)) window.LW.addItems(t.ITEMS, t.MARKS);
+  authors = Object.fromEntries(local.map((i) => [i.name, i.author]));
+  users = glyphUsers(Object.keys(window.LW.ITEMS), (id) => glyphName(window.LW, id));
+}
+
+function render() {
+  if (!tables[code]) { $('#sum').textContent = `No item table for ${code} yet (step 5).`; return; }
+  const LW = window.LW;
+  list = cards(code, tables, LW.ITEMS, (id) => glyphName(LW, id), (id) => id in ITEM_GLYPH || !!LW.ITEMS[id]?.glyph);
+  const own = list.filter((c) => c.home === code), dflt = list.filter((c) => !c.named);
+  const shared = own.filter((c) => own.some((d) => d !== c && d.glyph === c.glyph));
+  $('#sum').textContent = `${own.length} items of its own, ${list.length - own.length} from elsewhere; ${dflt.length} with their kind's default icon, `
+    + `${shared.length} sharing an icon with another of its own; ${local.length} icons on this PC.`;
+  const card = (c, i) => {
+    const it = c.item || {}, kind = it.kind || '?';
+    const extra = Object.entries(it).filter(([k]) => !['name', 'kind', 'glyph', 'about'].includes(k))
+      .map(([k, v]) => `<span>${esc(k)}${v === true ? '' : ' ' + esc(typeof v === 'object' ? JSON.stringify(v) : v)}</span>`).join('');
+    const where = Object.entries(c.used).map(([how, s]) => `<span class="ln">${esc(HOW[how] || how)}: <em>${esc(s.join(', '))}</em></span>`).join('');
+    const same = (users[c.glyph] || []).filter((id) => id !== c.id);
+    const home = c.home === code ? 'this book' : c.home === 'engine' ? 'the engine (every book)' : c.home ? bookName(c.home) : 'nowhere: an unknown id';
+    return `<div class="card ${c.named ? '' : 'dflt'}" data-i="${i}" data-q="${esc([it.name, c.id, c.glyph].join(' ').toLowerCase())}">
+      <div class="look">${icon(c.glyph, 'disc')}${icon(c.glyph)}</div>
+      <div><b>${esc(it.name || c.id)}</b><small>${esc(c.id)} · ${esc(kind)} · from ${esc(home)}</small>
+        ${extra ? `<div class="chips">${extra}</div>` : ''}
+        ${it.about ? `<div class="about">${esc(it.about)}</div>` : ''}
+        ${where || '<span class="ln warn">named in none of this book\'s sections</span>'}
+        ${c.books.length ? `<span class="ln">also in: <em>${esc(c.books.map(bookName).join(', '))}</em></span>` : ''}
+        <span class="ln ${c.named ? '' : 'warn'}">icon: <em>${esc(c.glyph)}</em>${authors[c.glyph] ? ` (${esc(authors[c.glyph])})` : ''}${c.named ? '' : `, its kind's default`}${c.glyph in authors ? '' : ' <b style="color:var(--blood)">file missing</b>'}</span>
+        ${same.length ? `<span class="ln">same icon: <em>${esc(same.map((id) => LW.itemName(id)).slice(0, 8).join(', '))}${same.length > 8 ? ` and ${same.length - 8} more` : ''}</em></span>` : ''}
+        <div class="tools"><button data-i="${i}">Change icon...</button></div></div></div>`;
+  };
+  const groups = [['Its own items', list.filter((c) => c.home === code)], ['From elsewhere', list.filter((c) => c.home !== code)]];
+  $('#groups').innerHTML = groups.filter(([, l]) => l.length).map(([t, l]) => `<h2 class="group">${t}</h2><main class="cards">${l.map((c) => card(c, list.indexOf(c))).join('')}</main>`).join('');
+  filter();
+}
+function filter() {
+  const q = $('#q').value.trim().toLowerCase();
+  document.querySelectorAll('.card').forEach((c) => { c.hidden = !!q && !c.dataset.q.includes(q); });
+}
+$('#q').addEventListener('input', filter);
+$('#groups').addEventListener('click', (e) => { const b = e.target.closest('button[data-i]'); if (b) pick(list[+b.dataset.i]); });
+
+// ---------- the picker ----------
+const ed = { card: null, tab: 'local', sel: null, remote: null };
+function pick(c) {
+  ed.card = c; ed.sel = null;
+  $('#ed-title').textContent = `${c.item?.name || c.id}: its icon`;
+  $('#ed-now').innerHTML = `${icon(c.glyph)}<span>now: ${esc(c.glyph)}</span>`;
+  $('#ed-hint').textContent = c.home === 'engine' ? 'An engine item: the change is written to itemglyphs.js, for every book.'
+    : c.home !== code ? `Defined in ${bookName(c.home)}'s table: the change is written there.` : '';
+  $('#ed-q').value = '';
+  showNew();
+  tab(ed.tab);
+  $('#ed').showModal();
+  $('#ed-q').focus();
+}
+function showNew() {
+  const s = ed.sel;
+  $('#ed-new').innerHTML = s ? `${s.remote ? remoteIcon(s.remote) : icon(s.name)}<span>${esc(s.remote || s.name)}</span>` : '<span class="bare"></span><span>pick one below</span>';
+  $('#ed-save').disabled = !s || (!s.remote && s.name === ed.card.glyph);
+  $('#ed-save').textContent = s?.remote ? 'Fetch and use this icon' : 'Use this icon';
+}
+async function tab(t) {
+  ed.tab = t;
+  document.querySelectorAll('#ed .tabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
+  let who;
+  if (t === 'remote') {
+    if (!ed.remote) {
+      $('#ed-grid').textContent = 'Asking game-icons.net for its list...';
+      const r = await fetch('/api/admin/icons/remote', { cache: 'no-store' }).catch(() => null);
+      const j = r ? await r.json().catch(() => ({})) : {};
+      if (!r || !r.ok) { $('#ed-grid').textContent = `No list: ${j.error || 'the server did not answer'}`; return; }
+      ed.remote = j;
+    }
+    who = [...new Set(ed.remote.paths.map((p) => p.split('/')[0]))];
+  } else who = [...new Set(local.map((i) => i.author).filter(Boolean))].sort();
+  $('#ed-who').innerHTML = '<option value="">Every author</option>' + who.map((w) => `<option>${esc(w)}</option>`).join('');
+  grid();
+}
+function grid() {
+  const q = $('#ed-q').value.trim().toLowerCase(), who = $('#ed-who').value;
+  let hits, html;
+  if (ed.tab === 'local') {
+    // by name, or by the items that show it (filter "jar" finds the icons the jars use)
+    hits = local.filter((i) => (!who || i.author === who) && (!q || i.name.includes(q) || (users[i.name] || []).some((id) => window.LW.itemName(id).toLowerCase().includes(q))));
+    html = hits.slice(0, 400).map((i) => {
+      const n = (users[i.name] || []).length;
+      return `<button class="it ${ed.sel && !ed.sel.remote && ed.sel.name === i.name ? 'sel' : ''}" data-name="${esc(i.name)}" title="${esc(i.name + (n ? '\n' + users[i.name].map((id) => window.LW.itemName(id)).join(', ') : ''))}">
+        ${icon(i.name)}<span>${esc(i.name)}</span><span class="who">${n ? `${n} item${n > 1 ? 's' : ''}` : 'unused'}</span></button>`;
+    }).join('');
+  } else {
+    const here = new Set(local.map((i) => `${i.author}/${i.name}`));
+    hits = ed.remote.paths.filter((p) => (!who || p.startsWith(who + '/')) && (!q || p.split('/')[1].includes(q)));
+    html = hits.slice(0, 240).map((p) => `<button class="it ${ed.sel?.remote === p ? 'sel' : ''}" data-remote="${esc(p)}" title="${esc(p)}">
+        ${remoteIcon(p)}<span>${esc(p.split('/')[1])}</span><span class="${here.has(p) ? 'here' : 'who'}">${here.has(p) ? 'on this PC' : esc(p.split('/')[0])}</span></button>`).join('');
+  }
+  const cap = ed.tab === 'local' ? 400 : 240;
+  $('#ed-n').textContent = `${hits.length} of ${ed.tab === 'local' ? local.length : ed.remote.paths.length}` + (ed.tab === 'remote' ? ` (list of ${ed.remote.fetched})` : '');
+  $('#ed-grid').innerHTML = html + (hits.length > cap ? `<p class="count">${hits.length - cap} more: filter to narrow.</p>` : '') || '<p class="count">None.</p>';
+}
+document.querySelectorAll('#ed .tabs button').forEach((b) => { b.onclick = () => tab(b.dataset.tab); });
+$('#ed-q').addEventListener('input', () => ed.tab === 'remote' && !ed.remote ? null : grid());
+$('#ed-who').addEventListener('change', grid);
+$('#ed-grid').addEventListener('click', (e) => {
+  const b = e.target.closest('.it');
+  if (!b) return;
+  ed.sel = b.dataset.remote ? { remote: b.dataset.remote } : { name: b.dataset.name };
+  document.querySelectorAll('#ed .it.sel').forEach((x) => x.classList.remove('sel'));
+  b.classList.add('sel');
+  showNew();
+});
+$('#ed-grid').addEventListener('dblclick', (e) => { if (e.target.closest('.it') && !$('#ed-save').disabled) save(); });
+$('#ed-cancel').onclick = () => $('#ed').close();
+$('#ed-save').onclick = save;
+async function save() {
+  const s = ed.sel, c = ed.card;
+  $('#ed-save').disabled = true;
+  try {
+    const r = await fetch('/api/admin/item-glyph', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ item: c.id, ...(s.remote ? { remote: s.remote } : { glyph: s.name }) }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) return toast(j.error || `Not saved (${r.status})`, 7000);
+    $('#ed').close();
+    await loadTables();
+    render();
+    toast(`${c.item?.name || c.id}: ${j.glyph}, written to ${j.file}${j.was ? ` (was ${j.was})` : ''}`, 5000);
+    window.parent.postMessage({ itemSheet: 'changed', book: code }, location.origin);
+  } finally { showNew(); }
+}
+
+let toastTimer;
+function toast(t, ms = 3000) {
+  const el = $('#toast'); el.textContent = t; el.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, ms);
+}
+
+(async () => {
+  if (!/^[\w-]{1,40}$/.test(code)) { $('#sum').textContent = 'No book given.'; return; }
+  try { await loadEngine(); await loadTables(); } catch (e) { $('#sum').textContent = `Could not read the tables: ${e.message}`; return; }
+  render();
+})();
+</script>
+</body>
+</html>

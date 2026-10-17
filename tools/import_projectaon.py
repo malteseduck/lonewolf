@@ -24,6 +24,7 @@ BOOKS = {  # code: (number, series, title)
     '09tcof': (9, 'magnakai', 'The Cauldron of Fear'), '10tdot': (10, 'magnakai', 'The Dungeons of Torgar'),
     '11tpot': (11, 'magnakai', 'The Prisoners of Time'), '12tmod': (12, 'magnakai', 'The Masters of Darkness'),
     '13tplor': (13, 'grandmaster', 'The Plague Lords of Ruel'),
+    '14tcok': (14, 'grandmaster', 'The Captives of Kaag'),
 }
 DISC = {'camouflage': 'camouflage', 'hunting': 'hunting', 'sixth sense': 'sixthSense', 'tracking': 'tracking', 'healing': 'healing',
         'weaponskill': 'weaponskill', 'mindshield': 'mindshield', 'mindblast': 'mindblast', 'animal kinship': 'animalKinship',

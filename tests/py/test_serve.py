@@ -486,3 +486,24 @@ def test_picture_by_address_and_a_link_for_one_already_here(root, monkeypatch, t
     assert st == 200 and art_sources.load()['art/plates/rat.png'] == {'url': None}
     st, _ = jsend('POST', '/api/admin/art-link', {'src': 'art/plates/none.png', 'url': None})
     assert st == 400  # only a picture that is here
+
+
+# ---------------------------------------------------------------- the item sheet's icons
+
+def test_item_sheet_icons_listed_previewed_and_an_item_glyph_changed(root, monkeypatch):
+    import item_icons
+    monkeypatch.setattr(item_icons, 'ROOT', str(root))
+    write(str(root / 'assets' / 'icons' / 'README.txt'), '  by Lorc (https://lorcblog.blogspot.com):\n    key\n')
+    write(str(root / 'assets' / 'icons' / 'key.svg'), '<svg/>')
+    write(str(root / 'items' / 'items-01fftd.js'), "export const ITEMS = {\n  gem1: { name: 'Gem', kind: 'special', glyph: 'key' },\n};\n")
+    write(str(root / 'itemglyphs.js'), "export const ITEM_GLYPH = {\n  dagger: 'key',\n};\n")
+    monkeypatch.setattr(item_icons, '_get', lambda url: b'<svg><path d="M0 0h512v512H0z"/><path fill="#fff" d="M1 1"/></svg>')
+    assert jsend('GET', '/api/admin/icons') == (200, {'local': [{'name': 'key', 'author': 'lorc'}], 'tables': ['01fftd']})
+    h = ask('GET', '/api/admin/icons/preview?path=lorc/crown')
+    assert h.status == 200 and h.out == b'<svg><path d="M1 1"/></svg>'
+    assert jsend('GET', '/api/admin/icons/preview?path=../x')[0] == 400
+    st, got = jsend('POST', '/api/admin/item-glyph', {'item': 'gem1', 'remote': 'lorc/crown'})
+    assert (st, got) == (200, {'file': 'items/items-01fftd.js', 'was': 'key', 'glyph': 'crown'})
+    assert "glyph: 'crown'" in open(root / 'items' / 'items-01fftd.js', encoding='utf-8').read()
+    assert jsend('POST', '/api/admin/item-glyph', {'item': 'gem1', 'glyph': 'missing'})[0] == 400
+    assert jsend('POST', '/api/admin/item-glyph', {'item': 'gem1', 'glyph': 'key'}, addr='192.168.1.5')[0] == 403

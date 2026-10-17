@@ -31,5 +31,7 @@ its white fill were removed, so the page can use the shape as a mask.
   by Caro Asercion:
     for Book 13 (fetched 2026-10-17): mason-jar
 
-Which glyph stands for what is DISC_GLYPH, ITEM_GLYPH and TAB_ART in main.js.
+Which glyph stands for what is DISC_GLYPH and TAB_ART in main.js, ITEM_GLYPH in itemglyphs.js, and each
+book item's glyph in its item table. The dashboard's item sheet (tools/admin/items.html) changes an item's
+glyph and fetches new ones, adding them here under their author.
 The map tab's compass rose is not from this set: it is drawn in main.js (ROSE).

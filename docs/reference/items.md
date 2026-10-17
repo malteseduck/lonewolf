@@ -179,6 +179,10 @@ guess. Add each to `assets/icons/README.txt` under its author. Book 1's: cut-dia
 Gem), gems, key, skeleton-key, scroll-unfurled, scroll-quill, gem-necklace (Crystal Star
 Pendant), standing-potion (Alether), soap, torch, flint-spark (Tinderbox), backpack.
 
+Once the table exists, the dashboard's item sheet (step 5, "Open item sheet"; ADR 0042) shows every
+item with its icon, and the owner changes one there, from the icons here or from game-icons.net
+(fetched and credited the same way).
+
 ### 5. Check
 
 `node tools/check_items.mjs <book>`: errors (sections, choices, items or icons that do not exist,

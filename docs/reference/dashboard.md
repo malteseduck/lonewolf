@@ -43,6 +43,20 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   by side at one size; "1:1" draws both at the upscale's own pixels (the original stretched by the
   browser, as the player would) and the two scroll together; the arrow keys go to the next picture.
   It only looks: nothing on it changes a file.
+- **The item sheet** ("Open item sheet" at step 5, once the book has a table; ADR 0042), inline like the
+  others and only there (`tools/admin/items.html`, its reading of the tables in `itemsheet.js`): the
+  book's own items, then those from elsewhere its sections name (the engine's, another book's), each
+  with its icon as the inventory draws it and large, its id, kind and other fields, its `about`, the
+  sections that offer, give, take or test it (by the section's field), the other books whose tables
+  have or name it, and the items sharing its icon; a card showing its kind's default icon is ringed.
+  A filter narrows the cards. Change icon... opens a picker: "On this PC" (every icon in
+  `assets/icons/`, with how many items show it; the filter also matches those items' names) or
+  "game-icons.net" (the repository's whole list, by name and author, previews through the server).
+  Use this icon writes the item's `glyph` (`tools/item_icons.py`): in its entry in the book's table,
+  in another book's table for an item from there, or in `itemglyphs.js` for the engine's own (every
+  book's). One from game-icons.net is first saved to `assets/icons/` (square removed; `name-author`
+  if another author's icon has the name) and credited in its README, on its author's "picked on the
+  item sheet" line.
 - **Setup** (ADR 0036), above the tools: what the tools need on this PC, from `tools/setup.py`. One line
   while everything is there ("Show" opens it); a row per part, open, while any is missing: uv and
   Node (yours to install), the Python packages (`tools/.venv`, from `tools/pyproject.toml` and `uv.lock`), the npm
@@ -105,6 +119,10 @@ agent run `show` instead).
 | `POST picture-url` | `{url}`: the picture at an address, or the one its page names (`og:image`), fetched by `tools/art_sources.py`: `{type, data}` (base64); the page shrinks and saves it as a dropped file |
 | `POST art-link` | `{src, url}` (`url` null: no link): the link of a picture already in `art/`, into `art/sources.json` |
 | `GET ills?book=<code>` | the illustration sheet's list, `ill_upscale.listing()`: `[{name, bytes, big, bigBytes, sections}]`, file names, sizes and section ids only |
+| `GET icons` | the item sheet: `{local: [{name, author}], tables: [code]}`, the icons in `assets/icons/` with their authors from its README, and the books with an item table |
+| `GET icons/remote` (`?refresh=1`) | every icon at game-icons.net, `{fetched, paths: ['author/name']}`, from the GitHub repository's tree, kept in `data/reference/game-icons/tree.json` after the first ask |
+| `GET icons/preview?path=<author/name>` | that icon as SVG, square removed, kept in `data/reference/game-icons/` |
+| `POST item-glyph` | `{item, glyph}` or `{item, remote: 'author/name'}` (fetched and credited first): `item_icons.set_glyph()` rewrites the item's glyph where it is named; `{file, glyph, was}` |
 | `POST plate` | the picture sheet: `{book, enemy, image?, link?, crop?, levels?, flip?, remove?}` (`image` base64 WebP, up to 25 MB): the owner's picture for one enemy, saved as `art/plates/<book>/<slug of the name>.webp` (never a path from the request) and entered in `plates.json` by `tools/plates_file.py`, which keeps the file's one-entry-per-line layout; `link` (an address, or null for none) recorded in `art/sources.json` with a new picture |
 
 The stages are a fixed table, `ADMIN_STAGES`: the command is built from it and a code from

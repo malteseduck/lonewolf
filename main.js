@@ -6,6 +6,7 @@ import { drawCreature, setArt, setEmblem, newWound, portraitFromArt, drawFrame, 
 import { printedCanvas } from './maps.js';
 import { compilePlates, pickPlate, pinKey, upscaledSrc } from './platepick.js';
 import * as Adv from './adventures.js';
+import { glyphName } from './itemglyphs.js';
 
 import * as ITEMS_01 from './items/items-01fftd.js';
 import * as ITEMS_02 from './items/items-02fotw.js';
@@ -188,10 +189,8 @@ const ROSE = (() => {
   return `<svg class="rose" viewBox="-50 -50 100 100" aria-hidden="true"><circle class="ring" r="21"/>${minor}${major}<circle class="lt" r="3.2"/></svg>`;
 })();
 const TAB_ART = { kai: glyph('wolf-head'), pack: glyph('locked-chest'), map: ROSE };
-/* items, drawn the same way; anything typed in by hand gets a pouch or a pendant by its kind */
-const ITEM_GLYPH = { dagger: 'plain-dagger', spear: 'barbed-spear', mace: 'mace-head', shortSword: 'gladius', warhammer: 'warhammer', sword: 'pointy-sword', axe: 'battle-axe', quarterstaff: 'wizard-staff', broadsword: 'two-handed-sword',
-  bow: 'pocket-bow', quiver: 'quiver', arrows: 'arrow-flights', potion: 'health-potion', meal: 'meal', map: 'treasure-map', helmet: 'visored-helm', chainmail: 'mail-shirt' };
-const itemGlyph = (id) => glyph(ITEM_GLYPH[id] || (LW.ITEMS[id] && LW.ITEMS[id].glyph) || (id === 'gold' || id === 'coin' ? 'two-coins' : id === 'pack' ? 'backpack' : LW.itemKind(id) === 'special' ? 'gem-pendant' : LW.itemKind(id) === 'weapon' ? 'pointy-sword' : 'swap-bag'));
+/* items, drawn the same way (itemglyphs.js) */
+const itemGlyph = (id) => glyph(glyphName(LW, id));
 
 /* The seal buttons' plate, of a piece with the medallions: a bronze bezel round a dark enamel field,
    a bronze lozenge pin at each end. Drawn 400 x 100 (given as its size, so border-image slices count

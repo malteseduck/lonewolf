@@ -49,6 +49,11 @@ Static files as `python -m http.server` serves them, from the project root, plus
     POST /api/admin/art-link          {src, url|null}: a link for a picture already in art/ (art/sources.json, ADR 0038)
     GET  /api/admin/standins          every picture a fight can borrow: [{src, group, size, shows?, near?}]
     GET  /api/admin/ills?book=<code>  the illustration sheet: [{name, bytes, big, bigBytes, sections}] (tools/ill_upscale.py)
+    GET  /api/admin/icons             the item sheet: {local: [{name, author}], tables: [code]}: the icons in assets/icons/, the item tables
+    GET  /api/admin/icons/remote      every icon at game-icons.net: {fetched, paths: ['author/name']}; ?refresh=1 asks again
+    GET  /api/admin/icons/preview?path=<author/name>   one of them, as SVG (kept in data/reference/game-icons/)
+    POST /api/admin/item-glyph        {item, glyph} or {item, remote: 'author/name'} (fetched into assets/icons/ and
+                                      credited): the item's glyph rewritten in its table or itemglyphs.js. {file, glyph, was}
 
     GET  /api/offline          what the offline copy holds: {version, files: {path: hash}}
 
@@ -667,6 +672,8 @@ class Handler(SimpleHTTPRequestHandler):
             import ill_upscale
             got = ill_upscale.listing(q.get('book', [''])[0])
             return self._json(200, got) if got is not None else self._json(404, {'error': 'not a downloaded book'})
+        if parts[:1] == ['icons'] or parts == ['item-glyph']:
+            return self._admin_icons(method, parts, q, body)
         if method == 'GET' and parts == ['standins']:
             import plates_file
             return self._json(200, plates_file.standins())
@@ -686,6 +693,33 @@ class Handler(SimpleHTTPRequestHandler):
         if method == 'POST' and len(parts) == 3 and parts[0] == 'mark' and parts[2].isdigit():
             ok, msg = book_status.mark(parts[1], int(parts[2]), undo=q.get('undo', [''])[0] == '1', run_checks=False)
             return self._json(200 if ok else 409, {'ok': ok, 'message': msg})
+        return self._json(404, {'error': 'nothing here'})
+
+    def _admin_icons(self, method, parts, q, body):
+        """The item sheet's icons (tools/item_icons.py): the ones here, game-icons.net's list and previews, and
+        an item's glyph changed. Fetching from game-icons.net is the owner's own click on the sheet."""
+        import item_icons
+        try:
+            if method == 'GET' and parts == ['icons']:
+                return self._json(200, {'local': item_icons.local(), 'tables': item_icons.tables()})
+            if method == 'GET' and parts == ['icons', 'remote']:
+                return self._json(200, item_icons.remote(refresh=q.get('refresh', [''])[0] == '1'))
+            if method == 'GET' and parts == ['icons', 'preview']:
+                data = item_icons.preview(q.get('path', [''])[0]).encode('utf-8')
+                self.send_response(200)
+                self.send_header('Content-Type', 'image/svg+xml')
+                self.send_header('Content-Length', str(len(data)))
+                self.send_header('Cache-Control', 'max-age=86400')
+                self.end_headers()
+                self.wfile.write(data)
+                return None
+            if method == 'POST' and parts == ['item-glyph']:
+                glyph = item_icons.fetch(str(body['remote'])) if body.get('remote') else str(body.get('glyph') or '')
+                return self._json(200, {**item_icons.set_glyph(str(body.get('item') or ''), glyph), 'glyph': glyph})
+        except ValueError as e:
+            return self._json(400, {'error': str(e)})
+        except OSError as e:  # game-icons.net out of reach
+            return self._json(502, {'error': f'game-icons.net did not answer: {e}'})
         return self._json(404, {'error': 'nothing here'})
 
     def _admin_plate(self, body):

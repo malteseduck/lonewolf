@@ -208,6 +208,16 @@ describe('actions', () => {
     expect($('#map-title').textContent).toBe('Illustrations: 1. Stand-in 1');
   });
 
+  it('opens the item sheet for a book with an item table, inline under the grid', async () => {
+    await setup(book(1));
+    const button = () => [...$('#detail .step[data-stage="items"]').querySelectorAll('button')].find((b) => b.textContent === 'Open item sheet');
+    button().click();
+    expect($('#mapframe').dataset.src).toBe('/tools/admin/items.html?book=01book1&embed=1');
+    expect($('#map-title').textContent).toBe('Items: 1. Stand-in 1');
+    await setup(book(2, { items: { exists: false, todos: 0, registered: false, check: null } }));
+    expect(button()).toBeUndefined();
+  });
+
   describe('a gated job', () => {
     const jobs = { 'POST admin/run/*': () => [200, { id: 1, title: 'Job' }], 'GET admin/jobs/*': () => [200, { lines: [], from: 0, state: 'done', code: 0, started: 0, ended: 0 }] };
 

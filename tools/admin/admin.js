@@ -143,7 +143,8 @@ const ACTIONS = {
   rules: (b) => [...(b.rulesPage ? [run('Diff rules', 'rules-diff')] : []), prompt('rules'), mark(4)],
   reading: () => [run('Make reading copy', 'reading')],
   // the draft first (ADR 0036); over a hand-made table it only writes items-draft.js beside the book, to compare
-  items: (b) => [run(b.items.exists && !b.items.draft ? 'Draft and compare' : 'Draft table', 'items-draft'), prompt('items'), run('Check items', 'check-items'), ...(b.items.check?.errors?.length ? [prompt('itemsFix', 'Copy fix prompt')] : [])],
+  items: (b) => [run(b.items.exists && !b.items.draft ? 'Draft and compare' : 'Draft table', 'items-draft'), prompt('items'), run('Check items', 'check-items'), ...(b.items.check?.errors?.length ? [prompt('itemsFix', 'Copy fix prompt')] : []),
+    ...(b.items.exists ? [{ t: 'items', label: 'Open item sheet' }] : [])],
   // the draft first (ADR 0036), while an enemy has no picture: the script's picks, judged on the sheet
   pictures: (b) => [...(b.imp?.bare ? [run('Draft pictures', 'pictures-draft')] : []), prompt('pictures'), { t: 'sheet', label: 'Open picture sheet' }, run('Upscale 2x', 'fights-up'), mark(7),
     ...(b.pins?.waiting ? [run('Approve picture changes...', 'approve-pictures', { gate: 'pictures' })] : [])],
@@ -161,7 +162,7 @@ function mark(step) { return { t: 'mark', step }; }
 let acts = [];
 function actHtml(a, b) {
   const i = acts.push({ ...a, b }) - 1;
-  if (a.t === 'sheet' || a.t === 'ills') return `<button data-act="${i}">${esc(a.label)}</button>`;
+  if (a.t === 'sheet' || a.t === 'ills' || a.t === 'items') return `<button data-act="${i}">${esc(a.label)}</button>`;
   if (a.t === 'link') return `<a class="btn" href="${esc(a.href)}" target="_blank">${esc(a.label)}</a>`;
   if (a.t === 'mark') return `<button data-act="${i}">${b.marks[a.step] ? 'Mark not done' : 'Mark done'}</button>`;
   return `<button data-act="${i}" ${a.t === 'run' && running ? 'disabled title="a job is running"' : ''}>${esc(a.label)}</button>`;
@@ -221,6 +222,7 @@ $('#detail').addEventListener('click', async (e) => {
   if (a.t === 'map') return openMap(a.b, a.step);
   if (a.t === 'sheet') return openSheet(a.b);
   if (a.t === 'ills') return openIlls(a.b);
+  if (a.t === 'items') return openItems(a.b);
   if (a.t === 'mark') {
     const undo = !!a.b.marks[a.step];
     const { j } = await api(`mark/${a.b.code}/${a.step}${undo ? '?undo=1' : ''}`, { method: 'POST' });
@@ -246,6 +248,9 @@ function openIlls(b) {  // every illustration, and each one's original beside it
   if (!b?.folder) return toast('Download the book first', 3000);
   openInline(b, `/tools/admin/ills.html?book=${encodeURIComponent(b.code)}&embed=1`, `Illustrations: ${b.n}. ${b.title}`);
 }
+function openItems(b) {  // every item of the book's table, its icon, and another picked (tools/item_icons.py)
+  openInline(b, `/tools/admin/items.html?book=${encodeURIComponent(b.code)}&embed=1`, `Items: ${b.n}. ${b.title}`);
+}
 function openMap(b, step) {
   if (!b?.folder) return toast('Download the book first', 3000);
   openInline(b, `/tools/map-editor.html?book=${encodeURIComponent(b.code)}&embed=1${step ? '&step=' + step : ''}`, `Map editor: ${b.n}. ${b.title}`);
@@ -270,7 +275,7 @@ $('#map-close').onclick = () => {
   load();
 };
 window.addEventListener('message', (e) => {
-  if (e.origin === location.origin && (e.data?.mapEditor === 'state' || e.data?.fightSheet === 'changed')) reloadSoon();
+  if (e.origin === location.origin && (e.data?.mapEditor === 'state' || e.data?.fightSheet === 'changed' || e.data?.itemSheet === 'changed')) reloadSoon();
 });
 window.addEventListener('beforeunload', (e) => {
   try { if ($('#mapframe').contentWindow.mapEditorDirty?.()) { e.preventDefault(); e.returnValue = ''; } } catch { /* none */ }
