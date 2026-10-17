@@ -217,11 +217,11 @@ three Topical Guide pages) were downloaded on 2026-10-10 into git-ignored
 | Rule | Engine |
 |---|---|
 | A new character: COMBAT SKILL = **25** + a Random Number, ENDURANCE = **30** + a Random Number | yes (`LW.SERIES.grandmaster.base`) |
-| A carried character (Books 1–12 behind him) keeps his COMBAT SKILL and ENDURANCE, Lore-circle bonuses included in them | partly: circle ENDURANCE stays in his scores; circle COMBAT SKILL, added per fight only in a Magnakai book, is lost until G3 folds it in |
+| A carried character (Books 1–12 behind him) keeps his COMBAT SKILL and ENDURANCE, Lore-circle bonuses included in them | yes: circle ENDURANCE stays in his scores; circle COMBAT SKILL, added per fight in a Magnakai book, is folded into his score as he enters (`enterGrand`) |
 | Discipline bonuses of the earlier series do not raise his permanent scores; only a character who completed the earlier books benefits from them (above) | yes: nothing adds them to his scores (`LW.chose` gives them in play) |
-| Weapons, **Backpack Items** and gold carry over (unlike every earlier book). Whether Meals do is left open: the Handbook calls dropping them optional. *Owner*: Meals do not (ADR 0011) | no |
+| Weapons, **Backpack Items** and gold carry over (unlike every earlier book). Whether Meals do is left open: the Handbook calls dropping them optional. *Owner*: Meals do not (ADR 0011) | yes |
 | A carried character may instead re-roll: the rules say he "can" carry his scores; the Handbook lists ways to start afresh but gives no ruling. *Owner*: no re-roll; he keeps his scores and bonuses (ADR 0019) | yes (`LW.HeroSetup` draws no scores for him) |
-| Only these Special Items carry into the series: Crystal Star Pendant, Sommerswerd, Silver Helm, Dagger of Vashna, Silver Bracers, Jewelled Mace, Silver Bow of Duadon, Helshezag, Kagonite Chainmail, Korlinium Scabbard. A character who begins the series at Book 13 uses this list throughout; later books alter it for one who begins there. *Owner*: the others are dropped (ADR 0019) | no |
+| Only these Special Items carry into the series: Crystal Star Pendant, Sommerswerd, Silver Helm, Dagger of Vashna, Silver Bracers, Jewelled Mace, Silver Bow of Duadon, Helshezag, Kagonite Chainmail, Korlinium Scabbard. A character who begins the series at Book 13 uses this list throughout; later books alter it for one who begins there. *Owner*: the others are dropped (ADR 0019) | yes (`LW.SERIES.grandmaster.keeps`), carried or at the Monastery, on entering the series; between Grand Master books his Special Items all carry, until a later book's rules say otherwise |
 
 ### Carrying
 
@@ -457,8 +457,8 @@ Monastery). Clothing is named there but not tracked.
 
 The first Grand Master book. Read from its own rules pages (game rules, disciplines, equipment, combat,
 levels, improved disciplines, wisdom, footnotes; the book has no Lore-circles page). *Engine*: the
-series (G1), setting out (G2), its kit and gold; the rest is docs/plan.md, "Grand Master series",
-G3-G7. Also in place:
+series (G1), setting out (G2), carrying into the series (G3), its kit and gold; the rest is
+docs/plan.md, "Grand Master series", G4-G7. Also in place:
 `LW.backpackMax` (10 for `series: 'grandmaster'`) and `LW.specialLimit` (12).
 
 - **Scores**: a new character: COMBAT SKILL = **25** + a Random Number (0 counts as zero), ENDURANCE =
@@ -471,7 +471,7 @@ G3-G7. Also in place:
 - **Carried over**: Weapons (still two at most) and Backpack Items (now up to **ten**); Gold Crowns.
   Of the Special Items only the Crystal Star Pendant, Sommerswerd, Silver Helm, Dagger of Vashna,
   Silver Bracers, Jewelled Mace, Silver Bow of Duadon, Helshezag, Kagonite Chainmail and Korlinium
-  Scabbard. *Engine*: no.
+  Scabbard. *Engine*: yes (G3).
 - **Disciplines**: he holds every Kai and Magnakai Discipline (the book summarises them) and chooses
   **four** Grand Master Disciplines as a Kai Grand Defender. From Book 14, each Grand Master
   Discipline past four adds 1 to his basic COMBAT SKILL and 2 to his basic ENDURANCE; completing this

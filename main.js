@@ -843,15 +843,19 @@ const suSlots = (label, filled, n) => {
 function setupLeftHTML() {
   const head = (title) => `<span class="eyebrow lead">${esc(book.title)}</span><h2 class="su-h">${title}</h2>`;
   if (SU.step === 'hero') {
-    const h = SU.h, carried = !!h.hero, need = h.need();
+    const h = SU.h, carried = !!h.hero, need = h.need(), kept = carried && h.carried();
     const score = (key, label, base) => {
       const n = h.rolls[key];
-      return `<div class="su-score">${carried ? `<span class="med su-val">${key === 'cs' ? h.hero.cs : h.hero.epMax}</span>` : `<span class="dialslot" data-sudial="${key}"></span>`}<b>${label}</b><i>${
+      return `<div class="su-score">${carried ? `<span class="med su-val">${kept[key]}</span>` : `<span class="dialslot" data-sudial="${key}"></span>`}<b>${label}</b><i>${
         carried ? 'carried on' : n == null ? `${base} + the number drawn` : `${base} + ${n} = <em>${base + n}</em>`}</i></div>`;
     };
-    const note = carried
-      ? `Carried on from ${esc(h.carry.fromTitle || 'the last book')}: your scores, disciplines, weapons, Special Items and gold. The Backpack starts empty.`
-      : 'Touch each medallion to draw your two scores.';
+    // into the Grand Master series the Backpack Items come too, and only the listed Special Items (rules-series.js, enterGrand)
+    const gm = h.series === 'grandmaster', entering = gm && carried && h.hero.series !== 'grandmaster';
+    const from = `Carried on from ${esc(h.carry ? h.carry.fromTitle || 'the last book' : '')}: your scores, disciplines, weapons`;
+    const note = !carried ? 'Touch each medallion to draw your two scores.' : entering
+      ? `${from}, Backpack Items and gold, but no Meals; only the ten Special Items the series allows. The Lore-circles’ Combat Skill is now in your score.`
+      : gm ? `${from}, Special Items, Backpack Items and gold, but no Meals.`
+      : `${from}, Special Items and gold. The Backpack starts empty.`;
     const say = h.rolls.cs == null || h.rolls.ep == null ? 'Draw both scores.' : h.picked.size < h.pick ? `Choose ${h.pick - h.picked.size} more on the facing page.`
       : h.weapons.size < need ? `Choose ${need - h.weapons.size} more weapon${need - h.weapons.size === 1 ? '' : 's'} to master.` : 'Your Action Chart is ready.';
     const chosen = [...h.picked].map((id) => `<button type="button" class="disc lit" data-supick="${id}" title="${esc(LW.DISCIPLINES[id].name)}" aria-label="Let ${esc(LW.DISCIPLINES[id].name)} go">${glyph(DISC_GLYPH[id])}</button>`);

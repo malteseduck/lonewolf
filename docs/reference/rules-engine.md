@@ -163,7 +163,7 @@ a second step (`KitSetup`): the gold (the kit's `gold`, 10 if absent, + a Random
 goes to `storedGold`, which can be drawn on), the given items (one he has is skipped), the
 "choose N" list ("Choose for me" fills it), his weapons (any may be left behind), and where the
 book allows, Special Items left at or taken from the Monastery. Begin waits until the limits hold
-(2 Weapons, 8 Backpack, 12 Special from Book 8). A Quiver from the kit comes with 6 Arrows.
+(2 Weapons, 8 Backpack, or 10 counting the Backpack Items he brings into a Grand Master book, 12 Special from Book 8). A Quiver from the kit comes with 6 Arrows.
 On confirm it sets `hero.series`, settles Lore-circles, adds +1 COMBAT SKILL and +2 ENDURANCE for
 each Grand Master Discipline past four (`settleGrand`, counted in `hero.grandEarned`, so once each),
 and restores Endurance to maximum.
@@ -179,8 +179,13 @@ Curing's +1, Huntmastery's Meals and ambushes, Weaponmastery (and its Bow shot, 
 Psi-surge, Archmaster Curing; the Kai Disciplines give no numbers. `shielded` is Kai-screen or a chosen
 Psi-screen. Lore-circles no longer count (`circlesOf` is empty) and their ENDURANCE stays in his scores
 (`settleCircles` does nothing). Setting out (the scores, the disciplines past four, Grand Weaponmastery's weapons) is above (G2,
-2026-10-16). The Grand Master Disciplines' own numbers (Grand Weaponmastery, Kai-surge, Deliverance,
-Grand Huntmastery) and carrying into the series are plan.md's G3-G5.
+2026-10-16). Carried into a Grand Master book (G3, 2026-10-16), he keeps his Backpack Items (Meals
+not, ADR 0011). Entering the series from an earlier one (`enterGrand`, in `build()`), the Lore-circles'
+COMBAT SKILL goes into `hero.cs`, and of his Special Items, carried or at the Monastery, only
+`LW.SERIES.grandmaster.keeps` stay (ADR 0019; `dropItem`, so an item's ENDURANCE goes with it; no
+Quiver, no Arrows). `HeroSetup.carried()` gives the scores he will set out with, for the page. The
+Grand Master Disciplines' own numbers (Grand Weaponmastery, Kai-surge, Deliverance, Grand
+Huntmastery) are plan.md's G5.
 
 ## Combat procedure
 

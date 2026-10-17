@@ -303,6 +303,15 @@ describe('Book 13 gold', () => {
     k.rollGold(5);
     expect(k.gold()).toEqual({ purse: 50, over: 15, bank: 15 });
   });
+  it('counts the Backpack Items he brings into the series against the ten', () => {
+    const hero = { cs: 30, ep: 30, epMax: 30, weapons: [], backpack: Array(8).fill('rope'), special: [], meals: 0, gold: 0, series: 'grandmaster', disciplines: [] };
+    const k = LW.KitSetup({}, LW.KITS[13], hero), meals = k.from.findIndex((x) => x.meal);
+    k.rollGold(0);
+    k.choose(k.from.findIndex((x) => x.item === 'potion'));
+    expect(k.problems()).toEqual([]);
+    k.choose(meals); // four Meals: 13
+    expect(k.problems()).toEqual(['10 Backpack Items at most, Meals included.']);
+  });
 });
 
 describe('LW.weaponBonus: what a weapon adds, as the inventory shows it', () => {
@@ -439,9 +448,40 @@ describe('the Grand Master series', () => {
     expect(s.rolls).toEqual({ cs: 0, ep: 0 });
     s.roll('cs', 9); s.auto();
     const h = LW.readyHero(s.build());
-    expect(h.cs).toBe(31);
+    expect(h.cs).toBe(33); // 31 and the Lore-circles' 2, folded in (G3)
     expect(h.epMax).toBe(44);
     expect(h.grandmaster).toHaveLength(4);
+  });
+  it('carries a Magnakai character in with his Backpack Items, no Meals, and only the ten Special Items listed (ADR 0011, 0019)', () => {
+    LW.ITEMS.kagoniteMail = { name: 'Kagonite Chainmail', kind: 'special', ep: 1 };
+    LW.ITEMS.waistcoat = { name: 'Waistcoat', kind: 'special', ep: 2 };
+    LW.ITEMS.sommerswerd = { name: 'Sommerswerd', kind: 'special', weapon: ['sword'], cs: 8 };
+    const hero = mkHero(EIGHT, { cs: 30, epMax: 40, ep: 40, backpack: ['potion', 'rope'], meals: 3, arrows: 4,
+      special: ['sommerswerd', 'kagoniteMail', 'waistcoat', 'quiver', 'map'], stored: ['crystalStar', 'mapDarklands'], storedGold: 12, had: ['waistcoat'] });
+    const h = LW.readyHero(LW.HeroSetup({ number: 13, series: 'grandmaster' }, { hero, completed: [] }).build());
+    expect(h.backpack).toEqual(['potion', 'rope']);
+    expect(h.meals).toBe(0);
+    expect(h.special).toEqual(['sommerswerd', 'kagoniteMail']);
+    expect(h.stored).toEqual(['crystalStar']); // the Monastery keeps only the listed ones too
+    expect(h.storedGold).toBe(12);
+    expect(h.arrows).toBe(0); // the Quiver is not on the list
+    expect(h.epMax).toBe(38); // the Waistcoat's 2 go with it
+    expect(h.had).toContain('waistcoat');
+  });
+  it('folds the Lore-circles\' COMBAT SKILL into his score as he enters the series', () => {
+    const hero = mkHero(NINE, { cs: 30, epMax: 40, ep: 40 }); // Fire, Light, Solaris: +2 COMBAT SKILL
+    expect(LW.heroCS(hero).parts).toContainEqual({ label: 'Lore-circles', n: 2 });
+    const s = LW.HeroSetup({ number: 13, series: 'grandmaster' }, { hero, completed: [] });
+    expect(s.carried()).toEqual({ cs: 32, ep: 40 }); // what the page shows before he sets out
+    const h = LW.readyHero(s.build());
+    expect(h.cs).toBe(32);
+    expect(names(LW.heroCS(h))).not.toContain('Lore-circles');
+    // from one Grand Master book to the next: nothing folded again, the Backpack kept, his Special Items too
+    const next = LW.readyHero(LW.HeroSetup({ number: 14, series: 'grandmaster' }, { hero: Object.assign(h, { backpack: ['rope'], meals: 2, special: ['map'] }), completed: [] }).build());
+    expect(next.cs).toBe(32);
+    expect(next.backpack).toEqual(['rope']);
+    expect(next.meals).toBe(0);
+    expect(next.special).toEqual(['map']);
   });
   it('adds +1 COMBAT SKILL and +2 ENDURANCE, for good, for each Grand Master Discipline past four', () => {
     const four = ['kaiSurge', 'deliverance', 'kaiScreen', 'grandNexus'];

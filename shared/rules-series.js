@@ -45,6 +45,8 @@
       ranks: ['', 'Kai Master', 'Kai Master Senior', 'Kai Master Superior', 'Primate', 'Tutelary', 'Principalin', 'Mentora', 'Scion-kai', 'Archmaster', 'Kai Grand Master'] },
     grandmaster: { name: 'Grand Master', list: ids('grandmaster'), first: 4, field: 'grandmaster', base: { cs: 25, ep: 30 },
       arms: { disc: 'grandWeaponmastery', first: 2, field: 'grandMastery' },
+      // the only Special Items of the earlier books that come into the series (Book 13's rules; ADR 0019)
+      keeps: ['crystalStar', 'sommerswerd', 'silverHelm', 'daggerVashna', 'silverBracers', 'jewelledMace', 'silverBow', 'helshezag', 'kagoniteMail', 'korliniumScabbard'],
       ranks: ['', 'Kai Grand Master Senior', 'Kai Grand Master Superior', 'Kai Grand Sentinel', 'Kai Grand Defender', 'Kai Grand Guardian', 'Sun Knight', 'Sun Lord', 'Sun Thane', 'Grand Thane', 'Grand Crown', 'Sun Prince', 'Kai Supreme Master'] },
   };
   LW.CIRCLES = [
@@ -219,6 +221,12 @@
       },
       canWeapon(w) { return !oldMastery.includes(w) && (this.weapons.has(w) || this.weapons.size < this.need()); },
       toggleWeapon(w) { if (this.canWeapon(w)) { if (this.weapons.has(w)) this.weapons.delete(w); else this.weapons.add(w); } },
+      /* a carried character's scores as he will set out with them (entering the Grand Master series changes them) */
+      carried() {
+        const c = JSON.parse(JSON.stringify(hero));
+        if (series === GM && c.series !== GM) enterGrand(c, S);
+        return { cs: c.cs, ep: c.epMax };
+      },
       roll(key, n = LW.rand10()) { if (this.rolls[key] == null) this.rolls[key] = n; return this.rolls[key]; },
       auto() {
         this.roll('cs'); this.roll('ep');
@@ -236,8 +244,10 @@
           // makeHero gives Book 1's kit; a later book's own kit is all a new character has
           if (kit) Object.assign(out, { weapons: [], special: [], backpack: [], meals: 0, gold: 0 });
         }
-        // the books carry over Weapons, Special Items and gold, not what was in the Backpack
-        if (hero) { out.backpack = []; out.meals = 0; out.noPack = false; }
+        // the books carry over Weapons, Special Items and gold, not what was in the Backpack; into a
+        // Grand Master book the Backpack Items come too, Meals still not (ADR 0011)
+        if (hero) { if (series !== GM) out.backpack = []; out.meals = 0; out.noPack = false; }
+        if (hero && series === GM && hero.series !== GM) enterGrand(out, S);
         out.series = series;
         out[S.field] = [...owned, ...this.picked];
         if (series === 'kai' && this.picked.has('weaponskill') && !out.weaponskill) out.weaponskill = LW.WEAPONSKILL_TABLE[LW.rand10()];
@@ -249,6 +259,15 @@
       },
     };
   };
+  /* Into the Grand Master series from an earlier one: the Lore-circles' COMBAT SKILL, added per fight
+     until now, goes into his score (their ENDURANCE is there already); of the Special Items, carried or
+     at the Monastery, only the series' list stays, the rest dropped (ADR 0019; hero.had keeps them) */
+  function enterGrand(hero, S) {
+    hero.cs += LW.circlesOf(hero).reduce((t, c) => t + c.cs, 0);
+    hero.special.filter((s) => !S.keeps.includes(s)).forEach((s) => LW.dropItem(hero, s));
+    if (!hero.special.includes('quiver')) hero.arrows = 0;
+    if (hero.stored) { hero.stored = hero.stored.filter((s) => S.keeps.includes(s)); if (!hero.stored.length) delete hero.stored; }
+  }
   /* the last of setting out: Lore-circle Endurance, the Grand Master Disciplines past four, and full Endurance */
   LW.readyHero = (out) => { settleCircles(out); settleGrand(out); out.ep = out.epMax; return out; };
 
@@ -300,7 +319,7 @@
         const p = this.picks();
         return {
           weapon: hero.weapons.length - this.dropW.size + count('weapon', p),
-          backpack: count('backpack', [...this.gifts, ...p]),
+          backpack: hero.backpack.length + hero.meals + count('backpack', [...this.gifts, ...p]), // the Grand Master series keeps his
           special: hero.special.length - this.leave.size + this.fetch.size + count('special', [...this.gifts, ...p]),
         };
       },

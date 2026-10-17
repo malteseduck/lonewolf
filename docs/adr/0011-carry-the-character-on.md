@@ -23,7 +23,7 @@ Special Items. The Readers' Handbook calls leaving Meals behind optional (they p
 ## Consequences
 
 Spec 4.7 states the rule; `docs/reference/rules-engine.md` how it is done. The Grand Master part is
-not in the engine yet (`docs/plan.md`, "Grand Master series").
+in the engine since 2026-10-16 (rules-engine.md).
 
 ## Changes
 

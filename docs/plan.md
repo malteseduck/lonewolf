@@ -41,7 +41,7 @@ spent at B8 164 (the text gives no number), the puzzles, and B5 162's climb (a b
 
 Book 13's rules were read on 2026-10-10 (rules-books.md, "Grand Master series"). The importer knows
 Book 13 (2026-10-11: its disciplines, ranks, and foes `immune: 'psi'`); the engine has the series (G1)
-and setting out (G2), but not yet carrying or the new disciplines' numbers. Importing it is the owner's go-ahead, apart
+setting out (G2) and carrying in (G3), but not yet the new disciplines' numbers. Importing it is the owner's go-ahead, apart
 from this work.
 
 **Engine work**, in order (G1 first: everything else reads the series):
@@ -51,9 +51,8 @@ from this work.
 - G2 done 2026-10-16 (rules-engine.md, "Setting out"): 25 + RN / 30 + RN, four disciplines then one a
   book with +1 / +2 past four, Grand Weaponmastery's weapons in `hero.grandMastery`, no re-roll. Book
   13's walk now leaves one fight unwon (38, a foe at 50 the section lets him evade).
-- G3. Carrying into the series: the Backpack's items kept, Meals not (ADR 0011); Special Items cut
-  to the ten listed, the others dropped (ADR 0019); Lore-circle COMBAT SKILL folded into his base
-  score (the engine adds it per fight, and only in Magnakai books). Needs: G1.
+- G3 done 2026-10-16 (rules-engine.md, "Grand Master book"): Backpack Items kept, Meals not; Special
+  Items cut to the ten, at the Monastery too; Lore-circle COMBAT SKILL folded in.
 - G4. Monastery storage in this series (Book 13's kit, `LW.KITS[13]`, with its `gold: 20`, is written;
   it is offered once G1 gives the book its series). The Backpack of 10, `LW.backpackMax`, and the 12 Special Items, `LW.specialLimit`, are done:
   they wait only on `series: 'grandmaster'` from G1. Needs: G1; after G3 (judgement: the same setting-out step).
