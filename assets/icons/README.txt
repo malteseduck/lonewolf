@@ -27,13 +27,13 @@ its white fill were removed, so the page can use the shape as a mask.
     and for Books 4-12 (fetched 2026-10-05): bamboo, bracer, cube, mushrooms, prism, rhinoceros-horn,
     rolled-cloth, scabbard, towel, war-pick, water-flask, whistle, wine-bottle,
     and for Book 13 (fetched 2026-10-17): covered-jar
-    and picked on the item sheet (tools/admin/items.html): mighty-horn, power-ring, rusty-sword, holy-water, straight-pipe, dart, flanged-mace, black-belt, bow-string, globe-ring, crescent-staff
+    and picked on the item sheet (tools/admin/items.html): mighty-horn, power-ring, rusty-sword, holy-water, straight-pipe, dart, flanged-mace, black-belt, bow-string, globe-ring, crescent-staff, switch-weapon
   by Skoll:
     footsteps, gladius
   by Caro Asercion:
     for Book 13 (fetched 2026-10-17): mason-jar
 
-Which glyph stands for what is DISC_GLYPH and TAB_ART in main.js, ITEM_GLYPH in itemglyphs.js, and each
-book item's glyph in its item table. The dashboard's item sheet (tools/admin/items.html) changes an item's
-glyph and fetches new ones, adding them here under their author.
+Which glyph stands for what is DISC_GLYPH, UI_GLYPH and KIND_GLYPH in glyphs.js, ITEM_GLYPH in itemglyphs.js,
+and each book item's glyph in its item table. The dashboard's item sheet (tools/admin/items.html) and icon
+sheet (tools/admin/icons.html) change them and fetch new ones, adding them here under their author.
 The map tab's compass rose is not from this set: it is drawn in main.js (ROSE).

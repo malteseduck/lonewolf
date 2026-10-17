@@ -17,7 +17,7 @@ body
       section#pl.page.left        the story page (ornate frame via ::before; via ::after, the shade into the
                                   gutter and the fold's 1px line, so a page turn's copies carry the fold)
       .rightwrap
-          #rtabs                  three tab medallions (TAB_ART: wolf head, chest, compass rose), then a smaller
+          #rtabs                  three tab medallions (TAB_ART: wolf head, chest, compass rose; the icons in glyphs.js), then a smaller
                                   return-arrow medallion (data-home) back to the title page; on the page's
                                   outer edge; hidden outside story mode
           section#pr.page.right   the panel: the same parchment and frame, mirrored
@@ -124,7 +124,7 @@ on the same medallion again, or Escape closes it; touching another medallion mov
   - `.discs`: every discipline of the book's series in two rows (five to a row; the Grand Master's
     twelve six to a row, `.six`, on smaller medallions so the bars still show), as `.disc`
     medallions joined by bars, in a box framed by `drawFrame(1000, 470)` (`--grid-frame`). Learned
-    ones are `.lit`. Glyphs are game-icons.net SVGs in `assets/icons/` (`DISC_GLYPH`), used as CSS
+    ones are `.lit`. Glyphs are game-icons.net SVGs in `assets/icons/` (`DISC_GLYPH`, `glyphs.js`), used as CSS
     masks so they can take the ivory fill and ember glow; a Grand Master discipline mostly shares
     its Magnakai counterpart's glyph, as only one series' grid shows at a time. The rank is
     `LW.rankOf` (the series' `ranks`, by the number of its disciplines held).
@@ -159,7 +159,8 @@ on the same medallion again, or Escape closes it; touching another medallion mov
   `shared/shared.css` gives `.picker`), so the Backpack below does not move; its row labels are one
   width, wrapping when long, top-aligned. The picker's own line names whatever is under the pointer.
   Item glyphs are game-icons.net SVGs (`itemglyphs.js`, changed on the dashboard's item sheet); items typed in by hand get a pouch or a
-  pendant by their kind.
+  pendant by their kind (`KIND_GLYPH`). Every other icon the player draws is named in `glyphs.js` (`UI_GLYPH`) and changed on the
+  dashboard's icon sheet.
 - **map**: not a panel. Its tab medallion opens `openMap()`'s modal over the whole window (see "The map modal"
   below); the right page stays as it was. A book without a map (`book.map` unset) gets the same modal
   saying "This book has no map." Every choice is made on the story page.

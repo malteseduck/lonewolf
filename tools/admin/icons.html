@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Player icons</title>
+<link rel="stylesheet" href="admin.css">
+<link rel="stylesheet" href="icons.css">
+<script type="module" src="parchment.js"></script>
+<style>
+  .sheet-top { display: flex; gap: 12px; align-items: center; padding: 16px 24px 8px; flex-wrap: wrap; }
+  .sheet-top .sum { color: var(--dim); flex: 1; min-width: 20em; }
+  .sheet-top input { font: inherit; background: rgba(255, 248, 226, .5); color: var(--fg); border: 1px solid var(--line); border-radius: 4px; padding: 4px 8px; width: 18em; }
+  .note { margin: 0 24px 6px; color: var(--dim); font-size: 12px; }
+  h2.group { margin: 14px 24px 0; font: 18px var(--title); color: var(--rubric); }
+  h2.group[hidden], .cards[hidden] { display: none; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; padding: 8px 24px 16px; }
+  /* the book's tan, as the other sheets */
+  .card { background: linear-gradient(#e2d3aa, #cfbb89); color: var(--ink); border-radius: 3px; padding: 8px 10px; box-shadow: 0 2px 8px rgba(40, 24, 10, .45); display: grid; grid-template-columns: 52px 44px minmax(0, 1fr); gap: 4px 10px; align-items: center; }
+  .card[hidden] { display: none; }
+  .card .bare { width: 44px; height: 44px; }
+  .card b { font: 15px var(--title); }
+  .card small, .card .ln { display: block; color: #6b553c; font-size: 12px; }
+  .card .ln em { font-style: normal; color: var(--ink); }
+  .card .ln.warn { color: var(--warn); }
+  .card .tools { grid-column: 1 / -1; display: flex; justify-content: flex-end; }
+  .card .tools button { font-size: 12px; padding: 2px 8px; }
+</style>
+</head>
+<body>
+<header class="sheet-top">
+  <span class="sum" id="sum">Reading the player's icons...</span>
+  <input type="search" id="q" placeholder="Filter: name, place, icon..." aria-label="Filter">
+</header>
+<p class="note">Every icon the player draws apart from the books' own items (those are on each book's item sheet): the disciplines, the
+  tabs and gauges, the fight's medallions, the icons an item gets by its kind, and the engine's own items, which every book shares.
+  Each shows as a medallion and large. Change icon... picks another, from the icons here or from game-icons.net (fetched into
+  <code>assets/icons/</code> and credited in its README); it is written to <code>glyphs.js</code>, or <code>itemglyphs.js</code> for
+  an engine item, and changes in every book at once. The compass rose and the plates' ornaments are drawn in code, not icons.</p>
+<div id="groups"></div>
+<div class="toast" id="toast" hidden></div>
+
+<script type="module">
+import { esc, icon, pickIcon } from './iconpicker.js';
+import { glyphUsers } from './itemsheet.js';
+
+const $ = (s) => document.querySelector(s);
+const params = new URLSearchParams(location.search);
+// like the other sheets, it opens only inside the dashboard (ADR 0021)
+if (!(params.get('embed') === '1' && window.parent !== window)) {
+  document.body.innerHTML = '<p style="padding:24px">This page opens only inside the import dashboard, <a href="/tools/admin/">/tools/admin/</a>.</p>';
+  throw new Error('not embedded');
+}
+document.body.classList.add('embed');
+
+// what KIND_GLYPH's keys stand for (glyphs.js)
+const KIND_WHERE = {
+  gold: 'Gold Crowns and other coins as an item',
+  pack: 'the Backpack itself',
+  special: 'a Special Item with no icon of its own',
+  weapon: 'a weapon with no icon of its own',
+  backpack: 'a Backpack Item with no icon of its own',
+};
+const SERIES = [['kai', 'Kai disciplines'], ['magnakai', 'Magnakai disciplines'], ['grandmaster', 'Grand Master disciplines']];
+let G, IG, local = [], authors = {}, list = [], uses = {};
+
+function script(src) {
+  return new Promise((ok, bad) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = bad; document.head.append(s); });
+}
+async function loadEngine() {
+  for (const f of ['core.js', 'ui.js', 'rules-series.js']) await script(`/shared/${f}`);
+}
+// the lists afresh after each change (a new address passes the module cache)
+async function load() {
+  const v = Date.now(), LW = window.LW;
+  G = await import(`/glyphs.js?v=${v}`);
+  IG = await import(`/itemglyphs.js?v=${v}`);
+  const icons = await fetch('/api/admin/icons', { cache: 'no-store' }).then((r) => r.json());
+  local = icons.local;
+  authors = Object.fromEntries(local.map((i) => [i.name, i.author]));
+  const engine = Object.keys(LW.ITEMS);  // before the tables add theirs
+  const tables = await Promise.all(icons.tables.map((c) => import(`/items/items-${c}.js?v=${v}`).catch(() => null)));
+  const bookItems = Object.fromEntries(tables.filter(Boolean).flatMap((t) => Object.entries(t.ITEMS || {})));
+  const glyphOf = (id) => IG.glyphName(LW, id);
+
+  // [group, card] for every place an icon is drawn; list = {kind, key, name, where, glyph}
+  list = [];
+  for (const [s, title] of SERIES) {
+    for (const d of Object.keys(LW.DISCIPLINES).filter((id) => LW.DISCIPLINES[id].series === s)) {
+      list.push({ group: title, list: 'DISC_GLYPH', key: d, name: LW.DISCIPLINES[d].name, where: '', glyph: G.DISC_GLYPH[d] });
+    }
+  }
+  for (const [k, g] of Object.entries(G.UI_GLYPH)) {
+    const [group, where] = G.WHERE[k] || ['Elsewhere', ''];
+    list.push({ group, list: 'UI_GLYPH', key: k, name: k, where, glyph: g });
+  }
+  for (const [k, g] of Object.entries(G.KIND_GLYPH)) list.push({ group: 'Items by their kind', list: 'KIND_GLYPH', key: k, name: k, where: KIND_WHERE[k] || '', glyph: g });
+  for (const id of engine) list.push({ group: "The engine's items (every book)", item: true, key: id, name: LW.ITEMS[id].name || id, where: `${LW.ITEMS[id].kind || ''} item`, glyph: glyphOf(id) });
+
+  // every use of each icon, the books' own items included, for "same icon" and the picker
+  uses = {};
+  for (const c of list) (uses[c.glyph] ||= []).push(c.name + (c.item ? '' : c.list === 'DISC_GLYPH' ? ' (discipline)' : ` (${c.where || c.key})`));
+  const items = glyphUsers(Object.keys(bookItems), (id) => bookItems[id].glyph || glyphOf(id));
+  for (const [g, ids] of Object.entries(items)) for (const id of ids) (uses[g] ||= []).push(`${bookItems[id].name || id} (a book's item)`);
+}
+
+function render() {
+  const groups = [...new Set(list.map((c) => c.group))];
+  const missing = list.filter((c) => !(c.glyph in authors)).length;
+  $('#sum').textContent = `${list.length} places an icon is drawn, ${new Set(list.map((c) => c.glyph)).size} icons among them; ${local.length} icons on this PC`
+    + (missing ? `; ${missing} with the file missing` : '') + '.';
+  const card = (c, i) => {
+    const same = (uses[c.glyph] || []).filter((n) => !n.startsWith(c.name + ' (') && n !== c.name);
+    return `<div class="card" data-q="${esc([c.name, c.key, c.where, c.glyph].join(' ').toLowerCase())}">
+      ${icon(c.glyph, 'disc')}${icon(c.glyph)}
+      <div><b>${esc(c.name)}</b>${c.where ? `<small>${esc(c.where)}</small>` : ''}
+        <span class="ln">icon: <em>${esc(c.glyph)}</em>${authors[c.glyph] ? ` (${esc(authors[c.glyph])})` : ''}${c.glyph in authors ? '' : ' <b style="color:var(--blood)">file missing</b>'}</span>
+        ${same.length ? `<span class="ln" title="${esc(same.join('\n'))}">same icon: <em>${esc(same.slice(0, 4).join(', '))}${same.length > 4 ? ` and ${same.length - 4} more` : ''}</em></span>` : ''}</div>
+      <div class="tools"><button data-i="${i}">Change icon...</button></div></div>`;
+  };
+  $('#groups').innerHTML = groups.map((g) => `<h2 class="group">${esc(g)}</h2><main class="cards">${list.map((c, i) => c.group === g ? card(c, i) : '').join('')}</main>`).join('');
+  filter();
+}
+function filter() {
+  const q = $('#q').value.trim().toLowerCase();
+  document.querySelectorAll('.card').forEach((c) => { c.hidden = !!q && !c.dataset.q.includes(q); });
+  document.querySelectorAll('.cards').forEach((m) => {
+    const empty = ![...m.children].some((c) => !c.hidden);
+    m.hidden = empty; m.previousElementSibling.hidden = empty;
+  });
+}
+$('#q').addEventListener('input', filter);
+$('#groups').addEventListener('click', (e) => { const b = e.target.closest('button[data-i]'); if (b) pick(list[+b.dataset.i]); });
+
+function pick(c) {
+  pickIcon({
+    title: `${c.name}: its icon`, now: c.glyph, local,
+    hint: c.item ? 'An engine item: written to itemglyphs.js, for every book.' : `Written to glyphs.js (${c.list}.${c.key}), for every book.`,
+    usedBy: (g) => uses[g] || [],
+    save: async (s) => {
+      const pickd = s.remote ? { remote: s.remote } : { glyph: s.name };
+      const [url, body] = c.item ? ['item-glyph', { item: c.key, ...pickd }] : ['ui-glyph', { list: c.list, key: c.key, ...pickd }];
+      const r = await fetch(`/api/admin/${url}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) return j.error || `Not saved (${r.status})`;
+      await load();
+      render();
+      toast(`${c.name}: ${j.glyph}, written to ${j.file}${j.was ? ` (was ${j.was})` : ''}`, 5000);
+      return '';
+    },
+  });
+}
+
+let toastTimer;
+function toast(t, ms = 3000) {
+  const el = $('#toast'); el.textContent = t; el.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, ms);
+}
+
+(async () => {
+  try { await loadEngine(); await load(); } catch (e) { $('#sum').textContent = `Could not read the icons: ${e.message}`; return; }
+  render();
+})();
+</script>
+</body>
+</html>

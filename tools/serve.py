@@ -54,6 +54,8 @@ Static files as `python -m http.server` serves them, from the project root, plus
     GET  /api/admin/icons/preview?path=<author/name>   one of them, as SVG (kept in data/reference/game-icons/)
     POST /api/admin/item-glyph        {item, glyph} or {item, remote: 'author/name'} (fetched into assets/icons/ and
                                       credited): the item's glyph rewritten in its table or itemglyphs.js. {file, glyph, was}
+    POST /api/admin/ui-glyph          {list, key, glyph} or {list, key, remote}: the icon sheet's change to one of the
+                                      player's own glyphs (DISC_GLYPH, UI_GLYPH, KIND_GLYPH in glyphs.js). {file, glyph, was}
 
     GET  /api/offline          what the offline copy holds: {version, files: {path: hash}}
 
@@ -459,11 +461,12 @@ ADMIN_STAGES = {
     'pictures-draft': {'title': 'Draft fight pictures', 'folder': True, 'timeout': 300, 'cmds': lambda c: [PY + ['tools/ill_index.py'], PY + ['tools/plates_draft.py', c]]},
     'fights-up': {'title': 'Upscale fight pictures', 'folder': True, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/ill_upscale.py', '--fights', c]]},
     'ills': {'title': 'Upscale illustrations', 'folder': True, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/ill_upscale.py', c]]},
-    'offline': {'title': 'Offline check', 'book': False, 'timeout': 300, 'cmds': lambda c: [PY + ['tools/offline_check.py']]},
     # the real books through every script, then both unit-test suites (ADR 0022: re-importing here needs no go-ahead)
     'check': {'title': 'Check everything', 'book': False, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/check_all.py']]},
-    # the last commit to the iPad (the release server, docs/reference/offline.md); gated: the owner's go-ahead
-    'release': {'title': 'Release to the iPad', 'book': False, 'gated': True, 'timeout': 600, 'cmds': lambda c: [PY + ['tools/release.py']]},
+    # the last commit to the iPad (the release server, docs/reference/offline.md); gated: the owner's go-ahead.
+    # The offline check first: its sizes in the log, and nothing released if the page names a missing file
+    'release': {'title': 'Release to the iPad', 'book': False, 'gated': True, 'timeout': 600,
+                'cmds': lambda c: [PY + ['tools/offline_check.py'], PY + ['tools/release.py']]},
 }
 # Setup (ADR 0036): tools/setup.py installs a part. Not through PY: tools/.venv may not exist yet.
 # realesrgan and ocr download files, so they are gated.
@@ -672,7 +675,7 @@ class Handler(SimpleHTTPRequestHandler):
             import ill_upscale
             got = ill_upscale.listing(q.get('book', [''])[0])
             return self._json(200, got) if got is not None else self._json(404, {'error': 'not a downloaded book'})
-        if parts[:1] == ['icons'] or parts == ['item-glyph']:
+        if parts[:1] == ['icons'] or parts in (['item-glyph'], ['ui-glyph']):
             return self._admin_icons(method, parts, q, body)
         if method == 'GET' and parts == ['standins']:
             import plates_file
@@ -696,8 +699,8 @@ class Handler(SimpleHTTPRequestHandler):
         return self._json(404, {'error': 'nothing here'})
 
     def _admin_icons(self, method, parts, q, body):
-        """The item sheet's icons (tools/item_icons.py): the ones here, game-icons.net's list and previews, and
-        an item's glyph changed. Fetching from game-icons.net is the owner's own click on the sheet."""
+        """The item and icon sheets' icons (tools/item_icons.py): the ones here, game-icons.net's list and previews,
+        and an item's or the player's own glyph changed. Fetching from game-icons.net is the owner's own click on the sheet."""
         import item_icons
         try:
             if method == 'GET' and parts == ['icons']:
@@ -716,6 +719,9 @@ class Handler(SimpleHTTPRequestHandler):
             if method == 'POST' and parts == ['item-glyph']:
                 glyph = item_icons.fetch(str(body['remote'])) if body.get('remote') else str(body.get('glyph') or '')
                 return self._json(200, {**item_icons.set_glyph(str(body.get('item') or ''), glyph), 'glyph': glyph})
+            if method == 'POST' and parts == ['ui-glyph']:  # the icon sheet: a glyph of glyphs.js
+                glyph = item_icons.fetch(str(body['remote'])) if body.get('remote') else str(body.get('glyph') or '')
+                return self._json(200, {**item_icons.set_ui_glyph(str(body.get('list') or ''), str(body.get('key') or ''), glyph), 'glyph': glyph})
         except ValueError as e:
             return self._json(400, {'error': str(e)})
         except OSError as e:  # game-icons.net out of reach

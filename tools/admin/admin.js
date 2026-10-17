@@ -251,6 +251,10 @@ function openIlls(b) {  // every illustration, and each one's original beside it
 function openItems(b) {  // every item of the book's table, its icon, and another picked (tools/item_icons.py)
   openInline(b, `/tools/admin/items.html?book=${encodeURIComponent(b.code)}&embed=1`, `Items: ${b.n}. ${b.title}`);
 }
+function openIcons() {  // every icon the player draws beside the books' items: it spans the books, so no book (glyphs.js)
+  openInline({ code: '' }, '/tools/admin/icons.html?embed=1', 'Player icons');
+}
+$('[data-open="icons"]').onclick = openIcons;
 function openMap(b, step) {
   if (!b?.folder) return toast('Download the book first', 3000);
   openInline(b, `/tools/map-editor.html?book=${encodeURIComponent(b.code)}&embed=1${step ? '&step=' + step : ''}`, `Map editor: ${b.n}. ${b.title}`);

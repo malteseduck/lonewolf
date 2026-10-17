@@ -2,6 +2,8 @@
    theirs in their item table (items/items-<code>.js, `glyph`); the engine's standard items are listed
    here, and an entry here wins over a `glyph` in shared/core.js. The item sheet (tools/admin/items.html)
    rewrites this list and the tables, one entry per line, so keep it so. */
+import { KIND_GLYPH } from './glyphs.js';
+
 export const ITEM_GLYPH = {
   dagger: 'plain-dagger',
   spear: 'barbed-spear',
@@ -22,7 +24,6 @@ export const ITEM_GLYPH = {
   chainmail: 'mail-shirt',
 };
 
-/* The glyph's name for an item id; anything typed in by hand gets a pouch or a pendant by its kind. */
+/* The glyph's name for an item id; anything else gets its kind's (glyphs.js KIND_GLYPH). */
 export const glyphName = (LW, id) => ITEM_GLYPH[id] || (LW.ITEMS[id] && LW.ITEMS[id].glyph)
-  || (id === 'gold' || id === 'coin' ? 'two-coins' : id === 'pack' ? 'backpack'
-    : LW.itemKind(id) === 'special' ? 'gem-pendant' : LW.itemKind(id) === 'weapon' ? 'pointy-sword' : 'swap-bag');
+  || KIND_GLYPH[id === 'coin' ? 'gold' : id === 'gold' || id === 'pack' ? id : ['special', 'weapon'].includes(LW.itemKind(id)) ? LW.itemKind(id) : 'backpack'];

@@ -7,6 +7,7 @@ import { printedCanvas } from './maps.js';
 import { compilePlates, pickPlate, pinKey, upscaledSrc } from './platepick.js';
 import * as Adv from './adventures.js';
 import { glyphName } from './itemglyphs.js';
+import { DISC_GLYPH, UI_GLYPH as UG } from './glyphs.js';
 
 import * as ITEMS_01 from './items/items-01fftd.js';
 import * as ITEMS_02 from './items/items-02fotw.js';
@@ -174,13 +175,7 @@ const pl = $('#pl'), pr = $('#pr'), bookEl = $('#book'), rtabs = $('#rtabs'), ge
 const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- icons ---------- */
-/* Drawn glyphs for the disciplines, from game-icons.net (assets/icons/README.txt), cut from the
-   medallion's colour by a mask so they can glow like the HD ones */
-const DISC_GLYPH = { camouflage: 'hood', hunting: 'high-shot', sixthSense: 'third-eye', tracking: 'footsteps', healing: 'herbs-bundle', weaponskill: 'broadsword', mindshield: 'eye-shield', mindblast: 'brainstorm', animalKinship: 'wolf-howl', mindOverMatter: 'magic-palm',
-  weaponmastery: 'crossed-swords', animalControl: 'stag-head', curing: 'healing', invisibility: 'invisible', huntmastery: 'bowman', pathsmanship: 'footprint', psiSurge: 'psychic-waves', psiScreen: 'magic-shield', nexus: 'fire-shield', divination: 'crystal-ball',
-  // the Grand Master ones, each near its Magnakai counterpart's (only one series' grid shows at a time)
-  grandWeaponmastery: 'shining-sword', animalMastery: 'stag-head', deliverance: 'healing', assimilance: 'domino-mask', grandHuntmastery: 'bowman', grandPathsmanship: 'footprint',
-  kaiSurge: 'psychic-waves', kaiScreen: 'magic-shield', grandNexus: 'fire-shield', telegnosis: 'crystal-ball', magiMagic: 'magic-palm', kaiAlchemy: 'round-bottom-flask' };
+/* Drawn glyphs from game-icons.net (assets/icons/README.txt); which stands where is in glyphs.js */
 const glyph = (name) => `<span class="glyph" aria-hidden="true"><i style="--g:url(assets/icons/${name}.svg)"></i></span>`;
 /* the HD map medallion's compass rose: eight points, each split into a lit and a shaded half */
 const ROSE = (() => {
@@ -188,7 +183,7 @@ const ROSE = (() => {
   const minor = [45, 135, 225, 315].map((a) => pt(a, 30, 6)).join(''), major = [0, 90, 180, 270].map((a) => pt(a, 47, 8.5)).join('');
   return `<svg class="rose" viewBox="-50 -50 100 100" aria-hidden="true"><circle class="ring" r="21"/>${minor}${major}<circle class="lt" r="3.2"/></svg>`;
 })();
-const TAB_ART = { kai: glyph('wolf-head'), pack: glyph('locked-chest'), map: ROSE };
+const TAB_ART = { kai: glyph(UG.tabKai), pack: glyph(UG.tabPack), map: ROSE };
 /* items, drawn the same way (itemglyphs.js) */
 const itemGlyph = (id) => glyph(glyphName(LW, id));
 
@@ -302,7 +297,7 @@ function titleLeftHTML() {
   const band = (label, from, to) => `<div class="band"><em>${label}</em><div>${SCROLL}${Array.from({ length: to - from + 1 }, (_, i) => numeral(from + i)).join('')}${SCROLL}</div></div>`;
   return `<div class="titlepage">
     <div class="maker">A solo adventure in Magnamund</div>
-    <h1 class="mark"><span>Lone</span><span class="wolfmark">${glyph('wolf-head')}</span><span>Wolf</span></h1>
+    <h1 class="mark"><span>Lone</span><span class="wolfmark">${glyph(UG.titleMark)}</span><span>Wolf</span></h1>
     <div class="frontis">${portraitURL ? `<img src="${portraitURL}" alt="">` : ''}</div>
     <div class="bands">${SHELVES.map((s) => band(s.name, s.from, s.to)).join('')}</div>
   </div>`;
@@ -344,7 +339,7 @@ function adventuresHTML() {
   };
   return `<div class="shelfpage">${ruled('Your adventures')}
     <div class="plaqs">${adv.list.map(plaque).join('')}
-      <div class="plaq"><button type="button" class="plaqmain" data-advnew><span class="med">${glyph('wolf-head')}</span><span class="plaqtext"><b>A new adventure</b><i>Another game, with a Lone Wolf of its own</i></span></button>
+      <div class="plaq"><button type="button" class="plaqmain" data-advnew><span class="med">${glyph(UG.newAdventure)}</span><span class="plaqtext"><b>A new adventure</b><i>Another game, with a Lone Wolf of its own</i></span></button>
         <span class="plaqmore">${restoring && !restoring.id && (restoring.files || restoring.chosen) ? restoreRow('') : '<button type="button" class="inkbtn" data-restore>restore</button>'}</span></div></div></div>`;
 }
 function shelfHTML() {
@@ -371,7 +366,7 @@ function shelfHTML() {
 function leftHTML() {
   if (mode === 'title') return titleLeftHTML();
   if (mode === 'setup') return setupLeftHTML();
-  if (intro) return `<div class="badge"><div class="med" style="--s:3.300em">${glyph('wolf-head')}</div></div><div class="story"><div class="scroll" id="scroll">
+  if (intro) return `<div class="badge"><div class="med" style="--s:3.300em">${glyph(UG.introBadge)}</div></div><div class="story"><div class="scroll" id="scroll">
       <span class="eyebrow lead">The story so far</span><div class="text">${book.intro.map((p, i) => `<p class="${i ? '' : 'first'}">${esc(p)}</p>`).join('')}</div></div>
       <div class="finis"><button type="button" class="seal" data-intro>${intro === 'again' ? `Back to section ${esc(game.s.at)}` : 'Begin'}</button></div></div>`;
   const sec = game.section, id = game.s.at;
@@ -429,7 +424,7 @@ function leftHTML() {
   }
   // a fight stopped by hand and not won: only the by-hand turn box, or the fight after all
   else if (game.combatPending && game.brokenOff) h += `${turnBox('Turn to section', '')}<button type="button" class="inkbtn byhand" data-fight>or fight it after all</button>`;
-  else if (game.combatPending) h += `<div class="compass"><div class="orn"><button type="button" class="med" data-fight aria-label="Begin the fight">${glyph('crossed-swords')}</button></div><span>Draw your weapon.</span></div>`;
+  else if (game.combatPending) h += `<div class="compass"><div class="orn"><button type="button" class="med" data-fight aria-label="Begin the fight">${glyph(UG.beginFight)}</button></div><span>Draw your weapon.</span></div>`;
   else if (sec.end) {
     const next = Object.keys(BOOKS).find((k) => BOOKS[k].number === book.number + 1);
     h += `<div class="finis"><h2>Your quest is fulfilled</h2><p>You came through in ${game.s.trail.length} sections. Your Lone Wolf is kept for the next book.</p>${
@@ -566,7 +561,7 @@ function kaiHTML() {
   const list = LW.SERIES[series].list, rows = [], across = Math.ceil(list.length / 2); // two rows: five, or the Grand Master's six
   for (let i = 0; i < list.length; i += across) rows.push(list.slice(i, i + across));
   return `<div class="likeness">${portraitURL ? `<img src="${portraitURL}" alt="">` : ''}
-      <div class="who"><span class="disc lit">${glyph('wolf-head')}</span><h3>Lone Wolf</h3></div></div>
+      <div class="who"><span class="disc lit">${glyph(UG.kaiSheet)}</span><h3>Lone Wolf</h3></div></div>
     <div class="ledgers"><section>${ruled('Attributes')}${row('Combat Skill', `${stepper('cs')} ${cs.total}`)}${row('Endurance', `${stepper('ep')} ${Math.max(0, h.ep)}/${h.epMax}`)}${row('Meals', h.meals)}${row('Rank', esc(LW.rankOf(h) || 'Kai Lord'), true)}${
       series === 'magnakai' ? row('Lore-circles', circles.length ? esc(circles.map((c) => c.name.replace('Circle of ', '').replace('the ', '')).join(', ')) : 'none', true) : ''}</section>
       <section>${ruled('Combat Skill')}${cs.parts.map((p, i) => row(esc(p.label), i ? signed(p.n) : p.n)).join('')}
@@ -611,14 +606,14 @@ function packHTML() {
   for (let i = 0; i < h.meals; i++) cells.push(`<button type="button" class="disc item ${on('meal', 'meal')}" data-sel="meal|meal" aria-label="Meal">${itemGlyph('meal')}</button>`);
   h.backpack.forEach((b) => cells.push(slot('pack', b)));
   while (cells.length < room) cells.push('');
-  const kit = adding ? pickerHTML() : `<div class="arms">${arm(h.weapons[0])}<span class="crestmark">${glyph('wolf-head')}</span>${arm(h.weapons[1])}</div>
+  const kit = adding ? pickerHTML() : `<div class="arms">${arm(h.weapons[0])}<span class="crestmark">${glyph(UG.crest)}</span>${arm(h.weapons[1])}</div>
     ${ruled(`Special Items <small>${LW.counted(h)} of ${LW.specialLimit(h)}</small>`)}
     <div class="specs">${specs ? `<ul>${specs}</ul>` : '<p class="none">None carried.</p>'}</div>`;
   return `${kit}
     ${ruled(h.noPack ? 'Backpack <small>lost: find another to carry anything</small>' : `Backpack <small>${h.backpack.length + h.meals} of ${room}</small>`)}
     <div class="pack" style="--cols:${cols}">${cells.map((c) => `<div class="cell">${c}</div>`).join('')}${packLattice(cols, Math.ceil(cells.length / cols))}</div>
-    <div class="ledger"><span class="purse">${glyph('two-coins')}<b>${h.gold}</b> Gold Crowns ${stepper('gold')}</span>${
-      Object.keys(LW.COINS).filter((c) => (h.coins || {})[c] != null).map((c) => `<span class="purse">${glyph('two-coins')}<b>${h.coins[c]}</b> ${esc(LW.COINS[c])} ${stepper(c)}</span>`).join('')}
+    <div class="ledger"><span class="purse">${glyph(UG.purse)}<b>${h.gold}</b> Gold Crowns ${stepper('gold')}</span>${
+      Object.keys(LW.COINS).filter((c) => (h.coins || {})[c] != null).map((c) => `<span class="purse">${glyph(UG.purse)}<b>${h.coins[c]}</b> ${esc(LW.COINS[c])} ${stepper(c)}</span>`).join('')}
       ${adding ? '' : '<button type="button" class="inkbtn addhand" data-adding="open">Add an item by hand</button>'}</div>
     ${kept.length && !adding ? `<p class="kept">At the Kai Monastery, taken up or left at the start of a book: ${esc(kept.join(', '))}.</p>` : ''}${
       // what was taken from him to be given back later (hero.stash), lasting conditions, and the notes the text asks for
@@ -648,8 +643,8 @@ function pickerHTML() {
 
   return `<div class="picker">${ruled('Add an item <button type="button" class="inkbtn" data-adding="close">done</button>')}
     ${row('Weapons', LW.WEAPONS.map(pick).join(''))}
-    ${row('Backpack', pick('meal') + pick('potion') + other('pack', 'swap-bag', 'Another Backpack Item'))}
-    ${row('Special Items', pick('helmet') + pick('chainmail') + pick('map') + other('spec', 'gem-pendant', 'Another Special Item'))}
+    ${row('Backpack', pick('meal') + pick('potion') + other('pack', UG.otherPack, 'Another Backpack Item'))}
+    ${row('Special Items', pick('helmet') + pick('chainmail') + pick('map') + other('spec', UG.otherSpecial, 'Another Special Item'))}
     ${pastItems.length ? `
       <details>
         <summary>View Special Items from Past Books</summary>
@@ -769,15 +764,15 @@ function closeMap() { if (M) M.close(); }
    showing how much is left. */
 function gauges(cs, h) {
   const ep = Math.max(0, h.ep), g = (id, art, label, v, extra = '') => `<span class="gauge ${id}" title="${label}" aria-label="${label} ${v.replace(/<[^>]+>/g, '')}"><span class="med">${art}</span><b>${v}</b>${extra}</span>`;
-  return g('cs', glyph('crossed-swords'), 'Combat Skill', String(cs))
-    + g('ep', glyph('heart-drop'), 'Endurance', `${ep}<small>/${h.epMax}</small>`, `<i class="thread"><i style="width:${Math.round((ep / h.epMax) * 100)}%"></i></i>`)
-    + g('gold', glyph('two-coins'), 'Gold Crowns', String(h.gold));
+  return g('cs', glyph(UG.statCs), 'Combat Skill', String(cs))
+    + g('ep', glyph(UG.statEp), 'Endurance', `${ep}<small>/${h.epMax}</small>`, `<i class="thread"><i style="width:${Math.round((ep / h.epMax) * 100)}%"></i></i>`)
+    + g('gold', glyph(UG.statGold), 'Gold Crowns', String(h.gold));
 }
 function renderRight() {
   const tabs = [['kai', 'Kai Disciplines'], ['pack', 'Inventory'], ['map', 'Map']]; // Map opens the modal, not a panel
   rtabs.hidden = mode !== 'story';
   rtabs.innerHTML = tabs.map(([id, label]) => `<button type="button" class="med" role="tab" aria-selected="${panel === id}" aria-label="${label}" data-panel="${id}">${TAB_ART[id]}</button>`).join('')
-    + `<button type="button" class="med home" data-home aria-label="Back to the title page" title="Back to the title page">${glyph('return-arrow')}</button>`; // the HD return medallion: start over, or pick another book
+    + `<button type="button" class="med home" data-home aria-label="Back to the title page" title="Back to the title page">${glyph(UG.home)}</button>`; // the HD return medallion: start over, or pick another book
   if (mode === 'title') { pr.innerHTML = titleRightHTML(); return; }
   if (mode === 'setup') {
     // a choice redraws the page: keep the list where the reader had scrolled it
@@ -1090,13 +1085,13 @@ function updateBattle() {
   const locked = B.lock || B.over;
   const med = (id, ic, label, note, off, extra = '') => `<div class="medcap"><button type="button" class="med ${extra}" data-cmd="${id}" ${locked || off ? 'disabled' : ''} aria-label="${label}">${ic}</button>${label}<small>${note}</small></div>`;
   const n = hero.backpack.filter((b) => b === 'potion').length, psi = LW.psi(hero), cure = LW.cureOf(hero);
-  const left = med('fight', B.weapon ? itemGlyph(B.weapon) : glyph('crossed-swords'), 'Strike', 'attack')
-    + (B.power ? med('mind', glyph(B.power === 2 ? 'psychic-waves' : 'brainstorm'), B.power === 2 ? psi.name : 'Mindblast', B.deaf() ? 'no effect' : foe.immune && B.mind === 1 ? 'as Mindblast: no effect' : ['at rest', B.power === 2 ? `as Mindblast, +${psi.blast}` : 'focused, +2', `+${psi.surge}, costs ${psi.cost} a round`][B.mind], false, B.blasting() ? 'lit' : '') : '');
+  const left = med('fight', B.weapon ? itemGlyph(B.weapon) : glyph(UG.strike), 'Strike', 'attack')
+    + (B.power ? med('mind', glyph(B.power === 2 ? UG.psiSurge : UG.mindblast), B.power === 2 ? psi.name : 'Mindblast', B.deaf() ? 'no effect' : foe.immune && B.mind === 1 ? 'as Mindblast: no effect' : ['at rest', B.power === 2 ? `as Mindblast, +${psi.blast}` : 'focused, +2', `+${psi.surge}, costs ${psi.cost} a round`][B.mind], false, B.blasting() ? 'lit' : '') : '');
   const right = (n ? med('item', itemGlyph('potion'), 'Laumspur', `${n} left`, hero.ep >= hero.epMax) : '')
-    + (LW.canCure(hero, book.id) ? med('cure', glyph('healing'), cure.name, hero.ep <= cure.at ? '20 back, once a book' : `at ${cure.at} or less`, hero.ep > cure.at) : '')
+    + (LW.canCure(hero, book.id) ? med('cure', glyph(UG.cure), cure.name, hero.ep <= cure.at ? '20 back, once a book' : `at ${cure.at} or less`, hero.ep > cure.at) : '')
     + B.boosts().map((id) => med('boost:' + id, itemGlyph(id), esc(LW.itemName(id)), 'before you strike')).join('')
     // one medallion for each way out the text allows (B.evades()); a second one is named by its own label
-    + B.evades().map((e) => med('evade:' + e.i, glyph(e.free ? 'invisible' : 'run'), e.label ? esc(e.label) : 'Evade', e.open ? (e.free ? 'untouched' : 'take one blow') : e.late ? 'too late' : e.if && !LW.meets(hero, e.if) ? `needs ${esc(LW.condName(e.if))}` : `after round ${e.after}`, !e.open)).join('');
+    + B.evades().map((e) => med('evade:' + e.i, glyph(e.free ? UG.evadeFree : UG.evade), e.label ? esc(e.label) : 'Evade', e.open ? (e.free ? 'untouched' : 'take one blow') : e.late ? 'too late' : e.if && !LW.meets(hero, e.if) ? `needs ${esc(LW.condName(e.if))}` : `after round ${e.after}`, !e.open)).join('');
   const cmds = q('cmds');
   cmds.innerHTML = left + right;
   renderLeft();
@@ -1249,8 +1244,8 @@ async function begin(id, fresh, anew, reread) {
 }
 window.addEventListener('resize', () => { if (B && B.fit) B.fit(); });
 
-/* the crossed swords drawn on the plate of a foe with no picture */
-fetch('assets/icons/crossed-swords.svg').then((r) => r.text()).then((t) => {
+/* the emblem (crossed swords) drawn on the plate of a foe with no picture */
+fetch(`assets/icons/${UG.foeEmblem}.svg`).then((r) => r.text()).then((t) => {
   const d = [...t.matchAll(/ d="([^"]+)"/g)].map((m) => m[1]).join(' ');
   if (d) setEmblem(d);
 }).catch(() => {});

@@ -151,3 +151,41 @@ def test_remote_list_is_fetched_once_and_kept(root, monkeypatch):
     assert item_icons.remote()['paths'] == ['delapouite/meal', 'lorc/key'] and len(calls) == 1
     item_icons.remote(refresh=True)
     assert len(calls) == 2
+
+
+# ---------------------------------------------------------------- the icon sheet: glyphs.js
+
+UI = """/* where each glyph is drawn */
+export const DISC_GLYPH = {
+  camouflage: 'hood',
+  // a comment
+  tracking: 'footsteps',
+};
+
+export const UI_GLYPH = {
+  crest: 'key',
+  home: 'key',
+};
+
+export const WHERE = {
+  crest: ['Panels', 'the crest'],
+};
+"""
+
+
+def test_a_player_glyph_is_replaced_in_glyphs_js_and_nothing_else_moves(root):
+    f = str(root / 'glyphs.js')
+    put(f, UI)
+    assert item_icons.set_ui_glyph('UI_GLYPH', 'home', 'meal') == {'file': 'glyphs.js', 'was': 'key'}
+    assert item_icons.set_ui_glyph('DISC_GLYPH', 'tracking', 'gladius')['was'] == 'footsteps'
+    assert read(f) == UI.replace("home: 'key'", "home: 'meal'").replace("tracking: 'footsteps'", "tracking: 'gladius'")
+
+
+def test_set_ui_glyph_refusals(root):
+    put(str(root / 'glyphs.js'), UI)
+    with pytest.raises(ValueError, match='no entry'):
+        item_icons.set_ui_glyph('UI_GLYPH', 'camouflage', 'meal')  # in another list only
+    with pytest.raises(ValueError, match='not a list'):
+        item_icons.set_ui_glyph('WHERE', 'crest', 'meal')
+    with pytest.raises(ValueError, match='no icon'):
+        item_icons.set_ui_glyph('UI_GLYPH', 'home', 'nothing-here')

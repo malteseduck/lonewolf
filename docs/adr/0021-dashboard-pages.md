@@ -1,4 +1,4 @@
-# 0021. The dashboard's pages: the map's burnt parchment, its sheets opened inside it, an item sheet that picks icons
+# 0021. The dashboard's pages: the map's burnt parchment, its sheets opened inside it, item and icon sheets that pick icons
 
 - Status: Accepted
 - Date: 2026-10-11
@@ -14,7 +14,9 @@ the parchment with burnt edges.
 Each item's icon is a game-icons.net glyph named in its item table (`glyph`) or, for the engine's
 own items, in the code. Choosing one meant guessing names for `tools/fetch_icons.py` and editing
 the table by hand, without seeing the icons side by side. The owner asked for a sheet like the
-picture and illustration sheets (2026-10-17).
+picture and illustration sheets (2026-10-17). The same day the owner asked for the player's other
+icons (disciplines, tabs, fight medallions and the like) to be reviewed and changed the same way;
+they span the books, so they are not a book step.
 
 ## Decision
 
@@ -41,6 +43,15 @@ picture and illustration sheets (2026-10-17).
   credited under its author in `assets/icons/README.txt`, as `fetch_icons.py` does.
 - The change is written where the glyph is named: the item's entry in its book's table, or, for the
   engine's own items, `itemglyphs.js`, which every book shares.
+- **The icon sheet.** "Player icons" in the dashboard's tools row (not a book step: it is the same
+  in every book) opens `tools/admin/icons.html`: every icon the player draws other than a book's own
+  items, grouped by where it shows (the disciplines by series, the title and panels, the gauges and
+  inventory, the fights, an item's default by kind, the engine's items), each where it is drawn, as a
+  medallion and large, with what else uses it. Change icon... is the item sheet's picker, with the
+  same go-ahead for a download.
+- Those icons are named in one file, `glyphs.js`, one entry for each place an icon is drawn (the
+  wolf's head on the title and on the crest are separate entries), so each can be changed alone. The
+  sheet changes an entry already there; a new place to draw an icon is added in the code.
 
 ## Consequences
 
@@ -50,6 +61,7 @@ picture and illustration sheets (2026-10-17).
   burns its edges in CSS (`--scorch`, reach `--burn`). A new panel takes the panel rule in
   `admin.css`; a new floating sheet the `sheet` class. Colours come from the custom properties at the
   top of `admin.css`, not new hard-coded ones.
+- The picker is one module (`iconpicker.js`, `icons.css`) for both sheets.
 - Icons fetched and then left unused stay in `assets/icons/` until removed by hand. An engine item's
   icon changes in every book at once; the sheet says so before saving.
 
@@ -60,3 +72,5 @@ picture and illustration sheets (2026-10-17).
 - 2026-10-11: fight cards back to the book's plain tan, to judge a picture as it will look.
 - 2026-10-11: the picture sheet and map editor open only inside the dashboard, without a rim of their own.
 - 2026-10-17: the item sheet added (was 0042), merged into this record.
+- 2026-10-17: the icon sheet added for the player's other icons, named in `glyphs.js`; the owner asked
+  for them to be reviewed and changed as the items' are.

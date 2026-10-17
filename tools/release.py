@@ -4,13 +4,14 @@
     python tools/release.py [commit]      (default HEAD)
     python tools/release.py --status      what is released, and what HEAD would add, as JSON
 
-The dashboard's "Release" button runs it too (docs/reference/dashboard.md).
+The dashboard's "Release" button runs it too, after tools/offline_check.py (docs/reference/dashboard.md).
 
 The code comes from the commit, never the working copy, so uncommitted work stays on the PC. The
 books and art are git-ignored (data/projectaon/, art/), so they come from disk as they are now; a
 file the page needs that is neither in the commit nor ignored (a new file not yet committed) stops
 the release. The folder holds only the files GET /api/offline lists, plus sw.js. The last two
-releases are kept, so `release.py <older commit>` puts an earlier one back.
+releases are kept, so `release.py <older commit>` puts an earlier one back. When the files are exactly
+those released already (a commit that changes only docs or tools), nothing is made and it says so.
 """
 import io
 import json
@@ -22,6 +23,7 @@ import tarfile
 import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import serve  # noqa: E402
 from serve import RELEASES, ROOT, offline_list  # noqa: E402
 
 KEEP = 2
@@ -79,6 +81,10 @@ def main():
         borrowed.append(rel)
         return True
 
+    # the build folder's path is the same each time: hashes remembered from the last build would hide a change
+    with serve._hash_lock:
+        for k in [k for k in serve._hashes if k.startswith(stage)]:
+            del serve._hashes[k]
     got = offline_list(stage, fill)
     # what came from disk must be ignored by git: anything else is code not committed
     ignored = set(git('check-ignore', '--stdin', '-z', data='\0'.join(borrowed).encode(), ok=(0, 1)).decode().split('\0')) if borrowed else set()
@@ -98,6 +104,10 @@ def main():
             os.rmdir(d)
 
     before = current()
+    if before.get('version') == got['version'] and os.path.isdir(os.path.join(RELEASES, before.get('dir') or '.building')):
+        shutil.rmtree(stage, ignore_errors=True)
+        print(f'Nothing to release: the iPad already has exactly these files ({before["dir"]}).')
+        return 0
     name = f'{time.strftime("%Y%m%d-%H%M%S")}-{sha}'
     os.replace(stage, os.path.join(RELEASES, name))
     size = sum(os.path.getsize(os.path.join(RELEASES, name, r)) for r in got['files'])
@@ -112,10 +122,7 @@ def main():
         shutil.rmtree(os.path.join(RELEASES, n), ignore_errors=True)
 
     print(f'Released {sha} "{subject}": {len(got["files"])} files, {size / 1e6:.1f} MB, version {got["version"]}.')
-    if before.get('version') == got['version']:
-        print('The iPad already has exactly these files: nothing for it to fetch.')
-    else:
-        print('The iPad fetches it at its next sync (opening the app with the PC in reach).')
+    print('The iPad fetches it at its next sync (opening the app with the PC in reach).')
     dirty = git('status', '--porcelain', '--untracked-files=no').decode().splitlines()
     if dirty and ref == 'HEAD':
         print(f'Not included: uncommitted changes to {len(dirty)} file{"s" * (len(dirty) != 1)}.')

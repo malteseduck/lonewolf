@@ -74,9 +74,9 @@ Changes list names what it took in.
 
 | # | Decision | Amended |
 |---|---|---|
-| [0021](0021-dashboard-pages.md) | The dashboard is the map's burnt parchment; its sheets open only inside it; the item sheet picks icons | 2026-10-17 |
+| [0021](0021-dashboard-pages.md) | The dashboard is the map's burnt parchment; its sheets open only inside it; the item and icon sheets pick icons | 2026-10-17 |
 
 ### Rulings
 
 [`rulings.md`](rulings.md): game and house rules (R1-R3), book readings (R4-R10), presentation
-(R11-R12), workflow (R13-R14).
+(R11-R12), workflow (R13-R15).

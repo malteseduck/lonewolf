@@ -61,7 +61,8 @@ copies into `release/<date>-<commit>/` (git-ignored) the files `GET /api/offline
 books and art from disk as they are (they are git-ignored, so never in a commit). A file the page
 needs that is neither committed nor ignored stops the release. `release/CURRENT` names the folder;
 the release server reads it at each request, so no restart is needed, and the iPad fetches the
-difference at its next sync. The last two releases are kept: `release.py <older commit>` puts one
+difference at its next sync. If the files are exactly those of the current release (a commit of
+docs or tools only), nothing is made and it says so. The last two releases are kept: `release.py <older commit>` puts one
 back.
 
 The release server answers the files of the release and the backups API (the same `backups/` as the
@@ -91,8 +92,7 @@ code is `tools/serve.py` from the working copy, read when it starts.
   are not on disk (sw.js ignores it).
 - `python tools/offline_check.py` prints the same list without a server: file count and size, size
   per group (each book on its own), the 10 largest files and anything missing (exit code 1 if so).
-  Run it after adding a file the page loads, or moving one (or press "Offline check" in the import
-  dashboard). `--json` prints the same as one JSON object.
+  Run it after adding a file the page loads, or moving one (the dashboard's Release runs it first). `--json` prints the same as one JSON object.
 - `sw.js` (the service worker) keeps the files in a Cache named `lw-files-<version>` and answers
   every request for them from it; `api/` and `sw.js` itself always go to the network. Its state
   (`active`, `staged`) is kept in the `lw-offline-state` cache.

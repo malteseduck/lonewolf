@@ -56,7 +56,16 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   in another book's table for an item from there, or in `itemglyphs.js` for the engine's own (every
   book's). One from game-icons.net is first saved to `assets/icons/` (square removed; `name-author`
   if another author's icon has the name) and credited in its README, on its author's "picked on the
-  item sheet" line.
+  item sheet" line. The picker is `iconpicker.js` (styles in `icons.css`), shared with the icon sheet.
+- **The icon sheet** ("Player icons" in the tools row; ADR 0021), inline like the others and only there
+  (`tools/admin/icons.html`): every icon the player draws other than a book's own items, which spans
+  the books: the disciplines by series, the title, panels and tabs, the gauges and inventory, the fight's
+  medallions (`UI_GLYPH`, grouped and described by `WHERE`), the icons an item gets by its kind
+  (`KIND_GLYPH`), all in `glyphs.js`, and the engine's own items. Each card shows the icon as a
+  medallion and large, and what else draws the same icon (a book's items too). Change icon... is the
+  item sheet's picker; it writes `glyphs.js` (`item_icons.set_ui_glyph()`, only an entry already
+  there) or, for an engine item, `itemglyphs.js`. The compass rose and the plates' ornaments are drawn
+  in code and not on it.
 - **Setup** (ADR 0036), above the tools: what the tools need on this PC, from `tools/setup.py`. One line
   while everything is there ("Show" opens it); a row per part, open, while any is missing: uv and
   Node (yours to install), the Python packages (`tools/.venv`, from `tools/pyproject.toml` and `uv.lock`), the npm
@@ -64,7 +73,8 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   its row) and `art/` (git-ignored: how many pictures are here, with a link, with none, not asked yet; those missing
   that have a link in `art/sources.json` are fetched again by **Download...**, gated; the rest copied from the old checkout). A missing
   part that a script can install has **Install** (or **Download...**, gated).
-- **Whole-project tools**: the offline check, check everything (`check_all.py`), the release.
+- **Whole-project tools**: check everything (`check_all.py`), the player icons (the icon sheet, below), the
+  release (the offline check, then `release.py`; ruling R15).
 - **The job log** at the foot: a job's output line by line while it runs. A job started in another
   tab, or before a reload, is followed too.
 
@@ -119,10 +129,11 @@ agent run `show` instead).
 | `POST picture-url` | `{url}`: the picture at an address, or the one its page names (`og:image`), fetched by `tools/art_sources.py`: `{type, data}` (base64); the page shrinks and saves it as a dropped file |
 | `POST art-link` | `{src, url}` (`url` null: no link): the link of a picture already in `art/`, into `art/sources.json` |
 | `GET ills?book=<code>` | the illustration sheet's list, `ill_upscale.listing()`: `[{name, bytes, big, bigBytes, sections}]`, file names, sizes and section ids only |
-| `GET icons` | the item sheet: `{local: [{name, author}], tables: [code]}`, the icons in `assets/icons/` with their authors from its README, and the books with an item table |
+| `GET icons` | the item and icon sheets: `{local: [{name, author}], tables: [code]}`, the icons in `assets/icons/` with their authors from its README, and the books with an item table |
 | `GET icons/remote` (`?refresh=1`) | every icon at game-icons.net, `{fetched, paths: ['author/name']}`, from the GitHub repository's tree, kept in `data/reference/game-icons/tree.json` after the first ask |
 | `GET icons/preview?path=<author/name>` | that icon as SVG, square removed, kept in `data/reference/game-icons/` |
 | `POST item-glyph` | `{item, glyph}` or `{item, remote: 'author/name'}` (fetched and credited first): `item_icons.set_glyph()` rewrites the item's glyph where it is named; `{file, glyph, was}` |
+| `POST ui-glyph` | the icon sheet: `{list, key, glyph}` or `{list, key, remote}`: `item_icons.set_ui_glyph()` rewrites that entry of `glyphs.js`'s `DISC_GLYPH`, `UI_GLYPH` or `KIND_GLYPH`; `{file, glyph, was}` |
 | `POST plate` | the picture sheet: `{book, enemy, image?, link?, crop?, levels?, flip?, remove?}` (`image` base64 WebP, up to 25 MB): the owner's picture for one enemy, saved as `art/plates/<book>/<slug of the name>.webp` (never a path from the request) and entered in `plates.json` by `tools/plates_file.py`, which keeps the file's one-entry-per-line layout; `link` (an address, or null for none) recorded in `art/sources.json` with a new picture |
 
 The stages are a fixed table, `ADMIN_STAGES`: the command is built from it and a code from
@@ -146,9 +157,8 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `pictures-draft` | `ill_index.py`, then `plates_draft.py <code>`: step 7's draft (items.md, "The draft"), a `plates.json` entry marked `draft` for each enemy with no picture that it can match; shown while any has none ("Draft pictures") | |
 | `fights-up` | `ill_upscale.py --fights <code>` (step 7's Upscale 2x: every picture the book's fights can show, now or approved; about 5-10 s a picture) | |
 | `ills` | `ill_upscale.py <code>` (Real-ESRGAN on this PC; about 3 s a picture) | |
-| `offline` | `offline_check.py` | |
 | `check` | `check_all.py` (re-imports every book, ADR 0022) | |
-| `release` | `release.py` (the last commit to the iPad, docs/reference/offline.md) | yes |
+| `release` | `offline_check.py`, then `release.py` (the last commit to the iPad, docs/reference/offline.md): a missing file stops it at the check; files the iPad has already make nothing (ruling R15) | yes |
 | `setup-venv`, `setup-npm` | `setup.py install venv` (`uv sync --project tools`), `install npm` (`npm ci`); through `uv run --no-project`, so that setup.py reports what is missing rather than uv installing it first | |
 | `setup-realesrgan` | `setup.py install realesrgan`: the v0.2.5.0 Windows zip from GitHub (about 45 MB); only the program, its DLLs and `models/` are written into `tools/realesrgan/` | yes: a download |
 | `setup-art` | `art_sources.py fetch`: every picture in `art/sources.json` with a link and no file here, fetched again and shrunk to 2000 px as the sheet does (through the venv: Pillow) | yes: a download |

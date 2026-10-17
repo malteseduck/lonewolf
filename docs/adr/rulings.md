@@ -43,3 +43,4 @@ row, not a decision by analogy.
 |---|---|---|---|
 | R13 | **The iPad is served the last release**, not the working copy: `tools/serve.py --release` on port 8765, always running. A change reaches it only after a commit and `tools/release.py`, the owner's call: agents do not run it or press Release unasked. | `docs/reference/offline.md` | 2026-10-10 |
 | R14 | **Each book's item table is `items/items-<code>.js`.** The root holds the page, the service worker, the player's modules, and files tools need at the root (configuration, the agents' and readers' notes). | `main.js` imports from `./items/`; the tools look there | 2026-10-11 |
+| R15 | **The dashboard's Release runs the offline check first**, and has no button of its own for it. A release whose files are exactly those released already makes nothing and says so; the check has still run. | `tools/serve.py` ADMIN_STAGES, `tools/release.py` | 2026-10-17 |

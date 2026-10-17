@@ -324,11 +324,13 @@ def stage(monkeypatch, name, cmds=(('run',),), timeout=30, **spec):
 
 def test_admin_stage_table_has_every_stage_with_the_right_gates():
     assert set(serve.ADMIN_STAGES) == {'fetch', 'fetch-rules', 'import', 'reading', 'items-draft', 'check-items', 'approve-pictures', 'pictures-draft', 'phrasings-scan', 'rules-diff', 'walk', 'add-book', 'map-style',
-                                       'ills', 'fights-up', 'offline', 'check', 'release',
+                                       'ills', 'fights-up', 'check', 'release',
                                        'setup-venv', 'setup-npm', 'setup-realesrgan', 'setup-ocr', 'setup-art'}
     gated = {k for k, v in serve.ADMIN_STAGES.items() if v.get('gated')}
     # upscaling fetches nothing; setup's downloads of files are gated, its package installs not
     assert gated == {'fetch', 'fetch-rules', 'import', 'approve-pictures', 'release', 'setup-realesrgan', 'setup-ocr', 'setup-art'}
+    # the release runs the offline check first, and stops if it fails
+    assert serve.ADMIN_STAGES['release']['cmds']('') == [serve.PY + ['tools/offline_check.py'], serve.PY + ['tools/release.py']]
     assert serve.ADMIN_STAGES['setup-art']['cmds']('') == [serve.PY + ['tools/art_sources.py', 'fetch']]  # Pillow converts
     # setup runs before tools/.venv exists, so not through PY
     assert serve.ADMIN_STAGES['setup-ocr']['cmds']('') == [['uv', 'run', '--no-project', 'python', 'tools/setup.py', 'install', 'ocr']]
@@ -507,3 +509,9 @@ def test_item_sheet_icons_listed_previewed_and_an_item_glyph_changed(root, monke
     assert "glyph: 'crown'" in open(root / 'items' / 'items-01fftd.js', encoding='utf-8').read()
     assert jsend('POST', '/api/admin/item-glyph', {'item': 'gem1', 'glyph': 'missing'})[0] == 400
     assert jsend('POST', '/api/admin/item-glyph', {'item': 'gem1', 'glyph': 'key'}, addr='192.168.1.5')[0] == 403
+    # the icon sheet: one of the player's own glyphs, in glyphs.js
+    write(str(root / 'glyphs.js'), "export const UI_GLYPH = {\n  crest: 'key',\n};\n")
+    st, got = jsend('POST', '/api/admin/ui-glyph', {'list': 'UI_GLYPH', 'key': 'crest', 'remote': 'lorc/crown'})
+    assert (st, got) == (200, {'file': 'glyphs.js', 'was': 'key', 'glyph': 'crown'})
+    assert jsend('POST', '/api/admin/ui-glyph', {'list': 'UI_GLYPH', 'key': 'nope', 'glyph': 'key'})[0] == 400
+    assert jsend('POST', '/api/admin/ui-glyph', {'list': 'UI_GLYPH', 'key': 'crest', 'glyph': 'key'}, addr='192.168.1.5')[0] == 403

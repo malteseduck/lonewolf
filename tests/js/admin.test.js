@@ -218,6 +218,14 @@ describe('actions', () => {
     expect(button()).toBeUndefined();
   });
 
+  it('opens the player icon sheet, which spans the books, from the tools row', async () => {
+    await setup(book(1));
+    $('[data-open="icons"]').click();
+    expect($('#mapwrap').hidden).toBe(false);
+    expect($('#mapframe').dataset.src).toBe('/tools/admin/icons.html?embed=1');
+    expect($('#map-title').textContent).toBe('Player icons');
+  });
+
   describe('a gated job', () => {
     const jobs = { 'POST admin/run/*': () => [200, { id: 1, title: 'Job' }], 'GET admin/jobs/*': () => [200, { lines: [], from: 0, state: 'done', code: 0, started: 0, ended: 0 }] };
 
@@ -291,10 +299,11 @@ describe('the whole-project buttons', () => {
 
   it('runs an ungated tool with no book', async () => {
     await boot({ books: [book(1)], running: null }, ok);
-    document.querySelector('[data-global="offline"]').click();
-    await until(() => expect(post('POST admin/run/offline')).toHaveLength(1));
-    expect(post('POST admin/run/offline')[0].search).toBe('');
-    expect(post('POST admin/run/offline')[0].body).toEqual({});
+    document.querySelector('[data-global="check"]').click();
+    await until(() => expect(post('POST admin/run/check')).toHaveLength(1));
+    expect(post('POST admin/run/check')[0].search).toBe('');
+    expect(post('POST admin/run/check')[0].body).toEqual({});
+    expect(document.querySelector('[data-global="offline"]')).toBeNull();  // the release runs it
   });
 
 

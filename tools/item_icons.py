@@ -1,5 +1,5 @@
-"""The item sheet's icons (tools/admin/items.html, through serve.py's /api/admin/icons and
-/api/admin/item-glyph; docs/reference/dashboard.md).
+"""The item and icon sheets' icons (tools/admin/items.html and icons.html, through serve.py's /api/admin/icons,
+/api/admin/item-glyph and /api/admin/ui-glyph; docs/reference/dashboard.md).
 
 The icons are game-icons.net glyphs in assets/icons/, credited by author in assets/icons/README.txt
 (CC BY 3.0). An item's glyph is named in the file that defines it: its book's item table
@@ -258,3 +258,27 @@ def set_glyph(item, glyph):
         text = text[:a] + body + text[b + 1:]
     _write(path, text)
     return {'file': rel, 'was': was}
+
+
+# ---------- the player's other glyphs, in glyphs.js (the icon sheet, tools/admin/icons.html) ----------
+
+UI_LISTS = ('DISC_GLYPH', 'UI_GLYPH', 'KIND_GLYPH')
+
+
+def set_ui_glyph(name, key, glyph):
+    """key's glyph in glyphs.js's list name made glyph; returns {file, was}. Only an entry already there:
+    a new place to draw an icon is added in the code, not from the sheet."""
+    if name not in UI_LISTS:
+        raise ValueError(f'{name} is not a list of glyphs')
+    if not ID.fullmatch(key or '') or not NAME.fullmatch(glyph or ''):
+        raise ValueError('not a key and an icon name')
+    if not os.path.isfile(_p('assets', 'icons', glyph + '.svg')):
+        raise ValueError(f'no icon {glyph} in assets/icons/')
+    path = _p('glyphs.js')
+    text = _read(path)
+    a, b = _block(text, f'export const {name} = {{')
+    m = re.compile(r'^(\s*' + re.escape(key) + r": ')([^']*)'", re.M).search(text, a, b)
+    if not m:
+        raise ValueError(f'no entry {key} in {name}')
+    _write(path, text[:m.start(2)] + glyph + text[m.end(2):])
+    return {'file': 'glyphs.js', 'was': m.group(2)}

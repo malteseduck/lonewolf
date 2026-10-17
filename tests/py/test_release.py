@@ -160,6 +160,17 @@ def test_release_copies_exactly_the_offline_files_plus_sw(env, monkeypatch, caps
 
 
 
+def test_the_same_files_again_are_not_released_and_it_says_so(env, monkeypatch, capsys):
+    run(monkeypatch)
+    before = current(env)
+    env.commit('docs only', **{'docs/guide.md': 'changed, but not needed offline'})
+    capsys.readouterr()
+    assert run(monkeypatch) == 0
+    assert current(env) == before
+    assert [e.name for e in os.scandir(os.path.join(env.root, 'release')) if e.is_dir()] == [before['dir']]
+    assert capsys.readouterr().out.startswith(f'Nothing to release: the iPad already has exactly these files ({before["dir"]}).')
+
+
 def test_a_changed_file_changes_the_version(env, monkeypatch):
     run(monkeypatch)
     v1 = current(env)['version']

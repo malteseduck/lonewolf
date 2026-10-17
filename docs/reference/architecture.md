@@ -13,7 +13,9 @@ maps.js                     ES module: printedCanvas, the book's printed map rep
 platepick.js                ES module: which picture a fight shows (pins, plates.json, the book's own); also used
                             by the picture sheet and tools/plates_pin.mjs
 itemglyphs.js               ES module: ITEM_GLYPH, the engine's items' icons, and glyphName (an item's icon);
-                            also used by the item sheet, which rewrites it (ADR 0021)
+                            also used by the item and icon sheets, which rewrite it (ADR 0021)
+glyphs.js                   ES module: every other icon the player draws (DISC_GLYPH, UI_GLYPH and what each
+                            is for in WHERE, KIND_GLYPH an item's default by kind); the icon sheet rewrites it
 items/items-<code>.js       ES modules, one per book (items-01fftd.js for Book 1): its items and what each
                             section gives, takes or gates, by hand (docs/reference/book-format.md, "Item
                             tables"; kept out of the root: ruling R14)
@@ -61,7 +63,8 @@ tools/
                             book's fight pictures on a sheet, where the owner drops, crops and removes
                             pictures), ills.html (one book's illustrations, each original beside its
                             2x upscale), items.html and itemsheet.js (one book's items and their icons, which
-                            the owner changes: ADR 0021), parchment.js (the tool pages' parchment and charred-rim filter, from
+                            the owner changes: ADR 0021), icons.html (the player's other icons, for
+                            every book), iconpicker.js and icons.css (both sheets' icon picker), parchment.js (the tool pages' parchment and charred-rim filter, from
                             shared/ink.js; the map editor loads it too: ADR 0021)
   map-editor.html           the map steps' page (docs/reference/map-upscale.md); also shown inside the dashboard
   plates_file.py            reads and writes assets/plates/plates.json in its layout; the owner's pictures from the
@@ -91,8 +94,9 @@ tools/
   check_items.mjs           checks items-<code>.js against the book (node)
   plates_pin.mjs            pins a book's approved fight pictures, and lists what would now differ (node)
   fetch_icons.py            fetches game-icons.net glyphs into assets/icons/, background removed
-  item_icons.py             the item sheet's icons: README credits, game-icons.net's list and previews (kept in
-                            data/reference/game-icons/), a fetch, and an item's glyph rewritten where it is named
+  item_icons.py             the item and icon sheets' icons: README credits, game-icons.net's list and previews (kept in
+                            data/reference/game-icons/), a fetch, an item's glyph rewritten where it is named, and
+                            one of glyphs.js's
                             (the four above: docs/reference/items.md)
   map_upscale.py            Real-ESRGAN upscale of a printed map to a set width, saved as WebP or PNG
   ill_upscale.py            Real-ESRGAN upscale of a book's illustrations to 2x, each saved as <name>-2x.webp beside it
@@ -129,7 +133,7 @@ data/projectaon/index.js    document.writes a <script> for each imported book ->
 shared/ui.js                LW.UI (LW.sfx blips: prototypes only)
 shared/rules-series.js      adds Magnakai, overrides LW.has and LW.heroCS, adds LW.Character, LW.HeroSetup, LW.KitSetup, LW.KITS
 shared/fight.js             LW.Fight, LW.ROMAN, LW.RATIO_CAP
-main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js, ./platepick.js, ./adventures.js, ./itemglyphs.js
+main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js, ./platepick.js, ./adventures.js, ./itemglyphs.js, ./glyphs.js
 ```
 
 Order matters: `rules-series.js` overrides functions defined in `core.js` and needs `LW.UI`.
