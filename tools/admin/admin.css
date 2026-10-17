@@ -95,12 +95,23 @@ button.danger:hover:not(:disabled) { border-color: var(--bad); color: var(--bad)
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 16px; padding: 0 24px 24px; align-items: start; }
 @media (max-width: 1250px) { .layout { grid-template-columns: 1fr; } }
 
-.board { border-radius: 3px; overflow-x: auto; }
+/* clip, not auto: a scrolling box would hold the sticky header to itself instead of the window */
+.board { border-radius: 3px; overflow-x: clip; }
+@media (max-width: 960px) { .board { overflow-x: auto; } }
 .grid { border-collapse: collapse; width: 100%; min-width: 900px; }
+/* the header stays in view while the table scrolls past, on the page's own parchment (fixed, so it lines up).
+   A collapsed border does not travel with a sticky cell, so its lines are drawn as inset shadows, and, while it is
+   stuck, a strip of the same parchment above it hides the rows passing under the window's charred rim. */
+.grid thead { position: sticky; top: 22px; z-index: 2; container-type: scroll-state; }
 .grid th, .grid td { padding: 6px 6px; border-bottom: 1px solid var(--line-lo); text-align: center; }
-.grid thead th { font-weight: 600; font-size: 12px; color: var(--dim); vertical-align: bottom; }
-.grid thead tr.groups th { font: 13px var(--title); color: var(--rubric); border-bottom: 1px solid var(--line); letter-spacing: .04em; }
-.grid thead tr.groups th + th { border-left: 1px solid var(--line-lo); }
+.grid thead th { font-weight: 600; font-size: 12px; color: var(--dim); vertical-align: bottom; position: relative; border-bottom: 0;
+  background-color: var(--page); background-image: linear-gradient(rgba(255, 248, 226, .22), rgba(255, 248, 226, .22)), var(--parch, none);
+  background-size: auto, cover; background-position: center; background-attachment: scroll, fixed; }
+.grid thead tr.groups th { font: 13px var(--title); color: var(--rubric); letter-spacing: .04em; box-shadow: inset 0 -1px var(--line); }
+.grid thead tr.groups th + th { box-shadow: inset 0 -1px var(--line), inset 1px 0 var(--line-lo); }
+/* only while stuck: at rest the strip would cover the board's top edge */
+@container scroll-state(stuck: top) { .grid thead tr.groups th::before { content: ''; position: absolute; left: 0; right: 0; bottom: 100%; height: 23px; background: inherit; } }
+.grid thead tr:last-child th { box-shadow: inset 0 -1px var(--line); }
 .grid thead .kind { width: 13px; height: 13px; display: block; margin: 0 auto 3px; }
 .grid td.book, .grid th.book { text-align: left; white-space: nowrap; }
 .grid td.book b { color: var(--bronze-hi); font: 15px var(--title); margin-right: 6px; display: inline-block; min-width: 1.4em; }
