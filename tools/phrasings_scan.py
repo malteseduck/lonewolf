@@ -13,7 +13,9 @@ text they saw, so it can say why each one was left. Each leftover is one of two 
   a phrasing the importer could learn, or one it rightly leaves.
 - **design**: left on purpose (importer.md, "What it does not read"): a negative gate, a gate on an
   item or gold, a draw that counts gold or Endurance, a bonus from an item or weapon, a COMBAT SKILL
-  change for some rounds or from a weapon. These are the item table's (step 5) or the player's.
+  change for some rounds or from a weapon, and any fight whose text shows a rule it does not read (some
+  rounds, a stop or an ENDURANCE falling, undead, something doubled, a read change beside a weapon or a
+  mind defence: general signs, ADR 0036). These are the item table's (step 5) or the player's.
 
 The step is the owner's mark once every "look" has been judged (none left, or each one a phrasing
 rightly left: say which in the report). Counts and section ids only, never the books' text.
@@ -45,6 +47,11 @@ KINDS = {
     'evade': 'speaks of evading in a fight with no evasion read',
     'immune': 'speaks of immunity in a fight with no immune foe',
     'drain': 'speaks of a mind attack every round with no drain read',
+    'cs-read': 'a COMBAT SKILL change read, beside wording on a weapon, a mind defence or a condition (the item table\'s)',
+    'fight-rounds': 'a fight rule for some rounds, left as text (the item table\'s)',
+    'fight-end': 'a fight that stops, or turns on an ENDURANCE falling, left as text (the item table\'s)',
+    'fight-undead': 'the text calls an enemy undead (the item table\'s)',
+    'fight-double': 'a fight with something doubled, left as text (the item table\'s)',
 }
 # a discipline tied to a weapon or item he must carry: the item table's, like any item
 ITEMISH = re.compile(r'\b(?:carrying|carry|wield\w*)\b|\b(?:Weaponmastery|Weaponskill)\s*(?:\(|with\b|in\b)|\bwith (?:a |the )?Bow\b|\bGold\b')
@@ -52,6 +59,22 @@ ITEMISH = re.compile(r'\b(?:carrying|carry|wield\w*)\b|\b(?:Weaponmastery|Weapon
 ENDURANCE = re.compile(r'\bENDURANCE\b')
 # evasion offered as a way out, not a dive "to evade its heat" nor "too late to evade"
 OFFERED = re.compile(r'\b(?:may|can|could|wish to|decide to|choose to) evade\b|\bevade (?:the |this )?(?:combat|fight)\b|\bevasion\b', re.I)
+# a fight's rules the importer does not read (importer.md, "What it does not read"), in any book's
+# wording: a sign for the item table, so a fight with one is listed rather than passed over (ADR 0036)
+FIGHT_SIGNS = {
+    'fight-rounds': re.compile(r'\b(?:first|second|third|fourth|fifth|next|last|following|opening|each|every|per|this|that|a|one|two|three|'
+                               r'four|five|six|seven|eight|nine|ten|\d+)\s+(?:combat\s+|further\s+|more\s+)?rounds?\b|\brounds? of (?:combat|the fight)\b', re.I),
+    'fight-end': re.compile(r"\b(?:stop|end|break off|halt)\w*\b[^.]{0,40}\b(?:combat|fight)\b|\b(?:combat|fight)\b[^.]{0,20}\b(?:stops?|ends?)\b"
+                            r"|\bif you lose\b|\bif (?:his|your|its|the enemy's) ENDURANCE\b|ENDURANCE (?:score |points? )?(?:falls|drops|is reduced|reaches)"
+                            r"|\breduce[sd]? (?:its|his|the \w+'s|the enemy's) ENDURANCE\b|\b(?:its|his|the enemy's) ENDURANCE (?:score )?(?:to|below|falls)"
+                            r"|\bignore\b[^.]*\bENDURANCE\b|\bENDURANCE\b[^.]*\bignore", re.I),
+    'fight-undead': re.compile(r'\bundead\b', re.I),
+    'fight-double': re.compile(r'\bdoubl(?:e|es|ed|ing)\b|\btwice\b', re.I),
+}
+# beside a COMBAT SKILL change the importer read: a word that may make it another (a weapon, a mind defence, a condition)
+CS_DOUBT = re.compile(r'\bweapon|\bunarmed\b|\bMindshield\b|\bPsi-screen\b|\bKai-screen\b|\bpsychic\b|\bMindforce\b|\bunless\b|\binstead\b'
+                      r'|\bif you (?:have|possess|are carrying|carry|do not)\b', re.I)
+DRAIN = r'(?:Mindshield|Psi-screen|Kai-screen)[^.]*ENDURANCE[^.]*\b(?:every|each) round'
 LOOK = ('gate', 'rn-unlinked', 'rn-ranges', 'rn-choice', 'rn-bonus', 'combat-line', 'cs', 'evade', 'immune', 'drain')
 
 
@@ -118,8 +141,15 @@ def scan(book):
                 found.add('evade')
             if re.search(r'\bimmune to\b', whole, re.I) and not any(e.get('immune') for e in fight['enemies']):
                 found.add('immune')
-            if re.search(r'(?:Mindshield|Psi-screen|Kai-screen)[^.]*ENDURANCE[^.]*\b(?:every|each) round', whole) and not any(e.get('drain') for e in fight['enemies']):
+            if re.search(DRAIN, whole) and not any(e.get('drain') for e in fight['enemies']):
                 found.add('drain')
+            # a COMBAT SKILL change read, with a word beside it that may make it another
+            if 'csMod' in fight and any('COMBAT SKILL' in s and CS_DOUBT.search(s) for s in imp['sentences'](whole)):
+                found.add('cs-read')
+            # the rules left as text; an evasion and a drain are their own kinds, so their sentences are not signs here
+            rest = ' '.join(s for s in imp['sentences'](whole + ' ' + ' '.join(c['text'] for c in sec['choices']))
+                            if not re.search(r'\bevade\b|\bevasion\b', s, re.I) and not re.search(DRAIN, s))
+            found.update(k for k, r in FIGHT_SIGNS.items() if r.search(rest))
         for k in found:
             out[k].append(sid)
     for k in out:

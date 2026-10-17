@@ -30,9 +30,18 @@ dash. Book 2's first import dropped them; check a new book's shops show their wa
 `python tools/item_sections.py <book>` scans every section for item, gold, Meal, Endurance and
 Combat Skill wording and writes those sections, from the reading copy, to
 `data/projectaon/<book>/items-reading.txt`, each with its choice lines under it (`  > `). It casts
-wide (Book 1: 168 of 350, of which 65 needed an entry). Read all of it: the item's name is often
+wide (Book 1: 176 of 350, of which 65 needed an entry). Read all of it: the item's name is often
 in one sentence and the instruction in the next. Choice lines like "If you have a Golden Key" or
 "If you wish to pay 10 Gold Crowns" are the gates (`need`).
+
+Besides the item words, it takes general signs (ADR 0036, never one book's phrase): a gate on
+anything carried, held or worn, whatever the book calls it ("if you possess / are carrying / do not
+have a ..."; not one on a discipline, a skill or a rank), a choice to use, give, offer, pay or trade,
+gold however it is named, eating or food, and a fight's rule for some rounds. On 2026-10-17, against
+Books 1-13's tables, that cut the table sections it left off the list from 50 to 24 (per book: 1, 1,
+9, 2, 1, 0, 2, 2, 2, 2, 1, 1, 0), for 94 more sections listed that have no entry (1628 to 1722; 3095
+of 4600 listed, from 2975). Those left are mostly gates on a book's own thing named in lower case,
+fights whose correction the text gives no sign of, and a few marks: the agent's reading finds them.
 
 ### 2b. The draft
 

@@ -156,7 +156,20 @@ whose text still looks like something it reads, with why it was left. Two lists:
 - **design**, left on purpose (below, "What it does not read"): negative gates, gates on an item or
   gold (a discipline tied to a weapon carried counts as one), draws changed by an item, weapon,
   wound or "0 = 10", draws with no ranges, COMBAT SKILL changes for some rounds, from a weapon, or
-  two in a section.
+  two in a section. And any fight whose text shows a rule the importer does not read, by general
+  signs (ADR 0036; an evasion's and a drain's sentences are their own kinds, so not signs here): some
+  rounds ("the first two rounds", "each round", "rounds of combat": `fight-rounds`), a fight that
+  stops or turns on an ENDURANCE falling, reduced or ignored (`fight-end`), an enemy called undead
+  (`fight-undead`), something doubled or twice (`fight-double`), and a COMBAT SKILL change read beside
+  a weapon, a mind defence, "unless", "instead" or "if you have" (`cs-read`). These are for step 5,
+  where the item table gives the fight's correction.
+
+Its silence on a fight should mean the item table has nothing to correct there. On 2026-10-17,
+against Books 1-13's tables (the sections whose entry corrects a fight or gives a draw's effects),
+the fight signs cut those it listed under no kind from 134 to 24 (per book: 1, 2, 2, 2, 1, 2, 1, 1,
+1, 1, 1, 7, 2), for 42 more sections listed that have no table entry (302 to 344). The "look" list,
+and so step 3's count on the dashboard, is unchanged. Those left are COMBAT SKILL corrections and
+evasions the wording gives no general sign of: the item table's reading finds them.
 
 Each "look" is judged against the section page: a phrasing the importer can learn for certain, or
 one rightly left (say which). None left, or each judged: the owner marks step 3. `--json` writes

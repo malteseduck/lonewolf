@@ -166,7 +166,8 @@ downloads and imports still need the owner's word (AGENTS.md).
   if any book got worse. Run after any importer change.
 - `python tools/phrasings_scan.py <code>`: step 3's scan of what the importer left as text (ADR 0036;
   `docs/reference/importer.md`, "The leftover scan"); `--json` also writes `phrasings.json` beside the book. Kinds and
-  section ids only.
+  section ids only. Its design list also takes a fight's rules left as text by general signs, for step 5
+  (2026-10-17: the tables' fight and draw corrections it was silent on, 134 to 24, for 42 more listed).
 - `python tools/rules_diff.py <code>`: step 4's diff (ADR 0036): each rules page against the previous
   book's, paragraph by paragraph (same, changed with the numbers that moved, new, gone; the footnotes
   and errata are the book's own and not compared). `--json` writes beside the book `rules-diff.json`
@@ -174,16 +175,22 @@ downloads and imports still need the owner's word (AGENTS.md).
   `rules-draft.md`, a skeleton addendum: what reads with certainty from its usual shape (the gold, "a
   Random Number" plus N in the Gold Crowns paragraph; the kit, the list above "List the N items you
   choose"; the footnotes' section ids), every other line and every Engine line a todo. Page names,
-  paragraph numbers and figures only on the console.
+  paragraph numbers and figures only on the console. Its silence can be trusted (2026-10-17): a paragraph
+  is passed over only when it is word for word the previous book's, and what the skeleton fills (the
+  gold, how many of how long a kit list) agrees with `LW.KITS` for Books 2-13 (Book 1, against
+  nothing, is all todo).
 - `node tools/walk_book.mjs <code>`: step 6's walk of the book with the engine, two stand-in characters (ADR 0036;
   `docs/reference/rules-engine.md`, "The walk"); `--json` also writes `walk.json` beside the book. Section ids, counts and
-  the engine's own reasons only.
+  the engine's own reasons only. It reads no wording, so it has no signs to widen (ADR 0036): what it
+  lists is what the engine did.
 - `node tools/items_draft.mjs <code>`: step 5's draft of the item table (ADR 0036; `docs/reference/items.md`,
   "The draft"). Writes `items/items-<code>.js` only where there is none, else `items-draft.js` beside the
   book, compared with the table; counts and section ids only.
 - `python tools/plates_draft.py <code>`: step 7's draft of the fight pictures (ADR 0035, 0036; `docs/reference/items.md`,
   "Fight pictures", "The draft"). `--dry` prints only; `--compare` drafts a book whose pictures are set afresh, without
-  its own entries, and counts how often it picks the same picture. Names and file names only.
+  its own entries, and counts how often it picks the same picture. Names and file names only. Nothing
+  it does is silent (ADR 0036): every pick is marked `draft` for the sheet, every enemy it cannot match
+  is listed, and its words (groups, plain humans, plurals) are the series' general ones.
 - `python tools/map_labels.py retype|style maps/<code>/labels.json`: the map's two drafts (D8, ADR 0036;
   `docs/reference/map-upscale.md`, steps 2 and 5): `retype` unticks what is surely not a place name
   (the map editor's Untick captions, step 3), `style` writes a first `style.txt` marked as a draft,

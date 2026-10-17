@@ -49,10 +49,39 @@ def test_each_leftover_is_listed_by_kind_and_the_ones_to_look_at_apart():
         'gate': ['1'], 'gate-negative': ['1'], 'gate-item': ['1'],
         'rn-unlinked': ['6'], 'rn-bonus': ['3', '11'], 'rn-other': ['4'], 'rn-counts': ['5'],
         'combat-line': ['7'], 'cs': ['8'], 'cs-other': ['9'], 'evade': ['8'], 'immune': ['9'], 'drain': ['9'],
+        'fight-rounds': ['9'],
     }
     text = ps.report('01xx', out)
     assert text.startswith('01xx: 7 sections to look at (1, 3, 6, 7, 8, 9, 11)')
     assert 'Hunting' not in text and 'Bandit' not in text  # ids and kinds, never the text
+
+
+# a fight rule the importer leaves as text, in any book's wording, is listed for the item table (ADR 0036):
+# its silence on a fight should mean nothing there needs the table
+FIGHTS = {'series': 'kai', 'sections': {
+    '1': sec('For the first three rounds, the Bog Troll loses no ENDURANCE.', choices=['If you win, turn to 2.'], combat=foe()),
+    '2': sec("If the enemy's ENDURANCE falls to 6 or below, stop the fight.", choices=['Turn to 3.'], combat=foe()),
+    '3': sec('This creature is undead.', choices=['If you win, turn to 4.'], combat=foe()),
+    '4': sec('Every wound you inflict counts double.', choices=['If you win, turn to 5.'], combat=foe()),
+    # a change read, but the sentence names a weapon: it may be another
+    '5': sec('Deduct 2 points from your COMBAT SKILL unless you carry a weapon of silver.', choices=['If you win, turn to 6.'],
+             combat=foe(csMod=-2)),
+    # nothing to read: a fight and its outcome, an evasion read after two rounds, a drain read every round
+    '6': sec('The Bog Troll attacks.', 'You may evade after two rounds.', choices=['If you win, turn to 7.'],
+             combat=foe(evade={'after': 2, 'to': '1'})),
+    '7': sec('Unless you have Mindshield, lose 2 ENDURANCE points every round.', choices=['If you win, turn to 8.'],
+             combat={'enemies': [{'name': 'Wraith', 'cs': 15, 'ep': 20, 'drain': 2}]}),
+    # the same words with no fight are not a fight's rules
+    '8': sec('You walk for three rounds of the walls; it is twice as far as you thought.', choices=['Turn to 9.']),
+}}
+
+
+def test_a_fights_rules_left_as_text_are_listed_for_the_item_table():
+    out = ps.scan(FIGHTS)
+    assert {k: v for k, v in out.items() if v} == {
+        'fight-rounds': ['1'], 'fight-end': ['2'], 'fight-undead': ['3'], 'fight-double': ['4'], 'cs-read': ['5'],
+    }
+    assert ps.report('01xx', out).startswith('01xx: 0 sections to look at')  # the item table's, not step 3's
 
 
 def test_json_written_beside_the_book_for_the_dashboard(tmp_path, monkeypatch):

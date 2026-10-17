@@ -86,7 +86,8 @@ Commands run from the project root as
    of the key's pitch from them. Scale numbers are not judged. Leave-one-out on Books 1-6 and 12's
    checked lists it found 64 of the 83 labels the owner left as drawn, and unticked no place
    name; what it misses is a title with none of those words (Kalte, the Stornlands) and a key entry
-   in a column with fewer than two recurring ones. Untick the rest, and tick any place name it
+   in a column with fewer than two recurring ones (measured again 2026-10-17, the same: its silence
+   leaves a label ticked, the safe side under ADR 0036, so no signs were added). Untick the rest, and tick any place name it
    caught by mistake. **Untick captions** in step 3 saves the list and runs the same judgement on it
    (`map_labels.py retype`), once OCR's wording is corrected: it unticks only, never ticks.
    **Copy request for Claude** in step 3 saves the list and copies a ready request for what the

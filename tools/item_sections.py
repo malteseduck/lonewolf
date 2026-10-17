@@ -16,7 +16,15 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 KEY = re.compile(r'Action Chart|Special Item|Backpack|Gold Crown|Crowns|Meal|weapon|ENDURANCE|COMBAT SKILL|erase|'
                  r'lose your|you lose|you find|you take|pick up|take the|keep the|keep this|mark it|stolen|'
                  r'Laumspur|Potion|Sword|Dagger|Mace|Axe|Spear|Quarterstaff|Warhammer|Broadsword|Helmet|Chainmail|'
-                 r'Map|Key|Pendant|Gem|Scroll|Bow|Arrow|Quiver|Rope|Torch', re.I)
+                 r'Map|Key|Pendant|Gem|Scroll|Bow|Arrow|Quiver|Rope|Torch|'
+                 # general signs (ADR 0036): a gate on anything carried, not a discipline's or a rank's; gold however
+                 # it is named; food; a fight's rule for some rounds
+                 r'\bif you (?:still |already |now )?(?:do not |don\'t )?(?:have|possess|carry|hold|own|are (?:still |already |now )?(?:carrying|holding|wearing))'
+                 r'(?: not)?\s+(?:a|an|the|some|any|no|one|both|either|this|these|that|those|it|them)\b'
+                 r'(?!\s+(?:(?:of )?(?:these|those) )?(?:Kai |Magnakai |Grand Master )?(?:Disciplines?|skills?|abilit(?:y|ies)|rank|Lore-circle|Mastery)\b)|'
+                 r'\bif you (?:wish|want|decide|choose) to (?:use|give|offer|pay|buy|sell|trade|swap|exchange|show|drink|eat|throw|wear)\b|'
+                 r'\bgold\b|\beat\b|\bfood\b|'
+                 r'\brounds? of combat\b|\b(?:first|second|third|next|last|two|three|four|five|\d+) (?:combat )?rounds?\b', re.I)
 
 book = sys.argv[1] if len(sys.argv) > 1 else '01fftd'
 src = os.path.join(ROOT, 'data', 'projectaon', book)

@@ -48,6 +48,23 @@ def test_key_matches_item_wording(KEY, text):
     assert KEY.search(text)
 
 
+# general signs (ADR 0036): a gate on something carried, whatever the book calls it, gold however it is
+# named, food, a fight's rule for some rounds; a gate on a discipline or a rank is no item sign
+@pytest.mark.parametrize('text, hit', [
+    ('If you possess a Brass Whistle, turn to 9.', True), ('If you are carrying some Blue Stones, turn to 9.', True),
+    ('If you do not have an Ornate Ring, turn to 9.', True), ('If you do not possess this, turn to 9.', True),
+    ('If you are already wearing a cloak, turn to 9.', True), ('If you wish to offer the guard something, turn to 9.', True),
+    ('If you wish to rest, turn to 9.', False), ('If you do not possess this skill, turn to 9.', False),
+    ('If you do not possess either of these skills, turn to 9.', False),
+    ('The purse holds forty gold pieces.', True), ('You eat the last of your food.', True),
+    ('For the first two rounds of combat, you fight bare-handed.', True),
+    ('If you have the Kai Discipline of Tracking, turn to 9.', False), ('If you have reached the rank of Guardian, turn to 9.', False),
+    ('You look round the empty hall.', False),
+])
+def test_key_matches_general_signs_of_items(KEY, text, hit):
+    assert bool(KEY.search(text)) is hit
+
+
 
 
 def test_writes_only_sections_with_item_wording_and_their_choice_lines(tmp_path, capsys):
