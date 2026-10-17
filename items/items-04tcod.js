@@ -16,9 +16,9 @@
 export const ITEMS = {
   onyxMedallion: { name: 'Onyx Medallion', kind: 'special', glyph: 'medal', about: 'Taken from a fallen Vassagonian warrior. It passes for a mark of rank among Vassagonians.' },
   scroll4: { name: 'Scroll', kind: 'special', glyph: 'scroll-unfurled', about: 'A verse written by an astrologer you met: it foretells a sacrifice at the temple.' },
-  holyWater4: { name: 'Flask of Holy Water', kind: 'backpack', glyph: 'round-bottom-flask', about: 'An earthenware flask. It bursts into white fire against the black dagger.' },
+  holyWater4: { name: 'Flask of Holy Water', kind: 'backpack', glyph: 'holy-water', about: 'An earthenware flask. It bursts into white fire against the black dagger.' },
   dvalSword: { name: 'Captain D’Val’s Sword', kind: 'weapon', weapon: ['sword'], glyph: 'gladius', about: 'A cavalry officer’s sword, engraved with its owner’s name. It fights as a sword. The captain would be glad of it.' },
-  ironKey4: { name: 'Iron Key', kind: 'special', glyph: 'skeleton-key', about: 'It opens an iron door above the well chamber.' },
+  ironKey4: { name: 'Iron Key', kind: 'special', glyph: 'key', about: 'It opens an iron door above the well chamber.' },
   brassKey4: { name: 'Brass Key', kind: 'special', glyph: 'key', about: 'It opens a locked door in the mines.' },
   whip4: { name: 'Whip', kind: 'backpack', glyph: 'whip' },
   shovel4: { name: 'Shovel', kind: 'backpack', glyph: 'spade', about: 'Takes the room of two Backpack Items; the page counts one.' },

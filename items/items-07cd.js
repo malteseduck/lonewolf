@@ -12,7 +12,7 @@
      - The Sommerswerd, a Diamond and a Kalte Firesphere may come from earlier books (same ids).
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {
-  powerKey: { name: 'Power-key', kind: 'special', glyph: 'gems', about: 'A red gem with sparks inside. It lets you through the power-shield; lose it and you cannot leave the island.' },
+  powerKey: { name: 'Power-key', kind: 'special', glyph: 'crystal-shine', about: 'A red gem with sparks inside. It lets you through the power-shield; lose it and you cannot leave the island.' },
   jarLaumspur7: { name: 'Concentrated Laumspur', kind: 'backpack', glyph: 'health-potion', heal: 8, about: 'A large jar of strong Laumspur. Drink it after a fight.' },
   platinumAmulet: { name: 'Kazan-Oud Platinum Amulet', kind: 'special', glyph: 'gem-necklace', about: 'Worn on the wrist. It protects against high temperatures.' },
   skeletonKey7: { name: 'Skeleton Key', kind: 'special', glyph: 'skeleton-key', about: 'Taken from the robed creatures. It opens the oval door of the flooding chamber.' },
@@ -26,7 +26,7 @@ export const ITEMS = {
   wineBottle7: { name: 'Bottle of Wine', kind: 'backpack', glyph: 'wine-bottle' },
   waterBottle7: { name: 'Bottle of Water', kind: 'backpack', glyph: 'water-flask' },
   blanket7: { name: 'Blanket', kind: 'backpack', glyph: 'blanket', about: 'Wrapped round the arm it adds 1 COMBAT SKILL against the unseen whipmaster.' },
-  redRobe7: { name: 'Red Robe', kind: 'backpack', glyph: 'hood', about: 'A hooded robe. Wrapped round the arm it adds 1 COMBAT SKILL against the unseen whipmaster.' },
+  redRobe7: { name: 'Red Robe', kind: 'backpack', glyph: 'robe', about: 'A hooded robe. Wrapped round the arm it adds 1 COMBAT SKILL against the unseen whipmaster.' },
 };
 
 // the number drawn plus `add` is the loss

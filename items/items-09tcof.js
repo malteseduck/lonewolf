@@ -28,7 +28,7 @@ export const ITEMS = {
   comb9: { name: 'Comb', kind: 'backpack', glyph: 'comb' },
   candlestick9: { name: 'Silver Candlestick', kind: 'backpack', glyph: 'candle-holder' },
   whistle9: { name: 'Brass Whistle', kind: 'backpack', glyph: 'whistle' },
-  goblet9: { name: 'Silver Goblet', kind: 'backpack', glyph: 'wine-glass' },
+  goblet9: { name: 'Silver Goblet', kind: 'backpack', glyph: 'jeweled-chalice' },
   silkJacket9: { name: 'Silk Jacket', kind: 'backpack', glyph: 'robe' },
   decanter9: { name: 'Crystal Decanter', kind: 'backpack', glyph: 'brandy-bottle' },
 };

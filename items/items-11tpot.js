@@ -18,7 +18,7 @@ export const ITEMS = {
   map11: { name: 'Map', kind: 'special', glyph: 'treasure-map', about: 'Serocca’s map of the Nahgoth Forest and the way to Haagadar. Carried inside your tunic.' },
   ironheartBroadsword: { name: 'Ironheart Broadsword', kind: 'special', glyph: 'broadsword', weapon: ['broadsword'], about: 'A magical blade from the Grand Sepulchre, set with rubies, emeralds and korlinium. It fights as a broadsword; the +8 is given at the one fight the text names.' },
   ookorCharm: { name: 'Ookor Charm', kind: 'special', glyph: 'feathered-wing', about: 'A wooden charm in the shape of a bird’s wing, given by an old Ookor fortune teller. Strapped to your Backpack.' },
-  silverRod11: { name: 'Silver Rod', kind: 'special', glyph: 'wizard-staff', about: 'A gleaming rod found with the bones in a cairn. Carried through your belt.' },
+  silverRod11: { name: 'Silver Rod', kind: 'special', glyph: 'crescent-staff', about: 'A gleaming rod found with the bones in a cairn. Carried through your belt.' },
   silverFlask11: { name: 'Silver Flask', kind: 'backpack', glyph: 'round-bottom-flask', heal: 4, doses: 2, about: 'Charmed wine from Baylon’s sarcophagus. Two draughts are left; each restores 4 ENDURANCE.' },
   khetuSpores11: { name: 'Khetu Spores', kind: 'backpack', glyph: 'mushroom-gills', about: 'Orange spore pods from the Nahgoth Forest floor. Deadly poison.' },
   haina11: { name: 'Haina', kind: 'backpack', glyph: 'herbs-bundle', heal: 5, about: 'A red flower for battle-wounds: restores 5 ENDURANCE, and only after a fight.' },

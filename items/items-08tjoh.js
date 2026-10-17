@@ -28,7 +28,7 @@ export const ITEMS = {
   wristGuards8: { name: 'Wrist and Finger Guards', kind: 'backpack', glyph: 'bracer', about: 'Archer’s guards for the bow hand.' },
   bowCaseWood8: { name: 'Bow Case (wood)', kind: 'backpack', glyph: 'quiver', about: 'A wooden case that keeps a bow dry.' },
   bowCaseLeather8: { name: 'Bow Case (leather)', kind: 'backpack', glyph: 'quiver', about: 'A leather case that keeps a bow dry.' },
-  bowstring8: { name: 'Bowstring', kind: 'backpack', glyph: 'arrow-flights', about: 'A spare string for a bow.' },
+  bowstring8: { name: 'Bowstring', kind: 'backpack', glyph: 'bow-string', about: 'A spare string for a bow.' },
 };
 
 export const MARKS = {

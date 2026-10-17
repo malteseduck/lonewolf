@@ -20,16 +20,16 @@ export const ITEMS = {
     about: 'A Cener Druid’s glassy green mask, part of a disguise. Carried, it takes a Backpack place (keep it free by hand); worn, none.' },
   mapMogaruith: { name: 'Map of Mogaruith', kind: 'special', glyph: 'treasure-map', free: true, about: 'Shows the dungeon levels of Mogaruith. Kept in your tunic: takes no Special Item place.' },
   goldKey13: { name: 'Gold Key', kind: 'special', glyph: 'key' },
-  copperKey13: { name: 'Copper Key', kind: 'backpack', glyph: 'skeleton-key' },
+  copperKey13: { name: 'Copper Key', kind: 'backpack', glyph: 'key' },
   restrainer13: { name: 'Restrainer', kind: 'special', glyph: 'jigsaw-box', about: 'A tiny magical box on a chain that bent a Pit Agarashi to the will of its Vazhag keeper.' },
   volkoBerries: { name: 'Jar of Black Berries', kind: 'backpack', glyph: 'covered-jar', about: 'Volko berries from Kakush, prized by magicians: they speed up magical reactions without being changed themselves.' },
   mirror13: { name: 'Mirror', kind: 'backpack', glyph: 'mirror-mirror' },
-  laumspurJar13: { name: 'Jar of Laumspur', kind: 'backpack', glyph: 'mason-jar', heal: 4, doses: 5, about: 'Five doses in one jar: each restores 4 ENDURANCE, swallowed after a fight.' },
-  aletherJar13: { name: 'Jar of Alether', kind: 'backpack', glyph: 'mason-jar', boost: 2, doses: 4, about: 'Four doses in one jar: each, swallowed just before a fight, gives +2 COMBAT SKILL for it.' },
-  gallowbrushJar13: { name: 'Jar of Gallowbrush', kind: 'backpack', glyph: 'mason-jar', doses: 2, about: 'Two doses in one jar: each induces ten hours’ sleep and costs 2 ENDURANCE.' },
+  laumspurJar13: { name: 'Jar of Laumspur', kind: 'backpack', glyph: 'health-potion', heal: 4, doses: 5, about: 'Five doses in one jar: each restores 4 ENDURANCE, swallowed after a fight.' },
+  aletherJar13: { name: 'Jar of Alether', kind: 'backpack', glyph: 'standing-potion', boost: 2, doses: 4, about: 'Four doses in one jar: each, swallowed just before a fight, gives +2 COMBAT SKILL for it.' },
+  gallowbrushJar13: { name: 'Jar of Gallowbrush', kind: 'backpack', glyph: 'round-bottom-flask', doses: 2, about: 'Two doses in one jar: each induces ten hours’ sleep and costs 2 ENDURANCE.' },
   sabitoJar13: { name: 'Jar of Sabito', kind: 'backpack', glyph: 'mason-jar', doses: 2, about: 'Two doses in one jar: each lets you breathe under water.' },
-  laumwortJar13: { name: 'Jar of Laumwort', kind: 'backpack', glyph: 'mason-jar', heal: 2, doses: 3, about: 'Three doses in one jar: each restores 2 ENDURANCE, before or after a fight.' },
-  oedeJar13: { name: 'Jar of Oede', kind: 'backpack', glyph: 'mason-jar', heal: 10, about: 'One dose of the rare Oede: it cures serious diseases and restores 10 ENDURANCE, before or after a fight.' },
+  laumwortJar13: { name: 'Jar of Laumwort', kind: 'backpack', glyph: 'health-potion', heal: 2, doses: 3, about: 'Three doses in one jar: each restores 2 ENDURANCE, before or after a fight.' },
+  oedeJar13: { name: 'Jar of Oede', kind: 'backpack', glyph: 'health-potion', heal: 10, about: 'One dose of the rare Oede: it cures serious diseases and restores 10 ENDURANCE, before or after a fight.' },
 };
 
 const lune = (n) => ({ coin: 'lune', n });

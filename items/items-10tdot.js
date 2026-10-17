@@ -12,8 +12,8 @@
 export const ITEMS = {
   bullwhip: { name: 'Bullwhip', kind: 'special', glyph: 'whip', about: 'A studded whip taken from a partisan leader’s brother. Its copper nuggets glow against the undead: +2 COMBAT SKILL in a fight with them. Some partisans will know it.' },
   medal10: { name: 'Medal', kind: 'special', glyph: 'medal', about: 'Won at the Battle of Luomi and pressed into your hand by a grateful knight.' },
-  signetRing10: { name: 'Signet Ring', kind: 'special', glyph: 'ring', free: true, about: 'Prince Graygor’s royal crest, worn on the right hand to show the court’s friendship. It does not count against the twelve Special Items.' },
-  gorodonHorn: { name: 'Gorodon Horn', kind: 'special', glyph: 'rhinoceros-horn', about: 'Cut from a Gorodon; potion-makers in Humbold would pay well for it. Carried strapped to the pack.' },
+  signetRing10: { name: 'Signet Ring', kind: 'special', glyph: 'globe-ring', free: true, about: 'Prince Graygor’s royal crest, worn on the right hand to show the court’s friendship. It does not count against the twelve Special Items.' },
+  gorodonHorn: { name: 'Gorodon Horn', kind: 'special', glyph: 'mighty-horn', about: 'Cut from a Gorodon; potion-makers in Humbold would pay well for it. Carried strapped to the pack.' },
   blackKey10: { name: 'Black Key', kind: 'special', glyph: 'key', about: 'Taken from a Drakkarim officer. It opens a black steel door in Torgar.' },
   skeletonKey10: { name: 'Skeleton Key', kind: 'special', glyph: 'skeleton-key', about: 'Picks the lock of the black steel door. Not found in this book.' },
   laumwort: { name: 'Laumwort', kind: 'backpack', glyph: 'herbs-bundle', heal: 2, about: 'A herb like Laumspur: eat the leaves to restore 2 ENDURANCE.' },

@@ -20,7 +20,7 @@
        two sections that open it can swap it for the Adgana, or throw it away.
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {
-  crystalExplosive: { name: 'Crystal Explosive', kind: 'special', glyph: 'gems', about: 'A charge of fused crystals strapped to your Backpack. It must go under the Transfusor; the shard in it primes it, and it blows fifteen minutes later.' },
+  crystalExplosive: { name: 'Crystal Explosive', kind: 'special', glyph: 'crystal-cluster', about: 'A charge of fused crystals strapped to your Backpack. It must go under the Transfusor; the shard in it primes it, and it blows fifteen minutes later.' },
   goldenAmulet12: { name: 'Golden Amulet', kind: 'special', glyph: 'gem-necklace', free: true, about: 'Keeps out the heat and poisonous air of the Darklands. Takes no Special Item place.' },
   greenMask12: { name: 'Green Mask', kind: 'special', glyph: 'domino-mask', free: true, about: 'A glass-like mask that hides who you are from a casual look. Takes no Special Item place.' },
   korliniumScabbard: { name: 'Korlinium Scabbard', kind: 'special', glyph: 'scabbard', free: true, about: 'Keeps the Sommerswerd’s power hidden while it is sheathed. Takes no Special Item place.' },

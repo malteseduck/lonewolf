@@ -10,10 +10,10 @@
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {
   baknarOil: { name: 'Baknar Oil', kind: 'special', glyph: 'round-bottom-flask', about: 'Rubbed into your skin for the rest of this adventure: it keeps out the cold. It takes no room.' },
-  silverKey3: { name: 'Ornate Silver Key', kind: 'special', glyph: 'skeleton-key', about: 'From the stomach of a Crystal Frostwyrm. It opens a carved stone chest.' },
-  boneSword: { name: 'Bone Sword', kind: 'special', glyph: 'pointy-sword', weapon: ['sword'], about: 'A sword set with teeth, taken from an Ice Barbarian. It fights as a sword.' },
-  blueDisc: { name: 'Blue Stone Disc', kind: 'special', glyph: 'medal', about: 'The key to a door with a slot beside it.' },
-  blueTriangle: { name: 'Blue Stone Triangle', kind: 'special', glyph: 'gem-pendant', about: 'Worn on a chain. It fits the recess that opens the fortress door.' },
+  silverKey3: { name: 'Ornate Silver Key', kind: 'special', glyph: 'key', about: 'From the stomach of a Crystal Frostwyrm. It opens a carved stone chest.' },
+  boneSword: { name: 'Bone Sword', kind: 'special', glyph: 'rusty-sword', weapon: ['sword'], about: 'A sword set with teeth, taken from an Ice Barbarian. It fights as a sword.' },
+  blueDisc: { name: 'Blue Stone Disc', kind: 'special', glyph: 'circle-cage', about: 'The key to a door with a slot beside it.' },
+  blueTriangle: { name: 'Blue Stone Triangle', kind: 'special', glyph: 'moebius-triangle', about: 'Worn on a chain. It fits the recess that opens the fortress door.' },
   diamond: { name: 'Diamond', kind: 'special', glyph: 'cut-diamond', about: 'Worth a fortune in Sommerlund; here, a bright thing to throw.' },
   bracelet: { name: 'Gold Bracelet', kind: 'special', glyph: 'ring', about: 'Worn by the Ice Barbarians. It carries a mind attack that Mindshield turns away.' },
   effigy: { name: 'Stone Effigy', kind: 'special', glyph: 'third-eye', about: 'A statuette of a tentacled creature.' },

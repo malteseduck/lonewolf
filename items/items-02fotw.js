@@ -20,7 +20,7 @@
    shared/core.js; the starting kit, the Seal included, is LW.KITS in shared/rules-series.js).
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {
-  seal: { name: 'Seal of Hammerdal', kind: 'special', glyph: 'ring', about: 'The ring that proves your mission to the people of Durenor.' },
+  seal: { name: 'Seal of Hammerdal', kind: 'special', glyph: 'power-ring', about: 'The ring that proves your mission to the people of Durenor.' },
   sommerswerd: { name: 'Sommerswerd', kind: 'special', glyph: 'shining-sword', weapon: ['sword', 'broadsword', 'shortSword'], cs: 8, undead: 2,
     about: 'The sun-sword: +8 COMBAT SKILL when you fight with it, and Weaponskill with any sword counts. Undead foes lose double ENDURANCE. It absorbs magic used against you.' },
   magicSpear: { name: 'Magic Spear', kind: 'special', glyph: 'spear-feather', weapon: ['spear'], about: 'A rune-carved spear that can wound a Helghast. It fights as a spear.' },
@@ -33,7 +33,7 @@ export const ITEMS = {
   orangePotion: { name: 'Potion of Orange Liquid', kind: 'backpack', glyph: 'round-bottom-flask', about: 'You do not know what it does.' },
   blanket: { name: 'Fur Blanket', kind: 'backpack', glyph: 'blanket' },
   rope: { name: 'Rope', kind: 'backpack', glyph: 'rope-coil', about: 'Thirty feet of it.' },
-  goldRing: { name: 'Gold Ring', kind: 'special', glyph: 'diamond-ring' },
+  goldRing: { name: 'Gold Ring', kind: 'special', glyph: 'ring' },
 };
 
 const shop = (list) => list.map(([item, cost]) => (item === 'meal' ? { meal: 1, cost } : item === 'pack' ? { pack: true, cost } : { item, cost }));

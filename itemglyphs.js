@@ -11,7 +11,7 @@ export const ITEM_GLYPH = {
   sword: 'pointy-sword',
   axe: 'battle-axe',
   quarterstaff: 'wizard-staff',
-  broadsword: 'two-handed-sword',
+  broadsword: 'broadsword',
   bow: 'pocket-bow',
   quiver: 'quiver',
   arrows: 'arrow-flights',
