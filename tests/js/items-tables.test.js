@@ -6,7 +6,7 @@ import path from 'path';
 import { pathToFileURL } from 'url';
 import { ROOT, loadShared } from './helpers.js';
 
-const CODES = ['01fftd', '02fotw', '03tcok', '04tcod', '05sots', '06tkot', '07cd', '08tjoh', '09tcof', '10tdot', '11tpot', '12tmod', '13tplor'];
+const CODES = ['01fftd', '02fotw', '03tcok', '04tcod', '05sots', '06tkot', '07cd', '08tjoh', '09tcof', '10tdot', '11tpot', '12tmod', '13tplor', '14tcok'];
 // from tools/check_items.mjs
 const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'noHunt', 'todo', 'need', 'fight', 'bowShot', 'grandBow', 'rntMod',
   'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax', 'game']);

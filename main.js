@@ -22,6 +22,7 @@ import * as ITEMS_10 from './items/items-10tdot.js';
 import * as ITEMS_11 from './items/items-11tpot.js';
 import * as ITEMS_12 from './items/items-12tmod.js';
 import * as ITEMS_13 from './items/items-13tplor.js';
+import * as ITEMS_14 from './items/items-14tcok.js';
 
 const LW = window.LW;
 const ROMAN = LW.ROMAN;
@@ -34,6 +35,7 @@ const ITEM_TABLES = {
   '01fftd': ITEMS_01, '02fotw': ITEMS_02, '03tcok': ITEMS_03, '04tcod': ITEMS_04, '05sots': ITEMS_05, '06tkot': ITEMS_06,
   '07cd': ITEMS_07, '08tjoh': ITEMS_08, '09tcof': ITEMS_09, '10tdot': ITEMS_10, '11tpot': ITEMS_11, '12tmod': ITEMS_12,
   '13tplor': ITEMS_13,
+  '14tcok': ITEMS_14,
 };
 Object.values(ITEM_TABLES).forEach((t) => LW.addItems(t.ITEMS, t.MARKS));
 const applyItems = (b) => LW.applyItems(b, ITEM_TABLES[b.id]);

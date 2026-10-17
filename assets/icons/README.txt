@@ -18,6 +18,7 @@ its white fill were removed, so the page can use the shape as a mask.
     candle-holder, comb, curvy-knife, domino-mask, feathered-wing, hourglass, mirror-mirror,
     mushroom-gills, pill, robe, rock, spade, spiral-shell, whip, wine-glass,
     and for Book 13 (fetched 2026-10-17): jigsaw-box
+    and for Book 14 (fetched 2026-10-17): claw-hammer, evil-minion, imp
     and picked on the item sheet (tools/admin/items.html): moebius-triangle, circle-cage, elderberry, crystal-shine, jeweled-chalice, crystal-cluster, shiny-purse, battle-gear, spinning-sword
   by Delapouite (https://delapouite.com):
     healing, health-potion, herbs-bundle, invisible, meal, quiver, two-coins,

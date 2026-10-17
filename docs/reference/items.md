@@ -3,8 +3,8 @@
 Two jobs done by hand for each imported book, after importing it and writing its reading copy
 (`tools/reading_copy.py`): the **item table**, so the engine gives, offers, takes and gates what the
 text says (spec 4.5a), and the **fight pictures**, so every fight has a plate (spec 6.5). Book 1
-has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-13 have
-their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 2026-10-17). The field reference is in `book-format.md` ("Section", "Item tables").
+has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-14 have
+their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 and 14 2026-10-17). The field reference is in `book-format.md` ("Section", "Item tables").
 
 Never put the book's text anywhere but `data/projectaon/`: tools print section numbers and
 counts, the table holds only the book's short item names, and everything else is in our words.
@@ -213,7 +213,13 @@ the importer read as "at any time"). Book 13 (from the script's draft, 2026-10-1
 sections; 153 left out. The draft had 104 sections, 83 with a todo; 18 of the other 21 needed nothing
 more. Another 24 sections it did not touch needed an entry: fights, bow shots, Arrows loosed, a Copper
 Key found, the disguise given or gated, and four Endurance restorations in brackets (now its todos). Two forced Meals (83, 133)
-written "a meal" the importer missed then; it reads them now (Book 10's 186 too, which its table already had). It knows every book's items, as the page does.
+written "a meal" the importer missed then; it reads them now (Book 10's 186 too, which its table already had). It knows every book's items, as the page does. Book 14 (from the draft,
+2026-10-17): no errors; 16 items, 124 sections; 139 left out. Of the draft's 131 sections, 99 with a todo, two readings were
+wrong (140's Spear both given and offered; the bow gates without an Arrow) and 23 sections it did not touch needed an entry:
+fights (undead Vordaks, won-within rounds, doubled psychic bonuses, the Sommerswerd doubled), Endurance in brackets or in
+prose (6, 21, 83, 101, 179, 207, 225), a forced Meal written "consume" (86), the climb's Rope bonus the importer could
+not read (164, 277), and the sphere's spells tried once (marks). 128's fight ends when his ENDURANCE falls below 12, which
+the engine cannot stop on: `byHand`, with the two ways on gated by his ENDURANCE.
 `--json` also writes `data/projectaon/<book>/check-items.json`, which `tools/book_status.py` reads
 for checklist step 5 (the dashboard's "Check items" runs it so).
 
