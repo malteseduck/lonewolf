@@ -197,12 +197,13 @@
 
   /* Weaponskill's weapon, by Random Number, as the Kai books' table has it (the Sword twice, no Bow) */
   LW.WEAPONSKILL_TABLE = ['dagger', 'spear', 'mace', 'shortSword', 'warhammer', 'sword', 'axe', 'sword', 'quarterstaff', 'broadsword'];
-  LW.makeHero = ({ csRoll, epRoll, disciplines, bonusItem }) => {
+  /* base: the scores a Random Number is added to (the Grand Master books' are 25 and 30) */
+  LW.makeHero = ({ csRoll, epRoll, disciplines, bonusItem, base = { cs: 10, ep: 20 } }) => {
     const hero = {
       name: 'Lone Wolf',
-      cs: 10 + csRoll,
-      ep: 20 + epRoll,
-      epMax: 20 + epRoll,
+      cs: base.cs + csRoll,
+      ep: base.ep + epRoll,
+      epMax: base.ep + epRoll,
       disciplines: disciplines.slice(),
       weaponskill: null,
       weapons: ['axe'],

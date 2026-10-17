@@ -18,6 +18,8 @@ has its tests in `tests/js/` (`core-*`, `rules-series`, `fight`).
   weaponskill: 'sword'|null, // Kai Weaponskill weapon, drawn from LW.WEAPONSKILL_TABLE (the books' table)
   had: [ids],               // every item he has ever been given (LW.putItem), for "if you have ever been given"
   mastery: [...],            // Magnakai Weaponmastery weapons
+  grandMastery: [...],       // Grand Weaponmastery weapons (its own list: a weapon may be in both)
+  grandEarned: 0,            // Grand Master Disciplines past four already added to his scores
   circleEp: 0,               // Endurance already granted by Lore-circles
   weapons: [...],            // max 2
   backpack: [...],           // item ids; Meals are counted separately
@@ -145,19 +147,26 @@ Adds `bow` and `quiver` to `LW.ITEMS`.
 | Combat Skill | `LW.heroCS(hero, ctx)` returns `{total, parts: [{label, n}]}`. `ctx`: `mindblast`, `psiSurge`, `psiTimes`, `enemy`, `csMod`, `csNote`, `with`, `noShield`, `noUnarmed`, `weaponCs`, `plain`, `only`, `barred`, `lend`, `more` (parts added as given). Every carried Special Item with `fightCs` (the Shield, the Silver Helm, +2 each) counts; a mark's `noShield` or `ctx.noShield` bars the Shield; marks' `cs` count |
 | Weapon in hand | `LW.armedWith(hero, ctx)`: of his weapons and the Special Items that are weapons (`item.weapon`: the kinds it counts as), the one that adds most: its own `item.cs` (the Sommerswerd's 8) plus Weaponskill or Weaponmastery in any of its kinds. `ctx.with`: `'none'` (bare-handed, -4) or the one item that can harm this foe. Null: unarmed, -4 |
 | Carried character | `LW.Character.load()`, `.save(hero, book)`, `.clear()`, `.carries(kept, bookId)` (not into a book he has completed), all on the storage key in `LW.Character.key` (the player points it at the open adventure's) |
-| Setting out | `LW.HeroSetup(book, carry)`: the scores, disciplines and Weaponmastery weapons chosen (`roll`, `toggle`, `toggleWeapon`, `auto`, `ready`), `build()` makes the hero; `.kit` is the book's kit or null. `LW.KitSetup(book, kit, hero)`: the kit's choices (`rollGold`, `choose`, `flip`, `problems`, `auto`, `ready`), `finish()` applies them. `LW.readyHero(hero)` settles Lore-circles and fills Endurance. `carry` null = roll a new one. The player draws them on its pages (interface.md, Setting out) |
+| Setting out | `LW.HeroSetup(book, carry)`: the scores, disciplines and Weaponmastery weapons chosen (`roll`, `toggle`, `toggleWeapon`, `auto`, `ready`), `build()` makes the hero (a new one at the series' `base` scores + the rolls); `.kit` is the book's kit or null. `LW.KitSetup(book, kit, hero)`: the kit's choices (`rollGold`, `choose`, `flip`, `problems`, `auto`, `ready`), `finish()` applies them. `LW.readyHero(hero)` settles Lore-circles and the Grand Master Disciplines past four, and fills Endurance. `carry` null = roll a new one. The player draws them on its pages (interface.md, Setting out) |
 
 Setting-out rules: a new character picks `first` disciplines of the book's series; a
-carried one picks one more (or `first` if it has none in this series yet). Choosing Weaponmastery
-asks for three weapons; a character that already has it picks one more. A new Magnakai character
-is given all ten Kai disciplines. A new character at Book 2 or later starts with nothing but the
+carried one picks one more (or `first` if it has none in this series yet). The series' `arms` names
+the discipline that masters weapons and how many at first: choosing Weaponmastery asks for three
+weapons (`hero.mastery`), Grand Weaponmastery for two (`hero.grandMastery`, a list of its own, so a
+weapon mastered by Weaponmastery may be chosen again); a character that already has it picks one
+more. A new character's scores are the series' `base` + the Random Numbers: 10 and 20, or 25 and 30
+in the Grand Master series. A carried one keeps his, with no re-roll (ADR 0019). A new Magnakai or
+Grand Master character is given all ten Kai disciplines (a Grand Master one holds the Magnakai ones
+for the gates, `LW.has`, with none in `hero.magnakai`). A new character at Book 2 or later starts with nothing but the
 book's kit. Then, where the book has a kit (`LW.KITS`; not for a carried character in Book 11),
 a second step (`KitSetup`): the gold (the kit's `gold`, 10 if absent, + a Random Number added, at most 50; from Book 6 the rest
 goes to `storedGold`, which can be drawn on), the given items (one he has is skipped), the
 "choose N" list ("Choose for me" fills it), his weapons (any may be left behind), and where the
 book allows, Special Items left at or taken from the Monastery. Begin waits until the limits hold
 (2 Weapons, 8 Backpack, 12 Special from Book 8). A Quiver from the kit comes with 6 Arrows.
-On confirm it sets `hero.series`, settles Lore-circles and restores Endurance to maximum.
+On confirm it sets `hero.series`, settles Lore-circles, adds +1 COMBAT SKILL and +2 ENDURANCE for
+each Grand Master Discipline past four (`settleGrand`, counted in `hero.grandEarned`, so once each),
+and restores Endurance to maximum.
 
 In a Magnakai book `heals`, `hunts`, `shielded`, `mindPower` and the weapon bonus look only at
 Magnakai disciplines, except that one who completed Books 1-5 also heals and hunts by his Kai
@@ -169,8 +178,9 @@ he chose (`LW.chose`; a new Grand Master character has none) at his Magnakai ran
 Curing's +1, Huntmastery's Meals and ambushes, Weaponmastery (and its Bow shot, Mentora's +2),
 Psi-surge, Archmaster Curing; the Kai Disciplines give no numbers. `shielded` is Kai-screen or a chosen
 Psi-screen. Lore-circles no longer count (`circlesOf` is empty) and their ENDURANCE stays in his scores
-(`settleCircles` does nothing). The Grand Master Disciplines' own numbers (Grand Weaponmastery,
-Kai-surge, Deliverance, Grand Huntmastery), the scores and carrying are plan.md's G2-G5.
+(`settleCircles` does nothing). Setting out (the scores, the disciplines past four, Grand Weaponmastery's weapons) is above (G2,
+2026-10-16). The Grand Master Disciplines' own numbers (Grand Weaponmastery, Kai-surge, Deliverance,
+Grand Huntmastery) and carrying into the series are plan.md's G3-G5.
 
 ## Combat procedure
 

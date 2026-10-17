@@ -34,12 +34,17 @@
   LW.WEAPONS = Object.keys(LW.ITEMS).filter((k) => LW.ITEMS[k].kind === 'weapon');
 
   const ids = (series) => Object.keys(LW.DISCIPLINES).filter((d) => LW.DISCIPLINES[d].series === series);
+  /* base: a new character's scores before the Random Number; arms: the discipline that masters weapons,
+     how many at first (then one a book) and the hero's list of them */
+  const KAI_BASE = { cs: 10, ep: 20 };
   LW.SERIES = {
-    kai: { name: 'Kai', list: ids('kai'), first: 5, field: 'disciplines',
+    kai: { name: 'Kai', list: ids('kai'), first: 5, field: 'disciplines', base: KAI_BASE,
       ranks: ['', 'Novice', 'Intuite', 'Doan', 'Acolyte', 'Initiate', 'Aspirant', 'Guardian', 'Warmarn', 'Savant', 'Master'] },
-    magnakai: { name: 'Magnakai', list: ids('magnakai'), first: 3, field: 'magnakai',
+    magnakai: { name: 'Magnakai', list: ids('magnakai'), first: 3, field: 'magnakai', base: KAI_BASE,
+      arms: { disc: 'weaponmastery', first: 3, field: 'mastery' },
       ranks: ['', 'Kai Master', 'Kai Master Senior', 'Kai Master Superior', 'Primate', 'Tutelary', 'Principalin', 'Mentora', 'Scion-kai', 'Archmaster', 'Kai Grand Master'] },
-    grandmaster: { name: 'Grand Master', list: ids('grandmaster'), first: 4, field: 'grandmaster',
+    grandmaster: { name: 'Grand Master', list: ids('grandmaster'), first: 4, field: 'grandmaster', base: { cs: 25, ep: 30 },
+      arms: { disc: 'grandWeaponmastery', first: 2, field: 'grandMastery' },
       ranks: ['', 'Kai Grand Master Senior', 'Kai Grand Master Superior', 'Kai Grand Sentinel', 'Kai Grand Defender', 'Kai Grand Guardian', 'Sun Knight', 'Sun Lord', 'Sun Thane', 'Grand Thane', 'Grand Crown', 'Sun Prince', 'Kai Supreme Master'] },
   };
   LW.CIRCLES = [
@@ -167,6 +172,13 @@
     const ep = LW.circlesOf(hero).reduce((t, c) => t + c.ep, 0), by = ep - (hero.circleEp || 0);
     hero.epMax += by; hero.ep += by; hero.circleEp = ep;
   }
+  /* Each Grand Master Discipline past four adds 1 COMBAT SKILL and 2 ENDURANCE to his scores, for good
+     (from Book 14; Book 13 gives four). hero.grandEarned: how many were counted already. */
+  function settleGrand(hero) {
+    if (hero.series !== GM) return;
+    const n = Math.max(0, (hero.grandmaster || []).length - 4), by = n - (hero.grandEarned || 0);
+    hero.cs += by; hero.epMax += 2 * by; hero.grandEarned = n;
+  }
 
   /* ---------- the character who is carried between books ---------- */
   LW.Character = {
@@ -189,15 +201,16 @@
     const series = book.series || 'kai', S = LW.SERIES[series], kit = LW.KITS[book.number];
     const hero = carry ? JSON.parse(JSON.stringify(carry.hero)) : null;
     const owned = hero ? (hero[S.field] || []).slice() : [];
-    const oldMastery = (hero && hero.mastery) || [], hadMastery = owned.includes('weaponmastery');
+    // the weapons this series' mastery has: Grand Weaponmastery keeps its own list beside Weaponmastery's
+    const arms = S.arms, oldMastery = (arms && hero && hero[arms.field]) || [], hadMastery = !!arms && owned.includes(arms.disc);
     return {
       book, carry, series, S, hero, owned, oldMastery,
       pick: Math.min(S.list.length - owned.length, owned.length ? 1 : S.first),
       picked: new Set(), weapons: new Set(),
       rolls: { cs: hero ? 0 : null, ep: hero ? 0 : null },
       kit: kit && !(hero && kit.newOnly) ? kit : null, // Book 11: a carried character sets out with what he has
-      /* how many weapons Weaponmastery asks him to master now */
-      need() { return Math.min(this.picked.has('weaponmastery') ? 3 : hadMastery ? 1 : 0, LW.WEAPONS.length - oldMastery.length); },
+      /* how many weapons (Grand) Weaponmastery asks him to master now */
+      need() { return Math.min(arms && this.picked.has(arms.disc) ? arms.first : hadMastery ? 1 : 0, LW.WEAPONS.length - oldMastery.length); },
       canPick(id) { return !owned.includes(id) && (this.picked.has(id) || this.picked.size < this.pick); },
       toggle(id) {
         if (!this.canPick(id)) return;
@@ -218,7 +231,7 @@
         let out = hero;
         if (!out) {
           // a fresh Magnakai character is already a Kai Master: all ten Kai Disciplines
-          out = LW.makeHero({ csRoll: this.rolls.cs, epRoll: this.rolls.ep, disciplines: series === 'kai' ? [...this.picked] : LW.SERIES.kai.list.slice(), bonusItem: book.bonusItem });
+          out = LW.makeHero({ csRoll: this.rolls.cs, epRoll: this.rolls.ep, disciplines: series === 'kai' ? [...this.picked] : LW.SERIES.kai.list.slice(), bonusItem: book.bonusItem, base: S.base });
           if (series !== 'kai') out.weaponskill = null;
           // makeHero gives Book 1's kit; a later book's own kit is all a new character has
           if (kit) Object.assign(out, { weapons: [], special: [], backpack: [], meals: 0, gold: 0 });
@@ -228,15 +241,16 @@
         out.series = series;
         out[S.field] = [...owned, ...this.picked];
         if (series === 'kai' && this.picked.has('weaponskill') && !out.weaponskill) out.weaponskill = LW.WEAPONSKILL_TABLE[LW.rand10()];
-        out.mastery = [...oldMastery, ...this.weapons];
+        out.mastery = out.mastery || [];
+        if (arms) out[arms.field] = [...oldMastery, ...this.weapons];
         out.completed = carry ? [...(carry.completed || [])] : []; // for rules that reward having played earlier books
         delete out.found;
         return out;
       },
     };
   };
-  /* the last of setting out: Lore-circle Endurance, and full Endurance */
-  LW.readyHero = (out) => { settleCircles(out); out.ep = out.epMax; return out; };
+  /* the last of setting out: Lore-circle Endurance, the Grand Master Disciplines past four, and full Endurance */
+  LW.readyHero = (out) => { settleCircles(out); settleGrand(out); out.ep = out.epMax; return out; };
 
   /* ---------- each book's starting kit (rules-books.md, "Book addenda") ----------
      gold: the book's base gold, 10 if absent; give: handed over (an item he already has is skipped). choose: how many of `from` he may take; an

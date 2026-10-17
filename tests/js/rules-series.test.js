@@ -398,4 +398,64 @@ describe('the Grand Master series', () => {
     expect(h.grandmaster.every((d) => LW.SERIES.grandmaster.list.includes(d))).toBe(true);
     expect(h.weaponskill).toBeNull();
   });
+  it('sets a new character out at 25 + a Random Number and 30 + a Random Number', () => {
+    const s = LW.HeroSetup({ number: 13, series: 'grandmaster' }, null);
+    s.roll('cs', 3); s.roll('ep', 7);
+    expect(s.S.base).toEqual({ cs: 25, ep: 30 });
+    const h = LW.readyHero(s.build());
+    expect(h.cs).toBe(28);
+    expect(h.epMax).toBe(37);
+    expect(h.ep).toBe(37);
+    expect(h.magnakai || []).toEqual([]); // every Magnakai Discipline for the gates, none of their numbers (ADR 0018)
+  });
+  it('asks Grand Weaponmastery for two weapons, kept apart from Weaponmastery\'s, then one a book', () => {
+    const s = LW.HeroSetup({ number: 13, series: 'grandmaster' }, null);
+    expect(s.need()).toBe(0);
+    s.toggle('grandWeaponmastery');
+    expect(s.need()).toBe(2);
+    s.toggleWeapon('sword'); s.toggleWeapon('bow'); s.toggleWeapon('axe');
+    expect([...s.weapons]).toEqual(['sword', 'bow']);
+    s.roll('cs', 0); s.roll('ep', 0);
+    ['kaiSurge', 'deliverance', 'kaiScreen'].forEach((d) => s.toggle(d));
+    expect(s.ready()).toBe(true);
+    const h = s.build();
+    expect(h.grandMastery).toEqual(['sword', 'bow']);
+    expect(h.mastery).toEqual([]);
+    // a veteran of the Magnakai books: his Weaponmastery weapons stay, and may be mastered again
+    const vet = LW.HeroSetup({ number: 13, series: 'grandmaster' }, { hero: gmHero([], { magnakai: NINE, mastery: ['sword', 'bow', 'axe'], grandmaster: undefined }), completed: [] });
+    vet.toggle('grandWeaponmastery');
+    expect(vet.need()).toBe(2);
+    expect(vet.canWeapon('sword')).toBe(true);
+    // the next book: one more
+    const next = LW.HeroSetup({ number: 14, series: 'grandmaster' }, { hero: Object.assign(h, { grandmaster: [...h.grandmaster] }), completed: ['13tplor'] });
+    expect(next.pick).toBe(1);
+    expect(next.need()).toBe(1);
+    expect(next.canWeapon('sword')).toBe(false);
+    next.toggleWeapon('dagger'); next.toggle('telegnosis');
+    expect(next.build().grandMastery).toEqual(['sword', 'bow', 'dagger']);
+  });
+  it('keeps a carried character\'s scores, with no re-roll (ADR 0019)', () => {
+    const s = LW.HeroSetup({ number: 13, series: 'grandmaster' }, { hero: mkHero(NINE, { cs: 31, epMax: 44, ep: 12, circleEp: 11 }), completed: [] });
+    expect(s.rolls).toEqual({ cs: 0, ep: 0 });
+    s.roll('cs', 9); s.auto();
+    const h = LW.readyHero(s.build());
+    expect(h.cs).toBe(31);
+    expect(h.epMax).toBe(44);
+    expect(h.grandmaster).toHaveLength(4);
+  });
+  it('adds +1 COMBAT SKILL and +2 ENDURANCE, for good, for each Grand Master Discipline past four', () => {
+    const four = ['kaiSurge', 'deliverance', 'kaiScreen', 'grandNexus'];
+    const h = LW.readyHero(gmHero(four, { cs: 30, epMax: 35, ep: 10 }));
+    expect([h.cs, h.epMax]).toEqual([30, 35]);
+    const s = LW.HeroSetup({ number: 14, series: 'grandmaster' }, { hero: h, completed: ['13tplor'] });
+    s.toggle('telegnosis');
+    const h14 = LW.readyHero(s.build());
+    expect([h14.cs, h14.epMax, h14.ep]).toEqual([31, 37, 37]);
+    LW.readyHero(h14); // set out again (a restart): not added twice
+    expect([h14.cs, h14.epMax]).toEqual([31, 37]);
+    const s15 = LW.HeroSetup({ number: 15, series: 'grandmaster' }, { hero: h14, completed: ['13tplor', '14tcod'] });
+    s15.toggle('magiMagic');
+    const h15 = LW.readyHero(s15.build());
+    expect([h15.cs, h15.epMax]).toEqual([32, 39]);
+  });
 });

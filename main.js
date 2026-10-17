@@ -513,7 +513,8 @@ function captionHTML() {
   const h = game.hero, id = sel && sel.id, drop = (word = 'Drop') => `<button type="button" class="seal" data-remove="${esc(id)}">${word}</button>`;
   if (sel && sel.kind === 'disc') {
     const d = LW.DISCIPLINES[id], extra = id === 'weaponskill' && h.weaponskill ? ` in ${esc(LW.itemName(h.weaponskill))}` : '';
-    const mastered = id === 'weaponmastery' && (h.mastery || []).length ? ` Mastered: ${esc(h.mastery.map(LW.itemName).join(', '))}.` : '';
+    const arms = { weaponmastery: h.mastery, grandWeaponmastery: h.grandMastery }[id] || [];
+    const mastered = arms.length ? ` Mastered: ${esc(arms.map(LW.itemName).join(', '))}.` : '';
     return `<div><h3>${esc(d.name)}${extra}</h3><p>${esc(d.blurb)}${mastered}${LW.has(h, id) ? '' : ' <i>Not yet learned.</i>'}</p></div>`;
   }
   const it = LW.ITEMS[id] || {}, about = it.about ? ` ${esc(it.about)}` : '';
@@ -856,9 +857,9 @@ function setupLeftHTML() {
     const chosen = [...h.picked].map((id) => `<button type="button" class="disc lit" data-supick="${id}" title="${esc(LW.DISCIPLINES[id].name)}" aria-label="Let ${esc(LW.DISCIPLINES[id].name)} go">${glyph(DISC_GLYPH[id])}</button>`);
     const mastered = [...h.weapons].map((w) => `<button type="button" class="disc item lit" data-suw="${w}" title="${esc(LW.itemName(w))}" aria-label="Let ${esc(LW.itemName(w))} go">${itemGlyph(w)}</button>`);
     return `<div class="setup">${head(carried ? 'Your Lone Wolf returns' : 'Your Action Chart')}<p class="su-note">${note}</p>
-      <div class="su-scores">${score('cs', 'Combat Skill', 10)}${score('ep', 'Endurance', 20)}</div>
+      <div class="su-scores">${score('cs', 'Combat Skill', h.S.base.cs)}${score('ep', 'Endurance', h.S.base.ep)}</div>
       ${h.pick ? suSlots(`${h.pick === 1 ? 'A new' : h.pick} ${h.S.name} Discipline${h.pick === 1 ? '' : 's'}`, chosen, h.pick) : `<p class="su-note">You have mastered every ${h.S.name} Discipline.</p>`}
-      ${need ? suSlots(`Weaponmastery: ${need} weapon${need === 1 ? '' : 's'}`, mastered, need) : ''}
+      ${need ? suSlots(`${need} weapon${need === 1 ? '' : 's'} to master`, mastered, need) : ''}
       ${suFoot(say, h.ready(), h.kit ? 'On to your equipment' : 'Begin')}</div>`;
   }
   const k = SU.k, kit = k.kit, g = k.gold(), hero = k.hero;
@@ -901,7 +902,7 @@ function setupRightHTML() {
     };
     return `<div class="headrow"><div class="place">${esc(h.S.name)} Disciplines</div></div>
       <div class="supage"><div class="sulist">${h.S.list.map(disc).join('')}</div>
-      ${need ? `${ruled(`Weaponmastery <small>choose ${need} weapon${need === 1 ? '' : 's'} to master</small>`)}<div class="sulist short">${LW.WEAPONS.map(weapon).join('')}</div>` : ''}</div>`;
+      ${need ? `${ruled(`${LW.DISCIPLINES[h.S.arms.disc].name} <small>choose ${need} weapon${need === 1 ? '' : 's'} to master</small>`)}<div class="sulist short">${LW.WEAPONS.map(weapon).join('')}</div>` : ''}</div>`;
   }
   const k = SU.k, hero = k.hero;
   const entry = (x, i) => suItem(`data-sukit="${i}"`, kitArt(x), kitName(x), kitAbout(x), k.chosen.has(i), k.held(i) ? 'yours already' : '', !k.chosen.has(i) && !k.canChoose(i));
