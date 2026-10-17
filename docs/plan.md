@@ -41,8 +41,9 @@ spent at B8 164 (the text gives no number), the puzzles, and B5 162's climb (a b
 
 Book 13's rules were read on 2026-10-10 (rules-books.md, "Grand Master series"). The importer knows
 Book 13 (2026-10-11: its disciplines, ranks, and foes `immune: 'psi'`); the engine has the series (G1)
-setting out (G2), carrying in (G3), the new disciplines' numbers (G5) and the Kai sheet (G6). Importing it is the owner's go-ahead, apart
-from this work.
+setting out (G2), carrying in (G3), the new disciplines' numbers (G5) and the Kai sheet (G6), so the
+engine work is done; what is left for Book 13 are its book steps (item table onward). Importing Books
+14-20 is the owner's go-ahead.
 
 **Engine work**, in order (G1 first: everything else reads the series):
 
@@ -60,8 +61,9 @@ from this work.
   its Magnakai counterpart's number.
 - G6 done 2026-10-17 (interface.md, "kai"): the Kai sheet's grid of twelve, six a row, with their
   glyphs; the ranks were already in G1.
-- G7. Then register the Grand Master item tables in `main.js`. The dashboard opens their test play and
-  registering by itself once `LW.SERIES` has the series (ADR 0039). Needs: G1-G5.
+- G7 done 2026-10-17: nothing to register yet. `LW.SERIES` has the series, so the dashboard offers the
+  Grand Master books test play (step 6) and asks for their item tables to be registered in `main.js`
+  `ITEM_TABLES` as part of step 5 (ADR 0039); no `items-13tplor.js` exists yet.
 
 **Decided 2026-10-10** (the Readers' Handbook downloaded that day, then the owner): ADR 0018 (which
 earlier disciplines keep their numbers: a carried character's chosen Magnakai ones, replaced by
