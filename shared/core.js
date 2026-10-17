@@ -772,8 +772,9 @@
     }
     /* sec.rolls: what the number drawn here does to him, where the text says so outright: ep, gold
        won (gold), and what is lost (take). sec.bowShot: the draw is a shot, which spends an Arrow and
-       has his skill with the bow added (LW.bowShot); s.rolled is then the total, s.drawn the number. */
-    shot() { return this.section.bowShot && LW.bowShot ? LW.bowShot(this.s.hero) : null; }
+       has his skill with the bow added (LW.bowShot; sec.grandBow, the section's own number for Grand
+       Weaponmastery with Bow); s.rolled is then the total, s.drawn the number. */
+    shot() { return this.section.bowShot && LW.bowShot ? LW.bowShot(this.s.hero, this.section.grandBow) : null; }
     /* sec.rntMod: what the text adds to the number for a discipline, rank or Lore-circle he has */
     bonuses() {
       const hero = this.s.hero, times = (m) => (m.each ? Math.max(0, (LW.owned ? LW.owned(hero, m.each) : []).length - (m.over || 0)) : 1); // each: per Magnakai Discipline, over the first `over`

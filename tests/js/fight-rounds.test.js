@@ -185,6 +185,12 @@ describe('whole-fight conditions', () => {
     f.round(wounding(5), 'evade');
     expect([f.over, g.hero.ep]).toEqual(['evade', 25]);
   });
+  it('an evasion open only once the foe is down to a score', () => {
+    const { f } = fightAt({ enemies: [foe({ ep: 20 })], evade: { foeAt: 15, to: '2' } }, mkHero({ cs: 30 }));
+    expect(f.evadeOpen).toBe(false);
+    f.round(drawWhere(15, (r) => r.enemy >= 5 && r.enemy < 20));
+    expect(f.evadeOpen).toBe(true);
+  });
   it('the same foes fought again keep their wounds, and those already dead stay so', () => {
     const { g, f } = fightAt({ enemies: [foe({ name: 'K1', ep: 1 }), foe({ name: 'K2', ep: 9 })], keep: 'kalkoth', evade: { after: 1, to: '2' } });
     f.round(drawWhere(5, (r) => r.enemy > 0 && r.enemy < 50));
@@ -204,6 +210,13 @@ describe('the mind', () => {
   it('Mindblast doubled against a foe that takes it badly, tripled with the Lore-circle', () => {
     const r = [{ psi: 2 }];
     expect(fightAt({ enemies: [foe()], rounds: r }, mkHero({ disciplines: ['mindblast'] })).f.cs()).toBe(19);
+  });
+  it('a bonus only while the full surge is loosed, not with the lesser Mindblast', () => {
+    const r = [{ mind: 2, csMod: 2, if: { disc: 'kaiSurge' } }];
+    const { f } = fightAt({ enemies: [foe()], rounds: r }, mkHero({ series: 'grandmaster', grandmaster: ['kaiSurge'], cs: 30, ep: 30 }));
+    expect([f.mind, f.cs()]).toEqual([1, 34]);
+    f.focus();
+    expect([f.mind, f.cs()]).toEqual([2, 40]);
   });
   it('a fight of the mind: a fixed score, or his own with what the text adds, and no weapon', () => {
     expect(fightAt({ enemies: [foe()], mind: { cs: 15 } }, mkHero({ cs: 22, special: ['shield'] })).f.cs()).toBe(15);

@@ -150,20 +150,21 @@
      Weaponmastery with the Bow 3, and from Mentora (Book 10) 2 more; both only with the Bow mastered.
      Grand Weaponmastery with the Bow: 5, in place of both.
      A bow of a book's own may add its own (item.shot). {why} when he cannot shoot. */
-  LW.bowShot = (hero) => {
+  /* grand: what this shot's section gives Grand Weaponmastery with Bow, in place of its +5 (ADR 0040) */
+  LW.bowShot = (hero, grand) => {
     const bows = hero.weapons.filter((w) => (LW.ITEMS[w] || {}).ranged), shot = (w) => LW.ITEMS[w].shot || 0;
     if (!bows.length) return { why: 'You need a Bow to shoot.' };
     if (!(hero.arrows > 0)) return { why: 'You have no Arrows left.' };
-    const bow = bows.reduce((a, b) => (shot(b) > shot(a) ? b : a)), parts = LW.weaponBonus(hero, bow);
+    const bow = bows.reduce((a, b) => (shot(b) > shot(a) ? b : a)), parts = LW.weaponBonus(hero, bow, grand);
     return { bow, parts, plus: parts.reduce((t, p) => t + p.n, 0) };
   };
   /* What one weapon adds, for the inventory to show: a bow's to the number for a shot, any other's
      to COMBAT SKILL in a fight (its own bonus and his skill with it). */
-  LW.weaponBonus = (hero, w) => {
+  LW.weaponBonus = (hero, w, grand) => {
     const it = LW.ITEMS[w] || {};
     if (!it.ranged) return weaponParts(hero, w);
     const parts = it.shot ? [{ label: LW.itemName(w), n: it.shot }] : [], kinds = (it.weapon || [w]).concat('bow');
-    if (LW.grand(hero, 'grandWeaponmastery') && kinds.some((k) => (hero.grandMastery || []).includes(k))) parts.push({ label: 'Grand Weaponmastery with Bow', n: 5 });
+    if (LW.grand(hero, 'grandWeaponmastery') && kinds.some((k) => (hero.grandMastery || []).includes(k))) parts.push({ label: 'Grand Weaponmastery with Bow', n: grand == null ? 5 : grand });
     else if (mastered(hero) && kinds.some((k) => (hero.mastery || []).includes(k))) {
       parts.push({ label: 'Weaponmastery with Bow', n: 3 });
       if (LW.mkRank(hero) >= 7) parts.push({ label: 'Mentora', n: 2 });

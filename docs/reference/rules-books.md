@@ -231,7 +231,7 @@ three Topical Guide pages) were downloaded on 2026-10-10 into git-ignored
 | At most 12 Special Items; more may be left at the Monastery | `LW.specialLimit` (12 in every book, ADR 0029); the Monastery at a book's start (the kit step: `store`) |
 | Gold: at most 50; more may be left at the Monastery | yes, at a book's start (the kit step: `storeGold`) |
 | Bow: as in the Magnakai series (a Quiver and an Arrow a shot, useless hand to hand) | yes (`ranged`, `hero.arrows`, `bowShot`) |
-| Some sections give Grand Weaponmastery with Bow its own bonus (3 to 5); the Handbook advises using the section's number in place of the +5 | no |
+| Some sections give Grand Weaponmastery with Bow its own bonus (3 to 5); the Handbook advises using the section's number in place of the +5. *Owner*: the section's number (ADR 0040) | yes (an item table's `grandBow`) |
 
 ### Grand Master Disciplines
 
@@ -509,7 +509,7 @@ hero can hold it; no effect is applied.
 - **Bow**: used only when the section allows; needs a Quiver and an Arrow, one Arrow a shot; useless
   hand to hand. *Engine*: yes (`ranged`, `hero.arrows`, `bowShot`).
 - **Money**: Palmyrion's Lune, 4 to the Gold Crown. *Engine*: counted in their own purse
-  (`hero.coins`) through the item table, once the book's table exists.
+  (`hero.coins`) through the item table.
 - **Combat**: as before, with the Grand Master bonuses and Special Items added to COMBAT SKILL; Kai-surge
   also costs 1 ENDURANCE each round it is used (the example: the Combat Ratio +5, a roll of 2, he loses 3
   plus 1). Evasion only where the section allows it: that round is fought, the enemy's losses are

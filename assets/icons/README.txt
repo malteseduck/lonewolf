@@ -16,16 +16,20 @@ its white fill were removed, so the page can use the shape as a mask.
     fire-bomb, medal, arrow-flights,
     and for Books 4-12 (fetched 2026-10-05): arrowhead, belt-buckles, bowl-spiral, brandy-bottle,
     candle-holder, comb, curvy-knife, domino-mask, feathered-wing, hourglass, mirror-mirror,
-    mushroom-gills, pill, robe, rock, spade, spiral-shell, whip, wine-glass
+    mushroom-gills, pill, robe, rock, spade, spiral-shell, whip, wine-glass,
+    and for Book 13 (fetched 2026-10-17): jigsaw-box
   by Delapouite (https://delapouite.com):
     healing, health-potion, herbs-bundle, invisible, meal, quiver, two-coins,
     two-handed-sword, warhammer,
     and for the books' own items: backpack, blanket, diamond-ring, flint-spark, id-card, ring,
     rope-coil, scroll-quill, soap, spear-feather, ticket, torch, viking-shield,
     and for Books 4-12 (fetched 2026-10-05): bamboo, bracer, cube, mushrooms, prism, rhinoceros-horn,
-    rolled-cloth, scabbard, towel, war-pick, water-flask, whistle, wine-bottle
+    rolled-cloth, scabbard, towel, war-pick, water-flask, whistle, wine-bottle,
+    and for Book 13 (fetched 2026-10-17): covered-jar
   by Skoll:
     footsteps, gladius
+  by Caro Asercion:
+    for Book 13 (fetched 2026-10-17): mason-jar
 
 Which glyph stands for what is DISC_GLYPH, ITEM_GLYPH and TAB_ART in main.js.
 The map tab's compass rose is not from this set: it is drawn in main.js (ROSE).

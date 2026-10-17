@@ -66,13 +66,13 @@
 
     /* c.rounds: what holds for some rounds only, or for the whole fight under a condition: [{from, upTo
        (round numbers, 1 first), fromFoe (the list's index), if, unless (Conditions), ambush (Huntmastery
-       spares it), mind (only while a mind attack is used), csMod, note, unarmed, heroLoss, foeLoss
+       spares it), mind (only while a mind attack is used; 2: only the full Psi-surge or Kai-surge), csMod, note, unarmed, heroLoss, foeLoss
        (multipliers: 0 ignores, 2 doubles, 0.5 halves), heroPlus (more for every wound), heroEach, foeEach
        (lost every round), psi (what the mind's attack adds is multiplied)}] */
     phases(round = this.rounds + 1) {
       const hero = this.hero, ctx = { weapon: this.weapon };
       return (this.c.rounds || []).filter((p) => (!p.from || round >= p.from) && (!p.upTo || round <= p.upTo) && (p.fromFoe == null || this.i >= p.fromFoe)
-        && (!p.if || LW.meets(hero, p.if, ctx)) && !(p.unless && LW.meets(hero, p.unless, ctx)) && !(p.ambush && this.huntmaster()) && (!p.mind || this.blasting()));
+        && (!p.if || LW.meets(hero, p.if, ctx)) && !(p.unless && LW.meets(hero, p.unless, ctx)) && !(p.ambush && this.huntmaster()) && (!p.mind || (p.mind === 2 ? this.blasting() === 2 : this.blasting())));
     }
     /* the changes that begin with this round, and those that end, for the log */
     changes(round) {
@@ -111,11 +111,12 @@
     cs(round) { return this.parts(round).total; }
     ratio() { return Math.min(LW.RATIO_CAP, this.cs() - this.foe.cs); }
     // evade.after: not before that many rounds; evade.within: only in the first rounds; evade.if: only
-    // with that (a Condition); evade.free: without the blow. A list: several ways out, each its own.
+    // with that (a Condition); evade.foeAt: only once the foe is down to that; evade.free: without the
+    // blow. A list: several ways out, each its own.
     // c.noEvade: the text allows none, whatever the section's choices say
     evades() {
       return this.c.noEvade ? [] : [].concat(this.c.evade || []).map((ev, i) => Object.assign({}, ev, { i,
-        open: (!ev.if || LW.meets(this.hero, ev.if)) && this.rounds >= (ev.after || 0) && !(ev.within && this.rounds >= ev.within),
+        open: (!ev.if || LW.meets(this.hero, ev.if)) && this.rounds >= (ev.after || 0) && !(ev.foeAt != null && this.foe && this.foe.ep > ev.foeAt) && !(ev.within && this.rounds >= ev.within),
         late: !!ev.within && this.rounds >= ev.within }));
     }
     get evadeOpen() { return this.evades().some((e) => e.open); }

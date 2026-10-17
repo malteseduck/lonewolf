@@ -109,8 +109,10 @@ export function draftSection(sec, names) {
   const e = {}, todo = new Set();
   const add = (f, x) => (e[f] = e[f] || []).push(x);
   // what is in brackets mostly describes a thing (a potion's "restores 3"), which does not happen here;
-  // a wound is the exception ("(lose 2 ENDURANCE points)"). A paragraph that names a Discipline is
-  // conditional throughout ("unless you have Mind Over Matter")
+  // a wound is the exception ("(lose 2 ENDURANCE points)"). A restoration in brackets may be either
+  // ("(restore 3 ENDURANCE points)" after a night's sleep), so it is read by hand. A paragraph that
+  // names a Discipline is conditional throughout ("unless you have Mind Over Matter")
+  if ((sec.text || []).some((p) => [...p.matchAll(/\(([^)]*)\)/g)].some(([, x]) => EP_GAIN.test(x) || EP_FULL.test(x)))) todo.add('Endurance');
   const paras = (sec.text || []).map((p) => p.replace(/\(([^)]*)\)/g, (m, x) => (/\b(lose|deduct|erase|remember)\b/i.test(x) ? ` ${x.replace(/!/g, '')}. ` : ' ')));
   const ss = paras.flatMap((p, k) => sentences([p]).map((s) => ({ s, k })));
   const shop = paras.some((p) => SHOP.test(p));

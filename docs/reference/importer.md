@@ -97,7 +97,7 @@ Heuristics layered on top, all by regular expression:
   further / an extra N" counts. Sentences are not split after "i.e." or "e.g.". Left as text: a change for some rounds only, one
   "instead of" the engine's own bonus, one from a weapon's or item's power (its own bonus may count
   it; the enemies' weapons given as the reason do not count), one with any other condition, and a section with two.
-- **Forced Meal**: "must (also) (now) eat a Meal", "Unless you eat a Meal now".
+- **Forced Meal**: "must (also) (now) eat a Meal", "Unless you eat a Meal now", "Meal" in either case (Book 13 writes "a meal").
 - **Victory**: the highest-numbered section.
 - **Enemy plates**: an enemy uses the full-page illustration of its own section if there is one;
   otherwise one from a section where the same kind of enemy is both fought and pictured; otherwise

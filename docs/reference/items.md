@@ -3,8 +3,8 @@
 Two jobs done by hand for each imported book, after importing it and writing its reading copy
 (`tools/reading_copy.py`): the **item table**, so the engine gives, offers, takes and gates what the
 text says (spec 4.5a), and the **fight pictures**, so every fight has a plate (spec 6.5). Book 1
-has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-12 have
-their tables (Book 3 2026-10-03, 4-12 2026-10-05). The field reference is in `book-format.md` ("Section", "Item tables").
+has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-13 have
+their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 2026-10-17). The field reference is in `book-format.md` ("Section", "Item tables").
 
 Never put the book's text anywhere but `data/projectaon/`: tools print section numbers and
 counts, the table holds only the book's short item names, and everything else is in our words.
@@ -41,7 +41,8 @@ imported sections a sentence at a time and writes `items/items-<book>.js` with o
 outright, in no condition: Gold Crowns and Meals found (`give` when pocketed or handed over, `loot` when
 offered; Meals found are `loot`), known items found, offered or erased, `{arrows: n}` where the text says
 to deduct them, `{weapons: 'all'}` and the like, Endurance lost or restored on arrival (a wound in
-brackets counts; a potion's "restores 3" in brackets does not), and the gates on a choice: a known item
+brackets counts; a restoration in brackets, which may be a potion's "restores 3" or a night's rest, is a
+`todo`: on 2026-10-17 all 29 in Books 1-13 were sections the tables have an entry for), and the gates on a choice: a known item
 (`{item}`, `not` for "if you do not have"; one of a list, `item: [...]`), a weapon by its kind
 (`{any: [{weapon: ['sword']}]}`, so a weapon-like item such as the Sommerswerd or the Silver Bow counts),
 or a fee (`{gold, spend: true}`). Endurance written on a choice goes where the tables put it: a Random
@@ -53,7 +54,9 @@ share, an id with a book's number (`skeletonKey7`: another book's key is another
 longer one ("Magic Spear", "Jar of Laumspur"), and a place a thing is kept ("in your Quiver"). What a
 sentence says under a condition (if, unless, a Discipline named in the paragraph, a Random Number, what
 someone says), a shop or a list of wares, an Arrow shot (it may have been spent a section earlier), or an
-item no table knows yet, becomes a `todo` naming it ("Gold Crowns and Endurance: as the text says"). The
+item no table knows yet, becomes a `todo` naming it ("Gold Crowns and Endurance: as the text says"). When a
+sentence shows a sign of an item, a loss or a gain that it cannot read for certain, it writes a todo rather
+than nothing (ADR 0036). The
 file's first line (`// DRAFT by tools/items_draft.mjs`) marks it unread: step 5 is not done while it is
 there, and the items-tables test leaves such a file out. The draft writes no book items, fights,
 `bowShot`, marks or stakes: those, and the reading list's other sections, are step 3's.
@@ -82,7 +85,7 @@ Decide each section by what the text says, outright:
   "or lose 3" (that is `meal`), and not a loss tied to a Random Number (that is `rolls`).
 - **rolls**: what a number drawn in the section does, where the text says so in the section itself
   rather than in choices ("if 0-6, the Kraan has ripped away your Backpack").
-- **meal**: a forced Meal the importer missed (it reads "must (also) (now) eat a Meal" and "Unless you eat a Meal now").
+- **meal**: a forced Meal the importer missed (it reads "must (also) (now) eat a Meal" and "Unless you eat a Meal now", "meal" in either case).
 - **need**: gates on the choice to a section: `{item}`, `{item, not: true}` ("if you do not
   possess"), `{gold, spend: true}` (paying), `{any: [cond, ...]}` (any one condition, which may be
   `{disc}`, `{rank}` or `{item}`: "Nexus or a Platinum Amulet").
@@ -102,7 +105,8 @@ Decide each section by what the text says, outright:
   higher"). Leave out the choice for having no Bow. The engine adds Weaponmastery and spends the
   Arrow. Arrows found or bought are `{arrows: n}` in `loot`; lost ones `{arrows: n | 'all'}` in `take`.
   A discipline's bonus the text gives on the shot, which the importer does not read there, is an
-  `rntMod` (Book 6's 170: `[{disc: 'huntmastery', plus: 1}]`).
+  `rntMod` (Book 6's 170: `[{disc: 'huntmastery', plus: 1}]`). Where a Grand Master shot gives Grand Weaponmastery with Bow its own
+  number, that is `grandBow: n`, used in place of the +5 (ADR 0040; Book 13's 104, 176, 303: 3).
 - **food as a Meal**: an item the text says can be eaten as a Meal gets `meal: true` (Book 1's
   Laumspur).
 - **the engine's rules first**: before a `todo`, use what the engine applies (book-format.md):
@@ -160,7 +164,11 @@ listed were real misses, so read the list; a full re-read on 2026-10-09 found no
 todo, 137's partial Mindblast, into a fight change). Book 12: no errors; 16 items, 121 sections; 127
 left out (a full re-read on 2026-10-10 found seven misses, among them a Special Item lost in a section
 with no item wording, so also search the whole book for each of its item names, and two evasions
-the importer read as "at any time"). It knows every book's items, as the page does.
+the importer read as "at any time"). Book 13 (from the script's draft, 2026-10-17): no errors; 14 items, 105
+sections; 153 left out. The draft had 104 sections, 83 with a todo; 18 of the other 21 needed nothing
+more. Another 24 sections it did not touch needed an entry: fights, bow shots, Arrows loosed, a Copper
+Key found, the disguise given or gated, and four Endurance restorations in brackets (now its todos). Two forced Meals (83, 133)
+written "a meal" the importer missed then; it reads them now (Book 10's 186 too, which its table already had). It knows every book's items, as the page does.
 `--json` also writes `data/projectaon/<book>/check-items.json`, which `tools/book_status.py` reads
 for checklist step 5 (the dashboard's "Check items" runs it so).
 

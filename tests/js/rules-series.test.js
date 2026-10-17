@@ -538,6 +538,8 @@ describe('the Grand Master Disciplines\' numbers', () => {
     expect(LW.weaponBonus(vet, 'axe')).toEqual([{ label: 'Weaponmastery', n: 4 }]); // a Scion-kai's, kept
     expect(LW.heroCS(vet).total).toBe(35);
     expect(LW.bowShot(vet).plus).toBe(5);
+    // a shot whose section gives Grand Weaponmastery with Bow its own number (ADR 0040)
+    expect(LW.bowShot(vet, 3).parts).toEqual([{ label: 'Grand Weaponmastery with Bow', n: 3 }]);
     const fresh = gmHero(FOUR, { grandMastery: ['axe'], weapons: ['axe'] });
     expect(LW.heroCS(fresh).parts).toContainEqual({ label: 'Grand Weaponmastery', n: 5 });
     expect(LW.skilledWith(fresh, 'axe')).toBe(true);

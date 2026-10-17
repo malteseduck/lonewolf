@@ -248,7 +248,7 @@ anywhere else: `game.breakOff()`, the fight unwon and no choice open; ADR 0027).
 records `hero.lastLoss` and `hero.lastWeapon`. `way()` is where it leads: `wounded` once he has lost
 Endurance, `won` by the rounds a win took, `combat.to`, `evade.to`, a stop's `to`. `finish()`: a win
 or a stop marks the fight won (`game.wonCombat`, so the choices open) and goes to `way()` if there is
-one; an evasion goes there; a death only saves. Evasion also needs `evade.if`, costs nothing with
+one; an evasion goes there; a death only saves. Evasion also needs `evade.if`, waits for the foe to fall to `evade.foeAt`, costs nothing with
 `evade.free`, and is shut by `noEvade`. The page draws each round's number out of sight (ADR 0026).
 
 Prototypes A and B have their own combat in `shared/battle.js`, and C in its `main.js`; those do

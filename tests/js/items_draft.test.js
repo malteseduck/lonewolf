@@ -15,7 +15,7 @@ const sec = (text, choices = [{ text: 'Turn to 1.', to: '1' }], more = {}) => ({
 const turn = (to, text = `Turn to ${to}.`) => ({ text, to });
 
 const SECTIONS = {
-  '1': sec('A quiet road.', [turn('2'), turn('3'), turn('4'), turn('5'), turn('6'), turn('7'), turn('8'), turn('9'), turn('10'), turn('11'), turn('12'), turn('13')]),
+  '1': sec('A quiet road.', [turn('2'), turn('3'), turn('4'), turn('5'), turn('6'), turn('7'), turn('8'), turn('9'), turn('10'), turn('11'), turn('12'), turn('13'), turn('14')]),
   // found and pocketed: given; offered: loot
   '2': sec(['In the drawer you find 6 Gold Crowns and pocket them.', 'A Dagger lies on the table. You may take it if you wish to: mark it on your Action Chart as a Weapon.']),
   // a wound, and a loss only under a condition
@@ -37,6 +37,8 @@ const SECTIONS = {
   '11': sec('Pick a number from the Random Number Table.', [{ text: 'If your total is 0-4, lose 3 ENDURANCE points and turn to 1.', to: '1', range: [0, 4] }, { text: 'If it is 5-9, turn to 12.', to: '12', range: [5, 9] }], { rnt: 'auto' }),
   '12': sec('Nothing here.', [turn('13')]),
   '13': sec('The end.', [], { end: 'victory' }),
+  // a restoration in brackets may be a thing's description or an event: read by hand
+  '14': sec('You sleep well (restore 3 ENDURANCE points).', [turn('13')]),
 };
 const BOOK = `(window.LW = window.LW || {}).BOOKS = Object.assign(window.LW.BOOKS || {}, { t1: ${JSON.stringify({ id: 't1', sections: SECTIONS })} });`;
 
@@ -73,8 +75,9 @@ describe('items_draft.mjs', () => {
     expect(S['9']).toEqual({ take: [{ item: 'lamp' }] });
     expect(S['10']).toEqual({ todo: 'Gold Crowns: as the text says' });
     expect(S['11']).toEqual({ rolls: [{ range: [0, 4], ep: -3 }] });
+    expect(S['14']).toEqual({ todo: 'Endurance: as the text says' });
     expect(S['1']).toBeUndefined();
-    expect(r.text).toMatch(/^\d+ sections: give 1, loot 1, take 1, ep 2, need 1, todo 4\nwrote items\/items-t1\.js$/);
+    expect(r.text).toMatch(/^\d+ sections: give 1, loot 1, take 1, ep 2, need 1, todo 5\nwrote items\/items-t1\.js$/);
 
     const check = await checkItems({ root: tmp, book: 't1' });
     expect(check.errors).toEqual([]);

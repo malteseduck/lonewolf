@@ -40,6 +40,7 @@ shows the book's printed map. Only the prototypes travel on a map.
 | `meal` | true | a Meal must be eaten on arrival |
 | `noHunt` | true | item table: Hunting does not excuse that Meal (Book 2's Wildlands) |
 | `bowShot` | true | from an item table's `bowShot: {to: [lo, hi]}`: the Random Number is a bow shot. It needs a Bow and an Arrow, spends the Arrow, and has `LW.bowShot`'s bonus added; the ranges (set on the choices, `rnt` made `auto`) are for the total. A choice with no range stays open without shooting |
+| `grandBow` | n | item table: what Grand Weaponmastery with Bow adds to this section's shot, where the text gives its own number in place of the +5 (ADR 0040) |
 | `img` | `{file, full, at}` | imported: illustration file (its `-2x.webp` once `ill_upscale.py` has made it, ADR 0033), whether it is a full-page plate, and the paragraph index it sits before |
 | `loc` | string | authored: key into `locations` |
 | `scene` | string | authored: which procedural ink scene to draw (`ruins`, `forest`, `hill`, `river`, `road`, `night`, `bridge`, `city`) |
@@ -144,12 +145,12 @@ Enemies are fought in order, one at a time. An item table's `fight` may also giv
 
 | Field | Meaning |
 |---|---|
-| `rounds` | `[{from, upTo, fromFoe, if, unless, ambush, mind, csMod, note, unarmed, heroLoss, foeLoss, heroPlus, heroEach, foeEach, psi}]`: what holds in some rounds only (`from`/`upTo`, round numbers, 1 first; `fromFoe`, from that foe of the list on, 0 first), or the whole fight under a condition (`if`/`unless`, Conditions; `ambush`, spared by Huntmastery in a Magnakai book; `mind`, only while Mindblast or Psi-surge is used). `csMod` (named `note`); `unarmed` (bare-handed); `heroLoss`/`foeLoss` multiply each round's loss (0 ignores it, 2 doubles, 0.5 halves, rounding down); `heroPlus` more for every wound; `heroEach`/`foeEach` lost every round whatever the dice say; `psi` multiplies what Mindblast or Psi-surge adds |
+| `rounds` | `[{from, upTo, fromFoe, if, unless, ambush, mind, csMod, note, unarmed, heroLoss, foeLoss, heroPlus, heroEach, foeEach, psi}]`: what holds in some rounds only (`from`/`upTo`, round numbers, 1 first; `fromFoe`, from that foe of the list on, 0 first), or the whole fight under a condition (`if`/`unless`, Conditions; `ambush`, spared by Huntmastery in a Magnakai book; `mind`, only while Mindblast or Psi-surge is used, `mind: 2` only while the full Psi-surge or Kai-surge is). `csMod` (named `note`); `unarmed` (bare-handed); `heroLoss`/`foeLoss` multiply each round's loss (0 ignores it, 2 doubles, 0.5 halves, rounding down); `heroPlus` more for every wound; `heroEach`/`foeEach` lost every round whatever the dice say; `psi` multiplies what Mindblast or Psi-surge adds |
 | `stop` | `{after, wound, foeAt, drawn: [n], to, by}` or a list: the text ends the fight after `after` rounds, at his first wound, when the foe is down to `foeAt`, or at once when a number in `drawn` is drawn; it leads to `to` (one of the section's choices), or opens the choices. `by: {hero, foe, even}`: the way on by who lost more |
 | `won` | `{within, to, else}`: a win in `within` rounds or fewer leads to `to`, a longer one to `else` |
 | `wounded` | once he has lost any Endurance in it, the fight (won or evaded) leads here |
 | `to` | the way on after a win |
-| `noEvade`, `evade.if`, `evade.free`, `evade.label` | no evading whatever the choices say; evading only with a Condition; evading without the blow. `evade` may be a list: several ways out, each a medallion of its own, a second named by its `label` |
+| `noEvade`, `evade.if`, `evade.foeAt`, `evade.free`, `evade.label` | no evading whatever the choices say; evading only with a Condition; only once the foe is down to that ENDURANCE (Book 13's Giganite); evading without the blow. `evade` may be a list: several ways out, each a medallion of its own, a second named by its `label` |
 | `rounds` `barred` | in a round entry: weapons (ids or kinds) not to be used in those rounds |
 | `stop.if` | a stop rule that holds only under a Condition (a bow that breaks on a 0 only if it is the Jakan) |
 | `lose` | a contest, not a fight to the death: brought to 0 he has lost, keeps his Endurance (as it was with `restore`, else 1) and goes here |

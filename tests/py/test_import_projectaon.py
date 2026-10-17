@@ -222,6 +222,12 @@ def test_number_rules_reads_a_bonus_with_no_condition(kai):
         {'plus': 3}]
 
 
+def test_a_forced_meal_is_read_whatever_the_case_of_meal(tmp_path):
+    s = secs(tmp_path, {1: '<p>While you run you must eat a meal or lose 3 ENDURANCE points.</p>' + choice('Turn to', 2),
+                        2: '<p>You may eat a meal here if you wish.</p>'})
+    assert (s['1'].get('meal'), s['2'].get('meal')) == (True, None)
+
+
 def test_random_number_auto_with_a_bonus_for_everyone(tmp_path):
     s = secs(tmp_path, {1: '<p>Pick a number from the <a href="random.htm">Random Number Table</a> and add 3 to the '
                         'number you have chosen.</p>' + choice('If your total score is now 3–4, turn to', 2)

@@ -430,7 +430,7 @@ for n in numbers:
             if sec.get('img', {}).get('full'):
                 e['art'] = sec['img']['file']
         sec['combat'] = combat
-    if re.search(r'must (?:also )?(?:now )?eat a Meal|[Uu]nless you eat a Meal now', whole):
+    if re.search(r'must (?:also )?(?:now )?eat a [Mm]eal|[Uu]nless you eat a [Mm]eal now', whole):
         sec['meal'] = True
     sections[str(n)] = sec
     if sec.get('img', {}).get('full'):

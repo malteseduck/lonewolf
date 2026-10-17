@@ -2,6 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-14
+- Amended: 2026-10-17
 
 ## Context
 
@@ -10,12 +11,21 @@ are download-only until the engine has the series). The owner wants to take a fr
 through most of a book's steps from the dashboard alone, without asking an agent what to do, with
 "good enough" first attempts made by scripts that an agent can refine when one is available.
 
+Book 13's item table (2026-10-17) found the draft silent on 24 sections that needed an entry, four of
+them restorations it had seen and dropped. The owner: a few more todos are better than misses, since a
+draft whose silence cannot be trusted means re-checking everything; but a draft that flags every
+section is just as pointless.
+
 ## Decision
 
 - Each book step on the dashboard has a button that runs a script. Where the step needs judgement,
   the script makes a draft or a report that is good enough to look at and mark: what it can read
   with certainty is filled in, everything else is left as a `todo` or listed by section id (spec
   principle 2, "automate only what is certain", still holds: a draft never guesses).
+- **A draft leans to flagging.** Where a section shows a sign of what the step looks for and the script
+  cannot be sure what it means, it writes a `todo` (or lists the id), never nothing: a false alarm costs
+  one read, a miss costs trusting the draft at all. It still flags only sections with such a sign, so
+  its silence narrows the reading; a draft that flags nearly every section has failed too.
 - **Copy prompt** stays beside it, as the refinement: the agent starts from the script's draft.
 - A fresh checkout is set up from the dashboard: a Setup panel checks and installs each tool (uv,
   npm), and downloads the tools' own files (Real-ESRGAN, OCR models) behind a gated button.
@@ -32,6 +42,8 @@ through most of a book's steps from the dashboard alone, without asking an agent
 
 ## Changes
 
+- 2026-10-17: drafts lean to flagging (owner): a todo over a silent miss, but only where the section
+  shows a sign of the thing; first applied to restorations in brackets in `items_draft.mjs`.
 - 2026-10-15: "Send to agent", which opened a new Claude Desktop session with the prompt
   (`claude://code/new`), was tried and dropped by the owner as clunky (a new session and a folder
   confirmation every time). Copy prompt is back: the owner pastes into a session of their choosing.
