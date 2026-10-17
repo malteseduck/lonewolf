@@ -184,15 +184,21 @@ Commands run from the project root as
   outlines were added or lost. On Book 4 the blue cells found exactly Gemini's added forest.
 - `tools/map_letter.py`: sets labels in type, onto `map-2k-erased.jpg` (step 4, `-` for the warp)
   or onto a round's 4K upscale (step 8). See its docstring for every label field.
-- `tools/fonts/`: Cabin (used), Architects Daughter (Book 12), IM Fell English and Almendra (tried),
-  all OFL; sources in its README.
+- `tools/fonts/`: Cabin (used), Darkland Hand (Book 12, our own), Architects Daughter, Caesar
+  Dressing, IM Fell English and Almendra (tried), all OFL; sources in its README.
+- `tools/map_font.py`: builds Darkland Hand (Thin, Light, Regular, Bold) into `tools/fonts/`: each
+  letter a few straight strokes drawn with a chisel nib, after the hand of Books 12 and 13's maps
+  (the drawing, the squash, width and spacing are constants at its top). Run it again after
+  changing a letter, then Letter.
 - `maps/<code>/font.txt`: line 1 names a file in `tools/fonts/`, the font that map's names are
   set in, honoured by every step (ADR 0006). The dashboard's Letter and Finish steps pass it to `map_letter.py` as `--hand` and `--caps`,
   and the editor's preview draws in it; with no file, Cabin SemiBold. An optional line 2 describes
   the lettering for the Gemini prompt in place of "clean sans-serif type" (Book 12: hand-lettered
-  in a thin, even pen). Book 12's map is lettered by
-  hand in thin marker, so it has `ArchitectsDaughter-Regular.ttf` (tried against Patrick Hand, Kalam,
-  Neucha and Comic Neue, 2026-10-10).
+  in a thin, even felt pen, in angular, runic-looking letters). Book 12's map is lettered by hand
+  in angular chisel strokes, so it has `DarklandHand-Thin.ttf` (2026-10-16), drawn for it after no
+  free font matched (Architects Daughter before it, tried against Patrick Hand, Kalam, Neucha and
+  Comic Neue on 2026-10-10; Norse and runic fonts on 2026-10-16). Its names' hand-set sizes were
+  scaled then so each spans the printed name's length.
 - The comparison page, `work/compare.html` in a book's folder (git-ignored): two panes, synced pan and
   zoom, any version in each, file sizes in the menu. Copy Book 1's and edit its file list (the scan
   and the finished map are `../map.png` and `../map-4k.webp` from there).

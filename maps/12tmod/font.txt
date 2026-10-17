@@ -1,2 +1,2 @@
-ArchitectsDaughter-Regular.ttf
-hand-lettered in a thin, even pen, like a draughtsman's hand
+DarklandHand-Thin.ttf
+hand-lettered in a thin, even felt pen, in angular, runic-looking letters (diamond O, zigzag S, pointed bowls)

@@ -9,3 +9,14 @@ Architects Daughter (ArchitectsDaughter-Regular): Kimberly Geswein. Named by map
 since Book 12's map is lettered by hand (a map's font.txt sets its font: docs/adr/0006). Chosen over Patrick Hand, Kalam, Neucha
 and Comic Neue as the closest to the scan's thin marker. From github.com/google/fonts
 (ofl/architectsdaughter), 2026-10-10, under the SIL Open Font License 1.1 (OFL-ArchitectsDaughter.txt).
+
+Darkland Hand (DarklandHand-Thin, -Light, -Regular, -Bold): our own, drawn by tools/map_font.py in
+straight chisel-pen strokes after the hand that letters the printed maps of Books 12 and 13 (no free
+font had its angular capitals with lower case). Not traced from the scans. Named by
+maps/12tmod/font.txt in Thin, which matches Book 12's stroke weight once map_letter.py's added stroke
+is counted; Bold is the weight of Book 13's pen. Rebuild with `python tools/map_font.py`, 2026-10-16,
+under the SIL Open Font License 1.1 (OFL-DarklandHand.txt).
+
+Caesar Dressing (CaesarDressing-Regular): Open Window. Tried for Book 12 (capitals only), 2026-10-16.
+From github.com/google/fonts (ofl/caesardressing), under the SIL Open Font License 1.1
+(OFL-CaesarDressing.txt).
