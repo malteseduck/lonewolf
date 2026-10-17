@@ -26,8 +26,8 @@ mechanism rather than a Book 12 exception.
 - A map with no `font.txt` gets Cabin SemiBold.
 - A book's `font.txt` is the owner's choice for that map: an agent does not change it, remove it,
   or override it on the command line without the owner's say-so.
-- Book 12: `DarklandHand-Thin.ttf`, our own font (`tools/map_font.py`), described as "hand-lettered
-  in a thin, even felt pen, in angular, runic-looking letters (diamond O, zigzag S, pointed bowls)".
+- Book 12: `DarklandHand-Regular.ttf`, our own font (`tools/map_font.py`), described as "hand-lettered
+  in an even felt pen, in angular, runic-looking letters (diamond O, zigzag S, pointed bowls)".
 - A map's font may be one we draw ourselves when no free font matches its hand: built by a script
   in `tools/`, OFL, committed in `tools/fonts/` like the rest.
 
@@ -53,3 +53,5 @@ mechanism rather than a Book 12 exception.
   Runicesque tried). Its proportions, spacing and weight were measured against Book 12's scan and
   adjusted by the owner's eye; the names' hand-set sizes were scaled so each spans its printed
   length.
+- 2026-10-16: Book 12 moved from Darkland Hand Thin to Regular (owner): names set again at Finish
+  looked too thin beside Gemini's repaint, which thickens the lettering. "thin" dropped from line 2.

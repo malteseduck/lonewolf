@@ -1,2 +1,2 @@
-DarklandHand-Thin.ttf
-hand-lettered in a thin, even felt pen, in angular, runic-looking letters (diamond O, zigzag S, pointed bowls)
+DarklandHand-Regular.ttf
+hand-lettered in an even felt pen, in angular, runic-looking letters (diamond O, zigzag S, pointed bowls)

@@ -194,8 +194,8 @@ Commands run from the project root as
   set in, honoured by every step (ADR 0006). The dashboard's Letter and Finish steps pass it to `map_letter.py` as `--hand` and `--caps`,
   and the editor's preview draws in it; with no file, Cabin SemiBold. An optional line 2 describes
   the lettering for the Gemini prompt in place of "clean sans-serif type" (Book 12: hand-lettered
-  in a thin, even felt pen, in angular, runic-looking letters). Book 12's map is lettered by hand
-  in angular chisel strokes, so it has `DarklandHand-Thin.ttf` (2026-10-16), drawn for it after no
+  in an even felt pen, in angular, runic-looking letters). Book 12's map is lettered by hand
+  in angular chisel strokes, so it has `DarklandHand-Regular.ttf` (Thin from 2026-10-16, Regular the same day: Thin looked faint beside the repaint), drawn for it after no
   free font matched (Architects Daughter before it, tried against Patrick Hand, Kalam, Neucha and
   Comic Neue on 2026-10-10; Norse and runic fonts on 2026-10-16). Its names' hand-set sizes were
   scaled then so each spans the printed name's length.
