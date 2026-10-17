@@ -16,7 +16,3 @@ font had its angular capitals with lower case). Not traced from the scans. Named
 maps/12tmod/font.txt in Thin, which matches Book 12's stroke weight once map_letter.py's added stroke
 is counted; Bold is the weight of Book 13's pen. Rebuild with `python tools/map_font.py`, 2026-10-16,
 under the SIL Open Font License 1.1 (OFL-DarklandHand.txt).
-
-Caesar Dressing (CaesarDressing-Regular): Open Window. Tried for Book 12 (capitals only), 2026-10-16.
-From github.com/google/fonts (ofl/caesardressing), under the SIL Open Font License 1.1
-(OFL-CaesarDressing.txt).
