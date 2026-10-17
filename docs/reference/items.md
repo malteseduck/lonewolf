@@ -93,6 +93,22 @@ chiefly Discipline gates, marks, a book's own item named in lower case, forced M
 and number changes by a Discipline. Books 1-12 alone: 1,070 todos, 231 false alarms, 177 untouched
 (104 fights, 73 others).
 
+How far each reading can be trusted (2026-10-17, Books 1-13, against the tables' 73 untouched
+sections other than fights):
+
+| Read | Sections (of 4,600) | Table entries missed |
+|---|---|---|
+| the draft's todos | 1,171 (25%) | 73 (about 6 a book) |
+| the todos and the reading list (step 2) | 3,124 (68%) | 12 |
+| both, and a search for each of the book's own item names | the same, and the hits | 7 |
+
+The 7: two Fireseeds used but only described, never named (Book 7's 157, Book 9's 106), a Backpack
+lost with no loss word (Book 9's 346), a gate on a Discipline or rank (Book 3's 289), one on a mark
+(Book 8's 31), a mark (Book 1's 284) and a forced Meal, the importer's (Book 4's 13). Of the 114
+untouched fights, 112 are on the reading list. So the todos, the list and the name search miss about
+one entry in two books, where the todos alone miss about six a book; but the list is two thirds of a
+book, so the three together save only about a third of a full read.
+
 ### 3. What each section gets
 
 Decide each section by what the text says, outright:
