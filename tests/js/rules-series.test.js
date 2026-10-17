@@ -282,6 +282,21 @@ describe('Book 13 kit', () => {
   });
 });
 
+describe('Book 14 kit', () => {
+  it('is the map of the Darklands, 20 + a Random Number in gold, and any 5 of the same nine as Book 13', () => {
+    const k = LW.KITS[14];
+    expect(k.give).toEqual(['mapDarklands']);
+    expect(k.gold).toBe(20);
+    expect(k.choose).toBe(5);
+    expect(k.from).toEqual(['sword', 'bow', 'quiver', 'axe', { meal: 4 }, 'rope', 'potion', 'spear', 'dagger']);
+    expect(k.store && k.storeGold && !k.newOnly).toBe(true);
+  });
+  it('gives the map only to a hero who has not kept Book 12\'s', () => {
+    const hero = { weapons: [], backpack: [], special: ['mapDarklands'], disciplines: [], gold: 0 };
+    expect(LW.KitSetup({}, LW.KITS[14], hero).gifts).toEqual([]);
+  });
+});
+
 describe('LW.KitSetup', () => {
   const setup = (n, hero, book = {}) => LW.KitSetup(book, LW.KITS[n], hero);
   const empty = (over = {}) => Object.assign({ cs: 15, ep: 20, epMax: 20, weapons: [], backpack: [], special: [], meals: 0, gold: 0, series: 'kai', disciplines: [] }, over);

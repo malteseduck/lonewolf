@@ -205,7 +205,7 @@ downloads and imports still need the owner's word (AGENTS.md).
   choose"; the footnotes' section ids), every other line and every Engine line a todo. Page names,
   paragraph numbers and figures only on the console. Its silence can be trusted (2026-10-17): a paragraph
   is passed over only when it is word for word the previous book's, and what the skeleton fills (the
-  gold, how many of how long a kit list) agrees with `LW.KITS` for Books 2-13 (Book 1, against
+  gold, how many of how long a kit list) agrees with `LW.KITS` for Books 2-14 (Book 1, against
   nothing, is all todo).
 - `node tools/walk_book.mjs <code>`: step 6's walk of the book with the engine, two stand-in characters (ADR 0036;
   `docs/reference/rules-engine.md`, "The walk"); `--json` also writes `walk.json` beside the book. Section ids, counts and

@@ -302,6 +302,7 @@
     11: { give: [{ meal: 2 }], choose: 6, from: later, newOnly: true },
     12: { give: ['mapDarklands'], choose: 6, from: [...later.filter((x) => !x.meal), { meal: 4 }, 'quarterstaff', 'axe'], store: true, storeGold: true, wear: 'cold-weather clothing and a waterproof cape' },
     13: { give: ['mapRuel'], gold: 20, choose: 5, from: ['sword', 'bow', 'quiver', 'axe', { meal: 4 }, 'rope', 'potion', 'spear', 'dagger'], store: true, storeGold: true },
+    14: { give: ['mapDarklands'], gold: 20, choose: 5, from: ['sword', 'bow', 'quiver', 'axe', { meal: 4 }, 'rope', 'potion', 'spear', 'dagger'], store: true, storeGold: true },
   };
   const entry = (x) => (typeof x === 'string' ? { item: x, n: 1 } : Object.assign({ n: 1 }, x));
   const entryName = (x) => (x.meal ? x.name || (x.meal > 1 ? `${x.meal} Meals` : 'a Meal') : x.n > 1 ? `${x.n} × ${LW.itemName(x.item)}` : LW.itemName(x.item));
