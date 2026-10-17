@@ -58,13 +58,14 @@ Heuristics layered on top, all by regular expression:
   disciplines ("of X", "of either X or Y" = any, "of X and Y" = all), a rank ("reached the Kai rank
   of Guardian or higher", mapped to a discipline count), Lore-circles ("completed the (Magnakai) Lore-circle
   of Fire", "possess the Lore-circle of ...") and, for Random Number bonuses, his Endurance ("your current ENDURANCE point total is
-  less than 10", "your ENDURANCE score is 20 or higher"), joined by "and have ...". Anything else in it (an item, a weapon in hand, "or have
+  less than 10", "your ENDURANCE score is 20 or higher", "your ENDURANCE is less than 10"), joined by "and have ...". Anything else in it (an item, a weapon in hand, "or have
   reached") and the rule is not read. Written as in book-format.md, Conditions.
   In a Grand Master book (Book 13 on) a discipline is also read as "the Grand Master Discipline of
-  X", "(the) Grand Mastery of X", "Mastery of X" (or "mastery of X"), "the Discipline of X" or bare ("If you possess
+  X", "(the) Grand Mastery of X", "Mastery of X" (or "mastery of X"), "the Discipline of X", "the skill of X" or bare ("If you possess
   Kai-screen"); a name that is not a discipline still leaves the rule unread. "Grand Mastery of
   Nexus" is Grand Nexus. "Grand Weaponmastery (with Bow)" is not read: it needs the Bow mastered.
-  The twelve Grand Master ranks are known, though Book 13 gates on none.
+  The twelve Grand Master ranks are known. "The rank of Y in the Discipline of X" (Book 14's 107) is the discipline
+  and the rank: his rank is his own, the same in every discipline.
 - **Gates** (`gate()`): the choice's condition, up to its first comma or "turn to". Negative
   phrasings ("if you do not have", "have yet to", "neither") are left open. "X, or have reached the rank of Y" (parts joined by "or (if you) have/possess/reached/attained") is split and each part read as a condition; if all parse, `need: {any: [...]}`, else the choice is left open. A
   looser reading still gates "If you wish to use the Kai Discipline of X ..." (also "... of X in order to ...").
@@ -86,11 +87,12 @@ Heuristics layered on top, all by regular expression:
   ...", which stays a choice shown after the fight: Book 3's 138, 263, Book 4's 133); "after N rounds",
   "after the first round" and "until the beginning of the third round" set the wait; "in the first
   round of combat only" sets `within: 1`.
-- **Mind immunity**: "immune to Mindblast / Psi-surge / all psychic attacks" in the section; "immune to Mindblast (but
-  not Psi-surge)" makes it `'mindblast'`; "immune to Mindblast and Psi-surge (but not Kai-surge)" or
-  "...; only (the Grand Mastery of) Kai-surge" makes it `'psi'`.
+- **Mind immunity**: "immune to Mindblast / Psi-surge / all (forms of) psychic attack(s)" in the section; "immune to Mindblast (but
+  not Psi-surge)" makes it `'mindblast'`; "immune to Mindblast and Psi-surge (but not Kai-surge)",
+  "...; only (the Grand Mastery of) Kai-surge" or "..., and suffers only half-damage ... Kai-surge" makes it `'psi'`
+  (the halving is the item table's).
 - **Mind drain**: "Unless you possess the Discipline of Mindshield (Psi-screen in a Magnakai
-  book), deduct N ENDURANCE points every round" sets each enemy's `drain`.
+  book, Kai-screen in a Grand Master one), deduct N ENDURANCE points every round" sets each enemy's `drain`.
 - **Combat Skill adjustment** (`cs_rule()`): one sentence that adds to, deducts from or reduces
   "your COMBAT SKILL" for the fight, taken as `csMod`, with "If you have X," (or "If you have X you may ...", no comma) as `csIf` and
   "unless you have X" as `csUnless` (disciplines, a rank, Lore-circles). "add an additional / a
@@ -204,6 +206,15 @@ score is" (91, 116, 174, 220, 226, 241, 245, 307); rules after a colon (116); "(
 an unconditional "add 3 to the number" (124); "immune to all psychic attacks" (47, 56, 202, 291, 339); the foes'
 weapons as a penalty's reason (86). Books 1-12 unchanged by it. Left free: 52 (no ranges), 81 (a weapon in hand),
 104, 176, 303 (Grand Weaponmastery with Bow).
+
+Book 14 as of 2026-10-17, after its step 3: 350 sections, 41 fights, Random 33 (28) / 15, gates 45 / 10 / 0,
+illustrated 38, dead 13, puzzles 4, Meals 6, fights 1 / 3 (0) / 2 / 1, enemies 8 / 6 / 11 (before it: Random
+30 (25) / 18, gates 44 / 9, fights 1 / 1 (0) / 0 / 1). Step 3 taught: "the rank of Kai Grand Guardian in the
+Discipline of Grand Huntmastery" (107); "the skill of X" (99); "your ENDURANCE is ..." (136, 274); "immune to all
+forms of psychic attack" (14, 126); Kai-screen as the shield against a drain (169, 211); "immune to Mindblast and
+Psi-surge, and suffers only half-damage ... Kai-surge" as `'psi'` (229, which had been read as immune to all).
+Books 1-13 unchanged by it. Left free: 177, 232 (odd or even: a range cannot say it), 74 ("0 = 10"), the rest
+counting or changed by an item (the item table's).
 
 Introductions: 7, 7, 9, 4, 10, 7, 10, 10, 8, 9, 8, 8 paragraphs. The free Random Number sections
 left are those where the number counts gold or Endurance, plays a game, or is changed by a bow, a

@@ -103,10 +103,12 @@ def condition(text):
         clause = clause.strip()
         d = re.fullmatch(r'(?:have|possess)(?: and wish to use)? (?:either |both )?(?:of )?the (?:Kai |Magnakai )?Disciplines? (?:either |both )?(?:of )?(.+)', clause)
         if not d and series == 'grandmaster':
-            d = re.fullmatch(r'(?:have|possess) (?:the )?(?:(?:Grand Master |Magnakai |Kai )?Disciplines? of |(?:Grand )?[Mm]astery of )?(.+)', gm_names(clause))
-        r = re.fullmatch(r'(?:have )?(?:also )?(?:reached|attained) the (?:Kai |Magnakai )?[Rr]ank of ([A-Za-z -]+?)(?: or (?:higher|above|more))?(?: \([^)]*\))?', clause)
+            d = re.fullmatch(r'(?:have|possess) (?:the )?(?:(?:Grand Master |Magnakai |Kai )?Disciplines? of |(?:Grand )?[Mm]astery of |skill of )?(.+)', gm_names(clause))
+        # "the rank of Kai Grand Guardian in the Discipline of Grand Huntmastery" (Book 14's 107): his rank is his own, so the discipline and the rank
+        r = re.fullmatch(r'(?:have )?(?:also )?(?:reached|attained) the (?:Kai |Magnakai )?[Rr]ank of ([A-Za-z -]+?)(?: or (?:higher|above|more))?(?: \([^)]*\))?'
+                         r'(?: in the (?:Grand Master |Magnakai |Kai )?Discipline of ([A-Za-z -]+))?', clause)
         c = re.fullmatch(r'(?:(?:have )?completed|possess) the (?:Magnakai )?Lore-circles? of (.+)', clause)
-        e = re.fullmatch(r'your (?:current )?ENDURANCE(?: points?)?(?: point)? (?:total|score) is (?:now )?(.+)', clause)
+        e = re.fullmatch(r'your (?:current )?ENDURANCE(?: points?)?(?: point)?(?: total| score)? is (?:now )?(.+)', clause)
         if e and 'ep' not in out:  # his Endurance as he draws: "less than 10", "20 or more"
             x = e.group(1)
             m = (re.fullmatch(r'(?:less|lower|fewer) than (\d+)|below (\d+)|under (\d+)', x), re.fullmatch(r'(?:greater|more|higher) than (\d+)|above (\d+)|over (\d+)', x),
@@ -121,6 +123,13 @@ def condition(text):
                 out['ep'] = [-OPEN, int(m[3].group(1))]
             else:
                 return None
+        elif r and r.group(1).strip().lower() in RANKS and 'rank' not in out:  # before d: a Grand Master book's bare "have X" takes any words
+            out['rank'] = RANKS[r.group(1).strip().lower()]
+            if r.group(2):
+                got = 'disc' not in out and disc_list(gm_names(r.group(2)))
+                if not got or got[1]:
+                    return None
+                out['disc'] = got[0]
         elif d and 'disc' not in out:
             got = disc_list(d.group(1))
             if not got:
@@ -128,8 +137,6 @@ def condition(text):
             out['disc'], every = got
             if every:
                 out['every'] = True
-        elif r and r.group(1).strip().lower() in RANKS and 'rank' not in out:
-            out['rank'] = RANKS[r.group(1).strip().lower()]
         elif c and 'circle' not in out:
             names = [n.strip().lower() for n in re.split(r',\s*(?:and\s+)?|\s+and\s+', re.sub(r'\bthe Lore-circle of\b', '', c.group(1))) if n.strip()]
             names = [re.sub(r'^the\s+', '', n) for n in names]
@@ -385,14 +392,14 @@ for n in numbers:
         if target:
             combat['points'] = {'n': target}
         # the sentence that grants immunity; when it names some of the enemies, only they are immune
-        said = next((x for x in re.split(r'(?<=\.)\s+', whole) if re.search(r'immune to (?:Mindblast|Psi-surge|all psychic attacks)', x, re.I)), '')
+        said = next((x for x in re.split(r'(?<=\.)\s+', whole) if re.search(r'immune to (?:Mindblast|Psi-surge|all (?:forms of )?psychic attacks?)', x, re.I)), '')
         named = [e for e in enemies if re.sub(r'\s+\d+$', '', e['name']).lower() in said.lower()]
         for e in enemies:
             if named and e not in named:
                 continue
             if re.search(r'immune to Mindblast[\s,(]*but not (?:to )?Psi-surge', whole):
                 e['immune'] = 'mindblast'  # Psi-surge still works
-            elif re.search(r'immune to Mindblast and Psi-surge(?:[\s,(]*but not (?:to )?|; only (?:the Grand Mastery of )?)Kai-surge', whole):
+            elif re.search(r'immune to Mindblast and Psi-surge(?:[\s,(]*but not (?:to )?|; only (?:the Grand Mastery of )?|, and suffers only half-damage [^.]*?)Kai-surge', whole):
                 e['immune'] = 'psi'  # Kai-surge still works
             elif said:
                 e['immune'] = True
@@ -404,8 +411,8 @@ for n in numbers:
                 combat['csIf'] = if_
             if unless_:
                 combat['csUnless'] = unless_
-        # a mind attack that costs Endurance every round unless he is shielded (Mindshield, or Psi-screen in a Magnakai book)
-        shield = 'Psi-screen' if series == 'magnakai' else 'Mindshield'
+        # a mind attack that costs Endurance every round unless he is shielded (Mindshield; Psi-screen in a Magnakai book, Kai-screen in a Grand Master one)
+        shield = {'magnakai': 'Psi-screen', 'grandmaster': 'Kai-screen'}.get(series, 'Mindshield')
         dr = re.search(r'[Uu]nless you (?:have|possess) the (?:Kai |Magnakai )?Discipline of ' + shield + r', (?:you must )?(?:deduct|lose) (\d+) ENDURANCE points? (?:at the (?:beginning|start|end) of |for |in )?(?:every|each) round', whole)
         if dr:
             for e in enemies:

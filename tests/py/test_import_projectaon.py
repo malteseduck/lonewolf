@@ -252,6 +252,30 @@ def test_grand_master_gate_phrasings(grand, text, expect):
     assert grand['gate'](text) == expect
 
 
+def test_grand_master_book_14_phrasings(grand):
+    # a rank "in the Discipline of X": the rank is the hero's own, so it is the discipline and the rank
+    assert grand['gate']('If you have reached the rank of Kai Grand Guardian in the Discipline of Grand Huntmastery, '
+                         'turn to 22.') == {'disc': 'grandHuntmastery', 'rank': 5}
+    # "the skill of X"; "your ENDURANCE is ..." with no "score" or "total"
+    assert grand['number_rules']('If you have the skill of Grand Pathsmanship, add 3 to the number you have picked.') == [
+        {'disc': ['grandPathsmanship'], 'plus': 3}]
+    assert grand['number_rules']('If your current ENDURANCE points score is 20 or higher, add 2 to the number you have '
+                                 'chosen. If your ENDURANCE is less than 10, deduct 2.') == [
+        {'ep': [20, 99], 'plus': 2}, {'ep': [-99, 9], 'plus': -2}]
+
+
+def test_grand_master_immunity_and_drain(tmp_path):
+    s = secs(tmp_path, {
+        1: '<p>This creature is immune to all forms of psychic attack.</p>' + foe('Rat', 1, 1),
+        2: '<p>Unless you possess the Discipline of Kai-screen, deduct 2 ENDURANCE points every round you are in combat.</p>'
+           + foe('Rat', 1, 1),
+        3: '<p>This creature is immune to Mindblast and Psi-surge, and suffers only half-damage resulting from the use '
+           'of Kai-surge.</p>' + foe('Rat', 1, 1)}, book='14tcok')
+    assert s['1']['combat']['enemies'][0]['immune'] is True
+    assert s['2']['combat']['enemies'][0]['drain'] == 2
+    assert s['3']['combat']['enemies'][0]['immune'] == 'psi'   # Kai-surge still gets through; its halving is the item table's
+
+
 def test_cs_rule_a_penalty_from_the_foes_weapons_is_for_the_whole_fight(kai):
     assert kai['cs_rule']("Due to the length of your enemies’ weapons, you must reduce your COMBAT SKILL by 4 "
                           'for the duration of this combat.') == (-4, None, None)
