@@ -3,7 +3,7 @@
 Where each rule in `docs/spec.md` section 4 is implemented. Three files, loaded by the main page in
 this order: `shared/core.js` (series-independent rules and the Kai defaults), `shared/rules-series.js`
 (adds Magnakai and overrides some functions) and `shared/fight.js` (the fight). The prototypes load
-only `core.js`. `main.js` holds no rules: it draws, animates and takes input (ADR 0024). Each part
+only `core.js`. `main.js` holds no rules: it draws, animates and takes input (ADR 0022). Each part
 has its tests in `tests/js/` (`core-*`, `rules-series`, `fight`).
 
 ## The hero object
@@ -43,6 +43,8 @@ has its tests in `tests/js/` (`core-*`, `rules-series`, `fight`).
   flagsRead: true,           // flags tracked from the start (LW.makeHero). A hero saved before 2026-10-12 lacks it:
                              // main.js backfillFlags reads his flags once from the adventure's saves of earlier
                              // books, only where a trail passed the section that sets one (LW.flagsFrom)
+  assumed: ['visitedGornCove'], // flags of LW.ASSUME already settled (LW.makeHero fills it); one missing is given
+                             // once when he is carried into a book it names (LW.assumeMarks, ADR 0011)
 }
 ```
 
@@ -51,7 +53,7 @@ Item ids are keys of `LW.ITEMS`, or `pack:Name` / `spec:Name` for items typed in
 `LW.addItems` (from its item table). `LW.putItem(hero, id)` puts one where it belongs, or returns why
 it does not fit (two weapons, a full Backpack: `LW.backpackMax(hero)`, 8, or 10 in the Grand Master series; no Backpack); `LW.dropItem(hero, id)` takes one
 away; both handle Special Items' Endurance. `putItem` also refuses a thirteenth Special
-Item (`LW.specialLimit`: 12 in every book, ADR 0029). `LW.hasItem(hero, id)` checks any list.
+Item (`LW.specialLimit`: 12 in every book, ruling R2). `LW.hasItem(hero, id)` checks any list.
 
 ## core.js
 
@@ -139,8 +141,8 @@ Adds `bow` and `quiver` to `LW.ITEMS`.
 |---|---|
 | Series table | `LW.SERIES.kai` / `.magnakai` / `.grandmaster`: `list`, `first` (disciplines for a new character), `field` (hero property), `ranks` |
 | Lore-circles | `LW.CIRCLES`; `LW.circlesOf(hero)`; `settleCircles(hero)` adds circle Endurance once |
-| Discipline tests | `LW.has(hero, id)` checks the three lists; in a Grand Master book every Kai and Magnakai Discipline counts as held (the text's gates, ADR 0018). `LW.chose(hero, id)`: a Magnakai Discipline in `hero.magnakai`, in a Magnakai or Grand Master book (`LW.pastKai`), whose numbers apply. `LW.owned(hero, series)`, `LW.rankOf`, `LW.rankCount` |
-| Series-dependent effects | `LW.heals`, `LW.hunts` (in a Magnakai book, Healing and Hunting too for one who completed Books 1-5: `LW.completedAll(hero, 1, 5)`, ADR 0018; `LW.huntNote` then reminds that Hunting fails in desert and wasteland), `LW.shielded`, `LW.mindPower` (0 none, 1 Mindblast, 2 Psi-surge or Kai-surge), `LW.psi(hero)` (the surge's `name`, `surge`, `cost`, `floor`, Mindblast's `blast`: a Grand Master's Kai-surge +8, 1, 6, +4, `kai`; an Archmaster's Psi-surge +6, 1, 4, +3; else +4, 2, 6, +2) |
+| Discipline tests | `LW.has(hero, id)` checks the three lists; in a Grand Master book every Kai and Magnakai Discipline counts as held (the text's gates, ADR 0011). `LW.chose(hero, id)`: a Magnakai Discipline in `hero.magnakai`, in a Magnakai or Grand Master book (`LW.pastKai`), whose numbers apply. `LW.owned(hero, series)`, `LW.rankOf`, `LW.rankCount` |
+| Series-dependent effects | `LW.heals`, `LW.hunts` (in a Magnakai book, Healing and Hunting too for one who completed Books 1-5: `LW.completedAll(hero, 1, 5)`, ADR 0011; `LW.huntNote` then reminds that Hunting fails in desert and wasteland), `LW.shielded`, `LW.mindPower` (0 none, 1 Mindblast, 2 Psi-surge or Kai-surge), `LW.psi(hero)` (the surge's `name`, `surge`, `cost`, `floor`, Mindblast's `blast`: a Grand Master's Kai-surge +8, 1, 6, +4, `kai`; an Archmaster's Psi-surge +6, 1, 4, +3; else +4, 2, 6, +2) |
 | Improved disciplines | `LW.mkRank(hero)`: the number of Magnakai Disciplines. Weaponmastery +4 at Scion-kai (8); unarmed with Weaponmastery −2 at Tutelary (5), −1 at Scion-kai; Psi-surge as above; `LW.cureOf(hero)` (`{name, at}`: Deliverance at 8, else an Archmaster's Curing at 6) and `LW.canCure(hero, book)`: its 20 back, once a book |
 | Bow | `bow` is `ranged`: never the weapon in hand unless the fight names it (`ctx.with`). `LW.bowShot(hero)`: `{why}` with no Bow or Arrow, else `{bow, parts, plus}`: Weaponmastery with the Bow +3, and from Mentora (7) +2 more, both only with the Bow mastered, a book bow's own `shot` (these parts are `LW.weaponBonus(hero, bow)`, which gives any other weapon's COMBAT SKILL parts too, for the inventory) |
 | Starting kits | `LW.KITS[number]`: `give`, `choose`, `from`, `store`, `storeGold`, `newOnly`, `wear` (rules-books.md, "Book addenda") |
@@ -155,7 +157,7 @@ the discipline that masters weapons and how many at first: choosing Weaponmaster
 weapons (`hero.mastery`), Grand Weaponmastery for two (`hero.grandMastery`, a list of its own, so a
 weapon mastered by Weaponmastery may be chosen again); a character that already has it picks one
 more. A new character's scores are the series' `base` + the Random Numbers: 10 and 20, or 25 and 30
-in the Grand Master series. A carried one keeps his, with no re-roll (ADR 0019). A new Magnakai or
+in the Grand Master series. A carried one keeps his, with no re-roll (ADR 0011). A new Magnakai or
 Grand Master character is given all ten Kai disciplines (a Grand Master one holds the Magnakai ones
 for the gates, `LW.has`, with none in `hero.magnakai`). A new character at Book 2 or later starts with nothing but the
 book's kit. Then, where the book has a kit (`LW.KITS`; not for a carried character in Book 11),
@@ -170,7 +172,7 @@ and restores Endurance to maximum.
 
 In a Magnakai book `heals`, `hunts`, `shielded`, `mindPower` and the weapon bonus look only at
 Magnakai disciplines, except that one who completed Books 1-5 also heals and hunts by his Kai
-Disciplines (spec 4.2, ADR 0018). `hero.completed` is set when setting out; a hero saved before
+Disciplines (spec 4.2, ADR 0011). `hero.completed` is set when setting out; a hero saved before
 2026-10-11 has none and counts as no veteran until his next book.
 
 In a Grand Master book (G1 of plan.md, 2026-10-16) the same functions look at the Magnakai Disciplines
@@ -182,16 +184,16 @@ Psi-screen. Lore-circles no longer count (`circlesOf` is empty) and their ENDURA
 2026-10-16). Carried into a Grand Master book (G3, 2026-10-16), he keeps his Backpack Items (Meals
 not, ADR 0011). Entering the series from an earlier one (`enterGrand`, in `build()`), the Lore-circles'
 COMBAT SKILL goes into `hero.cs`, and of his Special Items, carried or at the Monastery, only
-`LW.SERIES.grandmaster.keeps` stay (ADR 0019; `dropItem`, so an item's ENDURANCE goes with it; no
+`LW.SERIES.grandmaster.keeps` stay (ADR 0011; `dropItem`, so an item's ENDURANCE goes with it; no
 Quiver, no Arrows). `HeroSetup.carried()` gives the scores he will set out with, for the page.
 
 The Grand Master Disciplines' own numbers (G5, 2026-10-17; `LW.grand(hero, d)`: his, in a Grand
-Master book) each replace their Magnakai counterpart's, never add to it (ADR 0018): Grand
+Master book) each replace their Magnakai counterpart's, never add to it (ADR 0011): Grand
 Weaponmastery +5 with a weapon in `hero.grandMastery` (`weaponParts`; a weapon only in
 `hero.mastery` keeps a chosen Weaponmastery's +3 / +4), +5 to a Bow shot in place of Weaponmastery's
 3 and Mentora's 2 (`weaponBonus`), and counts for the text's `mastery` / `skilled` conditions
 (`LW.skilledWith`); Kai-surge in `LW.psi` in place of Psi-surge; Deliverance in `LW.cureOf` in place
-of Archmaster Curing (once a book, ADR 0019; Curing's +1 a section stays); Grand Huntmastery in
+of Archmaster Curing (once a book, ADR 0011; Curing's +1 a section stays); Grand Huntmastery in
 `LW.hunts` (Meals only: Huntmastery's ambush rule stays with a chosen Huntmastery, as Book 13 gives
 Grand Huntmastery none).
 
@@ -209,7 +211,7 @@ The log opens with what applies: a foe's `mindforce` (or the shield that stops i
 why it is spared, a fixed weapon, a weapon with its own bonus.
 
 `cs()` is `LW.heroCS` with the mind attack in play and the foe; `ratio()` is `cs()` minus the foe's,
-**at most +10** (`LW.RATIO_CAP`): the owner's house rule against the Sommerswerd (ADR 0023), so the
+**at most +10** (`LW.RATIO_CAP`): the owner's house rule against the Sommerswerd (ruling R1), so the
 table's "+11 or more" column is never used. No floor.
 
 A round: `roll(n)` looks up `LW.combatRound(ratio(), n)` and counts the round; then either
@@ -248,8 +250,10 @@ anywhere else: `game.breakOff()`, the fight unwon and no choice open; ADR 0027).
 records `hero.lastLoss` and `hero.lastWeapon`. `way()` is where it leads: `wounded` once he has lost
 Endurance, `won` by the rounds a win took, `combat.to`, `evade.to`, a stop's `to`. `finish()`: a win
 or a stop marks the fight won (`game.wonCombat`, so the choices open) and goes to `way()` if there is
-one; an evasion goes there; a death only saves. Evasion also needs `evade.if`, waits for the foe to fall to `evade.foeAt`, costs nothing with
-`evade.free`, and is shut by `noEvade`. The page draws each round's number out of sight (ADR 0026).
+one; an evasion goes there; a death only saves. Evasion also needs `evade.if`, waits for the foe to fall to `evade.foeAt` or for the foe `evade.fromFoe` of the list, costs nothing with
+`evade.free`, and is shut by `noEvade`. `combat.breath` (Book 4's underwater fights): the number drawn in
+the section (0 as 10, its `rntMod` added; drawn by the fight if not yet) is the rounds he lasts, and every
+round after costs `breath.each` more, as a `rounds` entry added when the fight begins. The page draws each round's number out of sight (ruling R3).
 
 Prototypes A and B have their own combat in `shared/battle.js`, and C in its `main.js`; those do
 not know about Magnakai.
@@ -283,7 +287,7 @@ give (or a range no total can make), sections with no way on, fights past 100 ro
 from the start but never reached. Listed apart, as information: the fights no stand-in won (a hard
 fight, or one he came to unarmed), the sections no link leads to (puzzle answers, turns by hand) and
 those only past them. `look` is the first list's ids; `--json` writes it all to `walk.json` beside
-the book. A book whose series is not in `LW.SERIES` is not walked (ADR 0039). First run, 2026-10-15:
+the book. A book whose series is not in `LW.SERIES` is not walked (ADR 0036). First run, 2026-10-15:
 Books 1-9, 11 and 12 nothing to look at; Book 10 two gates on items it never gives (246, 285).
 
 ## Not implemented

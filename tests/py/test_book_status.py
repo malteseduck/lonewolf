@@ -330,7 +330,7 @@ def test_testplay_follows_the_mark(env):
 
 
 def test_a_book_whose_series_the_engine_lacks_gets_every_step_that_works(env):
-    # ADR 0039: everything but test play, and an item table read and checked but not registered;
+    # ADR 0036: everything but test play, and an item table read and checked but not registered;
     # the engine's series are read from shared/rules-series.js (the fixture's stand-in has kai and magnakai)
     gm = dict(code='13tplor', title='The Plague Lords', n=13)
     env.downloaded(code='13tplor')

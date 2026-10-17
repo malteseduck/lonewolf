@@ -19,13 +19,13 @@ files instead and says what is missing. `undo` takes a hand mark back. See
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Getting the book** | | | | | | | | | | | | | | | | | | | | |
 | 1. Downloaded | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 2. Imported; report clean (no broken links, no section without a way on) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ |
+| 2. Imported; report clean (no broken links, no section without a way on) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ |
 | 3. Importer reads the book's own phrasings (gates, Random Number, combat) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 4. Rules addendum written, Engine column true | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | **Items** | | | | | | | | | | | | | | | | | | | | |
 | 5. Item table (`items-<code>.js`): read, `check_items.mjs` clean, registered | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | **Play** | | | | | | | | | | | | | | | | | | | | |
-| 6. Played through with test characters; misreadings and item gaps fixed | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 6. Played through with test characters; misreadings and item gaps fixed | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | **Pictures** | | | | | | | | | | | | | | | | | | | | |
 | 7. Every enemy has a fight picture (importer: "0 with none"), upscaled 2x, shown to the owner on one sheet, changes made | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 8. Printed map repainted, labels checked, `map-4k.webp` made and shown in the player | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
@@ -63,7 +63,7 @@ Each step's buttons and prompt are in the dashboard, `http://localhost:8766/tool
 8. `docs/reference/map-upscale.md`. Never overwrite `map.png`: it is the original.
     Read from the files: done once `map-4k.webp` exists and `book.js` names it (a re-import).
 9. `tools/ill_upscale.py <code>` (the dashboard's Upscale 2x at step 9), then a re-import. Never
-   overwrite an original: each `<name>-2x.webp` sits beside its `.png` (ADR 0033). Read from the files:
+   overwrite an original: each `<name>-2x.webp` sits beside its `.png` (ADR 0031). Read from the files:
    done once every illustration has its WebP and `book.js` names them.
 
 ## Notes

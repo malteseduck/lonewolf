@@ -45,7 +45,7 @@
       ranks: ['', 'Kai Master', 'Kai Master Senior', 'Kai Master Superior', 'Primate', 'Tutelary', 'Principalin', 'Mentora', 'Scion-kai', 'Archmaster', 'Kai Grand Master'] },
     grandmaster: { name: 'Grand Master', list: ids('grandmaster'), first: 4, field: 'grandmaster', base: { cs: 25, ep: 30 },
       arms: { disc: 'grandWeaponmastery', first: 2, field: 'grandMastery' },
-      // the only Special Items of the earlier books that come into the series (Book 13's rules; ADR 0019)
+      // the only Special Items of the earlier books that come into the series (Book 13's rules; ADR 0011)
       keeps: ['crystalStar', 'sommerswerd', 'silverHelm', 'daggerVashna', 'silverBracers', 'jewelledMace', 'silverBow', 'helshezag', 'kagoniteMail', 'korliniumScabbard'],
       ranks: ['', 'Kai Grand Master Senior', 'Kai Grand Master Superior', 'Kai Grand Sentinel', 'Kai Grand Defender', 'Kai Grand Guardian', 'Sun Knight', 'Sun Lord', 'Sun Thane', 'Grand Thane', 'Grand Crown', 'Sun Prince', 'Kai Supreme Master'] },
   };
@@ -58,12 +58,12 @@
 
   const seriesOf = (hero) => LW.SERIES[hero.series] || LW.SERIES.kai;
   LW.owned = (hero, series) => hero[LW.SERIES[series || hero.series || 'kai'].field] || [];
-  /* In a Grand Master book he holds every Kai and Magnakai Discipline for the text's gates (ADR 0018) */
+  /* In a Grand Master book he holds every Kai and Magnakai Discipline for the text's gates (ADR 0011) */
   const GM = 'grandmaster';
   LW.has = (hero, d) => hero.disciplines.includes(d) || (hero.magnakai || []).includes(d) || (hero.grandmaster || []).includes(d)
     || (hero.series === GM && !!LW.DISCIPLINES[d] && LW.DISCIPLINES[d].series !== GM);
   /* A Magnakai Discipline's numbers: in a Magnakai book, those he holds; in a Grand Master book, only
-     those a carried character chose (ADR 0018); none in a Kai book he goes back to */
+     those a carried character chose (ADR 0011); none in a Kai book he goes back to */
   LW.pastKai = (hero) => hero.series === 'magnakai' || hero.series === GM;
   LW.chose = (hero, d) => LW.pastKai(hero) && (hero.magnakai || []).includes(d);
   /* a Grand Master Discipline's numbers, in a Grand Master book; each replaces its Magnakai counterpart's */
@@ -79,7 +79,7 @@
   };
   /* In a Magnakai book the Magnakai Disciplines do the work; the Kai ones are taken as read, except
      that one who played Books 1-5 keeps Healing's +1 (never added to Curing's) and Hunting's Meals
-     (ADR 0018). The Magnakai books do not mark where Hunting fails, so it says so. */
+     (ADR 0011). The Magnakai books do not mark where Hunting fails, so it says so. */
   const kaiVeteran = (hero) => LW.completedAll(hero, 1, 5);
   LW.heals = (hero) => (hero.series === GM ? LW.chose(hero, 'curing') && 'Curing' : hero.series === 'magnakai' ? (LW.has(hero, 'curing') && 'Curing') || (kaiVeteran(hero) && LW.has(hero, 'healing') && 'Healing') : LW.has(hero, 'healing') && 'Healing');
   LW.hunts = (hero) => (hero.series === GM ? (LW.grand(hero, 'grandHuntmastery') && 'Grand Huntmastery') || (LW.chose(hero, 'huntmastery') && 'Huntmastery') : hero.series === 'magnakai' ? (LW.has(hero, 'huntmastery') && 'Huntmastery') || (kaiVeteran(hero) && LW.has(hero, 'hunting') && 'Hunting') : LW.has(hero, 'hunting') && 'Hunting');
@@ -150,7 +150,7 @@
      Weaponmastery with the Bow 3, and from Mentora (Book 10) 2 more; both only with the Bow mastered.
      Grand Weaponmastery with the Bow: 5, in place of both.
      A bow of a book's own may add its own (item.shot). {why} when he cannot shoot. */
-  /* grand: what this shot's section gives Grand Weaponmastery with Bow, in place of its +5 (ADR 0040) */
+  /* grand: what this shot's section gives Grand Weaponmastery with Bow, in place of its +5 (ruling R10) */
   LW.bowShot = (hero, grand) => {
     const bows = hero.weapons.filter((w) => (LW.ITEMS[w] || {}).ranged), shot = (w) => LW.ITEMS[w].shot || 0;
     if (!bows.length) return { why: 'You need a Bow to shoot.' };
@@ -172,8 +172,8 @@
     return parts;
   };
   /* Curing at Archmaster (Book 12): once in a book (the books say once in 100 days), at 6 ENDURANCE or
-     less in a fight, 20 back; Deliverance in its place, at 8 or less (once in 20 days: once a book, ADR
-     0019). {name, at}, or null. hero.cured holds the book it was used in. */
+     less in a fight, 20 back; Deliverance in its place, at 8 or less (once in 20 days: once a book, ruling
+     R9). {name, at}, or null. hero.cured holds the book it was used in. */
   LW.cureOf = (hero) => (LW.grand(hero, 'deliverance') ? { name: 'Deliverance', at: 8 } : LW.mkRank(hero) >= 9 && LW.chose(hero, 'curing') ? { name: 'Curing', at: 6 } : null);
   LW.canCure = (hero, bookId) => !!LW.cureOf(hero) && hero.cured !== bookId;
 
@@ -258,6 +258,7 @@
         // Grand Master book the Backpack Items come too, Meals still not (ADR 0011)
         if (hero) { if (series !== GM) out.backpack = []; out.meals = 0; out.noPack = false; }
         if (hero && series === GM && hero.series !== GM) enterGrand(out, S);
+        if (hero) LW.assumeMarks(out, book.number);
         out.series = series;
         out[S.field] = [...owned, ...this.picked];
         if (series === 'kai' && this.picked.has('weaponskill') && !out.weaponskill) out.weaponskill = LW.WEAPONSKILL_TABLE[LW.rand10()];
@@ -271,7 +272,7 @@
   };
   /* Into the Grand Master series from an earlier one: the Lore-circles' COMBAT SKILL, added per fight
      until now, goes into his score (their ENDURANCE is there already); of the Special Items, carried or
-     at the Monastery, only the series' list stays, the rest dropped (ADR 0019; hero.had keeps them) */
+     at the Monastery, only the series' list stays, the rest dropped (ADR 0011; hero.had keeps them) */
   function enterGrand(hero, S) {
     hero.cs += LW.circlesOf(hero).reduce((t, c) => t + c.cs, 0);
     hero.special.filter((s) => !S.keeps.includes(s)).forEach((s) => LW.dropItem(hero, s));

@@ -7,10 +7,10 @@
      - The Pick and the Shovel take two Backpack spaces each in the text; the page counts one, so the
        player keeps the room by hand. The lit Torch at 79 and 123 is not recorded, so one Torch less is
        offered than the crate holds.
-     - Where a choice needs a past visit (Gorn Cove), the choice stays open and the player decides.
+     - The way at 200 for one who has been to Gorn Cove reads Book 2's flag (ADR 0011).
      - A Torch lit from the Backpack (22) leaves it, as the lit ones at 79 and 123 are never in it.
      - The Elix fight (308) leaves the flag foughtElix, which Book 5 asks about.
-     - The underwater fights (194, 234) last as many rounds as a number drawn: still by hand.
+     - The underwater fights (194, 234): the number drawn is the rounds he holds his breath (fight.breath).
      - The Firesphere, the Sommerswerd and the other Book 3 things are those of items-03tcok.js.
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {
@@ -34,6 +34,9 @@ const dval = { item: 'dvalSword' };
 // one crate's worth of Torches (the lit one is not counted)
 const torches = (n) => Array.from({ length: n }, () => ({ item: 'torch' }));
 const camo = { disc: 'camouflage', rank: 7 };
+// a Torch and a Tinderbox, or the Firesphere; and having neither
+const lit = { any: [{ items: ['torch', 'tinderbox'] }, { item: 'firesphere' }] };
+const dark = { any: [{ not: lit }] };
 
 // flags a later section or book tests (core.js, LW.MARKS)
 export const MARKS = { foughtElix: { name: 'having fought an Elix', flag: true } };
@@ -52,14 +55,19 @@ export const SECTIONS = {
   22: { when: [{ if: { items: ['torch', 'tinderbox'], not: { item: 'firesphere' } }, take: [{ item: 'torch' }] }, { take: [{ pick: 'backpack', n: 1, else: [{ weapons: 'one' }] }] }] },
   23: { need: { 282: { item: 'brassKey4' }, 105: { item: 'brassKey4', not: true } } },
   29: { need: { 168: { item: 'firesphere' } } },
+  // the way on by how many rounds the win took
+  36: { fight: { won: { within: 3, to: '155', else: '277' } } },
   35: { rntMod: [{ plus: 3, any: [{ disc: 'hunting' }, { rank: 7 }] }], ranges: { 147: [0, 7], 231: [8, 12] } },
   40: { need: { 349: { disc: 'tracking', rank: 6 } } },
   44: { loot: [{ gold: 12 }, { meal: 2 }] },
+  47: { fight: { won: { within: 5, to: '32', else: '340' } } },
   52: { ep: -1 },
   54: { need: { 4: { disc: 'healing', rank: 8 } } },
+  56: { fight: { won: { within: 3, to: '69', else: '203' } } },
   57: { need: { 327: dval, 289: { item: 'dvalSword', not: true } } },
   62: { fight: { rounds: [{ upTo: 3, csMod: -2, note: 'On the ground' }], noEvade: true } },
-  67: { ep: -1, need: { 292: sommerswerd } },
+  // the draw is only for one without the Sommerswerd
+  67: { ep: -1, need: { 292: sommerswerd, 242: noSword, 263: noSword, 278: noSword } },
   70: { need: { 305: { item: 'onyxMedallion' } } },
   73: { need: { 283: holy, 325: { item: 'holyWater4', not: true } } },
   74: { ep: 1 },
@@ -75,7 +83,8 @@ export const SECTIONS = {
   102: { give: [{ gold: 12 }, { meal: 2 }] },
   103: { ep: -4 },
   109: { loot: [{ gold: 3 }, { item: 'dagger' }, { item: 'sword' }] },
-  117: { need: { 22: { any: [{ items: ['torch', 'tinderbox'] }, { item: 'firesphere' }] } } },
+  // the draw is only for one with no other light
+  117: { need: { 22: lit, 99: dark, 256: dark } },
   118: { loot: [{ item: 'whip4' }], need: { 308: { item: 'ironKey4' } } },
   122: { ep: -1, fight: { mindforce: 4 } },
   123: { loot: [{ item: 'tinderbox' }, ...torches(6)] },
@@ -84,6 +93,8 @@ export const SECTIONS = {
   133: { fight: { wounded: '17', to: '265' } },
   137: { ep: 6 },
   141: { noHunt: true },
+  // evading only once the first guard is dead
+  143: { fight: { evade: { fromFoe: 1, to: '87' } } },
   147: { fight: { rounds: [{ upTo: 1, heroLoss: 0, note: 'Surprise' }] } },
   152: { loot: [{ item: 'sword' }, { gold: 6 }, { meal: 2 }, { item: 'brassKey4' }] },
   153: { fight: { rounds: [{ upTo: 2, csMod: -4, note: 'Weapon not drawn' }], noEvade: true } },
@@ -99,12 +110,15 @@ export const SECTIONS = {
   185: { noHunt: true },
   188: { noHunt: true },
   193: { fight: { stop: { after: 2, to: '311' } } },
-  194: { todo: 'the number drawn (0 is 10; Mind Over Matter adds 2) is how many rounds you last underwater: every round after that costs 2 more ENDURANCE.' },
+  // underwater: the number drawn (0 is 10, Mind Over Matter adds 2) is the rounds he lasts; each after costs 2 more
+  194: { rntMod: [{ plus: 2, disc: 'mindOverMatter' }], fight: { breath: { each: 2 } } },
+  // Hunting, or having been to Gorn Cove (Book 2's flag)
+  200: { need: { 45: { any: [{ disc: 'hunting' }, { mark: 'visitedGornCove' }] } } },
   213: { loot: [{ item: 'pick4' }, { item: 'shovel4' }, { item: 'axe' }, { item: 'torch' }, { item: 'tinderbox' }, { item: 'hourglass4' }] },
   222: { loot: [{ item: 'dvalSword' }] },
   230: { loot: [{ item: 'sword' }, { item: 'dagger' }, { gold: 9 }, { meal: 2 }] },
   231: { loot: [{ gold: 3 }, { item: 'sword' }, { meal: 1 }] },
-  234: { todo: 'the number drawn (0 is 10; Mind Over Matter adds 2) is how many rounds you last underwater: every round after that costs 2 more ENDURANCE.' },
+  234: { rntMod: [{ plus: 2, disc: 'mindOverMatter' }], fight: { breath: { each: 2 } } },
   236: { ep: -4 },
   // with no Sommerswerd the Daemonak's bite costs 8 before the way on
   246: { ep: -8, need: { 34: sommerswerd, 85: noSword } },
@@ -114,7 +128,8 @@ export const SECTIONS = {
   263: { ep: -4 },
   268: { loot: [{ gold: 4 }, { item: 'spear' }, { item: 'broadsword' }, { item: 'ironKey4' }, { item: 'brassKey4' }, { meal: 2 }, { item: 'potion' }] },
   269: { loot: [{ item: 'shovel4' }], noHunt: true },
-  270: { need: { 168: { item: 'firesphere' } } },
+  // a Torch and a Tinderbox, a Firesphere, or neither (in the dark)
+  270: { need: { 29: { any: [{ items: ['torch', 'tinderbox'] }] }, 168: { item: 'firesphere' }, 246: dark } },
   // he loses one weapon (his choice when he has two), and the Backpack and Special Items stay
   272: { ep: -5, take: [{ weapons: 'one' }] },
   274: { need: { 283: holy, 325: { item: 'holyWater4', not: true } } },

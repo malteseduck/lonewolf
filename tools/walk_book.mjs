@@ -51,7 +51,7 @@ export async function walkBook({ root = ROOT, book = '01fftd', json = false, see
   for (const f of ['core.js', 'rules-series.js', 'fight.js']) run(path.join(root, 'shared', f));
   run(path.join(dir, 'book.js'));
   const LW = globalThis.LW, B = LW.BOOKS[book], series = B.series || 'kai', S = LW.SERIES[series];
-  if (!S) return { code: 0, text: `Book ${B.number} is ${series}: the engine has no ${series} rules yet (ADR 0039), so it cannot be walked`, waits: true };
+  if (!S) return { code: 0, text: `Book ${B.number} is ${series}: the engine has no ${series} rules yet (ADR 0036), so it cannot be walked`, waits: true };
 
   // every book's items are known (as in the page); this book's table laid over its sections
   const tables = {};

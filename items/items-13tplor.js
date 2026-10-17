@@ -10,7 +10,7 @@
      - The jars of herbs at 234 and 341 hold several doses each in one Backpack place.
      - Arrows loosed where the text says outright that one flies are taken from the Quiver here; Random
        Number shots are spent by the page's own bow shot. The three shots (104, 176, 303) give Grand
-       Weaponmastery with Bow +3, in place of its usual +5 (grandBow, ADR 0040).
+       Weaponmastery with Bow +3, in place of its usual +5 (grandBow, ruling R10).
      - Junk the dead carry (tobacco, a copper bowl) is left out.
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {

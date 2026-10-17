@@ -1,4 +1,4 @@
-"""tools/plates_draft.py, step 7's draft (ADR 0035, 0036), against a temporary project tree: made-up
+"""tools/plates_draft.py, step 7's draft (ADRs 0008, 0036), against a temporary project tree: made-up
 books, pictures and notes, never Project Aon's."""
 import json
 
@@ -54,7 +54,7 @@ def test_kinds_are_read_from_the_names_alone():
     assert pd.person(pd.kind('Monks of the Sword'), set()) and not pd.person(pd.kind('Giak Officer'), {('giak',)})
 
 
-def test_each_enemy_with_no_picture_gets_one_in_adr_0035s_order_and_is_written_for_the_sheet(tree):
+def test_each_enemy_with_no_picture_gets_one_in_adr_0008s_order_and_is_written_for_the_sheet(tree):
     for f in ('ill1', 'ill2', 'ill3', 'ill4'):
         tree.file(f'data/projectaon/{CODE}/{f}.png')
     tree.file('data/projectaon/01aa/ill1.png')
@@ -79,7 +79,7 @@ def test_each_enemy_with_no_picture_gets_one_in_adr_0035s_order_and_is_written_f
     assert picks['Marsh Thing'] == ({'src': f'data/projectaon/{CODE}/ill2.png'}, 'this book')   # a note names it
     assert picks['Gloom Beast'] == ({'src': 'data/projectaon/03cc/ill1.png'}, 'Book 3')        # the nearest book's, before a guess
     assert picks['Lurker'] == ({'src': f'data/projectaon/{CODE}/ill3.png'}, 'this book, a picture 1 link before the fight')
-    assert picks['Town Guard'] == ({'src': 'art/plates/guard-with-halberd.png'}, 'stand-in')   # a person: a stand-in first (ADR 0010)
+    assert picks['Town Guard'] == ({'src': 'art/plates/guard-with-halberd.png'}, 'stand-in')   # a person: a stand-in first (ADR 0008)
     assert picks['Giak Officer'] == ({'src': 'data/projectaon/03cc/ill2.png', 'crop': [0, 0, 0.5, 1]}, 'Book 3')  # a Giak, cropped as shown
     assert picks['Swamp Snake'] == ({'src': 'assets/plates/water-snake.jpg'}, 'stand-in')
     assert picks['Zorg'] == (None, None)

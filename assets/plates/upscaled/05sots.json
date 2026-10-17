@@ -1,5 +1,5 @@
 {
- "_readme": "The fight pictures of this book with a Real-ESRGAN 2x copy beside them, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0033.",
+ "_readme": "The fight pictures of this book with a Real-ESRGAN 2x copy beside them, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
  "srcs": [
   "art/plates/05sots/darklord-haakon.webp",
   "art/plates/bestiary-gourgaz-zlanbeast-vordak-doomwolf.webp",

@@ -8,7 +8,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
 ## The page
 
 - **The grid**: every downloaded book; those not downloaded are folded below (download only). Each book
-  is offered every step that can work for it (ADR 0039): test play and registering the item table need
+  is offered every step that can work for it (ADR 0036): test play and registering the item table need
   the engine to have the book's series (`book_status.engine_series()`, the keys of `LW.SERIES`), so a
   Grand Master book has neither yet, its item table stopping at "read and checked". One column per step, grouped as in `docs/book-checklist.md`. Each cell is
   a seal: done, not yet, a warning (stale, or the files and the marks disagree), failed, or not
@@ -43,7 +43,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   by side at one size; "1:1" draws both at the upscale's own pixels (the original stretched by the
   browser, as the player would) and the two scroll together; the arrow keys go to the next picture.
   It only looks: nothing on it changes a file.
-- **The item sheet** ("Open item sheet" at step 5, once the book has a table; ADR 0042), inline like the
+- **The item sheet** ("Open item sheet" at step 5, once the book has a table; ADR 0021), inline like the
   others and only there (`tools/admin/items.html`, its reading of the tables in `itemsheet.js`): the
   book's own items, then those from elsewhere its sections name (the engine's, another book's), each
   with its icon as the inventory draws it and large, its id, kind and other fields, its `about`, the
@@ -204,7 +204,7 @@ downloads and imports still need the owner's word (AGENTS.md).
 - `node tools/items_draft.mjs <code>`: step 5's draft of the item table (ADR 0036; `docs/reference/items.md`,
   "The draft"). Writes `items/items-<code>.js` only where there is none, else `items-draft.js` beside the
   book, compared with the table; counts and section ids only.
-- `python tools/plates_draft.py <code>`: step 7's draft of the fight pictures (ADR 0035, 0036; `docs/reference/items.md`,
+- `python tools/plates_draft.py <code>`: step 7's draft of the fight pictures (ADRs 0008, 0036; `docs/reference/items.md`,
   "Fight pictures", "The draft"). `--dry` prints only; `--compare` drafts a book whose pictures are set afresh, without
   its own entries, and counts how often it picks the same picture. Names and file names only. Nothing
   it does is silent (ADR 0036): every pick is marked `draft` for the sheet, every enemy it cannot match

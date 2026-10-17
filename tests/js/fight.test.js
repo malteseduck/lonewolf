@@ -72,7 +72,7 @@ describe('a fight to the end', () => {
 });
 
 describe('the Combat Ratio', () => {
-  it('counts for at most +10 (the house rule against the Sommerswerd, ADR 0023)', () => {
+  it('counts for at most +10 (the house rule against the Sommerswerd, ruling R1)', () => {
     const { f } = fightAt({ enemies: [foe()] }, mkHero({ cs: 40 }));
     expect(f.ratio()).toBe(10);
     expect(LW.crtColumn(10)).not.toBe(LW.crtColumn(11)); // so the last column is never reached

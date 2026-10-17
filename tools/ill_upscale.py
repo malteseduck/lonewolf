@@ -1,4 +1,4 @@
-"""Upscale a book's illustrations 2x, each saved as WebP beside its original (ADR 0033).
+"""Upscale a book's illustrations 2x, each saved as WebP beside its original (ADR 0031).
 
 Run (from the project root):
   uv run --project tools python tools/ill_upscale.py <book> [--force]
@@ -131,7 +131,7 @@ def fights(code):
     with open(os.path.join(d, code + '.part'), 'w', encoding='utf-8', newline='\n') as f:
         f.write(json.dumps({'_readme': 'The fight pictures of this book with a Real-ESRGAN 2x copy beside them, '
                             '<name>-2x.webp, which the player and the picture sheet show instead (platepick.js '
-                            'upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0033.', 'srcs': made}, indent=1) + '\n')
+                            'upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.', 'srcs': made}, indent=1) + '\n')
     os.replace(os.path.join(d, code + '.part'), os.path.join(d, code + '.json'))
     print(f'{code}: {len(made)} fight pictures upscaled' + (f', {len(srcs) - len(made)} could not be' if len(made) < len(srcs) else '')
           + f'; listed in assets/plates/upscaled/{code}.json')

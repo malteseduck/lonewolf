@@ -7,7 +7,7 @@
 
   LW.ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX'];
   // the most the Combat Ratio counts for: the owner's house rule, so the Sommerswerd does not make
-  // the early books' fights a walk (ADR 0023). The table's "+11 or more" column is never reached.
+  // the early books' fights a walk (ruling R1). The table's "+11 or more" column is never reached.
   LW.RATIO_CAP = 10;
 
   // a loss multiplied (doubled, halved, ignored): a killing blow stays one unless it is ignored; halves round down
@@ -22,7 +22,8 @@
 
   class Fight {
     constructor(game, bookId) {
-      const sec = game.section, c = sec.combat, hero = game.hero;
+      const sec = game.section, hero = game.hero;
+      let c = sec.combat;
       this.game = game; this.bookId = bookId; this.hero = hero; this.c = c;
       // the fight's own adjustment, unless he carries what the text says spares him it (a torch), or
       // it is the text's "unarmed" penalty and he has no weapon anyway (heroCS already counts that)
@@ -35,6 +36,13 @@
       this.note = c.csIf ? LW.condName(c.csIf) : c.csNote; // a discipline's bonus is named after it
       // mind: 0 at rest, 1 Mindblast, 2 Psi-surge. power is the most this character can do.
       this.power = c.mind ? 0 : LW.mindPower(hero); this.mind = this.power ? 1 : 0;
+      // breath: rounds he lasts (the number drawn here, 0 as 10, with the section's bonuses; drawn now if
+      // not yet), then `each` more lost every round after (Book 4's underwater fights)
+      if (c.breath) {
+        if (game.s.rolled == null) game.setRolled(LW.rand10());
+        this.breath = (game.s.drawn || 10) + game.s.rolled - game.s.drawn;
+        this.c = c = Object.assign({}, c, { rounds: [...(c.rounds || []), { from: this.breath + 1, heroEach: c.breath.each, note: 'Out of breath' }] });
+      }
       this.i = -1; this.foe = null; this.rounds = 0; this.log = []; this.over = null; this.stopTo = null;
       this.lost = { hero: 0, foe: 0 }; this.startEp = hero.ep; this.boosted = null;
       // points: a contest scored in target points ({n, lose}): they stand in for his Endurance while it lasts
@@ -48,6 +56,7 @@
       this.bring();
       const log = this.log, csMod = this.csMod;
       if (kept) log.push('These foes still carry the wounds you gave them.');
+      if (this.breath) { const d = game.s.drawn, plus = game.s.rolled - d; log.push(`You drew ${d}${d ? '' : ' (10)'}${plus ? `, ${plus} added` : ''}: you can hold your breath for ${this.breath} rounds.`); }
       if (this.foe.mindforce) log.push(LW.shielded(hero) ? 'Its will breaks against your Mindshield.' : `Its will presses on yours: Combat Skill less ${this.foe.mindforce}.`);
       if (csMod) log.push(`${this.note}: Combat Skill ${csMod > 0 ? 'plus' : 'less'} ${Math.abs(csMod)}.`);
       else if (spared) log.push(`Your ${c.unless.map(LW.itemName).join(' and ')} spare you the penalty.`);
@@ -111,12 +120,12 @@
     cs(round) { return this.parts(round).total; }
     ratio() { return Math.min(LW.RATIO_CAP, this.cs() - this.foe.cs); }
     // evade.after: not before that many rounds; evade.within: only in the first rounds; evade.if: only
-    // with that (a Condition); evade.foeAt: only once the foe is down to that; evade.free: without the
-    // blow. A list: several ways out, each its own.
+    // with that (a Condition); evade.foeAt: only once the foe is down to that; evade.fromFoe: only from
+    // that foe of the list on (0 first); evade.free: without the blow. A list: several ways out, each its own.
     // c.noEvade: the text allows none, whatever the section's choices say
     evades() {
       return this.c.noEvade ? [] : [].concat(this.c.evade || []).map((ev, i) => Object.assign({}, ev, { i,
-        open: (!ev.if || LW.meets(this.hero, ev.if)) && this.rounds >= (ev.after || 0) && !(ev.foeAt != null && this.foe && this.foe.ep > ev.foeAt) && !(ev.within && this.rounds >= ev.within),
+        open: (!ev.if || LW.meets(this.hero, ev.if)) && this.rounds >= (ev.after || 0) && !(ev.foeAt != null && this.foe && this.foe.ep > ev.foeAt) && !(ev.fromFoe != null && this.i < ev.fromFoe) && !(ev.within && this.rounds >= ev.within),
         late: !!ev.within && this.rounds >= ev.within }));
     }
     get evadeOpen() { return this.evades().some((e) => e.open); }

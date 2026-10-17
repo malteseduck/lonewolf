@@ -43,7 +43,7 @@ const firstRound = { csMod: 0, rounds: [{ upTo: 1, csMod: 2, note: 'Surprise att
 const watchtower = [{ item: 'broadsword' }, { item: 'mace' }, { item: 'quarterstaff' }, { item: 'healingPotion' }, { meal: 3 }, { pack: true }, { gold: 12 }];
 
 // flags a later section or book tests (core.js, LW.MARKS)
-export const MARKS = { visitedRagadorn: { name: 'having been to Ragadorn', flag: true } };
+export const MARKS = { visitedRagadorn: { name: 'having been to Ragadorn', flag: true }, visitedGornCove: { name: 'having been to Gorn Cove', flag: true } };
 
 export const SECTIONS = {
   5: { fight: { undead: true } },
@@ -119,7 +119,8 @@ export const SECTIONS = {
   // the Weaponskill choice opens with the weapon he carries, so the importer leaves it ungated; the weapon is his to check
   160: { need: { 255: { disc: 'weaponskill' } } },
   165: { take: [{ item: 'seal' }], give: [{ gold: 40 }] },
-  168: { need: { 314: { gold: 1, spend: true } } },
+  // the only way into Gorn Cove; Book 4 asks about it (200)
+  168: { need: { 314: { gold: 1, spend: true } }, mark: 'visitedGornCove' },
   // reached only by turning down the fruit on the shore (337)
   171: { ep: -3 },
   178: { meal: true },

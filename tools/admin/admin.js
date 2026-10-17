@@ -101,7 +101,7 @@ function render() {
       }).join('')}
       <td class="next">${nx ? `<span class="kind" data-kind="${nx.kind}" style="width:12px;height:12px;vertical-align:-1px"></span> ${esc(nx.label)}` : 'done'}</td></tr>`;
   };
-  // a book not downloaded has only the download to offer, so it is folded away (ADR 0039)
+  // a book not downloaded has only the download to offer, so it is folded away (ADR 0036)
   const now = books.filter((b) => b.folder), later = books.filter((b) => !b.folder);
   const runs = [...later].sort((a, b) => a.n - b.n).reduce((r, b) => { const last = r.at(-1); if (last && last[1] === b.n - 1) last[1] = b.n; else r.push([b.n, b.n]); return r; }, [])
     .map(([a, z]) => (a === z ? `${a}` : `${a}-${z}`)).join(', ');

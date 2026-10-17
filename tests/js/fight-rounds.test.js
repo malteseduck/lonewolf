@@ -342,3 +342,39 @@ describe('a contest lost', () => {
     expect([f.over, f.way(), g.hero.ep]).toEqual(['stop', '4', 1]);
   });
 });
+
+describe('Book 4\'s own fight rules', () => {
+  it('an evasion open only once the first foe of the list is dead', () => {
+    const { f } = fightAt({ enemies: [foe({ ep: 1 }), foe()], evade: { fromFoe: 1, to: '2' } });
+    expect(f.evadeOpen).toBe(false);
+    f.round(drawWhere(5, (r) => r.enemy > 0 && r.enemy < 50));
+    expect([f.foe.at, f.evadeOpen]).toEqual([1, true]);
+  });
+  /* breath: the number drawn here (0 counts as 10, the section's rntMod added) is how many rounds he
+     lasts; every round after that costs `each` more */
+  function underwater(hero, draw) {
+    const book = { id: 'test', start: '1', sections: { 1: { text: ['x'], rnt: 'free', rntMod: [{ disc: ['mindOverMatter'], plus: 2 }],
+      combat: { enemies: [foe()], breath: { each: 2 } }, choices: [{ text: 'a', to: '2' }] }, 2: { text: ['y'] } } };
+    const g = new LW.Game(book, 'test-save');
+    g.start(hero);
+    if (draw != null) g.setRolled(draw);
+    return { g, f: new LW.Fight(g, 'test') };
+  }
+  it('rounds past the breath he has cost 2 Endurance more each', () => {
+    const n = wounding(5), res = LW.combatRound(5, n);
+    const { g, f } = underwater(mkHero({ ep: 99, epMax: 99 }), 2);
+    f.round(n); f.round(n);
+    expect(g.hero.ep).toBe(99 - 2 * res.hero);
+    f.round(n);
+    expect(g.hero.ep).toBe(99 - 3 * res.hero - 2);
+  });
+  it('a 0 drawn is 10, and Mind Over Matter adds 2', () => {
+    expect(underwater(mkHero(), 0).f.breath).toBe(10);
+    expect(underwater(mkHero({ disciplines: ['mindOverMatter'] }), 3).f.breath).toBe(5);
+  });
+  it('a fight begun before the draw draws the number itself', () => {
+    const { g, f } = underwater(mkHero());
+    expect(g.s.rolled).not.toBe(null);
+    expect(f.breath).toBe(g.s.drawn || 10);
+  });
+});

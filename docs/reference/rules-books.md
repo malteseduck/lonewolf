@@ -29,7 +29,7 @@ table, not here.
 |---|---|
 | At most 2 Weapons; only one is used in a fight | `LW.MAX_WEAPONS`, `LW.armedWith` |
 | At most 8 Backpack Items, Meals included (each Meal is one) | `LW.backpackMax` |
-| *Owner*: at most 12 Special Items, as from Book 8 (the Kai books set no limit; ADR 0029) | `LW.specialLimit` |
+| *Owner*: at most 12 Special Items, as from Book 8 (the Kai books set no limit; ruling R2) | `LW.specialLimit` |
 | One Backpack only (a footnote, Book 2) | yes (`noPack`) |
 | Special Items are not in the Backpack; the text says how each is carried | yes |
 | At most 50 Gold Crowns, in the Belt Pouch | yes |
@@ -51,7 +51,7 @@ table, not here.
 
 | Rule | Engine |
 |---|---|
-| Combat Ratio = his COMBAT SKILL with every bonus, minus the enemy's | `LW.Fight#ratio` (fight.js); house rule: counted as +10 at most (`LW.RATIO_CAP`, ADR 0023), so the "+11 or more" column is never used |
+| Combat Ratio = his COMBAT SKILL with every bonus, minus the enemy's | `LW.Fight#ratio` (fight.js); house rule: counted as +10 at most (`LW.RATIO_CAP`, ruling R1), so the "+11 or more" column is never used |
 | Each round: a Random Number, crossed with the ratio on the Combat Results Table, gives both sides' ENDURANCE loss; K kills outright | `LW.combatRound` |
 | The table is the same in every book; the engine's copy was checked cell by cell (2026-10-02) | `CRT_ROWS` in core.js |
 | Ratio columns: ≤−11, −10/−9, −8/−7, −6/−5, −4/−3, −2/−1, 0, +1/+2, +3/+4, +5/+6, +7/+8, +9/+10, ≥+11 | `LW.crtColumn` |
@@ -110,7 +110,7 @@ books begin), 6 Aspirant, 7 Guardian, 8 Warmarn (or Journeyman), 9 Savant, 10 Ma
   (`rules-series.js`); the spec's interpretation is confirmed. *But* the Lone Wolf Club newsletters
   (in the Readers' Handbook, downloaded 2026-10-10) rule that a character who completed Books 1–5
   keeps Healing's +1 a section (not added to Curing's) and Hunting's spared Meals in the Magnakai
-  books (Summer Special 1987, 8, 10). The owner adopted that (ADR 0018). *Engine*: yes (`LW.heals`,
+  books (Summer Special 1987, 8, 10). The owner adopted that (ADR 0011). *Engine*: yes (`LW.heals`,
   `LW.hunts`); as the Magnakai books do not mark desert and wasteland, Hunting spares the Meal and
   the page reminds him to eat by hand in such a place.
 - Gold over 50 may be left in safekeeping at the Kai Monastery. *Engine*: yes: at a book's start
@@ -193,7 +193,7 @@ Nexus limited immunity to fire, gas and acid.
 Read from Book 13's rules pages (2026-10-10). **The engine applies only part of this yet**: the series
 itself (`LW.SERIES.grandmaster`, 2026-10-16: its disciplines, ranks, gates, and which earlier numbers
 remain), setting out (G2, 2026-10-16: the scores, the disciplines past four, Grand Weaponmastery's
-weapons), carrying in (G3), and the Grand Master Disciplines' numbers (G5, 2026-10-17); the rest is in docs/plan.md ("Grand Master series"); the owner's readings are ADRs 0011, 0018 and 0019.
+weapons), carrying in (G3), and the Grand Master Disciplines' numbers (G5, 2026-10-17); the rest is in docs/plan.md ("Grand Master series"); the owner's readings are ADR 0011.
 
 Book 13's footnote points to Project Aon's Readers' Handbook for what the earlier disciplines still
 do. Its rules pages (Kai, Magnakai, Grand Master, New Order, the rules FAQ, the newsletter excerpts,
@@ -206,11 +206,11 @@ three Topical Guide pages) were downloaded on 2026-10-10 into git-ignored
 | Rule | Engine |
 |---|---|
 | He holds every Kai and Magnakai Discipline; the text offers the Magnakai ones by name (Book 13: Nexus, Divination, Invisibility, Psi-surge, Animal Control) and assumes those with no number | `LW.has` |
-| Only a character who completed Books 1–12 keeps the numbers of his Magnakai Disciplines (LWCN Summer Special 1987, 10, 28). Partly completed: the Handbook leaves it to the reader. *Owner*: any carried character keeps the numbers of those he chose (ADR 0018) | `LW.chose` (`hero.magnakai`) |
+| Only a character who completed Books 1–12 keeps the numbers of his Magnakai Disciplines (LWCN Summer Special 1987, 10, 28). Partly completed: the Handbook leaves it to the reader. *Owner*: any carried character keeps the numbers of those he chose (ADR 0011) | `LW.chose` (`hero.magnakai`) |
 | Those numbers: Huntmastery spares Meals unless the text says not; Curing +1 ENDURANCE a section without a fight; Weaponmastery +3 (+4 from Scion-kai) and +2 on bow or thrown shots; Psi-surge +4 at 2 a round, Mindblast +2 (an Archmaster's +6 at 1, +3) | yes, at his Magnakai rank |
 | A Grand Master Discipline replaces its Magnakai counterpart's number, never adds to it: Grand Weaponmastery with a weapon he had mastered is +5, not +8 or +9 (LWCN 28) | yes (`LW.grand`): Grand Weaponmastery, Kai-surge, Deliverance, Grand Huntmastery each in place of the Magnakai number |
-| The +1 a section without a fight carries on into the series only for a character who played and survived the Magnakai books: a hidden reward for loyal readers (LWCN 28) | yes, with Curing chosen (ADR 0018) |
-| Deliverance replaces Archmaster Curing. "Once every 20 days" has no official ruling; the Handbook suggests once an adventure. *Owner*: once a book (ADR 0019) | yes (`LW.cureOf`) |
+| The +1 a section without a fight carries on into the series only for a character who played and survived the Magnakai books: a hidden reward for loyal readers (LWCN 28) | yes, with Curing chosen (ADR 0011) |
+| Deliverance replaces Archmaster Curing. "Once every 20 days" has no official ruling; the Handbook suggests once an adventure. *Owner*: once a book (ADR 0011) | yes (`LW.cureOf`) |
 
 ### Entering the series
 
@@ -220,18 +220,18 @@ three Topical Guide pages) were downloaded on 2026-10-10 into git-ignored
 | A carried character (Books 1–12 behind him) keeps his COMBAT SKILL and ENDURANCE, Lore-circle bonuses included in them | yes: circle ENDURANCE stays in his scores; circle COMBAT SKILL, added per fight in a Magnakai book, is folded into his score as he enters (`enterGrand`) |
 | Discipline bonuses of the earlier series do not raise his permanent scores; only a character who completed the earlier books benefits from them (above) | yes: nothing adds them to his scores (`LW.chose` gives them in play) |
 | Weapons, **Backpack Items** and gold carry over (unlike every earlier book). Whether Meals do is left open: the Handbook calls dropping them optional. *Owner*: Meals do not (ADR 0011) | yes |
-| A carried character may instead re-roll: the rules say he "can" carry his scores; the Handbook lists ways to start afresh but gives no ruling. *Owner*: no re-roll; he keeps his scores and bonuses (ADR 0019) | yes (`LW.HeroSetup` draws no scores for him) |
-| Only these Special Items carry into the series: Crystal Star Pendant, Sommerswerd, Silver Helm, Dagger of Vashna, Silver Bracers, Jewelled Mace, Silver Bow of Duadon, Helshezag, Kagonite Chainmail, Korlinium Scabbard. A character who begins the series at Book 13 uses this list throughout; later books alter it for one who begins there. *Owner*: the others are dropped (ADR 0019) | yes (`LW.SERIES.grandmaster.keeps`), carried or at the Monastery, on entering the series; between Grand Master books his Special Items all carry, until a later book's rules say otherwise |
+| A carried character may instead re-roll: the rules say he "can" carry his scores; the Handbook lists ways to start afresh but gives no ruling. *Owner*: no re-roll; he keeps his scores and bonuses (ADR 0011) | yes (`LW.HeroSetup` draws no scores for him) |
+| Only these Special Items carry into the series: Crystal Star Pendant, Sommerswerd, Silver Helm, Dagger of Vashna, Silver Bracers, Jewelled Mace, Silver Bow of Duadon, Helshezag, Kagonite Chainmail, Korlinium Scabbard. A character who begins the series at Book 13 uses this list throughout; later books alter it for one who begins there. *Owner*: the others are dropped (ADR 0011) | yes (`LW.SERIES.grandmaster.keeps`), carried or at the Monastery, on entering the series; between Grand Master books his Special Items all carry, until a later book's rules say otherwise |
 
 ### Carrying
 
 | Rule | Engine |
 |---|---|
 | At most 2 Weapons; at most **10** Backpack Items, Meals included | `LW.backpackMax` (for `series: 'grandmaster'`, which G1 adds) |
-| At most 12 Special Items; more may be left at the Monastery | `LW.specialLimit` (12 in every book, ADR 0029); the Monastery at a book's start (the kit step: `store`) |
+| At most 12 Special Items; more may be left at the Monastery | `LW.specialLimit` (12 in every book, ruling R2); the Monastery at a book's start (the kit step: `store`) |
 | Gold: at most 50; more may be left at the Monastery | yes, at a book's start (the kit step: `storeGold`) |
 | Bow: as in the Magnakai series (a Quiver and an Arrow a shot, useless hand to hand) | yes (`ranged`, `hero.arrows`, `bowShot`) |
-| Some sections give Grand Weaponmastery with Bow its own bonus (3 to 5); the Handbook advises using the section's number in place of the +5. *Owner*: the section's number (ADR 0040) | yes (an item table's `grandBow`) |
+| Some sections give Grand Weaponmastery with Bow its own bonus (3 to 5); the Handbook advises using the section's number in place of the +5. *Owner*: the section's number (ruling R10) | yes (an item table's `grandBow`) |
 
 ### Grand Master Disciplines
 
@@ -244,7 +244,7 @@ bonus when he sets out (`LW.readyHero`, once each).
 |---|---|---|
 | Grand Weaponmastery | +5 COMBAT SKILL with a mastered weapon; two weapons at the start, one more for each Grand Master book completed; with the Bow, +5 to the Random Number of a shot | yes (`hero.grandMastery`; `weaponParts`, `weaponBonus`) |
 | Animal Mastery | Controls hostile non-sentient creatures; speaks with birds and fish | gates only |
-| Deliverance (Advanced Curing) | Once every 20 days, at 8 ENDURANCE or less in a fight, restore 20 | yes, once a book (ADR 0019; `LW.cureOf`, the fight's medallion) |
+| Deliverance (Advanced Curing) | Once every 20 days, at 8 ENDURANCE or less in a fight, restore 20 | yes, once a book (ruling R9; `LW.cureOf`, the fight's medallion) |
 | Assimilance (Advanced Invisibility) | Changes his appearance for days; near undetectable in open land | gates only |
 | Grand Huntmastery | No Meal needed when told to eat; sees in total darkness | the Meal (`LW.hunts`); the darkness, gates only |
 | Grand Pathsmanship | Resists hostile plants; senses ambush in woods | gates only |
@@ -481,7 +481,7 @@ the rest is docs/plan.md, "Grand Master series", G5-G7. Also in place:
 |---|---|---|
 | Grand Weaponmastery | +5 COMBAT SKILL with a mastered weapon (two to start, one more for each Grand Master book completed); the weapons are the ten of Weaponmastery (Spear, Dagger, Mace, Short Sword, Warhammer, Bow, Quarterstaff, Broadsword, Axe, Sword); with the Bow, +5 to a Random Number picked for a shot. Replaces Weaponmastery's bonus, not added to it; Mentora's +2 on bow shots is not added to the +5 | no |
 | Animal Mastery | Considerable control over hostile non-sentient creatures; talks with birds and fish and uses them as guides | gates only (not yet) |
-| Deliverance (Advanced Curing) | In a fight at 8 ENDURANCE or less, restore 20; once every 20 days (owner: once a book, ADR 0019) | no |
+| Deliverance (Advanced Curing) | In a fight at 8 ENDURANCE or less, restore 20; once every 20 days (owner: once a book, ruling R9) | no |
 | Assimilance (Advanced Invisibility) | Striking changes of appearance lasting a few days; almost undetectable in open country | gates only (not yet) |
 | Grand Huntmastery | Sees in total darkness, keener touch and taste; no Meal ticked off when told to eat | no |
 | Grand Pathsmanship | Resists entrapment by hostile plants; keen awareness of ambush in woods and dense forest | gates only (not yet) |

@@ -215,7 +215,7 @@ function choose() {
 async function render() {
   choose();
   const none = foes.filter((f) => !f.src).length;
-  // approval is told once, here; only the cards that need the owner are marked (ADR 0020)
+  // approval is told once, here; only the cards that need the owner are marked (ADR 0008)
   const waiting = foes.filter((f) => f.waiting).length, blunt = foes.filter((f) => f.blunt).length;
   $('#sum').textContent = `${foes.length} kinds of enemy, ${none} with no picture, ${blunt} not upscaled; `
     + (!pins ? 'not approved yet (mark step 7 done on the dashboard)'

@@ -11,7 +11,7 @@ every book can become a step or a check there.
 
 ## Next steps
 
-In order of importance. The engine is in modules and tested before its rules change (ADR 0024:
+In order of importance. The engine is in modules and tested before its rules change (ADR 0022:
 done 2026-10-11 for the fight, the item tables and the adventures; what is left is under "Code to
 make testable"). Books 1-12 are imported and being played; the engine now applies nearly all their
 `todo`s (2026-10-12). The Grand Master series is needed before Book 13 can be played; Book 13 is
@@ -22,12 +22,12 @@ done, and when.
 ### The item tables' last todos
 
 The engine work that retires the tables' `todo`s was done on 2026-10-12 (rules-engine.md, book-format.md;
-ADRs 0026, 0027): 323 todos then, 17 now (the games of chance done the same day). The rest, in order of how often they come up; teach the engine a
+ADR 0027, ruling R3): 323 todos then, 16 now (the games of chance done the same day; Book 4's underwater fights 2026-10-17). The rest, in order of how often they come up; teach the engine a
 case when it is met in play, rather than flagging it (ADR 0027):
 
 1. **Shops**: one item only (B6 10), at most N (B6 123), selling Arrows by the four (B6 98), paying with an
    item when short of gold (B6 17), a price in Special Items or gold (B6 212).
-2. **Fights**: rounds set by a number drawn (B4 194, 234), a draw after each round he would have lost
+2. **Fights**: a draw after each round he would have lost
    Endurance in (B3 88), losses that come off his maximum after round 1 (B12 268).
 3. **Items**: a Helmet and the Silver Helm not counting together (B7 148, a series rule); a stake of items
    (B9 115, 204); the Backpack halved by a coin (B9 91); which remedy was used when he has several (B8
@@ -48,7 +48,7 @@ engine work is done; what is left for Book 13 are its book steps after the item 
 **Engine work**, in order (G1 first: everything else reads the series):
 
 - G1 done 2026-10-16 (rules-engine.md, "rules-series.js"): `LW.SERIES.grandmaster`, the gates, the
-  chosen Magnakai numbers. Since then the dashboard offers Book 13's test play (ADR 0039).
+  chosen Magnakai numbers. Since then the dashboard offers Book 13's test play (ADR 0036).
 - G2 done 2026-10-16 (rules-engine.md, "Setting out"): 25 + RN / 30 + RN, four disciplines then one a
   book with +1 / +2 past four, Grand Weaponmastery's weapons in `hero.grandMastery`, no re-roll. Book
   13's walk now leaves one fight unwon (38, a foe at 50 the section lets him evade).
@@ -63,13 +63,12 @@ engine work is done; what is left for Book 13 are its book steps after the item 
   glyphs; the ranks were already in G1.
 - G7 done 2026-10-17: nothing to register yet. `LW.SERIES` has the series, so the dashboard offers the
   Grand Master books test play (step 6) and asks for their item tables to be registered in `main.js`
-  `ITEM_TABLES` as part of step 5 (ADR 0039); Book 13's was registered with its table on 2026-10-17.
+  `ITEM_TABLES` as part of step 5 (ADR 0036); Book 13's was registered with its table on 2026-10-17.
 
-**Decided 2026-10-10** (the Readers' Handbook downloaded that day, then the owner): ADR 0018 (which
+**Decided 2026-10-10** (the Readers' Handbook downloaded that day, then the owner): ADR 0011 (which
 earlier disciplines keep their numbers: a carried character's chosen Magnakai ones, replaced by
-their Grand Master counterparts), ADR 0011 amended (Backpack Items carry into the series, Meals not),
-ADR 0019 (other Special Items dropped, Deliverance once a book, no re-roll). G2, G3 and G5 follow
-them.
+their Grand Master counterparts; Backpack Items carry into the series, Meals not; other Special Items
+dropped; no re-roll) and ruling R9 (Deliverance once a book). G2, G3 and G5 follow them.
 
 ### Book notes outside the steps
 
@@ -111,7 +110,7 @@ without them; the importer marks the highest section `victory` even when it is a
 
 ### Code to make testable
 
-The engine's rules are out of `main.js` (ADR 0024, 2026-10-11): the fight is `LW.Fight`
+The engine's rules are out of `main.js` (ADR 0022, 2026-10-11): the fight is `LW.Fight`
 (shared/fight.js), the item tables `LW.applyItems` and `LW.itemByName` (core.js), an adventure lost
 (`game.lost`) and the character a book begins with (`LW.Character.carries`), adventures and backups
 `adventures.js`, each with tests, and each checked against the old code. Left:

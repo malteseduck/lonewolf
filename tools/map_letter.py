@@ -23,7 +23,7 @@ the clean type of most names right, so only the ones it garbled are set again). 
 on a repaint, labels marked "reset" (ticked in tools/map-editor.html after the round's check)
 and "fix" are the ones done, if any label is marked "reset". With none marked "reset", only the
 "fix" labels are done, so Gemini's names stand; --all sets every "retype" label again as well
-(ADR 0005). With nothing to letter, it still warps, erases --mark and the sparkle, and saves.
+(ADR 0004). With nothing to letter, it still warps, erases --mark and the sparkle, and saves.
 Also writes <out>-sheet.png (or --sheet <path>): each lettered label, the scan beside the result.
 With <H.json> given as -, it letters Gemini's input instead: <repaint> is map_erase.py's picture,
 lettered at its own size (Book 1: the owner's idea, so Gemini copies clean type and paints round
@@ -243,7 +243,7 @@ def main():
         todo = [labels[int(i)] for i in a.only.split(',')]
     elif a.warp != '-' and any(lab.get('reset') for lab in labels):  # the same, ticked in the editor
         todo = [lab for lab in labels if lab.get('reset') or lab.get('fix')]
-    elif a.warp != '-' and not a.all:  # nothing ticked: keep Gemini's names (ADR 0005; re-setting
+    elif a.warp != '-' and not a.all:  # nothing ticked: keep Gemini's names (ADR 0004; re-setting
         todo = [lab for lab in labels if lab.get('fix')]  # them all left Book 12 a doubled "Vorndarol")
     if a.warp == '-':
         # Gemini's input instead: <repaint> is map_erase.py's picture, lettered at its own size

@@ -88,6 +88,18 @@
      (an item, or a list of them, whose use ends it)}; or a flag (flag: true: a name only, "having been to
      Ragadorn", not listed among his conditions). Item tables add theirs (MARKS). */
   LW.MARKS = {};
+  /* Flags a later book asks about that were recorded only from 2026-10-17: a character carried into one
+     of these book numbers who was made before then (not in hero.assumed) is taken to have it, once
+     (ADR 0011). A character made since has them in hero.assumed from the start (LW.makeHero), so only
+     what his own books recorded counts. */
+  LW.ASSUME = { visitedGornCove: [3, 4] };
+  LW.assumeMarks = (hero, number) => {
+    for (const [m, books] of Object.entries(LW.ASSUME)) {
+      if ((hero.assumed || []).includes(m) || !books.includes(number)) continue;
+      (hero.marks = hero.marks || {})[m] = true;
+      hero.assumed = [...(hero.assumed || []), m];
+    }
+  };
   /* Coins other than Gold Crowns (hero.coins): Book 9's Lune, Book 12's Kika */
   LW.COINS = { lune: 'Lune', kika: 'Kika' };
   /* The flags an item table's sections (top-level mark / unmark) leave on a hero who walked this trail of
@@ -114,7 +126,7 @@
   LW.MAX_ARROWS = 6; // a Quiver's load
   /* the book being played (main.js sets it): the Special Item limit depends on it */
   LW.bookNumber = 0;
-  /* At most 12 Special Items. The books set it from Book 8; the owner holds every book to it (ADR 0029). */
+  /* At most 12 Special Items. The books set it from Book 8; the owner holds every book to it (ruling R2). */
   LW.specialLimit = () => 12;
   /* A book's own items (name, kind, and optionally heal, ep, glyph, about) join the list. */
   LW.addItems = (items, marks) => {
@@ -211,6 +223,7 @@
       special: ['map'],
       meals: 1,
       flagsRead: true, // flags are tracked from the start: the backfill for older saves (main.js) is not for him
+      assumed: Object.keys(LW.ASSUME), // nor is the assumption for older characters (LW.assumeMarks)
       gold: LW.rand10(),
     };
     if (hero.disciplines.includes('weaponskill')) {

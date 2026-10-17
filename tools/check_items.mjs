@@ -43,7 +43,7 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
   const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'noHunt', 'todo', 'need', 'fight', 'bowShot', 'grandBow', 'rntMod',
     'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax', 'game']);
   const FIGHT = new Set(['csMod', 'csIf', 'csUnless', 'csNote', 'mindforce', 'unless', 'unarmed', 'undead', 'drain', 'with', 'double', 'ambush', 'evade',
-    'rounds', 'stop', 'won', 'wounded', 'noEvade', 'noShield', 'noUnarmed', 'weaponCs', 'plain', 'only', 'barred', 'lend', 'mind', 'keep', 'healLost', 'restore', 'noBoost', 'to', 'points', 'lose', 'byHand']);
+    'rounds', 'stop', 'won', 'wounded', 'noEvade', 'noShield', 'noUnarmed', 'weaponCs', 'plain', 'only', 'barred', 'lend', 'mind', 'keep', 'healLost', 'restore', 'noBoost', 'to', 'points', 'lose', 'byHand', 'breath']);
   const WHEN = new Set(['if', 'unless', 'ate', 'came', 'ep', 'epMax', 'cs', 'healLost', 'take', 'back', 'mark', 'unmark', 'settle']);
   const ROUND = new Set(['from', 'upTo', 'fromFoe', 'if', 'unless', 'ambush', 'mind', 'csMod', 'note', 'unarmed', 'heroLoss', 'foeLoss', 'heroPlus', 'heroEach', 'foeEach', 'psi', 'barred']);
   const STOP = new Set(['after', 'wound', 'foeAt', 'drawn', 'to', 'by', 'if']);

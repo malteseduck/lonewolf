@@ -6,7 +6,7 @@ Both from github.com/google/fonts (ofl/imfellenglish, ofl/imfellenglishsc, ofl/a
 2026-10-06, under the SIL Open Font License 1.1 (OFL-IMFell.txt, OFL-Almendra.txt).
 
 Architects Daughter (ArchitectsDaughter-Regular): Kimberly Geswein. Named by maps/12tmod/font.txt,
-since Book 12's map is lettered by hand (a map's font.txt sets its font: docs/adr/0006). Chosen over Patrick Hand, Kalam, Neucha
+since Book 12's map is lettered by hand (a map's font.txt sets its font: docs/adr/0004). Chosen over Patrick Hand, Kalam, Neucha
 and Comic Neue as the closest to the scan's thin marker. From github.com/google/fonts
 (ofl/architectsdaughter), 2026-10-10, under the SIL Open Font License 1.1 (OFL-ArchitectsDaughter.txt).
 

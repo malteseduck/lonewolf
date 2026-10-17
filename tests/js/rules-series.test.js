@@ -237,6 +237,22 @@ describe('LW.HeroSetup: a carried character', () => {
   });
 });
 
+describe('a mark assumed once for a character made before it was recorded (ADR 0011)', () => {
+  const into = (number, hero) => { const s = LW.HeroSetup({ number, series: 'kai' }, { hero, completed: [] }); s.toggle('mindblast'); return s.build(); };
+  it('carried into Book 3 or 4 without the Gorn Cove visit, he is taken to have made it, once', () => {
+    const h = into(4, kaiHero());
+    expect(h.marks.visitedGornCove).toBe(true);
+    expect(h.assumed).toContain('visitedGornCove');
+    delete h.marks.visitedGornCove; // a second carry assumes nothing more
+    expect((into(4, h).marks || {}).visitedGornCove).toBeUndefined();
+  });
+  it('not into another book, and not for a character made since: his own Book 2 records the visit', () => {
+    expect((into(5, kaiHero()).marks || {}).visitedGornCove).toBeUndefined();
+    const made = LW.makeHero({ csRoll: 0, epRoll: 0, disciplines: [] });
+    expect((into(3, Object.assign(kaiHero(), { assumed: made.assumed })).marks || {}).visitedGornCove).toBeUndefined();
+  });
+});
+
 describe('the starting kits', () => {
   it('has a kit for Books 2 to 13, not 1', () => {
     expect(LW.KITS[1]).toBeUndefined();
@@ -355,7 +371,7 @@ describe('LW.weaponBonus: what a weapon adds, as the inventory shows it', () => 
   });
 });
 
-/* G1: the Grand Master series (rules-books.md, "Grand Master series"; ADR 0018). He holds every Kai and
+/* G1: the Grand Master series (rules-books.md, "Grand Master series"; ADR 0011). He holds every Kai and
    Magnakai Discipline for the text's gates; of their numbers he keeps only those of the Magnakai
    Disciplines he chose (hero.magnakai, a carried character's), at his Magnakai rank. */
 const FOUR = ['grandWeaponmastery', 'deliverance', 'kaiSurge', 'grandNexus'];
@@ -444,7 +460,7 @@ describe('the Grand Master series', () => {
     expect(h.cs).toBe(28);
     expect(h.epMax).toBe(37);
     expect(h.ep).toBe(37);
-    expect(h.magnakai || []).toEqual([]); // every Magnakai Discipline for the gates, none of their numbers (ADR 0018)
+    expect(h.magnakai || []).toEqual([]); // every Magnakai Discipline for the gates, none of their numbers (ADR 0011)
   });
   it('asks Grand Weaponmastery for two weapons, kept apart from Weaponmastery\'s, then one a book', () => {
     const s = LW.HeroSetup({ number: 13, series: 'grandmaster' }, null);
@@ -472,7 +488,7 @@ describe('the Grand Master series', () => {
     next.toggleWeapon('dagger'); next.toggle('telegnosis');
     expect(next.build().grandMastery).toEqual(['sword', 'bow', 'dagger']);
   });
-  it('keeps a carried character\'s scores, with no re-roll (ADR 0019)', () => {
+  it('keeps a carried character\'s scores, with no re-roll (ADR 0011)', () => {
     const s = LW.HeroSetup({ number: 13, series: 'grandmaster' }, { hero: mkHero(NINE, { cs: 31, epMax: 44, ep: 12, circleEp: 11 }), completed: [] });
     expect(s.rolls).toEqual({ cs: 0, ep: 0 });
     s.roll('cs', 9); s.auto();
@@ -481,7 +497,7 @@ describe('the Grand Master series', () => {
     expect(h.epMax).toBe(44);
     expect(h.grandmaster).toHaveLength(4);
   });
-  it('carries a Magnakai character in with his Backpack Items, no Meals, and only the ten Special Items listed (ADR 0011, 0019)', () => {
+  it('carries a Magnakai character in with his Backpack Items, no Meals, and only the ten Special Items listed (ADR 0011)', () => {
     LW.ITEMS.kagoniteMail = { name: 'Kagonite Chainmail', kind: 'special', ep: 1 };
     LW.ITEMS.waistcoat = { name: 'Waistcoat', kind: 'special', ep: 2 };
     LW.ITEMS.sommerswerd = { name: 'Sommerswerd', kind: 'special', weapon: ['sword'], cs: 8 };
@@ -530,7 +546,7 @@ describe('the Grand Master series', () => {
 });
 
 /* G5: the Grand Master Disciplines' own numbers (rules-books.md, "Grand Master Disciplines"). Each
-   replaces its Magnakai counterpart's number, never adds to it (ADR 0018). */
+   replaces its Magnakai counterpart's number, never adds to it (ADR 0011). */
 describe('the Grand Master Disciplines\' numbers', () => {
   it('Grand Weaponmastery: +5 with a weapon it mastered, in place of Weaponmastery; +5 to a Bow shot, no Mentora', () => {
     const vet = gmHero(FOUR, { magnakai: NINE, mastery: ['sword', 'axe', 'bow'], grandMastery: ['sword', 'bow'], weapons: ['sword', 'bow'], arrows: 3 });
@@ -538,7 +554,7 @@ describe('the Grand Master Disciplines\' numbers', () => {
     expect(LW.weaponBonus(vet, 'axe')).toEqual([{ label: 'Weaponmastery', n: 4 }]); // a Scion-kai's, kept
     expect(LW.heroCS(vet).total).toBe(35);
     expect(LW.bowShot(vet).plus).toBe(5);
-    // a shot whose section gives Grand Weaponmastery with Bow its own number (ADR 0040)
+    // a shot whose section gives Grand Weaponmastery with Bow its own number (ruling R10)
     expect(LW.bowShot(vet, 3).parts).toEqual([{ label: 'Grand Weaponmastery with Bow', n: 3 }]);
     const fresh = gmHero(FOUR, { grandMastery: ['axe'], weapons: ['axe'] });
     expect(LW.heroCS(fresh).parts).toContainEqual({ label: 'Grand Weaponmastery', n: 5 });

@@ -157,7 +157,7 @@ Commands run from the project root as
    round's check). With nothing ticked reset it sets no place name again, only the `fix` labels:
    an upscale only, Gemini's names standing; `--all` (the Finish step's "Set every place name
    again", unchecked by default) sets every one again, which leaves doubled names wherever Gemini
-   moved one (Book 12, round 3; ADR 0005). The step says which it will do. It warps the upscale onto the 4K frame, wipes
+   moved one (Book 12, round 3; ADR 0004). The step says which it will do. It warps the upscale onto the 4K frame, wipes
    Gemini's thin strokes right round where each of those names goes (all wipes before any
    drawing), sets them again, and removes Gemini's sparkle watermark. Look at
    `map-4k-sheet.png`. A correct name next to a re-set one can lose strokes to the wipe: add it to
@@ -195,7 +195,7 @@ Commands run from the project root as
   (the drawing, the squash, width and spacing are constants at its top). Run it again after
   changing a letter, then Letter.
 - `maps/<code>/font.txt`: line 1 names a file in `tools/fonts/`, the font that map's names are
-  set in, honoured by every step (ADR 0006). The dashboard's Letter and Finish steps pass it to `map_letter.py` as `--hand` and `--caps`,
+  set in, honoured by every step (ADR 0004). The dashboard's Letter and Finish steps pass it to `map_letter.py` as `--hand` and `--caps`,
   and the editor's preview draws in it; with no file, Cabin SemiBold. An optional line 2 describes
   the lettering for the Gemini prompt in place of "clean sans-serif type" (Book 12: hand-lettered
   in an even felt pen, in angular, runic-looking letters). Book 12's map is lettered by hand

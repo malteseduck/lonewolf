@@ -4,11 +4,15 @@ A personal-use player for the Lone Wolf gamebooks, styled after *Lone Wolf HD Re
 Plain HTML/CSS/JS, no build step, no dependencies to install.
 
 Read `docs/spec.md` and the index in `docs/adr/README.md` before changing behaviour, art, or a
-tool's output. The spec is the statement of intent, design, and architecture; the ADRs are the owner's decisions, and they
-are binding: never reverse or work around one without the owner's say-so in chat. When the owner
-decides something, write an ADR in the same piece of work (rules in `docs/adr/README.md`), and
-change the spec too if the intent/design/architecture itself changed. When you write or amend an ADR, search
-`docs/spec.md` for its subject and bring any sentence it contradicts into line. The spec says what
+tool's output, and the rulings in `docs/adr/rulings.md` for the area you touch (a book's readings
+before working on that book). The spec is the statement of intent, design, and architecture; the
+ADRs (one per topic) and rulings (one line each) are the owner's decisions, and they are binding:
+never reverse or work around one without the owner's say-so in chat. When the owner decides
+something, record it in the same piece of work (rules in `docs/adr/README.md`): amend the topic's
+ADR in place if it has one (a reversal too: there are no superseded records), add a ruling if it is
+small, a new ADR only for a topic none covers. Change the spec too if the intent/design/architecture
+itself changed. When you record a decision, search `docs/spec.md` for its subject and bring any
+sentence it contradicts into line. Cite them as "ADR NNNN" or "ruling Rn". The spec says what
 a thing must achieve, not details of how it looks, is laid out, or implementation details: that belongs in an ADR or the reference.
 `docs/reference/` describes the code as it is.
 
@@ -19,7 +23,7 @@ The player is the page at the project root: `index.html`, `main.js`, `plates.js`
 (`art.js`, `battle.js`, `flow.js`, `book-demo.js`) are historical (ADR 0002): do not read, mention,
 run, check or change them. A change to `shared/` is checked against the player only.
 
-The devices are the iPad, mainly, and the PC; phones are not supported (ADR 0030).
+The devices are the iPad, mainly, and the PC; phones are not supported (ruling R12).
 
 ## Run it
 
@@ -202,7 +206,7 @@ pages (`docs/reference/rules-books.md`), and its text is not copied into the rep
 | File | Holds |
 |---|---|
 | `docs/spec.md` | Intent: purpose, principles, game rules, presentation. Change it when the owner changes the intent. |
-| `docs/adr/` | The owner's decisions, one record each, binding. A refinement amends its ADR in place (dated in its Changes list); a new topic or a reversal gets a new ADR. |
+| `docs/adr/` | The owner's decisions, binding: an ADR per topic, its index grouped by topic in `README.md`; small decisions and book readings as one-line rulings in `rulings.md`. Every change, a reversal included, amends the record in place (dated in its Changes list); a new ADR only for a new topic. |
 | `docs/reference/architecture.md` | File map, load order, state, storage keys |
 | `docs/reference/book-format.md` | The book data model, field by field |
 | `docs/reference/rules-engine.md` | How the rules are implemented and where |

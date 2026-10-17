@@ -156,7 +156,7 @@ FONTS = ['--hand', 'Cabin.ttf|SemiBold', '--caps', 'Cabin.ttf|SemiBold']
 
 def _fonts(book):
     """map_letter.py's font arguments: the file in tools/fonts that maps/<book>/font.txt names,
-    honoured for every map that has one (ADR 0006); else Cabin."""
+    honoured for every map that has one (ADR 0004); else Cabin."""
     try:
         with open(os.path.join(MAPS, book, 'font.txt'), encoding='utf-8') as fh:
             name = fh.readline().strip()
@@ -408,7 +408,7 @@ def offline_list(root=ROOT, fill=None):
             for pin in as_json(rel).get('pins', {}).values():
                 if (pin or {}).get('plate'):
                     add('', pin['plate'].get('src', ''))
-        elif rel.startswith('assets/plates/upscaled/'):  # fight pictures shown from their 2x copy (ADR 0033)
+        elif rel.startswith('assets/plates/upscaled/'):  # fight pictures shown from their 2x copy (ADR 0031)
             for src in as_json(rel).get('srcs', []):
                 add('', posixpath.splitext(src)[0] + '-2x.webp')
         elif rel == 'art/manifest.json':
@@ -453,9 +453,9 @@ ADMIN_STAGES = {
     'map-style': {'title': 'Draft map style', 'folder': True, 'timeout': 60, 'cmds': lambda c: [PY + ['tools/map_labels.py', 'style', f'maps/{c}/labels.json']]},
     # step 3's scan (ADR 0036): reads book.js, writes only phrasings.json beside it
     'phrasings-scan': {'title': 'Scan phrasings', 'folder': True, 'timeout': 120, 'cmds': lambda c: [PY + ['tools/phrasings_scan.py', c, '--json']]},
-    # Real-ESRGAN on the PC: fetches nothing, writes only <name>-2x.webp beside each original (ADR 0033)
+    # Real-ESRGAN on the PC: fetches nothing, writes only <name>-2x.webp beside each original (ADR 0031)
     # every picture the book's fights can show, the same way; listed in assets/plates/upscaled/<code>.json
-    # step 7's draft (ADR 0035, 0036): the index afresh, then a picture for each enemy with none, entered in plates.json
+    # step 7's draft (ADRs 0008, 0036): the index afresh, then a picture for each enemy with none, entered in plates.json
     'pictures-draft': {'title': 'Draft fight pictures', 'folder': True, 'timeout': 300, 'cmds': lambda c: [PY + ['tools/ill_index.py'], PY + ['tools/plates_draft.py', c]]},
     'fights-up': {'title': 'Upscale fight pictures', 'folder': True, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/ill_upscale.py', '--fights', c]]},
     'ills': {'title': 'Upscale illustrations', 'folder': True, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/ill_upscale.py', c]]},

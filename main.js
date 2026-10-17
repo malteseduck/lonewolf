@@ -1074,7 +1074,7 @@ function showFoe() {
 let PLATES = [];
 fetch('assets/plates/plates.json').then((r) => r.json()).then((j) => { PLATES = compilePlates(j.plates); }).catch(() => {});
 /* assets/plates/approved/<book>.json: the pictures the owner approved, kept whatever plates.json now picks;
-   assets/plates/upscaled/<book>.json: those of its fight pictures shown from their 2x copy (ADR 0033) */
+   assets/plates/upscaled/<book>.json: those of its fight pictures shown from their 2x copy (ADR 0031) */
 const PINS = {}, UPSCALED = {};
 function loadPins(id) {
   if (id in PINS) return;
@@ -1118,7 +1118,7 @@ async function battleAct(id) {
   else if (id === 'stop') B.stopHere();
   else if (id.startsWith('boost:')) B.boost(id.slice(6));
   else {
-    // the Random Number is drawn out of sight: the owner wants no medallion in a fight (ADR 0026)
+    // the Random Number is drawn out of sight: the owner wants no medallion in a fight (ruling R3)
     const o = B.roll(LW.rand10());
     if (B.over) { /* the number drawn ended the fight (c.stop drawn) */ }
     else if (id.startsWith('evade')) { B.flee(o, +id.split(':')[1] || 0); await lunge(o.taken); }

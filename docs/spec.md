@@ -5,9 +5,10 @@ the design as it should be now, not how it got here, and not the code. For how t
 see `docs/reference/`; for the state of the work, `docs/plan.md`. When this file and the reference
 disagree, this file says what should be true and the reference says what is true.
 
-Where there was a choice, what the owner chose and why is recorded in `docs/adr/`, one decision
-per record. Those records are binding: an agent does not reverse one without the owner. This file
-changes when the intent changes; a decision within the intent gets an ADR instead.
+Where there was a choice, what the owner chose and why is recorded in `docs/adr/`: an ADR per
+topic, and small decisions and book readings as one-line rulings (`docs/adr/rulings.md`). Those
+records are binding: an agent does not reverse one without the owner. This file changes when the
+intent changes; a decision within the intent gets an ADR or a ruling instead.
 
 ## 1. Purpose
 
@@ -72,7 +73,7 @@ apply.
 - **Gold Crowns**: at most 50.
 - **Weapons**: at most 2.
 - **Backpack**: at most 8 items (10 in the Grand Master series). Meals are Backpack Items.
-- **Special Items**: at most 12 (from Book 8 in the books; in every book here, ADR 0029). Some raise maximum Endurance while carried
+- **Special Items**: at most 12 (from Book 8 in the books; in every book here, ruling R2). Some raise maximum Endurance while carried
   (Helmet +2, Chainmail Waistcoat +4); dropping the item removes the bonus.
 
 ### 4.2 Disciplines
@@ -105,11 +106,11 @@ apply.
 - In a Magnakai book the Magnakai Disciplines have mechanical effect (Book 6 restates the Kai
   effects as Magnakai ones: Weaponmastery for weapons, Huntmastery for Meals). Only a character
   who completed Books 1–5 also keeps Healing's +1 (never added to Curing's) and Hunting's spared
-  Meals, as the Lone Wolf Club newsletters rule (ADR 0018).
+  Meals, as the Lone Wolf Club newsletters rule (ADR 0011).
 - **Grand Master series** (Book 13 on; partly in the engine): twelve Grand Master Disciplines, four
   to begin with. The earlier disciplines are held for the text's gates; their numbers count only
   for a carried character, for the Magnakai Disciplines he chose, each replaced by its Grand Master
-  counterpart (ADR 0018). The rules are in rules-books.md, the readings in ADR 0019.
+  counterpart (ADR 0011). The rules are in rules-books.md, the readings in ADR 0011 and ruling R9.
 - From Book 7, ranks improve some disciplines; the engine applies them as rules-books.md
   ("Improved Disciplines") lists them.
 
@@ -208,7 +209,7 @@ This section says what the presentation must achieve. How each page is laid out 
 ### 6.1 Layout
 
 - One open book is the whole interface, and it scales with the window. Decoration around it never
-  costs the pages space (ADR 0013).
+  costs the pages space (ADR 0002).
 - **Title page**: the adventures (section 7), then an adventure's books, each with continue, start
   over or new character. Books not yet downloaded wait on the shelf.
 - **Left page: the story**, with its illustrations where the book places them.
@@ -236,14 +237,14 @@ open book's own items.
 
 - The map is the one printed in the book, and only that: no made-up places, town plans or travel on
   the map (ADR 0004). Every choice is made on the story page.
-- It is shown sharp and in keeping with the rest of the book (ADRs 0005-0007), and the player can
+- It is shown sharp and in keeping with the rest of the book (ADR 0004), and the player can
   pan and zoom it.
 
 ### 6.5 Combat
 
-- Fought on the book's pages, not in a separate scene (ADR 0003).
+- Fought on the book's pages, not in a separate scene (ADR 0002).
 - Every fight has a picture of the enemy: the book's own where there is one, otherwise the same
-  creature pictured elsewhere, otherwise a fitting stand-in (ADRs 0008, 0010, 0020, 0035). Wounds show on it.
+  creature pictured elsewhere, otherwise a fitting stand-in (ADR 0008). Wounds show on it.
 - The player strikes, uses a mind attack, drinks a potion or evades; each round is written on the
   story page as a line of the fight's record.
 

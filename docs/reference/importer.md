@@ -104,7 +104,7 @@ Heuristics layered on top, all by regular expression:
   an entry in `PLATE_FIXES` (checked by eye, Book 1 only so far); otherwise none, and the player
   looks the name up in `assets/plates/plates.json` at play time (see interface.md, Art pipeline).
 - **Upscaled illustrations**: a section's `img.file` names `<name>-2x.webp` when `tools/ill_upscale.py`
-  has made it beside the original (ADR 0033); an enemy's plate keeps the original `.png`.
+  has made it beside the original (ADR 0031); an enemy's plate keeps the original `.png`.
 
 It also reads `tssf.htm` ("The Story So Far") into `intro`: every `<p>` in
 `<div class="frontmatter">` except the ones holding a link (the last only points on to the game

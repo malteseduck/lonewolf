@@ -6,17 +6,17 @@ How the code is laid out today. Intent lives in `docs/spec.md`.
 
 ```
 index.html                  the player: markup, all CSS, script tags
-main.js                     ES module: state, rendering, input, combat on the page, title page (no rules: ADR 0024)
+main.js                     ES module: state, rendering, input, combat on the page, title page (no rules: ADR 0022)
 adventures.js               ES module: adventures and backups in storage (load, migrate, back up, restore, pending)
 plates.js                   ES module: ink creatures, inkPlate (restyles an illustration), figure, frame, gear
 maps.js                     ES module: printedCanvas, the book's printed map repainted in sepia
 platepick.js                ES module: which picture a fight shows (pins, plates.json, the book's own); also used
                             by the picture sheet and tools/plates_pin.mjs
 itemglyphs.js               ES module: ITEM_GLYPH, the engine's items' icons, and glyphName (an item's icon);
-                            also used by the item sheet, which rewrites it (ADR 0042)
+                            also used by the item sheet, which rewrites it (ADR 0021)
 items/items-<code>.js       ES modules, one per book (items-01fftd.js for Book 1): its items and what each
                             section gives, takes or gates, by hand (docs/reference/book-format.md, "Item
-                            tables"; kept out of the root: ADR 0025)
+                            tables"; kept out of the root: ruling R14)
 sw.js                       service worker: the offline copy (docs/reference/offline.md)
 manifest.webmanifest        the Home Screen app: name, colours, icons (assets/app/)
 art/plates/<code>/          git-ignored. Fight pictures the owner gave on the picture sheet (WebP)
@@ -30,7 +30,7 @@ assets/plates/              plates.json: pictures for enemies their book does no
                             mostly engravings from Wikimedia Commons (credited in README.txt)
   upscaled/<code>.json      the book's fight pictures with a 2x copy beside them (ill_upscale.py --fights), shown from it
   approved/<code>.json      the fight pictures the owner approved (step 7 marked done), pinned per fight:
-                            section/enemy number -> picture; no book text (ADR 0020)
+                            section/enemy number -> picture; no book text (ADR 0008)
 CLAUDE.md, README.md
 docs/                       spec, plan, reference
   book-status.json          the book steps no file can show (checklist 3, 4, 6, 7), with the date each was
@@ -61,7 +61,7 @@ tools/
                             book's fight pictures on a sheet, where the owner drops, crops and removes
                             pictures), ills.html (one book's illustrations, each original beside its
                             2x upscale), items.html and itemsheet.js (one book's items and their icons, which
-                            the owner changes: ADR 0042), parchment.js (the tool pages' parchment and charred-rim filter, from
+                            the owner changes: ADR 0021), parchment.js (the tool pages' parchment and charred-rim filter, from
                             shared/ink.js; the map editor loads it too: ADR 0021)
   map-editor.html           the map steps' page (docs/reference/map-upscale.md); also shown inside the dashboard
   plates_file.py            reads and writes assets/plates/plates.json in its layout; the owner's pictures from the

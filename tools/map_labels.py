@@ -316,7 +316,7 @@ def prompt(labels, lettered=False, style=None, lettering=None):
          'and every panel and every object already drawn on the map stays in its place with its colours. '
          'Keep these labels in their present places and directions, spelled exactly as written here, letter for '
          'letter: ' + names(keep) + '.')
-    if lettered and lettering:  # font.txt's second line (ADR 0006), e.g. a hand Gemini is not to tidy into type
+    if lettered and lettering:  # font.txt's second line (ADR 0004), e.g. a hand Gemini is not to tidy into type
         p += (f' The place names are {lettering}: keep that same lettering for them, not other type, '
               'and keep the ground behind each name clear so it stays easy to read.')
     elif lettered:

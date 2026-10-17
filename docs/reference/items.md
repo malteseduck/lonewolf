@@ -147,7 +147,7 @@ Decide each section by what the text says, outright:
   Arrow. Arrows found or bought are `{arrows: n}` in `loot`; lost ones `{arrows: n | 'all'}` in `take`.
   A discipline's bonus the text gives on the shot, which the importer does not read there, is an
   `rntMod` (Book 6's 170: `[{disc: 'huntmastery', plus: 1}]`). Where a Grand Master shot gives Grand Weaponmastery with Bow its own
-  number, that is `grandBow: n`, used in place of the +5 (ADR 0040; Book 13's 104, 176, 303: 3).
+  number, that is `grandBow: n`, used in place of the +5 (ruling R10; Book 13's 104, 176, 303: 3).
 - **food as a Meal**: an item the text says can be eaten as a Meal gets `meal: true` (Book 1's
   Laumspur).
 - **the engine's rules first**: before a `todo`, use what the engine applies (book-format.md):
@@ -195,7 +195,7 @@ guess. Add each to `assets/icons/README.txt` under its author. Book 1's: cut-dia
 Gem), gems, key, skeleton-key, scroll-unfurled, scroll-quill, gem-necklace (Crystal Star
 Pendant), standing-potion (Alether), soap, torch, flint-spark (Tinderbox), backpack.
 
-Once the table exists, the dashboard's item sheet (step 5, "Open item sheet"; ADR 0042) shows every
+Once the table exists, the dashboard's item sheet (step 5, "Open item sheet"; ADR 0021) shows every
 item with its icon, and the owner changes one there, from the icons here or from game-icons.net
 (fetched and credited the same way).
 
@@ -237,7 +237,7 @@ carried character).
 
 ## Fight pictures
 
-Once the owner marks step 7 done, each fight's picture is pinned (ADR 0020): an entry added to
+Once the owner marks step 7 done, each fight's picture is pinned (ADR 0008): an entry added to
 `plates.json` later, or a re-import, changes nothing in the player until the owner approves it on the
 dashboard. `node tools/plates_pin.mjs <code>` lists what would change. Do not run `--approve` yourself.
 
@@ -250,7 +250,7 @@ stand-in that suits that book), and put book entries first. The sheet labels a b
 `match` is exactly the enemy's anchored name (`^name$`) as the owner's own picture, so an entry you
 add is written some other way (`ice barbarian$`, `kalkoth`).
 
-**The owner's own picture** stands whatever the order below (ADR 0035). The owner puts it in on the picture sheet
+**The owner's own picture** stands whatever the order below (ADR 0008). The owner puts it in on the picture sheet
    (inline in the dashboard at step 7, "Open picture sheet"): drop a picture file on
    the enemy's card, paste it, or Choose; the page shrinks it to 2000 px on its long side as WebP and
    `POST /api/admin/plate` saves it as git-ignored `art/plates/<code>/<name>.webp` and writes the entry
@@ -288,13 +288,13 @@ picture now, as shown, crop and all, or an illustration whose note names it), th
 links before the fight (a guess); then a library or `art/plates/` picture with a word of the name in its file
 name (the one this book uses least). A plain human (a person's word last, "guard", "swordsman", with no
 creature named before it: "Giak Officer" is a Giak) takes this book's same kind, else a stand-in, else
-another book's only by the very same name (ADR 0010). It never takes another draft as a source. What it
+another book's only by the very same name (ADR 0008). It never takes another draft as a source. What it
 cannot match is listed, for the agent's prompt or the sheet's Stand-in.... `--compare` on Books 2-12 (their
 own entries left out) (106 enemies, 2026-10-14) gives the owner's very picture for a third of them and some picture
 for two thirds; the rest of the owner's choices were by eye (variety, a better figure), which is what the
 sheet is for.
 
-Where a fight's picture comes from, first that applies (ADR 0035):
+Where a fight's picture comes from, first that applies (ADR 0008):
 
 1. **The fight's own picture**, which the importer gives it from its section (above).
 2. **The same creature in the same book**: any of its illustrations, fight pictures included (another
@@ -320,7 +320,7 @@ Where a fight's picture comes from, first that applies (ADR 0035):
    Book 1's Giak cropped to the one on foot, Book 9's Gourgaz Book 1's. Never another book's
    different creature or set-piece fight. Plain human enemies (soldiers, guards, robbers, bodyguards)
    may take another book's plain humans; for them these and the stand-ins in 4 rank alike, chosen
-   for variety (ADR 0010).
+   for variety (ADR 0008).
 
 **Vary the plain humans.** The broad library entries (`soldier|...|guard`, `robber|...|bandit`) are a
 last resort: a book full of guards would show the same picture in every fight (the owner asked for

@@ -1,9 +1,8 @@
 # NNNN. Title, as the decision
 
-- Status: Accepted (or: Superseded by NNNN, with a one-line reason)
+- Status: Accepted
 - Date: YYYY-MM-DD (when the owner first decided)
 - Amended: YYYY-MM-DD (the latest amendment; leave out until there is one)
-- Supersedes: NNNN, if this replaces a reversed decision
 
 ## Context
 

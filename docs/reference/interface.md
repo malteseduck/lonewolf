@@ -77,7 +77,7 @@ ember on hover and focus; disabled it is greyed.
   Animal Control: 7.").
   `makeDial()` builds it: a 4.6em medallion whose bronze bezel is engraved 0-9 and turns, while
   the black face shuffles digits, then shows the drawn one under the notch at the top, glowing.
-  A fight has none: its numbers are drawn out of sight (ADR 0026).
+  A fight has none: its numbers are drawn out of sight (ruling R3).
 - Then one of: death panel, the crossed-swords medallion ("Draw your weapon"), the ending panel,
   or the list of choices.
   The death panel (death in a fight, or a death section) offers to go back: a seal for the section
@@ -90,7 +90,7 @@ ember on hover and focus; disabled it is greyed.
   is toasted. `turnTo()`. Every other section with choices has the same box, smaller and faint
   (`.puzzle.byhand`, "By hand: turn to"), for a way on the page cannot see, folded into a faint link
   ("By hand: turn to a section…", `data-byhand`) that opens it and focuses it when touched; both centred, last on the page, the box's button a small
-  `.seal` reading "go" (ADR 0032).
+  `.seal` reading "go" (ADR 0027).
 - Above the fight notice, three blocks the item tables can call for: "Choose what you lose" (or
   "Give in exchange"), a medallion per thing he may lose (`game.pickable()`, `data-pick`), shown while
   a loss of his choosing is pending and the choices wait; "Your stake" / "What you give", an amount
@@ -134,7 +134,7 @@ on the same medallion again, or Escape closes it; touching another medallion mov
   skill counts with it, `LW.weaponBonus`; its box gives the item table's `about`, else the rules'
   words for a bow or any weapon, and what it adds; a Special Item that fights as a weapon (`weapon`
   in its item table: the Sommerswerd) likewise. What an item adds is never shown on the page; an empty hand a faint sword, `.disc.vacant`, "No weapon"), the Kai wolf's
-  head (`.crestmark`, faint in `--ink`; ADR 0009) between them; a ruled "Special Items n of 12"
+  head (`.crestmark`, faint in `--ink`; ADR 0028) between them; a ruled "Special Items n of 12"
   heading (`LW.counted`, `LW.specialLimit`) over `.specs`, every Special Item as a small medallion
   and its name (the Quiver's with its Arrows, "4 of 6", `LW.quiverRoom`), three to a row, no empty slots (a name stops at three lines with an ellipsis, a weapon's at two;
   the whole name is in its box; a name with a word over ten letters, the Sommerswerd, is set smaller,
@@ -203,7 +203,7 @@ with the page's own drawing state added: `fx`, `img`, `node`, `scene`, `lock` (i
 while a round plays), `fit`, `floor`.
 
 The panel is one `.fight` node: a canvas filling it, the enemy bar over its top, the command
-medallions over its foot (no Random Number medallion: ADR 0026). `B.fit()` sizes the canvas to the node at device resolution
+medallions over its foot (no Random Number medallion: ruling R3). `B.fit()` sizes the canvas to the node at device resolution
 and measures `B.ceil` (the foot of the enemy's name and stats line) and `B.floor` (the top of the
 medallions): the picture is scaled to fit between them, so it never runs under either.
 A requestAnimationFrame loop calls `drawCreature` each frame; the plate itself is still, only
@@ -248,10 +248,10 @@ story on.
   `setEmblem` once main.js has fetched it) over a blot of wash, or a plain ring and blades until then.
 - Whichever picture is picked, it is loaded from its Real-ESRGAN 2x copy (`<name>-2x.webp` beside it)
   when the book's `assets/plates/upscaled/<code>.json` lists it (`upscaledSrc` in platepick.js; the
-  Upscale 2x of step 7, ADR 0033).
+  Upscale 2x of step 7, ADR 0031).
 - Which picture (`showFoe` in main.js, by `pickPlate` in platepick.js): first the picture the owner
   approved for that fight, once the book's step 7 is marked done (`assets/plates/approved/<code>.json`,
-  ADR 0020: a later plates.json entry or re-import does not change it until approved); else a library entry marked `over` (the owner preferred another
+  ADR 0008: a later plates.json entry or re-import does not change it until approved); else a library entry marked `over` (the owner preferred another
   picture to the book's own; Book 1's Vordak), else the enemy's own `art` (its section's
   illustration, or one the importer borrowed from the same book), else the first entry of `assets/plates/plates.json`
   whose `match` is found in its name and whose `book`, if it has one, is the open book (`PLATES`;
@@ -261,7 +261,7 @@ story on.
   (Winged Serpent; the links of found ones in the committed `art/sources.json`, ADR 0038), or Project Aon
   illustrations by path under `data/projectaon/`: the same book's, often cropped to one figure
   (Book 2's portrait page), or another book's picture of the same creature, or of a plain human
-  (the order is ADR 0035).
+  (the order is ADR 0008).
 - The shaded bands behind the enemy's name and the controls are `::before` layers faded out at
   the sides too, so no straight edge shows over the plate.
 - The fight's command medallions use glyphs too: Strike shows the weapon in hand (`itemGlyph`),

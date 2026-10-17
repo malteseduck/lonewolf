@@ -462,7 +462,7 @@ if os.path.exists(tssf):
     front = page[page.find('<div class="frontmatter">'):page.find('</article')]
     intro = [plain(p) for p in re.findall(r'<p[^>]*>(.*?)</p>', front, re.S) if 'href=' not in p and plain(p)]
 
-# an illustration's 2x WebP beside it once tools/ill_upscale.py has made it (ADR 0033); a fight's plate
+# an illustration's 2x WebP beside it once tools/ill_upscale.py has made it (ADR 0031); a fight's plate
 # (its 'art', set above) keeps the original, so the approved fight pictures do not move
 for sec in sections.values():
     big = sec.get('img', {}).get('file', '')[:-4] + '-2x.webp'

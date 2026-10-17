@@ -1,4 +1,4 @@
-"""Step 7's draft (ADR 0035, 0036): a picture for each enemy of a book that has none, written to
+"""Step 7's draft (ADRs 0008, 0036): a picture for each enemy of a book that has none, written to
 assets/plates/plates.json for the owner to judge on the picture sheet.
 
     python tools/plates_draft.py <code>            # writes the entries, prints what it chose
@@ -6,7 +6,7 @@ assets/plates/plates.json for the owner to judge on the picture sheet.
     python tools/plates_draft.py <code> --compare  # a book already done: drafts it afresh without
                                                    # its own entries and says how often it agrees
 
-Where a picture comes from, first that applies (ADR 0035; docs/reference/items.md, Fight pictures):
+Where a picture comes from, first that applies (ADR 0008; docs/reference/items.md, Fight pictures):
 
 1. the fight's own picture: the importer gave it already, so such an enemy is not drafted;
 2. the same creature in this book: another enemy of the same kind with a picture now (whole or
@@ -19,7 +19,7 @@ Where a picture comes from, first that applies (ADR 0035; docs/reference/items.m
 
 "The same kind" is read from the names alone: numbers, a note in brackets and a group word ("pack",
 "patrol") left out, plurals made singular, then one name held in the other ("Vazhag" in "Fat
-Vazhag"). A plain human (a guard, a swordsman: ADR 0010) is matched only in this book, then by a
+Vazhag"). A plain human (a guard, a swordsman: ADR 0008) is matched only in this book, then by a
 stand-in, then by exactly the same name in another book, and a lone word such as "guard" never
 matches a longer name. What cannot be matched is left with none and listed: the sheet's Stand-in...
 is the owner's.
@@ -40,7 +40,7 @@ GROUP = {'pack', 'patrol', 'scout', 'horde', 'band', 'squad', 'troop', 'garrison
 STOP = {'the', 'a', 'an', 'and', 'with', 'one'}
 IRREGULAR = {'drakkarim': 'drakkar', 'wolves': 'wolf', 'elves': 'elf', 'dwarves': 'dwarf', 'liganim': 'ligan',
              'nadziranim': 'nadziran', 'thieves': 'thief'}
-# a plain human's last word (ADR 0010): such a name is a kind of person, not one creature
+# a plain human's last word (ADR 0008): such a name is a kind of person, not one creature
 HUMAN = {'guard', 'soldier', 'warrior', 'mercenary', 'sentry', 'captain', 'sergeant', 'knight', 'officer', 'leader',
          'robber', 'thug', 'bandit', 'thief', 'brigand', 'cutthroat', 'footpad', 'rogue', 'pickpocket', 'swordsman',
          'swordswoman', 'horseman', 'rider', 'archer', 'bowman', 'spearman', 'priest', 'monk', 'acolyte', 'defender',
@@ -250,7 +250,7 @@ def draft(code, plates=None, index=None, others=None):
         for hs in (here, there, near):
             hs.sort(key=lambda h: h[0])
         sub = standin(head(k), files, used)
-        # the order of ADR 0035; a person's stand-in ranks with another book's (ADR 0010), a guess from
+        # the order of ADR 0008; a person's stand-in ranks with another book's (ADR 0008), a guess from
         # the links last of the pictures
         pick = why = None
         if here:

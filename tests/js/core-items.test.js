@@ -67,7 +67,7 @@ describe('LW.putItem', () => {
     expect(LW.putItem(h, 'sword')).toBeNull();
     expect(LW.putItem(h, 'map')).toBeNull();
   });
-  it('refuses a thirteenth Special Item in every book, Kai ones too (owner, ADR 0029)', () => {
+  it('refuses a thirteenth Special Item in every book, Kai ones too (owner, ruling R2)', () => {
     const full = Array.from({ length: 12 }, (_, i) => 'spec:Thing' + i);
     for (const [n, series] of [[1, 'kai'], [7, 'magnakai'], [8, 'magnakai']]) {
       LW.bookNumber = n;
