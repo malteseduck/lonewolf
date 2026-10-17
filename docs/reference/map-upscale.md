@@ -29,7 +29,10 @@ book picker and the dashboard follows the files it changes: `docs/reference/dash
 measure, lettering, erase and letter, Gemini, check, finish, import), each marked done, not done or
 out of date from the files' times. It edits the labels, runs the scripts, copies the prompt and the
 lettered picture for Gemini, takes the round's image back (Ctrl+V, drop or file picker), and shows a
-suitable background for each stage. The command lines below are still how to run a step by hand.
+suitable background for each stage. **Compare with** (under the background picker) shows a second
+picture right of a divider dragged across the map, or the whole map while C is held, and Swap
+exchanges the two: any two of the scan, the lettered picture, the rounds and the 4K map. A round's
+`map-check-<n>/aligned.png` lines up with the scan exactly; Gemini's own file only roughly. The command lines below are still how to run a step by hand.
 
 In the editor each place name has two shapes. Its **box** says where the printed name is: step 3
 erases the letters inside it and Measure reads them. Its **frame**, drawn round the new type, is what
