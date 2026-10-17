@@ -66,6 +66,8 @@
      those a carried character chose (ADR 0018); none in a Kai book he goes back to */
   LW.pastKai = (hero) => hero.series === 'magnakai' || hero.series === GM;
   LW.chose = (hero, d) => LW.pastKai(hero) && (hero.magnakai || []).includes(d);
+  /* a Grand Master Discipline's numbers, in a Grand Master book; each replaces its Magnakai counterpart's */
+  LW.grand = (hero, d) => hero.series === GM && (hero.grandmaster || []).includes(d);
   LW.rankOf = (hero) => seriesOf(hero).ranks[LW.owned(hero).length] || '';
   LW.rankCount = (hero) => LW.owned(hero).length;
   LW.circlesOf = (hero) => (hero.series === 'magnakai' ? LW.CIRCLES.filter((c) => c.needs.every((d) => LW.has(hero, d))) : []);
@@ -80,13 +82,15 @@
      (ADR 0018). The Magnakai books do not mark where Hunting fails, so it says so. */
   const kaiVeteran = (hero) => LW.completedAll(hero, 1, 5);
   LW.heals = (hero) => (hero.series === GM ? LW.chose(hero, 'curing') && 'Curing' : hero.series === 'magnakai' ? (LW.has(hero, 'curing') && 'Curing') || (kaiVeteran(hero) && LW.has(hero, 'healing') && 'Healing') : LW.has(hero, 'healing') && 'Healing');
-  LW.hunts = (hero) => (hero.series === GM ? LW.chose(hero, 'huntmastery') && 'Huntmastery' : hero.series === 'magnakai' ? (LW.has(hero, 'huntmastery') && 'Huntmastery') || (kaiVeteran(hero) && LW.has(hero, 'hunting') && 'Hunting') : LW.has(hero, 'hunting') && 'Hunting');
+  LW.hunts = (hero) => (hero.series === GM ? (LW.grand(hero, 'grandHuntmastery') && 'Grand Huntmastery') || (LW.chose(hero, 'huntmastery') && 'Huntmastery') : hero.series === 'magnakai' ? (LW.has(hero, 'huntmastery') && 'Huntmastery') || (kaiVeteran(hero) && LW.has(hero, 'hunting') && 'Hunting') : LW.has(hero, 'hunting') && 'Hunting');
   LW.huntNote = (hero) => (LW.hunts(hero) === 'Hunting' && hero.series === 'magnakai' ? ' Hunting fails in desert and wasteland: if this is such a place, eat a Meal by hand.' : '');
   LW.shielded = (hero) => (hero.series === GM ? LW.has(hero, 'kaiScreen') || LW.chose(hero, 'psiScreen') : hero.series === 'magnakai' ? LW.has(hero, 'psiScreen') : LW.has(hero, 'mindshield'));
-  /* Psi-surge's numbers: an Archmaster's are stronger and cheaper (Book 12) */
-  LW.psi = (hero) => (LW.mkRank(hero) >= 9 && LW.chose(hero, 'psiSurge') ? { surge: 6, cost: 1, floor: 4, blast: 3 } : { surge: 4, cost: 2, floor: 6, blast: 2 });
-  /* 0 = no mind attack, 1 = Mindblast, 2 = Psi-surge */
-  LW.mindPower = (hero) => (LW.pastKai(hero) ? (LW.chose(hero, 'psiSurge') ? 2 : 0) : LW.has(hero, 'mindblast') ? 1 : 0);
+  /* The surge's numbers: an Archmaster's Psi-surge is stronger and cheaper (Book 12); a Grand Master's
+     Kai-surge stronger still, and it gets through a foe deaf to Mindblast and Psi-surge (kai) */
+  LW.psi = (hero) => (LW.grand(hero, 'kaiSurge') ? { name: 'Kai-surge', surge: 8, cost: 1, floor: 6, blast: 4, kai: true }
+    : LW.mkRank(hero) >= 9 && LW.chose(hero, 'psiSurge') ? { name: 'Psi-surge', surge: 6, cost: 1, floor: 4, blast: 3 } : { name: 'Psi-surge', surge: 4, cost: 2, floor: 6, blast: 2 });
+  /* 0 = no mind attack, 1 = Mindblast, 2 = Psi-surge (or Kai-surge) */
+  LW.mindPower = (hero) => (LW.pastKai(hero) ? (LW.grand(hero, 'kaiSurge') || LW.chose(hero, 'psiSurge') ? 2 : 0) : LW.has(hero, 'mindblast') ? 1 : 0);
 
   /* Magnakai rank: the number of Magnakai Disciplines. From Book 7 the books improve some disciplines
      by rank (rules-books.md, "Improved Disciplines"); a carried character reaches each rank in the
@@ -100,7 +104,8 @@
   const weaponParts = (hero, w, ctx = {}) => {
     const it = LW.ITEMS[w] || {}, kinds = it.weapon || [w], wc = ctx.weaponCs || {};
     const own = w in wc ? wc[w] : '*' in wc ? wc['*'] : ctx.plain ? 0 : it.cs, parts = own ? [{ label: it.name || LW.itemName(w), n: own }] : [];
-    if (mastered(hero) && kinds.some((k) => (hero.mastery || []).includes(k))) parts.push({ label: 'Weaponmastery', n: LW.mkRank(hero) >= 8 ? 4 : 3 }); // Scion-kai: +4
+    if (LW.grand(hero, 'grandWeaponmastery') && kinds.some((k) => (hero.grandMastery || []).includes(k))) parts.push({ label: 'Grand Weaponmastery', n: 5 });
+    else if (mastered(hero) && kinds.some((k) => (hero.mastery || []).includes(k))) parts.push({ label: 'Weaponmastery', n: LW.mkRank(hero) >= 8 ? 4 : 3 }); // Scion-kai: +4
     else if (!LW.pastKai(hero) && hero.weaponskill && kinds.includes(hero.weaponskill)) parts.push({ label: 'Weaponskill', n: 2 });
     return parts;
   };
@@ -134,7 +139,7 @@
     marks.filter((m) => m.cs).forEach((m) => parts.push({ label: m.name, n: m.cs }));
     // ctx.psiTimes: a foe that takes the mind's attack badly (or well) multiplies what it adds
     const psi = LW.psi(hero), times = ctx.psiTimes || 1;
-    if (ctx.psiSurge) parts.push({ label: 'Psi-surge', n: psi.surge * times });
+    if (ctx.psiSurge) parts.push({ label: psi.name, n: psi.surge * times });
     else if (ctx.mindblast) parts.push({ label: 'Mindblast', n: psi.blast * times });
     if (ctx.enemy && ctx.enemy.mindforce && !LW.shielded(hero)) parts.push({ label: 'Mind attack', n: -ctx.enemy.mindforce });
     if (ctx.csMod) parts.push({ label: ctx.csNote || 'Circumstance', n: ctx.csMod });
@@ -143,6 +148,7 @@
   };
   /* A bow shot (a section's bowShot): a Bow and an Arrow, and what is added to the Random Number:
      Weaponmastery with the Bow 3, and from Mentora (Book 10) 2 more; both only with the Bow mastered.
+     Grand Weaponmastery with the Bow: 5, in place of both.
      A bow of a book's own may add its own (item.shot). {why} when he cannot shoot. */
   LW.bowShot = (hero) => {
     const bows = hero.weapons.filter((w) => (LW.ITEMS[w] || {}).ranged), shot = (w) => LW.ITEMS[w].shot || 0;
@@ -156,16 +162,19 @@
   LW.weaponBonus = (hero, w) => {
     const it = LW.ITEMS[w] || {};
     if (!it.ranged) return weaponParts(hero, w);
-    const parts = it.shot ? [{ label: LW.itemName(w), n: it.shot }] : [];
-    if (mastered(hero) && (it.weapon || [w]).concat('bow').some((k) => (hero.mastery || []).includes(k))) {
+    const parts = it.shot ? [{ label: LW.itemName(w), n: it.shot }] : [], kinds = (it.weapon || [w]).concat('bow');
+    if (LW.grand(hero, 'grandWeaponmastery') && kinds.some((k) => (hero.grandMastery || []).includes(k))) parts.push({ label: 'Grand Weaponmastery with Bow', n: 5 });
+    else if (mastered(hero) && kinds.some((k) => (hero.mastery || []).includes(k))) {
       parts.push({ label: 'Weaponmastery with Bow', n: 3 });
       if (LW.mkRank(hero) >= 7) parts.push({ label: 'Mentora', n: 2 });
     }
     return parts;
   };
   /* Curing at Archmaster (Book 12): once in a book (the books say once in 100 days), at 6 ENDURANCE or
-     less in a fight, 20 back. hero.cured holds the book it was used in. */
-  LW.canCure = (hero, bookId) => LW.mkRank(hero) >= 9 && LW.chose(hero, 'curing') && hero.cured !== bookId;
+     less in a fight, 20 back; Deliverance in its place, at 8 or less (once in 20 days: once a book, ADR
+     0019). {name, at}, or null. hero.cured holds the book it was used in. */
+  LW.cureOf = (hero) => (LW.grand(hero, 'deliverance') ? { name: 'Deliverance', at: 8 } : LW.mkRank(hero) >= 9 && LW.chose(hero, 'curing') ? { name: 'Curing', at: 6 } : null);
+  LW.canCure = (hero, bookId) => !!LW.cureOf(hero) && hero.cured !== bookId;
 
   /* Lore-circle ENDURANCE is added once, when a circle is completed; in the Grand Master series it
      stays in his scores, and no circle counts any more */

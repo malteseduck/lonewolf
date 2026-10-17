@@ -262,8 +262,8 @@ story on.
 - The shaded bands behind the enemy's name and the controls are `::before` layers faded out at
   the sides too, so no straight edge shows over the plate.
 - The fight's command medallions use glyphs too: Strike shows the weapon in hand (`itemGlyph`),
-  Mindblast/Psi-surge a brain or psychic waves (lit while in use), Laumspur the potion, Curing its
-  discipline's glyph, Evade a running man.
+  Mindblast/Psi-surge (Kai-surge) a brain or psychic waves (lit while in use), Laumspur the potion,
+  Curing (Deliverance) the healing glyph, its note at 6 (8) or less, Evade a running man.
 - `portraitFromArt`, `drawFrame`, `gearSVG`: Lone Wolf's ink likeness for the Kai and
   inventory panels, the page frame (also the discipline grid's frame), the clockwork.
   `drawFrame` (after the HD book): a border band with a running vine (`vine`: a wavering stem,

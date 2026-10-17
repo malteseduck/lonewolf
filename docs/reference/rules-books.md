@@ -192,8 +192,8 @@ Nexus limited immunity to fire, gas and acid.
 
 Read from Book 13's rules pages (2026-10-10). **The engine applies only part of this yet**: the series
 itself (`LW.SERIES.grandmaster`, 2026-10-16: its disciplines, ranks, gates, and which earlier numbers
-remain) and setting out (G2, 2026-10-16: the scores, the disciplines past four, Grand Weaponmastery's
-weapons); the rest is in docs/plan.md ("Grand Master series"); the owner's readings are ADRs 0011, 0018 and 0019.
+remain), setting out (G2, 2026-10-16: the scores, the disciplines past four, Grand Weaponmastery's
+weapons), carrying in (G3), and the Grand Master Disciplines' numbers (G5, 2026-10-17); the rest is in docs/plan.md ("Grand Master series"); the owner's readings are ADRs 0011, 0018 and 0019.
 
 Book 13's footnote points to Project Aon's Readers' Handbook for what the earlier disciplines still
 do. Its rules pages (Kai, Magnakai, Grand Master, New Order, the rules FAQ, the newsletter excerpts,
@@ -208,9 +208,9 @@ three Topical Guide pages) were downloaded on 2026-10-10 into git-ignored
 | He holds every Kai and Magnakai Discipline; the text offers the Magnakai ones by name (Book 13: Nexus, Divination, Invisibility, Psi-surge, Animal Control) and assumes those with no number | `LW.has` |
 | Only a character who completed Books 1–12 keeps the numbers of his Magnakai Disciplines (LWCN Summer Special 1987, 10, 28). Partly completed: the Handbook leaves it to the reader. *Owner*: any carried character keeps the numbers of those he chose (ADR 0018) | `LW.chose` (`hero.magnakai`) |
 | Those numbers: Huntmastery spares Meals unless the text says not; Curing +1 ENDURANCE a section without a fight; Weaponmastery +3 (+4 from Scion-kai) and +2 on bow or thrown shots; Psi-surge +4 at 2 a round, Mindblast +2 (an Archmaster's +6 at 1, +3) | yes, at his Magnakai rank |
-| A Grand Master Discipline replaces its Magnakai counterpart's number, never adds to it: Grand Weaponmastery with a weapon he had mastered is +5, not +8 or +9 (LWCN 28) | no |
+| A Grand Master Discipline replaces its Magnakai counterpart's number, never adds to it: Grand Weaponmastery with a weapon he had mastered is +5, not +8 or +9 (LWCN 28) | yes (`LW.grand`): Grand Weaponmastery, Kai-surge, Deliverance, Grand Huntmastery each in place of the Magnakai number |
 | The +1 a section without a fight carries on into the series only for a character who played and survived the Magnakai books: a hidden reward for loyal readers (LWCN 28) | yes, with Curing chosen (ADR 0018) |
-| Deliverance replaces Archmaster Curing. "Once every 20 days" has no official ruling; the Handbook suggests once an adventure. *Owner*: once a book (ADR 0019) | no |
+| Deliverance replaces Archmaster Curing. "Once every 20 days" has no official ruling; the Handbook suggests once an adventure. *Owner*: once a book (ADR 0019) | yes (`LW.cureOf`) |
 
 ### Entering the series
 
@@ -242,13 +242,13 @@ bonus when he sets out (`LW.readyHero`, once each).
 
 | Discipline | Effect | Engine |
 |---|---|---|
-| Grand Weaponmastery | +5 COMBAT SKILL with a mastered weapon; two weapons at the start, one more for each Grand Master book completed; with the Bow, +5 to the Random Number of a shot | the weapons chosen (`hero.grandMastery`); the +5, no |
+| Grand Weaponmastery | +5 COMBAT SKILL with a mastered weapon; two weapons at the start, one more for each Grand Master book completed; with the Bow, +5 to the Random Number of a shot | yes (`hero.grandMastery`; `weaponParts`, `weaponBonus`) |
 | Animal Mastery | Controls hostile non-sentient creatures; speaks with birds and fish | gates only |
-| Deliverance (Advanced Curing) | Once every 20 days, at 8 ENDURANCE or less in a fight, restore 20 | no |
+| Deliverance (Advanced Curing) | Once every 20 days, at 8 ENDURANCE or less in a fight, restore 20 | yes, once a book (ADR 0019; `LW.cureOf`, the fight's medallion) |
 | Assimilance (Advanced Invisibility) | Changes his appearance for days; near undetectable in open land | gates only |
-| Grand Huntmastery | No Meal needed when told to eat; sees in total darkness | no |
+| Grand Huntmastery | No Meal needed when told to eat; sees in total darkness | the Meal (`LW.hunts`); the darkness, gates only |
 | Grand Pathsmanship | Resists hostile plants; senses ambush in woods | gates only |
-| Kai-surge | +8 COMBAT SKILL at 1 ENDURANCE a round, or Mindblast +4 at no cost; not with Psi-surge or Mindblast at once; not at 6 ENDURANCE or less | no |
+| Kai-surge | +8 COMBAT SKILL at 1 ENDURANCE a round, or Mindblast +4 at no cost; not with Psi-surge or Mindblast at once; not at 6 ENDURANCE or less | yes (`LW.psi`; gets through a foe immune to Mindblast and Psi-surge, `immune: 'psi'`) |
 | Kai-screen | Mind fortresses for himself and others, stronger by rank (the text gives it a COMBAT SKILL penalty to spare: 221, 325) | shields from a foe's mind attack (`LW.shielded`), as Psi-screen |
 | Grand Nexus | Withstands flame and acid for an hour or more | gates only |
 | Telegnosis (Advanced Divination) | Longer, safer spirit-walking | gates only |
@@ -258,7 +258,7 @@ bonus when he sets out (`LW.readyHero`, once each).
 The weapons that can be mastered are the same ten as Weaponmastery's.
 
 Footnote rulings (Project Aon's): Grand Weaponmastery's bonus **replaces** Weaponmastery's, it is
-not added to it; and the Mentora +2 on bow shots is not added to Grand Weaponmastery's +5.
+not added to it; and the Mentora +2 on bow shots is not added to Grand Weaponmastery's +5. *Engine*: yes.
 
 ### Ranks
 

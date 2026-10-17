@@ -359,6 +359,7 @@ describe('LW.weaponBonus: what a weapon adds, as the inventory shows it', () => 
    Magnakai Discipline for the text's gates; of their numbers he keeps only those of the Magnakai
    Disciplines he chose (hero.magnakai, a carried character's), at his Magnakai rank. */
 const FOUR = ['grandWeaponmastery', 'deliverance', 'kaiSurge', 'grandNexus'];
+const BARE = ['grandNexus', 'telegnosis', 'magiMagic', 'kaiAlchemy']; // no numbers of their own
 const gmHero = (grandmaster = FOUR, over = {}) => Object.assign({
   cs: 30, ep: 35, epMax: 35, series: 'grandmaster', disciplines: KAI(), grandmaster, mastery: [],
   weapons: ['sword'], backpack: [], special: [], meals: 0, gold: 0, completed: [],
@@ -387,7 +388,7 @@ describe('the Grand Master series', () => {
     expect(LW.meets(h, { disc: ['nexus'] })).toBe(true);
   });
   it('gives a new character none of the earlier numbers', () => {
-    const h = gmHero(FOUR, { weaponskill: 'sword', mastery: ['sword'] });
+    const h = gmHero(BARE, { weaponskill: 'sword', mastery: ['sword'] });
     expect(LW.heals(h)).toBe(false);
     expect(LW.hunts(h)).toBe(false);
     expect(LW.mindPower(h)).toBe(0);
@@ -399,12 +400,12 @@ describe('the Grand Master series', () => {
     expect(LW.canCure(h, '13tplor')).toBe(false);
   });
   it('keeps a carried character\'s chosen Magnakai numbers, at his Magnakai rank', () => {
-    const h = gmHero(FOUR, { magnakai: NINE, mastery: ['sword', 'bow', 'axe'], arrows: 3, weapons: ['sword', 'bow'] });
+    const h = gmHero(BARE, { magnakai: NINE, mastery: ['sword', 'bow', 'axe'], arrows: 3, weapons: ['sword', 'bow'] });
     expect(LW.mkRank(h)).toBe(9);
     expect(LW.heals(h)).toBe('Curing');
     expect(LW.hunts(h)).toBe('Huntmastery');
     expect(LW.mindPower(h)).toBe(2);
-    expect(LW.psi(h)).toEqual({ surge: 6, cost: 1, floor: 4, blast: 3 }); // Archmaster
+    expect(LW.psi(h)).toEqual({ name: 'Psi-surge', surge: 6, cost: 1, floor: 4, blast: 3 }); // Archmaster
     expect(LW.shielded(h)).toBe(true);
     expect(LW.heroCS(h).parts).toContainEqual({ label: 'Weaponmastery', n: 4 }); // Scion-kai
     expect(LW.skilledWith(h, 'sword')).toBe(true);
@@ -525,5 +526,43 @@ describe('the Grand Master series', () => {
     s15.toggle('magiMagic');
     const h15 = LW.readyHero(s15.build());
     expect([h15.cs, h15.epMax]).toEqual([32, 39]);
+  });
+});
+
+/* G5: the Grand Master Disciplines' own numbers (rules-books.md, "Grand Master Disciplines"). Each
+   replaces its Magnakai counterpart's number, never adds to it (ADR 0018). */
+describe('the Grand Master Disciplines\' numbers', () => {
+  it('Grand Weaponmastery: +5 with a weapon it mastered, in place of Weaponmastery; +5 to a Bow shot, no Mentora', () => {
+    const vet = gmHero(FOUR, { magnakai: NINE, mastery: ['sword', 'axe', 'bow'], grandMastery: ['sword', 'bow'], weapons: ['sword', 'bow'], arrows: 3 });
+    expect(LW.weaponBonus(vet, 'sword')).toEqual([{ label: 'Grand Weaponmastery', n: 5 }]); // not +4 more
+    expect(LW.weaponBonus(vet, 'axe')).toEqual([{ label: 'Weaponmastery', n: 4 }]); // a Scion-kai's, kept
+    expect(LW.heroCS(vet).total).toBe(35);
+    expect(LW.bowShot(vet).plus).toBe(5);
+    const fresh = gmHero(FOUR, { grandMastery: ['axe'], weapons: ['axe'] });
+    expect(LW.heroCS(fresh).parts).toContainEqual({ label: 'Grand Weaponmastery', n: 5 });
+    expect(LW.skilledWith(fresh, 'axe')).toBe(true);
+    expect(LW.skilledWith(fresh, 'sword')).toBe(false);
+    expect(LW.weaponBonus(gmHero(BARE, { grandMastery: ['axe'] }), 'axe')).toEqual([]); // the list without the discipline
+  });
+  it('Kai-surge: +8 at 1 ENDURANCE a round, Mindblast +4, not at 6 or less; it replaces Psi-surge', () => {
+    const want = { name: 'Kai-surge', surge: 8, cost: 1, floor: 6, blast: 4, kai: true };
+    expect(LW.psi(gmHero(FOUR))).toEqual(want);
+    expect(LW.psi(gmHero(FOUR, { magnakai: NINE }))).toEqual(want); // an Archmaster's Psi-surge gives way
+    expect(LW.mindPower(gmHero(FOUR))).toBe(2);
+    expect(LW.heroCS(gmHero(FOUR), { psiSurge: true }).parts).toContainEqual({ label: 'Kai-surge', n: 8 });
+    expect(LW.heroCS(gmHero(FOUR), { mindblast: true }).parts).toContainEqual({ label: 'Mindblast', n: 4 });
+  });
+  it('Grand Huntmastery spares the Meal, in place of Huntmastery', () => {
+    expect(LW.hunts(gmHero(['grandHuntmastery']))).toBe('Grand Huntmastery');
+    expect(LW.hunts(gmHero(['grandHuntmastery'], { magnakai: NINE }))).toBe('Grand Huntmastery');
+    expect(LW.hunts(gmHero(BARE, { magnakai: NINE }))).toBe('Huntmastery');
+  });
+  it('Deliverance: 20 back at 8 or less, once a book, in place of an Archmaster\'s Curing', () => {
+    expect(LW.cureOf(gmHero(FOUR))).toEqual({ name: 'Deliverance', at: 8 });
+    expect(LW.cureOf(gmHero(FOUR, { magnakai: NINE }))).toEqual({ name: 'Deliverance', at: 8 });
+    expect(LW.cureOf(gmHero(BARE, { magnakai: NINE }))).toEqual({ name: 'Curing', at: 6 });
+    expect(LW.cureOf(gmHero(BARE))).toBe(null);
+    expect(LW.canCure(gmHero(FOUR, { cured: '13tplor' }), '13tplor')).toBe(false);
+    expect(LW.canCure(gmHero(FOUR, { cured: '13tplor' }), '14tcod')).toBe(true);
   });
 });

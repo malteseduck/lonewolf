@@ -84,11 +84,11 @@
     sum(key, round) { return this.phases(round).reduce((t, p) => t + (p[key] || 0), 0); }
 
     // immune: true, to every attack of the mind; 'mindblast', to Mindblast only (Psi-surge still tells);
-    // 'psi', to Mindblast and Psi-surge (only a Grand Master's Kai-surge tells, which the engine lacks yet)
-    static allDeaf(foe) { return foe.immune === true || foe.immune === 'psi'; }
+    // 'psi', to Mindblast and Psi-surge (only a Grand Master's Kai-surge tells)
+    static allDeaf(foe, hero) { return foe.immune === true || (foe.immune === 'psi' && !LW.psi(hero).kai); }
     /* the foe no mind attack of his can touch: immune to all, or to Mindblast when that is all he has */
-    deaf() { return Fight.allDeaf(this.foe) || (!!this.foe.immune && this.power === 1); }
-    blasting() { return Fight.allDeaf(this.foe) || (this.foe.immune && this.mind === 1) ? 0 : this.mind; }
+    deaf() { return Fight.allDeaf(this.foe, this.hero) || (!!this.foe.immune && this.power === 1); }
+    blasting() { return Fight.allDeaf(this.foe, this.hero) || (this.foe.immune && this.mind === 1) ? 0 : this.mind; }
     /* his COMBAT SKILL, worked out (heroCS's {total, parts}) for a round, the next one by default */
     parts(round = this.rounds + 1) {
       const hero = this.hero, ph = this.phases(round), more = ph.filter((p) => p.csMod).map((p) => ({ label: p.note || 'This round', n: p.csMod }));
@@ -121,19 +121,19 @@
     get evadeOpen() { return this.evades().some((e) => e.open); }
     get evadeLate() { const e = this.evades(); return !!e.length && e.every((x) => x.late); }
 
-    /* Mindblast, Psi-surge, at rest, in turn */
+    /* Mindblast, Psi-surge (Kai-surge), at rest, in turn */
     focus() {
-      const hero = this.hero, foe = this.foe;
+      const hero = this.hero, foe = this.foe, psi = LW.psi(hero);
       if (this.deaf()) return void this.log.push(`${foe.name} is immune to ${foe.immune === true ? 'attacks of the mind' : foe.immune === 'psi' ? 'Mindblast and Psi-surge' : 'Mindblast'}.`);
       this.mind = (this.mind + 1) % (this.power + 1);
-      if (this.mind === 2 && hero.ep <= LW.psi(hero).floor) { this.mind = 0; this.log.push('You are too weak to Psi-surge.'); }
-      else this.log.push(['You let your mind rest.', foe.immune ? `You gather your will to a point: Mindblast, to which ${foe.name} is immune.` : 'You gather your will to a point: Mindblast.', `You loose the full Psi-surge. It will cost you ${LW.psi(hero).cost} Endurance a round.`][this.mind]);
+      if (this.mind === 2 && hero.ep <= psi.floor) { this.mind = 0; this.log.push(`You are too weak to ${psi.name}.`); }
+      else this.log.push(['You let your mind rest.', foe.immune ? `You gather your will to a point: Mindblast, to which ${foe.name} is immune.` : 'You gather your will to a point: Mindblast.', `You loose the full ${psi.name}. It will cost you ${psi.cost} Endurance a round.`][this.mind]);
     }
-    /* an Archmaster's Curing: 20 back, once a book (LW.canCure) */
+    /* an Archmaster's Curing or a Grand Master's Deliverance: 20 back, once a book (LW.canCure) */
     cure() {
       const hero = this.hero, back = Math.min(20, hero.epMax - hero.ep);
       hero.ep += back; hero.cured = this.bookId;
-      this.log.push(`Curing: you draw on your mastery and ${back} Endurance returns.`);
+      this.log.push(`${LW.cureOf(hero).name}: you draw on your mastery and ${back} Endurance returns.`);
     }
     /* the house rule: Laumspur may be drunk mid-fight; it ends a condition it cures (LW.MARKS[m].until) */
     drink() {
@@ -201,7 +201,7 @@
       if (each && hero.ep > 0) { hero.ep -= each; this.log.push(`It costs you ${each} Endurance more.`); }
       if (this.blasting() === 2 && hero.ep > 0) {
         const psi = LW.psi(hero);
-        hero.ep -= psi.cost; this.log.push(`The Psi-surge costs you ${psi.cost} Endurance.`);
+        hero.ep -= psi.cost; this.log.push(`The ${psi.name} costs you ${psi.cost} Endurance.`);
         if (hero.ep <= psi.floor && hero.ep > 0) { this.mind = 1; this.log.push('Too weak to hold it, you fall back on Mindblast.'); }
       }
       hero.ep = Math.max(0, hero.ep);

@@ -30,7 +30,7 @@ has its tests in `tests/js/` (`core-*`, `rules-series`, `fight`).
   arrows: 0,                 // Arrows in the Quiver, at most LW.MAX_ARROWS (6)
   stored: [ids],             // Special Items left at the Kai Monastery (Book 5 on): kept, not usable
   storedGold: 0,             // Gold Crowns left there (Book 6 on)
-  cured: 'code',             // the book an Archmaster last used Curing's 20 in
+  cured: 'code',             // the book an Archmaster's Curing (or Deliverance) last gave its 20 in
   completed: ['01fftd', ...], // the books he had completed when he set out on this one (from LW.Character's record; [] when new)
   found,                     // transient flag used for a toast after creation
   marks: {id: true | n},     // lasting conditions and flags (LW.MARKS); n: the book number it lasts for
@@ -140,8 +140,8 @@ Adds `bow` and `quiver` to `LW.ITEMS`.
 | Series table | `LW.SERIES.kai` / `.magnakai` / `.grandmaster`: `list`, `first` (disciplines for a new character), `field` (hero property), `ranks` |
 | Lore-circles | `LW.CIRCLES`; `LW.circlesOf(hero)`; `settleCircles(hero)` adds circle Endurance once |
 | Discipline tests | `LW.has(hero, id)` checks the three lists; in a Grand Master book every Kai and Magnakai Discipline counts as held (the text's gates, ADR 0018). `LW.chose(hero, id)`: a Magnakai Discipline in `hero.magnakai`, in a Magnakai or Grand Master book (`LW.pastKai`), whose numbers apply. `LW.owned(hero, series)`, `LW.rankOf`, `LW.rankCount` |
-| Series-dependent effects | `LW.heals`, `LW.hunts` (in a Magnakai book, Healing and Hunting too for one who completed Books 1-5: `LW.completedAll(hero, 1, 5)`, ADR 0018; `LW.huntNote` then reminds that Hunting fails in desert and wasteland), `LW.shielded`, `LW.mindPower` (0 none, 1 Mindblast, 2 Psi-surge), `LW.psi(hero)` (Psi-surge's `surge`, `cost`, `floor`, Mindblast's `blast`: an Archmaster's +6, 1, 4, +3, else +4, 2, 6, +2) |
-| Improved disciplines | `LW.mkRank(hero)`: the number of Magnakai Disciplines. Weaponmastery +4 at Scion-kai (8); unarmed with Weaponmastery −2 at Tutelary (5), −1 at Scion-kai; Psi-surge as above; `LW.canCure(hero, book)`: an Archmaster's Curing, once a book |
+| Series-dependent effects | `LW.heals`, `LW.hunts` (in a Magnakai book, Healing and Hunting too for one who completed Books 1-5: `LW.completedAll(hero, 1, 5)`, ADR 0018; `LW.huntNote` then reminds that Hunting fails in desert and wasteland), `LW.shielded`, `LW.mindPower` (0 none, 1 Mindblast, 2 Psi-surge or Kai-surge), `LW.psi(hero)` (the surge's `name`, `surge`, `cost`, `floor`, Mindblast's `blast`: a Grand Master's Kai-surge +8, 1, 6, +4, `kai`; an Archmaster's Psi-surge +6, 1, 4, +3; else +4, 2, 6, +2) |
+| Improved disciplines | `LW.mkRank(hero)`: the number of Magnakai Disciplines. Weaponmastery +4 at Scion-kai (8); unarmed with Weaponmastery −2 at Tutelary (5), −1 at Scion-kai; Psi-surge as above; `LW.cureOf(hero)` (`{name, at}`: Deliverance at 8, else an Archmaster's Curing at 6) and `LW.canCure(hero, book)`: its 20 back, once a book |
 | Bow | `bow` is `ranged`: never the weapon in hand unless the fight names it (`ctx.with`). `LW.bowShot(hero)`: `{why}` with no Bow or Arrow, else `{bow, parts, plus}`: Weaponmastery with the Bow +3, and from Mentora (7) +2 more, both only with the Bow mastered, a book bow's own `shot` (these parts are `LW.weaponBonus(hero, bow)`, which gives any other weapon's COMBAT SKILL parts too, for the inventory) |
 | Starting kits | `LW.KITS[number]`: `give`, `choose`, `from`, `store`, `storeGold`, `newOnly`, `wear` (rules-books.md, "Book addenda") |
 | Combat Skill | `LW.heroCS(hero, ctx)` returns `{total, parts: [{label, n}]}`. `ctx`: `mindblast`, `psiSurge`, `psiTimes`, `enemy`, `csMod`, `csNote`, `with`, `noShield`, `noUnarmed`, `weaponCs`, `plain`, `only`, `barred`, `lend`, `more` (parts added as given). Every carried Special Item with `fightCs` (the Shield, the Silver Helm, +2 each) counts; a mark's `noShield` or `ctx.noShield` bars the Shield; marks' `cs` count |
@@ -183,9 +183,17 @@ Psi-screen. Lore-circles no longer count (`circlesOf` is empty) and their ENDURA
 not, ADR 0011). Entering the series from an earlier one (`enterGrand`, in `build()`), the Lore-circles'
 COMBAT SKILL goes into `hero.cs`, and of his Special Items, carried or at the Monastery, only
 `LW.SERIES.grandmaster.keeps` stay (ADR 0019; `dropItem`, so an item's ENDURANCE goes with it; no
-Quiver, no Arrows). `HeroSetup.carried()` gives the scores he will set out with, for the page. The
-Grand Master Disciplines' own numbers (Grand Weaponmastery, Kai-surge, Deliverance, Grand
-Huntmastery) are plan.md's G5.
+Quiver, no Arrows). `HeroSetup.carried()` gives the scores he will set out with, for the page.
+
+The Grand Master Disciplines' own numbers (G5, 2026-10-17; `LW.grand(hero, d)`: his, in a Grand
+Master book) each replace their Magnakai counterpart's, never add to it (ADR 0018): Grand
+Weaponmastery +5 with a weapon in `hero.grandMastery` (`weaponParts`; a weapon only in
+`hero.mastery` keeps a chosen Weaponmastery's +3 / +4), +5 to a Bow shot in place of Weaponmastery's
+3 and Mentora's 2 (`weaponBonus`), and counts for the text's `mastery` / `skilled` conditions
+(`LW.skilledWith`); Kai-surge in `LW.psi` in place of Psi-surge; Deliverance in `LW.cureOf` in place
+of Archmaster Curing (once a book, ADR 0019; Curing's +1 a section stays); Grand Huntmastery in
+`LW.hunts` (Meals only: Huntmastery's ambush rule stays with a chosen Huntmastery, as Book 13 gives
+Grand Huntmastery none).
 
 ## Combat procedure
 
@@ -215,10 +223,11 @@ once (the tests use it).
 
 Between rounds, at no cost: `focus()` cycles the mind attack (rest, Mindblast, Psi-surge; not
 Psi-surge at or below its floor; nothing against a foe it cannot touch: `deaf()`); `drink()` (the house
-rule that Laumspur can be drunk mid-fight, +4); `cure()` (an Archmaster's Curing, 20 back, once a
-book: `LW.canCure`). A foe `immune: true` ignores every mind attack; `immune: 'mindblast'` only
+rule that Laumspur can be drunk mid-fight, +4); `cure()` (an Archmaster's Curing or Deliverance, 20 back, once a
+book: `LW.canCure`, named by `LW.cureOf`). A foe `immune: true` ignores every mind attack; `immune: 'mindblast'` only
 Mindblast (Psi-surge, and so the +4, still tells); `immune: 'psi'` Mindblast and Psi-surge (only a
-Grand Master's Kai-surge, not in the engine yet, would tell). `evadeOpen`: `evade.after` rounds
+Grand Master's Kai-surge tells: `Fight.allDeaf(foe, hero)` looks at `LW.psi(hero).kai`; his Mindblast,
++4, does not). `evadeOpen`: `evade.after` rounds
 fought and, with `evade.within`, fewer than that (`evadeLate` once past it).
 
 What holds for some rounds only, or under a condition, is `combat.rounds` (book-format.md): `phases(r)`

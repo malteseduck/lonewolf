@@ -41,7 +41,7 @@ spent at B8 164 (the text gives no number), the puzzles, and B5 162's climb (a b
 
 Book 13's rules were read on 2026-10-10 (rules-books.md, "Grand Master series"). The importer knows
 Book 13 (2026-10-11: its disciplines, ranks, and foes `immune: 'psi'`); the engine has the series (G1)
-setting out (G2) and carrying in (G3), but not yet the new disciplines' numbers. Importing it is the owner's go-ahead, apart
+setting out (G2), carrying in (G3) and the new disciplines' numbers (G5). Importing it is the owner's go-ahead, apart
 from this work.
 
 **Engine work**, in order (G1 first: everything else reads the series):
@@ -55,14 +55,9 @@ from this work.
   Items cut to the ten, at the Monastery too; Lore-circle COMBAT SKILL folded in.
 - G4 done 2026-10-16: Book 13's kit step keeps the Monastery (Special Items over 12, gold over 50)
   for a Grand Master character, as in the Magnakai books; it needed no change, only its test.
-- G5. Disciplines with numbers: Grand Weaponmastery +5 (replacing Weaponmastery, not added; Bow +5,
-  Mentora's +2 not added), Kai-surge (+8 at 1 a round, Mindblast +4, not at 6 or less) in `LW.psi` and
-  the fight's medallions, Deliverance (20 back at 8 or less, in the fight like Archmaster Curing; once
-  a book, ADR 0019), Grand Huntmastery in `LW.hunts`; a carried character's chosen Magnakai
-  Disciplines keep their numbers until replaced by their Grand Master counterparts (ADR 0018). Book
-  13's 8 foes immune to Mindblast and Psi-surge but not Kai-surge (31, 45, 120, 156, 157, 186, 212,
-  243) are read by the importer and already deaf to the first two; Kai-surge must get through (295
-  is Mindblast only). Needs: G1. The psychic multipliers it builds on (fight `rounds` `psi`) are done.
+- G5 done 2026-10-17 (rules-engine.md, "Grand Master book"): Grand Weaponmastery, Kai-surge (through
+  Book 13's foes immune to Mindblast and Psi-surge), Deliverance, Grand Huntmastery, each in place of
+  its Magnakai counterpart's number.
 - G6. The Kai sheet's grid of twelve disciplines and their glyphs, and the ranks. Needs: G1.
 - G7. Then register the Grand Master item tables in `main.js`. The dashboard opens their test play and
   registering by itself once `LW.SERIES` has the series (ADR 0039). Needs: G1-G5.

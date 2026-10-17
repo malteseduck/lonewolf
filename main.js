@@ -595,7 +595,7 @@ function packHTML() {
   const ails = LW.marksOf(h).map((m) => LW.MARKS[m].name + (LW.MARKS[m].about ? `: ${LW.MARKS[m].about}` : ''));
   const slot = (kind, id, extra = '') => `<button type="button" class="disc item ${on(kind, id)} ${extra}" data-sel="${kind}|${esc(id)}" aria-label="${esc(LW.itemName(id))}">${itemGlyph(id)}</button>`;
   // lit when his skill counts with it (what it adds is in its box only). An empty hand shows a faint sword, not a bare ring
-  const skilled = (w) => LW.weaponBonus(h, w).some((p) => /^Weapon/.test(p.label));
+  const skilled = (w) => LW.weaponBonus(h, w).some((p) => /^(Grand )?Weapon/.test(p.label));
   const arm = (w) => `<div class="arm">${w ? slot('weapon', w, skilled(w) ? 'lit' : '') : `<span class="disc vacant">${itemGlyph('sword')}</span>`}
     <span class="name">${w ? esc(LW.itemName(w)) : 'No weapon'}</span></div>`;
   // the Quiver shows its Arrows (its room is less what rides in it in their place)
@@ -1085,11 +1085,11 @@ function updateBattle() {
   q('stats').textContent = `CS ${foe.cs} · EP ${Math.max(0, foe.ep)} · Ratio ${r > 0 ? '+' : ''}${r}`;
   const locked = B.lock || B.over;
   const med = (id, ic, label, note, off, extra = '') => `<div class="medcap"><button type="button" class="med ${extra}" data-cmd="${id}" ${locked || off ? 'disabled' : ''} aria-label="${label}">${ic}</button>${label}<small>${note}</small></div>`;
-  const n = hero.backpack.filter((b) => b === 'potion').length, psi = LW.psi(hero);
+  const n = hero.backpack.filter((b) => b === 'potion').length, psi = LW.psi(hero), cure = LW.cureOf(hero);
   const left = med('fight', B.weapon ? itemGlyph(B.weapon) : glyph('crossed-swords'), 'Strike', 'attack')
-    + (B.power ? med('mind', glyph(B.power === 2 ? 'psychic-waves' : 'brainstorm'), B.power === 2 ? 'Psi-surge' : 'Mindblast', B.deaf() ? 'no effect' : foe.immune && B.mind === 1 ? 'as Mindblast: no effect' : ['at rest', B.power === 2 ? `as Mindblast, +${psi.blast}` : 'focused, +2', `+${psi.surge}, costs ${psi.cost} a round`][B.mind], false, B.blasting() ? 'lit' : '') : '');
+    + (B.power ? med('mind', glyph(B.power === 2 ? 'psychic-waves' : 'brainstorm'), B.power === 2 ? psi.name : 'Mindblast', B.deaf() ? 'no effect' : foe.immune && B.mind === 1 ? 'as Mindblast: no effect' : ['at rest', B.power === 2 ? `as Mindblast, +${psi.blast}` : 'focused, +2', `+${psi.surge}, costs ${psi.cost} a round`][B.mind], false, B.blasting() ? 'lit' : '') : '');
   const right = (n ? med('item', itemGlyph('potion'), 'Laumspur', `${n} left`, hero.ep >= hero.epMax) : '')
-    + (LW.canCure(hero, book.id) ? med('cure', glyph('healing'), 'Curing', hero.ep <= 6 ? '20 back, once a book' : 'at 6 or less', hero.ep > 6) : '')
+    + (LW.canCure(hero, book.id) ? med('cure', glyph('healing'), cure.name, hero.ep <= cure.at ? '20 back, once a book' : `at ${cure.at} or less`, hero.ep > cure.at) : '')
     + B.boosts().map((id) => med('boost:' + id, itemGlyph(id), esc(LW.itemName(id)), 'before you strike')).join('')
     // one medallion for each way out the text allows (B.evades()); a second one is named by its own label
     + B.evades().map((e) => med('evade:' + e.i, glyph(e.free ? 'invisible' : 'run'), e.label ? esc(e.label) : 'Evade', e.open ? (e.free ? 'untouched' : 'take one blow') : e.late ? 'too late' : e.if && !LW.meets(hero, e.if) ? `needs ${esc(LW.condName(e.if))}` : `after round ${e.after}`, !e.open)).join('');

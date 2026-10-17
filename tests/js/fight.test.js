@@ -157,6 +157,24 @@ describe('the mind', () => {
     expect(f.mind).toBe(0);
     expect(f.log.at(-1)).toBe('You are too weak to Psi-surge.');
   });
+  it('Kai-surge adds 8 at 1 a round, gets through a foe deaf to Mindblast and Psi-surge, and stops at 6', () => {
+    const gm = () => mkHero({ series: 'grandmaster', grandmaster: ['kaiSurge'], cs: 30, ep: 8 });
+    const { g, f } = fightAt({ enemies: [foe({ ep: 999, immune: 'psi' })] }, gm());
+    expect([f.power, f.deaf(), f.cs()]).toEqual([2, false, 30]); // its Mindblast does not tell
+    f.focus();
+    expect([f.mind, f.cs()]).toEqual([2, 38]);
+    expect(f.log.at(-1)).toBe('You loose the full Kai-surge. It will cost you 1 Endurance a round.');
+    const unhurt = drawWhere(10, (r) => r.hero === 0 && r.enemy < 50);
+    f.round(unhurt);
+    expect([g.hero.ep, f.mind]).toEqual([7, 2]);
+    f.round(unhurt);
+    expect([g.hero.ep, f.mind]).toEqual([6, 1]);
+    expect(f.log.at(-2)).toBe('The Kai-surge costs you 1 Endurance.');
+    // deaf to every attack of the mind: nothing gets through
+    expect(fightAt({ enemies: [foe({ immune: true })] }, gm()).f.deaf()).toBe(true);
+    // a Magnakai character's Psi-surge does not get through 'psi'
+    expect(fightAt({ enemies: [foe({ immune: 'psi' })] }, mkHero({ series: 'magnakai', magnakai: ['psiSurge'] })).f.deaf()).toBe(true);
+  });
   it('a foe\'s mind attack drains every round, unless he is shielded', () => {
     const hero = (d) => mkHero({ cs: 30, disciplines: d });
     let { g, f } = fightAt({ enemies: [foe({ ep: 999, drain: 2 })] }, hero([]));
@@ -197,6 +215,13 @@ describe('healing mid-fight', () => {
     expect(LW.canCure(g.hero, 'test')).toBe(true);
     f.cure();
     expect(g.hero.ep).toBe(25);
+    expect(LW.canCure(g.hero, 'test')).toBe(false);
+  });
+  it('Deliverance gives 20 back at 8 or less, once a book', () => {
+    const { g, f } = fightAt({ enemies: [foe()] }, mkHero({ series: 'grandmaster', grandmaster: ['deliverance'], ep: 8, epMax: 40 }));
+    expect(LW.canCure(g.hero, 'test')).toBe(true);
+    f.cure();
+    expect([g.hero.ep, f.log.at(-1)]).toEqual([28, 'Deliverance: you draw on your mastery and 20 Endurance returns.']);
     expect(LW.canCure(g.hero, 'test')).toBe(false);
   });
 });
