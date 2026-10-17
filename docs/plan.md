@@ -41,7 +41,7 @@ spent at B8 164 (the text gives no number), the puzzles, and B5 162's climb (a b
 
 Book 13's rules were read on 2026-10-10 (rules-books.md, "Grand Master series"). The importer knows
 Book 13 (2026-10-11: its disciplines, ranks, and foes `immune: 'psi'`); the engine has the series (G1)
-setting out (G2), carrying in (G3) and the new disciplines' numbers (G5). Importing it is the owner's go-ahead, apart
+setting out (G2), carrying in (G3), the new disciplines' numbers (G5) and the Kai sheet (G6). Importing it is the owner's go-ahead, apart
 from this work.
 
 **Engine work**, in order (G1 first: everything else reads the series):
@@ -58,7 +58,8 @@ from this work.
 - G5 done 2026-10-17 (rules-engine.md, "Grand Master book"): Grand Weaponmastery, Kai-surge (through
   Book 13's foes immune to Mindblast and Psi-surge), Deliverance, Grand Huntmastery, each in place of
   its Magnakai counterpart's number.
-- G6. The Kai sheet's grid of twelve disciplines and their glyphs, and the ranks. Needs: G1.
+- G6 done 2026-10-17 (interface.md, "kai"): the Kai sheet's grid of twelve, six a row, with their
+  glyphs; the ranks were already in G1.
 - G7. Then register the Grand Master item tables in `main.js`. The dashboard opens their test play and
   registering by itself once `LW.SERIES` has the series (ADR 0039). Needs: G1-G5.
 

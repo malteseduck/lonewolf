@@ -285,6 +285,8 @@ h4.ruled small { font-size: 0.7em; color: var(--ink-dim); margin-left: 0.3em; }
 /* the grid of medallions, framed like the HD sheet's lower panel */
 .discs { flex: none; position: relative; display: flex; flex-direction: column; justify-content: center; gap: 0.75em; padding: 1.15em 1.1em 1.3em; background: var(--grid-frame) center / 100% 100% no-repeat, rgba(51, 35, 26, 0.08); }
 .drow { display: flex; align-items: center; }
+/* the Grand Master's twelve, six a row: smaller medallions so the links between them still show */
+.discs.six .disc { --s: 2.75em; }
 .linkwrap { position: relative; flex: 1; min-width: 0.6em; height: 1em; margin: 0 -0.15em; z-index: 0; }
 .linkwrap .link { position: absolute; inset: 0; width: 100%; height: 100%; }
 .link .band { fill: var(--enamel); }

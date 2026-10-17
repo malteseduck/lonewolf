@@ -121,10 +121,13 @@ on the same medallion again, or Escape closes it; touching another medallion mov
   - `.ledgers`: "Attributes" (CS, EP with -/+ steppers, Meals, rank, Lore-circles in Magnakai
     books) beside "Combat Skill" (`heroCS` parts) and "Endurance" (base, plus Special Items' and
     Lore-circles' bonuses). Headings are ruled with a swash (`ruled()`).
-  - `.discs`: every discipline of the book's series, five to a row, as `.disc` medallions joined
-    by bars, in a box framed by `drawFrame(1000, 470)` (`--grid-frame`). Learned ones are `.lit`.
-    Glyphs are game-icons.net SVGs in `assets/icons/` (`DISC_GLYPH`), used as CSS masks so they
-    can take the ivory fill and ember glow.
+  - `.discs`: every discipline of the book's series in two rows (five to a row; the Grand Master's
+    twelve six to a row, `.six`, on smaller medallions so the bars still show), as `.disc`
+    medallions joined by bars, in a box framed by `drawFrame(1000, 470)` (`--grid-frame`). Learned
+    ones are `.lit`. Glyphs are game-icons.net SVGs in `assets/icons/` (`DISC_GLYPH`), used as CSS
+    masks so they can take the ivory fill and ember glow; a Grand Master discipline mostly shares
+    its Magnakai counterpart's glyph, as only one series' grid shows at a time. The rank is
+    `LW.rankOf` (the series' `ranks`, by the number of its disciplines held).
   - The box explains the touched discipline, and says when it is not learned.
 - **pack** (`packHTML`), a ledger like the Kai panel (ADR 0028), its parts close together
   (`.panel:has(> .pack)`): `.arms`, the two weapons each named under its medallion (lit when his

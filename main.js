@@ -174,7 +174,10 @@ const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* Drawn glyphs for the disciplines, from game-icons.net (assets/icons/README.txt), cut from the
    medallion's colour by a mask so they can glow like the HD ones */
 const DISC_GLYPH = { camouflage: 'hood', hunting: 'high-shot', sixthSense: 'third-eye', tracking: 'footsteps', healing: 'herbs-bundle', weaponskill: 'broadsword', mindshield: 'eye-shield', mindblast: 'brainstorm', animalKinship: 'wolf-howl', mindOverMatter: 'magic-palm',
-  weaponmastery: 'crossed-swords', animalControl: 'stag-head', curing: 'healing', invisibility: 'invisible', huntmastery: 'bowman', pathsmanship: 'footprint', psiSurge: 'psychic-waves', psiScreen: 'magic-shield', nexus: 'fire-shield', divination: 'crystal-ball' };
+  weaponmastery: 'crossed-swords', animalControl: 'stag-head', curing: 'healing', invisibility: 'invisible', huntmastery: 'bowman', pathsmanship: 'footprint', psiSurge: 'psychic-waves', psiScreen: 'magic-shield', nexus: 'fire-shield', divination: 'crystal-ball',
+  // the Grand Master ones, each near its Magnakai counterpart's (only one series' grid shows at a time)
+  grandWeaponmastery: 'shining-sword', animalMastery: 'stag-head', deliverance: 'healing', assimilance: 'domino-mask', grandHuntmastery: 'bowman', grandPathsmanship: 'footprint',
+  kaiSurge: 'psychic-waves', kaiScreen: 'magic-shield', grandNexus: 'fire-shield', telegnosis: 'crystal-ball', magiMagic: 'magic-palm', kaiAlchemy: 'round-bottom-flask' };
 const glyph = (name) => `<span class="glyph" aria-hidden="true"><i style="--g:url(assets/icons/${name}.svg)"></i></span>`;
 /* the HD map medallion's compass rose: eight points, each split into a lit and a shaded half */
 const ROSE = (() => {
@@ -559,15 +562,15 @@ function kaiHTML() {
   if (h.circleEp) epParts.push({ label: 'Lore-circles', n: h.circleEp });
   const disc = (d) => `<button type="button" class="disc ${LW.has(h, d) ? 'lit' : ''} ${sel && sel.id === d ? 'sel' : ''}" data-sel="disc|${d}" aria-label="${esc(LW.DISCIPLINES[d].name)}${LW.has(h, d) ? '' : ', not learned'}">${glyph(DISC_GLYPH[d])}</button>`;
   const bar = '<svg class="link" viewBox="0 0 40 14" preserveAspectRatio="none" aria-hidden="true"><path class="band" d="M0 3.4h40v7.2H0z"/><path class="edge" d="M0 4h40M0 10h40M15 7c2.5-3.2 5-3.2 6.2 0s3.700 3.200 6.200 0" vector-effect="non-scaling-stroke"/></svg><span class="chev" aria-hidden="true"></span>';
-  const list = LW.SERIES[series].list, rows = [];
-  for (let i = 0; i < list.length; i += 5) rows.push(list.slice(i, i + 5));
+  const list = LW.SERIES[series].list, rows = [], across = Math.ceil(list.length / 2); // two rows: five, or the Grand Master's six
+  for (let i = 0; i < list.length; i += across) rows.push(list.slice(i, i + across));
   return `<div class="likeness">${portraitURL ? `<img src="${portraitURL}" alt="">` : ''}
       <div class="who"><span class="disc lit">${glyph('wolf-head')}</span><h3>Lone Wolf</h3></div></div>
     <div class="ledgers"><section>${ruled('Attributes')}${row('Combat Skill', `${stepper('cs')} ${cs.total}`)}${row('Endurance', `${stepper('ep')} ${Math.max(0, h.ep)}/${h.epMax}`)}${row('Meals', h.meals)}${row('Rank', esc(LW.rankOf(h) || 'Kai Lord'), true)}${
       series === 'magnakai' ? row('Lore-circles', circles.length ? esc(circles.map((c) => c.name.replace('Circle of ', '').replace('the ', '')).join(', ')) : 'none', true) : ''}</section>
       <section>${ruled('Combat Skill')}${cs.parts.map((p, i) => row(esc(p.label), i ? signed(p.n) : p.n)).join('')}
       ${ruled('Endurance')}${row('Base', h.epMax - epParts.reduce((t, p) => t + p.n, 0))}${epParts.map((p) => row(p.label, signed(p.n))).join('')}</section></div>
-    <div class="discs">${rows.map((r) => `<div class="drow">${r.map(disc).join(`<span class="linkwrap">${bar}</span>`)}</div>`).join('')}</div>`;
+    <div class="discs ${across > 5 ? 'six' : ''}">${rows.map((r) => `<div class="drow">${r.map(disc).join(`<span class="linkwrap">${bar}</span>`)}</div>`).join('')}</div>`;
 }
 /* Inventory, a ledger like the Kai panel (ADR 0028): the two weapons named either side of the faint
    Kai crest, the Special Items as a named list (it scrolls within its place past what fits, so the
