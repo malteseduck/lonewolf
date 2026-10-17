@@ -49,20 +49,20 @@ export const UI_GLYPH = {
   tabKai: 'wolf-head',
   tabPack: 'backpack',
   home: 'return-arrow',
-  statCs: 'crossed-swords',
+  statCs: 'battle-gear',
   statEp: 'heart-drop',
   statGold: 'two-coins',
-  purse: 'two-coins',
+  purse: 'shiny-purse',
   otherPack: 'swap-bag',
   otherSpecial: 'gem-pendant',
   beginFight: 'crossed-swords',
-  strike: 'crossed-swords',
+  strike: 'spinning-sword',
   mindblast: 'brainstorm',
   psiSurge: 'psychic-waves',
   cure: 'healing',
-  evade: 'run',
+  evade: 'boulder-dash',
   evadeFree: 'invisible',
-  foeEmblem: 'crossed-swords',
+  foeEmblem: 'fish-monster',
 };
 
 /* an item with no glyph of its own (one typed in by hand, or a table's item without one), by its kind */
@@ -70,7 +70,7 @@ export const KIND_GLYPH = {
   gold: 'two-coins',
   pack: 'backpack',
   special: 'gem-pendant',
-  weapon: 'pointy-sword',
+  weapon: 'sword-brandish',
   backpack: 'swap-bag',
 };
 
