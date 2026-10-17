@@ -97,7 +97,7 @@ function render() {
       ${STAGES.map((s, i) => {
         const x = b.stages[s.id];
         const gs = i && STAGES[i - 1].group !== s.group ? ' gstart' : '';
-        return `<td class="${gs}" data-stage="${s.id}" title="${esc(s.label + ': ' + x.ev)}"><span class="st ${x.state}"></span>${x.num != null && x.state !== 'done' ? `<span class="cellnum">${esc(x.num)}</span>` : ''}</td>`;
+        return `<td class="${gs}" data-stage="${s.id}" title="${esc(s.label + ': ' + x.ev)}"><span class="st ${x.state}"></span></td>`;
       }).join('')}
       <td class="next">${nx ? `<span class="kind" data-kind="${nx.kind}" style="width:12px;height:12px;vertical-align:-1px"></span> ${esc(nx.label)}` : 'done'}</td></tr>`;
   };

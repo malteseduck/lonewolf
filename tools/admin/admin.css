@@ -125,7 +125,6 @@ button.danger:hover:not(:disabled) { border-color: var(--bad); color: var(--bad)
 .st.done::before { content: '\2713'; }
 .st.warn::before { content: '!'; }
 .st.bad::before { content: '\00d7'; }
-.cellnum { display: block; font-size: 10px; color: var(--dim); margin-top: 1px; }
 .loading { padding: 16px; color: var(--dim); }
 
 .detail { border-radius: 3px; padding: 18px 20px; position: sticky; top: 30px; max-height: calc(100vh - 60px); overflow: auto; }

@@ -12,7 +12,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   the engine to have the book's series (`book_status.engine_series()`, the keys of `LW.SERIES`), so a
   Grand Master book has neither yet, its item table stopping at "read and checked". One column per step, grouped as in `docs/book-checklist.md`. Each cell is
   a seal: done, not yet, a warning (stale, or the files and the marks disagree), failed, or not
-  needed. The number under a cell is what is left (todos, enemies with no picture, the map's stage).
+  needed. A cell shows the seal alone; its tooltip says what is left (todos, enemies with no picture, the map's stage).
   "Next" is the first step not done. The icon over each column says who does it: a cog (a script),
   a hand (the owner), a quill (Claude Code).
 - **A book** (click its row): every step with its evidence, where it came from (the files, or a hand
@@ -63,7 +63,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
 | 1 Download | files | `sect*.htm` and `gamerulz.htm` in `data/projectaon/<code>/` |
 | 2 Import | files | `book.js` there, no broken links, no section without a way on. A warning when it is out of date: the importer or a source page is newer than the last import (`import-report.json`, written every run), or `map-4k.webp` is not named yet |
 | 3 Phrasings | hand | marked in `docs/book-status.json`. Until then it shows the leftover scan (`phrasings.json`, from `phrasings_scan.py --json`): not scanned, out of date (older than `book.js` or the importer), N sections to look at (by id), or none left, a warning: the owner's to mark. Once marked, the scan's line is shown beside the mark |
-| 4 Rules | both | a `### Book N,` heading in `rules-books.md` and a hand mark. Beside it, the rules diff (`rules-diff.json`, from `rules_diff.py --json`): not diffed, out of date (older than a rules page or the script), or N paragraphs to read against the book before (the number under the cell while there is no addendum) |
+| 4 Rules | both | a `### Book N,` heading in `rules-books.md` and a hand mark. Beside it, the rules diff (`rules-diff.json`, from `rules_diff.py --json`): not diffed, out of date (older than a rules page or the script), or N paragraphs to read against the book before |
 | Reading copy | files | `reading.txt` and `items-reading.txt` newer than `book.js` (not a checklist step) |
 | 5 Item table | files | `items-<code>.js` registered in `main.js` `ITEM_TABLES`, and `check-items.json` (from `check_items.mjs --json`) clean and newer than the table and `book.js`. A table that still starts with the draft's line (`// DRAFT by tools/items_draft.mjs`) is not done, however clean |
 | 6 Test play | hand | marked. Until then it shows the walk (`walk.json`, from `walk_book.mjs --json`): not walked, out of date (older than `book.js`, the item table or the engine), N sections to look at (by id), or nothing to look at with how many sections were reached; the play-through and its mark stay the agent's. Once marked, the walk's line is shown beside the mark |
