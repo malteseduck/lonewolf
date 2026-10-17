@@ -54,9 +54,22 @@ share, an id with a book's number (`skeletonKey7`: another book's key is another
 longer one ("Magic Spear", "Jar of Laumspur"), and a place a thing is kept ("in your Quiver"). What a
 sentence says under a condition (if, unless, a Discipline named in the paragraph, a Random Number, what
 someone says), a shop or a list of wares, an Arrow shot (it may have been spent a section earlier), or an
-item no table knows yet, becomes a `todo` naming it ("Gold Crowns and Endurance: as the text says"). When a
-sentence shows a sign of an item, a loss or a gain that it cannot read for certain, it writes a todo rather
-than nothing (ADR 0036). The
+item no table knows yet, becomes a `todo` naming it ("Gold Crowns and Endurance: as the text says").
+
+A sentence those readings leave silent still gets a todo when it shows a sign (ADR 0036: a todo over
+a miss, from general wording only, never one book's phrase): Action Chart, Special or Backpack Item
+wording (also in brackets, which are otherwise dropped; not right after the sentence it belongs to,
+nor about a number to note); a capitalised Arrow, or in a Random Number section a Bow, bow-skill or
+missile bonus (`a bow shot`); ENDURANCE with a loss or gain word (not "if your ENDURANCE score is",
+nor an enemy's); Crowns or gold with a loss, paying or pocketing word; Meals; "your Backpack /
+Weapons / equipment" or a known item with a loss word (`items lost`); a known item given or offered,
+"you may take it", or a thing taken "from your Backpack" or pocket; and in a Random Number section, an
+item or the weapon in use changing the number. A choice line it cannot read gets `a gate` when it is
+open only to who holds something ("If you still have the...", not a Discipline or rank), can pay, or
+names a known item. Fights get no todo: the importer reads each one, and its picture and any
+Combat Skill fix are their own steps.
+
+The
 file's first line (`// DRAFT by tools/items_draft.mjs`) marks it unread: step 5 is not done while it is
 there, and the items-tables test leaves such a file out. The draft writes no book items, fights,
 `bowShot`, marks or stakes: those, and the reading list's other sections, are step 3's.
@@ -64,9 +77,12 @@ there, and the items-tables test leaves such a file out. The draft writes no boo
 With a table already there the draft never touches it: it goes to `data/projectaon/<book>/items-draft.js`
 and is compared with the table, reading by reading. On Books 1-12 (2026-10-14) the tables agree with 457
 of its 473 readings (Endurance 220 of 226, gates 194 of 202, finds 38 of 40, losses 5 of 5); most of the
-rest are gates the tables leave open. Its todos name a section the table also has an entry for in 630 of
-794 cases. It leaves 372 of the tables' 1,292 sections untouched, chiefly fights, bow shots and the
-books' own items.
+rest are gates the tables leave open. With the signs (2026-10-17, Books 1-13): 4,600 sections, 1,171
+with a todo (889 before), 913 of them sections the table has an entry for; 258 false alarms (187
+before). It leaves 187 of the tables' 1,397 sections untouched (384 before): 114 fights, and 73 others,
+chiefly Discipline gates, marks, a book's own item named in lower case, forced Meals (the importer's)
+and number changes by a Discipline. Books 1-12 alone: 1,070 todos, 231 false alarms, 177 untouched
+(104 fights, 73 others).
 
 ### 3. What each section gets
 

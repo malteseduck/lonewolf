@@ -26,6 +26,10 @@ section is just as pointless.
   cannot be sure what it means, it writes a `todo` (or lists the id), never nothing: a false alarm costs
   one read, a miss costs trusting the draft at all. It still flags only sections with such a sign, so
   its silence narrows the reading; a draft that flags nearly every section has failed too.
+- **Signs are general.** What a script reads, or takes as a sign, is wording any book of the series
+  might use (the Action Chart, a capitalised item, a loss or a gain), never a phrase matched to one
+  section or one book: a one-off miss is left to the agent's reading. This holds for every drafter,
+  scanner and script of the book steps, not only the item table's.
 - **Copy prompt** stays beside it, as the refinement: the agent starts from the script's draft.
 - A fresh checkout is set up from the dashboard: a Setup panel checks and installs each tool (uv,
   npm), and downloads the tools' own files (Real-ESRGAN, OCR models) behind a gated button.
@@ -43,7 +47,9 @@ section is just as pointless.
 ## Changes
 
 - 2026-10-17: drafts lean to flagging (owner): a todo over a silent miss, but only where the section
-  shows a sign of the thing; first applied to restorations in brackets in `items_draft.mjs`.
+  shows a sign of the thing; first applied to restorations in brackets in `items_draft.mjs`. The same
+  day, for `items_draft.mjs`'s signs in general (owner): general wording only, no book-specific
+  phrases, and the same rule for the other drafters, scanners and scripts.
 - 2026-10-15: "Send to agent", which opened a new Claude Desktop session with the prompt
   (`claude://code/new`), was tried and dropped by the owner as clunky (a new session and a folder
   confirmation every time). Copy prompt is back: the owner pastes into a session of their choosing.

@@ -6,8 +6,8 @@
    sentence at a time and fills in only the plain readings: Gold Crowns, Meals and items with a known
    id found or offered, items lost, Endurance lost or restored on arrival, and the choices gated on a
    known item or on paying Gold Crowns. A sentence that says any of these under a condition, or names
-   an item no table knows, is not guessed: its section gets a `todo` naming what to read there. The
-   agent's prompt (and the owner) refine the draft from there.
+   an item no table knows, is not guessed: its section gets a `todo` naming what to read there, as does
+   any sentence left silent that shows a general sign of an item, a loss or a gain. The agent's prompt (and the owner) refine the draft from there.
 
    With no items-<book>.js yet, the draft is written there. With one, it is never touched: the draft
    goes to data/projectaon/<book>/items-draft.js instead, and is compared with the table section by
@@ -30,8 +30,8 @@ const num = (s) => (/^\d+$/.test(s) ? +s : WORDS[s.toLowerCase()]);
 
 // a sentence that holds only under a condition, or over time, is not read
 const COND = /\b(if|unless|otherwise|instead|whether|either|until|when|whenever|each|every|per|round|rounds|before|after|later|next time|Random Number|chance|should|would|could|might|will|must have)\b/i;
-// "If you wish to keep it" is an offer, not a condition
-const OFFER_IF = /\b(?:if|should) you (?:wish|want|decide|choose|would like|wish instead) to\b/gi;
+// "If you wish to keep it", "take it if you wish." are offers, not conditions
+const OFFER_IF = /\b(?:if|should) you (?:wish|want|decide|choose|would like|wish instead)(?: to\b|(?=\s*[.,;!)]|$))/gi;
 const OFFER = /\b(may|wish|want|choose|decide|would like|are free to|can take|can keep)\b/i;
 const GIVE = /\b(pocket|you find|you discover|you are given|you receive|hands? you|gives? you|presents? you|you collect|you now (?:have|possess)|you take|you pick up|you put|you place|you slip|you tuck)\b/i;
 const CHART = /\b(Action Chart|Special Items?|Backpack Items?|Weapons? List|Belt Pouch|record|mark (?:it|this|them|these)|note (?:it|this)|add (?:it|this|them|these))\b/i;
@@ -48,6 +48,52 @@ const MEALS = new RegExp(`\\b(?:food|provisions|rations)?[^.]*?\\b${NUM}\\s+Meal
 
 // a shot of his own: he draws or fires an Arrow, or his Arrow strikes
 const SHOT = /\byou\b[^.]*\b(?:draw|fire|loose|notch|nock|release)\b[^.]*\bArrow\b|\byour Arrow\b/i;
+
+/* Signs, for a sentence the readings above left silent (ADR 0036: a draft leans to flagging). Each is
+   general wording any book uses for the Action Chart, Arrows, Endurance, gold or what he carries;
+   one that shows means the sentence may do something the script could not read, so it gets a todo. */
+const SIGN_CHART = /\b(Action Chart|Special Items?|Backpack Items?|Weapons? List|Belt Pouch)\b/;
+// an Arrow, the item, is capitalised (the tables spend one in some sections that only tell it striking);
+// a number drawn for a bow-skill or missile bonus is a shot
+const SIGN_ARROW = /\bArrows?\b|\byour shaft\b/;
+const SIGN_SHOT = /\b(?:Bow|bow-skill|missile)\b|\bArrows?\b/;
+// an offer of something no table knows ("You may keep this Weapon"), or a thing he takes out to use
+const SIGN_OFFER = /\b(?:may|can) (?:take|keep|pick up|carry)\s+(?:it|them|this|these|one|any|either|both|what)\b/i;
+const SIGN_USE = /\bfrom your (?:Backpack|pocket|Belt Pouch|pack|Quiver)\b/;
+const LOSS = /\b(lose|loses|lost|losing|deduct|subtract|erase|remove|discard|discarded|drop|dropped|stolen|steal|steals|stole|taken|confiscat\w*|destroy\w*|crushed|without|gone|missing|hand over|take your|takes your|took your|strip\w*|surrender)\b/i;
+const GAIN = /\b(restore[sd]?|regain|gain|recover|heal|heals|healed|add|adjust)\b/i;
+const SIGN_GOLD = /\bCrowns?\b|\b(?:your|the|some) gold\b/;
+const GOLD_VERB = /\b(pay|paid|pocket|pouch|give|gives|hand|hands|spend|throw|win|won|count|take|takes|bet|wager)\b/i;
+const SIGN_KIT = /\byour (?:Backpack|Weapons?|Special Items|Backpack Items|Quiver|equipment|possessions|belongings|pack)\b|\b(?:Weapons|Backpack Items|Special Items)\b/;
+// a choice open only to who holds something: "If you (still) have a...", "If you possess no..."
+const HOLDS = /\bif you (?:still |already |now )?(?:do not |don't )?(?:have|possess|carry|are carrying|hold|are holding|are wearing|own)\b\s+(?:a|an|the|some|any|no|it|them|this|these|that|those|one|both|either|neither|only|enough|more)\b/i;
+const NOT_ITEM = /Discipline|Kai\b|Magnakai|Lore-circle|skill|mastery|rank|level|picked|chosen/i;
+
+function sign(s, sec, names, prev, prevRead) {
+  if (sec.rnt && SIGN_SHOT.test(s)) return 'a bow shot';
+  if (SIGN_ARROW.test(s)) return 'Arrows';
+  // not "If your ENDURANCE score is 20 or more, add 2" (to the number drawn), nor an enemy's
+  if (/\bENDURANCE\b/.test(s) && !/\bmeal|\bif your (?:current )?ENDURANCE\b|\benem(?:y|ies)\b/i.test(s) && (LOSS.test(s) || GAIN.test(s) || sec.rnt)) return 'Endurance';
+  if (SIGN_GOLD.test(s) && (LOSS.test(s) || GOLD_VERB.test(s) || sec.rnt)) return 'Gold Crowns';
+  if (/\bMeals\b/.test(s) || (/\bMeal\b/.test(s) && !/\b(eat|eaten|eating)\b/i.test(s))) return 'Meals';
+  if (SIGN_KIT.test(s) && LOSS.test(s)) return 'items lost';
+  const ids = named(s, names);
+  if (ids.length && (LOSE_ITEM.test(s) || LOSS.test(s))) return 'items lost';
+  if (ids.length && (GIVE.test(s) || OFFER.test(s) || SIGN_CHART.test(s))) return 'items';
+  // "Mark it on your Action Chart" after the sentence that was read is that reading's
+  if (SIGN_CHART.test(s) && !prevRead && !/\bnumber\b/.test(s)) return ids.length || named(prev, names).length ? 'items' : 'an item no table knows yet';
+  if ((SIGN_OFFER.test(s) && !prevRead) || SIGN_USE.test(s)) return 'items';
+  // a Random Number changed by what he holds or the weapon he uses
+  if (sec.rnt && /\b(add|subtract|deduct)\b/i.test(s) && /\bif you\b/i.test(s) && (ids.length || /\bweapon|\busing\b/i.test(s))) return 'items';
+  return null;
+}
+// a choice line the gates above did not read, open only to who holds something or can pay
+function holds(t, names) {
+  const h = HOLDS.exec(t);
+  if (h && !NOT_ITEM.test(h[0] + t.slice(h.index + h[0].length).split(/,|\b(?:and|or|turn)\b/)[0])) return true;
+  if (/\b(?:can|cannot|can't|unable to) (?:pay|afford)\b|\bno (?:money|gold)\b/i.test(t)) return true;
+  return /\bif you\b/i.test(t) && /\b(have|possess|carry|use|show|give|offer|wear|hold)\b/i.test(t) && named(t, names).length > 0;
+}
 const sentences = (paras) => (paras || []).flatMap((p) => p.split(/(?<=[.!?:;])\s+(?=[A-Z‘“"'(])/));
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -113,20 +159,31 @@ export function draftSection(sec, names) {
   // ("(restore 3 ENDURANCE points)" after a night's sleep), so it is read by hand. A paragraph that
   // names a Discipline is conditional throughout ("unless you have Mind Over Matter")
   if ((sec.text || []).some((p) => [...p.matchAll(/\(([^)]*)\)/g)].some(([, x]) => EP_GAIN.test(x) || EP_FULL.test(x)))) todo.add('Endurance');
-  const paras = (sec.text || []).map((p) => p.replace(/\(([^)]*)\)/g, (m, x) => (/\b(lose|deduct|erase|remember)\b/i.test(x) ? ` ${x.replace(/!/g, '')}. ` : ' ')));
+  // an Action Chart instruction in brackets ("(record it as a Backpack Item)") is read as its own sentence too
+  const paras = (sec.text || []).map((p) => p.replace(/\(([^)]*)\)/g, (m, x) => (/\b(lose|deduct|erase|remember)\b/i.test(x) || SIGN_CHART.test(x) ? ` ${x.replace(/!/g, '')}. ` : ' ')));
   const ss = paras.flatMap((p, k) => sentences([p]).map((s) => ({ s, k })));
   const shop = paras.some((p) => SHOP.test(p));
   // a list of wares or finds ("– Sword"): which of them he takes, and at what price, is read by hand
   const LIST = /^\s*[–—-]\s/, list = paras.some((p) => LIST.test(p));
   let ep = 0, epFull = false, spent = 0;
+  const state = () => JSON.stringify([e, [...todo], ep, epFull, spent]);
+  let read = false;
   ss.forEach(({ s: raw, k }, i) => {
+    const was = state();
+    readSentence(raw, k, i);
+    const silent = state() === was;
+    if (silent) { const t = sign(raw.replace(OFFER_IF, 'may'), sec, names, i ? ss[i - 1].s : '', read); if (t) todo.add(t); }
+    read = !silent;
+  });
+  function readSentence(raw, k, i) {
     const s = raw.replace(OFFER_IF, 'may');
     const next = ss[i + 1] && ss[i + 1].k === k ? ss[i + 1].s : '', prev = i && ss[i - 1].k === k ? ss[i - 1].s : '';
     const near = s + ' ' + next;
     if (LIST.test(raw)) { if (named(s, names).length || /Gold Crown|Meal/.test(s)) todo.add('items'); return; }
     // what someone says ("Ale is one Gold Crown") is no event
     const cond = COND.test(s) || /[‘“"]/.test(s) || /Discipline/.test(paras[k]) || (/[:;,]$/.test(prev.trim()) && COND.test(prev));
-    const offer = OFFER.test(s) || (OFFER.test(next) && !COND.test(next.replace(OFFER_IF, 'may')));
+    // an offer in the next sentence that names its own things offers those, not these
+    const offer = OFFER.test(s) || (OFFER.test(next) && !COND.test(next.replace(OFFER_IF, 'may')) && !named(next, names).length);
     // Endurance on arrival; the Meal rule's "or lose 3" is the importer's
     const lose = s.match(EP_LOSE), gain = s.match(EP_GAIN), full = EP_FULL.test(s);
     if (lose || gain || full) {
@@ -187,10 +244,15 @@ export function draftSection(sec, names) {
     } else if (GIVE.test(s) && CHART.test(near) && handed(s, ids, names)) {
       ids.forEach((id) => add('give', { item: id }));
     } else if (CHART.test(s)) todo.add('items');
-  });
+  }
   // the choice lines: Endurance written on one, and the gates
   const onChoice = [];
   for (const c of sec.choices || []) {
+    const was = state();
+    readChoice(c);
+    if (state() === was && holds(c.text || '', names)) todo.add('a gate');
+  }
+  function readChoice(c) {
     const t = c.text || '';
     // "Restore 2 ENDURANCE points and turn to 80" is his on the way there: what the number drawn does, on
     // arrival here when it is the one way on, else placed on the section it leads to by draftBook
@@ -204,27 +266,27 @@ export function draftSection(sec, names) {
       else if (sec.choices.length === 1) ep += n;
       else onChoice.push({ to: c.to, ep: n });
     }
-    if (c.need ||/Discipline|Magnakai|Kai\b|Lore-circle/.test(t)) continue;
+    if (c.need ||/Discipline|Magnakai|Kai\b|Lore-circle/.test(t)) return;
     const gold = [...t.matchAll(GOLD)];
     if (gold.length) {
       // paying the fee is a gate; not paying it ("if you cannot pay") is the way left open
-      if (/\b(not|cannot|can't|unable|refuse|no)\b/i.test(t)) continue;
+      if (/\b(not|cannot|can't|unable|refuse|no)\b/i.test(t)) return;
       if (gold.length === 1 && /\b(pay|give|offer|spend|hand over|bribe|buy|purchase|afford)\b/i.test(t)) (e.need = e.need || {})[c.to] = { gold: num(gold[0][1]), spend: true };
       else todo.add('a gate');
-      continue;
+      return;
     }
     const m = /\bIf you (do not have|do not possess|have no|possess no|have|possess|are carrying|carry|still have|still possess|are wearing|wear|hold)\b(.*?)(?:\bturn to\b|$)/.exec(t);
-    if (!m) continue;
+    if (!m) return;
     const clause = m[2].replace(/,?\s*(?:and )?(?:you )?(?:wish|want|decide) to\b.*$/, '');
     const not = /no\b|not/.test(m[1]);
     // one item, or a list of single items any of which will do; "a Torch and Tinderbox", "neither... nor",
     // "not X but Y" are more than one condition
     const alts = clause.split(/,?\s+\bor\b\s+|,\s*/).map((a) => a.trim()).filter((a) => a && !/^(?:any|either)$/i.test(a));
     const ids = alts.map((a) => (/\b(and|but|neither|nor|mastery)\b/.test(a) ? [] : named(a, names)));
-    if (!alts.length) continue;
+    if (!alts.length) return;
     if (/\b(but|neither|nor)\b/.test(clause) || ids.some((x) => x.length !== 1)) {
       if (ids.some((x) => x.length) || /\b[A-Z][a-z]+/.test(clause) || /Special Item|Backpack/.test(clause)) todo.add('a gate');
-      continue;
+      return;
     }
     // a weapon is asked for by its kind, which a weapon-like item counts as (the Silver Bow is a Bow)
     const list = [...new Set(ids.flat())], kinds = list.filter((id) => names.weapons && names.weapons.has(id)), rest = list.filter((id) => !kinds.includes(id));

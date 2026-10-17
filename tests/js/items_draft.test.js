@@ -39,6 +39,15 @@ const SECTIONS = {
   '13': sec('The end.', [], { end: 'victory' }),
   // a restoration in brackets may be a thing's description or an event: read by hand
   '14': sec('You sleep well (restore 3 ENDURANCE points).', [turn('13')]),
+  // a draft leans to flagging (ADR 0036): a sign it cannot read is a todo, never silence
+  '15': sec('In the box you find a Brass Bell (if you wish to keep it, record it on your Action Chart as a Backpack Item).', [turn('13')]),
+  '16': sec('You draw and fire two Arrows at the fleeing guards.', [turn('13')]),
+  '17': sec('The current is strong, and you lose your Backpack and Weapons.', [turn('13')]),
+  '18': sec('Pick a number from the Random Number Table: it is the number of ENDURANCE points you lose.', [turn('13')], { rnt: 'auto' }),
+  '19': sec('A Dagger lies by the hearth. You may take this Weapon if you wish.', [turn('13')]),
+  '20': sec('A guard bars the gate.', [turn('13', 'If you still have the Brass Bell, turn to 13.'), turn('12')]),
+  // ...but no sign, no todo: a thing named as scenery
+  '21': sec('The guard leans on his Sword and yawns.', [turn('13')]),
 };
 const BOOK = `(window.LW = window.LW || {}).BOOKS = Object.assign(window.LW.BOOKS || {}, { t1: ${JSON.stringify({ id: 't1', sections: SECTIONS })} });`;
 
@@ -76,8 +85,15 @@ describe('items_draft.mjs', () => {
     expect(S['10']).toEqual({ todo: 'Gold Crowns: as the text says' });
     expect(S['11']).toEqual({ rolls: [{ range: [0, 4], ep: -3 }] });
     expect(S['14']).toEqual({ todo: 'Endurance: as the text says' });
+    expect(S['15']).toEqual({ todo: 'an item no table knows yet: as the text says' });
+    expect(S['16']).toEqual({ todo: 'Arrows: as the text says' });
+    expect(S['17']).toEqual({ todo: 'items lost: as the text says' });
+    expect(S['18']).toEqual({ todo: 'Endurance: as the text says' });
+    expect(S['19']).toEqual({ loot: [{ item: 'dagger' }] });
+    expect(S['20']).toEqual({ todo: 'a gate: as the text says' });
     expect(S['1']).toBeUndefined();
-    expect(r.text).toMatch(/^\d+ sections: give 1, loot 1, take 1, ep 2, need 1, todo 5\nwrote items\/items-t1\.js$/);
+    expect(S['21']).toBeUndefined();
+    expect(r.text).toMatch(/^\d+ sections: give 1, loot 2, take 1, ep 2, need 1, todo 10\nwrote items\/items-t1\.js$/);
 
     const check = await checkItems({ root: tmp, book: 't1' });
     expect(check.errors).toEqual([]);
