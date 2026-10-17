@@ -228,9 +228,9 @@ three Topical Guide pages) were downloaded on 2026-10-10 into git-ignored
 | Rule | Engine |
 |---|---|
 | At most 2 Weapons; at most **10** Backpack Items, Meals included | `LW.backpackMax` (for `series: 'grandmaster'`, which G1 adds) |
-| At most 12 Special Items; more may be left at the Monastery | `LW.specialLimit` (12 in every book, ADR 0029) |
-| Gold: at most 50; more may be left at the Monastery | no |
-| Bow: as in the Magnakai series (a Quiver and an Arrow a shot, useless hand to hand) | no |
+| At most 12 Special Items; more may be left at the Monastery | `LW.specialLimit` (12 in every book, ADR 0029); the Monastery at a book's start (the kit step: `store`) |
+| Gold: at most 50; more may be left at the Monastery | yes, at a book's start (the kit step: `storeGold`) |
+| Bow: as in the Magnakai series (a Quiver and an Arrow a shot, useless hand to hand) | yes (`ranged`, `hero.arrows`, `bowShot`) |
 | Some sections give Grand Weaponmastery with Bow its own bonus (3 to 5); the Handbook advises using the section's number in place of the +5 | no |
 
 ### Grand Master Disciplines
@@ -457,8 +457,8 @@ Monastery). Clothing is named there but not tracked.
 
 The first Grand Master book. Read from its own rules pages (game rules, disciplines, equipment, combat,
 levels, improved disciplines, wisdom, footnotes; the book has no Lore-circles page). *Engine*: the
-series (G1), setting out (G2), carrying into the series (G3), its kit and gold; the rest is
-docs/plan.md, "Grand Master series", G4-G7. Also in place:
+series (G1), setting out (G2), carrying into the series (G3), its kit, gold and the Monastery (G4);
+the rest is docs/plan.md, "Grand Master series", G5-G7. Also in place:
 `LW.backpackMax` (10 for `series: 'grandmaster'`) and `LW.specialLimit` (12).
 
 - **Scores**: a new character: COMBAT SKILL = **25** + a Random Number (0 counts as zero), ENDURANCE =

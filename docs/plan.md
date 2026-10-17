@@ -53,9 +53,8 @@ from this work.
   13's walk now leaves one fight unwon (38, a foe at 50 the section lets him evade).
 - G3 done 2026-10-16 (rules-engine.md, "Grand Master book"): Backpack Items kept, Meals not; Special
   Items cut to the ten, at the Monastery too; Lore-circle COMBAT SKILL folded in.
-- G4. Monastery storage in this series (Book 13's kit, `LW.KITS[13]`, with its `gold: 20`, is written;
-  it is offered once G1 gives the book its series). The Backpack of 10, `LW.backpackMax`, and the 12 Special Items, `LW.specialLimit`, are done:
-  they wait only on `series: 'grandmaster'` from G1. Needs: G1; after G3 (judgement: the same setting-out step).
+- G4 done 2026-10-16: Book 13's kit step keeps the Monastery (Special Items over 12, gold over 50)
+  for a Grand Master character, as in the Magnakai books; it needed no change, only its test.
 - G5. Disciplines with numbers: Grand Weaponmastery +5 (replacing Weaponmastery, not added; Bow +5,
   Mentora's +2 not added), Kai-surge (+8 at 1 a round, Mindblast +4, not at 6 or less) in `LW.psi` and
   the fight's medallions, Deliverance (20 back at 8 or less, in the fight like Archmaster Curing; once

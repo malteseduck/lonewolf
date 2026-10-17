@@ -303,6 +303,34 @@ describe('Book 13 gold', () => {
     k.rollGold(5);
     expect(k.gold()).toEqual({ purse: 50, over: 15, bank: 15 });
   });
+  it('keeps the Monastery for a character carried into the series: Special Items over 12 and gold over 50 (G4)', () => {
+    const keeps = LW.SERIES.grandmaster.keeps;
+    keeps.forEach((id) => { if (!LW.ITEMS[id]) LW.ITEMS[id] = { name: id, kind: 'special' }; });
+    LW.ITEMS.silverBow = { name: 'Silver Bow of Duadon', kind: 'weapon', ranged: true };
+    const special = keeps.filter((id) => id !== 'crystalStar' && id !== 'silverBow');
+    const hero = mkHero(EIGHT, { special: [...special, 'map'], stored: ['crystalStar', 'mapDarklands'], storedGold: 30, gold: 45, weapons: ['sword'] });
+    const h = LW.HeroSetup({ number: 13, series: 'grandmaster' }, { hero, completed: [] }).build();
+    expect(h.special).toEqual(special); // eight of the ten
+    const k = LW.KitSetup({}, LW.KITS[13], h);
+    expect(k.store).toBe(true);
+    expect(k.stored).toEqual(['crystalStar']);
+    k.rollGold(6); // 45 + 20 + 6 = 71: 50 in the pouch, 21 to the Monastery's 30
+    expect(k.gold()).toEqual({ purse: 50, over: 21, bank: 51 });
+    k.choose(k.from.findIndex((x) => x.item === 'quiver'));
+    k.flip(k.fetch, 0); // the Pendant back: 8 + map + Quiver + Pendant = 11
+    expect(k.problems()).toEqual([]);
+    LW.ITEMS.extra = { name: 'Extra', kind: 'special' };
+    h.special.push('extra', 'extra'); // 13: one must stay at the Monastery
+    expect(k.problems()).toEqual(['12 Special Items at most: leave some at the Monastery.']);
+    k.flip(k.leave, h.special.indexOf('extra'));
+    expect(k.problems()).toEqual([]);
+    k.finish();
+    expect(h.special).toEqual(expect.arrayContaining(['crystalStar', 'mapRuel', 'quiver', 'extra']));
+    expect(h.special).toHaveLength(12);
+    expect(h.stored).toEqual(['extra']);
+    expect(h.gold).toBe(50);
+    expect(h.storedGold).toBe(51);
+  });
   it('counts the Backpack Items he brings into the series against the ten', () => {
     const hero = { cs: 30, ep: 30, epMax: 30, weapons: [], backpack: Array(8).fill('rope'), special: [], meals: 0, gold: 0, series: 'grandmaster', disciplines: [] };
     const k = LW.KitSetup({}, LW.KITS[13], hero), meals = k.from.findIndex((x) => x.meal);
