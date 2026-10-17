@@ -1,0 +1,11 @@
+{
+  "_readme": "Where each picture in art/ came from (ADR 0038; tools/art_sources.py). url null: it has no link.",
+  "sources": {
+    "art/plates/07cd/flame-man-wandering-dm.jpg": {"url": "https://www.deviantart.com/wandering-dm/art/Fire-Elemental-Burning-Man-1108893313", "fetched": "2026-10-10", "note": "greyscale"},
+    "art/plates/07cd/oudagorg-worm.jpg": {"url": "https://www.pinterest.fr/pin/317151998744863129/", "fetched": "2026-10-10", "note": "greyscale"},
+    "art/plates/07cd/zahda-kelek-castilho.jpg": {"url": "https://www.pinterest.com/pin/kelek-evil-sorcerer-artist-carlos-castilho--21955116928221659/", "fetched": "2026-10-10", "note": "whitespace trimmed, greyscale"},
+    "art/plates/08tjoh/kezoor-necromancer-pen.jpg": {"url": "https://www.deviantart.com/maximumminiatures/art/Necromancer-Pen-Drawing-720312498", "fetched": "2026-10-10", "note": "greyscale"},
+    "art/plates/08tjoh/korkuna-egg-ink.jpg": {"url": "https://i.etsystatic.com/6355050/r/il/8a9d2b/3815976306/il_fullxfull.3815976306_3fmy.jpg", "fetched": "2026-10-10", "note": "shrunk to 2000 px, greyscale"},
+    "art/plates/12tmod/mind-reaper-smoke-spirit.webp": {"url": "https://i.pinimg.com/originals/55/19/a4/5519a43c82125ff85bd5b8df67e6aceb.jpg", "fetched": "2026-10-11", "page": "https://id.pinterest.com/pin/362365-dark-demon-spirit-thumbnail-sketch-ink-sketchbook-doodle-roughsketch-art-art--2674081023153003/", "note": "photo border cut off, shrunk to 2000 px"}
+  }
+}

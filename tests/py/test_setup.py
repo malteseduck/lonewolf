@@ -123,3 +123,15 @@ def test_install_runs_its_commands_and_stops_at_a_failure(root):
 def test_cli_json(root, capsys):
     assert setup.main(['--json']) == 0
     assert [r['id'] for r in json.loads(capsys.readouterr().out)][:2] == ['uv', 'node']
+
+
+def test_your_pictures_offers_to_fetch_again_what_has_a_link(root):
+    import art_sources
+    write(root / 'art' / 'here.png')
+    art_sources.record('art/here.png', 'https://example.org/here.png')
+    assert by_id(setup.status())['art']['state'] == 'ok'
+    art_sources.record('art/plates/02fotw/giak.webp', 'https://example.org/giak.png')  # listed, not on disk
+    art_sources.record('art/me.png', None)
+    art = by_id(setup.status())['art']
+    assert art['state'] == 'missing' and art['install'] and art['gated']  # a download: the owner's go-ahead
+    assert '1 missing that can be fetched' in art['detail'] and 'copy it' in art['detail'] and '1 picture' in art['size']

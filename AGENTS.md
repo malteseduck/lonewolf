@@ -158,7 +158,7 @@ explaining it would cost more than doing it.
   the choice to the player, write a `todo`, never a guess. Every fight needs a picture: the same
   page says where to find one.
 - Art borrowed for personal use (Lone Wolf HD screenshots and the like) lives in `art/`, which is
-  git-ignored except `art/manifest.json`. Reference images (fan maps) live in git-ignored
+  git-ignored except `art/manifest.json` and `art/sources.json` (each picture's link, ADR 0038). Reference images (fan maps) live in git-ignored
   `data/reference/`, with their sources in `SOURCES.txt`. Never move either anywhere committed.
 - HTML is built as template strings. Pass every piece of book or user text through `esc()`.
 - Comments say why, briefly. Match the density of the file you are in.

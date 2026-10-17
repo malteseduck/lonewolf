@@ -2,6 +2,8 @@ data/projectaon/
 # art/ holds the owner's reference shots and borrowed game art: personal use only, never committed
 art/*
 !art/manifest.json
+# where each picture came from, so a fresh checkout can fetch it again (ADR 0038): links only, no pictures
+!art/sources.json
 # reference images fetched for the owner (fan maps and the like): personal use, never committed
 data/reference/
 # the owner's adventure backups (written by the page's "backup" button): personal, never committed

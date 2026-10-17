@@ -255,7 +255,7 @@ story on.
   `__lw.plates` in the console), else the drawn
   sprite. Library entries are free engravings in `assets/plates/` (sources in its README.txt),
   pictures the owner supplied or that were found by search and are not free, in git-ignored `art/`
-  (Winged Serpent; sources of found ones in `art/plates/SOURCES.txt`), or Project Aon
+  (Winged Serpent; the links of found ones in the committed `art/sources.json`, ADR 0038), or Project Aon
   illustrations by path under `data/projectaon/`: the same book's, often cropped to one figure
   (Book 2's portrait page), or another book's picture of the same creature, or of a plain human
   (the order is ADR 0035).

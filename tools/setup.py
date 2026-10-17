@@ -9,7 +9,8 @@ Standard library only, run with --no-project so that it reports what is missing 
 install it first. The Python tools' packages are tools/pyproject.toml's, at uv.lock's versions (ADR 0037).
 uv and Node are installed by the owner, not here. realesrgan and ocr download files (about 45 MB from
 GitHub; about 1 GB of packages): the dashboard gates them. The books are downloaded from each book's
-row; art/ (the owner's own pictures) is git-ignored and can only be copied from the old checkout.
+row; art/ (the owner's own pictures) is git-ignored: those with a link in art/sources.json are fetched
+again by tools/art_sources.py (the dashboard's setup-art, gated), the rest copied from the old checkout.
 """
 import glob
 import io
@@ -96,10 +97,26 @@ def status():
     imp = [c for c in got if os.path.isfile(p('data', 'projectaon', c, 'book.js'))]
     rows.append(row('books', 'Books', 'data/projectaon/ (git-ignored)', 'info',
                     f'{len(got)} of {len(codes)} downloaded, {len(imp)} imported: each from its row below, with your go-ahead'))
-    ok = bool(glob.glob(p('art', 'plates', '*', '*')))
-    rows.append(row('art', 'Your pictures', 'art/: your fight pictures and borrowed art (git-ignored)', 'ok' if ok else 'missing',
-                    'present' if ok else 'none here: copy art/ from your old checkout (no script can make it)'))
+    rows.append(art_row())
     return rows
+
+
+def art_row():
+    """art/ is git-ignored; art/sources.json (committed) has the links its pictures can be fetched again from."""
+    import art_sources
+    s = art_sources.summary()
+    n, lost = len(s['missing']), len(s['lost'])
+    copy = f"; {lost} with no link: copy {'it' if lost == 1 else 'them'} from your old checkout" if lost else ''
+    what = 'art/: your fight pictures and borrowed art (git-ignored; their links in art/sources.json)'
+    if n:
+        return row('art', 'Your pictures', what, 'missing', f"{s['present']} here, {n} missing that can be fetched again from their links{copy}",
+                   install=True, gated=True, size=f"{n} picture{'s' if n > 1 else ''} from their links (art/sources.json)")
+    if lost:
+        return row('art', 'Your pictures', what, 'missing', f"{s['present']} here{copy}")
+    if not s['present']:
+        return row('art', 'Your pictures', what, 'missing', 'none here: copy art/ from your old checkout, or add pictures on the picture sheet')
+    return row('art', 'Your pictures', what, 'ok', f"{s['present']} here: {s['linked']} with a link, {s['nolink']} with none, "
+                                                   f"{len(s['unasked'])} not asked yet")
 
 
 def _run(argv):

@@ -32,7 +32,8 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   agent's work: the owner looks here and marks it. It opens
   inline under the grid like the map editor (Open picture sheet here, `?embed=1`; the step 7 cell
   only goes to that step's line in the book's list), and on its own. A picture file dropped, pasted or chosen on a card becomes that enemy's
-  picture; Adjust crops any card's picture, flips it left to right and sets levels, with the fight panel previewed as it will look (and, for a picture shown from its 2x copy, Show original to compare);
+  picture, and so does one by its address (dragged from another site, pasted, or By address...: the server fetches it);
+  a new picture asks for its link, or No link (ADR 0038), and Link... gives one to a picture already in `art/`; Adjust crops any card's picture, flips it left to right and sets levels, with the fight panel previewed as it will look (and, for a picture shown from its 2x copy, Show original to compare);
   Remove takes the owner's entry away. Each save redraws the cards and the "with none" count, and the
   dashboard's grid follows. The rules for the entry: `docs/reference/items.md`, "Fight pictures".
 - **The illustration sheet** ("Open illustration sheet" at step 9), inline under the grid like the
@@ -46,7 +47,8 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   while everything is there ("Show" opens it); a row per part, open, while any is missing: uv and
   Node (yours to install), the Python packages (`tools/.venv`, from `tools/pyproject.toml` and `uv.lock`), the npm
   packages, Real-ESRGAN and the map OCR (downloads: gated), the books (a count; each downloaded from
-  its row) and `art/` (git-ignored: copied from the old checkout, nothing can make it). A missing
+  its row) and `art/` (git-ignored: how many pictures are here, with a link, with none, not asked yet; those missing
+  that have a link in `art/sources.json` are fetched again by **Download...**, gated; the rest copied from the old checkout). A missing
   part that a script can install has **Install** (or **Download...**, gated).
 - **Whole-project tools**: the offline check, check everything (`check_all.py`), the release.
 - **The job log** at the foot: a job's output line by line while it runs. A job started in another
@@ -100,8 +102,10 @@ agent run `show` instead).
 | `GET jobs` | the last ten jobs (in memory; gone when the server restarts) |
 | `GET jobs/<id>?from=<n>` | a job's state, exit code and lines from n; the page polls it every 0.8 s |
 | `POST mark/<book>/<step>` (`?undo=1`) | `book_status.mark()` |
+| `POST picture-url` | `{url}`: the picture at an address, or the one its page names (`og:image`), fetched by `tools/art_sources.py`: `{type, data}` (base64); the page shrinks and saves it as a dropped file |
+| `POST art-link` | `{src, url}` (`url` null: no link): the link of a picture already in `art/`, into `art/sources.json` |
 | `GET ills?book=<code>` | the illustration sheet's list, `ill_upscale.listing()`: `[{name, bytes, big, bigBytes, sections}]`, file names, sizes and section ids only |
-| `POST plate` | the picture sheet: `{book, enemy, image?, crop?, levels?, flip?, remove?}` (`image` base64 WebP, up to 25 MB): the owner's picture for one enemy, saved as `art/plates/<book>/<slug of the name>.webp` (never a path from the request) and entered in `plates.json` by `tools/plates_file.py`, which keeps the file's one-entry-per-line layout |
+| `POST plate` | the picture sheet: `{book, enemy, image?, link?, crop?, levels?, flip?, remove?}` (`image` base64 WebP, up to 25 MB): the owner's picture for one enemy, saved as `art/plates/<book>/<slug of the name>.webp` (never a path from the request) and entered in `plates.json` by `tools/plates_file.py`, which keeps the file's one-entry-per-line layout; `link` (an address, or null for none) recorded in `art/sources.json` with a new picture |
 
 The stages are a fixed table, `ADMIN_STAGES`: the command is built from it and a code from
 `book_status.CATALOGUE`, never from the request. One job at a time, sharing the map editor's lock,
@@ -129,6 +133,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `release` | `release.py` (the last commit to the iPad, docs/reference/offline.md) | yes |
 | `setup-venv`, `setup-npm` | `setup.py install venv` (`uv sync --project tools`), `install npm` (`npm ci`); through `uv run --no-project`, so that setup.py reports what is missing rather than uv installing it first | |
 | `setup-realesrgan` | `setup.py install realesrgan`: the v0.2.5.0 Windows zip from GitHub (about 45 MB); only the program, its DLLs and `models/` are written into `tools/realesrgan/` | yes: a download |
+| `setup-art` | `art_sources.py fetch`: every picture in `art/sources.json` with a link and no file here, fetched again and shrunk to 2000 px as the sheet does (through the venv: Pillow) | yes: a download |
 | `setup-ocr` | `setup.py install ocr`: `tools/.venv-paddle` (Python 3.12) with PaddleOCR (about 1 GB) | yes: a download |
 
 **Gated stages** open a dialog first: the book, what is fetched or rewritten (about 400 files, 4 MB

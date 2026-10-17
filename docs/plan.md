@@ -1,7 +1,7 @@
 # Plan
 
 Work not yet done that is not a book step. Rough; to be refined with the owner. Last updated
-2026-10-12. What the player does now is in `docs/reference/`, what it is meant to do in
+2026-10-16. What the player does now is in `docs/reference/`, what it is meant to do in
 `docs/spec.md`, and the owner's decisions in `docs/adr/`; finished work leaves this file for those.
 
 Where each book stands, step by step, is not kept here: the import dashboard
@@ -18,25 +18,6 @@ make testable"). Books 1-12 are imported and being played; the engine now applie
 imported (2026-10-14). Each item ends with why it stands where it
 does: "Needs" is a hard dependency, "judgement" an order chosen, not forced. The owner picks what is
 done, and when.
-
-### Dashboard: a script for every step (ADR 0036)
-
-Every book step gets a button that runs a script; where judgement is needed the script writes a
-draft or a report (certain readings filled in, the rest `todo` or listed by section id), and the
-agent's Copy prompt refines it. In the owner's order (2026-10-14; D1, Setup, D2, the item table's
-draft, D3, the fight pictures' draft, and D4, the phrasings scan, done that day, and D5, the walk,
-D6, the rules diff, D7, a new book added to the importer, and D8, the map's retype ticks and style draft, on 2026-10-15:
-dashboard.md, items.md "The draft" twice, importer.md "The leftover scan", rules-engine.md "The walk",
-map-upscale.md steps 2 and 5; the Gemini repaint stays the owner's):
-
-- D9. **Art source links** (ADR 0038): a committed list of each `art/` picture's link; the picture
-  sheet takes a picture by URL (fetched by the server, link recorded) and asks for a link on drop or
-  paste ("no link" allowed); Setup counts what can be fetched again and fetches it (gated). The
-  pictures already there get links from the owner.
-
-Each new script gets tests of its main path and a line in `docs/reference/dashboard.md`; each prompt
-tells the agent to start from the script's output. Judgement: before the Grand Master work, so the
-scripts are tried on Books 10-12's open steps first.
 
 ### The item tables' last todos
 

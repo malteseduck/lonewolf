@@ -143,6 +143,16 @@ def stand_in_ok(src):
     return os.path.isfile(os.path.join(ROOT, *src.split('/')))
 
 
+def _drop(src):
+    """The owner's picture file removed, and its link in art/sources.json with it (ADR 0038)."""
+    import art_sources
+    try:
+        os.remove(os.path.join(ROOT, *src.split('/')))
+    except OSError:
+        pass
+    art_sources.forget(src)
+
+
 def put(code, book, name, image=None, crop=None, levels=None, remove=False, src=None, flip=False):
     """Write (or remove) the owner's entry for one enemy. image: WebP bytes, or None to keep the
     picture it has; src: instead, a picture already on disk to stand in (see standins()); flip: mirror it
@@ -162,10 +172,7 @@ def put(code, book, name, image=None, crop=None, levels=None, remove=False, src=
         save_plates(data)
         src = old.get('src', '')
         if src.startswith(folder) and not any(p.get('src') == src for p in plates):
-            try:
-                os.remove(os.path.join(ROOT, *src.split('/')))
-            except OSError:
-                pass
+            _drop(src)
         return None, 'removed'
     if crop is not None:
         if not (isinstance(crop, list) and len(crop) == 4 and all(isinstance(v, (int, float)) for v in crop)):
@@ -188,10 +195,7 @@ def put(code, book, name, image=None, crop=None, levels=None, remove=False, src=
         if mine is not None:  # the owner's file it replaces, if nothing else uses it
             old = plates[mine].get('src', '')
             if old != src and old.startswith(folder) and not any(p.get('src') == old for i, p in enumerate(plates) if i != mine):
-                try:
-                    os.remove(os.path.join(ROOT, *old.split('/')))
-                except OSError:
-                    pass
+                _drop(old)
     elif image is not None:
         if not (image[:4] == b'RIFF' and image[8:12] == b'WEBP'):
             raise ValueError('the picture must be WebP')

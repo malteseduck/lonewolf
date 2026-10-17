@@ -325,10 +325,11 @@ def stage(monkeypatch, name, cmds=(('run',),), timeout=30, **spec):
 def test_admin_stage_table_has_every_stage_with_the_right_gates():
     assert set(serve.ADMIN_STAGES) == {'fetch', 'fetch-rules', 'import', 'reading', 'items-draft', 'check-items', 'approve-pictures', 'pictures-draft', 'phrasings-scan', 'rules-diff', 'walk', 'add-book', 'map-style',
                                        'ills', 'fights-up', 'offline', 'check', 'release',
-                                       'setup-venv', 'setup-npm', 'setup-realesrgan', 'setup-ocr'}
+                                       'setup-venv', 'setup-npm', 'setup-realesrgan', 'setup-ocr', 'setup-art'}
     gated = {k for k, v in serve.ADMIN_STAGES.items() if v.get('gated')}
     # upscaling fetches nothing; setup's downloads of files are gated, its package installs not
-    assert gated == {'fetch', 'fetch-rules', 'import', 'approve-pictures', 'release', 'setup-realesrgan', 'setup-ocr'}
+    assert gated == {'fetch', 'fetch-rules', 'import', 'approve-pictures', 'release', 'setup-realesrgan', 'setup-ocr', 'setup-art'}
+    assert serve.ADMIN_STAGES['setup-art']['cmds']('') == [serve.PY + ['tools/art_sources.py', 'fetch']]  # Pillow converts
     # setup runs before tools/.venv exists, so not through PY
     assert serve.ADMIN_STAGES['setup-ocr']['cmds']('') == [['uv', 'run', '--no-project', 'python', 'tools/setup.py', 'install', 'ocr']]
     assert serve.ADMIN_STAGES['ills']['cmds']('02fotw') == [serve.PY + ['tools/ill_upscale.py', '02fotw']]
@@ -467,3 +468,21 @@ def test_map_upload_refuses_a_wrong_type(root):
     assert st == 400 and 'Content-Type' in got['error']
     assert post_image('/api/map/01fftd/gemini/1', b'GIF89a-not-a-png') == (400, {'error': 'the bytes are not that image type'})
     assert not (d / 'work').exists() or os.listdir(d / 'work') == []
+
+
+# ---------------------------------------------------------------- art sources (ADR 0038)
+
+def test_picture_by_address_and_a_link_for_one_already_here(root, monkeypatch, tmp_path):
+    import art_sources
+    monkeypatch.setattr(art_sources, '_fetch', lambda url: (PNG, 'image/png') if url.endswith('.png') else (b'<html></html>', 'text/html'))
+    st, got = jsend('POST', '/api/admin/picture-url', {'url': 'https://example.org/rat.png'})
+    assert st == 200 and got['type'] == 'image/png' and got['data']
+    st, got = jsend('POST', '/api/admin/picture-url', {'url': 'https://example.org/page'})
+    assert st == 400 and 'neither a picture' in got['error']
+    write(str(tmp_path / 'art' / 'plates' / 'rat.png'), PNG)
+    st, got = jsend('POST', '/api/admin/art-link', {'src': 'art/plates/rat.png', 'url': 'https://example.org/rat.png'})
+    assert st == 200 and art_sources.load()['art/plates/rat.png']['url'] == 'https://example.org/rat.png'
+    st, got = jsend('POST', '/api/admin/art-link', {'src': 'art/plates/rat.png', 'url': None})
+    assert st == 200 and art_sources.load()['art/plates/rat.png'] == {'url': None}
+    st, _ = jsend('POST', '/api/admin/art-link', {'src': 'art/plates/none.png', 'url': None})
+    assert st == 400  # only a picture that is here

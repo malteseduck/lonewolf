@@ -143,10 +143,13 @@ def test_put_levels_must_be_black_below_white_within_0_255(tree, levels):
         pf.put(CODE, book('Rat'), 'Rat', image=WEBP, levels=levels)
 
 
-def test_put_remove_takes_the_entry_and_its_file(tree):
+def test_put_remove_takes_the_entry_its_file_and_its_link(tree):
+    import art_sources
     own = tree.file('art/plates/02fotw/rat.webp')
+    art_sources.record('art/plates/02fotw/rat.webp', 'https://example.org/rat.png')
     tree.save([{'match': 'z', 'src': 'z'}, {'match': '^rat$', 'book': CODE, 'src': 'art/plates/02fotw/rat.webp'}])
     assert pf.put(CODE, book('Rat'), 'Rat', remove=True) == (None, 'removed')
     assert tree.plates() == [{'match': 'z', 'src': 'z'}] and not own.exists()
+    assert art_sources.load() == {}  # deleted on purpose: nothing to fetch again
 
 

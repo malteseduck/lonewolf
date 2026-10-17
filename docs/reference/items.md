@@ -210,8 +210,12 @@ add is written some other way (`ice barbarian$`, `kalkoth`).
    card shows its picture's 2x copy ("upscaled 2x"); one still shown from its original is badged
    **Not upscaled** (step 7 cannot be marked done while any is), and in Adjust **Show original** swaps it for the
    picture it was made from, in the editor and the preview, to compare (only to look: Save keeps the
-   entry as it is). **Remove** drops the entry (and its file under `art/plates/<code>/`). A picture dragged from another site arrives as an address and is refused: save it
-   first, or copy and paste it. **Stand-in...** on a card opens a picker of every picture already on disk
+   entry as it is). **Remove** drops the entry (and its file under `art/plates/<code>/`, and its link). A picture dragged from another site, an
+   address pasted, or **By address...** is fetched by the server (`POST /api/admin/picture-url`; a page's address is followed to
+   the picture it names, its `og:image`) and taken as a dropped file is. A new picture asks where it came from (ADR 0038): the
+   address it was fetched by is filled in; a file dropped or pasted wants its link typed, or **No link** ticked (a screenshot, the
+   owner's drawing). The link goes into the committed `art/sources.json` (`tools/art_sources.py`), from which Setup fetches the
+   picture again on a fresh checkout. **Link...** on a card whose picture is in `art/` gives or changes the link afterwards. **Stand-in...** on a card opens a picker of every picture already on disk
    (`GET /api/admin/standins`: `assets/plates/`, `art/` including `art/plates/`, `data/reference/`, and every
    imported book's `ill*.png`, each labelled with the enemies it is fought with and, once the index below
    has been built, what it shows); filter by name, enemy, a nearby fight's enemy or a word of the note,
@@ -346,8 +350,10 @@ like Drakkarim but are its Tukodak Guardians.
    - **Free** (public domain, CC0, CC BY): save it to `assets/plates/` (committed, so a fresh clone
      has it) and credit it in `assets/plates/README.txt`. Commons is a good first stop for these:
      search with `filetype:bitmap` (its API answers the browser with `origin=*`).
-   - **Anything else**: save it to git-ignored `art/plates/<code>/` and note its source page in
-     git-ignored `art/plates/SOURCES.txt`. A fresh clone shows the drawn emblem for that enemy.
+   - **Anything else**: save it to git-ignored `art/plates/<code>/` and record its link with
+     `python tools/art_sources.py link art/plates/<code>/<file> <url>` (the picture's own address, or its page), so
+     Setup can fetch it again; say what was done to it by hand (greyscale, trimmed) as the entry's `note` in
+     `art/sources.json`. A fresh clone shows the drawn emblem for that enemy until then.
 
    Lay the candidates out in the page to compare, and prefer menacing over quaint (the owner
    turned down a cute bear). Prefer line work: tonal prints (aquatints, such as Goya's) come out as a

@@ -41,10 +41,12 @@ Static files as `python -m http.server` serves them, from the project root, plus
     GET  /api/admin/setup             what the tools need and have: tools/setup.py's status() (setup-<part> stages install)
     GET  /api/admin/jobs              the last ten jobs; GET /api/admin/jobs/<id>?from=n: its state and lines from n
     POST /api/admin/mark/<book>/<n>   book_status.py's done (or ?undo=1) for checklist step n
-    POST /api/admin/plate             the picture sheet: {book, enemy, image?: base64 WebP, crop?, levels?, flip?, remove?};
+    POST /api/admin/plate             the picture sheet: {book, enemy, image?: base64 WebP, link?, crop?, levels?, flip?, remove?};
                                       the owner's picture for one enemy, saved as art/plates/<book>/<slug>.webp and
                                       written into assets/plates/plates.json (tools/plates_file.py). Or src: a picture
                                       already on disk (assets/, art/, data/) to stand in, instead of image
+    POST /api/admin/picture-url       {url}: the picture at an address (or the one its page names), {type, data: base64}
+    POST /api/admin/art-link          {src, url|null}: a link for a picture already in art/ (art/sources.json, ADR 0038)
     GET  /api/admin/standins          every picture a fight can borrow: [{src, group, size, shows?, near?}]
     GET  /api/admin/ills?book=<code>  the illustration sheet: [{name, bytes, big, bigBytes, sections}] (tools/ill_upscale.py)
 
@@ -464,6 +466,10 @@ for _part, _title, _gated in (('venv', 'Install Python packages', False), ('npm'
                               ('realesrgan', 'Download Real-ESRGAN', True), ('ocr', 'Install the map OCR', True)):
     ADMIN_STAGES['setup-' + _part] = {'title': _title, 'book': False, 'gated': _gated, 'timeout': 3600,
                                       'cmds': lambda c, part=_part: [['uv', 'run', '--no-project', 'python', 'tools/setup.py', 'install', part]]}
+# the pictures of art/ missing here, fetched again from their links in art/sources.json (ADR 0038): a download.
+# Through PY: it converts with Pillow, and Setup offers it only once the Python packages are in.
+ADMIN_STAGES['setup-art'] = {'title': 'Fetch your pictures', 'book': False, 'gated': True, 'timeout': 1800,
+                             'cmds': lambda c: [PY + ['tools/art_sources.py', 'fetch']]}
 _jobs, _jobs_lock, _job_seq = {}, threading.Lock(), [0]
 JOB_LINES = 20000
 
@@ -666,6 +672,17 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(200, plates_file.standins())
         if method == 'POST' and parts == ['plate']:
             return self._admin_plate(body)
+        if method == 'POST' and parts in (['picture-url'], ['art-link']):
+            import art_sources
+            import base64
+            try:
+                if parts == ['art-link']:  # a link for a picture already in art/ (ADR 0038)
+                    return self._json(200, art_sources.link_existing(str(body.get('src') or ''), body.get('url') or None))
+                # the picture sheet's picture by address: fetched here, shrunk and saved by the page as a dropped file is
+                data = art_sources.get_picture(str(body.get('url') or ''))
+                return self._json(200, {'type': art_sources.kind(data), 'data': base64.b64encode(data).decode('ascii')})
+            except (ValueError, OSError) as e:
+                return self._json(400, {'error': str(e)})
         if method == 'POST' and len(parts) == 3 and parts[0] == 'mark' and parts[2].isdigit():
             ok, msg = book_status.mark(parts[1], int(parts[2]), undo=q.get('undo', [''])[0] == '1', run_checks=False)
             return self._json(200 if ok else 409, {'ok': ok, 'message': msg})
@@ -679,14 +696,20 @@ class Handler(SimpleHTTPRequestHandler):
         import binascii
         import book_status
         import plates_file
+        import art_sources
         hit = book_status.find(str(body.get('book') or ''))
         if not hit or not os.path.isfile(os.path.join(ROOT, 'data', 'projectaon', hit[0], 'book.js')):
             return self._json(404, {'error': 'not an imported book'})
+        link = body.get('link') or None  # with a new picture: where it came from, or none (ADR 0038)
+        if link is not None and not art_sources.web(link):
+            return self._json(400, {'error': 'the link must be an http(s) address'})
         try:
             image = base64.b64decode(body['image'], validate=True) if body.get('image') else None
             entry, msg = plates_file.put(hit[0], book_status.load_book(hit[0]), str(body.get('enemy') or ''), image=image,
                                          crop=body.get('crop'), levels=body.get('levels'), remove=bool(body.get('remove')),
                                          src=body.get('src'), flip=body.get('flip') is True)
+            if image is not None and 'link' in body:
+                art_sources.record(entry['src'], link)
         except (ValueError, binascii.Error) as e:
             return self._json(400, {'error': str(e)})
         # the owner's own change on the sheet is his approval for that enemy: re-pin it in a book already

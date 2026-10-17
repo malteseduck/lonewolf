@@ -56,6 +56,10 @@
   #ed .ctl input[type=range] { flex: 1; }
   #ed .ctl output { width: 2.5em; text-align: right; color: var(--bronze-hi); }
   #ed .ctl small { color: var(--dim); }
+  #ed .src { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin-top: 10px; font-size: 13px; }
+  #ed .src label { display: flex; gap: 8px; align-items: center; }
+  #ed .src label:first-child { flex: 1; min-width: 24em; }
+  #ed .src input[type=url] { flex: 1; }
   #ed menu { display: flex; gap: 8px; padding: 0; margin: 14px 0 0; }
   #ed menu .sp { flex: 1; }
 
@@ -82,8 +86,9 @@
   <nav class="links" style="margin-left:auto"><a href="./">Dashboard</a></nav>
 </header>
 <p class="note">Every enemy with the picture the player would show, inked as in a fight (checklist step 7: look, change what you want, then mark it done on the dashboard). Drop a
-  picture file on a card, paste one (the card under the mouse), or use Choose; Adjust crops or flips it. Pictures you give
-  are kept in <code>art/plates/</code> (git-ignored) and entered in <code>assets/plates/plates.json</code>.
+  picture file on a card, paste one (the card under the mouse), or use Choose; a picture dragged from another site, an address pasted,
+  or By address fetches it from the web. Say where a new picture came from, so a fresh checkout can fetch it again. Adjust crops or flips it. Pictures you give
+  are kept in <code>art/plates/</code> (git-ignored) and entered in <code>assets/plates/plates.json</code>; their links in <code>art/sources.json</code>.
   Once approved, the line above says so; only a card whose picture has changed since is marked, showing the new picture.</p>
 <main class="cards" id="cards"></main>
 <input type="file" id="file" accept="image/*" hidden>
@@ -103,6 +108,10 @@
         <label>Paper <input type="range" id="lv-w" min="1" max="255" value="225"><output id="lv-wo">225</output></label>
       </div>
     </div>
+  </div>
+  <div class="src" id="ed-src" hidden>
+    <label>Where it came from <input type="url" id="ed-link" placeholder="https://... its page, or the picture's own address"></label>
+    <label><input type="checkbox" id="ed-nolink"> No link (a screenshot, your own drawing)</label>
   </div>
   <menu>
     <button id="ed-whole">Whole picture</button>
@@ -139,7 +148,7 @@ if (EMBED) document.body.classList.add('embed');
 // the owner's entry for one enemy: its name, escaped and anchored, as tools/plates_file.py writes it
 const anchored = (name) => '^' + name.toLowerCase().replace(/[.^$*+?()[\]{}|\\/]/g, '\\$&') + '$';
 const LONG = 2000;  // the longest side kept of a dropped picture
-let book, plates = [], pins = null, approvedOn = null, onlyWaiting = false, foes = [], stamp = Date.now(), active = null;
+let book, plates = [], sources = {}, pins = null, approvedOn = null, onlyWaiting = false, foes = [], stamp = Date.now(), active = null;
 
 fetch('/api/map/books', { cache: 'no-store' }).then((r) => r.json()).then((list) => {
   $('#pick').innerHTML = list.map((b) => `<option value="${esc(b.code)}" ${b.code === code ? 'selected' : ''}>${esc((b.number ? b.number + '. ' : '') + (b.title || b.code))}</option>`).join('');
@@ -167,7 +176,11 @@ async function loadPlates() {
   pins = (j && j.pins) || null; approvedOn = j && j.approved;
   const u = await fetch(`/assets/plates/upscaled/${code}.json`, { cache: 'no-store' }).catch(() => null);
   ups = u && u.ok ? ((await u.json().catch(() => null))?.srcs || null) : null;
+  // where each picture in art/ came from (ADR 0038, tools/art_sources.py)
+  const a = await fetch('/art/sources.json', { cache: 'no-store' }).catch(() => null);
+  sources = a && a.ok ? ((await a.json().catch(() => null))?.sources || {}) : {};
 }
+const ownFile = (f) => { const src = f.mine?.src || f.src; return src && src.startsWith('art/') ? src : null; };
 
 /* Each kind of enemy, with what the player shows for it at its first fight (platepick.js: the approved
    picture, else an "over" library entry, the book's own picture, the library) and the owner's own entry,
@@ -194,6 +207,7 @@ function choose() {
       : f.mine ? 'your picture' + (f.mine.src.startsWith('art/') ? '' : ` (re-cropped: ${f.mine.src.split('/').pop()})`)
       : f.lib ? `plates.json: "${f.lib.match}"${f.lib.over ? ' (over)' : ''}` : f.art ? `the book's ${f.art}` : 'none: the drawn emblem')
       + (f.src && sharp(f.src) !== f.src ? ', upscaled 2x' : '')
+      + (ownFile(f) ? (sources[ownFile(f)]?.url ? `; link: ${new URL(sources[ownFile(f)].url).hostname}` : ownFile(f) in sources ? '; no link' : '; no link given yet') : '')
       + (f.waiting ? (f.isNew ? '; a fight with no approved picture yet' : `; the player still shows the approved picture${f.waiting < f.fights.length ? ` (${f.waiting} of ${f.fights.length} fights)` : ''}`) : '');
   }
 }
@@ -215,7 +229,7 @@ async function render() {
     ${f.was ? `<div class="was" id="was${i}"><small>was</small></div>` : ''}
     <div class="pic" id="pic${i}">${f.src ? '' : '<div class="none">no picture<br><small>drop one here</small></div>'}</div>
     <b>${esc(f.name)}</b><small>section${f.secs.length > 1 ? 's' : ''} ${esc(f.secs.join(', '))}</small><small>${esc(f.from)}</small>
-    <div class="tools"><button data-do="choose">Choose...</button><button data-do="standin">Stand-in...</button>${f.src ? '<button data-do="adjust">Adjust</button>' : ''}</div></div>`).join('');
+    <div class="tools"><button data-do="choose">Choose...</button><button data-do="address">By address...</button><button data-do="standin">Stand-in...</button>${f.src ? '<button data-do="adjust">Adjust</button>' : ''}${ownFile(f) ? '<button data-do="link">Link...</button>' : ''}</div></div>`).join('');
   // ink them one by one, so the page shows at once
   for (const [i, f] of foes.entries()) {
     if (!f.src) continue;
@@ -266,6 +280,8 @@ $('#cards').addEventListener('click', (e) => {
   if (b.dataset.do === 'choose') { $('#file').value = ''; $('#file').click(); }
   if (b.dataset.do === 'adjust') edit(foes[+c.dataset.i]);
   if (b.dataset.do === 'standin') pickStandIn(foes[+c.dataset.i]);
+  if (b.dataset.do === 'address') { const a = window.prompt(`${foes[+c.dataset.i].name}: the address of a picture, or of a page that shows one`); if (a?.trim()) fromAddress(foes[+c.dataset.i], a.trim()); }
+  if (b.dataset.do === 'link') linkFor(foes[+c.dataset.i]);
 });
 $('#file').onchange = () => { const f = $('#file').files[0]; if (f && active != null) take(foes[active], f); };
 $('#cards').addEventListener('dragover', (e) => { const c = cardOf(e.target); if (!c) return; e.preventDefault(); c.classList.add('over'); });
@@ -276,20 +292,49 @@ $('#cards').addEventListener('drop', (e) => {
   e.preventDefault(); c.classList.remove('over'); setActive(c);
   const f = [...(e.dataTransfer.files || [])].find((x) => x.type.startsWith('image/'));
   if (f) return take(foes[+c.dataset.i], f);
-  // a picture dragged out of another site's page arrives as an address, which is never fetched
-  toast(e.dataTransfer.types.includes('text/uri-list') ? 'That is a link to a picture, not a file: save it to disk and drop the file, or copy the picture and paste it here.' : 'Drop a picture file (PNG, JPEG, WebP...).', 7000);
+  // a picture dragged out of another site's page arrives as its address: the server fetches it
+  const a = (e.dataTransfer.getData('text/uri-list') || '').split(/\r?\n/).find((l) => /^https?:\/\//.test(l));
+  if (a) return fromAddress(foes[+c.dataset.i], a);
+  toast('Drop a picture file (PNG, JPEG, WebP...), or a picture from another site.', 7000);
 });
 document.addEventListener('paste', (e) => {
+  if (e.target.closest?.('input')) return;  // typing a link into the editor
   const f = [...(e.clipboardData?.files || [])].find((x) => x.type.startsWith('image/'));
-  if (!f) return;
+  const a = !f && (e.clipboardData?.getData('text') || '').trim();
+  if (!f && !/^https?:\/\/\S+$/.test(a)) return;
   e.preventDefault();
-  if ($('#ed').open && ed.foe) return take(ed.foe, f);
-  if (active == null) return toast('Point at a card first, then paste.', 4000);
-  take(foes[active], f);
+  const foe = $('#ed').open && ed.foe ? ed.foe : active != null ? foes[active] : null;
+  if (!foe) return toast('Point at a card first, then paste.', 4000);
+  if (f) take(foe, f); else fromAddress(foe, a);
 });
 
+/* A picture by its address (ADR 0038): fetched by the server, which follows a page to the picture it
+   shows, then taken as a dropped file is, with the address as its link. */
+async function fromAddress(foe, address) {
+  toast('Fetching the picture...', 20000);
+  const r = await fetch('/api/admin/picture-url', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: address }) }).catch(() => null);
+  const j = r ? await r.json().catch(() => ({})) : {};
+  if (!r || !r.ok) return toast(`Could not fetch it: ${j.error || (r ? r.status : 'no answer')}`, 7000);
+  const bytes = Uint8Array.from(atob(j.data), (ch) => ch.charCodeAt(0));
+  $('#toast').hidden = true;
+  take(foe, new Blob([bytes], { type: j.type }), address);
+}
+
+/* The link of a picture already in art/: given afterwards, for the pictures that came before the list. */
+async function linkFor(foe) {
+  const src = ownFile(foe);
+  const v = window.prompt(`Where ${src.split('/').pop()} came from: its link (leave it empty for no link)`, sources[src]?.url || '');
+  if (v === null) return;
+  const r = await fetch('/api/admin/art-link', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ src, url: v.trim() || null }) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) return toast(j.error || `Not saved (${r.status})`, 6000);
+  await loadPlates();
+  await render();
+  toast(v.trim() ? 'Link saved' : 'Marked: no link', 2500);
+}
+
 /* A picture from the owner: at most LONG px on its long side, as WebP, then into the editor. */
-async function take(foe, file) {
+async function take(foe, file, link) {
   let bmp;
   try { bmp = await createImageBitmap(file); } catch { return toast('That file is not a picture this browser can read.', 5000); }
   const k = Math.min(1, LONG / Math.max(bmp.width, bmp.height));
@@ -298,7 +343,7 @@ async function take(foe, file) {
   const blob = await new Promise((ok) => c.toBlob(ok, 'image/webp', 0.9));
   if (!blob || blob.type !== 'image/webp') return toast('This browser cannot write WebP.', 5000);
   const dataUrl = await new Promise((ok) => { const r = new FileReader(); r.onload = () => ok(r.result); r.readAsDataURL(blob); });
-  edit(foe, { dataUrl, webp: dataUrl.split(',')[1] });
+  edit(foe, { dataUrl, webp: dataUrl.split(',')[1], link });
 }
 
 // ---------- the stand-in picker: any picture on disk ----------
@@ -385,6 +430,8 @@ async function edit(foe, upload) {
   $('#ed-title').textContent = `${foe.name}: ${upload ? 'new picture' : 'adjust'}`;
   $('#ed-img').src = src;
   $('#ed-remove').hidden = !foe.mine;
+  // a new picture asks where it came from (ADR 0038): its address, filled in when it was fetched by one
+  $('#ed-src').hidden = !ed.webp; $('#ed-link').value = upload?.link || ''; $('#ed-nolink').checked = false;
   if (!$('#ed').open) $('#ed').showModal();
   await $('#ed-img').decode().catch(() => {});
   place(); preview();
@@ -465,7 +512,12 @@ $('#orig').onchange = async () => {
 };
 $('#ed-whole').onclick = () => { ed.crop = [0, 0, 1, 1]; place(); preview(); };
 $('#ed-cancel').onclick = () => $('#ed').close();
-$('#ed-save').onclick = () => send({ image: ed.webp || undefined, src: ed.src || undefined, crop: ed.crop.map((v) => +v.toFixed(4)), levels: levels() || undefined, flip: $('#flip').checked || undefined });
+$('#ed-save').onclick = () => {
+  const link = $('#ed-link').value.trim();
+  if (ed.webp && !link && !$('#ed-nolink').checked) return toast('Say where it came from: its link, or tick No link.', 5000);
+  if (ed.webp && link && !/^https?:\/\/\S+$/.test(link)) return toast('The link must start with http:// or https://', 5000);
+  send({ image: ed.webp || undefined, link: ed.webp ? link || null : undefined, src: ed.src || undefined, crop: ed.crop.map((v) => +v.toFixed(4)), levels: levels() || undefined, flip: $('#flip').checked || undefined });
+};
 $('#ed-remove').onclick = () => {
   if (window.confirm(`Remove your picture for ${ed.foe.name}? It goes back to what it had before.`)) send({ remove: true });
 };

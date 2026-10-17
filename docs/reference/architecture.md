@@ -18,6 +18,8 @@ items/items-<code>.js       ES modules, one per book (items-01fftd.js for Book 1
 sw.js                       service worker: the offline copy (docs/reference/offline.md)
 manifest.webmanifest        the Home Screen app: name, colours, icons (assets/app/)
 art/plates/<code>/          git-ignored. Fight pictures the owner gave on the picture sheet (WebP)
+art/sources.json            committed: where each picture in art/ came from, its link or none (ADR 0038;
+                            tools/art_sources.py), so a fresh checkout can fetch them again
 art/manifest.json           optional pictures in art/: enemy sprites, Lone Wolf's figure (inventory), the Kai panel portrait
 assets/icons/               discipline glyphs from game-icons.net (CC BY 3.0, credited in README.txt)
 assets/fonts/               the page's three fonts and fonts.css, from Google Fonts (SIL OFL, licences beside them)
@@ -61,6 +63,9 @@ tools/
   map-editor.html           the map steps' page (docs/reference/map-upscale.md); also shown inside the dashboard
   plates_file.py            reads and writes assets/plates/plates.json in its layout; the owner's pictures from the
                             picture sheet (api/admin/plate)
+  art_sources.py            art/sources.json: each art/ picture's link (ADR 0038); what is here, what can be
+                            fetched again, and the fetch (Setup's gated setup-art); a page link is followed to
+                            the picture it names (og:image)
   ill_index.py              writes data/projectaon/ill-index.json: every book's illustrations, the fights near
                             each, and a hand note of what each shows (data/projectaon/ill-notes.json); both
                             git-ignored (docs/reference/items.md, Fight pictures)
