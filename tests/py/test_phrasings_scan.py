@@ -37,6 +37,9 @@ BOOK = {'series': 'kai', 'sections': {
     '10': sec('Add 2 points to your COMBAT SKILL for this fight.', 'It is immune to Mindblast. You may evade after two rounds.',
               choices=[{'text': 'If you evade, turn to 1.', 'to': '1', 'evade': True}],
               combat={'enemies': [{'name': 'Wraith', 'immune': True, 'drain': 2}], 'csMod': 2, 'evade': {'after': 2, 'to': '1'}}),
+    # a draw whose bonus is on his Endurance, which the importer reads, in wording it does not: one to look at
+    '11': sec('Pick a number from the Random Number Table. If your ENDURANCE is at least 20, add 1 to the number.',
+              choices=['If your total is now 0-4, turn to 1.', 'If your total is now 5-10, turn to 2.'], rnt='free'),
 }}
 
 
@@ -44,11 +47,11 @@ def test_each_leftover_is_listed_by_kind_and_the_ones_to_look_at_apart():
     out = ps.scan(BOOK)
     assert {k: v for k, v in out.items() if v} == {
         'gate': ['1'], 'gate-negative': ['1'], 'gate-item': ['1'],
-        'rn-unlinked': ['6'], 'rn-bonus': ['3'], 'rn-other': ['4'], 'rn-counts': ['5'],
+        'rn-unlinked': ['6'], 'rn-bonus': ['3', '11'], 'rn-other': ['4'], 'rn-counts': ['5'],
         'combat-line': ['7'], 'cs': ['8'], 'cs-other': ['9'], 'evade': ['8'], 'immune': ['9'], 'drain': ['9'],
     }
     text = ps.report('01xx', out)
-    assert text.startswith('01xx: 6 sections to look at (1, 3, 6, 7, 8, 9)')
+    assert text.startswith('01xx: 7 sections to look at (1, 3, 6, 7, 8, 9, 11)')
     assert 'Hunting' not in text and 'Bandit' not in text  # ids and kinds, never the text
 
 
@@ -59,5 +62,5 @@ def test_json_written_beside_the_book_for_the_dashboard(tmp_path, monkeypatch):
                                                + json.dumps({'01xx': BOOK}) + ');\n', encoding='utf-8')
     assert ps.main(['01xx', '--json']) == 0
     got = json.loads((tmp_path / '01xx' / 'phrasings.json').read_text(encoding='utf-8'))
-    assert got['look'] == [1, 3, 6, 7, 8, 9] and got['kinds']['gate-item'] == ['1']
+    assert got['look'] == [1, 3, 6, 7, 8, 9, 11] and got['kinds']['gate-item'] == ['1']
     assert ps.main(['02xx']) == 1  # not imported

@@ -36,7 +36,7 @@ KINDS = {
     'rn-unlinked': 'speaks of the Random Number Table but has no draw',
     'rn-ranges': 'a draw whose ranges do not cover each total exactly once',
     'rn-choice': 'a draw with a choice that is neither a range nor taken before drawing',
-    'rn-bonus': 'a draw whose bonus names a discipline, rank or Lore-circle, not read',
+    'rn-bonus': 'a draw whose bonus names a discipline, rank, Lore-circle or his ENDURANCE, not read',
     'rn-other': 'a draw changed by an item, weapon, wound or "0 = 10" (the item table\'s)',
     'rn-counts': 'a draw with no ranges: the number counts gold, Endurance or a game (by design)',
     'combat-line': 'an enemy\'s COMBAT SKILL and ENDURANCE line not read as a fight',
@@ -47,7 +47,9 @@ KINDS = {
     'drain': 'speaks of a mind attack every round with no drain read',
 }
 # a discipline tied to a weapon or item he must carry: the item table's, like any item
-ITEMISH = re.compile(r'\b(?:carrying|carry|wield\w*)\b|\b(?:Weaponmastery|Weaponskill)\s*(?:\(|with\b|in\b)|\bwith (?:a |the )?Bow\b|\bGold\b|\bENDURANCE\b')
+ITEMISH = re.compile(r'\b(?:carrying|carry|wield\w*)\b|\b(?:Weaponmastery|Weaponskill)\s*(?:\(|with\b|in\b)|\bwith (?:a |the )?Bow\b|\bGold\b')
+# his Endurance: the importer reads it in a draw's bonus, not in a gate or a COMBAT SKILL change
+ENDURANCE = re.compile(r'\bENDURANCE\b')
 # evasion offered as a way out, not a dive "to evade its heat" nor "too late to evade"
 OFFERED = re.compile(r'\b(?:may|can|could|wish to|decide to|choose to) evade\b|\bevade (?:the |this )?(?:combat|fight)\b|\bevasion\b', re.I)
 LOOK = ('gate', 'rn-unlinked', 'rn-ranges', 'rn-choice', 'rn-bonus', 'combat-line', 'cs', 'evade', 'immune', 'drain')
@@ -88,7 +90,7 @@ def scan(book):
                 found.add('gate-negative')
             elif sec.get('rnt') and re.search(r'\b(?:number|total|score|pick)', c['text']):
                 continue  # a draw's range on a condition: the draw's to judge
-            elif vocab.search(head) and not ITEMISH.search(head):
+            elif vocab.search(head) and not ITEMISH.search(head) and not ENDURANCE.search(head):
                 found.add('gate')
             else:
                 found.add('gate-item')
@@ -109,7 +111,7 @@ def scan(book):
                       and re.search(r'\b(?:add|increase|deduct|subtract|reduce)\b\D{0,40}\d', s, re.I)]
                 if cs:
                     plain = len(cs) == 1 and not re.search(r'\bround|instead of|\bpower\b|weapon|\bwield', cs[0])
-                    found.add('cs' if plain and vocab.search(cs[0]) and not ITEMISH.search(cs[0]) else 'cs-other')
+                    found.add('cs' if plain and vocab.search(cs[0]) and not ITEMISH.search(cs[0]) and not ENDURANCE.search(cs[0]) else 'cs-other')
             # a way out offered, not "you cannot evade" nor "even when attempting to evade" (a choice after the fight)
             said = [s for s in imp['sentences'](whole + ' ' + ' '.join(c['text'] for c in sec['choices'])) if re.search(r'\bevade\b|\bevasion\b', s, re.I)]
             if 'evade' not in fight and any(OFFERED.search(s) and not re.search(r"\b(?:not|cannot|unable|no|impossible|too late)\b|n't\b|\beven (?:when|if)\b", s, re.I) for s in said):
@@ -135,7 +137,7 @@ def free_reason(imp, sec, whole, vocab):
         # the first sentence that changes the number and is not read: on a discipline, or on anything else
         for s in imp['sentences'](whole):
             if re.search(r'\b(?:add|deduct|subtract)\b', s, re.I) and imp['number_rules'](s) is None:
-                return 'rn-bonus' if vocab.search(s) and not ITEMISH.search(s) and not re.search(r'\b(?:Bow|weapon)\b', s) else 'rn-other'
+                return 'rn-bonus' if (vocab.search(s) or ENDURANCE.search(s)) and not ITEMISH.search(s) and not re.search(r'\b(?:Bow|weapon)\b', s) else 'rn-other'
         return 'rn-other'
     before = all(r or (re.match(r'If\b[^,]{0,30}?\byou (?:have|possess|are carrying|wish to use)\b', c['text'])
                        and not re.search(r'\b(?:number|total|score|pick)', c['text'])) for c, r in zip(sec['choices'], ranges))

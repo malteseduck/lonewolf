@@ -58,23 +58,26 @@ Heuristics layered on top, all by regular expression:
   disciplines ("of X", "of either X or Y" = any, "of X and Y" = all), a rank ("reached the Kai rank
   of Guardian or higher", mapped to a discipline count), Lore-circles ("completed the (Magnakai) Lore-circle
   of Fire", "possess the Lore-circle of ...") and, for Random Number bonuses, his Endurance ("your current ENDURANCE point total is
-  less than 10"), joined by "and have ...". Anything else in it (an item, a weapon in hand, "or have
+  less than 10", "your ENDURANCE score is 20 or higher"), joined by "and have ...". Anything else in it (an item, a weapon in hand, "or have
   reached") and the rule is not read. Written as in book-format.md, Conditions.
   In a Grand Master book (Book 13 on) a discipline is also read as "the Grand Master Discipline of
-  X", "(the) Grand Mastery of X", "Mastery of X", "the Discipline of X" or bare ("If you possess
+  X", "(the) Grand Mastery of X", "Mastery of X" (or "mastery of X"), "the Discipline of X" or bare ("If you possess
   Kai-screen"); a name that is not a discipline still leaves the rule unread. "Grand Mastery of
   Nexus" is Grand Nexus. "Grand Weaponmastery (with Bow)" is not read: it needs the Bow mastered.
   The twelve Grand Master ranks are known, though Book 13 gates on none.
 - **Gates** (`gate()`): the choice's condition, up to its first comma or "turn to". Negative
   phrasings ("if you do not have", "have yet to", "neither") are left open. "X, or have reached the rank of Y" (parts joined by "or (if you) have/possess/reached/attained") is split and each part read as a condition; if all parse, `need: {any: [...]}`, else the choice is left open. A
-  looser reading still gates "If you wish to use the Kai Discipline of X ...".
+  looser reading still gates "If you wish to use the Kai Discipline of X ..." (also "... of X in order to ...").
 - **Random Number ranges** (`span()`): "0–4", "−2–+3" (the books' minus sign), "5 or more" / "or
   higher", "4 or less", "below 7", "above 6", or a single number. Not in a choice about ENDURANCE
   or COMBAT SKILL.
 - **Random Number bonuses** (`number_rules()`): each sentence that adds to or takes from the number
-  must be "If <condition>, add / deduct N (to the number)", "add another / a further N", or "add 1
-  for every Magnakai Discipline you possess (above the first three)". A parenthesis "if you have
-  both, add only N" is taken as read; "(for example ...)" is skipped. Anything else (an item, a
+  must be "If <condition>, add / deduct N (to the number)" (the comma may be missing), "add another / a further N",
+  "add 1 for every Magnakai Discipline you possess (above the first three)", or "(Pick a number ... and) add N
+  to the number you have chosen" with no condition, which always applies. Rules listed after a lead-in
+  ending in a colon are read one by one. A parenthesis "if you have both, add only N" is taken as read;
+  "add 3 (if you possess both of these ..., add 7)" after an either-of is read as that rule plus an
+  all-of rule for the 4 more; "(for example ...)" is skipped. Anything else (an item, a
   bow's "missile bonuses", a weapon, "0 = 10") leaves the section `free`.
 - **auto or free**: `auto` when the bonuses were all read, every total they can make is covered by
   exactly one choice's range, and every choice without a range is an "If you have / possess ..."
@@ -83,7 +86,7 @@ Heuristics layered on top, all by regular expression:
   ...", which stays a choice shown after the fight: Book 3's 138, 263, Book 4's 133); "after N rounds",
   "after the first round" and "until the beginning of the third round" set the wait; "in the first
   round of combat only" sets `within: 1`.
-- **Mind immunity**: "immune to Mindblast / Psi-surge" in the section; "immune to Mindblast (but
+- **Mind immunity**: "immune to Mindblast / Psi-surge / all psychic attacks" in the section; "immune to Mindblast (but
   not Psi-surge)" makes it `'mindblast'`; "immune to Mindblast and Psi-surge (but not Kai-surge)" or
   "...; only (the Grand Mastery of) Kai-surge" makes it `'psi'`.
 - **Mind drain**: "Unless you possess the Discipline of Mindshield (Psi-screen in a Magnakai
@@ -93,7 +96,7 @@ Heuristics layered on top, all by regular expression:
   "unless you have X" as `csUnless` (disciplines, a rank, Lore-circles). "add an additional / a
   further / an extra N" counts. Sentences are not split after "i.e." or "e.g.". Left as text: a change for some rounds only, one
   "instead of" the engine's own bonus, one from a weapon's or item's power (its own bonus may count
-  it), one with any other condition, and a section with two.
+  it; the enemies' weapons given as the reason do not count), one with any other condition, and a section with two.
 - **Forced Meal**: "must (also) (now) eat a Meal", "Unless you eat a Meal now".
 - **Victory**: the highest-numbered section.
 - **Enemy plates**: an enemy uses the full-page illustration of its own section if there is one;
@@ -146,7 +149,7 @@ whose text still looks like something it reads, with why it was left. Two lists:
 - **look**, for step 3's judgement: a gate naming a discipline, rank or Lore-circle left open
   (`gate`); a draw that speaks of the Random Number Table without a link (`rn-unlinked`), whose ranges
   miss or overlap a total (`rn-ranges`), with a choice neither a range nor taken before drawing
-  (`rn-choice`), or with a bonus on a discipline, rank or Lore-circle not read (`rn-bonus`); a stat line
+  (`rn-choice`), or with a bonus on a discipline, rank, Lore-circle or his Endurance not read (`rn-bonus`); a stat line
   not read as an enemy (`combat-line`); a fight's COMBAT SKILL change on a discipline not read (`cs`),
   evasion offered but not read (`evade`: "you may/can evade", "evade combat", not "you cannot" or
   "too late"), immunity or a mind drain said but not set (`immune`, `drain`).
@@ -180,10 +183,14 @@ evasion. Every book: no broken links, none without a way on.
 | 10 | 350 | 43 | 19 (16) / 8 | 32 / 15 / 2 | 44 | 15 / 0 | 0 | 9 | 4 / 10 (10) / 0 / 5 | 14 / 1 / 15 |
 | 11 | 350 | 40 | 19 (12) / 10 | 52 / 21 / 1 | 34 | 12 / 0 | 0 | 8 | 2 / 22 (21) / 0 / 4 | 4 / 3 / 18 |
 | 12 | 350 | 65 | 30 (24) / 10 | 40 / 25 / 2 | 42 | 20 / 0 | 0 | 8 | 0 / 21 (15) / 2 / 9 | 10 / 9 / 20 |
+| 13 | 350 | 51 | 30 (24) / 5 | 52 / 0 / 0 | 42 | 9 / 0 | 3 | 10 | 6 / 14 (1) / 0 / 4 | 11 / 12 / 7 |
 
-Book 13, a trial run into the scratchpad (2026-10-10, not imported): 350 sections, 51 with combat;
-Random 21 (15) / 14; gates 51 / 0 / 0; 42 illustrated; 9 dead ends; 3 puzzles; 10 Meals; fights 5 / 9
-(1) / 0 / 4, eight of the nine `'psi'`.
+Book 13 as of 2026-10-17, after its step 3 (before it: Random 21 (15) / 14, gates 51, fights 5 / 9 (1) / 0 / 4).
+Step 3 taught: "mastery of Magi-magic" (72, 172, 190); "Discipline of Divination in order to" (206); "ENDURANCE
+score is" (91, 116, 174, 220, 226, 241, 245, 307); rules after a colon (116); "(if you possess both ..., add 7)" (245);
+an unconditional "add 3 to the number" (124); "immune to all psychic attacks" (47, 56, 202, 291, 339); the foes'
+weapons as a penalty's reason (86). Books 1-12 unchanged by it. Left free: 52 (no ranges), 81 (a weapon in hand),
+104, 176, 303 (Grand Weaponmastery with Bow).
 
 Introductions: 7, 7, 9, 4, 10, 7, 10, 10, 8, 9, 8, 8 paragraphs. The free Random Number sections
 left are those where the number counts gold or Endurance, plays a game, or is changed by a bow, a

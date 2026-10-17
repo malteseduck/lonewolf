@@ -102,10 +102,10 @@ def condition(text):
         clause = clause.strip()
         d = re.fullmatch(r'(?:have|possess)(?: and wish to use)? (?:either |both )?(?:of )?the (?:Kai |Magnakai )?Disciplines? (?:either |both )?(?:of )?(.+)', clause)
         if not d and series == 'grandmaster':
-            d = re.fullmatch(r'(?:have|possess) (?:the )?(?:(?:Grand Master |Magnakai |Kai )?Disciplines? of |(?:Grand )?Mastery of )?(.+)', gm_names(clause))
+            d = re.fullmatch(r'(?:have|possess) (?:the )?(?:(?:Grand Master |Magnakai |Kai )?Disciplines? of |(?:Grand )?[Mm]astery of )?(.+)', gm_names(clause))
         r = re.fullmatch(r'(?:have )?(?:also )?(?:reached|attained) the (?:Kai |Magnakai )?[Rr]ank of ([A-Za-z -]+?)(?: or (?:higher|above|more))?(?: \([^)]*\))?', clause)
         c = re.fullmatch(r'(?:(?:have )?completed|possess) the (?:Magnakai )?Lore-circles? of (.+)', clause)
-        e = re.fullmatch(r'your (?:current )?ENDURANCE(?: points?)?(?: point)? total is (?:now )?(.+)', clause)
+        e = re.fullmatch(r'your (?:current )?ENDURANCE(?: points?)?(?: point)? (?:total|score) is (?:now )?(.+)', clause)
         if e and 'ep' not in out:  # his Endurance as he draws: "less than 10", "20 or more"
             x = e.group(1)
             m = (re.fullmatch(r'(?:less|lower|fewer) than (\d+)|below (\d+)|under (\d+)', x), re.fullmatch(r'(?:greater|more|higher) than (\d+)|above (\d+)|over (\d+)', x),
@@ -164,9 +164,9 @@ def gate(text):
                     g['disc'] = g['disc'][0]
             return {'any': got}
         return None
-    d = re.search(r'If you (?:have|possess|wish to use|wish to demonstrate)[^.;]*?(?:Kai|Magnakai) Disciplines? (?:either |both )?(?:of )?((?:either |both )?[A-Za-z -]+?(?:\s*\(any weapon\))?)(?:,| to| on| you| turn|\.| \(|$)', head + '.')
+    d = re.search(r'If you (?:have|possess|wish to use|wish to demonstrate)[^.;]*?(?:Kai|Magnakai) Disciplines? (?:either |both )?(?:of )?((?:either |both )?[A-Za-z -]+?(?:\s*\(any weapon\))?)(?:,| to| on| you| turn| in order|\.| \(|$)', head + '.')
     if not d and series == 'grandmaster' and not re.search(r'\(with (?:a |the )?Bow\)', head):
-        d = re.search(r'If you (?:have|possess) (?:the )?(?:(?:Grand Master |Magnakai |Kai )?Disciplines? of |(?:Grand )?Mastery of )?([A-Za-z -]+?)(?:,| to| on| you| turn|\.| \(|$)', gm_names(head) + '.')
+        d = re.search(r'If you (?:have|possess) (?:the )?(?:(?:Grand Master |Magnakai |Kai )?Disciplines? of |(?:Grand )?[Mm]astery of )?([A-Za-z -]+?)(?:,| to| on| you| turn|\.| \(|$)', gm_names(head) + '.')
     if d:
         got = disc_list(d.group(1))
         if not got:  # "of Hunting and wish to ...": the list stops at the first word that is not a discipline
@@ -226,7 +226,8 @@ def number_rules(whole):
     if re.search(r'0\s*=\s*10', whole):
         return None
     mods = []
-    for s in sentences(re.sub(r'\s*\(for example[^)]*\)', '', whole)):
+    # a list of rules after a lead-in ending in a colon (Book 13's 116): each rule is a sentence of its own
+    for s in sentences(re.sub(r':\s+(?=If\b)', '. ', re.sub(r'\s*\(for example[^)]*\)', '', whole))):
         if not re.search(r'\b(?:add|deduct|subtract)\b', s, re.I):
             continue
         if not (re.search(r'\b(?:number|total|score|figure)\b', s) or re.search(r'\b(?:add|deduct|subtract)\b\D{0,20}\d', s, re.I)):
@@ -242,6 +243,16 @@ def number_rules(whole):
             over = 3 if re.search(r'\b(?:above|in excess of)\b', s) else 0
             mods.append({'plus': int(each.group(1)), 'each': 'magnakai', 'over': over})
             continue
+        # "Pick a number from the Random Number Table and add 3 to the number you have chosen" (Book 13's 124)
+        plain_add = re.fullmatch(r'(?:Pick a number from the Random Number Table and )?(add|deduct|subtract) (\d+) (?:to|from) the number you have (?:chosen|picked)\.?', s, re.I)
+        if plain_add:
+            mods.append({'plus': int(plain_add.group(2)) * (1 if plain_add.group(1).lower() == 'add' else -1)})
+            continue
+        # "add 3 (if you possess both of these Grand Master Disciplines, add 7)" (Book 13's 245): both
+        # together make the larger sum, read as an all-of rule for the difference
+        both = re.search(r'\s*\(if you (?:have|possess) both\b[^)]*?,? add (\d+)\)', s, re.I)
+        if both:
+            s = s[:both.start()] + s[both.end():]
         m = re.match(r'(?:However, |Also, )?[Ii]f (you .+?|your .+?),? (?:then )?(?:you may (?:also )?)?(add|deduct|subtract) (?:another |a further |an additional |an extra )?(\d+)(?: points?)?(?: (?:to|from) (?:the|this|your) (?:total |final )?(?:number|total|score|figure)\b.*)?\.?$', s)
         if not m:
             return None
@@ -249,6 +260,10 @@ def number_rules(whole):
         if not cond:
             return None
         mods.append(dict(cond, plus=int(m.group(3)) * (1 if m.group(2) == 'add' else -1)))
+        if both:
+            if len(cond.get('disc', [])) < 2 or cond.get('every') or m.group(2) != 'add' or int(both.group(1)) <= int(m.group(3)):
+                return None
+            mods.append({'disc': cond['disc'], 'every': True, 'plus': int(both.group(1)) - int(m.group(3))})
     return mods
 
 
@@ -256,6 +271,8 @@ def reach(mods):
     """The lowest and highest totals the bonuses can make of a number 0-9."""
     def most(m, sign):
         n = m['plus'] * (10 - m['over'] if 'each' in m else 1)
+        if list(m) == ['plus']:
+            return n  # no condition: it always applies
         return n if n * sign > 0 else 0
     return sum(most(m, -1) for m in mods), 9 + sum(most(m, 1) for m in mods)
 
@@ -273,8 +290,9 @@ def cs_rule(whole):
         if not m or not re.search(r'(?:to|from) your COMBAT SKILL|your COMBAT SKILL by', s):
             continue
         # some rounds only; in place of a bonus the engine gives ("instead of the normal 2"); or a weapon's
-        # or item's power, which its own bonus may already count
-        if re.search(r'\bround|instead of|\bpower\b|weapon|\bwield', s):
+        # or item's power, which its own bonus may already count (not the foes' weapons given as the
+        # reason: Book 13's 86)
+        if re.search(r'\bround|instead of|\bpower\b|weapon|\bwield', re.sub(r"\benem(?:y|ies)['’]s? weapons?", '', s)):
             return None
         n = int(m.group(2)) * (1 if m.group(1).lower() in ('add', 'increase') else -1)
         # the condition ends at a comma, or with none at "you may" ("If you have X you may add 2")
@@ -366,7 +384,7 @@ for n in numbers:
         if target:
             combat['points'] = {'n': target}
         # the sentence that grants immunity; when it names some of the enemies, only they are immune
-        said = next((x for x in re.split(r'(?<=\.)\s+', whole) if re.search(r'immune to (?:Mindblast|Psi-surge)', x, re.I)), '')
+        said = next((x for x in re.split(r'(?<=\.)\s+', whole) if re.search(r'immune to (?:Mindblast|Psi-surge|all psychic attacks)', x, re.I)), '')
         named = [e for e in enemies if re.sub(r'\s+\d+$', '', e['name']).lower() in said.lower()]
         for e in enemies:
             if named and e not in named:

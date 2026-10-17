@@ -209,6 +209,49 @@ def test_number_rules_reads_however_if(kai):
         {'disc': ['hunting'], 'plus': 1}]
 
 
+def test_grand_master_draw_a_list_after_a_colon_and_endurance_score(grand):
+    nr = grand['number_rules']
+    assert nr('Now modify your number where appropriate: If you possess Kai-screen add 3. '
+              'If your current ENDURANCE score is 20 or higher add 1. '
+              'If your current ENDURANCE points score is 19 or lower subtract 1.') == [
+        {'disc': ['kaiScreen'], 'plus': 3}, {'ep': [20, 99], 'plus': 1}, {'ep': [-99, 19], 'plus': -1}]
+
+
+def test_number_rules_reads_a_bonus_with_no_condition(kai):
+    assert kai['number_rules']('Pick a number from the Random Number Table and add 3 to the number you have chosen.') == [
+        {'plus': 3}]
+
+
+def test_random_number_auto_with_a_bonus_for_everyone(tmp_path):
+    s = secs(tmp_path, {1: '<p>Pick a number from the <a href="random.htm">Random Number Table</a> and add 3 to the '
+                        'number you have chosen.</p>' + choice('If your total score is now 3–4, turn to', 2)
+                        + choice('If it is 5–12, turn to', 3), 2: '<p>A.</p>', 3: '<p>B.</p>'})
+    assert (s['1']['rnt'], s['1']['rntMod'], [c['range'] for c in s['1']['choices']]) == ('auto', [{'plus': 3}], [[3, 4], [5, 12]])
+
+
+def test_grand_master_draw_with_both_disciplines_adding_more(grand):
+    nr = grand['number_rules']
+    # either gives 3, both together 7: the any-of rule and an all-of rule for the 4 more
+    assert nr('If you possess Kai-alchemy or Magi-magic, add 3 to the number you have chosen '
+              '(if you possess both of these Grand Master Disciplines, add 7).') == [
+        {'disc': ['kaiAlchemy', 'magiMagic'], 'plus': 3}, {'disc': ['kaiAlchemy', 'magiMagic'], 'every': True, 'plus': 4}]
+    assert nr('If you possess Kai-alchemy, add 3 to the number (if you possess both of these, add 7).') is None
+
+
+@pytest.mark.parametrize('text,expect', [
+    ('If you possess mastery of Magi-magic and wish to use it, turn to 5.', {'disc': 'magiMagic'}),
+    ('If you wish to use your Magnakai Discipline of Divination in order to detect it, turn to 5.', {'disc': 'divination'}),
+])
+def test_grand_master_gate_phrasings(grand, text, expect):
+    assert grand['gate'](text) == expect
+
+
+def test_cs_rule_a_penalty_from_the_foes_weapons_is_for_the_whole_fight(kai):
+    assert kai['cs_rule']("Due to the length of your enemies’ weapons, you must reduce your COMBAT SKILL by 4 "
+                          'for the duration of this combat.') == (-4, None, None)
+    assert kai['cs_rule']('If your weapon is a Spear, reduce your COMBAT SKILL by 4.') is None
+
+
 
 
 
@@ -375,6 +418,11 @@ def test_mind_immunity_only_for_the_enemies_named(tmp_path):
     assert e1[0]['immune'] is True and 'immune' not in e1[1]
     assert all(e['immune'] is True for e in s['2']['combat']['enemies'])   # none named: all are
     assert 'immune' not in s['3']['combat']['enemies'][0]
+
+
+def test_immune_to_all_psychic_attacks_is_immune_to_every_mind_attack(tmp_path):
+    s = secs(tmp_path, {1: '<p>This creature is immune to all psychic attacks.</p>' + foe('Rat', 1, 1)})
+    assert s['1']['combat']['enemies'][0]['immune'] is True
 
 
 
