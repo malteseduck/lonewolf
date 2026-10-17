@@ -40,17 +40,15 @@ spent at B8 164 (the text gives no number), the puzzles, and B5 162's climb (a b
 ### Grand Master series (Book 13 on)
 
 Book 13's rules were read on 2026-10-10 (rules-books.md, "Grand Master series"). The importer knows
-Book 13 (2026-10-11: its disciplines, ranks, and foes `immune: 'psi'`), but the engine has none of
-its rules. Until it does, Book 13's gates on Grand Master Disciplines would never open (no character
-holds one) and a carried hero would play it by Kai rules. Importing it is the owner's go-ahead, apart
+Book 13 (2026-10-11: its disciplines, ranks, and foes `immune: 'psi'`); the engine has the series (G1)
+but not yet its scores, carrying or the new disciplines' numbers. Importing it is the owner's go-ahead, apart
 from this work.
 
 **Engine work**, in order (G1 first: everything else reads the series):
 
-- G1. A third series in `LW.SERIES` (`grandmaster`: twelve disciplines, `first: 4`, field
-  `grandmaster`, the twelve ranks), and every `series === 'magnakai'` test in `rules-series.js`,
-  `main.js` (Lore-circles row, `skilled`, the ambush) made to say what
-  a Grand Master book does. Not started (2026-10-11: `LW.SERIES` has `kai` and `magnakai` only).
+- G1 done 2026-10-16 (rules-engine.md, "rules-series.js"): `LW.SERIES.grandmaster`, the gates, the
+  chosen Magnakai numbers. Since then the dashboard offers Book 13's test play (ADR 0039), and its walk
+  runs: 36 fights no stand-in wins, as its heroes still set out at Kai scores (G2).
 - G2. Setting out: a new character 25 + RN / 30 + RN, holding all Kai and Magnakai Disciplines; four
   Grand Master Disciplines; Grand Weaponmastery's two weapons (then one a book, as Weaponmastery's
   three then one); from Book 14, +1 COMBAT SKILL and +2 ENDURANCE for each discipline past four. A

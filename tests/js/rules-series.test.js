@@ -317,3 +317,85 @@ describe('LW.weaponBonus: what a weapon adds, as the inventory shows it', () => 
     expect(sum(kaiHero(), 'bow')).toBe(0);
   });
 });
+
+/* G1: the Grand Master series (rules-books.md, "Grand Master series"; ADR 0018). He holds every Kai and
+   Magnakai Discipline for the text's gates; of their numbers he keeps only those of the Magnakai
+   Disciplines he chose (hero.magnakai, a carried character's), at his Magnakai rank. */
+const FOUR = ['grandWeaponmastery', 'deliverance', 'kaiSurge', 'grandNexus'];
+const gmHero = (grandmaster = FOUR, over = {}) => Object.assign({
+  cs: 30, ep: 35, epMax: 35, series: 'grandmaster', disciplines: KAI(), grandmaster, mastery: [],
+  weapons: ['sword'], backpack: [], special: [], meals: 0, gold: 0, completed: [],
+}, over);
+
+describe('the Grand Master series', () => {
+  it('has twelve disciplines, four to begin with, and the twelve ranks', () => {
+    const S = LW.SERIES.grandmaster;
+    expect(S.list).toHaveLength(12);
+    expect(S.list).toEqual(expect.arrayContaining(['grandWeaponmastery', 'animalMastery', 'deliverance', 'assimilance', 'grandHuntmastery',
+      'grandPathsmanship', 'kaiSurge', 'kaiScreen', 'grandNexus', 'telegnosis', 'magiMagic', 'kaiAlchemy']));
+    expect(S.first).toBe(4);
+    expect(S.field).toBe('grandmaster');
+    expect(S.ranks[1]).toBe('Kai Grand Master Senior');
+    expect(S.ranks[4]).toBe('Kai Grand Defender');
+    expect(S.ranks[12]).toBe('Kai Supreme Master');
+    expect(LW.rankOf(gmHero())).toBe('Kai Grand Defender');
+    expect(LW.rankCount(gmHero())).toBe(4);
+  });
+  it('opens the text\'s gates on every Kai and Magnakai Discipline, and on his Grand Master ones only', () => {
+    const h = gmHero(FOUR, { disciplines: [] });
+    expect(LW.has(h, 'camouflage')).toBe(true);
+    expect(LW.has(h, 'divination')).toBe(true);
+    expect(LW.has(h, 'kaiSurge')).toBe(true);
+    expect(LW.has(h, 'telegnosis')).toBe(false);
+    expect(LW.meets(h, { disc: ['nexus'] })).toBe(true);
+  });
+  it('gives a new character none of the earlier numbers', () => {
+    const h = gmHero(FOUR, { weaponskill: 'sword', mastery: ['sword'] });
+    expect(LW.heals(h)).toBe(false);
+    expect(LW.hunts(h)).toBe(false);
+    expect(LW.mindPower(h)).toBe(0);
+    expect(LW.shielded(h)).toBe(false);
+    expect(LW.mkRank(h)).toBe(0);
+    expect(LW.circlesOf(h)).toEqual([]);
+    expect(names(LW.heroCS(h))).toEqual(['Base']); // no Weaponskill, no Weaponmastery
+    expect(LW.skilledWith(h, 'sword')).toBe(false);
+    expect(LW.canCure(h, '13tplor')).toBe(false);
+  });
+  it('keeps a carried character\'s chosen Magnakai numbers, at his Magnakai rank', () => {
+    const h = gmHero(FOUR, { magnakai: NINE, mastery: ['sword', 'bow', 'axe'], arrows: 3, weapons: ['sword', 'bow'] });
+    expect(LW.mkRank(h)).toBe(9);
+    expect(LW.heals(h)).toBe('Curing');
+    expect(LW.hunts(h)).toBe('Huntmastery');
+    expect(LW.mindPower(h)).toBe(2);
+    expect(LW.psi(h)).toEqual({ surge: 6, cost: 1, floor: 4, blast: 3 }); // Archmaster
+    expect(LW.shielded(h)).toBe(true);
+    expect(LW.heroCS(h).parts).toContainEqual({ label: 'Weaponmastery', n: 4 }); // Scion-kai
+    expect(LW.skilledWith(h, 'sword')).toBe(true);
+    expect(LW.bowShot(h).plus).toBe(5); // Weaponmastery with Bow 3, Mentora 2
+    expect(LW.canCure(h, '13tplor')).toBe(true);
+    // Divination he did not choose: it opens the text's gates, but he has no Psi-screen of his own from it
+    expect(LW.shielded(gmHero(FOUR, { magnakai: EIGHT.filter((d) => d !== 'psiScreen') }))).toBe(false);
+  });
+  it('shields with Kai-screen', () => {
+    expect(LW.shielded(gmHero(['kaiScreen']))).toBe(true);
+  });
+  it('adds no Lore-circle in a fight, nor takes their ENDURANCE back: it is in his scores (G3 folds the COMBAT SKILL)', () => {
+    const h = gmHero(FOUR, { magnakai: NINE, circleEp: 11, epMax: 46, ep: 20 });
+    expect(LW.circlesOf(h)).toEqual([]);
+    expect(names(LW.heroCS(h))).not.toContain('Lore-circles');
+    LW.readyHero(h);
+    expect(h.epMax).toBe(46);
+    expect(h.ep).toBe(46);
+  });
+  it('builds a new Grand Master character with all ten Kai Disciplines and four Grand Master ones', () => {
+    const s = LW.HeroSetup({ number: 13, series: 'grandmaster' }, null);
+    expect(s.pick).toBe(4);
+    s.auto();
+    const h = s.build();
+    expect(h.series).toBe('grandmaster');
+    expect(h.disciplines).toEqual(KAI());
+    expect(h.grandmaster).toHaveLength(4);
+    expect(h.grandmaster.every((d) => LW.SERIES.grandmaster.list.includes(d))).toBe(true);
+    expect(h.weaponskill).toBeNull();
+  });
+});

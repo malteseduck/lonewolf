@@ -106,7 +106,7 @@ apply.
   effects as Magnakai ones: Weaponmastery for weapons, Huntmastery for Meals). Only a character
   who completed Books 1–5 also keeps Healing's +1 (never added to Curing's) and Hunting's spared
   Meals, as the Lone Wolf Club newsletters rule (ADR 0018).
-- **Grand Master series** (Book 13 on; not in the engine yet): twelve Grand Master Disciplines, four
+- **Grand Master series** (Book 13 on; partly in the engine): twelve Grand Master Disciplines, four
   to begin with. The earlier disciplines are held for the text's gates; their numbers count only
   for a carried character, for the Magnakai Disciplines he chose, each replaced by its Grand Master
   counterpart (ADR 0018). The rules are in rules-books.md, the readings in ADR 0019.

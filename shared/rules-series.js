@@ -1,4 +1,4 @@
-/* Rules that differ between series (Kai, Magnakai), and the character who walks from book to book.
+/* Rules that differ between series (Kai, Magnakai, Grand Master), and the character who walks from book to book.
    Load after core.js and ui.js. The numbers are the books' own (docs/reference/rules-books.md,
    checked against the rules pages 2026-10-02). */
 (function () {
@@ -16,6 +16,18 @@
     psiScreen: { series: 'magnakai', name: 'Psi-screen', blurb: 'Enemy mind attacks cannot weaken you.' },
     nexus: { series: 'magnakai', name: 'Nexus', blurb: 'Move objects by will. Endure heat and cold.' },
     divination: { series: 'magnakai', name: 'Divination', blurb: 'Sense danger and the thoughts of those nearby.' },
+    grandWeaponmastery: { series: 'grandmaster', name: 'Grand Weaponmastery', blurb: '+5 COMBAT SKILL with any weapon you have mastered, +5 to a shot with the Bow.' },
+    animalMastery: { series: 'grandmaster', name: 'Animal Mastery', blurb: 'Command hostile beasts; speak with birds and fish.' },
+    deliverance: { series: 'grandmaster', name: 'Deliverance', blurb: 'Once a book, at 8 ENDURANCE or less in a fight, 20 back.' },
+    assimilance: { series: 'grandmaster', name: 'Assimilance', blurb: 'Take on another look for days; pass unseen in open land.' },
+    grandHuntmastery: { series: 'grandmaster', name: 'Grand Huntmastery', blurb: 'Never need a Meal. See in total darkness.' },
+    grandPathsmanship: { series: 'grandmaster', name: 'Grand Pathsmanship', blurb: 'Resist hostile plants; sense an ambush in the woods.' },
+    kaiSurge: { series: 'grandmaster', name: 'Kai-surge', blurb: '+8 COMBAT SKILL for 1 ENDURANCE a round, or a free Mindblast for +4.' },
+    kaiScreen: { series: 'grandmaster', name: 'Kai-screen', blurb: 'A fortress of the mind for you and those beside you.' },
+    grandNexus: { series: 'grandmaster', name: 'Grand Nexus', blurb: 'Withstand flame and acid for an hour or more.' },
+    telegnosis: { series: 'grandmaster', name: 'Telegnosis', blurb: 'Walk in spirit, further and more safely.' },
+    magiMagic: { series: 'grandmaster', name: 'Magi-magic', blurb: 'The battle-spells of the Old Kingdoms.' },
+    kaiAlchemy: { series: 'grandmaster', name: 'Kai-alchemy', blurb: 'The spells of left-handed magic.' },
   });
   // the Bow shoots only where the text allows; hand to hand it is no weapon at all (ranged)
   Object.assign(LW.ITEMS, { bow: { name: 'Bow', kind: 'weapon', ranged: true }, quiver: { name: 'Quiver', kind: 'special', about: 'Holds six Arrows.' } });
@@ -27,6 +39,8 @@
       ranks: ['', 'Novice', 'Intuite', 'Doan', 'Acolyte', 'Initiate', 'Aspirant', 'Guardian', 'Warmarn', 'Savant', 'Master'] },
     magnakai: { name: 'Magnakai', list: ids('magnakai'), first: 3, field: 'magnakai',
       ranks: ['', 'Kai Master', 'Kai Master Senior', 'Kai Master Superior', 'Primate', 'Tutelary', 'Principalin', 'Mentora', 'Scion-kai', 'Archmaster', 'Kai Grand Master'] },
+    grandmaster: { name: 'Grand Master', list: ids('grandmaster'), first: 4, field: 'grandmaster',
+      ranks: ['', 'Kai Grand Master Senior', 'Kai Grand Master Superior', 'Kai Grand Sentinel', 'Kai Grand Defender', 'Kai Grand Guardian', 'Sun Knight', 'Sun Lord', 'Sun Thane', 'Grand Thane', 'Grand Crown', 'Sun Prince', 'Kai Supreme Master'] },
   };
   LW.CIRCLES = [
     { name: 'Circle of Fire', needs: ['weaponmastery', 'huntmastery'], cs: 1, ep: 2 },
@@ -37,7 +51,14 @@
 
   const seriesOf = (hero) => LW.SERIES[hero.series] || LW.SERIES.kai;
   LW.owned = (hero, series) => hero[LW.SERIES[series || hero.series || 'kai'].field] || [];
-  LW.has = (hero, d) => hero.disciplines.includes(d) || (hero.magnakai || []).includes(d);
+  /* In a Grand Master book he holds every Kai and Magnakai Discipline for the text's gates (ADR 0018) */
+  const GM = 'grandmaster';
+  LW.has = (hero, d) => hero.disciplines.includes(d) || (hero.magnakai || []).includes(d) || (hero.grandmaster || []).includes(d)
+    || (hero.series === GM && !!LW.DISCIPLINES[d] && LW.DISCIPLINES[d].series !== GM);
+  /* A Magnakai Discipline's numbers: in a Magnakai book, those he holds; in a Grand Master book, only
+     those a carried character chose (ADR 0018); none in a Kai book he goes back to */
+  LW.pastKai = (hero) => hero.series === 'magnakai' || hero.series === GM;
+  LW.chose = (hero, d) => LW.pastKai(hero) && (hero.magnakai || []).includes(d);
   LW.rankOf = (hero) => seriesOf(hero).ranks[LW.owned(hero).length] || '';
   LW.rankCount = (hero) => LW.owned(hero).length;
   LW.circlesOf = (hero) => (hero.series === 'magnakai' ? LW.CIRCLES.filter((c) => c.needs.every((d) => LW.has(hero, d))) : []);
@@ -51,20 +72,20 @@
      that one who played Books 1-5 keeps Healing's +1 (never added to Curing's) and Hunting's Meals
      (ADR 0018). The Magnakai books do not mark where Hunting fails, so it says so. */
   const kaiVeteran = (hero) => LW.completedAll(hero, 1, 5);
-  LW.heals = (hero) => (hero.series === 'magnakai' ? (LW.has(hero, 'curing') && 'Curing') || (kaiVeteran(hero) && LW.has(hero, 'healing') && 'Healing') : LW.has(hero, 'healing') && 'Healing');
-  LW.hunts = (hero) => (hero.series === 'magnakai' ? (LW.has(hero, 'huntmastery') && 'Huntmastery') || (kaiVeteran(hero) && LW.has(hero, 'hunting') && 'Hunting') : LW.has(hero, 'hunting') && 'Hunting');
+  LW.heals = (hero) => (hero.series === GM ? LW.chose(hero, 'curing') && 'Curing' : hero.series === 'magnakai' ? (LW.has(hero, 'curing') && 'Curing') || (kaiVeteran(hero) && LW.has(hero, 'healing') && 'Healing') : LW.has(hero, 'healing') && 'Healing');
+  LW.hunts = (hero) => (hero.series === GM ? LW.chose(hero, 'huntmastery') && 'Huntmastery' : hero.series === 'magnakai' ? (LW.has(hero, 'huntmastery') && 'Huntmastery') || (kaiVeteran(hero) && LW.has(hero, 'hunting') && 'Hunting') : LW.has(hero, 'hunting') && 'Hunting');
   LW.huntNote = (hero) => (LW.hunts(hero) === 'Hunting' && hero.series === 'magnakai' ? ' Hunting fails in desert and wasteland: if this is such a place, eat a Meal by hand.' : '');
-  LW.shielded = (hero) => (hero.series === 'magnakai' ? LW.has(hero, 'psiScreen') : LW.has(hero, 'mindshield'));
+  LW.shielded = (hero) => (hero.series === GM ? LW.has(hero, 'kaiScreen') || LW.chose(hero, 'psiScreen') : hero.series === 'magnakai' ? LW.has(hero, 'psiScreen') : LW.has(hero, 'mindshield'));
   /* Psi-surge's numbers: an Archmaster's are stronger and cheaper (Book 12) */
-  LW.psi = (hero) => (LW.mkRank(hero) >= 9 && LW.has(hero, 'psiSurge') ? { surge: 6, cost: 1, floor: 4, blast: 3 } : { surge: 4, cost: 2, floor: 6, blast: 2 });
+  LW.psi = (hero) => (LW.mkRank(hero) >= 9 && LW.chose(hero, 'psiSurge') ? { surge: 6, cost: 1, floor: 4, blast: 3 } : { surge: 4, cost: 2, floor: 6, blast: 2 });
   /* 0 = no mind attack, 1 = Mindblast, 2 = Psi-surge */
-  LW.mindPower = (hero) => (hero.series === 'magnakai' ? (LW.has(hero, 'psiSurge') ? 2 : 0) : LW.has(hero, 'mindblast') ? 1 : 0);
+  LW.mindPower = (hero) => (LW.pastKai(hero) ? (LW.chose(hero, 'psiSurge') ? 2 : 0) : LW.has(hero, 'mindblast') ? 1 : 0);
 
   /* Magnakai rank: the number of Magnakai Disciplines. From Book 7 the books improve some disciplines
      by rank (rules-books.md, "Improved Disciplines"); a carried character reaches each rank in the
-     book that first prints its improvements, so rank alone decides. */
-  LW.mkRank = (hero) => (hero.series === 'magnakai' ? (hero.magnakai || []).length : 0);
-  const mastered = (hero) => hero.series === 'magnakai' && LW.has(hero, 'weaponmastery');
+     book that first prints its improvements, so rank alone decides. A carried Grand Master keeps his. */
+  LW.mkRank = (hero) => (LW.pastKai(hero) ? (hero.magnakai || []).length : 0);
+  const mastered = (hero) => LW.chose(hero, 'weaponmastery');
   /* What a weapon adds: its own bonus (item.cs, the Sommerswerd's 8) and his skill with it. A Special
      Item can be a weapon too; item.weapon lists the kinds it counts as for the skill. */
   /* ctx.weaponCs: {id: n, '*': n}, what a weapon adds in this fight in place of its own bonus; ctx.plain:
@@ -73,7 +94,7 @@
     const it = LW.ITEMS[w] || {}, kinds = it.weapon || [w], wc = ctx.weaponCs || {};
     const own = w in wc ? wc[w] : '*' in wc ? wc['*'] : ctx.plain ? 0 : it.cs, parts = own ? [{ label: it.name || LW.itemName(w), n: own }] : [];
     if (mastered(hero) && kinds.some((k) => (hero.mastery || []).includes(k))) parts.push({ label: 'Weaponmastery', n: LW.mkRank(hero) >= 8 ? 4 : 3 }); // Scion-kai: +4
-    else if (hero.series !== 'magnakai' && hero.weaponskill && kinds.includes(hero.weaponskill)) parts.push({ label: 'Weaponskill', n: 2 });
+    else if (!LW.pastKai(hero) && hero.weaponskill && kinds.includes(hero.weaponskill)) parts.push({ label: 'Weaponskill', n: 2 });
     return parts;
   };
   /* The weapon he fights with: whichever gives most. ctx.with: 'none' when the text has him fight
@@ -137,10 +158,12 @@
   };
   /* Curing at Archmaster (Book 12): once in a book (the books say once in 100 days), at 6 ENDURANCE or
      less in a fight, 20 back. hero.cured holds the book it was used in. */
-  LW.canCure = (hero, bookId) => LW.mkRank(hero) >= 9 && LW.has(hero, 'curing') && hero.cured !== bookId;
+  LW.canCure = (hero, bookId) => LW.mkRank(hero) >= 9 && LW.chose(hero, 'curing') && hero.cured !== bookId;
 
-  /* Lore-circle ENDURANCE is added once, when a circle is completed. */
+  /* Lore-circle ENDURANCE is added once, when a circle is completed; in the Grand Master series it
+     stays in his scores, and no circle counts any more */
   function settleCircles(hero) {
+    if (hero.series === GM) return;
     const ep = LW.circlesOf(hero).reduce((t, c) => t + c.ep, 0), by = ep - (hero.circleEp || 0);
     hero.epMax += by; hero.ep += by; hero.circleEp = ep;
   }

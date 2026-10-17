@@ -34,7 +34,7 @@ beforeAll(() => {
   for (const f of ['core.js', 'rules-series.js', 'fight.js']) w(`shared/${f}`, fs.readFileSync(path.join(ROOT, 'shared', f), 'utf8'));
   w('items/items-01tt.js', `export const ITEMS = { lamp: { name: 'Lamp', kind: 'backpack' } }; export const SECTIONS = { 13: { give: [{ item: 'lamp' }] } };`);
   w('data/projectaon/01tt/book.js', book('01tt'));
-  w('data/projectaon/13gm/book.js', book('13gm', { number: 13, series: 'grandmaster' }));
+  w('data/projectaon/21no/book.js', book('21no', { number: 21, series: 'neworder' }));
 });
 afterAll(() => fs.rmSync(tmp, { recursive: true, force: true }));
 
@@ -68,9 +68,9 @@ describe('walk_book.mjs', () => {
   });
 
   it('does not walk a book whose series the engine has no rules for', async () => {
-    const r = await walkBook({ root: tmp, book: '13gm', json: true });
+    const r = await walkBook({ root: tmp, book: '21no', json: true });
     expect(r).toMatchObject({ code: 0, waits: true });
-    expect(fs.existsSync(path.join(tmp, 'data/projectaon/13gm/walk.json'))).toBe(false);
+    expect(fs.existsSync(path.join(tmp, 'data/projectaon/21no/walk.json'))).toBe(false);
   });
 
   it('says to import first when there is no book.js', async () => {

@@ -91,13 +91,13 @@ Decide each section by what the text says, outright:
   an item spares (the Burrowcrawler's darkness and a Torch with Tinderbox), `unarmed: true` when the
   penalty is the text's "you are unarmed" (the engine already gives -4 with no weapon), `ambush:
   true` when the `csMod` is what a surprise attack or ambush costs (Huntmastery spares it; mark
-  these in every Magnakai book). Since 2026-10-03 the importer reads a whole-fight change given or
+  these in every Magnakai and Grand Master book). Since 2026-10-03 the importer reads a whole-fight change given or
   spared by a discipline itself (`csIf`, `csUnless`) and leaves as text any for some rounds only,
   "instead of" a normal bonus, or from a weapon's or item's power: check those sections, and give
   the `csMod` here where it is certain, with `csIf` / `csUnless` when a discipline decides it (Book 3's
   137: a foe only partly immune, so Mindblast adds 1, is `{csMod: 1, csIf: {disc: ['mindblast']}}`).
   `evade: {after, to}` where the text allows evasion in its prose rather than in a choice (Book 3's 108).
-- **bowShot** (Magnakai books): a Random Number that is a bow shot, `{to: [lo, hi]}` for each
+- **bowShot** (Magnakai and Grand Master books): a Random Number that is a bow shot, `{to: [lo, hi]}` for each
   choice it decides, with the ranges of the total as the text gives them (use 99 for "or
   higher"). Leave out the choice for having no Bow. The engine adds Weaponmastery and spends the
   Arrow. Arrows found or bought are `{arrows: n}` in `loot`; lost ones `{arrows: n | 'all'}` in `take`.

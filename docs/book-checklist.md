@@ -51,7 +51,7 @@ Each step's buttons and prompt are in the dashboard, `http://localhost:8766/tool
    rules diff (`tools/rules_diff.py`, "Diff rules"): every paragraph it lists is read, and its
    `rules-draft.md` is the skeleton. Its heading is read from the file; that it is checked is a hand mark.
 5. `docs/reference/items.md`. Where the text leaves a choice to the player, a `todo`, never a guess.
-   In the Magnakai books, mark ambushes and bow shots. Read from the files: registered in `main.js`,
+   In the Magnakai and Grand Master books, mark ambushes and bow shots. Read from the files: registered in `main.js`,
    `node tools/check_items.mjs <code> --json` clean.
 6. Start from the walk (`tools/walk_book.mjs`, "Walk the book"): each section it lists is judged. Then
    play in the browser on a test address (`http://127.0.0.1:8766/`), never over the owner's saves.

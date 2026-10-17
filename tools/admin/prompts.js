@@ -43,7 +43,7 @@ Task: docs/book-checklist.md step 5, the item table, by docs/reference/items.md 
     : b.items.exists ? `items-${b.code}.js exists (${b.items.todos} todo entries${b.items.registered ? ', registered in main.js' : ', NOT yet registered in main.js ITEM_TABLES'}). Re-read it against the reading list and finish what is missing.`
     : `There is no items-${b.code}.js yet. Make the draft first: node tools/items_draft.mjs ${b.code} (the dashboard's "Draft table"), then refine it as below.`}
 - The reading list is data/projectaon/${b.code}/items-reading.txt (the dashboard's "Reading copy" step makes it: tools/reading_copy.py then tools/item_sections.py).
-- Where the text leaves a choice to the player, write a todo, never a guess.${b.series === 'magnakai' ? ' This is a Magnakai book: mark ambushes and bow shots.' : ''} One id per object across books.
+- Where the text leaves a choice to the player, write a todo, never a guess.${b.series === 'magnakai' || b.series === 'grand master' ? ` This is a ${b.series === 'magnakai' ? 'Magnakai' : 'Grand Master'} book: mark ambushes and bow shots.` : ''} One id per object across books.
 - Icons from game-icons.net via tools/fetch_icons.py are part of this step: fetch the ones the new items need and credit them in assets/icons/README.txt.
 ${b.playable === false
     ? `- node tools/check_items.mjs ${b.code} --json must be clean. Do NOT register the table in main.js ITEM_TABLES: the engine has no ${b.series} rules yet (docs/plan.md, ADR 0039), so the step stays short of done until then. Write nothing that needs those rules; leave it as a todo.

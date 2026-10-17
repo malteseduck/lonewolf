@@ -13,7 +13,8 @@ has its tests in `tests/js/` (`core-*`, `rules-series`, `fight`).
   name, cs, ep, epMax,
   disciplines: [...],        // Kai discipline ids
   magnakai: [...],           // Magnakai discipline ids (absent until the character enters that series)
-  series: 'kai'|'magnakai',  // the ruleset of the book being played; set when a book is started
+  grandmaster: [...],        // Grand Master discipline ids (likewise)
+  series: 'kai'|'magnakai'|'grandmaster', // the ruleset of the book being played; set when a book is started
   weaponskill: 'sword'|null, // Kai Weaponskill weapon, drawn from LW.WEAPONSKILL_TABLE (the books' table)
   had: [ids],               // every item he has ever been given (LW.putItem), for "if you have ever been given"
   mastery: [...],            // Magnakai Weaponmastery weapons
@@ -129,14 +130,14 @@ Item (`LW.specialLimit`: 12 in every book, ADR 0029). `LW.hasItem(hero, id)` che
 
 ## rules-series.js
 
-Adds the ten Magnakai disciplines to `LW.DISCIPLINES` and tags every discipline with `series`.
+Adds the ten Magnakai and twelve Grand Master disciplines to `LW.DISCIPLINES` and tags every discipline with `series`.
 Adds `bow` and `quiver` to `LW.ITEMS`.
 
 | What | Where |
 |---|---|
-| Series table | `LW.SERIES.kai` / `.magnakai`: `list`, `first` (disciplines for a new character), `field` (hero property), `ranks` |
+| Series table | `LW.SERIES.kai` / `.magnakai` / `.grandmaster`: `list`, `first` (disciplines for a new character), `field` (hero property), `ranks` |
 | Lore-circles | `LW.CIRCLES`; `LW.circlesOf(hero)`; `settleCircles(hero)` adds circle Endurance once |
-| Discipline tests | `LW.has(hero, id)` checks both lists. `LW.owned(hero, series)`, `LW.rankOf`, `LW.rankCount` |
+| Discipline tests | `LW.has(hero, id)` checks the three lists; in a Grand Master book every Kai and Magnakai Discipline counts as held (the text's gates, ADR 0018). `LW.chose(hero, id)`: a Magnakai Discipline in `hero.magnakai`, in a Magnakai or Grand Master book (`LW.pastKai`), whose numbers apply. `LW.owned(hero, series)`, `LW.rankOf`, `LW.rankCount` |
 | Series-dependent effects | `LW.heals`, `LW.hunts` (in a Magnakai book, Healing and Hunting too for one who completed Books 1-5: `LW.completedAll(hero, 1, 5)`, ADR 0018; `LW.huntNote` then reminds that Hunting fails in desert and wasteland), `LW.shielded`, `LW.mindPower` (0 none, 1 Mindblast, 2 Psi-surge), `LW.psi(hero)` (Psi-surge's `surge`, `cost`, `floor`, Mindblast's `blast`: an Archmaster's +6, 1, 4, +3, else +4, 2, 6, +2) |
 | Improved disciplines | `LW.mkRank(hero)`: the number of Magnakai Disciplines. Weaponmastery +4 at Scion-kai (8); unarmed with Weaponmastery −2 at Tutelary (5), −1 at Scion-kai; Psi-surge as above; `LW.canCure(hero, book)`: an Archmaster's Curing, once a book |
 | Bow | `bow` is `ranged`: never the weapon in hand unless the fight names it (`ctx.with`). `LW.bowShot(hero)`: `{why}` with no Bow or Arrow, else `{bow, parts, plus}`: Weaponmastery with the Bow +3, and from Mentora (7) +2 more, both only with the Bow mastered, a book bow's own `shot` (these parts are `LW.weaponBonus(hero, bow)`, which gives any other weapon's COMBAT SKILL parts too, for the inventory) |
@@ -162,6 +163,14 @@ In a Magnakai book `heals`, `hunts`, `shielded`, `mindPower` and the weapon bonu
 Magnakai disciplines, except that one who completed Books 1-5 also heals and hunts by his Kai
 Disciplines (spec 4.2, ADR 0018). `hero.completed` is set when setting out; a hero saved before
 2026-10-11 has none and counts as no veteran until his next book.
+
+In a Grand Master book (G1 of plan.md, 2026-10-16) the same functions look at the Magnakai Disciplines
+he chose (`LW.chose`; a new Grand Master character has none) at his Magnakai rank (`LW.mkRank`):
+Curing's +1, Huntmastery's Meals and ambushes, Weaponmastery (and its Bow shot, Mentora's +2),
+Psi-surge, Archmaster Curing; the Kai Disciplines give no numbers. `shielded` is Kai-screen or a chosen
+Psi-screen. Lore-circles no longer count (`circlesOf` is empty) and their ENDURANCE stays in his scores
+(`settleCircles` does nothing). The Grand Master Disciplines' own numbers (Grand Weaponmastery,
+Kai-surge, Deliverance, Grand Huntmastery), the scores and carrying are plan.md's G2-G5.
 
 ## Combat procedure
 

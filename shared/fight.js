@@ -60,7 +60,7 @@
       this.changes(1);
     }
 
-    huntmaster() { return this.hero.series === 'magnakai' && LW.has(this.hero, 'huntmastery'); }
+    huntmaster() { return LW.chose(this.hero, 'huntmastery'); }
     /* the next foe of the list, a copy, so the book's own numbers stay as printed */
     bring() { this.i++; this.foe = this.foes[this.i]; }
 

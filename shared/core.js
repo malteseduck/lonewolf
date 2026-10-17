@@ -244,7 +244,7 @@
   const kindsOf = (w) => (LW.ITEMS[w] && LW.ITEMS[w].weapon) || [w];
   LW.weaponsHeld = (hero) => [...hero.weapons, ...hero.special.filter((s) => LW.ITEMS[s] && LW.ITEMS[s].weapon)];
   LW.inHand = (hero, ctx = {}) => ('weapon' in ctx ? ctx.weapon : LW.armedWith ? LW.armedWith(hero) : hero.weapons[0] || null);
-  LW.skilledWith = (hero, w) => !!w && kindsOf(w).some((k) => (hero.series === 'magnakai' ? LW.has(hero, 'weaponmastery') && (hero.mastery || []).includes(k) : hero.weaponskill === k));
+  LW.skilledWith = (hero, w) => !!w && kindsOf(w).some((k) => (LW.pastKai(hero) ? LW.chose(hero, 'weaponmastery') && (hero.mastery || []).includes(k) : hero.weaponskill === k));
   LW.meets = (hero, c, ctx = {}) => {
     const ds = c.disc ? [].concat(c.disc) : [];
     if (ds.length && !(c.every ? ds.every((d) => LW.has(hero, d)) : ds.some((d) => LW.has(hero, d)))) return false;
