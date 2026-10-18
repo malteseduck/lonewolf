@@ -35,7 +35,15 @@
   .sheet-top .only { color: var(--fg); font-size: 13px; }
   .card.missing { box-shadow: inset 0 0 0 2px var(--blood), 0 2px 8px rgba(40, 24, 10, .45); }
   .card .tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-  .card .tools button { font-size: 12px; padding: 2px 8px; }
+  .card .tools { align-items: center; }
+  .card .tools button, .card .tools summary { font-size: 11px; padding: 1px 7px; }
+  /* the ways to give a picture, folded away: they are used once per enemy, Adjust and Prompt more often */
+  .card .more { position: relative; }
+  .card .more summary { list-style: none; cursor: pointer; background: var(--btn); color: var(--fg); border: 1px solid var(--btn-line); border-radius: 4px; }
+  .card .more summary::-webkit-details-marker { display: none; }
+  .card .more summary::after { content: ' \25BE'; }
+  .card .more .menu { position: absolute; z-index: 3; top: calc(100% + 3px); left: 0; display: grid; gap: 3px; padding: 5px; background: #e2d3aa; border: 1px solid #6b553c; border-radius: 3px; box-shadow: 0 3px 10px rgba(40, 24, 10, .45); white-space: nowrap; }
+  .card .more .menu button { text-align: left; }
   body.embed .sheet-top h1, body.embed .sheet-top select, body.embed .sheet-top nav { display: none; }
   /* inside the dashboard's frame: plain parchment, the charred rim is the dashboard's */
   body.embed { padding: 0; }
@@ -250,9 +258,10 @@ async function render() {
     ${f.blunt ? '<span class="badge blunt">Not upscaled</span>' : ''}
     ${f.was ? `<div class="was" id="was${i}"><small>was</small></div>` : ''}
     <div class="pic" id="pic${i}">${f.src ? '' : '<div class="none">no picture<br><small>drop one here</small></div>'}</div>
-    <b>${esc(f.name)}</b><small>section${f.secs.length > 1 ? 's' : ''} ${esc(f.secs.join(', '))}</small><small>${esc(f.from)}</small>
+    <b>${esc(f.name)}</b><small>section${f.secs.length > 1 ? 's' : ''} ${esc(f.secs.join(', '))}</small><small>${esc(f.from)}</small><small id="size${i}"></small>
     <small class="about${about(f.name) ? '' : ' unsaid'}">${esc(about(f.name) || 'not yet said what this enemy is')}</small>
-    <div class="tools"><button data-do="choose">Choose...</button><button data-do="address">By address...</button><button data-do="standin">Stand-in...</button>${f.src ? '<button data-do="adjust">Adjust</button>' : ''}${ownFile(f) ? '<button data-do="link">Link...</button>' : ''}</div></div>`).join('');
+    <div class="tools">${f.src ? '<button data-do="adjust">Adjust</button>' : ''}<button data-do="prompt" title="Copy a prompt for an AI image generator: this enemy as a Gary Chalk ink portrait">Prompt</button>
+      <details class="more"><summary>Picture</summary><div class="menu"><button data-do="choose">Choose file...</button><button data-do="address">By address...</button><button data-do="standin">Stand-in...</button>${ownFile(f) ? '<button data-do="link">Link...</button>' : ''}</div></details></div></div>`).join('');
   // ink them one by one, so the page shows at once
   for (const [i, f] of foes.entries()) {
     if (!f.src) continue;
@@ -261,6 +270,15 @@ async function render() {
     if (!box) return;  // drawn again meanwhile
     if (!im) { box.innerHTML = '<div class="none">file missing</div>'; continue; }
     box.append(copy(inkPlate(im)));
+    // the file the player loads (the copy where there is one): its bytes, and its size against what the
+    // fight panel inks (plates.js inkPlate: the crop at 1100 px wide; past that is wasted on the iPad)
+    const W = im.naturalWidth, H = im.naturalHeight, cr = f.plate?.crop, cw = Math.round((cr ? cr[2] : 1) * W);
+    const head = await fetch(url(f.src), { method: 'HEAD', cache: 'no-store' }).catch(() => null);
+    const bytes = +(head?.headers.get('Content-Length') || 0);
+    if (!$('#size' + i)) return;
+    $('#size' + i).textContent = (bytes ? `${bytes < 1e6 ? Math.round(bytes / 1024) + ' KB' : (bytes / 1048576).toFixed(1) + ' MB'}, ` : '')
+      + `${W} × ${H} px${f.blunt ? '' : ' (the copy)'}` + (cw < W ? `, crop ${cw} wide` : '')
+      + (cw > 1100 * 1.05 ? ': more than the iPad needs (step 7\'s Upscale reduces it)' : '');
     // before and after: the approved picture, small, in the corner of a changed card
     const was = f.was && $('#was' + i), old = was && f.was.src && await image(url(f.was.src), f.was);
     if (was) was.prepend(old ? copy(inkPlate(old)) : Object.assign(document.createElement('div'), { className: 'none', textContent: f.was.src ? 'file missing' : 'emblem' }));
@@ -300,6 +318,8 @@ $('#cards').addEventListener('click', (e) => {
   const b = e.target.closest('button[data-do]'), c = cardOf(e.target);
   if (!b || !c) return;
   setActive(c);
+  b.closest('details')?.removeAttribute('open');
+  if (b.dataset.do === 'prompt') copyPrompt(foes[+c.dataset.i]);
   if (b.dataset.do === 'choose') { $('#file').value = ''; $('#file').click(); }
   if (b.dataset.do === 'adjust') edit(foes[+c.dataset.i]);
   if (b.dataset.do === 'standin') pickStandIn(foes[+c.dataset.i]);
@@ -332,6 +352,34 @@ document.addEventListener('paste', (e) => {
   if (!foe) return toast('Point at a card first, then paste.', 4000);
   if (f) take(foe, f); else fromAddress(foe, a);
 });
+
+// one Picture menu open at a time, and a click elsewhere shuts it
+document.addEventListener('click', (e) => {
+  for (const d of document.querySelectorAll('.card details[open]')) if (!d.contains(e.target)) d.removeAttribute('open');
+});
+
+/* A prompt for an AI image generator: the enemy as the books' own artist might have inked it, tall like the
+   fight panel, on plain paper so inkPlate() can take it as it is. The description is the index's `about`. */
+function promptFor(foe) {
+  const what = about(foe.name);
+  return `A portrait of ${foe.name}${what ? `: ${what.replace(/\.\s*$/, '')}` : ''}. `
+    + 'Black-and-white pen-and-ink illustration in the style of Gary Chalk\'s artwork for the Lone Wolf gamebooks: '
+    + 'confident linework, dense cross-hatching and stippling for shade, detailed textures of cloth, armour, hide and fur, '
+    + 'the look of a 1980s fantasy gamebook plate. A single figure, full body or three-quarter length, in a dramatic fighting stance, '
+    + 'facing the viewer, filling a tall portrait frame (2:3). Plain white background, no scenery, '
+    + 'no colour, no grey wash, no text, no border.';
+}
+async function copyPrompt(foe) {
+  const text = promptFor(foe);
+  try { await navigator.clipboard.writeText(text); }
+  catch {  // no clipboard permission: the old way
+    const t = Object.assign(document.createElement('textarea'), { value: text });
+    document.body.append(t); t.select();
+    const ok = document.execCommand('copy'); t.remove();
+    if (!ok) return toast('Could not copy the prompt.', 4000);
+  }
+  toast(about(foe.name) ? 'Prompt copied' : 'Prompt copied (no description yet: only the name)', 3000);
+}
 
 /* The answer typed in the #ask dialog, or null if cancelled (Escape, Cancel). */
 function ask(question, value, placeholder) {

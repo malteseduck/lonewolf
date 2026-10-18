@@ -13,8 +13,10 @@ Prints file names and sizes only.
 
 --fights does the same for every picture the book's fights can show (checklist step 7's Upscale):
 what plates.json and the book pick for each enemy now, and the pictures approved for its fights. Each
-copy goes beside its picture, wherever that is (data/, art/, assets/plates/), and the pictures with a
-copy are listed in assets/plates/upscaled/<code>.json, from which the player and the picture sheet show
+copy goes beside its picture, wherever that is (data/, art/, assets/plates/), sized for the fight panel:
+twice the picture, but no wider than its widest crop needs to be FIT px across (plates.js inkPlate inks a
+crop at that width, so more is thrown away on the iPad), and a picture already past that is only reduced,
+without Real-ESRGAN. A copy of another size than that is made again. The pictures with a copy are listed in assets/plates/upscaled/<code>.json, from which the player and the picture sheet show
 the copy. plates.json and the approved pictures keep naming the originals; a crop, in fractions, fits both.
 """
 import os
@@ -30,23 +32,30 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'data', 'projectaon')
 HERE = os.path.join(ROOT, 'tools', 'realesrgan')
 QUALITY = 80
+# the width plates.js inkPlate() inks a fight picture's crop at: a copy wider than its crop needs is wasted bytes
+FIT = 1100
 ILL = re.compile(r'(?:ill|small)\d+\.png')
 
 
-def upscale(src, out, tmp):
-    """src at 4x by Real-ESRGAN, then LANCZOS to exactly 2x, as WebP at out."""
+def upscale(src, out, tmp, width=None):
+    """src at 4x by Real-ESRGAN, then LANCZOS to exactly 2x (or to width px wide), as WebP at out. A width
+    no more than src's own is a plain LANCZOS reduction, without Real-ESRGAN."""
     from PIL import Image  # here, not above: serve.py imports this module for listing() without Pillow
-    x4 = os.path.join(tmp, 'x4.png')
-    subprocess.run([os.path.join(HERE, 'realesrgan-ncnn-vulkan.exe'), '-i', src, '-o', x4,
-                    '-n', 'realesrgan-x4plus', '-m', os.path.join(HERE, 'models')], check=True, capture_output=True)
     w, h = Image.open(src).size
-    im = Image.open(x4)
+    size = (w * 2, h * 2) if width is None else (width, max(1, round(h * width / w)))
+    if size[0] <= w:
+        im = Image.open(src)
+    else:
+        x4 = os.path.join(tmp, 'x4.png')
+        subprocess.run([os.path.join(HERE, 'realesrgan-ncnn-vulkan.exe'), '-i', src, '-o', x4,
+                        '-n', 'realesrgan-x4plus', '-m', os.path.join(HERE, 'models')], check=True, capture_output=True)
+        im = Image.open(x4)
     if im.mode in ('RGBA', 'LA', 'P'):  # a transparent ground is paper: white under it
         im = im.convert('RGBA')
         ground = Image.new('RGBA', im.size, 'white')
         ground.alpha_composite(im)
         im = ground
-    im.convert('RGB').resize((w * 2, h * 2), Image.LANCZOS).save(out + '.part', 'WEBP', quality=QUALITY, method=6)
+    im.convert('RGB').resize(size, Image.LANCZOS).save(out + '.part', 'WEBP', quality=QUALITY, method=6)
     os.replace(out + '.part', out)
 
 
@@ -81,9 +90,11 @@ def listing(book):
     return out
 
 
-def upscale_one(rel):
-    """One picture, rel from the project root, to <stem>-2x.webp beside it. Returns the copy's rel, or
+def upscale_one(rel, crop=1):
+    """One picture, rel from the project root, to <stem>-2x.webp beside it: twice its width, but no wider
+    than makes crop (its widest crop, a fraction of its width) FIT px across. Returns the copy's rel, or
     None if rel is not a picture that can be upscaled (missing, outside assets/ art/ data/, an upscale)."""
+    from PIL import Image
     parts = rel.replace('\\', '/').split('/')
     stem, ext = os.path.splitext(parts[-1])
     if '..' in parts or parts[0] not in ('assets', 'art', 'data') or ext.lower() not in ('.png', '.jpg', '.jpeg', '.webp') or stem.endswith('-2x'):
@@ -93,10 +104,32 @@ def upscale_one(rel):
         return None
     out_rel = '/'.join(parts[:-1] + [stem + '-2x.webp'])
     out = os.path.join(ROOT, *out_rel.split('/'))
-    if not (os.path.isfile(out) and os.path.getmtime(out) >= os.path.getmtime(src)):
+    w = Image.open(src).width
+    width = min(2 * w, -(-FIT * 1000 // round(crop * 1000)))  # ceil(FIT / crop)
+    if not (os.path.isfile(out) and os.path.getmtime(out) >= os.path.getmtime(src) and Image.open(out).width == width):
         with tempfile.TemporaryDirectory() as tmp:
-            upscale(src, out, tmp)
+            upscale(src, out, tmp, width)
     return out_rel
+
+
+def widest_crops():
+    """{src: the widest crop of it, as a fraction of its width} over every entry in plates.json and every
+    approved picture of any book: a copy is shared by all of them."""
+    import json
+    import plates_file
+    uses = [(p.get('src'), p.get('crop')) for p in plates_file.load_plates()['plates']]
+    d = os.path.join(ROOT, 'assets', 'plates', 'approved')
+    for f in (os.listdir(d) if os.path.isdir(d) else []):
+        try:
+            with open(os.path.join(d, f), encoding='utf-8') as fh:
+                uses += [((pin.get('plate') or {}).get('src'), (pin.get('plate') or {}).get('crop')) for pin in json.load(fh).get('pins', {}).values() if pin]
+        except (OSError, ValueError):
+            pass
+    out = {}
+    for src, crop in uses:
+        if src:
+            out[src] = max(out.get(src, 0), crop[2] if crop and len(crop) == 4 and 0 < crop[2] <= 1 else 1)
+    return out
 
 
 def fight_srcs(code):
@@ -119,17 +152,18 @@ def fights(code):
     """Upscale the book's fight pictures and list those with a copy in assets/plates/upscaled/<code>.json."""
     import json
     srcs = fight_srcs(code)
+    crops = widest_crops()
     made = []
     for src in srcs:
         t = time.time()
-        out = upscale_one(src)
-        print(f'{src} -> {out}, {time.time() - t:.1f} s' if out else f'{src}: not a picture that can be upscaled', flush=True)
+        out = upscale_one(src, crops.get(src, 1))
+        print(f'{src} -> {out}, {os.path.getsize(os.path.join(ROOT, *out.split("/"))) // 1024} KB, {time.time() - t:.1f} s' if out else f'{src}: not a picture that can be upscaled', flush=True)
         if out:
             made.append(src)
     d = os.path.join(ROOT, 'assets', 'plates', 'upscaled')
     os.makedirs(d, exist_ok=True)
     with open(os.path.join(d, code + '.part'), 'w', encoding='utf-8', newline='\n') as f:
-        f.write(json.dumps({'_readme': 'The fight pictures of this book with a Real-ESRGAN 2x copy beside them, '
+        f.write(json.dumps({'_readme': 'The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, '
                             '<name>-2x.webp, which the player and the picture sheet show instead (platepick.js '
                             'upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.', 'srcs': made}, indent=1) + '\n')
     os.replace(os.path.join(d, code + '.part'), os.path.join(d, code + '.json'))

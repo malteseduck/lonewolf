@@ -116,3 +116,41 @@ def test_fights_upscales_every_picture_the_books_fights_can_show_and_lists_them(
     assert '4 fight pictures upscaled' in capsys.readouterr().out
     book.calls.clear()
     assert ill_upscale.main(['--fights', CODE]) == 0 and book.calls == []  # done already
+
+
+def test_fights_copies_are_sized_for_the_ink_canvas_a_big_picture_reduced_not_upscaled(book, tmp_path, monkeypatch, capsys):
+    """The fight panel inks a picture's crop at FIT px wide (plates.js inkPlate), so its copy is at most
+    that: a small picture doubled, one past FIT reduced without Real-ESRGAN, by its widest crop anywhere."""
+    import json
+    import plates_file
+    monkeypatch.setattr(ill_upscale, 'ROOT', str(tmp_path))
+    monkeypatch.setattr(ill_upscale, 'FIT', 100)
+    monkeypatch.setattr(plates_file, 'ROOT', str(tmp_path))
+    monkeypatch.setattr(plates_file, 'PLATES', str(tmp_path / 'assets' / 'plates' / 'plates.json'))
+    art = tmp_path / 'art' / 'plates' / CODE
+    art.mkdir(parents=True)
+    for name, w in (('small', 30), ('mid', 80), ('big', 400), ('cropped', 400)):
+        Image.new('RGB', (w, w * 2), 'white').save(art / f'{name}.webp')
+    (tmp_path / 'assets' / 'plates').mkdir(parents=True, exist_ok=True)
+    (tmp_path / 'assets' / 'plates' / 'plates.json').write_text(json.dumps({'plates': [
+        {'match': f'^{n}$', 'book': CODE, 'src': f'art/plates/{CODE}/{n}.webp'} for n in ('small', 'mid', 'big')] + [
+        {'match': '^cropped$', 'book': CODE, 'src': f'art/plates/{CODE}/cropped.webp', 'crop': [0.5, 0, 0.25, 1]},
+        # another book's wider crop of the same picture: the copy keeps enough for it too
+        {'match': '^other$', 'book': '01fftd', 'src': f'art/plates/{CODE}/cropped.webp', 'crop': [0, 0, 0.5, 1]}]}), encoding='utf-8')
+    secs = {'1': {'combat': {'enemies': [{'name': n} for n in ('Small', 'Mid', 'Big', 'Cropped')]}}}
+    (tmp_path / 'data' / 'projectaon').mkdir(parents=True)
+    os.replace(book.dir, tmp_path / 'data' / 'projectaon' / CODE)
+    monkeypatch.setattr(ill_upscale, 'DATA', str(tmp_path / 'data' / 'projectaon'))
+    (tmp_path / 'data' / 'projectaon' / CODE / 'book.js').write_text('(window.LW = window.LW || {}).BOOKS = Object.assign(window.LW.BOOKS || {}, '
+                                      + json.dumps({CODE: {'assets': f'data/projectaon/{CODE}/', 'sections': secs}}) + ');\n', encoding='utf-8')
+    assert ill_upscale.main(['--fights', CODE]) == 0
+    width = lambda n: Image.open(art / f'{n}-2x.webp').width
+    assert (width('small'), width('mid'), width('big'), width('cropped')) == (60, 100, 100, 200)
+    assert len(book.calls) == 2  # Real-ESRGAN for small and mid only
+    got = json.loads((tmp_path / 'assets' / 'plates' / 'upscaled' / f'{CODE}.json').read_text(encoding='utf-8'))
+    assert len(got['srcs']) == 4  # the player shows each copy, reduced or not
+    # a copy made before at full 2x is past what is needed: the next run reduces it, without Real-ESRGAN
+    Image.new('RGB', (800, 1600), 'white').save(art / 'big-2x.webp')
+    book.calls.clear()
+    assert ill_upscale.main(['--fights', CODE]) == 0
+    assert width('big') == 100 and book.calls == []

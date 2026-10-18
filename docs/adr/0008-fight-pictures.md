@@ -43,7 +43,9 @@ the very same creature. The owner set the order.
   on the picture sheet). The edges are not faded.
 - **Upscaled 2x** as the illustrations are (ADR 0031), all of a book's at once by "Upscale 2x" at
   checklist step 7: every picture its fights can show, now or as approved, each copy beside its
-  source. The book's list of them, `assets/plates/upscaled/<code>.json`, makes the player and the sheet
+  source. Each copy is sized for the iPad: twice its picture, but no wider than makes its widest crop
+  (in any book) 1100 px across, the width the fight panel inks it at; a picture already past that is
+  only reduced, without Real-ESRGAN, and a copy of another size is made again. The book's list of them, `assets/plates/upscaled/<code>.json`, makes the player and the sheet
   show the copy; `plates.json` and the approved pictures keep naming the originals, so nothing waits
   for approval, and a crop (in fractions) fits both. Adjust's "Show original" swaps in the picture
   before the upscale. Step 7 cannot be marked done while any of those pictures lacks an up-to-date 2x
@@ -92,5 +94,7 @@ the very same creature. The owner set the order.
 - 2026-10-17: merged 0008 (shown whole), 0010 (varied plain humans), 0020 (pinned once approved),
   0035 (source order) and the fight-picture part of 0033 (upscale) into this one record.
 - 2026-10-17: every illustration and fight picture says what it is, in the index and on both sheets.
+- 2026-10-18: copies sized for the iPad (no wider than the ink canvas uses), big pictures reduced;
+  each card shows its file's size in KB and pixels.
 - 2026-10-18: a fight card says what the enemy is by the book, whatever its picture (a picture the
   owner set had lost its card's description).
