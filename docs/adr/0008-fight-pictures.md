@@ -57,6 +57,14 @@ the very same creature. The owner set the order.
   his approval for that enemy. Unmarking step 7 lets the pins go.
 - The picture sheet says once, at the top, whether the book is approved; only cards waiting for
   approval are marked (showing the new picture), with a filter to show only those.
+- **Every picture and every enemy says what it is.** Each illustration (small ones too) has a short
+  description of what it is: who or what, and at which moment, as the book has it, or the wiki where
+  the book does not say; a stand-in says what it stands for. Each enemy has one of what it is by the
+  book, whatever picture stands in for it, so the owner knows the creature when looking for another
+  picture: the picture sheet shows the enemy's, the illustration sheet the picture's. Both are kept in
+  the illustration index, written by hand (no editing on the sheets: the owner wants the book's
+  description, not to write one). In our own words, kept with the books (git-ignored), never in the
+  repository. Book 13 first (2026-10-17), as the pattern.
 
 ## Consequences
 
@@ -65,6 +73,9 @@ the very same creature. The owner set the order.
 - The illustration index (`tools/ill_index.py`) holds every illustration of every downloaded book,
   fight pictures too, and a picture's fights in other sections (`fought_at`), so steps 2 and 3 of the
   order are a search of it by the creature's name. `tools/plates_draft.py` (ADR 0036) drafts by name.
+  Its `about` (from `data/projectaon/ill-about.json`) is a picture's description and `foes` (from
+  `foe-about.json`, by book and enemy name) an enemy's; it also holds the small pictures (marked
+  `small`, never a draft's source) and the stand-ins fights use, keyed by path.
 - The procedure is `docs/reference/items.md`, "Fight pictures" (Book 4 is the worked example for
   plain humans); the step 7 prompt in `tools/admin/prompts.js` gives the same order.
 - `ill_upscale.py --fights`, `upscaledSrc()` in `platepick.js`.
@@ -80,3 +91,6 @@ the very same creature. The owner set the order.
 - 2026-10-13: fight pictures became checklist step 7 (ADR 0036); upscaled 2x with the illustrations.
 - 2026-10-17: merged 0008 (shown whole), 0010 (varied plain humans), 0020 (pinned once approved),
   0035 (source order) and the fight-picture part of 0033 (upscale) into this one record.
+- 2026-10-17: every illustration and fight picture says what it is, in the index and on both sheets.
+- 2026-10-18: a fight card says what the enemy is by the book, whatever its picture (a picture the
+  owner set had lost its card's description).

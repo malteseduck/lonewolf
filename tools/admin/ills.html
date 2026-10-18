@@ -19,6 +19,8 @@
   .card img { max-width: 100%; max-height: 190px; mix-blend-mode: multiply; }
   .card b { display: block; font: 15px var(--title); margin-top: 6px; }
   .card small { display: block; color: #6b553c; font-size: 12px; }
+  .card small.about { color: #3b2a18; font-size: 13px; font-style: italic; margin-top: 3px; white-space: normal; }
+  .card small.about.unsaid { color: #a0522d; }
   .card .badge { position: absolute; top: 6px; right: 6px; font: 12px var(--title); color: #f3e6c4; background: #7d1d14; border-radius: 3px; padding: 2px 7px; }
   body.embed { padding: 0; }
   body.embed::before, body.embed::after { display: none; }
@@ -81,6 +83,10 @@ async function load() {
   const j = r && await r.json().catch(() => null);
   if (!r || !r.ok || !Array.isArray(j)) { $('#sum').textContent = (j && j.error) || 'The server did not answer.'; return; }
   ills = j;
+  // what each picture is (tools/ill_index.py: `about`, kept in data/projectaon/ill-about.json)
+  const x = await fetch('/data/projectaon/ill-index.json', { cache: 'no-store' }).catch(() => null);
+  const index = x && x.ok ? ((await x.json().catch(() => null)) || {}) : {};
+  for (const i of ills) i.about = index[`${code}/${i.name}`]?.about || '';
   const made = ills.filter((i) => i.big);
   const sum = (k, list) => list.reduce((t, i) => t + (i[k] || 0), 0);
   $('#sum').textContent = !ills.length ? 'This book has no illustrations.'
@@ -89,13 +95,14 @@ async function load() {
       ${i.big ? '' : '<span class="badge">not upscaled</span>'}
       <div class="pic"><img src="${src(i.big || i.name)}" alt="" loading="lazy"></div>
       <b>${esc(i.name.replace('.png', ''))}</b>
-      <small>${i.sections.length ? `section${i.sections.length > 1 ? 's' : ''} ${esc(i.sections.join(', '))}` : 'in no section'}</small></button>`).join('');
+      <small>${i.sections.length ? `section${i.sections.length > 1 ? 's' : ''} ${esc(i.sections.join(', '))}` : 'in no section'}</small>
+      <small class="about${i.about ? '' : ' unsaid'}">${esc(i.about || 'not yet said what this picture is')}</small></button>`).join('');
 }
 
 function show(n) {
   at = (n + ills.length) % ills.length;
   const i = ills[at];
-  $('#cmp-title').textContent = `${i.name.replace('.png', '')}${i.sections.length ? ', section ' + i.sections.join(', ') : ''}`;
+  $('#cmp-title').textContent = `${i.name.replace('.png', '')}${i.sections.length ? ', section ' + i.sections.join(', ') : ''}${i.about ? ': ' + i.about : ''}`;
   $('#cmp-a').innerHTML = `<img id="cmp-a-img" src="${src(i.name)}" alt="">`;
   $('#cmp-b').innerHTML = i.big ? `<img id="cmp-b-img" src="${src(i.big)}" alt="">` : '<div class="none">Not upscaled yet (step 9)</div>';
   $('#cmp-a-size').textContent = kb(i.bytes);
@@ -117,8 +124,7 @@ $('#cards').addEventListener('click', (e) => { const c = e.target.closest('.card
 $('#cmp-zoom').onchange = fit;
 $('#cmp-prev').onclick = () => show(at - 1);
 $('#cmp-next').onclick = () => show(at + 1);
-$('#cmp-close').onclick = () => $('#cmp').close();
-$('#cmp').addEventListener('keydown', (e) => {
+$('#cmp-close').onclick = () => $('#cmp').close();$('#cmp').addEventListener('keydown', (e) => {
   if (e.key === 'ArrowLeft') { e.preventDefault(); show(at - 1); }
   if (e.key === 'ArrowRight') { e.preventDefault(); show(at + 1); }
 });

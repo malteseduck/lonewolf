@@ -79,6 +79,19 @@ def test_current_an_over_entry_beats_the_books_picture():
 BIG = b'x' * (pf.MIN_BYTES + 1)
 
 
+def test_standins_carry_what_each_picture_is_from_the_index(tree):
+    tree.file('data/projectaon/02fotw/ill1.png', BIG)
+    tree.file('art/plates/02fotw/eel.webp', BIG)
+    tree.file('data/projectaon/ill-index.json', json.dumps({
+        '02fotw/ill1.png': {'shows': 'a rat', 'about': 'the rat king', 'near': [], 'fight': []},
+        'art/plates/02fotw/eel.webp': {'book': None, 'shows': '', 'about': 'stand-in for the eel', 'near': [], 'fight': []},
+    }).encode())
+    got = {o['src']: o for o in pf.standins()}
+    assert got['data/projectaon/02fotw/ill1.png']['about'] == 'the rat king'
+    assert got['data/projectaon/02fotw/ill1.png']['shows'] == 'a rat'
+    assert got['art/plates/02fotw/eel.webp']['about'] == 'stand-in for the eel'
+
+
 # ---- put ----
 def test_put_unknown_enemy(tree):
     with pytest.raises(ValueError, match='no enemy of that name'):

@@ -73,7 +73,9 @@ tools/
                             fetched again, and the fetch (Setup's gated setup-art); a page link is followed to
                             the picture it names (og:image)
   ill_index.py              writes data/projectaon/ill-index.json: every book's illustrations, the fights near
-                            each, and a hand note of what each shows (data/projectaon/ill-notes.json); both
+                            each, and hand notes of what each shows (data/projectaon/ill-notes.json) and
+                            what it is (ill-about.json), also for the stand-ins fights use, and what each
+                            enemy is by the book (foe-about.json); all
                             git-ignored (docs/reference/items.md, Fight pictures)
   setup.py                  what the tools need on this PC and installing it (the dashboard's Setup; standard
                             library only, run with --no-project); pyproject.toml and uv.lock: the tools as a uv project, its

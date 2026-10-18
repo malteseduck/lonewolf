@@ -25,6 +25,8 @@ def tree(tmp_path, monkeypatch):
     monkeypatch.setattr(ii, 'PA', str(pa))
     monkeypatch.setattr(ii, 'OUT', str(pa / 'ill-index.json'))
     monkeypatch.setattr(ii, 'NOTES', str(pa / 'ill-notes.json'))
+    monkeypatch.setattr(ii, 'ABOUT', str(pa / 'ill-about.json'))
+    monkeypatch.setattr(ii, 'FOE_ABOUT', str(pa / 'foe-about.json'))
     monkeypatch.setattr(ii, 'PLATES', str(plates / 'plates.json'))
 
     class T:
@@ -88,8 +90,8 @@ def test_main_builds_the_index_entry_for_each_picture(tree, capsys):
     assert e['book'] == '01xx' and e['section'] == 2
     assert e['fight'] == ['Giak'] and e['to'] == [3] and e['from'] == [1]
     assert {(n['section'], n['steps']) for n in e['near']} == {(3, 1), (3, -2)}   # 3 is one step on, and two steps back (3 -> 1 -> 2)
-    assert e['used_by'] == [] and e['shows'] == ''
-    assert capsys.readouterr().out.strip() == '1 illustrations in 1 books, 0 with a note'
+    assert e['used_by'] == [] and e['shows'] == '' and e['about'] == ''
+    assert capsys.readouterr().out.splitlines()[0] == '1 illustrations in 1 books, 0 with a note'
 
 
 def test_main_lists_the_fights_an_imported_book_gives_a_picture_from_another_section(tree):
@@ -109,7 +111,44 @@ def test_main_merges_the_notes_and_reports_stale_ones(tree, capsys):
     assert idx['01xx/ill1.png']['shows'] == 'a drawn thing' and idx['01xx/ill2.png']['shows'] == ''
     out = capsys.readouterr().out.splitlines()
     assert out[0] == '2 illustrations in 1 books, 1 with a note'
-    assert out[1] == 'notes for pictures not found: 01xx/ill9.png'
-    assert out[2] == 'no note: 01xx/ill2.png'
+    assert out[2] == 'notes for pictures not found: 01xx/ill9.png'
+    assert out[3] == 'no note: 01xx/ill2.png'
+
+
+def test_each_enemy_says_what_it_is_by_the_book_whatever_its_picture(tree):
+    # kept by book and name in foe-about.json, merged into the index under "foes"; the picture sheet shows it
+    tree.book('01xx', {1: sect(foes=['Rat'], ills=['ill1.png'])})
+    (tree.root / 'data' / 'projectaon' / 'foe-about.json').write_text(json.dumps({'01xx': {'Rat': 'a plague rat'}}), encoding='utf-8')
+    idx = tree.run()
+    assert idx['foes'] == {'01xx': {'Rat': 'a plague rat'}}
+
+
+def test_main_holds_the_small_illustrations_too_marked_small(tree):
+    # they are illustrations to describe, but too low to make a fight picture (the draft passes them over)
+    d = tree.book('01xx', {1: sect(foes=['Rat'], ills=['ill1.png']), 2: sect(extra='<img src="small3.png"/>')})
+    (d / 'small9.png').write_bytes(b'x')   # on a page outside the numbered sections (The Story So Far)
+    idx = tree.run()
+    assert idx['01xx/small3.png']['section'] == 2 and idx['01xx/small3.png']['small'] is True
+    assert idx['01xx/small9.png']['section'] is None and idx['01xx/small9.png']['small'] is True
+    assert 'small' not in idx['01xx/ill1.png']
+
+
+def test_main_says_what_each_fight_picture_is_book_pictures_and_stand_ins_alike(tree, capsys):
+    # what a picture is (the book's moment, or the creature a stand-in stands for) is kept by hand in
+    # ill-about.json and merged in; a picture from outside the books that a fight uses is in the index too
+    tree.book('01xx', {1: sect(foes=['Rat'], ills=['ill1.png']), 2: sect(ills=['ill2.png'])})
+    tree.plates([{'match': 'eel', 'book': '01xx', 'src': 'art/plates/01xx/eel.webp'},
+                 {'match': 'rat', 'book': '01xx', 'src': 'data/projectaon/01xx/ill1.png'}])
+    (tree.root / 'data' / 'projectaon' / 'ill-about.json').write_text(json.dumps({
+        '01xx/ill1.png': 'the rat king in his sewer', 'art/plates/01xx/eel.webp': 'stand-in for the eel'}), encoding='utf-8')
+    idx = tree.run('--missing')
+    assert idx['01xx/ill1.png']['about'] == 'the rat king in his sewer' and idx['01xx/ill2.png']['about'] == ''
+    eel = idx['art/plates/01xx/eel.webp']
+    assert eel['book'] is None and eel['about'] == 'stand-in for the eel'
+    assert eel['used_by'] == [{'book': '01xx', 'match': 'eel'}] and eel['fight'] == [] and eel['near'] == []
+    out = capsys.readouterr().out.splitlines()
+    assert out[0] == '2 illustrations in 1 books, 0 with a note'
+    assert out[1] == '1 other picture used by fights; 2 of 3 say what they are'
+    assert out[-1] == 'not said what it is: 01xx/ill2.png'
 
 

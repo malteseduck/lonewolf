@@ -46,6 +46,18 @@ def ill(book, fight=(), shows='', near=()):
     return {'book': book, 'fight': list(fight), 'near': list(near), 'shows': shows}
 
 
+def test_a_small_illustration_or_an_outside_picture_in_the_index_is_never_a_draft_source(tree):
+    # the index holds the small pictures (too low for a plate) and the stand-ins fights use, for their notes
+    tree.file(f'data/projectaon/{CODE}/small1.png')
+    tree.file('art/plates/other/thing.webp')
+    tree.book(CODE, fight('Marsh Thing'), fight('Lurker'))
+    tree.plates([])
+    tree.index({f'{CODE}/small1.png': {**ill(CODE, shows='a marsh thing', near=[{'section': 5, 'enemies': ['Lurker'], 'steps': 1}]), 'small': True},
+                'art/plates/other/thing.webp': {**ill(None, ['Marsh Thing'], shows='a marsh thing'), 'about': 'a marsh thing'}})
+    picks = {name: (plate, why) for name, plate, why in pd.draft(CODE)}
+    assert picks['Marsh Thing'] == (None, None) and picks['Lurker'] == (None, None)
+
+
 def test_kinds_are_read_from_the_names_alone():
     assert pd.kind('Vazhag pack') == ('vazhag',) and pd.kind('Plague Hound (wounded)') == ('plague', 'hound')
     assert pd.same_kind(pd.kind('Drakkarim 2'), pd.kind('Drakkar')) == 'exact'

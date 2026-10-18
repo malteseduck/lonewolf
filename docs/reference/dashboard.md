@@ -28,7 +28,10 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
 - **The picture sheet** ("Open picture sheet" at step 7), inline under the grid like the map editor and
   only there (`tools/admin/fights.html` at its own address shows only a line pointing to the dashboard). Every kind of enemy in the book with
   the picture the player would show (the same choice as `nextFoe()` in `main.js`), inked as in a
-  fight, the sections it is fought in and where the picture comes from. Checklist step 7, after the
+  fight, the sections it is fought in, where the picture comes from, and what the enemy is by the book,
+  whatever its picture (`foes` in `data/projectaon/ill-index.json`: its own name, else the name without
+  numbers and bracketed notes; "not yet said" in rust where there is none; ADR 0008). The Stand-in
+  picker shows and searches each picture's own `about`. Checklist step 7, after the
   agent's work: the owner looks here and marks it. It opens
   inline under the grid like the map editor (Open picture sheet here, `?embed=1`; the step 7 cell
   only goes to that step's line in the book's list), and on its own. A picture file dropped, pasted or chosen on a card becomes that enemy's
@@ -38,7 +41,8 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   dashboard's grid follows. The rules for the entry: `docs/reference/items.md`, "Fight pictures".
 - **The illustration sheet** ("Open illustration sheet" at step 9), inline under the grid like the
   others and only there (`tools/admin/ills.html`): every `ill*` and `small*` picture of the book on
-  a card, with the sections it is in, marked "not upscaled" until its `-2x.webp` is made, and the
+  a card, with the sections it is in and what it is (its `about` in the index, also in the side-by-side
+  view's title), marked "not upscaled" until its `-2x.webp` is made, and the
   sizes before and after in its top line. Clicking a card shows the original and the upscale side
   by side at one size; "1:1" draws both at the upscale's own pixels (the original stretched by the
   browser, as the player would) and the two scroll together; the arrow keys go to the next picture.

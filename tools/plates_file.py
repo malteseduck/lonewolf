@@ -127,9 +127,11 @@ def standins():
         with open(idx, encoding='utf-8') as f:
             index = json.load(f)
         for key, v in index.items():
-            o = first.get('data/projectaon/' + key)
+            o = first.get(key) if v.get('book', '') is None else first.get('data/projectaon/' + key)
             if o:
                 o['shows'] = v['shows']
+                if v.get('about'):
+                    o['about'] = v['about']
                 o['near'] = sorted({e for n in v['near'] for e in n['enemies']} - set(v['fight']))
     return list(first.values())
 

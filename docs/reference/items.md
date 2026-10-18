@@ -315,12 +315,23 @@ Where a fight's picture comes from, first that applies (ADR 0008):
    sections (`fought_at`, read from `book.js`: the importer's `PLATE_FIXES` and name match, such as Book 1's
    Gourgaz, pictured one section from its fight), the sections it links to and from, the fights
    within two links either way (`near`, with `steps`, negative for fights that lead to it), the
-   `plates.json` entries already borrowing it, and `shows`, a few words of our own on what it shows.
-   The notes are kept by hand in git-ignored `data/projectaon/ill-notes.json` and merged in, so a
-   re-run keeps them; `--missing` lists pictures with none. All 405 pictures of Books 1-20 have a
-   note (2026-10-11); when a new book is downloaded, look at its pictures once and add theirs. Search
-   the index for a creature's name (in `fight`, `fought_at` and `shows`) or a word ("hound", "robed",
-   "dwarf"), then look at the few hits. The Stand-in picker searches the same notes and nearby fights.
+   `plates.json` entries already borrowing it, `shows`, a few words of our own on what it shows, and
+   `about`, what it is (ADR 0008): who or what, at which moment, as the book has it (read the picture's
+   section, and the sections around it: the man at a desk may be the High Priest's clerk, not the
+   High Priest), or the wiki where the book does not say. The notes are kept by hand in git-ignored
+   `data/projectaon/ill-notes.json` and `ill-about.json` and merged in, so a re-run keeps them;
+   `--missing` lists pictures with none. The small pictures (`small*.png`) are in it too, marked
+   `small` (described, never a fight picture), and so is every picture from outside the books a
+   `plates.json` entry uses, keyed by its path (`book` null), its `about` saying what it stands for
+   in each book. `foes` holds what each enemy is by the book, whatever picture stands in for it
+   (`foe-about.json`, `{book: {enemy name: text}}`; a name's variants, "2 Ruel Giganite" or "Plague
+   Hound (wounded)", fall back to the plain kind's), which the picture sheet shows on each card: read
+   where the enemy is met and fought. All 405 `ill*` pictures of Books 1-20 have a `shows` note (2026-10-11); Book 13's
+   pictures and the stand-ins it uses have an `about`, and its enemies a `foes` entry (2026-10-17),
+   the other books not yet. When a new book is downloaded, look at its pictures once and add
+   both. Search the index for a creature's name (in `fight`, `fought_at`, `shows` and `about`) or a word
+   ("hound", "robed", "dwarf"), then look at the few hits. The Stand-in picker searches the same notes
+   and nearby fights.
 3. **The same creature in another downloaded book**, by path under `data/projectaon/`, found the same
    way in the index: Book 1's Crypt Spawn uses Book 5's, Book 2's Giaks and Szalls (a breed of Giak)
    Book 1's Giak cropped to the one on foot, Book 9's Gourgaz Book 1's. Never another book's

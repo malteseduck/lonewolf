@@ -165,6 +165,8 @@ def sources(plates, books, index):
         for name, plate in pictured(c, b, plates):
             out.append({'book': c, 'kind': kind(name), 'plate': plate, 'how': 'fight'})
     for key, v in index.items():
+        if key == 'foes' or v.get('small') or v.get('book', '') is None:  # enemies' notes; too low for a plate; a stand-in
+            continue
         c = v.get('book') or key.split('/')[0]
         src = f'data/projectaon/{key}'
         if c not in books:  # fetched, not imported: its own fights are known from the index alone

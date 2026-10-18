@@ -9,8 +9,14 @@ Read from the books' own section files, so books fetched but not imported are in
 sections (fought_at, from book.js), the sections it links to and from, the fights
 within two links either way, and the plates.json entries that borrow it. `shows` is what the picture
 shows, in our own words, kept by hand in data/projectaon/ill-notes.json ({"08tjoh/ill6.png": "..."})
-and merged in here, so re-running never loses it. Both files are git-ignored with the books: they
-describe Project Aon's pictures. Names and ids only, never the books' prose.
+and merged in here, so re-running never loses it. `about` is what the picture is: who or what, at
+which moment, as the book has it (the wiki where the book does not say); kept by hand the same way in
+data/projectaon/ill-about.json. Every picture a plates.json entry uses from outside the books (a
+stand-in in art/ or assets/plates/) has an entry too, keyed by its path, with `book` None and its
+`about` saying what it stands for. `foes` holds what each enemy is, by the book, whatever picture
+stands in for it ({book: {name: text}}, kept by hand in foe-about.json): the picture sheet shows that,
+the illustration sheet a picture's `about`. All these files are git-ignored with the books: they
+describe Project Aon's pictures and enemies, in our own words. Names and ids only, never the books' prose.
 """
 import html
 import json
@@ -22,6 +28,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PA = os.path.join(ROOT, 'data', 'projectaon')
 OUT = os.path.join(PA, 'ill-index.json')
 NOTES = os.path.join(PA, 'ill-notes.json')
+ABOUT = os.path.join(PA, 'ill-about.json')
+FOE_ABOUT = os.path.join(PA, 'foe-about.json')
 PLATES = os.path.join(ROOT, 'assets', 'plates', 'plates.json')
 NEAR = 2  # links either way
 
@@ -39,7 +47,7 @@ def read_book(code):
         links = sorted({int(x) for x in re.findall(r'href="sect(\d+)\.htm"', t)} - {int(m[1])})
         foes = [html.unescape(re.sub(r'<[^>]+>', '', x)).strip()
                 for x in re.findall(r'<p class="combat">(.*?):\s*<span', t, re.S)]
-        ills = sorted(set(re.findall(r'ill\d+\.png', t)), key=lambda n: int(n[3:-4]))
+        ills = sorted(set(re.findall(r'(?:ill|small)\d+\.png', t)), key=lambda n: (n[0] == 's', int(re.sub(r'\D', '', n))))
         out[int(m[1])] = (links, foes, ills)
     return out
 
@@ -88,11 +96,15 @@ def near(book, start, back):
     return hits
 
 
+def _load(path):
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding='utf-8') as f:
+        return json.load(f)
+
+
 def main():
-    notes = {}
-    if os.path.exists(NOTES):
-        with open(NOTES, encoding='utf-8') as f:
-            notes = json.load(f)
+    notes, about = _load(NOTES), _load(ABOUT)
     with open(PLATES, encoding='utf-8') as f:
         plates = json.load(f)['plates']
     index = {}
@@ -117,24 +129,43 @@ def main():
                                 for e in plates if e.get('src') == f'data/projectaon/{key}'],
                     'shows': notes.get(key, ''),
                 }
+                if ill.startswith('small'):  # described like the rest, but too low to make a fight picture
+                    index[key]['small'] = True
         # pictures outside the numbered sections (the title page and the like)
         for fn in sorted(os.listdir(os.path.join(PA, code))):
             key = f'{code}/{fn}'
-            if re.fullmatch(r'ill\d+\.png', fn) and key not in index:
+            if re.fullmatch(r'(ill|small)\d+\.png', fn) and key not in index:
                 index[key] = {'book': code, 'section': None, 'fight': [], 'fought_at': elsewhere.get(fn, []),
                               'to': [], 'from': [], 'near': [],
                               'used_by': [{k: e[k] for k in ('book', 'match') if k in e}
                                           for e in plates if e.get('src') == f'data/projectaon/{key}'],
-                              'shows': notes.get(key, '')}
+                              'shows': notes.get(key, ''), **({'small': True} if fn.startswith('small') else {})}
+    ills = len(index)
+    # the stand-ins fights use from outside the books, keyed by their path
+    outside = lambda src: index.setdefault(src, {'book': None, 'section': None, 'fight': [], 'fought_at': [], 'to': [],
+                                                 'from': [], 'near': [], 'used_by': [], 'shows': notes.get(src, '')})
+    for e in plates:
+        src = e.get('src', '')
+        if src and not src.startswith('data/projectaon/'):
+            outside(src)['used_by'].append({k: e[k] for k in ('book', 'match') if k in e})
+    for key, v in index.items():
+        v['about'] = about.get(key, '')
+    foes = {c: names for c, names in _load(FOE_ABOUT).items() if names}
     with open(OUT, 'w', encoding='utf-8') as f:
-        json.dump(index, f, ensure_ascii=False, indent=1)
-    noted = sum(1 for v in index.values() if v['shows'])
-    print(f'{len(index)} illustrations in {len({v["book"] for v in index.values()})} books, {noted} with a note')
-    stale = sorted(set(notes) - set(index))
+        # what each enemy is, by the book, whatever picture stands in for it: the picture sheet's text
+        json.dump({**index, **({'foes': foes} if foes else {})}, f, ensure_ascii=False, indent=1)
+    books = [v for v in index.values() if v['book']]
+    noted = sum(1 for v in books if v['shows'])
+    print(f'{ills} illustrations in {len({v["book"] for v in books})} books, {noted} with a note')
+    told = sum(1 for v in index.values() if v['about'])
+    print(f'{len(index) - ills} other picture{"s" if len(index) - ills != 1 else ""} used by fights; '
+          f'{told} of {len(index)} say what they are')
+    stale = sorted((set(notes) | set(about)) - set(index))
     if stale:
         print('notes for pictures not found:', ', '.join(stale))
     if '--missing' in sys.argv:
-        print('no note:', ' '.join(k for k, v in index.items() if not v['shows']))
+        print('no note:', ' '.join(k for k, v in index.items() if v['book'] and not v['shows']))
+        print('not said what it is:', ' '.join(k for k, v in index.items() if not v['about']))
 
 
 if __name__ == '__main__':

@@ -22,6 +22,8 @@
   .card .none { font: 15px var(--title); color: #7d1d14; text-align: center; padding: 20px; border: 1px dashed #7d1d14; }
   .card b { display: block; font: 16px var(--title); margin-top: 6px; }
   .card small { display: block; color: #6b553c; font-size: 12px; }
+  .card small.about { color: #3b2a18; font-size: 13px; font-style: italic; margin: 3px 0; }
+  .card small.about.unsaid { color: #a0522d; }
   .card.waiting { box-shadow: inset 0 0 0 3px var(--blood), 0 2px 8px rgba(40, 24, 10, .45); }
   .card .was { position: absolute; top: 34px; right: 6px; z-index: 1; width: 78px; padding: 3px; background: #e2d3aa; border: 1px solid #7d1d14; text-align: center; }
   .card .was canvas, .card .was .none { max-width: 100%; max-height: 90px; padding: 0; font-size: 11px; }
@@ -131,6 +133,13 @@
   <div class="grid" id="si-grid"></div>
   <menu style="display:flex;gap:8px;padding:0;margin:14px 0 0"><span style="flex:1"></span><button id="si-cancel">Cancel</button></menu>
 </dialog>
+<!-- a one-line question; window.prompt does nothing in the desktop app's browser pane (Electron) -->
+<dialog id="ask" style="width:min(600px,90vw);box-sizing:border-box;padding:18px 20px;overflow:hidden">
+  <form method="dialog">
+    <label><span id="ask-q"></span><input type="text" id="ask-v" style="display:block;width:100%;box-sizing:border-box;margin-top:8px"></label>
+    <menu style="display:flex;gap:8px;padding:0;margin:14px 0 0"><span style="flex:1"></span><button value="cancel" formnovalidate>Cancel</button><button value="ok" id="ask-ok">OK</button></menu>
+  </form>
+</dialog>
 <div class="toast" id="toast" hidden></div>
 
 <script type="module">
@@ -179,7 +188,20 @@ async function loadPlates() {
   // where each picture in art/ came from (ADR 0038, tools/art_sources.py)
   const a = await fetch('/art/sources.json', { cache: 'no-store' }).catch(() => null);
   sources = a && a.ok ? ((await a.json().catch(() => null))?.sources || {}) : {};
+  // what each picture is (tools/ill_index.py: `about`, kept in data/projectaon/ill-about.json)
+  const x = await fetch('/data/projectaon/ill-index.json', { cache: 'no-store' }).catch(() => null);
+  index = x && x.ok ? ((await x.json().catch(() => null)) || {}) : {};
 }
+let index = {};
+/* What an enemy is, by the book, whatever picture stands in for it (the index's foes, ADR 0008): its own
+   name first, else the name without numbers and notes in brackets ("2 Ruel Giganite", "Plague Hound (wounded)"). */
+const kindOf = (name) => name.toLowerCase().replace(/\([^)]*\)/g, ' ').replace(/\b\d+\b/g, ' ').replace(/\s+/g, ' ').trim();
+const about = (name) => {
+  const mine = index.foes?.[code] || {};
+  if (mine[name]) return mine[name];
+  const k = kindOf(name);
+  return Object.entries(mine).find(([n]) => kindOf(n) === k)?.[1] || '';
+};
 const ownFile = (f) => { const src = f.mine?.src || f.src; return src && src.startsWith('art/') ? src : null; };
 
 /* Each kind of enemy, with what the player shows for it at its first fight (platepick.js: the approved
@@ -229,6 +251,7 @@ async function render() {
     ${f.was ? `<div class="was" id="was${i}"><small>was</small></div>` : ''}
     <div class="pic" id="pic${i}">${f.src ? '' : '<div class="none">no picture<br><small>drop one here</small></div>'}</div>
     <b>${esc(f.name)}</b><small>section${f.secs.length > 1 ? 's' : ''} ${esc(f.secs.join(', '))}</small><small>${esc(f.from)}</small>
+    <small class="about${about(f.name) ? '' : ' unsaid'}">${esc(about(f.name) || 'not yet said what this enemy is')}</small>
     <div class="tools"><button data-do="choose">Choose...</button><button data-do="address">By address...</button><button data-do="standin">Stand-in...</button>${f.src ? '<button data-do="adjust">Adjust</button>' : ''}${ownFile(f) ? '<button data-do="link">Link...</button>' : ''}</div></div>`).join('');
   // ink them one by one, so the page shows at once
   for (const [i, f] of foes.entries()) {
@@ -280,9 +303,11 @@ $('#cards').addEventListener('click', (e) => {
   if (b.dataset.do === 'choose') { $('#file').value = ''; $('#file').click(); }
   if (b.dataset.do === 'adjust') edit(foes[+c.dataset.i]);
   if (b.dataset.do === 'standin') pickStandIn(foes[+c.dataset.i]);
-  if (b.dataset.do === 'address') { const a = window.prompt(`${foes[+c.dataset.i].name}: the address of a picture, or of a page that shows one`); if (a?.trim()) fromAddress(foes[+c.dataset.i], a.trim()); }
-  if (b.dataset.do === 'link') linkFor(foes[+c.dataset.i]);
-});
+  if (b.dataset.do === 'address') {
+    const foe = foes[+c.dataset.i];
+    ask(`${foe.name}: the address of a picture, or of a page that shows one`, '', 'https://...').then((a) => { if (a?.trim()) fromAddress(foe, a.trim()); });
+  }
+  if (b.dataset.do === 'link') linkFor(foes[+c.dataset.i]);});
 $('#file').onchange = () => { const f = $('#file').files[0]; if (f && active != null) take(foes[active], f); };
 $('#cards').addEventListener('dragover', (e) => { const c = cardOf(e.target); if (!c) return; e.preventDefault(); c.classList.add('over'); });
 $('#cards').addEventListener('dragleave', (e) => { cardOf(e.target)?.classList.remove('over'); });
@@ -308,6 +333,18 @@ document.addEventListener('paste', (e) => {
   if (f) take(foe, f); else fromAddress(foe, a);
 });
 
+/* The answer typed in the #ask dialog, or null if cancelled (Escape, Cancel). */
+function ask(question, value, placeholder) {
+  const d = $('#ask'), v = $('#ask-v');
+  $('#ask-q').textContent = question;
+  v.value = value; v.placeholder = placeholder || '';
+  v.onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); d.close('ok'); } };  // not the form's first button, Cancel
+  d.returnValue = '';
+  d.showModal();
+  v.select();
+  return new Promise((ok) => d.addEventListener('close', () => ok(d.returnValue === 'ok' ? v.value : null), { once: true }));
+}
+
 /* A picture by its address (ADR 0038): fetched by the server, which follows a page to the picture it
    shows, then taken as a dropped file is, with the address as its link. */
 async function fromAddress(foe, address) {
@@ -323,7 +360,7 @@ async function fromAddress(foe, address) {
 /* The link of a picture already in art/: given afterwards, for the pictures that came before the list. */
 async function linkFor(foe) {
   const src = ownFile(foe);
-  const v = window.prompt(`Where ${src.split('/').pop()} came from: its link (leave it empty for no link)`, sources[src]?.url || '');
+  const v = await ask(`Where ${src.split('/').pop()} came from: its link (leave it empty for no link)`, sources[src]?.url || '', 'https://...');
   if (v === null) return;
   const r = await fetch('/api/admin/art-link', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ src, url: v.trim() || null }) });
   const j = await r.json().catch(() => ({}));
@@ -389,13 +426,13 @@ async function pickStandIn(foe) {
 function showPool() {
   const q = $('#si-q').value.trim().toLowerCase(), g = $('#si-g').value;
   const hits = pool.filter((o) => (!g || o.group === g) && (!q || o.src.toLowerCase().includes(q)
-    || [...o.who, ...(o.near || []), o.shows || ''].some((w) => w.toLowerCase().includes(q))));
+    || [...o.who, ...(o.near || []), o.shows || '', o.about || ''].some((w) => w.toLowerCase().includes(q))));
   $('#si-n').textContent = `${hits.length} of ${pool.length}`;
   const shown = hits.slice(0, 300);  // lazy images, but the page stays light
-  $('#si-grid').innerHTML = shown.map((o) => `<button class="it" data-src="${esc(o.src)}" title="${esc((o.shows ? o.shows + '\n' : '') + o.src)}">
+  $('#si-grid').innerHTML = shown.map((o) => `<button class="it" data-src="${esc(o.src)}" title="${esc((o.about ? o.about + '\n' : '') + (o.shows ? o.shows + '\n' : '') + o.src)}">
     <img loading="lazy" src="/${esc(o.src)}" alt=""><span>${esc(o.src.split('/').slice(-2).join('/'))}</span>
     ${o.who.length ? `<span class="who">${esc(o.who.join(', '))}</span>` : ''}
-    ${o.shows ? `<span class="who">${esc(o.shows)}</span>` : ''}</button>`).join('')
+    ${o.about || o.shows ? `<span class="who">${esc(o.about || o.shows)}</span>` : ''}</button>`).join('')
     + (hits.length > shown.length ? `<p class="count">${hits.length - shown.length} more: filter to narrow.</p>` : '');
 }
 $('#si-q').addEventListener('input', () => showPool());
