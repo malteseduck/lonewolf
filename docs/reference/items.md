@@ -278,7 +278,8 @@ add is written some other way (`ice barbarian$`, `kalkoth`).
    (`GET /api/admin/standins`: `assets/plates/`, `art/` including `art/plates/`, `data/reference/`, and every
    imported book's `ill*.png`, each labelled with the enemies it is fought with and, once the index below
    has been built, what it shows); filter by name, enemy, a nearby fight's enemy or a word of the note,
-   click one, crop it in the same editor, Save. The entry points `src` at that file (no copy), so a creature
+   click one, crop it in the same editor, Save. A picture another entry already uses opens with that entry's
+   crop, levels and flip (the topmost, so the one set last), so reusing one as it was set is a click and Save. The entry points `src` at that file (no copy), so a creature
    met in several books needs one picture found once. Older owner pictures sit in `art/` and `art/plates/` (Book 1's Winged Serpent).
 
 **The draft** (ADR 0036): `python tools/plates_draft.py <code>`, the dashboard's **Draft pictures** at step 7

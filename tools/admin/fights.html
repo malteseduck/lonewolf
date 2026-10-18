@@ -442,14 +442,16 @@ $('#si-grid').addEventListener('click', (e) => {
   const b = e.target.closest('.it');
   if (!b) return;
   $('#si').close();
-  edit(si.foe, { dataUrl: '/' + b.dataset.src, src: b.dataset.src });  // crop it, then Save
+  // a picture already in use comes with that use's crop, levels and flip (the newest entry is on top)
+  const used = plates.find((p) => p.src === b.dataset.src && !p.draft);
+  edit(si.foe, { dataUrl: '/' + b.dataset.src, src: b.dataset.src, from: used });  // crop it, then Save
 });
 
 // ---------- the editor ----------
 const ed = { foe: null, img: null, webp: null, src: null, crop: [0, 0, 1, 1] };
 async function edit(foe, upload) {
   ed.foe = foe; ed.webp = upload?.webp || null; ed.src = upload?.src || null;
-  const from = upload ? null : foe.mine || foe.lib;  // the crop and levels it has now
+  const from = upload ? upload.from : foe.mine || foe.lib;  // the crop and levels it has now
   const src = upload ? upload.dataUrl : url(foe.mine?.src || foe.src);
   const im = await image(src);
   if (!im) return toast('Could not load the picture.', 4000);

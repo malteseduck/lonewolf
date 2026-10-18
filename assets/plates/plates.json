@@ -1,6 +1,7 @@
 {
   "_readme": "Pictures for fights whose section has no illustration of its own. The first entry whose match (a regular expression, case ignored) is found in the enemy's name is used, so put the narrower ones first. book, if given, limits an entry to that book (its own characters, or a stand-in that would be wrong elsewhere); book entries go first. src is relative to the project root: files in assets/plates/ are free to redistribute (sources in README.txt); files under data/projectaon/ are Project Aon illustrations on the owner's machine only, from the same book or borrowed from another, and files under art/ are pictures the owner supplied for personal use (git-ignored); a missing one falls back to the drawn emblem. crop, if given, is the part of the picture to use, [x, y, w, h] as fractions. over: true makes the entry win even where the section has an illustration of its own (the owner preferred another picture). levels, if given, is [black, white] (0-255): the tones that become full ink and bare paper, for a painting whose mid-tones would otherwise all turn to solid ink. draft, if given, marks an entry tools/plates_draft.py wrote (where it came from) that the owner has not yet adjusted on the picture sheet. See docs/reference/interface.md, Art pipeline, and docs/reference/items.md, Fight pictures.",
   "plates": [
+    { "match": "^high priest$", "book": "13tplor", "src": "art/plates/13tplor/high-priest.webp", "crop": [0.1295, 0.0729, 0.647, 0.8829], "levels": [0, 193] },
     { "match": "brother croumah", "book": "13tplor", "src": "art/plates/08tjoh/kezoor-necromancer-pen.jpg" },
     { "match": "cener druid \\(prone\\)", "book": "13tplor", "src": "data/projectaon/13tplor/ill4.png", "crop": [0.25, 0.27, 0.55, 0.5] },
     { "match": "cener druid$", "book": "13tplor", "src": "data/projectaon/13tplor/ill4.png" },
@@ -8,8 +9,8 @@
     { "match": "high priest$", "book": "13tplor", "src": "data/projectaon/13tplor/ill4.png", "crop": [0.18, 0.1, 0.5, 0.45] },
     { "match": "plaghatar", "book": "13tplor", "src": "art/plates/13tplor/plaghatar-swamp-monster-ink.webp", "crop": [0, 0, 1, 0.93] },
     { "match": "stragnah", "book": "13tplor", "src": "art/plates/13tplor/stragnah-plant-monster-ink.webp", "crop": [0.04, 0.04, 0.92, 0.8] },
-    { "match": "^2 ruel giganite$", "book": "13tplor", "src": "art/plates/13tplor/3-ruel-giganite.webp", "crop": [0, 0.2515, 0.9175, 0.69], "levels": [68, 90], "flip": true },
-    { "match": "^3 ruel giganite$", "book": "13tplor", "src": "art/plates/13tplor/3-ruel-giganite.webp", "crop": [0, 0.2515, 0.9175, 0.69], "levels": [68, 90] },
+    { "match": "^2 ruel giganite$", "book": "13tplor", "src": "art/plates/13tplor/2-ruel-giganite.webp", "crop": [0.061, 0.1266, 0.8623, 0.8236], "levels": [6, 178] },
+    { "match": "^3 ruel giganite$", "book": "13tplor", "src": "art/plates/13tplor/2-ruel-giganite.webp", "crop": [0.061, 0.1266, 0.8623, 0.8236], "levels": [6, 178] },
     { "match": "^acolytes of vashna \\(one with medallion of protection\\)$", "book": "13tplor", "src": "data/projectaon/13tplor/ill20.png", "draft": "this book" },
     { "match": "^drakkar$", "book": "13tplor", "src": "data/projectaon/12tmod/ill1.png", "draft": "Book 12" },
     { "match": "^fat vazhag$", "book": "13tplor", "src": "data/projectaon/13tplor/ill17.png", "draft": "this book" },
@@ -17,7 +18,7 @@
     { "match": "^pit agarashi$", "book": "13tplor", "src": "data/projectaon/13tplor/ill15.png", "draft": "this book, a picture 2 links before the fight" },
     { "match": "^pit agarashi \\(wounded\\)& vazhag$", "book": "13tplor", "src": "data/projectaon/13tplor/ill15.png", "draft": "this book, a picture 2 links before the fight" },
     { "match": "^plague hound \\(wounded\\)$", "book": "13tplor", "src": "data/projectaon/13tplor/ill19.png", "draft": "this book" },
-    { "match": "^vazhag archer$", "book": "13tplor", "src": "data/projectaon/13tplor/ill17.png", "draft": "this book" },
+    { "match": "^vazhag archer$", "book": "13tplor", "src": "art/plates/13tplor/vazhag-archer.webp", "levels": [7, 161] },
     { "match": "^vazhag pack$", "book": "13tplor", "src": "data/projectaon/13tplor/ill17.png", "draft": "this book" },
     { "match": "^vazhag patrol$", "book": "13tplor", "src": "data/projectaon/13tplor/ill17.png", "draft": "this book" },
     { "match": "^akataz$", "book": "10tdot", "src": "data/projectaon/10tdot/ill4.png", "draft": "this book" },
