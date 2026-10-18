@@ -59,8 +59,10 @@ the very same creature. The owner set the order.
   approval are marked (showing the new picture), with a filter to show only those.
 - **Every picture and every enemy says what it is.** Each illustration (small ones too) has a short
   description of what it is: who or what, and at which moment, as the book has it, or the wiki where
-  the book does not say; a stand-in says what it stands for. Each enemy has one of what it is by the
-  book, whatever picture stands in for it, so the owner knows the creature when looking for another
+  the book does not say; a stand-in says what it stands for. The words come only from the book's text
+  or the wiki, never from looking at the picture. Each enemy has one of what it is by the book,
+  topped up from the wiki (marked "(wiki)") where the book says little, whatever picture stands in
+  for it, so the owner knows the creature when looking for another
   picture: the picture sheet shows the enemy's, the illustration sheet the picture's. Both are kept in
   the illustration index, written by hand (no editing on the sheets: the owner wants the book's
   description, not to write one). In our own words, kept with the books (git-ignored), never in the
@@ -94,3 +96,5 @@ the very same creature. The owner set the order.
 - 2026-10-17: every illustration and fight picture says what it is, in the index and on both sheets.
 - 2026-10-18: a fight card says what the enemy is by the book, whatever its picture (a picture the
   owner set had lost its card's description).
+- 2026-10-18: descriptions come only from the book's text or the wiki, not from the picture; an
+  enemy the book says little about is topped up from the wiki.

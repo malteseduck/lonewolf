@@ -101,9 +101,12 @@ For step 7 in the books still open (all git-ignored, personal use):
   soldier). The other catalogue scans and their `cutouts.json` are no longer on disk.
 - The illustration index (`data/projectaon/ill-index.json`, `ill-notes.json`) notes all 405 pictures
   of Books 1-20 (2026-10-11), for borrowing another book's picture (items.md, "Fight pictures").
-- **What each picture and enemy is** (`about` and `foes`, ADR 0008): Book 13 done (2026-10-17) as the
-  pattern for the owner to judge; Books 1-12 and 14-20 (their `ill*` and `small*` pictures and their
-  enemies) and the other stand-ins fights use are still to describe. `ill_index.py --missing` lists them ("not said what it is").
+- **What each picture and enemy is** (`about` and `foes`, ADR 0008): all done (Book 13 on 2026-10-17,
+  the rest on 2026-10-18): every `ill*` and `small*` picture of Books 1-20, every stand-in a fight uses,
+  and every enemy kind, from the book's text and the wiki only (thin enemies topped up, "(wiki)").
+  Left for the owner: reading them on the sheets and correcting any; about 110 pictures, mostly
+  small, say the text does not say what they show. The stand-ins' entries still describe the
+  picture itself (owner to decide). The small pictures have no `shows` note (`--missing`, "no note").
 
 ### Oddities the unit tests noticed
 
