@@ -28,7 +28,9 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
 - **The picture sheet** ("Open picture sheet" at step 7), inline under the grid like the map editor and
   only there (`tools/admin/fights.html` at its own address shows only a line pointing to the dashboard). Every kind of enemy in the book with
   the picture the player would show (the same choice as `nextFoe()` in `main.js`), inked as in a
-  fight, the sections it is fought in, where the picture comes from, and what the enemy is by the book,
+  fight, the sections it is fought in, where the picture comes from, the file the player loads (the copy
+  where there is one): its size in KB and pixels, the crop's width, and a warning where the crop is wider
+  than the 1100 px the fight panel inks, which step 7's Upscale reduces, and what the enemy is by the book,
   whatever its picture (`foes` in `data/projectaon/ill-index.json`: its own name, else the name without
   numbers and bracketed notes; "not yet said" in rust where there is none; ADR 0008). The Stand-in
   picker shows and searches each picture's own `about`. Checklist step 7, after the
@@ -37,7 +39,10 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   only goes to that step's line in the book's list), and on its own. A picture file dropped, pasted or chosen on a card becomes that enemy's
   picture, and so does one by its address (dragged from another site, pasted, or By address...: the server fetches it);
   a new picture asks for its link, or No link (ADR 0038), and Link... gives one to a picture already in `art/`; Adjust crops any card's picture, flips it left to right and sets levels, with the fight panel previewed as it will look (and, for a picture shown from its 2x copy, Show original to compare);
-  Remove takes the owner's entry away. Each save redraws the cards and the "with none" count, and the
+  Remove takes the owner's entry away. A card's buttons are Adjust, Prompt and a Picture menu (Choose file...,
+  By address..., Stand-in..., Link...); Prompt copies a prompt for an AI image generator: the enemy's name and
+  `about`, asked for as a tall black-and-white pen-and-ink portrait in the style of Gary Chalk's Lone Wolf art,
+  on plain white so it inks as it is (`promptFor()`). Each save redraws the cards and the "with none" count, and the
   dashboard's grid follows. The rules for the entry: `docs/reference/items.md`, "Fight pictures".
 - **The illustration sheet** ("Open illustration sheet" at step 9), inline under the grid like the
   others and only there (`tools/admin/ills.html`): every `ill*` and `small*` picture of the book on
@@ -159,7 +164,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `check-items` | `node check_items.mjs <code> --json` | |
 | `approve-pictures` | `node plates_pin.mjs <code> --approve` | gated: the owner's approval of changed fight pictures |
 | `pictures-draft` | `ill_index.py`, then `plates_draft.py <code>`: step 7's draft (items.md, "The draft"), a `plates.json` entry marked `draft` for each enemy with no picture that it can match; shown while any has none ("Draft pictures") | |
-| `fights-up` | `ill_upscale.py --fights <code>` (step 7's Upscale 2x: every picture the book's fights can show, now or approved; about 5-10 s a picture) | |
+| `fights-up` | `ill_upscale.py --fights <code>` (step 7's Upscale 2x: every picture the book's fights can show, now or approved, sized for the iPad (ADR 0008); about 5-10 s a picture) | |
 | `ills` | `ill_upscale.py <code>` (Real-ESRGAN on this PC; about 3 s a picture) | |
 | `check` | `check_all.py` (re-imports every book, ADR 0022) | |
 | `release` | `offline_check.py`, then `release.py` (the last commit to the iPad, docs/reference/offline.md): a missing file stops it at the check; files the iPad has already make nothing (ruling R15) | yes |

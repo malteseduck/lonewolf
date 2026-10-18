@@ -106,18 +106,33 @@ __lw.begin(id, fresh, anew)
 `__lw.game.go('17'); __lw.render()` jumps to a section. Using this overwrites the owner's save for
 that book, so clear the keys you dirtied afterwards (see `docs/reference/architecture.md`) and say so.
 
-## Saving tokens: hand menial work to a Sonnet subagent
+## Saving tokens: hand mechanical work to a Sonnet subagent (ADR 0041)
 
-The owner pays for every token. Work that needs no judgement goes to a subagent on the cheaper
-model (Agent tool, `model: "sonnet"`), not to the main model: running the importer or a checker and
+The owner pays for every token, and the point of a subagent is to spend fewer of them. Before
+handing work off, weigh it: a subagent starts cold, so the brief, its own reading and its report all
+cost tokens. Hand it off when the work is mechanical and big enough that the cheaper model doing it
+costs less than the main model doing it: many tool calls, long output to wade through, or a job
+whose result can be reported in a few lines. Do it yourself when it is a call or two, when you
+already hold the context it needs, or when writing the brief would take about as long as the work.
+
+Mechanical means the agent only needs it done, not decided: running the importer or a checker and
 reporting its figures, re-importing books after an importer change, copying or renaming files,
 downloading files the owner has already approved, `node --check` / `py_compile` runs, applying an
 edit already decided down to the exact text, measuring image sizes or crops by script, git
-add/commit of finished work. Give it the exact commands, paths and what to report back, and the
-hard rules below that touch the task (no book prose in output, no downloads not approved). Keep on
-the main model: deciding what to change, reading the books' rules, design and layout, judging
-pictures by eye, and anything the owner is waiting to discuss. Do not split a small step off when
-explaining it would cost more than doing it.
+add/commit of finished work, a broad search whose answer is a list of places. Use the Agent tool
+with `model: "sonnet"`. Give it the exact commands, paths and what to report back (figures and ids,
+not dumps), and the hard rules below that touch the task (no book prose in output, no downloads not
+approved, Python through uv). Keep on the main model: deciding what to change, reading the books'
+rules, design and layout, judging pictures by eye, and anything the owner is waiting to discuss.
+
+## Separate sessions: when to start one, on which model (ADR 0041)
+
+Start a new session when the owner asks for work on a different topic from this session's, or when
+a piece of work turns out to be independent of it (another book, another tool, a fix spotted in
+passing), rather than piling it into this session's context. Keep a quick thing (a question, one
+edit, a few tool calls) here. Pick the model by the work, as for subagents: Sonnet for mechanical or
+well-specified work, Opus where it needs judgement (design, reading the books' rules, judging art).
+Give it a brief that stands on its own: the files, what done looks like, the hard rules that touch it.
 
 ## Separate sessions work in a worktree (ADR 0041)
 

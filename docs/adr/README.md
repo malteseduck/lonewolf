@@ -45,7 +45,7 @@ Changes list names what it took in.
 | [0022](0022-unit-tests.md) | Tests guard the main functionality, written first, a couple of seconds a suite; `check_all.py` runs the real books; the engine is modular and tested before its rules change | 2026-10-17 |
 | [0036](0036-book-steps.md) | The book steps: their order (6 test play, 7-9 pictures), every step offered where it can work, a script for each that drafts leaning to flagging, an agent only refines | 2026-10-17 |
 | [0037](0037-tools-are-a-uv-project.md) | The Python tools are a uv project with a lock file; every run is `uv run --project tools` | |
-| [0041](0041-sessions-in-worktrees-merged-to-main.md) | A separate session works in its own worktree and commits only when asked; then it merges into `main` | 2026-10-17 |
+| [0041](0041-sessions-in-worktrees-merged-to-main.md) | Sonnet subagents for mechanical work where that saves tokens; a new session for a new topic; it works in its own worktree, commits only when asked, then merges into `main` | 2026-10-18 |
 
 ### The player's look and layout
 

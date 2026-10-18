@@ -247,7 +247,7 @@ story on.
   medallions and the dial), so the picture never runs under them. Without, it draws a procedural silhouette (`kraan`,
   `giak`, `vordak`) or the crossed-swords `emblem`: the crossed-swords glyph (handed over by
   `setEmblem` once main.js has fetched it) over a blot of wash, or a plain ring and blades until then.
-- Whichever picture is picked, it is loaded from its Real-ESRGAN 2x copy (`<name>-2x.webp` beside it)
+- Whichever picture is picked, it is loaded from its copy (Real-ESRGAN 2x, or reduced to what the panel inks) (`<name>-2x.webp` beside it)
   when the book's `assets/plates/upscaled/<code>.json` lists it (`upscaledSrc` in platepick.js; the
   Upscale 2x of step 7, ADR 0031).
 - Which picture (`showFoe` in main.js, by `pickPlate` in platepick.js): first the picture the owner
