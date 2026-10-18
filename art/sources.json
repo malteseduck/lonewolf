@@ -1,6 +1,10 @@
 {
   "_readme": "Where each picture in art/ came from (ADR 0038; tools/art_sources.py). url null: it has no link.",
   "sources": {
+    "art/plates/01fftd/black-bear.webp": {"url": null},
+    "art/plates/01fftd/giak.webp": {"url": null},
+    "art/plates/01fftd/giaks.webp": {"url": null},
+    "art/plates/01fftd/vordak.webp": {"url": null},
     "art/plates/07cd/flame-man-wandering-dm.jpg": {"url": "https://www.deviantart.com/wandering-dm/art/Fire-Elemental-Burning-Man-1108893313", "fetched": "2026-10-10", "note": "greyscale"},
     "art/plates/07cd/oudagorg-worm.jpg": {"url": "https://www.pinterest.fr/pin/317151998744863129/", "fetched": "2026-10-10", "note": "greyscale"},
     "art/plates/07cd/zahda-kelek-castilho.jpg": {"url": "https://www.pinterest.com/pin/kelek-evil-sorcerer-artist-carlos-castilho--21955116928221659/", "fetched": "2026-10-10", "note": "whitespace trimmed, greyscale"},
