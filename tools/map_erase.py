@@ -9,7 +9,7 @@ bar) and outlines next to a colour fill (trees, rivers, mountains) stay, and so 
 joined to one; a label marked "clip": true has every stroke in its box erased instead (letters
 joined to the scale bar, a tower, a road); "joined": true also erases letters joined to a line running
 out of the box (a river, mountain, flagpole) and the line's ink inside the box, except river
-outlines and coasts (Book 4: Holmgard, Cloeasia; a name at sea is all taken, Book 5: Bisutan). "keep": [[x0, y0, x1, y1]] protects anything inside
+outlines and coasts (Book 4: Holmgard, Cloeasia; a name at sea is all taken, Book 5: Bisutan). "keep": [[x0, y0, x1, y1]] (or [x0, y0, x1, y1, degrees], turned round its centre) protects anything inside
 those boxes (Book 1: a ship inside a strait's name). Check the result: Gemini may letter a fragment. Asking Gemini to leave labels out did not work (Book 1, round
 5: it kept 22 of 23), so it is given a picture without them. The fill is rough where a label touched
 a tree or a coastline, but Gemini repaints all of it. The erased labels are lettered afterwards.
@@ -76,8 +76,13 @@ class LabelInk:
             inner[max(by0, 0):by1, max(bx0, 0):bx1] = True
             m = m | (part[sub] & inner & ~self.shore[y0:y1, x0:x1])
         m = m | self.enclosed(m, self.dark[y0:y1, x0:x1] > 30)
-        for kx0, ky0, kx1, ky1 in lab_.get('keep', []):  # a ship inside the label's box
-            m[max(ky0 - y0, 0):max(ky1 - y0, 0), max(kx0 - x0, 0):max(kx1 - x0, 0)] = False
+        if lab_.get('keep'):  # a ship inside the label's box; a fifth number turns the box (degrees, clockwise)
+            kept = np.zeros(m.shape, np.uint8)
+            for k in lab_['keep']:
+                kx0, ky0, kx1, ky1 = k[:4]
+                rect = (((kx0 + kx1) / 2 - x0, (ky0 + ky1) / 2 - y0), (kx1 - kx0, ky1 - ky0), k[4] if len(k) > 4 else 0)
+                cv2.fillPoly(kept, [np.round(cv2.boxPoints(rect)).astype(np.int32)], 1)
+            m = m & ~kept.astype(bool)
         return m
 
     @staticmethod

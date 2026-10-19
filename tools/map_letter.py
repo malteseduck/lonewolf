@@ -67,6 +67,8 @@ def geometry(scan_ink, lab):
     """Centre, reading direction (radians, y down) and length/thickness of the scan's ink."""
     x0, y0, x1, y1 = scan_ink.box(lab)
     ys, xs = np.nonzero(scan_ink.mask(lab))
+    if len(xs) < 2:  # its letters are joined to a road or coast running out of the box
+        return None
     pts = np.column_stack([xs + x0, ys + y0]).astype(np.float64)
     c = pts.mean(0)
     w, v = np.linalg.eigh(np.cov((pts - c).T))
@@ -134,7 +136,13 @@ def letter(base, lab, scan_ink, hand, caps, k):
         mask, lh = render(lines, font, 0, 0, len(lines), leading=lab.get('leading', 1), size=s['size'] * k)
         place(base, mask, lh, np.array(s['at'], np.float64) * k, np.radians(s['angle']))
         return
-    centre, ang, length, thick = geometry(scan_ink, lab)
+    g = geometry(scan_ink, lab)
+    if g is None:
+        if PHASE == 'draw':
+            print(f'label at box {lab["box"]} ({len(text)} letters): no ink of its own to measure, not lettered;'
+                  ' tick "clip" on it, or place it by hand, in the map editor')
+        return
+    centre, ang, length, thick = g
     centre = centre + np.array(lab.get('nudge', [0, 0]))  # map-2k px, off a tower the bigger type runs into
     if lab.get('lines'):  # stacked lines: the ink's long axis may run down the stack, so level
         ang = np.radians(lab.get('angle', 0))

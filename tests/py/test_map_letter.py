@@ -191,6 +191,15 @@ def test_letter_measures_the_scan_and_fits_the_ink_length():
     assert w <= 49 * 1.1                                 # fitted to the ink, at most a little over
 
 
+def test_letter_skips_a_label_with_no_ink_to_measure(capsys):
+    # its letters joined to a road: none of the box's ink counts, so it says so instead of crashing
+    base = blank_base()
+    lab = {'text': 'HOLM', 'box': [20, 20, 60, 40], 'retype': True}
+    map_letter.letter(base, lab, level_bar_ink(), CABIN, CABIN, 1)
+    assert np.asarray(base).min() == 255
+    assert '[20, 20, 60, 40]' in capsys.readouterr().out
+
+
 
 
 

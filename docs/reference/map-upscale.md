@@ -113,7 +113,9 @@ Commands run from the project root as
    river, mountain or flagpole), with that line's ink inside the box except river outlines and
    coasts, told apart as ink with both water and land within a few px (Book 4: Holmgard, Cloeasia;
    letters out at sea have only water round them, so they go: Book 5, Bisutan), and `keep: [[box]]`
-   (the editor's Add keep box, K) protects something inside a box (Book 1: a ship). Small dark
+   (the editor's Add keep box, K) protects something inside a box (Book 1: a ship); a fifth number,
+   `[x0, y0, x1, y1, degrees]`, turns the box clockwise round its centre (the green box's round
+   knob), for something lying on a slant. Small dark
    specks ringed by a name's taken ink (a thick stroke junction read as a tree) go with it.
 4. **Set them again**: `map_letter.py $W/map-2k.png $L $W/map-2k-erased.jpg - $W/map-2k-lettered.jpg --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"` (or the font `maps/<code>/font.txt` names).
    Each name's angle and size come from the scan's ink; small names are set 30% larger. Look at

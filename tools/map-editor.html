@@ -372,6 +372,12 @@ function boxHandles(b) {
     ['se', x1, y1], ['s', mx, y1], ['sw', x0, y1], ['w', x0, my],
   ];
 }
+// a keep box is [x0, y0, x1, y1] or, turned round its centre, [x0, y0, x1, y1, degrees clockwise]
+const keepFrame = k => ({ c: [(k[0] + k[2]) / 2, (k[1] + k[3]) / 2], w: k[2] - k[0], h: k[3] - k[1], a: (k[4] || 0) * Math.PI / 180 });
+function keepOf(f, deg) {
+  const k = [f.c[0] - f.w / 2, f.c[1] - f.h / 2, f.c[0] + f.w / 2, f.c[1] + f.h / 2].map(Math.round);
+  return deg ? [...k, deg] : k;
+}
 const HS = 6; // handle half-size, screen px
 function hit(sx, sy) {
   const near = (x, y, r) => Math.hypot(x * view.s + view.x - sx, y * view.s + view.y - sy) <= r;
@@ -387,8 +393,12 @@ function hit(sx, sy) {
   const [mx, my] = toMap(sx, sy);
   if (sel >= 0 && labels[sel] && labels[sel].keep && !onFrame(labels[sel])) {  // keep boxes lie inside the label's box: they win
     const ks = labels[sel].keep;
-    for (let k = 0; k < ks.length; k++) for (const [n, x, y] of boxHandles(ks[k])) if (nearSq(x, y)) return { kind: 'ksize', k, n };
-    for (let k = 0; k < ks.length; k++) { const [x0, y0, x1, y1] = ks[k]; if (mx >= x0 && mx <= x1 && my >= y0 && my <= y1) return { kind: 'kmove', k }; }
+    for (let k = 0; k < ks.length; k++) {
+      const f = keepFrame(ks[k]), [rx, ry] = frameRot(f);
+      if (near(rx, ry, 9)) return { kind: 'krot', k };
+      for (const [n, x, y] of frameHandles(f)) if (nearSq(x, y)) return { kind: 'ksize', k, n };
+    }
+    for (let k = 0; k < ks.length; k++) if (inFrame(keepFrame(ks[k]), mx, my)) return { kind: 'kmove', k };
   }
   let best = -1, area = Infinity;
   labels.forEach((l, i) => {
@@ -537,8 +547,10 @@ function draw() {
     const l = labels[sel];
     ctx.setLineDash([]);
     (l.keep || []).forEach(k => {
+      const f = keepFrame(k);
+      ctx.save(); ctx.translate(f.c[0], f.c[1]); ctx.rotate(f.a);
       ctx.strokeStyle = '#6bd18a'; ctx.setLineDash([4 / view.s, 3 / view.s]); ctx.lineWidth = lw;
-      ctx.strokeRect(k[0], k[1], k[2] - k[0], k[3] - k[1]);
+      ctx.strokeRect(-f.w / 2, -f.h / 2, f.w, f.h); ctx.restore();
     });
     ctx.setLineDash([]);
     const hs = HS / view.s;  // screen-sized handles
@@ -558,15 +570,19 @@ function draw() {
       ctx.strokeStyle = eraseMode ? '#ff4d6d99' : '#ff4d6d'; ctx.lineWidth = (eraseMode ? 1.2 : 2.5) / view.s;
       ctx.strokeRect(-f.w / 2, -f.h / 2, f.w, f.h); ctx.restore();
     }
+    const turnKnob = (f, col) => {
+      const [ex, ey] = toWorld(f, f.w / 2, 0), [rx, ry] = frameRot(f);
+      ctx.setLineDash([]); ctx.lineWidth = 1.5 / view.s;
+      ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(rx, ry); ctx.strokeStyle = col; ctx.stroke();
+      ctx.beginPath(); ctx.arc(rx, ry, 7 / view.s, 0, 7); ctx.fillStyle = col; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.stroke();
+    };
     if (f && !eraseMode) {
       knobs(frameHandles(f));
-      const [ex, ey] = toWorld(f, f.w / 2, 0), [rx, ry] = frameRot(f);
-      ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(rx, ry); ctx.strokeStyle = '#ff4d6d'; ctx.stroke();
-      ctx.beginPath(); ctx.arc(rx, ry, 7 / view.s, 0, 7); ctx.fillStyle = '#ff4d6d'; ctx.fill();
-      ctx.strokeStyle = '#fff'; ctx.stroke();
+      turnKnob(f, '#ff4d6d');
     } else {
       knobs(boxHandles(l.box));
-      (l.keep || []).forEach(k => knobs(boxHandles(k), '#6bd18a'));
+      (l.keep || []).forEach(k => { const kf = keepFrame(k); knobs(frameHandles(kf), '#6bd18a'); turnKnob(kf, '#6bd18a'); });
     }
   }
   if (drag && drag.kind === 'new' && drag.box) {
@@ -641,7 +657,7 @@ const TIPS = {  // what each field does in the map tools (docs/reference/map-ups
   'nudge x,y': 'Move the set type by this many map-2k px, off something the larger type runs into.',
   'box x0,y0': 'Top-left corner of the label’s box, in map-2k px.',
   'box x1,y1': 'Bottom-right corner of the label’s box, in map-2k px.',
-  keep: 'Areas inside the box the eraser must not touch (Book 1: a ship). Add one with the button or K, then drag on the map; drag a green box or its handles to change it.',
+  keep: 'Areas inside the box the eraser must not touch (Book 1: a ship). Add one with the button or K, then drag on the map; drag a green box or its handles to change it, its round knob to turn it (Shift: 15° steps).',
   'type at x,y': 'Placed by hand (the frame on the map): centre of the type, in map-2k px. Overrides the measured place, nudge, height and angle.',
   'type size': 'Type size in map-2k px, set by sizing the frame.',
   'type angle': 'Reading angle in degrees, clockwise, 0 = left to right, set by the frame\u2019s round handle.',
@@ -751,7 +767,7 @@ function renderForm() {
   if (l.retype) {
     const k = document.createElement('div'); k.className = 'keeps';
     (l.keep || []).forEach((b, j) => {
-      const r = document.createElement('div'); r.textContent = b.join(', ') + ' ';
+      const r = document.createElement('div'); r.textContent = b.slice(0, 4).join(', ') + (b[4] ? `, ${b[4]}°` : '') + ' ';
       const x = document.createElement('button'); x.textContent = '\u00d7'; x.title = 'Remove this keep box';
       x.onclick = () => { push(); l.keep.splice(j, 1); if (!l.keep.length) delete l.keep; renderForm(); afterEdit(); };
       r.appendChild(x); k.appendChild(r);
@@ -790,7 +806,8 @@ cv.addEventListener('mousedown', e => {
   if (h.kind === 'rot') { push(); ensureSet(labels[sel]); drag = { kind: 'rot' }; }
   else if (h.kind === 'fsize') { push(); ensureSet(labels[sel]); drag = { kind: 'fsize', n: h.n, f: frameOf(labels[sel]) }; }
   else if (h.kind === 'size') { push(); drag = { kind: 'size', n: h.n }; }
-  else if (h.kind === 'ksize') { push(); drag = { kind: 'ksize', k: h.k, n: h.n }; }
+  else if (h.kind === 'ksize') { push(); drag = { kind: 'ksize', k: h.k, n: h.n, f: keepFrame(labels[sel].keep[h.k]) }; }
+  else if (h.kind === 'krot') { push(); drag = { kind: 'krot', k: h.k }; }
   else if (h.kind === 'kmove') drag = { kind: 'kmove', k: h.k, mx, my, orig: labels[sel].keep[h.k].slice(), pushed: false };
   else if (h.kind === 'box') {
     if (h.i !== sel) select(h.i, false);
@@ -805,7 +822,7 @@ window.addEventListener('mousemove', e => {
   if (!drag) {
     if (e.target === cv) {
       const h = mode === 'draw' || mode === 'keep' ? { kind: 'draw' } : hit(sx, sy);
-      cv.style.cursor = spaceDown ? 'grab' : h.kind !== 'draw' && onDivider(sx) ? 'col-resize' : h.kind === 'draw' ? 'crosshair' : h.kind === 'rot' ? 'alias'
+      cv.style.cursor = spaceDown ? 'grab' : h.kind !== 'draw' && onDivider(sx) ? 'col-resize' : h.kind === 'draw' ? 'crosshair' : h.kind === 'rot' || h.kind === 'krot' ? 'alias'
         : h.kind === 'size' || h.kind === 'fsize' || h.kind === 'ksize' ? (h.n.length === 2 ? (h.n === 'nw' || h.n === 'se' ? 'nwse-resize' : 'nesw-resize') : (h.n === 'n' || h.n === 's' ? 'ns-resize' : 'ew-resize'))
         : h.kind === 'box' || h.kind === 'kmove' ? 'move' : 'grab';
     }
@@ -829,14 +846,29 @@ window.addEventListener('mousemove', e => {
     const dx = mx - drag.mx, dy = my - drag.my;
     if (!drag.pushed) { if (Math.hypot(dx, dy) * view.s < 3) return; push(); drag.pushed = true; }
     const b = [drag.orig[0] + dx, drag.orig[1] + dy, drag.orig[2] + dx, drag.orig[3] + dy]; clampBox(b);
-    labels[sel].keep[drag.k] = b; keepChanged();
-  } else if (drag.kind === 'size' || drag.kind === 'ksize') {
-    const b = drag.kind === 'size' ? labels[sel].box : labels[sel].keep[drag.k], n = drag.n;
+    labels[sel].keep[drag.k] = drag.orig[4] ? [...b, drag.orig[4]] : b; keepChanged();
+  } else if (drag.kind === 'ksize') {  // along the box's own sides: the opposite side stays put
+    const f = drag.f, n = drag.n, [u, v] = toLocal(f, mx, my);
+    let L = -f.w / 2, R = f.w / 2, T = -f.h / 2, B = f.h / 2;
+    if (n.includes('w')) L = Math.min(u, R - 2);
+    if (n.includes('e')) R = Math.max(u, L + 2);
+    if (n.includes('n')) T = Math.min(v, B - 2);
+    if (n.includes('s')) B = Math.max(v, T + 2);
+    const k = labels[sel].keep[drag.k];
+    labels[sel].keep[drag.k] = keepOf({ c: toWorld(f, (L + R) / 2, (T + B) / 2), w: R - L, h: B - T }, k[4]);
+    keepChanged();
+  } else if (drag.kind === 'krot') {
+    const k = labels[sel].keep[drag.k], f = keepFrame(k);
+    let a = Math.atan2(my - f.c[1], mx - f.c[0]) * 180 / Math.PI;
+    a = e.shiftKey ? Math.round(a / 15) * 15 : Math.round(a * 2) / 2;
+    labels[sel].keep[drag.k] = keepOf(f, a % 360 || 0); keepChanged();
+  } else if (drag.kind === 'size') {
+    const b = labels[sel].box, n = drag.n;
     if (n.includes('w')) b[0] = Math.min(mx, b[2] - 2);
     if (n.includes('e')) b[2] = Math.max(mx, b[0] + 2);
     if (n.includes('n')) b[1] = Math.min(my, b[3] - 2);
     if (n.includes('s')) b[3] = Math.max(my, b[1] + 2);
-    clampBox(b); if (drag.kind === 'size') boxChanged(); else keepChanged();
+    clampBox(b); boxChanged();
   } else if (drag.kind === 'fmove') {
     const dx = mx - drag.mx, dy = my - drag.my;
     if (!drag.pushed) { if (Math.hypot(dx, dy) * view.s < 3) return; push(); ensureSet(labels[sel]); drag.pushed = true; }
@@ -885,7 +917,7 @@ window.addEventListener('mouseup', e => {
       const t = $('form').querySelector('input[type=text]'); if (t) t.focus();
     } else draw();
   } else if (d.kind === 'pan' && d.click && !d.moved) select(-1, false);
-  else if (['rot', 'fsize', 'fmove', 'kmove', 'ksize'].includes(d.kind)) renderForm();  // the form now shows the hand placement
+  else if (['rot', 'fsize', 'fmove', 'kmove', 'ksize', 'krot'].includes(d.kind)) renderForm();  // the form now shows the hand placement
   dirty();
 });
 function boxChanged() { renderFormValues(); draw(); dirty(); }

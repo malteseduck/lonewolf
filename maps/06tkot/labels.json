@@ -15,26 +15,75 @@
   ]
  },
  {
-  "text": "HELGOR",
+  "text": "HELGOR TRAIIL",
   "box": [
    511,
    121,
-   592,
-   235
+   623,
+   289
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    566.6,
+    209.4
+   ],
+   "angle": 81.09,
+   "length": 171,
+   "thick": 138.2,
+   "box": [
+    511,
+    121,
+    623,
+    289
+   ]
+  },
+  "set": {
+   "at": [
+    570.8,
+    208.3
+   ],
+   "size": 23.1,
+   "angle": 60.5
+  },
+  "joined": true
  },
  {
-  "text": "AKE KAZONARA",
+  "text": "LAKE KAZONARA",
   "box": [
-   638,
+   626,
    173,
    828,
    229
   ],
   "conf": 0.98,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    726.4,
+    200.5
+   ],
+   "angle": 1.55,
+   "length": 209.9,
+   "thick": 68.5,
+   "box": [
+    626,
+    173,
+    828,
+    229
+   ]
+  },
+  "set": {
+   "at": [
+    734.1,
+    201.6
+   ],
+   "size": 24.3,
+   "angle": 9
+  },
+  "joined": true,
+  "clip": true
  },
  {
   "text": "LAKE VORNDAROL",
@@ -45,10 +94,35 @@
    204
   ],
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1009.6,
+    184.5
+   ],
+   "angle": -0.52,
+   "length": 225.1,
+   "thick": 46.8,
+   "box": [
+    898,
+    166,
+    1119,
+    204
+   ]
+  },
+  "set": {
+   "at": [
+    1006.9,
+    185.7
+   ],
+   "size": 21.8,
+   "angle": -2.5
+  },
+  "joined": true,
+  "clip": true
  },
  {
-  "text": "AKENGORGE",
+  "text": "THE MAAKENGORGE",
   "box": [
    1124,
    141,
@@ -56,7 +130,31 @@
    249
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1237.5,
+    193.8
+   ],
+   "angle": 11.82,
+   "length": 239.6,
+   "thick": 153.1,
+   "box": [
+    1124,
+    141,
+    1356,
+    249
+   ]
+  },
+  "set": {
+   "at": [
+    1242.6,
+    195
+   ],
+   "size": 23.5,
+   "angle": 20.5
+  },
+  "joined": true
  },
  {
   "text": "THE ZAUT",
@@ -67,10 +165,33 @@
    338
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1427.4,
+    317.5
+   ],
+   "angle": 1.61,
+   "length": 120.9,
+   "thick": 35.8,
+   "box": [
+    1371,
+    304,
+    1485,
+    338
+   ]
+  },
+  "set": {
+   "at": [
+    1429.2,
+    321.9
+   ],
+   "size": 22.5,
+   "angle": 1.6
+  }
  },
  {
-  "text": "QUARIEN RANGE",
+  "text": "THE QUARLEN RANGE",
   "box": [
    1657,
    323,
@@ -78,7 +199,35 @@
    396
   ],
   "conf": 0.97,
-  "retype": true
+  "retype": true,
+  "lines": [
+   "THE",
+   "QUARLEN RANGE"
+  ],
+  "ink": {
+   "at": [
+    1759.1,
+    356.6
+   ],
+   "angle": 6.36,
+   "length": 203.1,
+   "thick": 91,
+   "box": [
+    1657,
+    323,
+    1858,
+    396
+   ]
+  },
+  "set": {
+   "at": [
+    1765.1,
+    347.9
+   ],
+   "size": 22,
+   "angle": 13
+  },
+  "joined": true
  },
  {
   "text": "HELGOR",
@@ -89,7 +238,30 @@
    417
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    778.5,
+    396.5
+   ],
+   "angle": -4.3,
+   "length": 104.5,
+   "thick": 48,
+   "box": [
+    731,
+    379,
+    833,
+    417
+   ]
+  },
+  "set": {
+   "at": [
+    778.2,
+    397.7
+   ],
+   "size": 21.3,
+   "angle": -1
+  }
  },
  {
   "text": "KARKASTE",
@@ -100,7 +272,30 @@
    434
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1241.6,
+    419.4
+   ],
+   "angle": 1.51,
+   "length": 121.3,
+   "thick": 29.9,
+   "box": [
+    1185,
+    409,
+    1305,
+    434
+   ]
+  },
+  "set": {
+   "at": [
+    1245.1,
+    422
+   ],
+   "size": 23.2,
+   "angle": 1.5
+  }
  },
  {
   "text": "HELIN",
@@ -111,7 +306,31 @@
    449
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1417.6,
+    433.1
+   ],
+   "angle": -2.88,
+   "length": 88.7,
+   "thick": 34.3,
+   "box": [
+    1378,
+    420,
+    1459,
+    449
+   ]
+  },
+  "set": {
+   "at": [
+    1417.2,
+    433.8
+   ],
+   "size": 25.3,
+   "angle": -1.5
+  },
+  "joined": true
  },
  {
   "text": "MAGADOR",
@@ -122,7 +341,30 @@
    507
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    788.4,
+    484.5
+   ],
+   "angle": 1.34,
+   "length": 161.1,
+   "thick": 52,
+   "box": [
+    712,
+    462,
+    866,
+    507
+   ]
+  },
+  "set": {
+   "at": [
+    795.4,
+    482.5
+   ],
+   "size": 25.5,
+   "angle": 0.5
+  }
  },
  {
   "text": "VAKOVAR",
@@ -133,10 +375,34 @@
    507
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1038,
+    492.4
+   ],
+   "angle": 0.49,
+   "length": 104.1,
+   "thick": 27.5,
+   "box": [
+    984,
+    479,
+    1087,
+    507
+   ]
+  },
+  "set": {
+   "at": [
+    1038.8,
+    494.9
+   ],
+   "size": 22.8,
+   "angle": -1.5
+  },
+  "joined": true
  },
  {
-  "text": "VARETTIANHILLS",
+  "text": "VARETTIAN HILLS",
   "box": [
    1476,
    464,
@@ -144,7 +410,30 @@
    492
   ],
   "conf": 0.97,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1575.5,
+    476
+   ],
+   "angle": 1.04,
+   "length": 195.2,
+   "thick": 29.6,
+   "box": [
+    1476,
+    464,
+    1673,
+    492
+   ]
+  },
+  "set": {
+   "at": [
+    1573.3,
+    479
+   ],
+   "size": 22.1,
+   "angle": 1
+  }
  },
  {
   "text": "SCHAAN",
@@ -155,7 +444,30 @@
    532
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    558.6,
+    517.7
+   ],
+   "angle": 1.16,
+   "length": 111.4,
+   "thick": 35.2,
+   "box": [
+    507,
+    504,
+    616,
+    532
+   ]
+  },
+  "set": {
+   "at": [
+    565.4,
+    518.4
+   ],
+   "size": 22.7,
+   "angle": 1.2
+  }
  },
  {
   "text": "LYRIS",
@@ -166,10 +478,33 @@
    554
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1281.1,
+    536.6
+   ],
+   "angle": -1.21,
+   "length": 81.7,
+   "thick": 23.7,
+   "box": [
+    1234,
+    517,
+    1326,
+    554
+   ]
+  },
+  "set": {
+   "at": [
+    1284.6,
+    536.7
+   ],
+   "size": 33.5,
+   "angle": -1.2
+  }
  },
  {
-  "text": "QUARLED",
+  "text": "QUARLEN",
   "box": [
    1721,
    543,
@@ -177,7 +512,31 @@
    572
   ],
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1773.5,
+    557.6
+   ],
+   "angle": -0.28,
+   "length": 105.1,
+   "thick": 34.8,
+   "box": [
+    1721,
+    543,
+    1823,
+    572
+   ]
+  },
+  "set": {
+   "at": [
+    1773.1,
+    559
+   ],
+   "size": 22,
+   "angle": 0.5
+  },
+  "joined": true
  },
  {
   "text": "TELT",
@@ -188,7 +547,31 @@
    622
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    755,
+    607.2
+   ],
+   "angle": -6.5,
+   "length": 58.1,
+   "thick": 35.6,
+   "box": [
+    721,
+    588,
+    784,
+    622
+   ]
+  },
+  "set": {
+   "at": [
+    754.3,
+    606.5
+   ],
+   "size": 25.4,
+   "angle": -0.5
+  },
+  "joined": true
  },
  {
   "text": "SOREN",
@@ -199,7 +582,31 @@
    630
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1261.6,
+    616.7
+   ],
+   "angle": 0.38,
+   "length": 85,
+   "thick": 25.1,
+   "box": [
+    1219,
+    598,
+    1305,
+    630
+   ]
+  },
+  "set": {
+   "at": [
+    1262.3,
+    615
+   ],
+   "size": 22.7,
+   "angle": 0.9
+  },
+  "joined": true
  },
  {
   "text": "CASIORN",
@@ -210,7 +617,30 @@
    625
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1816,
+    606
+   ],
+   "angle": -0.37,
+   "length": 110.1,
+   "thick": 32.6,
+   "box": [
+    1757,
+    594,
+    1868,
+    625
+   ]
+  },
+  "set": {
+   "at": [
+    1811.9,
+    610
+   ],
+   "size": 23.4,
+   "angle": 1
+  }
  },
  {
   "text": "VARETTA",
@@ -232,7 +662,22 @@
    947
   ],
   "conf": 0.91,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    234.7,
+    867.9
+   ],
+   "angle": -76.57,
+   "length": 196.2,
+   "thick": 237.7,
+   "box": [
+    103,
+    714,
+    336,
+    947
+   ]
+  }
  },
  {
   "text": "ELDENORA",
@@ -254,7 +699,30 @@
    732
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    501.2,
+    718.7
+   ],
+   "angle": 2.58,
+   "length": 79.3,
+   "thick": 22.3,
+   "box": [
+    457,
+    700,
+    538,
+    732
+   ]
+  },
+  "set": {
+   "at": [
+    497.3,
+    717.3
+   ],
+   "size": 24.7,
+   "angle": 1
+  }
  },
  {
   "text": "SOLD",
@@ -265,7 +733,31 @@
    723
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    771.9,
+    705.7
+   ],
+   "angle": -2.54,
+   "length": 79.5,
+   "thick": 40.5,
+   "box": [
+    733,
+    689,
+    808,
+    723
+   ]
+  },
+  "set": {
+   "at": [
+    771,
+    706.6
+   ],
+   "size": 25.1,
+   "angle": 1
+  },
+  "joined": true
  },
  {
   "text": "DELDEN",
@@ -276,7 +768,30 @@
    824
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    838.5,
+    805.9
+   ],
+   "angle": 0.32,
+   "length": 115.2,
+   "thick": 42.3,
+   "box": [
+    785,
+    789,
+    893,
+    824
+   ]
+  },
+  "set": {
+   "at": [
+    837.1,
+    805.9
+   ],
+   "size": 25.7,
+   "angle": 0.3
+  }
  },
  {
   "text": "AMORY",
@@ -287,7 +802,31 @@
    826
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1383.5,
+    809
+   ],
+   "angle": -2.7,
+   "length": 88,
+   "thick": 35.9,
+   "box": [
+    1340,
+    793,
+    1428,
+    826
+   ]
+  },
+  "set": {
+   "at": [
+    1385.1,
+    810.2
+   ],
+   "size": 22.6,
+   "angle": -0.5
+  },
+  "joined": true
  },
  {
   "text": "THE CENERS",
@@ -298,7 +837,30 @@
    839
   ],
   "conf": 0.97,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1215.4,
+    823.5
+   ],
+   "angle": 0.57,
+   "length": 151,
+   "thick": 38.4,
+   "box": [
+    1144,
+    808,
+    1288,
+    839
+   ]
+  },
+  "set": {
+   "at": [
+    1213,
+    824
+   ],
+   "size": 22,
+   "angle": 0.6
+  }
  },
  {
   "text": "SLOVARIAN RANGE",
@@ -309,7 +871,30 @@
    886
   ],
   "conf": 0.96,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1715.9,
+    850.6
+   ],
+   "angle": 1.04,
+   "length": 275.2,
+   "thick": 74.3,
+   "box": [
+    1582,
+    816,
+    1850,
+    886
+   ]
+  },
+  "set": {
+   "at": [
+    1720.3,
+    848.6
+   ],
+   "size": 27,
+   "angle": -8
+  }
  },
  {
   "text": "NORTH PASS",
@@ -320,7 +905,30 @@
    909
   ],
   "conf": 0.97,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1842.1,
+    865.6
+   ],
+   "angle": -2.85,
+   "length": 146.9,
+   "thick": 74.8,
+   "box": [
+    1774,
+    835,
+    1914,
+    909
+   ]
+  },
+  "set": {
+   "at": [
+    1846,
+    871.5
+   ],
+   "size": 21,
+   "angle": -18.5
+  }
  },
  {
   "text": "LUYEN",
@@ -331,7 +939,30 @@
    901
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1077.3,
+    885.4
+   ],
+   "angle": 1.04,
+   "length": 61,
+   "thick": 37,
+   "box": [
+    1036,
+    867,
+    1113,
+    901
+   ]
+  },
+  "set": {
+   "at": [
+    1072,
+    885.1
+   ],
+   "size": 24.3,
+   "angle": -0.5
+  }
  },
  {
   "text": "BAIS",
@@ -342,10 +973,33 @@
    941
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    864.2,
+    927
+   ],
+   "angle": -3.9,
+   "length": 53.3,
+   "thick": 33.2,
+   "box": [
+    832,
+    906,
+    894,
+    941
+   ]
+  },
+  "set": {
+   "at": [
+    866.2,
+    924.6
+   ],
+   "size": 24.2,
+   "angle": 0
+  }
  },
  {
-  "text": "WOEL",
+  "text": "WOELD",
   "box": [
    1426,
    939,
@@ -353,7 +1007,31 @@
    972
   ],
   "conf": 0.9,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1464.7,
+    952.6
+   ],
+   "angle": 1.41,
+   "length": 85.2,
+   "thick": 34.1,
+   "box": [
+    1426,
+    939,
+    1508,
+    972
+   ]
+  },
+  "set": {
+   "at": [
+    1475.5,
+    954.6
+   ],
+   "size": 24.8,
+   "angle": -0.5
+  },
+  "joined": true
  },
  {
   "text": "TIDO",
@@ -364,7 +1042,31 @@
    1038
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1565.4,
+    1014.1
+   ],
+   "angle": 21.73,
+   "length": 75.4,
+   "thick": 38.6,
+   "box": [
+    1532,
+    996,
+    1604,
+    1038
+   ]
+  },
+  "set": {
+   "at": [
+    1571,
+    1017.6
+   ],
+   "size": 25.5,
+   "angle": 8
+  },
+  "joined": true
  },
  {
   "text": "LYRIS",
@@ -386,7 +1088,22 @@
    1052
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    622,
+    1036.4
+   ],
+   "angle": 0.79,
+   "length": 84.2,
+   "thick": 24.3,
+   "box": [
+    575,
+    1019,
+    668,
+    1052
+   ]
+  }
  },
  {
   "text": "DUADON",
@@ -397,7 +1114,30 @@
    1067
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1088.4,
+    1051
+   ],
+   "angle": -0.37,
+   "length": 110.9,
+   "thick": 38.7,
+   "box": [
+    1037,
+    1032,
+    1145,
+    1067
+   ]
+  },
+  "set": {
+   "at": [
+    1092.4,
+    1049.5
+   ],
+   "size": 22.6,
+   "angle": -0.4
+  }
  },
  {
   "text": "ELDENORA",
@@ -408,18 +1148,57 @@
    1155
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    597,
+    1141.5
+   ],
+   "angle": 0.3,
+   "length": 114.1,
+   "thick": 23.4,
+   "box": [
+    535,
+    1124,
+    656,
+    1155
+   ]
+  }
  },
  {
   "text": "ABISKO",
   "box": [
-   838,
+   865,
    1133,
    959,
    1166
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    910.9,
+    1149.8
+   ],
+   "angle": -3.75,
+   "length": 99.9,
+   "thick": 38.9,
+   "box": [
+    865,
+    1133,
+    959,
+    1166
+   ]
+  },
+  "set": {
+   "at": [
+    914,
+    1148.9
+   ],
+   "size": 24.5,
+   "angle": 0.5
+  },
+  "joined": true
  },
  {
   "text": "TEKARO",
@@ -430,7 +1209,44 @@
    1211
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1412.9,
+    1197.1
+   ],
+   "angle": 0.86,
+   "length": 98.2,
+   "thick": 27.1,
+   "box": [
+    1359,
+    1179,
+    1466,
+    1211
+   ]
+  },
+  "set": {
+   "at": [
+    1416.3,
+    1194.8
+   ],
+   "size": 26.4,
+   "angle": 0.4
+  },
+  "keep": [
+   [
+    1353,
+    1172,
+    1364,
+    1222
+   ],
+   [
+    1355,
+    1196,
+    1368,
+    1228
+   ]
+  ]
  },
  {
   "text": "SLOVIA",
@@ -441,7 +1257,30 @@
    1237
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1595.1,
+    1218.7
+   ],
+   "angle": -3.01,
+   "length": 93.1,
+   "thick": 23.8,
+   "box": [
+    1543,
+    1198,
+    1648,
+    1237
+   ]
+  },
+  "set": {
+   "at": [
+    1595,
+    1219.1
+   ],
+   "size": 26.5,
+   "angle": -3
+  }
  },
  {
   "text": "SUENTINA",
@@ -452,10 +1291,33 @@
    1212
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1849.6,
+    1195.5
+   ],
+   "angle": 0.63,
+   "length": 133,
+   "thick": 36.2,
+   "box": [
+    1780,
+    1181,
+    1918,
+    1212
+   ]
+  },
+  "set": {
+   "at": [
+    1848.7,
+    1195.5
+   ],
+   "size": 25.1,
+   "angle": 0.6
+  }
  },
  {
-  "text": "RELONI",
+  "text": "R. RELONI",
   "box": [
    806,
    1210,
@@ -463,7 +1325,30 @@
    1320
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    829.5,
+    1259
+   ],
+   "angle": 68.55,
+   "length": 118.7,
+   "thick": 93.6,
+   "box": [
+    806,
+    1210,
+    887,
+    1320
+   ]
+  },
+  "set": {
+   "at": [
+    842.2,
+    1255.1
+   ],
+   "size": 23,
+   "angle": 63
+  }
  },
  {
   "text": "R.SUEN",
@@ -474,7 +1359,31 @@
    1357
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1526.1,
+    1310.8
+   ],
+   "angle": -23.81,
+   "length": 120.9,
+   "thick": 34.5,
+   "box": [
+    1468,
+    1276,
+    1580,
+    1357
+   ]
+  },
+  "set": {
+   "at": [
+    1527.2,
+    1315.3
+   ],
+   "size": 25.7,
+   "angle": -23.5
+  },
+  "joined": true
  },
  {
   "text": "CHOD",
@@ -485,7 +1394,31 @@
    1316
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1333.9,
+    1299.6
+   ],
+   "angle": -3.78,
+   "length": 79.1,
+   "thick": 37.7,
+   "box": [
+    1299,
+    1283,
+    1377,
+    1316
+   ]
+  },
+  "set": {
+   "at": [
+    1342.8,
+    1300
+   ],
+   "size": 24.3,
+   "angle": 0
+  },
+  "joined": true
  },
  {
   "text": "SCALE IN MILES",
@@ -507,7 +1440,7 @@
    1391
   ],
   "conf": 1,
-  "retype": true
+  "retype": false
  },
  {
   "text": "OREDAL",
@@ -518,7 +1451,30 @@
    1393
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    753.6,
+    1378
+   ],
+   "angle": 1.2,
+   "length": 91.1,
+   "thick": 21.6,
+   "box": [
+    703,
+    1362,
+    800,
+    1393
+   ]
+  },
+  "set": {
+   "at": [
+    752.3,
+    1377.8
+   ],
+   "size": 22.3,
+   "angle": 1.2
+  }
  },
  {
   "text": "GORA",
@@ -529,94 +1485,531 @@
    1415
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1076.5,
+    1399.5
+   ],
+   "angle": -6.32,
+   "length": 81.7,
+   "thick": 37.3,
+   "box": [
+    1041,
+    1382,
+    1116,
+    1415
+   ]
+  },
+  "set": {
+   "at": [
+    1078.1,
+    1397.9
+   ],
+   "size": 24.4,
+   "angle": -0.5
+  },
+  "joined": true
  },
  {
-  "text": "2A",
+  "text": "0 25 50 75 100 125 150",
   "box": [
-   135,
-   1410,
-   155,
-   1422
-  ],
-  "conf": 0.9,
-  "retype": true
- },
- {
-  "text": "50",
-  "box": [
-   192,
-   1427,
-   215,
-   1444
-  ],
-  "conf": 0.78,
-  "retype": true
- },
- {
-  "text": "75",
-  "box": [
-   245,
-   1409,
-   271,
-   1424
-  ],
-  "conf": 0.8,
-  "retype": true
- },
- {
-  "text": "100",
-  "box": [
-   301,
-   1409,
-   334,
-   1423
-  ],
-  "conf": 0.94,
-  "retype": true
- },
- {
-  "text": "00",
-  "box": [
-   308,
-   1430,
-   334,
-   1446
-  ],
-  "conf": 1,
-  "retype": true
- },
- {
-  "text": "185 150",
-  "box": [
-   353,
+   79,
    1408,
    414,
    1425
   ],
-  "conf": 0.83,
-  "retype": true
+  "conf": 0.9,
+  "retype": true,
+  "spread": true,
+  "ink": {
+   "at": [
+    247.5,
+    1414.1
+   ],
+   "angle": 0.2,
+   "length": 331,
+   "thick": 20.9,
+   "box": [
+    79,
+    1408,
+    414,
+    1425
+   ]
+  }
  },
  {
-  "text": "150",
+  "text": "0 50 100 150",
   "box": [
-   380,
-   1429,
+   80,
+   1427,
    415,
    1447
   ],
   "conf": 1,
-  "retype": false
+  "retype": true,
+  "spread": true,
+  "ink": {
+   "at": [
+    247.2,
+    1436.1
+   ],
+   "angle": 0.82,
+   "length": 342,
+   "thick": 30.5,
+   "box": [
+    80,
+    1427,
+    415,
+    1447
+   ]
+  }
  },
  {
-  "text": "260",
+  "text": "0 75 250",
   "box": [
-   380,
+   80,
    1453,
    413,
    1474
   ],
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "spread": true,
+  "ink": {
+   "at": [
+    246.4,
+    1464.4
+   ],
+   "angle": 0.51,
+   "length": 339,
+   "thick": 27.8,
+   "box": [
+    80,
+    1453,
+    413,
+    1474
+   ]
+  }
+ },
+ {
+  "text": "FALLS OF LAMENTA ",
+  "box": [
+   1404,
+   215,
+   1615,
+   300
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "ink": {
+   "at": [
+    1510.8,
+    262.7
+   ],
+   "angle": 4.83,
+   "length": 219.3,
+   "thick": 98.1,
+   "box": [
+    1404,
+    215,
+    1615,
+    300
+   ]
+  },
+  "set": {
+   "at": [
+    1512.8,
+    256.5
+   ],
+   "size": 21.9,
+   "angle": 17.5
+  },
+  "joined": true
+ },
+ {
+  "text": "DOOM FALLS",
+  "box": [
+   1625,
+   270,
+   1768,
+   318
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "ink": {
+   "at": [
+    1698.2,
+    292.7
+   ],
+   "angle": 2.48,
+   "length": 145.4,
+   "thick": 51.6,
+   "box": [
+    1625,
+    270,
+    1768,
+    318
+   ]
+  },
+  "set": {
+   "at": [
+    1697.5,
+    295.3
+   ],
+   "size": 20.5,
+   "angle": 6
+  },
+  "joined": true
+ },
+ {
+  "text": "RUNS OF MAAKEN",
+  "box": [
+   1779,
+   237,
+   1919,
+   309
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "lines": [
+   "RUINS",
+   "OF MAAKEN"
+  ],
+  "ink": {
+   "at": [
+    1850.5,
+    272.3
+   ],
+   "angle": 0.99,
+   "length": 143.1,
+   "thick": 80.3,
+   "box": [
+    1779,
+    237,
+    1919,
+    309
+   ]
+  },
+  "set": {
+   "at": [
+    1846.1,
+    270.8
+   ],
+   "size": 21.8,
+   "angle": 0
+  },
+  "joined": true
+ },
+ {
+  "text": "R. QUARL",
+  "box": [
+   1598,
+   592,
+   1704,
+   691
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "set": {
+   "at": [
+    1652.5,
+    640.9
+   ],
+   "size": 23.3,
+   "angle": -41
+  },
+  "ink": {
+   "at": [
+    1646.5,
+    635
+   ],
+   "angle": -34.17,
+   "length": 111.7,
+   "thick": 109.5,
+   "box": [
+    1598,
+    592,
+    1704,
+    691
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "VARETTA",
+  "box": [
+   1373,
+   547,
+   1500,
+   580
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "ink": {
+   "at": [
+    1440.5,
+    561.7
+   ],
+   "angle": 0.38,
+   "length": 125.1,
+   "thick": 37.4,
+   "box": [
+    1373,
+    547,
+    1500,
+    580
+   ]
+  },
+  "set": {
+   "at": [
+    1437.1,
+    561.7
+   ],
+   "size": 26,
+   "angle": 0.5
+  },
+  "joined": true
+ },
+ {
+  "text": "R. STORN",
+  "box": [
+   1106,
+   504,
+   1186,
+   629
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "ink": {
+   "at": [
+    1144.3,
+    558.7
+   ],
+   "angle": 76.45,
+   "length": 125.1,
+   "thick": 96.5,
+   "box": [
+    1106,
+    504,
+    1186,
+    629
+   ]
+  },
+  "set": {
+   "at": [
+    1145.8,
+    562.9
+   ],
+   "size": 23,
+   "angle": 64.5
+  },
+  "joined": true
+ },
+ {
+  "text": "KRON",
+  "box": [
+   1086,
+   763,
+   1166,
+   799
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "set": {
+   "at": [
+    1125.5,
+    780.5
+   ],
+   "size": 24.5,
+   "angle": 0
+  },
+  "joined": true,
+  "ink": {
+   "at": [
+    1125.2,
+    780.8
+   ],
+   "angle": -3.32,
+   "length": 81.3,
+   "thick": 38.9,
+   "box": [
+    1086,
+    763,
+    1166,
+    799
+   ]
+  }
+ },
+ {
+  "text": "RHEM",
+  "box": [
+   1134,
+   974,
+   1220,
+   1009
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "ink": {
+   "at": [
+    1176.7,
+    993.3
+   ],
+   "angle": 1.55,
+   "length": 85,
+   "thick": 28.3,
+   "box": [
+    1134,
+    974,
+    1220,
+    1009
+   ]
+  },
+  "set": {
+   "at": [
+    1177.6,
+    991.9
+   ],
+   "size": 24.1,
+   "angle": 1.5
+  },
+  "joined": true,
+  "keep": [
+   [
+    1130,
+    960,
+    1226,
+    980
+   ]
+  ]
+ },
+ {
+  "text": "SALONY",
+  "box": [
+   1261,
+   934,
+   1372,
+   970
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "ink": {
+   "at": [
+    1319.5,
+    951.9
+   ],
+   "angle": 0.14,
+   "length": 111.1,
+   "thick": 24.2,
+   "box": [
+    1261,
+    934,
+    1372,
+    970
+   ]
+  },
+  "set": {
+   "at": [
+    1318.8,
+    952.2
+   ],
+   "size": 25,
+   "angle": 0.8
+  },
+  "joined": true,
+  "keep": [
+   [
+    1252,
+    922,
+    1383,
+    940
+   ],
+   [
+    1245,
+    925,
+    1264,
+    981
+   ],
+   [
+    1256,
+    965,
+    1377,
+    984
+   ]
+  ]
+ },
+ {
+  "text": "EULA",
+  "box": [
+   1266,
+   1095,
+   1334,
+   1131
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "joined": true,
+  "keep": [
+   [
+    1256,
+    1082,
+    1344,
+    1102
+   ]
+  ],
+  "ink": {
+   "at": [
+    1301,
+    1116.1
+   ],
+   "angle": 3.95,
+   "length": 65.7,
+   "thick": 31.4,
+   "box": [
+    1266,
+    1095,
+    1334,
+    1131
+   ]
+  }
+ },
+ {
+  "text": "RUANON",
+  "box": [
+   1825,
+   132,
+   1921,
+   164
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "ink": {
+   "at": [
+    1873.3,
+    148.8
+   ],
+   "angle": 3.13,
+   "length": 97.8,
+   "thick": 38,
+   "box": [
+    1825,
+    132,
+    1921,
+    164
+   ]
+  },
+  "joined": true
  }
 ]
