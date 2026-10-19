@@ -71,12 +71,21 @@ Commands run from the project root as
 
 1. **Upscale the scan**: `map_upscale.py $D/map.png $W/map-2k.png --width 2048`.
 2. **Label list.** `map_labels.py draft $W/map-2k.png $L` gives OCR boxes as a
-   start only. It uses PaddleOCR when `tools/.venv-paddle` exists (see `map_ocr_paddle.py`): on
-   Book 4 it read about 55 of 62 labels right, slanted ones included, and missed a few small ones.
-   Without it, EasyOCR (on Book 1 most came back as a stray digit). **The owner** corrects every
+   start only. It uses PaddleOCR when `tools/.venv-paddle` exists (see `map_ocr_paddle.py`), on the
+   GPU: the map is read turned to 0, ±30, ±60 and 90 degrees, at its own size and at twice it, with
+   low detection thresholds, and the best read of each place kept. On Book 6 it found 57 of the
+   owner's 62 labels (51 worded right), where one level pass found 51 (46); Book 7 gave 60 reads
+   where that pass gave 45 (2026-10-19). Reads of one letter repeated (a pair of trees as "TT") and
+   short reads on end within 80 px of the edge (the frame's ornament) are dropped: 6 on Book 7, none
+   of the owner's labels on Books 3-6 and 12. What it misses is hand lettering slanted over mountains or
+   trees. Each read keeps OCR's `slant` (degrees), which the measure below takes where the ink's own
+   axis is 3 to 20 degrees off it (a road or tree in the box skews the ink; further off, OCR misread
+   a short word): on Books 3-6 and 12 that halved the names set more than 3 degrees from the
+   owner's hand angle. Without the venv, EasyOCR (on Book 1 most came back as a stray digit). **The owner** corrects every
    wording and box by eye in the map editor, and adds what it missed (owner's call, 2026-10-07: the
    agent does not review the draft, which costs tokens on every map image it looks at; it helps
-   only with names the owner asks about). Each entry: `text` (exact, as printed), `box` [x0, y0, x1, y1],
+   only with names the owner asks about; since 2026-10-19 the owner may also press Find missed
+   labels, below, which spends Sonnet tokens on the map, never the session's). Each entry: `text` (exact, as printed), `box` [x0, y0, x1, y1],
    `where` (its place in words), `small` (hand-lettered), and `retype: true` on every *place name* (erased from the scan and set again in clean type;
    the draft ticks it on every label except those `captions()` finds are surely not a place name
    (D8, 2026-10-15): worded like a label two other maps keep as drawn and none has as a place;
@@ -90,6 +99,15 @@ Commands run from the project root as
    leaves a label ticked, the safe side under ADR 0036, so no signs were added). Untick the rest, and tick any place name it
    caught by mistake. **Untick captions** in step 3 saves the list and runs the same judgement on it
    (`map_labels.py retype`), once OCR's wording is corrected: it unticks only, never ticks.
+   **Find missed labels** in step 3 saves the list and runs `map_missed.py`: the map in six
+   overlapping tiles, every listed box outlined in red and a 100 px grid ruled, goes to Claude Sonnet
+   in one headless `claude -p` call (a one-line system prompt, no tools, run outside the project so
+   no CLAUDE.md rides along), which lists the lettering outside the boxes with a rough box; each is
+   tightened to the ink there and added with `found: "claude"`, outlined in purple and starred in
+   the list until the owner presses Checked in its form (or deletes it). About 11-12k tokens and
+   20 s a map. On a fresh draft of the checked maps (2026-10-19) it found 3 of the 8 names OCR
+   missed (Book 6: 3 of 5), with one false find in five maps, and added 10 on Book 7. Needs `claude`
+   signed in on this PC (`claude auth login`).
    **Copy request for Claude** in step 3 saves the list and copies a ready request for what the
    script missed, to paste into Claude Code (the page cannot reach the agent itself); reload the
    editor after the agent has written the file. The editor groups each label's fields by the step that uses them and hides those that
@@ -127,7 +145,9 @@ Commands run from the project root as
    knob), for something lying on a slant. Small dark
    specks ringed by a name's taken ink (a thick stroke junction read as a tree) go with it.
 4. **Set them again**: `map_letter.py $W/map-2k.png $L $W/map-2k-erased.jpg - $W/map-2k-lettered.jpg --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"` (or the font `maps/<code>/font.txt` names).
-   Each name's angle and size come from the scan's ink; small names are set 30% larger. Look at
+   Each name's angle and size come from the scan's ink (the angle from OCR's `slant` where the ink is a little off it, step 2); each one-line name is set at 1.05 times the map's common size (`common_size()`: the median of the
+   lettered one-line names fitted to their own ink) times its own fitted size over that to the 0.6 (`PULL`: most of the way to the common size; on Books 3-6 and 12, 16 of 159 names more than 15% off the owner's hand size, where one size a map left 44), unless fitted over 1.25 times it (a title or
+   region keeps its own; ADR 0004), and the editor's preview does the same. Look at
    it and fix by hand what the measuring got wrong: `angle` (degrees), `nudge` [dx, dy], `height`
    (px), `lines` (a name stacked over lines, set level), `leading` (their line spacing, 1 = the font's own), `spread` (the scale's numbers). Book 1
    needed about 15 such fixes. Since Book 3 the editor's frame does the same by dragging, as `set`.
@@ -184,9 +204,11 @@ Commands run from the project root as
   Its steps and the dashboard's jobs share one lock: one runs at a time.
 - `tools/map_upscale.py`: Real-ESRGAN (`tools/realesrgan/`, the v0.2.5.0 Windows build, git-ignored)
   in 4x passes until wide enough, then LANCZOS to the exact width. One pass about 10 s on the RTX 2060.
-- `tools/map_ocr_paddle.py`: PaddleOCR's reading of a map, run by `map_labels.py` in its own venv,
-  `tools/.venv-paddle` (Python 3.12, git-ignored; set-up commands in its docstring). Models in
-  `~/.paddlex`.
+- `tools/map_ocr_paddle.py`: PaddleOCR's reading of a map (turned and doubled passes, merged), run
+  by `map_labels.py` in its own venv, `tools/.venv-paddle` (Python 3.12, the GPU build, git-ignored;
+  set-up commands in its docstring, or the dashboard's Setup). Models in `~/.paddlex`.
+- `tools/map_missed.py`: step 3's Find missed labels (above): tiles, Claude's answer, boxes fitted to
+  the ink. Prints counts and tokens, never wordings.
 - `tools/map_labels.py`: `draft` (OCR boxes for a first list), `retype` (untick what is surely not
   a place name on the corrected list), `style` (a first `style.txt`), `prompt` (the Gemini prompt,
   `--lettered` for step 5) and `check` (OCR hint plus the `labels.png` eye-check sheet).

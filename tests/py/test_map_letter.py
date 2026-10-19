@@ -27,10 +27,11 @@ def write_png(path, im):
 
 @pytest.fixture(autouse=True)
 def module_state(monkeypatch):
-    """map_letter keeps K, WIPE and PHASE in module globals that main sets."""
+    """map_letter keeps K, WIPE, PHASE and COMMON in module globals that main sets."""
     monkeypatch.setattr(map_letter, 'K', 1)
     monkeypatch.setattr(map_letter, 'WIPE', False)
     monkeypatch.setattr(map_letter, 'PHASE', 'draw')
+    monkeypatch.setattr(map_letter, 'COMMON', None)
 
 
 # ---- ink_mask -----------------------------------------------------------------------------
@@ -63,6 +64,17 @@ def test_geometry_of_a_level_stroke():
     assert abs(math.degrees(ang)) < 1
     assert abs(length - 49) < 1.5
     assert abs(thick - 2) < 1.5
+
+
+def test_geometry_takes_the_ocr_slant_only_where_the_ink_is_a_little_off_it():
+    li = scan_ink(lambda im: im.__setitem__((slice(100, 103), slice(100, 150)), INK))
+    box = [95, 92, 155, 110]
+    def deg(**kw):
+        return math.degrees(map_letter.geometry(li, {'box': box, **kw})[1])
+    assert abs(deg(slant=10) - 10) < 0.1   # a road or tree in the box skews the ink's axis: OCR's line wins
+    assert abs(deg(slant=1.5)) < 1         # they agree: the ink's own
+    assert abs(deg(slant=60)) < 1          # too far apart: OCR misread a short word's box
+    assert abs(deg(slant=10, angle=-5) + 5) < 0.1  # a hand angle wins over both
 
 
 def slanted():
@@ -189,6 +201,31 @@ def test_letter_measures_the_scan_and_fits_the_ink_length():
     cx, cy, w, _ = drawn_centre(base)
     assert abs(cx - 124.5) < 5 and abs(cy - 101) < 6
     assert w <= 49 * 1.1                                 # fitted to the ink, at most a little over
+
+
+def test_letter_sets_a_name_between_its_own_size_and_the_maps_unless_its_own_is_much_bigger(monkeypatch):
+    ink = scan_ink(lambda im: cv2.putText(im, 'HOLM', (110, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.6, INK, 2))
+    lab = {'text': 'HOLM', 'box': [100, 90, 180, 118]}
+    def width(common):
+        monkeypatch.setattr(map_letter, 'COMMON', common)
+        base = blank_base()
+        map_letter.letter(base, lab, ink, CABIN, CABIN, 1)
+        return drawn_centre(base)[2]
+    own = width(None)               # no common size: fitted to its own ink
+    assert width(1) == own          # its own is over 1.25 times the map's: a title or region keeps it
+    s = map_letter.fit_size(['HOLM'], CABIN, *map_letter.geometry(ink, lab)[2:])
+    assert 1.4 < width(3 * s) / own < 2.5  # a small name on a map of names 3 times its size: pulled up, not all the way
+
+
+def test_common_size_is_the_median_of_the_single_line_names():
+    bars = ((20, 12), (60, 20), (100, 28))  # short enough that each is sized by its length
+    li = scan_ink(lambda im: [im.__setitem__((slice(y, y + 6), slice(20, 20 + n)), INK) for y, n in bars])
+    labs = [{'text': 'HOLM', 'box': [15, y - 5, 25 + n, y + 11], 'retype': True} for y, n in bars]
+    sizes = [map_letter.fit_size(['HOLM'], CABIN, *map_letter.geometry(li, lab)[2:], 1) for lab in labs]
+    others = [{'text': 'A B', 'box': [15, 140, 200, 190], 'retype': True, 'lines': ['A', 'B']},  # stacked: fills its box
+              {'text': 'KEY', 'box': [15, 15, 60, 30], 'retype': False},                       # left as drawn
+              {'text': 'NONE', 'box': [250, 150, 290, 190], 'retype': True}]                     # no ink to measure
+    assert map_letter.common_size(labs + others, li, CABIN, CABIN) == pytest.approx(sorted(sizes)[1])
 
 
 def test_letter_skips_a_label_with_no_ink_to_measure(capsys):

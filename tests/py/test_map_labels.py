@@ -152,7 +152,7 @@ def test_main_draft_sorts_by_band_and_unticks_retype_for_other_books_captions(tm
     write_labels(tmp_path, '02', [lab('Key')])
     monkeypatch.setattr(map_labels, 'ocr', lambda p: [
         read('KEY', (300, 10, 340, 30), 0.3),
-        read('HOLM', (50, 500, 100, 520), 0.95),
+        {**read('HOLM', (50, 500, 100, 520), 0.95), 'slant': 12.5},  # kept for map_letter.py's measure
         read('ARDEN', (10, 12, 60, 30), 0.4),
         read('RIVER', (200, 45, 260, 60), 0.8),
     ])
@@ -161,6 +161,7 @@ def test_main_draft_sorts_by_band_and_unticks_retype_for_other_books_captions(tm
     # 40 px bands top to bottom, then left to right inside a band
     assert [r['text'] for r in out] == ['ARDEN', 'KEY', 'RIVER', 'HOLM']
     assert [r['retype'] for r in out] == [True, False, True, True]
+    assert out[3]['slant'] == 12.5
     assert '4 boxes, 2 under 0.5 confidence, 1 unticked retype' in capsys.readouterr().out
 
 

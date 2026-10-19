@@ -415,7 +415,8 @@ function hit(sx, sy) {
 // ---------- drawing ----------
 // The preview follows map_letter.py's letter() and render(): the ink measure (map_measure.py writes
 // it as "ink") gives centre, angle, length and thickness; the hand fields override as there.
-const FILL = 0.92, TRACK = 0.05, BOLD = 0.025, SCALE = 1.3, SMALL = 30;
+const FILL = 0.92, TRACK = 0.05, BOLD = 0.025, SCALE = 1.3, SMALL = 30, SNAP = 1.05, PULL = 0.6, BIG = 1.25;
+let COMMON = null;  // the map's usual type size, common_size(): worked out at each draw()
 function stale(l) { return l.ink && l.ink.box.some((v, j) => v !== l.box[j]); }
 function flip(a, where) {  // map_letter.py geometry(): "upwards"/"downwards" pick the reading direction
   let dx = Math.cos(a), dy = Math.sin(a);
@@ -433,7 +434,7 @@ function letterGeom(l) {
   }
   else {  // not measured yet: a guess from the box
     at = [(x0 + x1) / 2, (y0 + y1) / 2];
-    ang = h > w * 1.6 ? -Math.PI / 2 : 0;
+    ang = typeof l.slant === 'number' ? l.slant * Math.PI / 180 : h > w * 1.6 ? -Math.PI / 2 : 0;  // OCR's slant when drafted
     const horiz = Math.abs(Math.cos(ang)) >= 0.5;
     length = (horiz ? w : h) * FILL; thick = (horiz ? h : w) * 0.8;
   }
@@ -466,17 +467,30 @@ function block(lines, size) {  // render()'s block(): longest line, block height
   const wid = Math.max(...m.map((x, i) => x.actualBoundingBoxLeft + x.actualBoundingBoxRight + TRACK * size * (lines[i].length - 1)));
   return { m, asc, own, wid, top: asc - m[0].actualBoundingBoxAscent, bot: asc + m[m.length - 1].actualBoundingBoxDescent };
 }
-function fitSize(lines, length, thick, boost, leading) {  // render()'s type size from the ink
+function natural(lines, length, thick, leading) {  // fit_size(): the type size fitted to the ink
   const b0 = block(lines, 100), lh0 = b0.own * leading;
   const h0 = lh0 * (lines.length - 1) + (b0.bot - b0.top);
-  const size = 100 * Math.min(length * FILL / b0.wid, thick * 1.25 / h0);
+  return 100 * Math.min(length * FILL / b0.wid, thick * 1.25 / h0);
+}
+function fitSize(lines, length, thick, boost, leading) {  // render()'s type size from the ink
   if (boost == null) boost = thick < SMALL ? SCALE : 1;
-  return Math.max(Math.floor(size * boost), 6);
+  return Math.max(Math.floor(natural(lines, length, thick, leading) * boost), 6);
+}
+function oneLine(l) { return (l.retype || l.fix) && !(l.lines && l.lines.length) && !l.spread && !l.height; }
+function commonSize() {  // common_size(): the median of the lettered one-line names fitted to their ink
+  const s = labels.filter(oneLine).map(l => { const g = letterGeom(l); return natural([l.text || ' '], g.length, g.thick, 1); })
+    .filter(Number.isFinite).sort((a, b) => a - b);
+  return s.length ? (s.length % 2 ? s[(s.length - 1) / 2] : (s[s.length / 2 - 1] + s[s.length / 2]) / 2) : null;
 }
 function typeOf(l) {  // what gets set: lines, type size, centre, reading angle (radians)
   const lines = l.lines && l.lines.length ? l.lines : [l.text || ' '], leading = l.leading || 1;
   if (l.set) return { lines, leading, size: l.set.size, centre: l.set.at, ang: l.set.angle * Math.PI / 180 };
   const g = letterGeom(l);
+  if (!g.stacked && !l.height && !l.spread) {  // letter(): a one-line name between its own size and the map's common one, unless much bigger
+    let size = natural(lines, g.length, g.thick, 1);
+    if (COMMON && size <= BIG * COMMON) size = COMMON * SNAP * (size / COMMON) ** PULL;
+    return { lines, leading, size: Math.max(Math.floor(size), 6), centre: g.centre, ang: g.ang };
+  }
   return { lines, leading, size: fitSize(lines, g.length, g.thick, g.stacked ? 1 : null, leading), centre: g.centre, ang: g.ang };
 }
 function frameOf(l) {  // the type's outline: longest line by the lines' height, as place() centres it
@@ -522,6 +536,7 @@ function visible(i) {
   return String(i).startsWith(q) || (l.text || '').toLowerCase().includes(q) || (l.where || '').toLowerCase().includes(q);
 }
 function draw() {
+  COMMON = commonSize();
   const d = devicePixelRatio || 1;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.fillStyle = '#17100b'; ctx.fillRect(0, 0, cv.width, cv.height);
@@ -538,8 +553,8 @@ function draw() {
   const lw = 1.5 / view.s;
   labels.forEach((l, i) => {
     if (!visible(i) || i === sel) return;
-    ctx.strokeStyle = l.retype ? '#ffb347' : '#5fb0ff';
-    ctx.globalAlpha = 0.9; ctx.lineWidth = lw;
+    ctx.strokeStyle = l.found ? '#c58bff' : l.retype ? '#ffb347' : '#5fb0ff';
+    ctx.globalAlpha = 0.9; ctx.lineWidth = l.found ? 2.5 * lw : lw;
     ctx.strokeRect(l.box[0], l.box[1], l.box[2] - l.box[0], l.box[3] - l.box[1]);
     ctx.globalAlpha = 1;
   });
@@ -625,7 +640,8 @@ function renderList() {
     d.className = 'item' + (l.retype ? ' place' : '') + (i === sel ? ' sel' : '');
     d.dataset.i = i;
     const n = document.createElement('span'); n.className = 'n'; n.textContent = i;
-    d.append(n, document.createTextNode((l.lines && l.lines.length ? l.lines.join(' / ') : l.text) || '(empty)'));
+    d.append(n, document.createTextNode((l.found ? '✦ ' : '') + ((l.lines && l.lines.length ? l.lines.join(' / ') : l.text) || '(empty)')));
+    if (l.found) d.title = 'Found by Claude: check its wording and box, then press Checked in its form';
     d.onclick = e => (e.shiftKey || mode === 'merge') && sel >= 0 && i !== sel ? merge(i) : select(i, true);
     el.appendChild(d);
   });
@@ -698,6 +714,11 @@ function renderForm() {
   const lettered = !!(l.retype || l.fix);
 
   sec('Label', 'step 3');
+  if (l.found) {  // map_missed.py's: Claude's reading and a box fitted to the ink, not yet looked at
+    const ok = document.createElement('button'); ok.textContent = 'Checked'; ok.title = 'Its wording and box are right: drop the purple mark';
+    ok.onclick = () => { push(); setField('found', undefined); renderForm(); afterEdit(); };
+    row('found by Claude', ok);
+  }
   for (const k of TEXTS) {
     const i = guard(document.createElement('input')); i.type = 'text'; i.value = l[k] ?? '';
     i.oninput = change(() => setField(k, i.value));
@@ -780,7 +801,7 @@ function renderForm() {
   sec('After a Gemini round', 'steps 8-9');
   if (l.retype) check('reset', false);
   else check('fix', false, true);
-  const others = Object.keys(l).filter(k => ![...TEXTS, ...BOOLS.map(b => b[0]), 'lines', 'leading', 'height', 'angle', 'nudge', 'box', 'keep', 'set'].includes(k));
+  const others = Object.keys(l).filter(k => ![...TEXTS, ...BOOLS.map(b => b[0]), 'lines', 'leading', 'height', 'angle', 'nudge', 'box', 'keep', 'set', 'found'].includes(k));
   if (others.length) { const k = document.createElement('div'); k.style.color = 'var(--dim)'; k.textContent = others.join(', ') + ' (kept as is)'; row('other', k); }
 }
 // after a form edit: redraw and refresh list text, without rebuilding the form under the cursor
@@ -1181,6 +1202,8 @@ function renderPanel() {
 <span class="note">${labels.length} labels, ${places} place names</span></div>
 <div class="row">${runBtn('Untick captions', 'data-do="retype"' + noRun)}
 <span class="note">saves, then unticks retype on what is surely not a place name: caption words (map, banner, arms, key, scale), the title's lines stacked on them, the key's entries</span></div>
+<div class="row">${runBtn('Find missed labels', 'data-do="missed"' + noRun)}
+<span class="note">saves, then asks Claude Sonnet to look at the map for names outside the boxes (about 12k tokens of your plan, 20 s): they come in outlined in purple, ${labels.filter(l => l.found).length} not checked yet</span></div>
 <div class="row"><button data-do="copyclaude">Copy request for Claude</button>
 <span class="note">saves, then copies a request to untick retype on the title, banner and captions the script missed: paste it into Claude Code, then reload this page</span></div>`; break; }
     case 4: {
@@ -1313,7 +1336,7 @@ async function doStep(what, btn) {
   }
   setBusy(false, btn);
   logs[s] = all;
-  if (['draft', 'retype', 'measure'].includes(what)) { await loadLabels(); refresh(); }
+  if (['draft', 'retype', 'measure', 'missed'].includes(what)) { await loadLabels(); refresh(); }
   await refreshState();
   if (curStep === s) { renderPanel(); await reloadBgAfter(what); }
   msg(all.code ? `${what} failed (exit ${all.code}); see the log` : `${what} done`, all.code ? 6000 : 2500);
