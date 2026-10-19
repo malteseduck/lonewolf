@@ -92,7 +92,12 @@ canvas { display: block; width: 100%; height: 100%; cursor: grab; }
 .field input[type=number] { width: 100%; min-width: 0; }
 .fsec { padding: 9px 10px 3px; margin-top: 4px; border-top: 1px solid var(--line); font-weight: 600; }
 .fsec small { color: var(--dim); font-weight: 400; margin-left: 4px; }
-.hint { padding: 2px 10px 8px; color: var(--dim); font-size: 12px; }
+.hint { padding: 2px 10px 8px 24px; margin: 0; color: var(--dim); font-size: 12px; }
+.hint li { margin: 1px 0; }
+#panel .about summary, #panel .log summary { cursor: pointer; color: var(--dim); font-size: 12px; }
+#panel .about p { margin: 4px 0; }
+#panel .about ul { margin: 4px 0; padding-left: 18px; max-width: 80ch; }
+#panel .about li { margin: 2px 0; }
 h3 { margin: 0; padding: 8px 10px; font-size: 13px; border-bottom: 1px solid var(--line); color: var(--blood); }
 kbd { background: rgba(255, 248, 226, .5); border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; }
 /* inside the dashboard (?embed=1): the dashboard picks the book */
@@ -143,14 +148,16 @@ body.embed #rail > b, body.embed #bookpick { display: none; }
     </div>
     <h3 id="ftitle">No label selected</h3>
     <div id="form"></div>
-    <div class="hint">
-      Wheel zoom, drag empty map or hold <kbd>Space</kbd> to pan. A place name's frame is its new type: drag it
-      to move, handles to resize, the round handle to turn it. <b>Merge</b> (<kbd>M</kbd>, or
-      <kbd>Shift</kbd>+click) joins another label into the selected one, as stacked lines. <b>Erase box</b> (<kbd>E</kbd>) edits instead
-      what is erased from the scan and where Measure reads it; <b>Add keep box</b> (<kbd>K</kbd>) then marks something
-      inside it for Erase to leave, drawn dashed green. Arrows nudge 1 px, with <kbd>Shift</kbd> 10.
-      Fields left empty are removed on save.
-    </div>
+    <ul class="hint">
+      <li>Wheel: zoom</li>
+      <li>Drag empty map or hold <kbd>Space</kbd>: pan</li>
+      <li>Drag a frame: move; handles: resize; round handle: turn</li>
+      <li><kbd>M</kbd> or <kbd>Shift</kbd>+click: merge into the selected label</li>
+      <li><kbd>E</kbd>: edit the erase box (what is erased and measured)</li>
+      <li><kbd>K</kbd>: add a keep box inside it (dashed green), left by Erase</li>
+      <li>Arrows: nudge 1 px, with <kbd>Shift</kbd> 10</li>
+      <li>Empty fields are removed on save</li>
+    </ul>
   </aside>
 </div>
 <script>
@@ -1059,7 +1066,7 @@ let S = { files: {}, rounds: [], running: null, err: '' };   // /api/map/<book>/
 let curStep = 0, curRound = 1, roundSet = false;
 let busy = false;
 const logs = {};            // key -> {code, out}
-let logOpen = false, received = null;
+let logOpen = false, aboutOpen = false, received = null;
 
 async function refreshState() {
   try {
@@ -1175,10 +1182,16 @@ async function openStep(n) {
 }
 function closePanel() { curStep = 0; $('panel').hidden = true; renderRail(); resize(); }
 
-function runBtn(label, attrs = '') { return `<button class="primary" data-run ${attrs}>${esc(label)}</button>`; }
+// a button's description is its hover text, and listed again under "About this step"
+let tips = [];
+function tip(label, desc) { tips.push([label, desc]); return ` title="${esc(desc)}"`; }
+function runBtn(label, attrs = '', desc = '') { return `<button class="primary" data-run ${attrs}${desc ? tip(label, desc) : ''}>${esc(label)}</button>`; }
+function aboutHtml(text) {
+  return `<details class="about"${aboutOpen ? ' open' : ''}><summary>About this step</summary><p>${esc(text)}</p>${tips.length ? `<ul>${tips.map(([l, d]) => `<li><b>${esc(l)}</b>: ${esc(d)}</li>`).join('')}</ul>` : ''}</details>`;
+}
 function logHtml(key) {
   const l = logs[key]; if (!l) return '';
-  return `<details ${logOpen || l.code ? 'open' : ''}><summary>${l.code ? '<span class="bad">failed (exit ' + l.code + ')</span>' : 'output (exit 0)'}</summary><pre>${esc(l.out || '(no output)')}</pre></details>`;
+  return `<details class="log" ${logOpen || l.code ? 'open' : ''}><summary>${l.code ? '<span class="bad">failed (exit ' + l.code + ')</span>' : 'output (exit 0)'}</summary><pre>${esc(l.out || '(no output)')}</pre></details>`;
 }
 function roundInput() {
   return `<label>Round <input type="number" id="rnd" min="0" max="999" value="${curRound}"></label>`;
@@ -1189,7 +1202,8 @@ function renderPanel() {
   p.hidden = false;
   const st = status(s.n), stTxt = st === 'done' ? 'done' : st === 'stale' ? 'out of date' : 'not done';
   const rd = curRound, noRun = S.err ? ' disabled' : '';
-  let h = `<h4>${s.n}. ${esc(s.name)} <span class="note">(${stTxt})</span></h4><p>${esc(s.text)}</p>`;
+  let h = `<h4>${s.n}. ${esc(s.name)} <span class="note">(${stTxt})</span></h4>`;
+  tips = [];
   const files = S.files;
   switch (s.n) {
     case 1:
@@ -1198,14 +1212,13 @@ function renderPanel() {
       h += `<div class="row">${runBtn(files['labels.json'] ? 'Draft again (replaces the list)' : 'Draft', 'data-do="draft"' + noRun)}</div>`; break;
     case 3: {
       const places = labels.filter(l => l.retype).length, done = !!mt('labels-checked.txt');
-      h += `<div class="row">${done ? '<button data-do="unchecked">Not checked after all</button>' : '<button class="primary" data-do="checked">Labels checked</button>'}
-<span class="note">${labels.length} labels, ${places} place names</span></div>
-<div class="row">${runBtn('Untick captions', 'data-do="retype"' + noRun)}
-<span class="note">saves, then unticks retype on what is surely not a place name: caption words (map, banner, arms, key, scale), the title's lines stacked on them, the key's entries</span></div>
-<div class="row">${runBtn('Find missed labels', 'data-do="missed"' + noRun)}
-<span class="note">saves, then asks Claude Sonnet to look at the map for names outside the boxes (about 12k tokens of your plan, 20 s): they come in outlined in purple, ${labels.filter(l => l.found).length} not checked yet</span></div>
-<div class="row"><button data-do="copyclaude">Copy request for Claude</button>
-<span class="note">saves, then copies a request to untick retype on the title, banner and captions the script missed: paste it into Claude Code, then reload this page</span></div>`; break; }
+      const found = labels.filter(l => l.found).length;
+      h += `<div class="row">${done ? `<button data-do="unchecked"${tip('Not checked after all', 'Marks step 3 not done again')}>Not checked after all</button>`
+        : `<button class="primary" data-do="checked"${tip('Labels checked', 'Marks step 3 done: every label\'s wording and box is right')}>Labels checked</button>`}
+${runBtn('Untick captions', 'data-do="retype"' + noRun, 'Saves, then unticks retype on what is surely not a place name: caption words (map, banner, arms, key, scale), the title\'s lines stacked on them, the key\'s entries')}
+${runBtn('Find missed labels', 'data-do="missed"' + noRun, 'Saves, then asks Claude Sonnet to look at the map for names outside the boxes (about 12k tokens of your plan, 20 s); they come in outlined in purple')}
+<button data-do="copyclaude"${tip('Copy request for Claude', 'Saves, then copies a request to untick retype on the title, banner and captions the script missed: paste it into Claude Code, then reload this page')}>Copy request for Claude</button>
+<span class="note">${labels.length} labels, ${places} place names${found ? `, ${found} found not checked yet` : ''}</span></div>`; break; }
     case 4: {
       const l = lettered(), m = l.filter(x => x.ink).length, old = l.filter(x => x.ink && stale(x)).length;
       h += `<div class="row">${runBtn('Measure', 'data-do="measure"' + noRun)}<span class="note">${m} of ${l.length} lettered labels measured${old ? `, ${old} with a box moved since` : ''}</span></div>`; break; }
@@ -1215,15 +1228,12 @@ function renderPanel() {
       h += `<div class="row">${runBtn('Erase and letter', 'data-do="erase+letter"' + noRun)}${runBtn('Erase only', 'data-do="erase"' + noRun)}${runBtn('Letter only', 'data-do="letter"' + noRun)}</div>`; break;
     case 7: {
       const have = !!files[`map-prompt-${rd}.txt`], rf = roundFile(rd);
-      h += `<div class="row">${roundInput()}<span class="note">next free is ${nextFree()}${rf ? `; <span class="bad">map-gemini-${rd} exists</span>` : ''}</span></div>
-<div class="row"><button data-run data-do="copyprompt"${noRun}>Copy prompt${have ? '' : ' (writes it first)'}</button>
-<button data-do="copyimage">Copy image (PNG)</button>
-<a href="https://gemini.google.com/app" target="_blank" rel="noopener">Open Gemini</a>
-<span class="note">then paste the image and the prompt into a new chat</span></div>
-<div class="row">${files['map-2k-lettered.jpg'] ? `<img class="thumb" id="thumb" src="${at('map-2k-lettered.jpg')}?v=${mt('map-2k-lettered.jpg')}" draggable="true" title="Drag me into the Gemini tab">` : '<span class="bad">no map-2k-lettered.jpg yet: step 6</span>'}
-<span class="note" style="max-width:60ch">Drag this JPEG straight into the Gemini tab. On Book 1 a 2048 px PNG with a long prompt was once refused and a roughly 1 MB JPEG went through, so drag the JPEG if a paste is refused.</span></div>
-<div class="row"><b>Receive</b> Ctrl+V the image Gemini made anywhere on this page, drop the file on it, or <input type="file" id="pick" accept="image/png,image/jpeg,image/webp">
-<span class="note">saved as map-gemini-${rd}.*</span></div>
+      h += `<div class="row">${roundInput()}<span class="note">next free is ${nextFree()}${rf ? `; <span class="bad">map-gemini-${rd} exists</span>` : ''}</span>
+<button data-run data-do="copyprompt"${noRun}${tip('Copy prompt', 'Copies the Gemini prompt for this round (writing it first if needed), to paste into a new Gemini chat')}>Copy prompt${have ? '' : ' (writes it first)'}</button>
+<button data-do="copyimage"${tip('Copy image (PNG)', 'Copies the lettered picture as a PNG, to paste into the same Gemini chat')}>Copy image (PNG)</button>
+<a href="https://gemini.google.com/app" target="_blank" rel="noopener">Open Gemini</a></div>
+<div class="row">${files['map-2k-lettered.jpg'] ? `<img class="thumb" id="thumb" src="${at('map-2k-lettered.jpg')}?v=${mt('map-2k-lettered.jpg')}" draggable="true"${tip('Thumbnail', 'Drag this JPEG straight into the Gemini tab. On Book 1 a 2048 px PNG with a long prompt was once refused and a roughly 1 MB JPEG went through, so drag the JPEG if a paste is refused')}>` : '<span class="bad">no map-2k-lettered.jpg yet: step 6</span>'}
+<span class="note"><b>Receive</b>: Ctrl+V Gemini's image anywhere here, drop the file, or</span> <input type="file" id="pick" accept="image/png,image/jpeg,image/webp"${tip('Receive', `Gemini's picture comes back by paste, drop or this file picker, saved as map-gemini-${rd}.*`)}></div>
 ${received ? `<div class="row">Received ${esc(received)}. <button class="primary" data-do="gotocheck">Go to Check</button></div>` : ''}`;
       break; }
     case 8: {
@@ -1231,8 +1241,8 @@ ${received ? `<div class="row">Received ${esc(received)}. <button class="primary
       h += `<div class="row">${roundInput()}${runBtn('Check', 'data-do="check"' + noRun)}
 <button data-open="${base_}labels.png"${files[`map-check-${rd}/labels.png`] ? '' : ' disabled'}>Open labels.png</button>
 <button data-open="${base_}flags.png"${files[`map-check-${rd}/flags.png`] ? '' : ' disabled'}>Open flags.png</button>
-<button data-do="clearreset">Clear reset</button>
-<span class="note">${labels.filter(l => l.reset).length} reset, ${labels.filter(l => l.fix).length} fix ticked now. Untick reset before checking a new round.</span></div>`;
+<button data-do="clearreset"${tip('Clear reset', 'Unticks reset on every label: do this before checking a new round')}>Clear reset</button>
+<span class="note">${labels.filter(l => l.reset).length} reset, ${labels.filter(l => l.fix).length} fix ticked</span></div>`;
       break; }
     case 9: {
       // what Finish will set again, said before it runs (ADR 0004): ticked labels decide; with none
@@ -1251,13 +1261,14 @@ ${received ? `<div class="row">Received ${esc(received)}. <button class="primary
     case 10:
       h += `<div class="row">${runBtn('Import', 'data-do="import"' + noRun)}<a href="/" target="_blank" rel="noopener">Open the player</a></div>`; break;
   }
-  h += logHtml(s.n);
+  h += aboutHtml(s.text) + logHtml(s.n);
   p.innerHTML = h;
   const fa = $('finishall'); if (fa) fa.onchange = () => { finishAll = fa.checked; renderPanel(); };
   const r = $('rnd'); if (r) r.onchange = async () => { curRound = Math.max(0, Math.floor(Number(r.value) || 0)); roundSet = true; renderPanel(); renderRail(); if (curStep === 8) await openStep(8); };
   const th = $('thumb'); if (th) th.addEventListener('dragstart', e => { try { e.dataTransfer.setData('DownloadURL', `image/jpeg:map-2k-lettered.jpg:${th.src}`); } catch (x) {} });
   const pk = $('pick'); if (pk) pk.onchange = () => { if (pk.files[0]) upload(pk.files[0]); };
-  p.querySelector('details')?.addEventListener('toggle', e => { logOpen = e.target.open; });
+  p.querySelector('details.log')?.addEventListener('toggle', e => { logOpen = e.target.open; });
+  p.querySelector('details.about')?.addEventListener('toggle', e => { aboutOpen = e.target.open; resize(); });
   resize();
 }
 $('panel').onclick = async e => {
