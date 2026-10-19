@@ -93,10 +93,11 @@ def main():
     img, out = sys.argv[1], sys.argv[2]
     im = cv2.imdecode(np.fromfile(img, np.uint8), cv2.IMREAD_COLOR)
     # enable_mkldnn off: Paddle 3.3's oneDNN path fails on Windows ("ConvertPirAttribute2RuntimeAttribute").
-    # Low detection thresholds: the defaults dropped faint and hand-lettered names (Book 6: 4 more found)
+    # Low detection thresholds: the defaults dropped faint and hand-lettered names (Book 6: 4 more found).
+    # Unclip at its default 1.5: 2.0 found no more names and gave boxes 1.3 times the owner's (Book 6).
     ocr = PaddleOCR(use_doc_orientation_classify=False, use_doc_unwarping=False, use_textline_orientation=True,
                     text_det_limit_side_len=8192, text_det_limit_type='max', enable_mkldnn=False,
-                    text_det_thresh=0.2, text_det_box_thresh=0.4, text_det_unclip_ratio=2.0)
+                    text_det_thresh=0.2, text_det_box_thresh=0.4, text_det_unclip_ratio=1.5)
     reads = []
     for scale in SCALES:
         for deg in TURNS:

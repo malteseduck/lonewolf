@@ -73,7 +73,9 @@ Commands run from the project root as
 2. **Label list.** `map_labels.py draft $W/map-2k.png $L` gives OCR boxes as a
    start only. It uses PaddleOCR when `tools/.venv-paddle` exists (see `map_ocr_paddle.py`), on the
    GPU: the map is read turned to 0, ±30, ±60 and 90 degrees, at its own size and at twice it, with
-   low detection thresholds, and the best read of each place kept. On Book 6 it found 57 of the
+   low detection thresholds, and the best read of each place kept. The box round each read is
+   grown by Paddle's default unclip ratio, 1.5: at 2.0 it found no more names and its boxes were 1.3
+   times the owner's on Book 6, half of them needing shrinking (2026-10-19). On Book 6 it found 57 of the
    owner's 62 labels (51 worded right), where one level pass found 51 (46); Book 7 gave 60 reads
    where that pass gave 45 (2026-10-19). Reads of one letter repeated (a pair of trees as "TT") and
    short reads on end within 80 px of the edge (the frame's ornament) are dropped: 6 on Book 7, none
