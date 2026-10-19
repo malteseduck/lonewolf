@@ -172,7 +172,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `setup-venv`, `setup-npm` | `setup.py install venv` (`uv sync --project tools`), `install npm` (`npm ci`); through `uv run --no-project`, so that setup.py reports what is missing rather than uv installing it first | |
 | `setup-realesrgan` | `setup.py install realesrgan`: the v0.2.5.0 Windows zip from GitHub (about 45 MB); only the program, its DLLs and `models/` are written into `tools/realesrgan/` | yes: a download |
 | `setup-art` | `art_sources.py fetch`: every picture in `art/sources.json` with a link and no file here, fetched again and shrunk to 2000 px as the sheet does (through the venv: Pillow) | yes: a download |
-| `setup-ocr` | `setup.py install ocr`: `tools/.venv-paddle` (Python 3.12) with PaddleOCR (about 1 GB) | yes: a download |
+| `setup-ocr` | `setup.py install ocr`: `tools/.venv-paddle` (Python 3.12) with PaddleOCR on the GPU build of PaddlePaddle (CUDA 12.6, about 3 GB) | yes: a download |
 
 **Gated stages** open a dialog first: the book, what is fetched or rewritten (about 400 files, 4 MB
 for a download), and for an import the dates (when `book.js` was made, the newest source page, when

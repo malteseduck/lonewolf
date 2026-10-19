@@ -7,9 +7,10 @@ Run (from the project root):
 <repaint-x4.png> is map_upscale.py's 4x of the Gemini round kept; <H.json> is map_check.py's warp
 for that round. Boxes, in the label list and --mark, are in map-2k.png's px.
 Labels marked "retype" (erased before Gemini saw the map) and "fix" (Gemini misspelled them) are
-lettered here. For each, the scan's ink in its box gives the angle (its long axis; "upwards" or
+lettered here. For each, the scan's ink in its box gives the angle (its long axis, or the OCR draft's "slant" where that is
+3-20 degrees off it; "upwards" or
 "downwards" in its "where" picks the reading direction) and the size (the type is fitted to the
-ink's length). "lines" splits a label over lines as printed, set level ("angle" in degrees
+ink's length, then pulled most of the way to the map's common size unless much bigger: COMMON, PULL). "lines" splits a label over lines as printed, set level ("angle" in degrees
 otherwise) and fitted to the box, "leading" its line spacing (1 = the font's own); "height" gives the type's height outright, in map-2k px;
 "nudge" [dx, dy] (map-2k px) moves a label off something the larger type runs into. "set" {at: [x, y],
 size, angle} places the type by hand (the map editor's text frame): centre of its lines, type size in
@@ -44,11 +45,15 @@ Image.MAX_IMAGE_PIXELS = None
 WIDTH = 3840
 FONTS = Path(__file__).parent / 'fonts'
 INK = (38, 30, 24)        # RGB: Gemini's lettering on Book 1 is a warm near-black
-SCALE = 1.3               # type size over the scan's for small names: the owner wanted it bigger
-SMALL = 30                # px on map-2k: names thinner than this are small and get SCALE
+SCALE = 1.3               # type size over the scan's for the scale's small numbers
+SMALL = 30                # px on map-2k: numbers thinner than this are small and get SCALE
+SNAP = 1.05               # a name's type size over the map's common size, before PULL (the owner's, 2026-10-19)
+PULL = 0.6                # how far a name's own size moves it off the common one (0 none, 1 its own)
+BIG = 1.25                # a name fitted over this times the common size keeps its own (a title, a region)
 TRACK = 0.05              # extra space between letters, as a share of the type size
 BOLD = 0.025              # stroke added round each glyph, as a share of the type size
 FILL = 0.92               # type length as a share of the scan's ink length: hand ink is loose
+SLANT_TRUST = (3, 20)     # degrees between the ink's axis and OCR's slant where the slant is taken
 
 
 def read(p):
@@ -73,6 +78,14 @@ def geometry(scan_ink, lab):
     c = pts.mean(0)
     w, v = np.linalg.eigh(np.cov((pts - c).T))
     d = v[:, 1]  # long axis
+    if 'slant' in lab and 'angle' not in lab:
+        # OCR's line (map_ocr_paddle.py) where the ink's axis is a little off it, as a road or tree
+        # in the box makes it; far off, OCR misread a short word's box. On Books 3-6 and 12 this
+        # halved the names set more than 3 degrees from the owner's hand angle (27 to 13).
+        s = np.radians(lab['slant'])
+        off = abs((np.degrees(np.arctan2(d[1], d[0])) - lab['slant'] + 90) % 180 - 90)
+        if SLANT_TRUST[0] < off < SLANT_TRUST[1]:
+            d = np.array([np.cos(s), np.sin(s)])
     if 'angle' in lab:  # given by hand where a flag or road in the box skews the axis
         d = np.array([np.cos(np.radians(lab['angle'])), np.sin(np.radians(lab['angle']))])
     where = lab.get('where', '')
@@ -89,27 +102,51 @@ def geometry(scan_ink, lab):
 
 
 K = 1  # 4K or 2K px per map-2k px, set in main
+COMMON = None  # the map's usual type size in map-2k px (common_size()), set in main
+
+
+def block(lines, font_path, size, leading=1):
+    """The font at <size>, the longest line's width, the block's height and its line height."""
+    path, _, variant = str(font_path).partition('|')  # 'Cabin.ttf|SemiBold': a variable font's weight
+    f = ImageFont.truetype(path, size)
+    if variant:
+        f.set_variation_by_name(variant)
+    boxes = [f.getbbox(t) for t in lines]
+    boxes = [(b[0], b[1], b[2] + round(TRACK * size * (len(t) - 1)), b[3]) for b, t in zip(boxes, lines)]
+    lh = (f.getmetrics()[0] + f.getmetrics()[1]) * leading
+    return f, max(b[2] - b[0] for b in boxes), lh * (len(lines) - 1) + (boxes[-1][3] - boxes[0][1]), lh
+
+
+def fit_size(lines, font_path, length, thick, leading=1):
+    """The type size whose longest line spans <length> px, capped so the block is no thicker than the
+    ink was, with a little give."""
+    _, w, h, _ = block(lines, font_path, 100, leading)
+    return 100 * min(length * FILL / w, thick * 1.25 / h)
+
+
+def common_size(labels, scan_ink, hand, caps):
+    """The map's usual type size (map-2k px): the median of its lettered one-line names fitted to
+    their own ink. None with no such name."""
+    sizes = []
+    for lab in labels:
+        if not (lab.get('retype') or lab.get('fix')) or lab.get('lines') or lab.get('spread') or lab.get('height'):
+            continue
+        g = geometry(scan_ink, lab)
+        if g is not None:
+            font = hand if any(ch.islower() for ch in lab['text']) else caps
+            sizes.append(fit_size([lab['text']], font, g[2], g[3]))
+    return float(np.median(sizes)) if sizes else None
 
 
 def render(lines, font_path, length, thick, nlines, boost=None, leading=1, size=None):
-    """The label as an RGBA image, horizontal, sized so its longest line spans <length> px (capped
-    so the block is no thicker than the ink was, with a little give), or at type <size> outright."""
-    def block(size):
-        path, _, variant = str(font_path).partition('|')  # 'Cabin.ttf|SemiBold': a variable font's weight
-        f = ImageFont.truetype(path, size)
-        if variant:
-            f.set_variation_by_name(variant)
-        boxes = [f.getbbox(t) for t in lines]
-        boxes = [(b[0], b[1], b[2] + round(TRACK * size * (len(t) - 1)), b[3]) for b, t in zip(boxes, lines)]
-        lh = (f.getmetrics()[0] + f.getmetrics()[1]) * leading
-        return f, max(b[2] - b[0] for b in boxes), lh * (nlines - 1) + (boxes[-1][3] - boxes[0][1]), lh
+    """The label as an RGBA image, horizontal, at fit_size() for <length> and <thick>, or at type
+    <size> outright."""
     if size is None:
-        f, w, h, lh = block(100)
-        size = 100 * min(length * FILL / w, thick * 1.25 / h)
+        size = fit_size(lines, font_path, length, thick, leading)
         if boost is None:
             boost = SCALE if thick < SMALL * K else 1
         size *= boost
-    f, w, h, lh = block(max(int(size), 6))
+    f, w, h, lh = block(lines, font_path, max(int(size), 6), leading)
     sw = max(1, round(f.size * BOLD))
     own = lh / leading  # the font's own line height: the wipe's reach and the padding go by it
     pad = int(own * 0.8)  # room for wipe()'s reach round the letters
@@ -161,9 +198,17 @@ def letter(base, lab, scan_ink, hand, caps, k):
             place(base, *render([w], font, 10 ** 6, thick * k, 1), c * k, ang)
         return
     lines = lab.get('lines') or [text]
+    size = None
+    if not lab.get('lines') and not lab.get('height'):
+        # a one-line name between its own fitted size and the map's common one: of the owner's 159 hand
+        # sizes on Books 3-6 and 12, fitting each to its own ink set 71 more than 15% off, one size a
+        # map 44, this blend 16. A name much bigger than the rest (a title, a region) keeps its own.
+        size = fit_size(lines, font, length * k, thick * k)
+        if COMMON and size <= BIG * COMMON * k:
+            size = COMMON * k * SNAP * (size / (COMMON * k)) ** PULL
     # stacked lines are fitted to their box, which is already the size wanted
     mask, lh = render(lines, font, length * k, thick * k, len(lines), 1 if lab.get('lines') else None,
-                      lab.get('leading', 1))
+                      lab.get('leading', 1), size)
     place(base, mask, lh, centre * k, ang)
 
 
@@ -280,9 +325,11 @@ def main():
             erase(A, pad([int(v) for v in m.split(',')], 0), 'all')
         unmark(A, k)
 
-    global K, WIPE
+    global K, WIPE, COMMON
     K, WIPE = k, a.warp != '-'
     scan_ink = LabelInk(F)  # the same ink map_erase.py takes out
+    # from every lettered name, not only those set this run, so a name set again keeps its size
+    COMMON = common_size(labels, scan_ink, FONTS / a.hand, FONTS / a.caps)
     base = Image.fromarray(cv2.cvtColor(A, cv2.COLOR_BGR2RGB))
     global PHASE
     for PHASE in (['wipe'] if WIPE else []) + ['draw']:

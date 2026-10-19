@@ -159,7 +159,11 @@ COMMANDS = {
     'venv': lambda: [['uv', 'sync', '--project', 'tools']],  # tools/.venv at uv.lock's versions
     'npm': lambda: [[shutil.which('npm') or 'npm', 'ci']],
     'ocr': lambda: [['uv', 'venv', '--allow-existing', '--system-certs', '--python', '3.12', PADDLE],
-                    ['uv', 'pip', 'install', '--system-certs', '--python', f'{PADDLE}/{PYEXE}', 'paddlepaddle', 'paddleocr', 'truststore']],
+                    # the GPU build (CUDA 12.6, this PC's RTX 2060): a map in a minute, where the CPU one took ten
+                    ['uv', 'pip', 'install', '--system-certs', '--python', f'{PADDLE}/{PYEXE}', 'paddlepaddle-gpu==3.3.1',
+                     '--index-url', 'https://www.paddlepaddle.org.cn/packages/stable/cu126/',
+                     '--extra-index-url', 'https://pypi.org/simple', '--index-strategy', 'unsafe-best-match'],
+                    ['uv', 'pip', 'install', '--system-certs', '--python', f'{PADDLE}/{PYEXE}', 'paddleocr', 'truststore']],
 }
 
 
