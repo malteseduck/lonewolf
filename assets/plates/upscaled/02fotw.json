@@ -1,7 +1,7 @@
 {
- "_readme": "The fight pictures of this book with a Real-ESRGAN 2x copy beside them, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
+ "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
  "srcs": [
-  "art/plates/citadel-c41-flyer-1984.jpg",
+  "art/plates/02fotw/szall-1.webp",
   "art/plates/guard-gold-trim-painted.png",
   "art/plates/guard-halberd-portcullis.png",
   "art/plates/guard-halberdier-plate.webp",

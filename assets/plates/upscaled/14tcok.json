@@ -1,0 +1,26 @@
+{
+ "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
+ "srcs": [
+  "art/plates/01fftd/vordak.webp",
+  "art/plates/14tcok/3-vordak-in-psychic-shock.webp",
+  "art/plates/14tcok/3-vordaks.webp",
+  "art/plates/14tcok/vodok.webp",
+  "data/projectaon/01fftd/ill3.png",
+  "data/projectaon/04tcod/ill1.png",
+  "data/projectaon/08tjoh/ill1.png",
+  "data/projectaon/09tcof/ill9.png",
+  "data/projectaon/10tdot/ill4.png",
+  "data/projectaon/10tdot/ill9.png",
+  "data/projectaon/12tmod/ill1.png",
+  "data/projectaon/12tmod/ill2.png",
+  "data/projectaon/14tcok/ill1.png",
+  "data/projectaon/14tcok/ill12.png",
+  "data/projectaon/14tcok/ill13.png",
+  "data/projectaon/14tcok/ill14.png",
+  "data/projectaon/14tcok/ill15.png",
+  "data/projectaon/14tcok/ill18.png",
+  "data/projectaon/14tcok/ill5.png",
+  "data/projectaon/14tcok/ill6.png",
+  "data/projectaon/14tcok/ill9.png"
+ ]
+}

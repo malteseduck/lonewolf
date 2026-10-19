@@ -359,14 +359,16 @@ document.addEventListener('click', (e) => {
 });
 
 /* A prompt for an AI image generator: the enemy as the books' own artist might have inked it, tall like the
-   fight panel, on plain paper so inkPlate() can take it as it is. The description is the index's `about`. */
+   fight panel, on plain paper so inkPlate() can take it as it is. The description is the index's `about`.
+   No person's words ("portrait", "fighting stance", "three-quarter length"): they stood beasts up as humanoids. */
 function promptFor(foe) {
   const what = about(foe.name);
-  return `A portrait of ${foe.name}${what ? `: ${what.replace(/\.\s*$/, '')}` : ''}. `
+  return `An illustration of ${foe.name}${what ? `: ${what.replace(/\.\s*$/, '')}` : ''}. `
     + 'Black-and-white pen-and-ink illustration in the style of Gary Chalk\'s artwork for the Lone Wolf gamebooks: '
-    + 'confident linework, dense cross-hatching and stippling for shade, detailed textures of cloth, armour, hide and fur, '
-    + 'the look of a 1980s fantasy gamebook plate. A single figure, full body or three-quarter length, in a dramatic fighting stance, '
-    + 'facing the viewer, filling a tall portrait frame (2:3). Plain white background, no scenery, '
+    + 'confident linework, dense cross-hatching and stippling for shade, detailed textures of hide, scales, fur, cloth and armour, '
+    + 'the look of a 1980s fantasy gamebook plate. A single subject, seen whole, menacing and about to attack, true to the description: '
+    + 'a beast keeps its own body and posture (on all fours, coiled, or in flight, as described), never made humanoid '
+    + 'or standing upright unless the description says so. Filling a tall frame (2:3). Plain white background, no scenery, '
     + 'no colour, no grey wash, no text, no border.';
 }
 async function copyPrompt(foe) {

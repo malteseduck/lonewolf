@@ -1,7 +1,14 @@
 {
- "_readme": "The fight pictures of this book with a Real-ESRGAN 2x copy beside them, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
+ "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
  "srcs": [
-  "data/projectaon/04tcod/ill1.png",
+  "art/plates/10tdot/bhakish.webp",
+  "art/plates/10tdot/cener-ghosts.webp",
+  "art/plates/10tdot/hammerlander.webp",
+  "art/plates/10tdot/lite-death-knights.webp",
+  "art/plates/10tdot/partisan-horseman.webp",
+  "art/plates/10tdot/roark.webp",
+  "art/plates/elf-swordsman-arch.webp",
+  "art/plates/villager-elder-coat.webp",
   "data/projectaon/10tdot/ill10.png",
   "data/projectaon/10tdot/ill11.png",
   "data/projectaon/10tdot/ill12.png",
@@ -10,8 +17,10 @@
   "data/projectaon/10tdot/ill19.png",
   "data/projectaon/10tdot/ill2.png",
   "data/projectaon/10tdot/ill20.png",
+  "data/projectaon/10tdot/ill4.png",
   "data/projectaon/10tdot/ill6.png",
   "data/projectaon/10tdot/ill8.png",
-  "data/projectaon/10tdot/ill9.png"
+  "data/projectaon/10tdot/ill9.png",
+  "data/projectaon/17tdoi/ill3.png"
  ]
 }

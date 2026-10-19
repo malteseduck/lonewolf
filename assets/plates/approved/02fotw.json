@@ -11,7 +11,7 @@
   "66/0": {"name":"51960z","plate":{"src":"data/projectaon/02fotw/ill2.png"}},
   "85/0": {"name":"14hy95d","plate":{"src":"data/projectaon/02fotw/ill15.png","crop":[0.0119,0.6924,0.4608,0.3014]}},
   "90/0": {"name":"udbyyg","plate":{"src":"art/plates/villager-sword-crosshatch.webp","crop":[0.2,0,0.76,0.7]}},
-  "90/1": {"name":"1h64l8g","plate":{"src":"art/plates/citadel-c41-flyer-1984.jpg","crop":[0.0174,0.47,0.1226,0.16]}},
+  "90/1": {"name":"1h64l8g","plate":{"src":"art/plates/02fotw/szall-1.webp","crop":[0.1906,0.0856,0.6269,0.7389]}},
   "90/2": {"name":"v7as1d","plate":{"src":"art/plates/villager-pitchfork-pencil.webp","crop":[0.1,0.04,0.68,0.66]}},
   "90/3": {"name":"1i03ebd","plate":{"src":"data/projectaon/01fftd/ill4.png","crop":[0.0402,0.0612,0.8151,0.5309]}},
   "90/4": {"name":"uxb6ce","plate":{"src":"art/plates/villager-elder-coat.webp","crop":[0.3,0.05,0.63,0.7]}},

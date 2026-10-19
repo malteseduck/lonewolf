@@ -41,8 +41,9 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   a new picture asks for its link, or No link (ADR 0038), and Link... gives one to a picture already in `art/`; Adjust crops any card's picture, flips it left to right and sets levels, with the fight panel previewed as it will look (and, for a picture shown from its 2x copy, Show original to compare);
   Remove takes the owner's entry away. A card's buttons are Adjust, Prompt and a Picture menu (Choose file...,
   By address..., Stand-in..., Link...); Prompt copies a prompt for an AI image generator: the enemy's name and
-  `about`, asked for as a tall black-and-white pen-and-ink portrait in the style of Gary Chalk's Lone Wolf art,
-  on plain white so it inks as it is (`promptFor()`). Each save redraws the cards and the "with none" count, and the
+  `about`, asked for as a tall black-and-white pen-and-ink illustration in the style of Gary Chalk's Lone Wolf art,
+  on plain white so it inks as it is (`promptFor()`). It avoids a person's words (portrait, fighting stance) and asks
+  that a beast keep its own body, as described, not be made humanoid (2026-10-18: beasts were coming out standing up). Each save redraws the cards and the "with none" count, and the
   dashboard's grid follows. The rules for the entry: `docs/reference/items.md`, "Fight pictures".
 - **The illustration sheet** ("Open illustration sheet" at step 9), inline under the grid like the
   others and only there (`tools/admin/ills.html`): every `ill*` and `small*` picture of the book on

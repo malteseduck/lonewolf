@@ -51,15 +51,18 @@
   },
   "10tdot": {
    "3": "2026-10-08",
-   "4": "2026-10-08"
+   "4": "2026-10-08",
+   "7": "2026-10-18"
   },
   "11tpot": {
    "3": "2026-10-08",
-   "4": "2026-10-08"
+   "4": "2026-10-08",
+   "7": "2026-10-18"
   },
   "12tmod": {
    "3": "2026-10-08",
-   "4": "2026-10-08"
+   "4": "2026-10-08",
+   "7": "2026-10-18"
   },
   "13tplor": {
    "3": "2026-10-17",
@@ -68,7 +71,8 @@
   },
   "14tcok": {
    "3": "2026-10-17",
-   "4": "2026-10-17"
+   "4": "2026-10-17",
+   "7": "2026-10-18"
   }
  },
  "note": "The book steps no file can show (3, 4, 6, 7; 6 is the owner's look at the picture sheet, once every enemy has a picture), each with the date it was marked done. Written by tools/book_status.py (done/undo) and the dashboard. Marks dated 2026-10-08 were carried over from the checklist's ticks that day."
