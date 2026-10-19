@@ -112,7 +112,16 @@ Commands run from the project root as
    flat ground), `joined: true` also clears letters joined to a line running out of the box (a
    river, mountain or flagpole), with that line's ink inside the box except river outlines and
    coasts, told apart as ink with both water and land within a few px (Book 4: Holmgard, Cloeasia;
-   letters out at sea have only water round them, so they go: Book 5, Bisutan), and `keep: [[box]]`
+   letters out at sea have only water round them, so they go: Book 5, Bisutan). Except with `clip`,
+   only the ink along the name's line of letters goes: the strip, at whatever angle, of the height
+   the name's letter count gives across its box, holding the most ink, then grown while the ink goes
+   on (one strip per `lines` entry). So a tight box and the right `text` matter; mountain peaks, tree
+   tops, roads and symbols in the box beside the letters stay, as round a slanted name in its level
+   box. A shape lying in the box and mostly in the strip is taken whole out to most of a letter's
+   height again (capitals, tails); a line joined to the letters only inside the strip. Checked on the
+   owner's lists of Books 4, 5, 6 and 12 (2026-10-19): of 133 keep boxes, 57 are no longer needed
+   (3 before) and 66% of the ink they saved now stays without them; what still needs one lies among
+   the letters (a mountain line crossing the name, a flag or tower at its end). `keep: [[box]]`
    (the editor's Add keep box, K) protects something inside a box (Book 1: a ship); a fifth number,
    `[x0, y0, x1, y1, degrees]`, turns the box clockwise round its centre (the green box's round
    knob), for something lying on a slant. Small dark
@@ -184,7 +193,8 @@ Commands run from the project root as
 - `tools/map_measure.py`: measures each lettered label's ink with the same code `map_letter.py` uses and
   stores it as `ink` in `labels.json`, for the map editor's preview.
 - `tools/map_erase.py`: erases the `retype` labels; its `LabelInk` (which of the scan's pixels belong
-  to a label) is shared with `map_letter.py`, which measures labels with it.
+  to a label, only along its line of letters) is shared with `map_letter.py`, which measures labels
+  with it.
 - `tools/map_check.py`: SIFT homography of the repaint onto `map-2k.png` (edge error 1-4 px), saved
   as `H.json`; then a 48 px grid, red where the hue moved (Lab a*b* distance over 25), blue where
   outlines were added or lost. On Book 4 the blue cells found exactly Gemini's added forest.

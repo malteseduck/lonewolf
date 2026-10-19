@@ -94,6 +94,105 @@ def _stroke_joined_to_line():
     return im
 
 
+# ---- only the ink along the line of letters ---------------------------------------------------
+
+def word(im, text, at, angle=0):
+    """Stand-in lettering about 15 px tall, its baseline starting at <at>, turned <angle> degrees
+    (clockwise, y down) round that point. Returns where its ink is (boolean, image-sized)."""
+    layer = np.zeros(im.shape[:2], np.uint8)
+    cv2.putText(layer, text, at, cv2.FONT_HERSHEY_DUPLEX, 0.6, 255, 1 if angle else 2, cv2.LINE_8)
+    if angle:
+        layer = cv2.warpAffine(layer, cv2.getRotationMatrix2D(at, -angle, 1), layer.shape[::-1], flags=cv2.INTER_NEAREST)
+    im[layer > 0] = INK
+    return layer > 0
+
+
+def peak(im, x, y, size=7):
+    """A mountain's outline: two thin strokes meeting at the top, <x, y> its foot's middle."""
+    m = np.zeros(im.shape[:2], np.uint8)
+    cv2.line(m, (x - size, y), (x, y - size), 1, 2)
+    cv2.line(m, (x, y - size), (x + size, y), 1, 2)
+    im[m > 0] = INK
+    return m > 0
+
+
+def around(ink, grow=2, up=0):
+    """A box drawn tight round <ink>, as the owner draws them, <up> px taller above."""
+    ys, xs = np.nonzero(ink)
+    return [int(xs.min()) - grow, int(ys.min()) - grow - up, int(xs.max()) + grow, int(ys.max()) + grow]
+
+
+def taken(li, lab, ink):
+    """The share of <ink> (image-sized) the label's mask takes."""
+    x0, y0, x1, y1 = li.box(lab)
+    m = li.mask(lab)
+    return (m & ink[y0:y1, x0:x1]).sum() / ink[y0:y1, x0:x1].sum()
+
+
+def _name_under_peaks(**flags):
+    im = paper(400, 200)
+    letters = word(im, 'ABCDEFGHK', (80, 130))
+    box = around(letters, up=16)               # the box takes in the peaks' tops above the name
+    peaks = peak(im, 100, box[1] + 12) | peak(im, 160, box[1] + 12)
+    return im, letters, peaks, {'box': box, 'text': 'ABCDEFGHK', **flags}
+
+
+def test_peaks_beside_the_letters_stay_and_the_letters_go():
+    im, letters, peaks, lab = _name_under_peaks()
+    li = LabelInk(im)
+    assert taken(li, lab, letters) > 0.97
+    assert taken(li, lab, peaks) == 0
+
+
+def test_a_slanted_name_in_its_level_box_leaves_the_corners():
+    im = paper(400, 400)
+    letters = word(im, 'ABCDEFGHKMN', (100, 120), angle=40)
+    x0, y0, x1, y1 = box = around(letters)
+    corners = peak(im, x1 - 20, y0 + 25) | peak(im, x0 + 20, y1 - 10)   # off the slant, inside the level box
+    li = LabelInk(im)
+    lab = {'box': box, 'text': 'ABCDEFGHKMN'}
+    assert taken(li, lab, letters) > 0.97
+    assert taken(li, lab, corners) == 0
+
+
+def test_a_name_set_over_two_lines_goes_whole():
+    im = paper(400, 200)
+    letters = word(im, 'ABC', (130, 100)) | word(im, 'DEFGHKMN', (90, 125))
+    li = LabelInk(im)
+    lab = {'box': around(letters), 'text': 'ABC DEFGHKMN', 'lines': ['ABC', 'DEFGHKMN']}
+    assert taken(li, lab, letters) > 0.97
+
+
+def test_joined_takes_the_line_only_along_the_letters():
+    im = paper(400, 200)
+    letters = word(im, 'ABCDEFGHK', (80, 130))
+    box = around(letters, up=20)
+    # a river bank from the last letter's top, up through the box and out of it
+    bank = np.zeros(im.shape[:2], np.uint8)
+    cv2.line(bank, (box[2] - 6, 118), (box[2] + 20, 40), 1, 2)
+    im[bank > 0] = INK
+    li = LabelInk(im)
+    lab = {'box': box, 'text': 'ABCDEFGHK', 'joined': True}
+    x0, y0 = li.box(lab)[:2]
+    above = np.zeros(im.shape[:2], bool)
+    above[box[1]:110] = True                  # the bank above the letters, still in the box
+    assert taken(li, lab, letters) > 0.97
+    assert taken(li, lab, (bank > 0) & above) == 0
+
+
+def test_clip_still_clears_the_whole_box():
+    im, letters, peaks, lab = _name_under_peaks(clip=True)
+    li = LabelInk(im)
+    assert taken(li, lab, peaks) > 0.9
+
+
+def test_a_label_without_text_is_taken_as_before():
+    im, letters, peaks, lab = _name_under_peaks()
+    li = LabelInk(im)
+    del lab['text']
+    assert taken(li, lab, peaks) > 0.9
+
+
 # ---- LabelInk.enclosed --------------------------------------------------------------------
 
 
