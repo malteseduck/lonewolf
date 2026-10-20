@@ -39,12 +39,12 @@ body { background: var(--void) var(--wood, none) center / 820px; color: var(--bo
 .gear { position: fixed; right: -52vh; top: 50%; width: 104vh; height: 104vh; margin-top: -52vh; transition: transform 1.2s cubic-bezier(0.3, 0, 0.2, 1); filter: drop-shadow(0 0 40px #000) brightness(0.5) saturate(0.8); }
 .stage { position: relative; height: 100%; display: grid; place-items: center; padding: 0; }
 
-.top { position: fixed; z-index: 6; right: calc(18px + env(safe-area-inset-right, 0px)); top: calc(10px + env(safe-area-inset-top, 0px)); display: flex; gap: 20px; font: 400 0.72rem var(--title); letter-spacing: 0.14em; text-transform: uppercase; }
-.top a, .top button { color: #a89878; background: none; border: 0; padding: 0; font: inherit; letter-spacing: inherit; text-transform: inherit; text-decoration: none; text-shadow: 0 1px 3px #000; }
-.top a:hover, .top button:hover { color: #fff; }
-.top #offline { color: var(--o-dim); cursor: default; }
-.top #offline.act { color: var(--ember); cursor: pointer; }
-.top #offline.act:hover { color: #fff; }
+.corner { position: fixed; z-index: 6; right: calc(18px + env(safe-area-inset-right, 0px)); bottom: calc(10px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 20px; font: 400 0.72rem var(--title); letter-spacing: 0.14em; text-transform: uppercase; }
+.corner a, .corner button { color: #a89878; background: none; border: 0; padding: 0; font: inherit; letter-spacing: inherit; text-transform: inherit; text-decoration: none; text-shadow: 0 1px 3px #000; }
+.corner a:hover, .corner button:hover { color: #fff; }
+.corner #offline { color: var(--o-dim); cursor: default; }
+.corner #offline.act { color: var(--ember); cursor: pointer; }
+.corner #offline.act:hover { color: #fff; }
 
 /* ---------- the book ---------- */
 .book { position: relative; width: var(--bw); aspect-ratio: 1.4; font-size: calc(var(--bw) / 59); transition: opacity 0.45s; z-index: 1; }
@@ -537,7 +537,7 @@ input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
 <svg class="gear" id="gear" viewBox="-500 -500 1000 1000" aria-hidden="true"></svg>
 <div class="shade"></div>
 <div class="glow"></div>
-<nav class="top">
+<nav class="corner">
   <button type="button" id="offline" hidden></button>
 </nav>
 <div class="stage">

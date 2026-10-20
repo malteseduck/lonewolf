@@ -1264,7 +1264,7 @@ fetch('art/manifest.json').then((r) => r.json()).then((m) => {
 }).catch(() => {});
 
 /* the offline copy (sw.js, docs/reference/offline.md): kept over https, as Tailscale serves it, or on
-   any address given ?offline (to try it at home). The corner at the top right says how it stands. */
+   any address given ?offline (to try it at home). The corner at the bottom right says how it stands. */
 const offlineBtn = $('#offline');
 function offlineSay(m) {
   const t = m.state === 'syncing' ? (m.total ? `Saving for offline ${m.done || 0} / ${m.total}` : 'Saving for offline')

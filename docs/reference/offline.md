@@ -24,7 +24,7 @@ saves under that address). Tailscale gives both.
    (HTTPS, its own certificate) across restarts; it only forwards to the local server, so
    the release server must be running for the iPad to reach the PC. Only your own Tailscale devices can
    open it. `tailscale serve status` shows it; `tailscale serve --https=443 off` stops it.
-5. **On the iPad, in Chrome** (or Safari): open that address. The top right corner of the page says
+5. **On the iPad, in Chrome** (or Safari): open that address. The bottom right corner of the page says
    "Saving for offline n / 647", then "Ready offline" (about 44 MB).
 6. **Add it to the Home Screen**: Chrome's share button (top right), "Add to Home Screen". Play from
    that icon from now on. The icon's app has its own storage, apart from Chrome's tabs: bring a game
@@ -33,7 +33,7 @@ saves under that address). Tailscale gives both.
 
 ## In use
 
-- **No connection**: the icon opens the saved copy. The top right corner says "Offline: playing the
+- **No connection**: the icon opens the saved copy. The bottom right corner says "Offline: playing the
   saved copy". Everything plays: all books, pictures, maps.
 - **Backup with no connection**: the backup is kept on the iPad ("Backup kept here") and sent to the
   PC's `backups/` the next time the app opens with the PC in reach ("1 waiting backup sent to the
@@ -42,7 +42,7 @@ saves under that address). Tailscale gives both.
   instead (one saved in the iPad's Files, for instance).
 - **Updates**: each time the app opens (or comes back to the front) with the PC in reach, it asks the
   PC what changed and downloads just that, in the background. Then "Update ready: reload" appears at
-  the top right: touch it (or simply open the app next time) and the new version takes over.
+  the bottom right: touch it (or simply open the app next time) and the new version takes over.
   A page already running never changes under you.
 
 ## Releasing
@@ -103,7 +103,7 @@ code is `tools/serve.py` from the working copy, read when it starts.
   deletes the old one. On the very first sync it becomes `active` at once.
 - Syncs start at every page load (the service worker itself, so a broken page cannot stop its own
   fix), when the page comes to the front, and when the device comes back online. The page shows the
-  worker's messages in `#offline` at the top right (`offlineSay` in `main.js`).
+  worker's messages in `#offline` at the bottom right (`offlineSay` in `main.js`).
 - The service worker is registered only over HTTPS (as Tailscale serves it) or when the address
   has `?offline`, so working on the PC at `http://localhost:8766/` is never served stale files. To
   try the offline copy on the PC, open `http://127.0.0.1:8766/?offline` (a different origin from

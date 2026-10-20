@@ -9,7 +9,7 @@
 body
   svg#gear            bronze clockwork, fixed, mostly off the right edge; turns a notch per page turn
   .shade, .glow       vignette and the warm light from the left
-  nav.top             #offline (top-right): how the offline copy stands (docs/reference/offline.md);
+  nav.corner          #offline (bottom-right): how the offline copy stands (docs/reference/offline.md);
                       "Update ready: reload" reloads when touched. The title page is reached by the
                       return medallion. The player has no sound
   .stage > .book#book > .spread
