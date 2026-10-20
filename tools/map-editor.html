@@ -1414,7 +1414,7 @@ async function doStep(what, btn) {
   logs[s] = all;
   if (['draft', 'retype', 'measure', 'missed'].includes(what)) { await loadLabels(); refresh(); }
   await refreshState();
-  if (what === 'names') renderList();
+  if (what === 'names') { renderList(); renderForm(); draw(); }  // the open label's form shows the new finding too
   if (curStep === s) { renderPanel(); await reloadBgAfter(what); }
   msg(all.code ? `${what} failed (exit ${all.code}); see the log` : `${what} done`, all.code ? 6000 : 2500);
   return all;
