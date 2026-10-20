@@ -23,7 +23,7 @@ Static files as `python -m http.server` serves them, from the project root, plus
                                       work/, named without the folder, and work/map-check-<n>/*, and
                                       maps/<book>/'s labels.json, style.txt, labels-checked.txt, font.txt) with
                                       size and mtime, the Gemini rounds present, the job running, when book.js was written
-    POST /api/map/<book>/run/<step>   run one step: upscale, draft, retype, missed, measure, erase, letter, prompt,
+    POST /api/map/<book>/run/<step>   run one step: upscale, draft, retype, missed, names, measure, erase, letter, prompt,
                                       check, finish, import. ?round=n for prompt, check, finish;
                                       ?force=1 for draft over an existing list; ?width=n for finish;
                                       ?all=1 for finish to set every place name again when none is ticked reset.
@@ -304,6 +304,10 @@ def map_commands(step, book, q):
         if not os.path.isfile(os.path.join(MAPS, book, 'labels.json')):
             return None, 'no labels.json yet', 404
         return [PY + [t('map_missed.py'), f'{wk}/map-2k.png', labels]], None, 0
+    if step == 'names':  # step 3's Check names: each wording against the books' own text (map_names.py)
+        if not os.path.isfile(os.path.join(MAPS, book, 'labels.json')):
+            return None, 'no labels.json yet', 404
+        return [PY + [t('map_names.py'), labels, f'{wk}/map-names.json']], None, 0
     if step == 'measure':
         return [PY + [t('map_measure.py'), f'{wk}/map-2k.png', labels]], None, 0
     if step == 'erase':

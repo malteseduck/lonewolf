@@ -1,6 +1,6 @@
 [
  {
-  "text": "THE DAINARG SWA2HP",
+  "text": "THE DANARG SWAMP",
   "box": [
    484,
    61,
@@ -9,34 +9,38 @@
   ],
   "slant": 0.4,
   "conf": 0.92,
-  "retype": true
+  "retype": false
  },
  {
-  "text": "MOG1AN",
+  "text": "OGIA",
   "box": [
-   752,
-   286,
-   930,
-   381
+   807,
+   304,
+   912,
+   363
   ],
   "slant": -4.8,
   "conf": 0.76,
   "retype": true
  },
  {
-  "text": "OCIAN",
+  "text": "OGIAN MOUNTAINS",
   "box": [
-   671,
+   651,
    343,
-   765,
-   391
+   796,
+   423
   ],
   "slant": 5.6,
   "conf": 0.87,
-  "retype": true
+  "retype": true,
+  "lines": [
+   "OGIAN",
+   "MOUNTAINS"
+  ]
  },
  {
-  "text": "SKAYOTYPASS",
+  "text": "SKAROR PASS",
   "box": [
    993,
    321,
@@ -48,7 +52,7 @@
   "retype": true
  },
  {
-  "text": "GNA-KOR-KUZIM",
+  "text": "AGNA-KOR-KUZIM",
   "box": [
    438,
    397,
@@ -60,19 +64,7 @@
   "retype": true
  },
  {
-  "text": "WOJNGAINS",
-  "box": [
-   651,
-   374,
-   796,
-   423
-  ],
-  "slant": -2.4,
-  "conf": 0.77,
-  "retype": true
- },
- {
-  "text": "2HAGADOR",
+  "text": "MAGADOR",
   "box": [
    1375,
    424,
@@ -84,19 +76,23 @@
   "retype": true
  },
  {
-  "text": "RALNZIM",
+  "text": "RALNZIM FOREST",
   "box": [
    351,
    447,
    473,
-   494
+   524
   ],
   "slant": 2.8,
   "conf": 0.7,
-  "retype": true
+  "retype": true,
+  "lines": [
+   "RALNZIM",
+   "FOREST"
+  ]
  },
  {
-  "text": "BLOKSHROTO TRL",
+  "text": "Blackshroud Trail",
   "box": [
    759,
    472,
@@ -106,18 +102,6 @@
   "slant": 0,
   "conf": 0.9,
   "retype": true
- },
- {
-  "text": "FOREST",
-  "box": [
-   377,
-   486,
-   454,
-   524
-  ],
-  "slant": 0,
-  "conf": 0.99,
-  "retype": false
  },
  {
   "text": "XANAR",
@@ -132,19 +116,19 @@
   "retype": true
  },
  {
-  "text": "SCHAAD",
+  "text": "SCHAAN",
   "box": [
    1577,
    592,
-   1699,
-   628
+   1665,
+   637
   ],
   "slant": -0.9,
   "conf": 0.99,
   "retype": true
  },
  {
-  "text": "ARAN",
+  "text": "ZAMAN",
   "box": [
    1484,
    626,
@@ -156,7 +140,7 @@
   "retype": true
  },
  {
-  "text": "LUUROS",
+  "text": "WUROS",
   "box": [
    1234,
    709,
@@ -180,31 +164,19 @@
   "retype": true
  },
  {
-  "text": "15",
-  "box": [
-   1609,
-   759,
-   1680,
-   821
-  ],
-  "slant": 88.6,
-  "conf": 0.88,
-  "retype": true
- },
- {
   "text": "TRACK",
   "box": [
-   452,
+   393,
    791,
    534,
-   873
+   947
   ],
   "slant": -44.5,
   "conf": 0.97,
   "retype": true
  },
  {
-  "text": "RAOIX",
+  "text": "KAON",
   "box": [
    1575,
    811,
@@ -228,7 +200,7 @@
   "retype": true
  },
  {
-  "text": "SMADA",
+  "text": "SYADA",
   "box": [
    1190,
    912,
@@ -256,40 +228,20 @@
   ]
  },
  {
-  "text": "LAVINYY",
-  "box": [
-   1492,
-   963,
-   1531,
-   1035
-  ],
-  "slant": -83.4,
-  "conf": 0.76,
-  "retype": true
- },
- {
-  "text": "ED",
-  "box": [
-   1267,
-   1047,
-   1342,
-   1108
-  ],
-  "slant": 87.7,
-  "conf": 0.79,
-  "retype": true
- },
- {
-  "text": "GREATBOR",
+  "text": "GREAT BOR RANGE",
   "box": [
    359,
    1094,
    479,
-   1128
+   1162
   ],
   "slant": 0.9,
   "conf": 0.88,
-  "retype": true
+  "retype": true,
+  "lines": [
+   "GREAT BOR",
+   "RANGE"
+  ]
  },
  {
   "text": "THARRO",
@@ -304,18 +256,6 @@
   "retype": true
  },
  {
-  "text": "ED",
-  "box": [
-   1554,
-   1111,
-   1611,
-   1169
-  ],
-  "slant": 86.5,
-  "conf": 0.92,
-  "retype": true
- },
- {
   "text": "CHANZ",
   "box": [
    1615,
@@ -325,22 +265,11 @@
   ],
   "slant": -4.1,
   "conf": 0.93,
-  "retype": true
+  "retype": true,
+  "named": "CHANZ"
  },
  {
-  "text": "RANGE",
-  "box": [
-   379,
-   1129,
-   455,
-   1162
-  ],
-  "slant": 0.3,
-  "conf": 0.85,
-  "retype": true
- },
- {
-  "text": "WORORIL",
+  "text": "MORDRIL",
   "box": [
    1040,
    1126,
@@ -361,18 +290,6 @@
   ],
   "slant": -1.6,
   "conf": 0.97,
-  "retype": false
- },
- {
-  "text": "WASY",
-  "box": [
-   1167,
-   1124,
-   1211,
-   1186
-  ],
-  "slant": 76.5,
-  "conf": 0.81,
   "retype": true
  },
  {
@@ -388,7 +305,7 @@
   "retype": true
  },
  {
-  "text": "TALESGRIA",
+  "text": "TALESTRIA",
   "box": [
    1066,
    1209,
@@ -400,7 +317,7 @@
   "retype": true
  },
  {
-  "text": "PHQENA",
+  "text": "PHOENA",
   "box": [
    1296,
    1255,
@@ -425,42 +342,6 @@
   "spread": true
  },
  {
-  "text": "10",
-  "box": [
-   1361,
-   1392,
-   1379,
-   1410
-  ],
-  "slant": -30,
-  "conf": 0.94,
-  "retype": true
- },
- {
-  "text": "SO",
-  "box": [
-   683,
-   1412,
-   711,
-   1441
-  ],
-  "slant": 0.8,
-  "conf": 0.75,
-  "retype": true
- },
- {
-  "text": "150",
-  "box": [
-   922,
-   1417,
-   953,
-   1443
-  ],
-  "slant": 0,
-  "conf": 0.98,
-  "retype": true
- },
- {
   "text": "PLAINS",
   "box": [
    1120,
@@ -470,10 +351,10 @@
   ],
   "slant": -1.3,
   "conf": 0.92,
-  "retype": false
+  "retype": true
  },
  {
-  "text": "DILLS",
+  "text": "HILLS",
   "box": [
    1198,
    1431,
@@ -485,11 +366,11 @@
   "retype": true
  },
  {
-  "text": "2IXTIK 2UAKSI)",
+  "text": "MTNS",
   "box": [
-   1249,
+   1265,
    1429,
-   1392,
+   1316,
    1462
   ],
   "slant": 0.1,
@@ -497,31 +378,41 @@
   "retype": true
  },
  {
-  "text": "DEGHD.",
+  "text": "DECID. FOREST",
   "box": [
    1396,
    1430,
    1456,
-   1462
+   1485
   ],
   "slant": 1.1,
   "conf": 0.94,
-  "retype": true
+  "retype": true,
+  "lines": [
+   "DECID.",
+   "FOREST"
+  ],
+  "named": "DECID. FOREST"
  },
  {
-  "text": "GONIF",
+  "text": "CONIF FOREST",
   "box": [
-   1455,
+   1471,
    1432,
-   1521,
-   1460
+   1530,
+   1487
   ],
   "slant": -0.1,
   "conf": 0.97,
-  "retype": true
+  "retype": true,
+  "lines": [
+   "CONIF",
+   "FOREST"
+  ],
+  "named": "CONIF FOREST"
  },
  {
-  "text": "SGALE IN 2NHILES",
+  "text": "SCALE IN MILES",
   "box": [
    654,
    1445,
@@ -542,18 +433,18 @@
   ],
   "slant": -3,
   "conf": 0.92,
-  "retype": false
+  "retype": true
  },
  {
-  "text": "FORESE FOREST",
+  "text": "MARSH",
   "box": [
-   1397,
-   1454,
-   1530,
-   1491
+   1329,
+   1432,
+   1390,
+   1463
   ],
-  "slant": -1,
-  "conf": 0.87,
+  "where": "",
+  "small": false,
   "retype": true
  }
 ]

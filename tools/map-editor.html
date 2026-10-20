@@ -12,7 +12,7 @@
      label colours on the map stay bright, to read over any map; on the parchment they are inked darker. */
   --bg: #17100b; --page: #dccb9f; --line: rgba(51, 35, 26, .4); --text: #33231a; --dim: #6b553c; --blood: #7d1d14;
   --place: #ffb347; --other: #5fb0ff; --sel: #ff4d6d; --accent: #6f6a2e;
-  --place-ink: #a3540c; --sel-ink: #a3182e;
+  --place-ink: #a3540c; --sel-ink: #a3182e; --name-near: #a3540c; --name-unknown: #a3182e;
   --btn: rgba(255, 248, 226, .4); --btn-hi: rgba(255, 248, 226, .75); --on: rgba(125, 29, 20, .14); --on-line: #7d1d14; --link: #4a2c14;
   --scorch: inset 0 0 0 1px rgba(40, 24, 10, .55), inset 0 0 8px rgba(36, 20, 8, .5), inset 0 0 50px rgba(84, 52, 20, .5);
 }
@@ -88,6 +88,8 @@ input[type=text], textarea { width: 100%; }
 .item.sel { background: var(--on); border-left-color: var(--blood); }
 .item .n { color: var(--dim); display: inline-block; width: 28px; }
 .item.place .n { color: var(--place-ink); }
+.item .nm { font-weight: bold; margin-right: 4px; } .item .nm.near { color: var(--name-near); } .item .nm.unknown { color: var(--name-unknown); }
+.sugg { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 #main { position: relative; min-width: 0; overflow: hidden; }
 canvas { display: block; width: 100%; height: 100%; cursor: grab; }
 #status { position: absolute; left: 8px; bottom: 8px; background: #000a; padding: 3px 8px; border-radius: 4px; color: #b5a684; }
@@ -201,6 +203,7 @@ let hover = null;
 let hideAll = false;  // H held: boxes and preview off, to see the map underneath
 let eraseMode = false; // E: handles act on the erase box, not the type's frame
 let finishAll = false;  // Finish's "Set every place name again": off on every load (ADR 0004)
+let names = {};  // work/map-names.json (Check names), by wording: {status, suggest, unknown}
 
 const cv = $('cv'), ctx = cv.getContext('2d');
 const snap = () => JSON.stringify(labels);
@@ -237,6 +240,25 @@ async function loadImg(name) {
   try { img = await loadImage(at(name) + '?' + Date.now()); } catch (e) { img = null; msg('Could not load ' + name); }
 }
 const imgDims = (im = img) => { const w = base.w || im.width; return [w, im.height * w / im.width]; };
+async function loadNames() {
+  const f = S.files['map-names.json'];
+  if (!f) { names = {}; loadNames.key = null; return; }
+  if (loadNames.key === f.mtime) return;
+  try {
+    const j = await (await fetch(at('map-names.json') + '?v=' + f.mtime, { cache: 'no-store' })).json();
+    names = Object.fromEntries(j.labels.map(e => [e.wording ?? e.text, e])); loadNames.key = f.mtime;
+  } catch (e) { names = {}; }
+}
+const wording = l => (l.lines && l.lines.length ? l.lines.join(' ') : l.text) || '';
+// Check names' finding for a label, while its wording is the one checked and not marked right since
+const nameCheck = l => { const e = names[wording(l)]; return e && l.named !== wording(l) ? e : null; };
+const flagged = l => { const e = nameCheck(l); return e && (e.status === 'near' || e.status === 'unknown') ? e : null; };
+function nameMark(l) {
+  const e = flagged(l); if (!e) return null;
+  const m = document.createElement('span'); m.className = 'nm ' + e.status; m.textContent = e.status === 'near' ? '?' : '✗';
+  m.title = e.status === 'near' ? 'Check names: not in the books; did you mean ' + e.suggest[0] + '?' : 'Check names: not in the books, nothing close';
+  return m;
+}
 async function setBase() {  // the labels' frame: map-2k.png, or the original while there is no 2k yet
   const name = S.files['map-2k.png'] ? 'map-2k.png' : S.files['map.png'] ? 'map.png' : null;
   if (!name) { base = { w: 0, h: 0 }; return; }
@@ -657,7 +679,8 @@ function renderList() {
     d.className = 'item' + (l.retype ? ' place' : '') + (i === sel ? ' sel' : '');
     d.dataset.i = i;
     const n = document.createElement('span'); n.className = 'n'; n.textContent = i;
-    d.append(n, document.createTextNode((l.found ? '✦ ' : '') + ((l.lines && l.lines.length ? l.lines.join(' / ') : l.text) || '(empty)')));
+    const nm = nameMark(l); if (nm) d.append(n, nm); else d.append(n);
+    d.append(document.createTextNode((l.found ? '✦ ' : '') + ((l.lines && l.lines.length ? l.lines.join(' / ') : l.text) || '(empty)')));
     if (l.found) d.title = 'Found by Claude: check its wording and box, then press Checked in its form';
     d.onclick = e => (e.shiftKey || mode === 'merge') && sel >= 0 && i !== sel ? merge(i) : select(i, true);
     el.appendChild(d);
@@ -735,6 +758,34 @@ function renderForm() {
     const ok = document.createElement('button'); ok.textContent = 'Checked'; ok.title = 'Its wording and box are right: drop the purple mark';
     ok.onclick = () => { push(); setField('found', undefined); renderForm(); afterEdit(); };
     row('found by Claude', ok);
+  }
+  const nc = nameCheck(l);
+  if (nc || l.named) {  // Check names' finding (map_names.py), and the owner's Right as it is
+    const d = document.createElement('div'); d.className = 'sugg';
+    const say = document.createElement('span');
+    say.textContent = !nc ? 'marked right as it is' : { name: 'in the books', words: 'its words are in the books, not together',
+      near: 'not in the books: ' + nc.unknown.join(', '), unknown: 'not in the books, nothing close: ' + nc.unknown.join(', ') }[nc.status];
+    d.append(say);
+    for (const s of (nc && flagged(l) ? nc.suggest : [])) {
+      const b = document.createElement('button'); b.textContent = s; b.title = 'Use this wording';
+      b.onclick = () => {
+        push();
+        const ws = s.split(' ');
+        if (l.lines && l.lines.length) {  // keep the printed line breaks when the words still fit them
+          const per = l.lines.map(x => x.split(' ').filter(Boolean).length);
+          if (per.reduce((a, b) => a + b, 0) === ws.length) { let k = 0; l.lines = per.map(n => ws.slice(k, k += n).join(' ')); }
+          else delete l.lines;
+        }
+        setField('text', s); refresh();
+      };
+      d.append(b);
+    }
+    if (nc && flagged(l)) {
+      const ok = document.createElement('button'); ok.textContent = 'Right as it is'; ok.title = 'The wording is as printed though the books do not hold it: Check names leaves it be';
+      ok.onclick = () => { push(); setField('named', wording(l)); refresh(); };
+      d.append(ok);
+    }
+    row('name', d);
   }
   for (const k of TEXTS) {
     const i = guard(document.createElement('input')); i.type = 'text'; i.value = l[k] ?? '';
@@ -818,14 +869,15 @@ function renderForm() {
   sec('After a Gemini round', 'steps 8-9');
   if (l.retype) check('reset', false);
   else check('fix', false, true);
-  const others = Object.keys(l).filter(k => ![...TEXTS, ...BOOLS.map(b => b[0]), 'lines', 'leading', 'height', 'angle', 'nudge', 'box', 'keep', 'set', 'found'].includes(k));
+  const others = Object.keys(l).filter(k => ![...TEXTS, ...BOOLS.map(b => b[0]), 'lines', 'leading', 'height', 'angle', 'nudge', 'box', 'keep', 'set', 'found', 'named'].includes(k));
   if (others.length) { const k = document.createElement('div'); k.style.color = 'var(--dim)'; k.textContent = others.join(', ') + ' (kept as is)'; row('other', k); }
 }
 // after a form edit: redraw and refresh list text, without rebuilding the form under the cursor
 function afterEdit() { renderListKeep(); draw(); dirty(); }
 function renderListKeep() {
   const it = $('list').querySelector(`.item[data-i="${sel}"]`);
-  if (it) { const l = labels[sel]; it.lastChild.textContent = (l.lines && l.lines.length ? l.lines.join(' / ') : l.text) || '(empty)'; it.classList.toggle('place', !!l.retype); it.firstChild.style.color = ''; }
+  if (it) { const l = labels[sel]; const nm = it.querySelector('.nm'); if (nm && !flagged(l)) nm.remove();
+    it.lastChild.textContent = (l.lines && l.lines.length ? l.lines.join(' / ') : l.text) || '(empty)'; it.classList.toggle('place', !!l.retype); it.firstChild.style.color = ''; }
 }
 function refresh() { renderList(); renderForm(); draw(); dirty(); }
 
@@ -1087,6 +1139,7 @@ async function refreshState() {
     S = { ...j, err: '' };
   } catch (e) { S = { files: {}, rounds: [], running: null, err: String(e.message || e) }; }
   await loadLetteredFrom();
+  await loadNames();
   await setBase();
   renderRail();
   $('job').textContent = S.err ? 'map steps unavailable: ' + S.err : S.running ? 'running: ' + S.running : '';
@@ -1227,9 +1280,10 @@ function renderPanel() {
       h += `<div class="row">${done ? `<button data-do="unchecked"${tip('Not checked after all', 'Marks step 3 not done again')}>Not checked after all</button>`
         : `<button class="primary" data-do="checked"${tip('Labels checked', 'Marks step 3 done: every label\'s wording and box is right')}>Labels checked</button>`}
 ${runBtn('Untick captions', 'data-do="retype"' + noRun, 'Saves, then unticks retype on what is surely not a place name: caption words (map, banner, arms, key, scale), the title\'s lines stacked on them, the key\'s entries')}
+${runBtn('Check names', 'data-do="names"' + noRun, 'Saves, then checks every wording against the place names in the downloaded books\' text and the other checked maps: a ? marks one close to a known name (pick the suggestion in its form), a ✗ one with nothing close. A few seconds, no AI')}
 ${runBtn('Find missed labels', 'data-do="missed"' + noRun, 'Saves, then asks Claude Sonnet to look at the map for names outside the boxes (about 12k tokens of your plan, 20 s); they come in outlined in purple')}
 <button data-do="copyclaude"${tip('Copy request for Claude', 'Saves, then copies a request to untick retype on the title, banner and captions the script missed: paste it into Claude Code, then reload this page')}>Copy request for Claude</button>
-<span class="note">${labels.length} labels, ${places} place names${found ? `, ${found} found not checked yet` : ''}</span></div>`; break; }
+<span class="note">${labels.length} labels, ${places} place names${found ? `, ${found} found not checked yet` : ''}${S.files['map-names.json'] ? `, ${labels.filter(flagged).length} names to look at` : ''}</span></div>`; break; }
     case 4: {
       const l = lettered(), m = l.filter(x => x.ink).length, old = l.filter(x => x.ink && stale(x)).length;
       h += `<div class="row">${runBtn('Measure', 'data-do="measure"' + noRun)}<span class="note">${m} of ${l.length} lettered labels measured${old ? `, ${old} with a box moved since` : ''}</span></div>`; break; }
@@ -1360,6 +1414,7 @@ async function doStep(what, btn) {
   logs[s] = all;
   if (['draft', 'retype', 'measure', 'missed'].includes(what)) { await loadLabels(); refresh(); }
   await refreshState();
+  if (what === 'names') renderList();
   if (curStep === s) { renderPanel(); await reloadBgAfter(what); }
   msg(all.code ? `${what} failed (exit ${all.code}); see the log` : `${what} done`, all.code ? 6000 : 2500);
   return all;

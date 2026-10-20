@@ -442,6 +442,14 @@ def test_map_retype_step_needs_a_label_list(root):
     assert serve.map_commands('retype', '01fftd', {})[0] == [serve.PY + ['tools/map_labels.py', 'retype', 'maps/01fftd/labels.json']]
 
 
+def test_map_names_step_checks_the_list_into_work(root):
+    book(root)
+    assert serve.map_commands('names', '01fftd', {}) == (None, 'no labels.json yet', 404)
+    write(str(root / 'maps' / '01fftd' / 'labels.json'), '[]')
+    assert serve.map_commands('names', '01fftd', {})[0] == [serve.PY + [
+        'tools/map_names.py', 'maps/01fftd/labels.json', 'data/projectaon/01fftd/work/map-names.json']]
+
+
 def test_map_commands_builds_a_step_and_refuses_a_bad_one(root):
     d = book(root)
     cmds, err, code = serve.map_commands('upscale', '01fftd', {})

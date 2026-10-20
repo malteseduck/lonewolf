@@ -64,6 +64,7 @@ player loads (the map editor and `serve.py` make `work/` when a step first needs
 | `work/map-check-<n>/` | Round n's checks: `aligned.png`, `H.json`, `flags.png`, `labels.png` |
 | `work/map-gemini-<n>-x4.png` | Real-ESRGAN 4x of the round kept |
 | `map-4k.webp` | The result, 3840 wide; its sheet is `work/map-4k-sheet.png` |
+| `work/map-names.json` | Check names' finding for each label (step 3), by wording |
 | `work/map-labels-lettered.json` | The label list step 4 last lettered from, so the editor can tell which later edits matter |
 | `work/compare.html` | The comparison page (below) |
 
@@ -112,6 +113,19 @@ Commands run from the project root as
    20 s a map. On a fresh draft of the checked maps (2026-10-19) it found 3 of the 8 names OCR
    missed (Book 6: 3 of 5), with one false find in five maps, and added 10 on Book 7. Needs `claude`
    signed in on this PC (`claude auth login`).
+   **Check names** in step 3 saves the list and runs `map_names.py`, a script (no AI, about 4 s):
+   every wording (case, hyphens and a leading "the" ignored) against an index built afresh in
+   memory from every downloaded book's `book.js` and `.htm` pages and the other maps' checked
+   lists, written to `work/map-names.json`. A wording is a *name* (the whole of it is in the text
+   or on another checked map), *words* (each word is, not together), *near* (a word is not, but is
+   close to one the books capitalise at least half the times they print it, or another checked map
+   holds, after reading a digit as the letter OCR mistakes it for: 2 Z, 0 O, 5 S...) or *unknown*.
+   The list marks near with `?` and unknown with `✗`; the label's form shows the suggestions (best
+   first, wordings the books hold before others) to press, and **Right as it is**, which stores the
+   wording as `named` so the check leaves it be until the wording changes. Map abbreviations (Mt,
+   Mtns, R., St) count as words; numbers are not judged. On the checked lists of Books 3-6 and 12
+   (2026-10-19) it flagged 2-11 labels a map, mostly names printed only on the map, which take
+   Right as it is once.
    **Copy request for Claude** in step 3 saves the list and copies a ready request for what the
    script missed, to paste into Claude Code (the page cannot reach the agent itself); reload the
    editor after the agent has written the file. The editor groups each label's fields by the step that uses them and hides those that
@@ -224,6 +238,8 @@ Commands run from the project root as
   set-up commands in its docstring, or the dashboard's Setup). Models in `~/.paddlex`.
 - `tools/map_missed.py`: step 3's Find missed labels (above): tiles, Claude's answer, boxes fitted to
   the ink. Prints counts and tokens, never wordings.
+- `tools/map_names.py`: step 3's Check names (above): the books' word index, each wording's
+  finding and suggestions. Prints counts and label indexes, never wordings.
 - `tools/map_labels.py`: `draft` (OCR boxes for a first list), `retype` (untick what is surely not
   a place name on the corrected list), `style` (a first `style.txt`), `prompt` (the Gemini prompt,
   `--lettered` for step 5) and `check` (OCR hint plus the `labels.png` eye-check sheet).
