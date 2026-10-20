@@ -63,6 +63,21 @@ def test_tree_blob_stays():
     assert li.mask({'box': [100, 80, 140, 120]}).sum() == 0
 
 
+def test_bold_lettering_is_taken_and_a_tree_still_stays():
+    """Book 7: lettering this bold read as trees at the fixed BLOB; the map's own stroke sets it."""
+    im = paper(400, 200)
+    labels = []
+    for y in (40, 100):
+        for x in (40, 70, 100):
+            im[y:y + 30, x:x + 10] = INK  # a bold letter's upright, two place names
+        labels.append({'box': [35, y - 5, 115, y + 35], 'retype': True})
+    cv2.circle(im, (300, 100), 14, INK, -1)
+    assert LabelInk(im).mask(labels[0]).sum() == 0  # the old size took it for a tree
+    li = LabelInk(im, labels)
+    assert li.mask(labels[0]).sum() >= 3 * 30 * 10
+    assert li.mask({'box': [280, 80, 320, 120]}).sum() == 0
+
+
 def test_coloured_ink_is_not_label_ink():
     im = paper()
     bar(im, 100, 130, 100, col=(0, 0, 220))  # a red stroke: chroma far over 24

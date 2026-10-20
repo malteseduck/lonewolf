@@ -27,7 +27,13 @@ import cv2
 import numpy as np
 
 PAD = 4   # px past a label's box: the hand-drawn boxes run tight
-BLOB = 9  # px: ink this thick is a tree, not a letter stroke
+BLOB = 9     # px: ink this thick is a tree, not a letter stroke
+NEAR = 31    # px: ink is what is darker than the median of this window round it
+# A map lettered bolder than BOLDER px (Book 7: 7.4; Books 1-6 and 12: 3.8 to 5.5) scales both by
+# its stroke: its letters' junctions outgrew BLOB and stayed as trees, and its letters packed a
+# NEAR window so dark that their cores did not count as ink and were smeared instead of taken.
+BOLDER = 6
+BOLD_BLOB, BOLD_NEAR = 2.4, 7
 # the line of letters (LabelInk.along_letters)
 MIN_INK = 40  # px: less ink than this and there is no line to find
 WIDE = 0.8    # a letter's width with its spacing, for its height
@@ -41,17 +47,24 @@ REACH = 0.8   # ... and by this share for a shape lying in the box and mostly in
 class LabelInk:
     """Which of the scan's pixels belong to a label. map_letter.py measures labels with it too."""
 
-    def __init__(self, im):
+    def __init__(self, im, labels=None):
         g = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-        self.dark = cv2.medianBlur(g, 31).astype(np.int16) - g
         lab = cv2.cvtColor(im, cv2.COLOR_BGR2LAB).astype(np.int16)
         chroma = np.hypot(lab[..., 1] - 128, lab[..., 2] - 128)
-        ink = ((self.dark > 30) & (chroma < 24)).astype(np.uint8)
-        # tree, river and mountain outlines hug a solid colour fill: keep ink next to one
-        fill = cv2.morphologyEx(((self.dark > 30) & (chroma > 18)).astype(np.uint8), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
-        ink &= (cv2.dilate(fill, np.ones((7, 7), np.uint8)) == 0).astype(np.uint8)
+
+        def letters(near):  # near-black, colourless, not hugging a colour fill
+            self.dark = cv2.medianBlur(g, near).astype(np.int16) - g
+            ink = ((self.dark > 30) & (chroma < 24)).astype(np.uint8)
+            # tree, river and mountain outlines hug a solid colour fill: keep ink next to one
+            fill = cv2.morphologyEx(((self.dark > 30) & (chroma > 18)).astype(np.uint8), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+            return ink & (cv2.dilate(fill, np.ones((7, 7), np.uint8)) == 0).astype(np.uint8)
+
+        ink, size = letters(NEAR), BLOB
+        stroke = self.stroke(ink, labels)
+        if stroke > BOLDER:
+            ink, size = letters(round(BOLD_NEAR * stroke) | 1), round(BOLD_BLOB * stroke) | 1
         # the scan's trees are near-black blobs; letters are thin strokes. Keep anything thick.
-        blob = cv2.morphologyEx(ink, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (BLOB, BLOB)))
+        blob = cv2.morphologyEx(ink, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (size, size)))
         ink &= (cv2.dilate(blob, np.ones((5, 5), np.uint8)) == 0).astype(np.uint8)
         # the map's straight grid lines join letters crossing them into one long shape: cut them out
         lines = cv2.morphologyEx(ink, cv2.MORPH_OPEN, np.ones((1, 61), np.uint8)) | cv2.morphologyEx(ink, cv2.MORPH_OPEN, np.ones((61, 1), np.uint8))
@@ -63,6 +76,23 @@ class LabelInk:
         # a river outline or coast has land beside it as well; letters out at sea have only water
         land = cv2.morphologyEx(((lab[..., 2] >= 112) & (self.dark < 15)).astype(np.uint8), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
         self.shore = self.near_water & (cv2.dilate(land, np.ones((11, 11), np.uint8)) > 0)
+
+    @staticmethod
+    def stroke(ink, labels):
+        """The map's letter stroke (px): the median over the place names of the thickest strokes
+        in each box (BOLDER)."""
+        if not labels:
+            return 0
+        dt = cv2.distanceTransform(ink, cv2.DIST_L2, 3)
+        w = []
+        for lab_ in labels:
+            if not lab_.get('retype') or 'box' not in lab_:
+                continue
+            x0, y0, x1, y1 = (max(int(v), 0) for v in lab_['box'])
+            s = dt[y0:y1, x0:x1]
+            if (s > 0).sum() >= MIN_INK:
+                w.append(2 * np.percentile(s[s > 0], 95))
+        return float(np.median(w)) if w else 0
 
     def box(self, lab_):
         x0, y0, x1, y1 = lab_['box']
@@ -204,10 +234,11 @@ class LabelInk:
 def main():
     src, labels, out = sys.argv[1:4]
     im = cv2.imdecode(np.fromfile(src, np.uint8), cv2.IMREAD_COLOR)
-    li = LabelInk(im)
+    labels = json.loads(Path(labels).read_text(encoding='utf-8'))
+    li = LabelInk(im, labels)
     mask = np.zeros(im.shape[:2], np.uint8)
     n = 0
-    for lab_ in json.loads(Path(labels).read_text(encoding='utf-8')):
+    for lab_ in labels:
         if not lab_.get('retype'):
             continue
         x0, y0, x1, y1 = li.box(lab_)

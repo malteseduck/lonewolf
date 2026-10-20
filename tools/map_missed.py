@@ -146,7 +146,7 @@ def main():
     rects = tiles(im.shape[1], im.shape[0])
     reply, usage = ask([draw_tile(im, r, labels) for r in rects])
     found = parse(reply)
-    new = place(found, rects, labels, LabelInk(im))
+    new = place(found, rects, labels, LabelInk(im, labels))
     if new:
         shutil.copyfile(lab_file, str(lab_file) + '.bak')
         lab_file.write_text(json.dumps(labels + new, indent=1), encoding='utf-8')

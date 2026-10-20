@@ -150,6 +150,13 @@ Commands run from the project root as
    `[x0, y0, x1, y1, degrees]`, turns the box clockwise round its centre (the green box's round
    knob), for something lying on a slant. Small dark
    specks ringed by a name's taken ink (a thick stroke junction read as a tree) go with it.
+   A map lettered boldly (its place names' strokes over 6 px at 2k: Book 7, 7.4; Books 1-6 and 12
+   are 3.8 to 5.5, and unchanged) has two of the ink tests scaled by its stroke, measured from its
+   own boxes (`LabelInk.stroke`): what counts as a tree, 2.4 times the stroke, not 9 px (its letter
+   junctions stayed as trees), and the window the ink is judged against, 7 times it, not 31 px (its
+   packed letters darkened the window, so their cores were smeared, not taken). Nothing to set;
+   map_measure, map_letter and map_missed use the same ink. Book 7 then needed `joined` on 16 names
+   (touching a town, road, river or coast) and `clip` on 4 (2026-10-19).
 4. **Set them again**: `map_letter.py $W/map-2k.png $L $W/map-2k-erased.jpg - $W/map-2k-lettered.jpg --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"` (or the font `maps/<code>/font.txt` names).
    Each name's angle and size come from the scan's ink (the angle from OCR's `slant` where the ink is a little off it, step 2); each one-line name is set at 1.05 times the map's common size (`common_size()`: the median of the
    lettered one-line names fitted to their own ink) times its own fitted size over that to the 0.6 (`PULL`: most of the way to the common size; on Books 3-6 and 12, 16 of 159 names more than 15% off the owner's hand size, where one size a map left 44), unless fitted over 1.25 times it (a title or

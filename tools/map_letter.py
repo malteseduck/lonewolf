@@ -354,7 +354,7 @@ def main():
 
     global K, WIPE, COMMON
     K, WIPE = k, a.warp != '-'
-    scan_ink = LabelInk(F)  # the same ink map_erase.py takes out
+    scan_ink = LabelInk(F, labels)  # the same ink map_erase.py takes out
     # from every lettered name, not only those set this run, so a name set again keeps its size
     COMMON = common_size(labels, scan_ink, FONTS / a.hand, FONTS / a.caps)
     base = Image.fromarray(cv2.cvtColor(A, cv2.COLOR_BGR2RGB))

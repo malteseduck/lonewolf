@@ -26,7 +26,7 @@ def main():
     a = ap.parse_args()
     path = Path(a.labels)
     labels = json.loads(path.read_text(encoding='utf-8'))
-    scan_ink = LabelInk(read(a.faithful))
+    scan_ink = LabelInk(read(a.faithful), labels)
     n = 0
     for lab in labels:
         if not (lab.get('retype') or lab.get('fix')):
