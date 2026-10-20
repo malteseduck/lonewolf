@@ -77,6 +77,23 @@ def test_geometry_takes_the_ocr_slant_only_where_the_ink_is_a_little_off_it():
     assert abs(deg(slant=10, angle=-5) + 5) < 0.1  # a hand angle wins over both
 
 
+def test_geometry_falls_back_to_the_box_where_the_ink_spans_little_of_it():
+    # a big title's strip takes in one tall letter, or a tower joined to the letters leaves a speck:
+    # the box, along OCR's slant, says more than the stray ink's axis
+    li = scan_ink(lambda im: im.__setitem__((slice(95, 135), slice(110, 116)), INK))
+    lab = {'box': [100, 90, 260, 140], 'slant': 2}
+    c, ang, length, thick = map_letter.geometry(li, lab)
+    assert map_letter.from_box(li, lab)
+    assert abs(c[0] - 180) < 1 and abs(c[1] - 115) < 1
+    assert abs(math.degrees(ang) - 2) < 0.1
+    assert abs(length - 160) < 1 and abs(thick - 50) < 1
+    assert abs(math.degrees(map_letter.geometry(li, {**lab, 'angle': -5})[1]) + 5) < 0.1  # a hand angle still wins
+    # a name that spans its box, and the scale's spread numbers, keep their measure
+    li = scan_ink(lambda im: im.__setitem__((slice(100, 103), slice(100, 150)), INK))
+    assert not map_letter.from_box(li, {'box': [95, 92, 155, 110]})
+    assert not map_letter.from_box(li, {'box': [95, 92, 400, 110], 'spread': True})
+
+
 def slanted():
     return scan_ink(lambda im: cv2.line(im, (100, 100), (140, 140), INK, 3))
 

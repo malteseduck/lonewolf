@@ -5,7 +5,8 @@ Run (from the project root):
   uv run --project tools python tools/map_measure.py <map-2k.png> <maps/<book>/labels.json>
 
 Writes "ink": {"at": [x, y] (centre), "angle" (degrees, y down, the reading direction), "length",
-"thick" (px on map-2k), "box" (the box it was measured in)} into every "retype" or "fix" label. It
+"thick" (px on map-2k), "box" (the box it was measured in), "from_box": true where the ink spanned
+too little of the box and the box was taken instead (map_letter.from_box)} into every "retype" or "fix" label. It
 ignores any "angle" set by hand, so the editor can show both. map_letter.py does not read "ink": it
 measures again, so a box moved since is never set from a stale measure (the editor flags those).
 """
@@ -14,7 +15,7 @@ import json
 import math
 from pathlib import Path
 
-from map_letter import geometry, read
+from map_letter import from_box, geometry, read
 from map_erase import LabelInk
 
 
@@ -40,6 +41,8 @@ def main():
                       'angle': round(math.degrees(ang), 2),
                       'length': round(float(length), 1), 'thick': round(float(thick), 1),
                       'box': list(lab['box'])}
+        if from_box(scan_ink, raw):  # too little ink to go by: the editor marks it to be checked
+            lab['ink']['from_box'] = True
         n += 1
     path.write_text(json.dumps(labels, indent=1), encoding='utf-8')
     print(f'{path}: measured {n} of {len(labels)} labels')

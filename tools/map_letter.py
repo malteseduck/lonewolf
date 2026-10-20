@@ -54,6 +54,7 @@ TRACK = 0.05              # extra space between letters, as a share of the type 
 BOLD = 0.025              # stroke added round each glyph, as a share of the type size
 FILL = 0.92               # type length as a share of the scan's ink length: hand ink is loose
 SLANT_TRUST = (3, 20)     # degrees between the ink's axis and OCR's slant where the slant is taken
+SPAN = 0.4                # ink spanning less of its box's long side than this is measured from the box
 
 
 def read(p):
@@ -68,13 +69,39 @@ def ink_mask(im, dark_min=30, chroma_max=24):
     return (dark > dark_min) & (chroma < chroma_max), dark
 
 
-def geometry(scan_ink, lab):
-    """Centre, reading direction (radians, y down) and length/thickness of the scan's ink."""
+def ink_points(scan_ink, lab):
     x0, y0, x1, y1 = scan_ink.box(lab)
     ys, xs = np.nonzero(scan_ink.mask(lab))
-    if len(xs) < 2:  # its letters are joined to a road or coast running out of the box
+    return np.column_stack([xs + x0, ys + y0]).astype(np.float64)
+
+
+def from_box(scan_ink, lab, pts=None):
+    """True where the ink's long axis spans under SPAN of the box's long side: the strip took in one
+    tall letter of a title, or a tower or palm joined to the letters left a speck (Book 7: 5 of 60;
+    none on Books 1-6 and 12). The box, along OCR's slant, is then the better guess."""
+    if lab.get('spread') or lab.get('lines'):
+        return False
+    pts = ink_points(scan_ink, lab) if pts is None else pts
+    if len(pts) < 2:
+        return False
+    c = pts.mean(0)
+    d = np.linalg.eigh(np.cov((pts - c).T))[1][:, 1]
+    along = (pts - c) @ d
+    x0, y0, x1, y1 = lab['box']
+    return along.max() - along.min() < SPAN * max(x1 - x0, y1 - y0)
+
+
+def geometry(scan_ink, lab):
+    """Centre, reading direction (radians, y down) and length/thickness of the scan's ink."""
+    pts = ink_points(scan_ink, lab)
+    if len(pts) < 2:  # its letters are joined to a road or coast running out of the box
         return None
-    pts = np.column_stack([xs + x0, ys + y0]).astype(np.float64)
+    if from_box(scan_ink, lab, pts):
+        x0, y0, x1, y1 = lab['box']
+        w, h = x1 - x0, y1 - y0
+        a = np.radians(lab['angle'] if 'angle' in lab else lab.get('slant', -90 if h > w * 1.6 else 0))
+        horiz = abs(np.cos(a)) >= 0.5
+        return np.array([(x0 + x1) / 2, (y0 + y1) / 2]), a, float(w if horiz else h), float(h if horiz else w)
     c = pts.mean(0)
     w, v = np.linalg.eigh(np.cov((pts - c).T))
     d = v[:, 1]  # long axis

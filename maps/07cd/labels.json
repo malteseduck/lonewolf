@@ -8,8 +8,7 @@
    118
   ],
   "slant": -1.3,
-  "conf": 1,
-  "retype": true
+  "conf": 1
  },
  {
   "text": "MAGIOCRACY OF",
@@ -20,8 +19,7 @@
    193
   ],
   "slant": 0,
-  "conf": 1,
-  "retype": true
+  "conf": 1
  },
  {
   "text": "VASSAGONIA",
@@ -33,10 +31,25 @@
   ],
   "slant": -12.8,
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1079.7,
+    180.7
+   ],
+   "angle": -11.82,
+   "length": 270.7,
+   "thick": 57.4,
+   "box": [
+    930,
+    114,
+    1209,
+    244
+   ]
+  }
  },
  {
-  "text": "KHORDAIMDISLES",
+  "text": "KHORDAIM ISLES",
   "box": [
    1577,
    167,
@@ -45,7 +58,22 @@
   ],
   "slant": 1.3,
   "conf": 0.98,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1701.6,
+    181.5
+   ],
+   "angle": 1.3,
+   "length": 240.5,
+   "thick": 38.8,
+   "box": [
+    1577,
+    167,
+    1825,
+    203
+   ]
+  }
  },
  {
   "text": "DESSI",
@@ -56,8 +84,7 @@
    302
   ],
   "slant": -0.5,
-  "conf": 1,
-  "retype": true
+  "conf": 1
  },
  {
   "text": "THE DRY MAIN",
@@ -73,7 +100,22 @@
   "lines": [
    "THE DRY",
    "MAIN"
-  ]
+  ],
+  "ink": {
+   "at": [
+    849.8,
+    241.5
+   ],
+   "angle": -1.8,
+   "length": 124.4,
+   "thick": 66.4,
+   "box": [
+    778,
+    194,
+    911,
+    281
+   ]
+  }
  },
  {
   "text": "R. KHORDA",
@@ -85,7 +127,22 @@
   ],
   "slant": -10.4,
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1179.5,
+    236.7
+   ],
+   "angle": -10.4,
+   "length": 163.8,
+   "thick": 43.5,
+   "box": [
+    1096,
+    196,
+    1262,
+    279
+   ]
+  }
  },
  {
   "text": "FIO FADALI",
@@ -97,7 +154,22 @@
   ],
   "slant": 0.7,
   "conf": 0.83,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    998.4,
+    312.5
+   ],
+   "angle": 0.7,
+   "length": 184.8,
+   "thick": 46.9,
+   "box": [
+    910,
+    278,
+    1088,
+    332
+   ]
+  }
  },
  {
   "text": "BAVARI HILLS",
@@ -109,10 +181,25 @@
   ],
   "slant": 0,
   "conf": 0.96,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1319.0,
+    355.7
+   ],
+   "angle": 0.26,
+   "length": 230.0,
+   "thick": 34.3,
+   "box": [
+    1208,
+    321,
+    1440,
+    382
+   ]
+  }
  },
  {
-  "text": "BAY G SHARKS",
+  "text": "BAY of SHARKS",
   "box": [
    1648,
    326,
@@ -121,7 +208,22 @@
   ],
   "slant": -0.7,
   "conf": 0.92,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1763.5,
+    355.2
+   ],
+   "angle": -1.68,
+   "length": 201.6,
+   "thick": 27.9,
+   "box": [
+    1648,
+    326,
+    1879,
+    397
+   ]
+  }
  },
  {
   "text": "KAKUSH",
@@ -133,7 +235,22 @@
   ],
   "slant": -15.6,
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    286.5,
+    432.0
+   ],
+   "angle": -15.6,
+   "length": 204.9,
+   "thick": 45.9,
+   "box": [
+    186,
+    378,
+    379,
+    488
+   ]
+  }
  },
  {
   "text": "LANAPO",
@@ -145,43 +262,111 @@
   ],
   "slant": 0,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    800.5,
+    381.5
+   ],
+   "angle": -2.68,
+   "length": 129.9,
+   "thick": 25.1,
+   "box": [
+    737,
+    363,
+    862,
+    395
+   ]
+  }
  },
  {
-  "text": "JAKAL",
+  "text": "JAKAI PASS",
   "box": [
    381,
    424,
-   482,
-   488
+   483,
+   499
   ],
   "slant": -4.7,
   "conf": 0.98,
-  "retype": true
+  "retype": true,
+  "lines": [
+   "JAKAI",
+   "PASS"
+  ],
+  "ink": {
+   "at": [
+    432.2,
+    463.4
+   ],
+   "angle": -6.27,
+   "length": 97.7,
+   "thick": 62.7,
+   "box": [
+    381,
+    424,
+    483,
+    499
+   ]
+  }
  },
  {
-  "text": "AVARI",
+  "text": "BAVARI",
   "box": [
-   1591,
+   1564,
    477,
-   1676,
-   509
+   1684,
+   515
   ],
   "slant": 0,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1624.0,
+    499.5
+   ],
+   "angle": 0.0,
+   "length": 104.0,
+   "thick": 37.0,
+   "box": [
+    1564,
+    477,
+    1684,
+    515
+   ]
+  }
  },
  {
-  "text": "NIKESA",
+  "text": "NIKESA PASS",
   "box": [
    126,
    517,
    239,
-   564
+   589
   ],
   "slant": 1,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "lines": [
+   "NIKESA",
+   "PASS"
+  ],
+  "ink": {
+   "at": [
+    178.4,
+    552.3
+   ],
+   "angle": 1.0,
+   "length": 105.0,
+   "thick": 77.3,
+   "box": [
+    126,
+    517,
+    239,
+    589
+   ]
+  }
  },
  {
   "text": "THE GREAT MASOURN TRAIL",
@@ -193,19 +378,22 @@
   ],
   "slant": 17,
   "conf": 0.96,
-  "retype": true
- },
- {
-  "text": "ASS",
-  "box": [
-   144,
-   563,
-   186,
-   589
-  ],
-  "slant": 0,
-  "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1390.0,
+    580.5
+   ],
+   "angle": 17.45,
+   "length": 427.4,
+   "thick": 63.2,
+   "box": [
+    1182,
+    502,
+    1599,
+    671
+   ]
+  }
  },
  {
   "text": "NIKESA",
@@ -217,31 +405,53 @@
   ],
   "slant": 0,
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    273.1,
+    603.2
+   ],
+   "angle": 0.62,
+   "length": 112.0,
+   "thick": 29.5,
+   "box": [
+    211,
+    583,
+    333,
+    621
+   ]
+  }
  },
  {
-  "text": "KAKUSH",
+  "text": "KAKUSH PLAINS",
   "box": [
    380,
    604,
    531,
-   643
-  ],
-  "slant": 0,
-  "conf": 1,
-  "retype": true
- },
- {
-  "text": "PLAINS",
-  "box": [
-   397,
-   641,
-   519,
    677
   ],
   "slant": 0,
   "conf": 1,
-  "retype": false
+  "retype": true,
+  "lines": [
+   "KAKUSH",
+   "PLAINS"
+  ],
+  "ink": {
+   "at": [
+    453.2,
+    644.9
+   ],
+   "angle": 1.65,
+   "length": 145.0,
+   "thick": 71.8,
+   "box": [
+    380,
+    604,
+    531,
+    677
+   ]
+  }
  },
  {
   "text": "KAZAN-OUD",
@@ -253,7 +463,23 @@
   ],
   "slant": -1.4,
   "conf": 0.96,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1032.0,
+    673.5
+   ],
+   "angle": -1.4,
+   "length": 212.0,
+   "thick": 39.0,
+   "box": [
+    926,
+    654,
+    1138,
+    693
+   ],
+   "from_box": true
+  }
  },
  {
   "text": "XULUN MTS.",
@@ -265,7 +491,22 @@
   ],
   "slant": 1.2,
   "conf": 0.84,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    839.1,
+    708.8
+   ],
+   "angle": 0.96,
+   "length": 228.1,
+   "thick": 57.4,
+   "box": [
+    729,
+    684,
+    959,
+    745
+   ]
+  }
  },
  {
   "text": "HERDOS",
@@ -277,19 +518,49 @@
   ],
   "slant": 0,
   "conf": 1,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1188.9,
+    726.3
+   ],
+   "angle": -2.99,
+   "length": 125.0,
+   "thick": 38.4,
+   "box": [
+    1122,
+    706,
+    1252,
+    751
+   ]
+  }
  },
  {
-  "text": "MONPA",
+  "text": "ILLUNI PEAKS",
   "box": [
-   238,
-   730,
-   435,
-   860
+   264,
+   754,
+   464,
+   849
   ],
   "slant": -75.6,
   "conf": 0.81,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    361.1,
+    810.0
+   ],
+   "angle": 5.04,
+   "length": 197.7,
+   "thick": 94.1,
+   "box": [
+    264,
+    754,
+    464,
+    849
+   ]
+  }
  },
  {
   "text": "DESSI",
@@ -301,7 +572,22 @@
   ],
   "slant": -5.4,
   "conf": 0.88,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1459.7,
+    767.7
+   ],
+   "angle": 23.47,
+   "length": 151.0,
+   "thick": 70.9,
+   "box": [
+    1376,
+    731,
+    1515,
+    820
+   ]
+  }
  },
  {
   "text": "LAMOAS",
@@ -313,7 +599,22 @@
   ],
   "slant": 0,
   "conf": 0.89,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    675.4,
+    862.4
+   ],
+   "angle": 0.39,
+   "length": 149.0,
+   "thick": 49.4,
+   "box": [
+    583,
+    842,
+    747,
+    888
+   ]
+  }
  },
  {
   "text": "R. XIN",
@@ -325,39 +626,84 @@
   ],
   "slant": 86.4,
   "conf": 0.97,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    887.6,
+    977.4
+   ],
+   "angle": 86.4,
+   "length": 109.2,
+   "thick": 28.9,
+   "box": [
+    847,
+    927,
+    898,
+    1042
+   ]
+  }
  },
  {
   "text": "DALOBIC",
   "box": [
-   1092,
-   929,
-   1203,
+   1082,
+   934,
+   1198,
    972
   ],
   "slant": 0,
   "conf": 0.94,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1139.5,
+    950.5
+   ],
+   "angle": 0.0,
+   "length": 123.0,
+   "thick": 41.0,
+   "box": [
+    1082,
+    934,
+    1198,
+    972
+   ]
+  }
  },
  {
   "text": "ELZIANT",
   "box": [
    1551,
    956,
-   1745,
-   1018
+   1707,
+   1014
   ],
   "slant": 0.8,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1626.7,
+    981.6
+   ],
+   "angle": 3.72,
+   "length": 144.9,
+   "thick": 32.5,
+   "box": [
+    1551,
+    956,
+    1707,
+    1014
+   ]
+  }
  },
  {
   "text": "SERPENT SWAMP",
   "box": [
-   1171,
-   969,
-   1357,
-   1063
+   1182,
+   980,
+   1318,
+   1057
   ],
   "slant": 1.2,
   "conf": 0.83,
@@ -365,7 +711,22 @@
   "lines": [
    "SERPENT",
    "SWAMP"
-  ]
+  ],
+  "ink": {
+   "at": [
+    1247.4,
+    1019.6
+   ],
+   "angle": 1.2,
+   "length": 130.0,
+   "thick": 80.4,
+   "box": [
+    1182,
+    980,
+    1318,
+    1057
+   ]
+  }
  },
  {
   "text": "LON",
@@ -377,7 +738,22 @@
   ],
   "slant": 0,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1107.2,
+    1147.1
+   ],
+   "angle": 38.36,
+   "length": 43.3,
+   "thick": 16.9,
+   "box": [
+    1087,
+    1121,
+    1150,
+    1161
+   ]
+  }
  },
  {
   "text": "COLOCANA",
@@ -389,31 +765,80 @@
   ],
   "slant": 1.3,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1453.2,
+    1101.6
+   ],
+   "angle": 4.12,
+   "length": 167.6,
+   "thick": 53.0,
+   "box": [
+    1360,
+    1085,
+    1533,
+    1135
+   ]
+  }
  },
  {
-  "text": "PLEAVON'S",
+  "text": "HEAVEN'S CHAIR MT.",
   "box": [
-   1624,
+   1612,
    1102,
-   1778,
-   1148
+   1782,
+   1192
   ],
   "slant": -1.1,
   "conf": 0.91,
-  "retype": true
+  "retype": true,
+  "lines": [
+   "HEAVEN'S",
+   "CHAIR MT."
+  ],
+  "ink": {
+   "at": [
+    1692.5,
+    1146.3
+   ],
+   "angle": 1.24,
+   "length": 170.0,
+   "thick": 98.8,
+   "box": [
+    1612,
+    1102,
+    1782,
+    1192
+   ]
+  }
  },
  {
-  "text": "TBOARI JUNGLE",
+  "text": "BOARI JUNGLE",
   "box": [
-   129,
-   1157,
-   390,
-   1245
+   153,
+   1178,
+   382,
+   1221
   ],
   "slant": 0.9,
   "conf": 0.94,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    268.4,
+    1201.3
+   ],
+   "angle": 1.57,
+   "length": 229.8,
+   "thick": 46.9,
+   "box": [
+    153,
+    1178,
+    382,
+    1221
+   ]
+  }
  },
  {
   "text": "ANASUNDE",
@@ -425,19 +850,22 @@
   ],
   "slant": 0,
   "conf": 0.88,
-  "retype": true
- },
- {
-  "text": "CHPAIR MT.",
-  "box": [
-   1612,
-   1138,
-   1782,
-   1192
-  ],
-  "slant": -1,
-  "conf": 0.87,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    868.0,
+    1154.3
+   ],
+   "angle": -1.21,
+   "length": 162.4,
+   "thick": 32.7,
+   "box": [
+    790,
+    1128,
+    946,
+    1176
+   ]
+  }
  },
  {
   "text": "LIO",
@@ -449,7 +877,22 @@
   ],
   "slant": 0,
   "conf": 0.96,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1861.0,
+    1167.5
+   ],
+   "angle": 0.0,
+   "length": 48.0,
+   "thick": 27.0,
+   "box": [
+    1828,
+    1148,
+    1891,
+    1187
+   ]
+  }
  },
  {
   "text": "BAY of LON",
@@ -461,7 +904,22 @@
   ],
   "slant": -1.3,
   "conf": 0.84,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1177.8,
+    1235.2
+   ],
+   "angle": -2.19,
+   "length": 119.1,
+   "thick": 38.4,
+   "box": [
+    1072,
+    1220,
+    1245,
+    1274
+   ]
+  }
  },
  {
   "text": "BITA SWAMP",
@@ -477,7 +935,22 @@
   "lines": [
    "BITA",
    "SWAMP"
-  ]
+  ],
+  "ink": {
+   "at": [
+    502.5,
+    1255.8
+   ],
+   "angle": -2.3,
+   "length": 127.9,
+   "thick": 83.4,
+   "box": [
+    441,
+    1220,
+    566,
+    1295
+   ]
+  }
  },
  {
   "text": "LKUMINI",
@@ -489,7 +962,22 @@
   ],
   "slant": 0.3,
   "conf": 0.98,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    699.3,
+    1301.5
+   ],
+   "angle": 1.82,
+   "length": 158.5,
+   "thick": 33.0,
+   "box": [
+    624,
+    1278,
+    779,
+    1322
+   ]
+  }
  },
  {
   "text": "PLAINS",
@@ -513,7 +1001,7 @@
   ],
   "slant": 89.1,
   "conf": 0.91,
-  "retype": true
+  "retype": false
  },
  {
   "text": "JUNGLE",
@@ -525,7 +1013,7 @@
   ],
   "slant": -0.7,
   "conf": 0.99,
-  "retype": true
+  "retype": false
  },
  {
   "text": "THE TENTARIAS",
@@ -537,7 +1025,22 @@
   ],
   "slant": -1,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    337.0,
+    1407.5
+   ],
+   "angle": -0.21,
+   "length": 218.0,
+   "thick": 32.3,
+   "box": [
+    217,
+    1381,
+    449,
+    1425
+   ]
+  }
  },
  {
   "text": "SKULL IS.",
@@ -549,7 +1052,22 @@
   ],
   "slant": 0,
   "conf": 0.96,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    640.4,
+    1406.9
+   ],
+   "angle": -0.67,
+   "length": 169.0,
+   "thick": 32.5,
+   "box": [
+    560,
+    1383,
+    732,
+    1424
+   ]
+  }
  },
  {
   "text": "DESERTS",
@@ -573,7 +1091,7 @@
   ],
   "slant": -1.3,
   "conf": 1,
-  "retype": true
+  "retype": false
  },
  {
   "text": "DISTANCE IN MILES",
@@ -609,29 +1127,61 @@
   ],
   "slant": -0.7,
   "conf": 0.99,
-  "retype": true
+  "retype": false
  },
  {
-  "text": "25 50 75 100",
+  "text": "0 25 50 75 100",
   "box": [
-   1524,
+   1479,
    1514,
    1726,
    1537
   ],
   "slant": -0.2,
   "conf": 0.97,
-  "retype": true
+  "retype": true,
+  "spread": true,
+  "ink": {
+   "at": [
+    1603.5,
+    1523.6
+   ],
+   "angle": 0.54,
+   "length": 235.0,
+   "thick": 26.7,
+   "box": [
+    1479,
+    1514,
+    1726,
+    1537
+   ]
+  }
  },
  {
   "text": "BISHTAN",
   "box": [
-   1293,
-   181,
-   1487,
+   1326,
+   186,
+   1472,
    237
   ],
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1399.0,
+    211.5
+   ],
+   "angle": 0.0,
+   "length": 146.0,
+   "thick": 51.0,
+   "box": [
+    1326,
+    186,
+    1472,
+    237
+   ],
+   "from_box": true
+  }
  },
  {
   "text": "R. KHARD",
@@ -642,7 +1192,6 @@
    587
   ],
   "retype": true,
-  "found": "claude",
   "set": {
    "at": [
     854.9,
@@ -650,6 +1199,21 @@
    ],
    "size": 33.1,
    "angle": -20.5
+  },
+  "ink": {
+   "at": [
+    848.3,
+    550.9
+   ],
+   "angle": -22.27,
+   "length": 128.1,
+   "thick": 74.9,
+   "box": [
+    778,
+    501,
+    928,
+    587
+   ]
   }
  },
  {
@@ -660,29 +1224,72 @@
    598,
    844
   ],
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    489.6,
+    777.6
+   ],
+   "angle": 30.89,
+   "length": 227.6,
+   "thick": 63.2,
+   "box": [
+    407,
+    698,
+    598,
+    844
+   ]
+  }
  },
  {
   "text": "THE MANCHOS",
   "box": [
-   357,
-   934,
-   662,
-   1115
+   407,
+   959,
+   610,
+   1091
   ],
   "retype": true,
-  "found": "claude"
+  "ink": {
+   "at": [
+    506.5,
+    1005.3
+   ],
+   "angle": -27.77,
+   "length": 191.4,
+   "thick": 110.9,
+   "box": [
+    407,
+    959,
+    610,
+    1091
+   ]
+  }
  },
  {
   "text": "R. BOARI",
   "box": [
-   105,
-   851,
-   240,
-   1032
+   128,
+   877,
+   220,
+   1003
   ],
   "retype": true,
-  "found": "claude"
+  "ink": {
+   "at": [
+    169.5,
+    949.2
+   ],
+   "angle": -55.88,
+   "length": 139.5,
+   "thick": 33.4,
+   "box": [
+    128,
+    877,
+    220,
+    1003
+   ]
+  }
  },
  {
   "text": "R. LODOLO",
@@ -692,7 +1299,22 @@
    1028,
    988
   ],
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1005.5,
+    930.4
+   ],
+   "angle": 65.55,
+   "length": 96.3,
+   "thick": 45.9,
+   "box": [
+    979,
+    837,
+    1028,
+    988
+   ]
+  }
  },
  {
   "text": "R. DOI",
@@ -702,7 +1324,22 @@
    1230,
    912
   ],
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1181.8,
+    863.2
+   ],
+   "angle": -87.86,
+   "length": 104.5,
+   "thick": 73.3,
+   "box": [
+    1151,
+    808,
+    1230,
+    912
+   ]
+  }
  },
  {
   "text": "UOBI",
@@ -712,27 +1349,72 @@
    1082,
    1067
   ],
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1044.6,
+    1052.6
+   ],
+   "angle": 18.91,
+   "length": 83.1,
+   "thick": 31.7,
+   "box": [
+    998,
+    1032,
+    1082,
+    1067
+   ]
+  }
  },
  {
   "text": "HIKAS",
   "box": [
-   1660,
-   672,
-   1781,
-   733
+   1657,
+   682,
+   1760,
+   722
   ],
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1689.4,
+    710.9
+   ],
+   "angle": 18.24,
+   "length": 59.5,
+   "thick": 25.6,
+   "box": [
+    1657,
+    682,
+    1760,
+    722
+   ]
+  }
  },
  {
   "text": "GOLOGO",
   "box": [
-   1771,
-   719,
-   1944,
-   780
+   1796,
+   730,
+   1919,
+   779
   ],
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1851.1,
+    744.4
+   ],
+   "angle": -18.8,
+   "length": 132.9,
+   "thick": 43.5,
+   "box": [
+    1796,
+    730,
+    1919,
+    779
+   ]
+  }
  },
  {
   "text": "CARCOS RANGE",
@@ -744,6 +1426,48 @@
   ],
   "where": "",
   "small": false,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1324.4,
+    663.7
+   ],
+   "angle": 0.46,
+   "length": 255.0,
+   "thick": 65.6,
+   "box": [
+    1201,
+    635,
+    1449,
+    693
+   ]
+  }
+ },
+ {
+  "text": "CHASM OF GORGORON",
+  "box": [
+   1429,
+   767,
+   1714,
+   970
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "ink": {
+   "at": [
+    1571.5,
+    880.4
+   ],
+   "angle": -30.27,
+   "length": 333.3,
+   "thick": 77.3,
+   "box": [
+    1429,
+    767,
+    1714,
+    970
+   ]
+  }
  }
 ]

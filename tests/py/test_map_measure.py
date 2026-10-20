@@ -41,6 +41,13 @@ def test_measures_a_retype_label(tmp_path, monkeypatch, capsys):
     assert abs(ink['thick'] - 2) < 1.5
     assert ink['box'] == [95, 92, 155, 110]
     assert 'measured 1 of 1 labels' in capsys.readouterr().out
+    assert 'from_box' not in ink
+
+
+def test_marks_a_label_measured_from_its_box(tmp_path, monkeypatch, capsys):
+    src, lab = setup(tmp_path, [{'text': 'ABCDEFGH', 'box': [95, 92, 400, 110], 'retype': True}])
+    ink = run(monkeypatch, src, lab)[0]['ink']
+    assert ink['from_box'] is True and ink['length'] == 305
 
 
 

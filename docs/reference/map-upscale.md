@@ -125,6 +125,10 @@ Commands run from the project root as
    label's measured ink (`ink`: centre, angle, length, thickness) into the list, so the map editor's
    preview starts from what step 4 will set. Optional: no other tool reads it. Run it once the
    wording and boxes are right, and again after moving a box (the editor outlines stale ones in red).
+   Where the ink spans under 0.4 of the box's long side (`SPAN`: a title's strip took in one tall
+   letter, or a tower or palm joined to a short name left a speck), the box is measured instead,
+   along OCR's `slant` or level; the measure marks it `from_box` and the editor outlines it in red
+   to be looked at (Book 7: 2 of 60 after its title was unticked; none on Books 1-6 and 12).
 3. **Erase the place names**: `map_erase.py $W/map-2k.png $L $W/map-2k-erased.jpg`.
    It takes each near-black shape lying mostly inside a name's box, and leaves lines running out of
    it (coasts, roads, the grid), trees and outlined shapes. Look at the result: a letter joined to a
