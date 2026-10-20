@@ -30,16 +30,8 @@ body { display: flex; flex-direction: column; }
   background: var(--page) var(--parch, none) center / cover; box-shadow: var(--scorch), 0 2px 8px #000a; border: 0; color: var(--blood); }
 #trayl { left: 0; border-radius: 0 4px 4px 0; } #trayr { right: 0; border-radius: 4px 0 0 4px; }
 #rail, #panel { flex-shrink: 0; }
-#rail, #panel, aside, #booklist, #ask { background: var(--page) var(--parch, none) center / cover; box-shadow: var(--scorch); }
+#rail, #panel, aside, #ask { background: var(--page) var(--parch, none) center / cover; box-shadow: var(--scorch); }
 #rail { display: flex; align-items: center; gap: 4px; padding: 7px 10px; flex-wrap: wrap; }
-#rail b { margin-right: 6px; }
-#bookpick { width: 16em; margin-right: 8px; }
-#booklist { position: fixed; z-index: 50; min-width: 22em; max-height: 60vh; overflow-y: auto;
-  border-radius: 3px; box-shadow: var(--scorch), 0 6px 18px #0008; }
-#booklist[hidden] { display: none; }
-#booklist .bk { padding: 4px 9px; cursor: pointer; white-space: nowrap; }
-#booklist .bk:hover, #booklist .bk.hi { background: var(--btn-hi); }
-#booklist .bk small { color: var(--dim); margin-left: 6px; }
 #steps { display: flex; gap: 3px; flex-wrap: wrap; }
 .step { display: flex; align-items: center; gap: 5px; padding: 3px 8px; }
 .step i { width: 9px; height: 9px; border-radius: 50%; background: #a8977a; display: inline-block; }
@@ -109,13 +101,11 @@ canvas { display: block; width: 100%; height: 100%; cursor: grab; }
 #panel .about li { margin: 2px 0; }
 h3 { margin: 0; padding: 8px 10px; font-size: 13px; border-bottom: 1px solid var(--line); color: var(--blood); }
 kbd { background: rgba(255, 248, 226, .5); border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; }
-/* inside the dashboard (?embed=1): the dashboard picks the book */
-body.embed #rail > b, body.embed #bookpick { display: none; }
 </style>
 <script type="module" src="admin/parchment.js"></script>
 </head>
 <body>
-<header id="rail"><b>Map editor</b><input id="bookpick" placeholder="Pick a book: number, title or code" autocomplete="off"><div id="booklist" hidden></div><div id="steps"></div><span id="job"></span></header>
+<header id="rail"><div id="steps"></div><span id="job"></span></header>
 <section id="panel" hidden></section>
 <div id="dropmark"></div>
 <div id="app">
@@ -176,7 +166,7 @@ body.embed #rail > b, body.embed #bookpick { display: none; }
 'use strict';
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
-// inside the import dashboard (tools/admin/): no book picker, and the dashboard hears when the files change
+// inside the import dashboard (tools/admin/), which picks the book and hears when the files change
 const EMBED = params.get('embed') === '1' && window.parent !== window;
 // the editor opens only inside the dashboard (owner, 2026-10-11)
 if (!EMBED) { document.body.innerHTML = '<p style="padding:24px">This page opens only inside the import dashboard, <a href="/tools/admin/">/tools/admin/</a>.</p>'; throw new Error('not embedded'); }
@@ -277,44 +267,8 @@ async function loadLabels() {
   if (sel >= labels.length) sel = -1;
   return true;
 }
-async function bookPicker() {  // every book folder, typeahead by number, title or code
-  let books = [];
-  try { books = await (await fetch('/api/map/books', { cache: 'no-store' })).json(); } catch (e) {}
-  const name = b => (b.number ? b.number + '. ' : '') + (b.title || b.code);
-  const cur = books.find(b => b.code === book);
-  const pick = $('bookpick'), list = $('booklist');
-  if (cur) pick.placeholder = name(cur) + ' (' + cur.code + ')';
-  // our own list under the box: a datalist's popup opened at the far left of the window
-  let shown = [], hi = 0;
-  const go = b => { list.hidden = true; if (b && b.code !== book) location.search = '?book=' + encodeURIComponent(b.code); };
-  const mark = () => [...list.children].forEach((d, i) => d.classList.toggle('hi', i === hi));
-  const show = () => {
-    const q = pick.value.trim().toLowerCase();
-    shown = books.filter(b => !q || (name(b) + ' ' + b.code).toLowerCase().includes(q))
-      .sort((a, b) => (String(b.number) === q) - (String(a.number) === q));  // "3" puts Book 3 before 13
-    hi = 0;
-    list.innerHTML = shown.map((b, i) => `<div class="bk" data-i="${i}">${esc(name(b))}<small>${esc(b.code + ', ' + b.stage)}</small></div>`).join('');
-    mark();
-    const r = pick.getBoundingClientRect();
-    Object.assign(list.style, { left: r.left + 'px', top: r.bottom + 2 + 'px' });
-    list.hidden = !shown.length;
-  };
-  pick.oninput = show;
-  pick.onfocus = () => { pick.value = ''; show(); };
-  pick.onblur = () => { list.hidden = true; };
-  list.onmousedown = e => { e.preventDefault(); const d = e.target.closest('.bk'); if (d) go(shown[+d.dataset.i]); };
-  pick.onkeydown = e => {
-    if (list.hidden) return;
-    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-      e.preventDefault(); hi = (hi + (e.key === 'ArrowDown' ? 1 : shown.length - 1)) % shown.length;
-      mark(); list.children[hi].scrollIntoView({ block: 'nearest' });
-    } else if (e.key === 'Enter') { e.preventDefault(); go(shown[hi]); }
-    else if (e.key === 'Escape') pick.blur();
-  };
-}
 async function init() {
-  await bookPicker();
-  if (!book) { savedJson = snap(); $('bookpick').focus(); msg('Pick a book to start', 8000); return; }
+  if (!book) { savedJson = snap(); msg('No book given', 8000); return; }
   $('title').textContent = 'Labels, ' + book;
   const have = await loadLabels();
   if (!have) msg('No label list for ' + book + ' yet: step 2 drafts one', 8000);
@@ -1500,7 +1454,7 @@ window.addEventListener('drop', async e => {
 window.mapEditorDirty = () => snap() !== savedJson;  // asked by the dashboard before it closes the editor
 window.addEventListener('beforeunload', e => { if (snap() !== savedJson) { e.preventDefault(); e.returnValue = ''; } });
 window.addEventListener('resize', resize);
-// the side trays, slid out or in; remembered in this browser only
+// the side trays, slid out or in
 function toggleTray(side, on) {
   const app = $('app'), cls = side === 'left' ? 'noleft' : 'noright';
   const hide = on === undefined ? !app.classList.contains(cls) : !on;
@@ -1508,14 +1462,11 @@ function toggleTray(side, on) {
   const b = $(side === 'left' ? 'trayl' : 'trayr'), name = side === 'left' ? 'labels' : 'tools';
   b.innerHTML = (side === 'left') === hide ? '&#8250;' : '&#8249;';
   b.title = `${hide ? 'Show' : 'Hide'} the ${name} tray (${side === 'left' ? '[' : ']'})`;
-  try { localStorage.setItem('lw-mapedit-' + cls, hide ? '1' : ''); } catch {}
 }
 $('trayl').onclick = () => toggleTray('left');
 $('trayr').onclick = () => toggleTray('right');
-for (const side of ['left', 'right']) {
-  let hid = false; try { hid = !!localStorage.getItem('lw-mapedit-no' + side); } catch {}
-  if (hid) toggleTray(side, false);
-}
+// both start slid out, so the map opens at full width
+toggleTray('left', false); toggleTray('right', false);
 new ResizeObserver(resize).observe(cv);
 resize();
 init();

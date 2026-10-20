@@ -16,6 +16,11 @@ OFL, like the other fonts in tools/fonts/.
 Four weights from one drawing: Thin is Book 12's pen once map_letter.py's added stroke is counted
 (stroke width over letter height 0.074 on the map, the scan's 0.075); Bold is about Book 13's pen.
 --sheet also writes a specimen of every glyph in every weight.
+
+Darkland Serif (Book 9, the owner, 2026-10-20) is built beside it from the same nib: Book 9's map is
+lettered with a broad pen in a hand still angular but serifed: every long steep stroke ends in a serif
+(serifs(), below), O and the bowls are rounded diamonds (only C, G and c round), the S is angular
+with a round bottom, contrast is stronger and the letters are closer set.
 """
 import argparse
 import math
@@ -109,6 +114,109 @@ G = {
 SPACE = 260
 
 
+# Darkland Serif (Book 9 on, the owner, 2026-10-20): the same nib and still angular, but Book 9's map
+# is lettered with a broad pen whose stems end in wedge serifs (lower case: an exit flick); its O and
+# bowls are rounded diamonds, only C (and G, c) truly round; its letters are less squashed.
+BOWL = 1.35  # a bowl's superellipse exponent: 1 a diamond, 2 an ellipse (owner: "almost like a slightly rounded diamond")
+
+
+def arc(cx, cy, rx, ry, a0, a1, n=BOWL):
+    """Part of a superellipse, from angle a0 to a1 in degrees (anticlockwise if a1 > a0)."""
+    k = max(4, round(abs(a1 - a0) / 10))
+    def at(t):
+        c, s = math.cos(math.radians(t)), math.sin(math.radians(t))
+        return cx + rx * math.copysign(abs(c) ** (2 / n), c), cy + ry * math.copysign(abs(s) ** (2 / n), s)
+    return [at(a0 + (a1 - a0) * i / k) for i in range(k + 1)]
+
+
+def cubic(*curves):
+    """Joined cubic Béziers, each (p0, p1, p2, p3), as one polyline."""
+    out = []
+    for p0, p1, p2, p3 in curves:
+        for i in range(0 if not out else 1, 13):
+            t = i / 12
+            out.append(tuple((1 - t) ** 3 * a + 3 * (1 - t) ** 2 * t * b + 3 * (1 - t) * t * t * c + t ** 3 * d
+                             for a, b, c, d in zip(p0, p1, p2, p3)))
+    return out
+
+
+# S: a flick, an angular top and spine in straight strokes, and a round bottom bowl ending in a tail
+_S = [(440, 560), (430, 690), (160, 700), (30, 580), (70, 440), (380, 290)] + cubic(((380, 290), (470, 220), (450, 10), (220, 0)), ((220, 0), (90, -5), (0, 50), (10, 160)))[1:]
+_ARCH = lambda x, w: [(x, 300), (x + 0.4 * w, 480), (x + w + 10, 420), (x + w + 10, 0)]  # an angular shoulder and its leg
+GS = dict(G)  # digits and punctuation as Darkland Hand's
+GS.update({
+    'A': (560, [[(0, 0), (280, 700), (560, 0)], [(130, 250), (440, 250)], [(230, 700), (320, 700)]]),
+    'B': (420, [[(0, 0), (0, 700)], [(0, 700)] + arc(150, 535, 210, 165, 90, -90) + [(0, 370)], [(0, 370)] + arc(170, 185, 250, 185, 90, -90) + [(0, 0)]]),
+    'C': (500, [[(490, 520)] + arc(280, 350, 280, 350, 45, 315, 2)]),
+    'D': (460, [[(0, 0), (0, 700)], [(0, 700)] + arc(130, 350, 330, 350, 90, -90) + [(0, 0)]]),
+    'E': (420, [[(0, 700), (0, 0)], [(0, 700), (400, 700), (410, 610)], [(0, 360), (280, 360)], [(0, 0), (420, 0), (430, 90)]]),
+    'F': (400, [[(0, 700), (0, 0)], [(0, 700), (400, 700), (410, 610)], [(0, 370), (280, 370)]]),
+    'G': (580, [arc(290, 350, 290, 350, 45, 345, 2), [(340, 290), (590, 290), (590, 30)]]),
+    'H': (480, [[(0, 0), (0, 700)], [(480, 0), (480, 700)], [(0, 360), (480, 360)]]),
+    'I': (0, [[(0, 0), (0, 700)]]),
+    'J': (380, [[(380, 700), (380, 200)] + arc(200, 200, 180, 200, 0, -160)]),
+    'K': (460, [[(0, 0), (0, 700)], [(440, 700), (0, 300)], [(120, 400), (470, 0)]]),
+    'L': (400, [[(0, 700), (0, 0), (400, 0), (415, 90)]]),
+    'M': (620, [[(0, 0), (40, 700), (310, 160), (580, 700), (620, 0)]]),
+    'N': (500, [[(0, 0), (0, 700), (500, 0), (500, 700)]]),
+    'O': (560, [arc(280, 350, 280, 350, 90, 450)]),
+    'P': (420, [[(0, 0), (0, 700)], [(0, 700)] + arc(150, 520, 230, 180, 90, -90) + [(0, 340)]]),
+    'Q': (560, [arc(280, 350, 280, 350, 90, 450), cubic(((300, 60), (380, -30), (480, -80), (590, -60)))]),
+    'R': (460, [[(0, 0), (0, 700)], [(0, 700)] + arc(150, 530, 220, 170, 90, -90) + [(0, 360)], [(170, 360), (470, 0)]]),
+    'S': (440, [_S]),
+    'T': (520, [[(10, 610), (0, 700), (520, 700), (530, 610)], [(260, 700), (260, 0)]]),
+    'U': (480, [[(0, 700), (0, 230)] + arc(240, 230, 240, 230, 180, 360), [(480, 700), (480, 0)]]),
+    'V': (520, [[(0, 700), (260, 0), (520, 700)]]),
+    'W': (700, [[(0, 700), (175, 0), (350, 600), (525, 0), (700, 700)]]),
+    'X': (480, [[(0, 700), (480, 0)], [(480, 700), (0, 0)]]),
+    'Y': (500, [[(0, 700), (250, 350), (500, 700)], [(250, 350), (250, 0)]]),
+    'Z': (460, [[(10, 610), (0, 700), (460, 700), (0, 0), (460, 0), (470, 90)]]),
+    'a': (350, [arc(175, 240, 175, 240, 0, 360), [(350, 480), (350, 0)]]),
+    'b': (360, [[(0, 720), (0, 0)], arc(185, 240, 175, 240, 180, 540)]),
+    'c': (330, [arc(180, 240, 180, 240, 50, 310, 2)]),
+    'd': (350, [arc(175, 240, 175, 240, 0, 360), [(350, 720), (350, 0)]]),
+    'e': (340, [[(10, 250), (345, 250)] + arc(175, 240, 170, 240, 5, 310)]),
+    'f': (300, [[(310, 650), (250, 720), (160, 720), (120, 640), (120, 0)], [(0, 440), (270, 440)]]),
+    'g': (345, [arc(175, 260, 170, 220, 0, 360), [(345, 480), (345, -100)] + arc(190, -100, 155, 120, 0, -170)]),
+    'h': (320, [[(0, 720), (0, 0)], _ARCH(0, 300)]),
+    'i': (0, [[(0, 480), (0, 0)], [(0, 640)]]),
+    'j': (180, [[(180, 480), (180, -100)] + arc(60, -100, 120, 120, 0, -150), [(180, 640)]]),
+    'k': (330, [[(0, 720), (0, 0)], [(300, 480), (0, 180)], [(110, 250), (330, 0)]]),
+    'l': (0, [[(0, 720), (0, 0)]]),
+    'm': (520, [[(0, 480), (0, 0)], _ARCH(0, 240), _ARCH(250, 240)]),
+    'n': (320, [[(0, 480), (0, 0)], _ARCH(0, 300)]),
+    'o': (360, [arc(180, 240, 180, 240, 90, 450)]),
+    'p': (360, [[(0, 480), (0, -220)], arc(185, 240, 175, 240, 180, 540)]),
+    'q': (350, [arc(175, 240, 175, 240, 0, 360), [(350, 480), (350, -220)]]),
+    'r': (280, [[(0, 480), (0, 0)], [(0, 300), (100, 470), (240, 470), (280, 400)]]),
+    's': (300, [[(x * 0.68, y * 480 / 700) for x, y in _S]]),
+    't': (280, [[(110, 650), (110, 80), (180, 0), (280, 50)], [(0, 440), (260, 440)]]),
+    'u': (320, [[(0, 480), (0, 130), (130, 0), (310, 90)], [(310, 480), (310, 0)]]),
+})
+SERIF = 70       # a serif's reach either side of the stem, font units
+SERIF_STYLE = dict(tall=0.85, wide=0.92, lower_wide=0.88, nib_angle=30, side=40,  # spaced closer than Darkland Hand, as Book 9's names are
+                   weights={'Thin': (55, 14), 'Light': (95, 18), 'Regular': (130, 26), 'Bold': (175, 34)})
+
+
+def serifs(strokes, lower):
+    """A serif at each free end of a long, steep stroke: a bar across a capital's stem, a wedge into a
+    lower-case stem's top and a flick out of its foot (a bar on a descender)."""
+    out = []
+    for s in strokes:
+        for p, q in ((s[0], s[1]), (s[-1], s[-2])) if len(s) > 1 else ():
+            dx, dy = p[0] - q[0], p[1] - q[1]
+            if math.hypot(dx, dy) < 150 or abs(dy) <= 1.2 * abs(dx):
+                continue
+            x, y = p
+            if dy > 0:
+                out.append([(x - SERIF, y - (12 if lower else 0)), (x + (10 if lower else SERIF * 0.7), y)])
+            elif lower and y > -50:
+                out.append([(x, y), (x + SERIF, y + 18)])
+            else:
+                out.append([(x - SERIF * 0.7, y), (x + SERIF, y)])
+    return out
+
+
 def hull(pts):
     pts = sorted(set(pts))
     if len(pts) < 3:
@@ -126,15 +234,15 @@ def hull(pts):
     return lo[:-1] + hi[:-1]  # anticlockwise
 
 
-def nib(length, thick):
-    a = math.radians(NIB_ANGLE)
+def nib(length, thick, angle=NIB_ANGLE):
+    a = math.radians(angle)
     u, v = (math.cos(a) * length / 2, math.sin(a) * length / 2), (-math.sin(a) * thick / 2, math.cos(a) * thick / 2)
     return [(su * u[0] + sv * v[0], su * u[1] + sv * v[1]) for su in (-1, 1) for sv in (-1, 1)]
 
 
-def outlines(strokes, length, thick):
+def outlines(strokes, length, thick, angle=NIB_ANGLE):
     """Each segment (or a lone point) swept by the nib: one convex polygon, clockwise as TrueType wants."""
-    corners = nib(length, thick)
+    corners = nib(length, thick, angle)
     out = []
     for s in strokes:
         segs = list(zip(s, s[1:])) or [(s[0], s[0])]
@@ -144,40 +252,53 @@ def outlines(strokes, length, thick):
     return out
 
 
-def build(weight, out):
-    length, thick = WEIGHTS[weight]
-    reach = math.ceil(max(abs(x) for x, _ in nib(length, thick)))
-    names = {c: (c if c.isalnum() and c.isascii() else f'uni{ord(c):04X}') for c in G}
-    order = ['.notdef', 'space'] + [names[c] for c in G]
+FAMILIES = {'DarklandHand': 'Darkland Hand', 'DarklandSerif': 'Darkland Serif'}
+
+
+def build(weight, out, family='DarklandHand'):
+    serif = family == 'DarklandSerif'
+    st = SERIF_STYLE if serif else dict(tall=TALL, wide=WIDE, lower_wide=LOWER_WIDE, nib_angle=NIB_ANGLE, side=SIDE, weights=WEIGHTS)
+    glyph_set = GS if serif else G
+    tall = st['tall']
+    asc, desc = round(720 * tall), round(-220 * tall)
+    length, thick = st['weights'][weight]
+    reach = math.ceil(max(abs(x) for x, _ in nib(length, thick, st['nib_angle'])))
+    names = {c: (c if c.isalnum() and c.isascii() else f'uni{ord(c):04X}') for c in glyph_set}
+    order = ['.notdef', 'space'] + [names[c] for c in glyph_set]
     fb = FontBuilder(UPM, isTTF=True)
     fb.setupGlyphOrder(order)
-    fb.setupCharacterMap({32: 'space', **{ord(c): names[c] for c in G}})
+    fb.setupCharacterMap({32: 'space', **{ord(c): names[c] for c in glyph_set}})
     glyphs, metrics = {}, {}
     for name in ('.notdef', 'space'):
         glyphs[name] = TTGlyphPen(None).glyph()
         metrics[name] = (SPACE, 0)
-    for c, (w, strokes) in G.items():
-        k = LOWER_WIDE if c.islower() else WIDE
-        w, strokes = round(w * k), [[(x * k, y * TALL) for x, y in st] for st in strokes]
+    for c, (w, strokes) in glyph_set.items():
+        if serif and c.isalpha():
+            strokes = strokes + serifs(strokes, c.islower())
+        k = st['lower_wide'] if c.islower() else st['wide']
+        w, strokes = round(w * k), [[(x * k, y * tall) for x, y in s] for s in strokes]
         pen = TTGlyphPen(None)
-        dx = SIDE + reach
-        polys = outlines(strokes, length, thick)
+        polys = outlines(strokes, length, thick, st['nib_angle'])
+        left = min(x for poly in polys for x, _ in poly)
+        # Darkland Hand spaces by the drawing's width; the serif face by its ink, since serifs reach past it
+        dx = st['side'] - left if serif else SIDE + reach
         for poly in polys:
             pen.moveTo((poly[0][0] + dx, poly[0][1]))
             for x, y in poly[1:]:
                 pen.lineTo((x + dx, y))
             pen.closePath()
         glyphs[names[c]] = pen.glyph()
-        metrics[names[c]] = (w + 2 * (SIDE + reach), min(x for poly in polys for x, _ in poly) + dx)
+        right = max(x for poly in polys for x, _ in poly)
+        metrics[names[c]] = (round(right - left) + 2 * st['side'] if serif else w + 2 * (SIDE + reach), left + dx)
     fb.setupGlyf(glyphs)
     fb.setupHorizontalMetrics(metrics)
-    fb.setupHorizontalHeader(ascent=ASC + 80, descent=DESC - 60)
-    family = 'Darkland Hand'
-    fb.setupNameTable({'familyName': family, 'styleName': weight, 'uniqueFontIdentifier': f'{family} {weight}',
-                       'fullName': f'{family} {weight}', 'psName': f'DarklandHand-{weight}', 'version': 'Version 1.0',
+    fb.setupHorizontalHeader(ascent=asc + 80, descent=desc - 60)
+    name = FAMILIES[family]
+    fb.setupNameTable({'familyName': name, 'styleName': weight, 'uniqueFontIdentifier': f'{name} {weight}',
+                       'fullName': f'{name} {weight}', 'psName': f'{family}-{weight}', 'version': 'Version 1.0',
                        'copyright': 'Copyright 2026, the Lone Wolf player project. SIL Open Font License 1.1.'})
-    fb.setupOS2(sTypoAscender=ASC + 80, sTypoDescender=DESC - 60, usWinAscent=ASC + 120, usWinDescent=-(DESC - 100),
-                sxHeight=XH, sCapHeight=CAP, usWeightClass={'Thin': 200, 'Light': 300, 'Regular': 400, 'Bold': 700}[weight])
+    fb.setupOS2(sTypoAscender=asc + 80, sTypoDescender=desc - 60, usWinAscent=asc + 120, usWinDescent=-(desc - 100),
+                sxHeight=round(480 * tall), sCapHeight=round(700 * tall), usWeightClass={'Thin': 200, 'Light': 300, 'Regular': 400, 'Bold': 700}[weight])
     fb.setupPost()
     fb.save(str(out))
     return out
@@ -187,7 +308,7 @@ def sheet(fonts, out):
     from PIL import Image, ImageDraw, ImageFont
     lines = ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz', "0123456789 .,'-/&()",
              'SOMMERLUND THE DARKLANDS', 'Naogizaga Point Vashna', 'The Kaltersee Gourdanak Mtns',
-             'LOURDEN STONEWATCH', 'Slovarian Plain Forest of Ruel']
+             'LOURDEN STONEWATCH', 'Slovarian Plain Forest of Ruel', 'SLOVIA SUENTINA FERRAR', 'Kakush Uplands R. Chah']
     im = Image.new('RGB', (1500, 90 * len(lines) * len(fonts) + 20), 'white')
     d = ImageDraw.Draw(im)
     y = 10
@@ -204,7 +325,7 @@ def main():
     ap.add_argument('out', nargs='?', default=str(Path(__file__).parent / 'fonts'))
     ap.add_argument('--sheet')
     a = ap.parse_args()
-    fonts = [build(w, Path(a.out) / f'DarklandHand-{w}.ttf') for w in WEIGHTS]
+    fonts = [build(w, Path(a.out) / f'{fam}-{w}.ttf', fam) for fam in FAMILIES for w in WEIGHTS]
     for f in fonts:
         print(f)
     if a.sheet:

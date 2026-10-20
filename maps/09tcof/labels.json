@@ -1,0 +1,1433 @@
+[
+ {
+  "text": "THE REPUBLIC OF ANARI",
+  "box": [
+   352,
+   87,
+   1289,
+   181
+  ],
+  "slant": 0.3,
+  "conf": 0.98,
+  "retype": false
+ },
+ {
+  "text": "AND SURROUNDING LANDS",
+  "box": [
+   1324,
+   105,
+   1660,
+   176
+  ],
+  "slant": -0.2,
+  "conf": 1,
+  "retype": false,
+  "lines": [
+   "AND SURROUNDING",
+   "LANDS"
+  ]
+ },
+ {
+  "text": "The Gold Trail",
+  "box": [
+   1144,
+   192,
+   1338,
+   345
+  ],
+  "slant": -35.9,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    1237.7,
+    272
+   ],
+   "angle": -34.15,
+   "length": 241.4,
+   "thick": 29,
+   "box": [
+    1144,
+    192,
+    1338,
+    345
+   ]
+  }
+ },
+ {
+  "text": "Chah Mtns",
+  "box": [
+   1560,
+   230,
+   1734,
+   264
+  ],
+  "slant": 0,
+  "conf": 0.87,
+  "retype": true,
+  "ink": {
+   "at": [
+    1645.1,
+    246.4
+   ],
+   "angle": -0.59,
+   "length": 171.9,
+   "thick": 28.7,
+   "box": [
+    1560,
+    230,
+    1734,
+    264
+   ]
+  },
+  "set": {
+   "at": [
+    1647.1,
+    247
+   ],
+   "size": 31.4,
+   "angle": -0.6
+  }
+ },
+ {
+  "text": "SUENTINA",
+  "box": [
+   348,
+   301,
+   533,
+   334
+  ],
+  "slant": 0.6,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    474,
+    316.5
+   ],
+   "angle": -1.27,
+   "length": 124.5,
+   "thick": 38.8,
+   "box": [
+    348,
+    301,
+    533,
+    334
+   ]
+  },
+  "set": {
+   "at": [
+    440.9,
+    322
+   ],
+   "size": 29.9,
+   "angle": 0
+  },
+  "joined": true,
+  "keep": [
+   [
+    336,
+    285,
+    552,
+    306
+   ]
+  ]
+ },
+ {
+  "text": "OSTOV",
+  "box": [
+   748,
+   324,
+   870,
+   360
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "OSTOV",
+  "ink": {
+   "at": [
+    811.5,
+    341.2
+   ],
+   "angle": 0.46,
+   "length": 119,
+   "thick": 28,
+   "box": [
+    748,
+    324,
+    870,
+    360
+   ]
+  },
+  "set": {
+   "at": [
+    815,
+    345.1
+   ],
+   "size": 33.2,
+   "angle": 0.5
+  }
+ },
+ {
+  "text": "RESA",
+  "box": [
+   1045,
+   358,
+   1142,
+   391
+  ],
+  "slant": -0.8,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1091.7,
+    373.6
+   ],
+   "angle": 1.03,
+   "length": 94.9,
+   "thick": 30.4,
+   "box": [
+    1045,
+    358,
+    1142,
+    391
+   ]
+  },
+  "set": {
+   "at": [
+    1098.6,
+    375.4
+   ],
+   "size": 28.6,
+   "angle": 1
+  }
+ },
+ {
+  "text": "Daroga Forest",
+  "box": [
+   1322,
+   351,
+   1525,
+   384
+  ],
+  "slant": -0.6,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1424.1,
+    368.3
+   ],
+   "angle": -0.91,
+   "length": 195.8,
+   "thick": 36.8,
+   "box": [
+    1322,
+    351,
+    1525,
+    384
+   ]
+  },
+  "set": {
+   "at": [
+    1426.7,
+    368.3
+   ],
+   "size": 27,
+   "angle": -0.9
+  }
+ },
+ {
+  "text": "SLOVIA",
+  "box": [
+   109,
+   372,
+   286,
+   421
+  ],
+  "slant": 1,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "R. Suen",
+  "box": [
+   272,
+   398,
+   398,
+   477
+  ],
+  "slant": -21.4,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    335,
+    435.9
+   ],
+   "angle": -21.05,
+   "length": 105.4,
+   "thick": 26.3,
+   "box": [
+    272,
+    398,
+    398,
+    477
+   ]
+  },
+  "set": {
+   "at": [
+    336.9,
+    439.1
+   ],
+   "size": 28,
+   "angle": -21
+  },
+  "joined": true,
+  "keep": [
+   [
+    235,
+    380,
+    400,
+    428,
+    -22.5
+   ]
+  ]
+ },
+ {
+  "text": "Anari Pass",
+  "box": [
+   1582,
+   367,
+   1739,
+   480
+  ],
+  "slant": -31.6,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1656.2,
+    422.1
+   ],
+   "angle": -31.14,
+   "length": 168,
+   "thick": 34.8,
+   "box": [
+    1582,
+    367,
+    1739,
+    480
+   ]
+  },
+  "set": {
+   "at": [
+    1660.1,
+    422.7
+   ],
+   "size": 29,
+   "angle": -31.1
+  }
+ },
+ {
+  "text": "THE ARMS OF THE CITY OFTAHOU",
+  "box": [
+   1747,
+   371,
+   1950,
+   434
+  ],
+  "slant": -90,
+  "conf": 1,
+  "retype": false,
+  "lines": [
+   "THE ARMS OF THE CITY",
+   "OFTAHOU"
+  ],
+  "named": "THE ARMS OF THE CITY OFTAHOU"
+ },
+ {
+  "text": "SLOVIA",
+  "box": [
+   497,
+   439,
+   660,
+   478
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    578.5,
+    459
+   ],
+   "angle": -0.21,
+   "length": 157,
+   "thick": 28.5,
+   "box": [
+    497,
+    439,
+    660,
+    478
+   ]
+  },
+  "set": {
+   "at": [
+    579.8,
+    460.9
+   ],
+   "size": 35.5,
+   "angle": -0.2
+  }
+ },
+ {
+  "text": "ANARI",
+  "box": [
+   1277,
+   485,
+   1443,
+   523
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1360.2,
+    503.9
+   ],
+   "angle": 0.85,
+   "length": 156,
+   "thick": 31.4,
+   "box": [
+    1277,
+    485,
+    1443,
+    523
+   ]
+  }
+ },
+ {
+  "text": "ZILA",
+  "box": [
+   1525,
+   514,
+   1617,
+   549
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1567.3,
+    532
+   ],
+   "angle": -1.01,
+   "length": 93.1,
+   "thick": 26.5,
+   "box": [
+    1525,
+    514,
+    1617,
+    549
+   ]
+  },
+  "set": {
+   "at": [
+    1575,
+    533.9
+   ],
+   "size": 33,
+   "angle": -1
+  }
+ },
+ {
+  "text": "Slovarian Plain",
+  "box": [
+   645,
+   555,
+   911,
+   592
+  ],
+  "slant": 0.5,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    778.5,
+    574.7
+   ],
+   "angle": 0.27,
+   "length": 257,
+   "thick": 26.4,
+   "box": [
+    645,
+    555,
+    911,
+    592
+   ]
+  },
+  "set": {
+   "at": [
+    780.7,
+    574.7
+   ],
+   "size": 31.5,
+   "angle": 0.3
+  }
+ },
+ {
+  "text": "PIRAZIN",
+  "box": [
+   269,
+   658,
+   411,
+   685
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    340.1,
+    670.2
+   ],
+   "angle": -0.73,
+   "length": 134,
+   "thick": 24.8,
+   "box": [
+    269,
+    658,
+    411,
+    685
+   ]
+  },
+  "set": {
+   "at": [
+    339.5,
+    673.4
+   ],
+   "size": 29,
+   "angle": -0.7
+  }
+ },
+ {
+  "text": "TAHOU",
+  "box": [
+   1268,
+   673,
+   1408,
+   705
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1333.9,
+    692.2
+   ],
+   "angle": 0.26,
+   "length": 140,
+   "thick": 31.7,
+   "box": [
+    1268,
+    673,
+    1408,
+    705
+   ]
+  },
+  "set": {
+   "at": [
+    1340.3,
+    692.8
+   ],
+   "size": 32,
+   "angle": 0.3
+  }
+ },
+ {
+  "text": "LOVKA",
+  "box": [
+   1055,
+   680,
+   1178,
+   712
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1087,
+    691.5
+   ],
+   "angle": 0,
+   "length": 72,
+   "thick": 31,
+   "box": [
+    1055,
+    680,
+    1178,
+    712
+   ]
+  },
+  "set": {
+   "at": [
+    1117.8,
+    699.2
+   ],
+   "size": 27.2,
+   "angle": 0
+  },
+  "joined": true
+ },
+ {
+  "text": "R. Chah",
+  "box": [
+   1350,
+   716,
+   1485,
+   811
+  ],
+  "slant": -27.1,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1417.5,
+    763.5
+   ],
+   "angle": -27.1,
+   "length": 135,
+   "thick": 95,
+   "box": [
+    1350,
+    716,
+    1485,
+    811
+   ],
+   "from_box": true
+  },
+  "set": {
+   "at": [
+    1422.5,
+    764.2
+   ],
+   "size": 29.7,
+   "angle": -27.1
+  },
+  "joined": true,
+  "keep": [
+   [
+    1372,
+    775,
+    1513,
+    828,
+    -29.5
+   ]
+  ]
+ },
+ {
+  "text": "CHOONOVA",
+  "box": [
+   717,
+   797,
+   918,
+   825
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "CHOONOVA",
+  "ink": {
+   "at": [
+    820.5,
+    810.6
+   ],
+   "angle": 0.4,
+   "length": 201.1,
+   "thick": 34.9,
+   "box": [
+    717,
+    797,
+    918,
+    825
+   ]
+  }
+ },
+ {
+  "text": "R. Churdas",
+  "box": [
+   1125,
+   787,
+   1179,
+   958
+  ],
+  "slant": 85.9,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1155.9,
+    903.4
+   ],
+   "angle": 88.07,
+   "length": 88.6,
+   "thick": 23.8,
+   "box": [
+    1125,
+    787,
+    1179,
+    958
+   ]
+  },
+  "set": {
+   "at": [
+    1155,
+    872.6
+   ],
+   "size": 26,
+   "angle": -95
+  },
+  "joined": true
+ },
+ {
+  "text": "5th Chah Range",
+  "box": [
+   1499,
+   791,
+   1787,
+   952
+  ],
+  "slant": -22.6,
+  "conf": 0.99,
+  "retype": true,
+  "named": "5th Chah Range",
+  "ink": {
+   "at": [
+    1654.3,
+    868.4
+   ],
+   "angle": -21.3,
+   "length": 290.5,
+   "thick": 44.3,
+   "box": [
+    1499,
+    791,
+    1787,
+    952
+   ]
+  },
+  "set": {
+   "at": [
+    1644,
+    872.7
+   ],
+   "size": 33.2,
+   "angle": -23.5
+  }
+ },
+ {
+  "text": "HALOK",
+  "box": [
+   283,
+   922,
+   398,
+   959
+  ],
+  "slant": 2.6,
+  "conf": 1,
+  "retype": true,
+  "named": "HALOK",
+  "ink": {
+   "at": [
+    340.9,
+    944.8
+   ],
+   "angle": 2.6,
+   "length": 110.8,
+   "thick": 35.8,
+   "box": [
+    283,
+    922,
+    398,
+    959
+   ]
+  }
+ },
+ {
+  "text": "Yajo Pass",
+  "box": [
+   1374,
+   979,
+   1553,
+   1021
+  ],
+  "slant": -1.3,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1464.3,
+    1002.5
+   ],
+   "angle": -2.48,
+   "length": 165.5,
+   "thick": 29.9,
+   "box": [
+    1374,
+    979,
+    1553,
+    1021
+   ]
+  },
+  "set": {
+   "at": [
+    1464.6,
+    1002.3
+   ],
+   "size": 32.9,
+   "angle": -2.5
+  }
+ },
+ {
+  "text": "NAVASARI",
+  "box": [
+   1131,
+   1009,
+   1313,
+   1043
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1218.5,
+    1026.9
+   ],
+   "angle": -0.05,
+   "length": 177,
+   "thick": 30,
+   "box": [
+    1131,
+    1009,
+    1313,
+    1043
+   ]
+  },
+  "set": {
+   "at": [
+    1220.2,
+    1028.8
+   ],
+   "size": 28.1,
+   "angle": 0
+  },
+  "joined": true
+ },
+ {
+  "text": "BIDAH",
+  "box": [
+   1590,
+   1028,
+   1729,
+   1070
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "BIDAH",
+  "ink": {
+   "at": [
+    1663.5,
+    1048.5
+   ],
+   "angle": 0,
+   "length": 137,
+   "thick": 49,
+   "box": [
+    1590,
+    1028,
+    1729,
+    1070
+   ]
+  },
+  "set": {
+   "at": [
+    1658.3,
+    1051.7
+   ],
+   "size": 32.9,
+   "angle": 0
+  }
+ },
+ {
+  "text": "TABORA",
+  "box": [
+   532,
+   1055,
+   683,
+   1083
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "TABORA",
+  "ink": {
+   "at": [
+    602.6,
+    1066.2
+   ],
+   "angle": 1.52,
+   "length": 149.3,
+   "thick": 28.7,
+   "box": [
+    532,
+    1055,
+    683,
+    1083
+   ]
+  },
+  "set": {
+   "at": [
+    604.5,
+    1072
+   ],
+   "size": 31,
+   "angle": 1.5
+  }
+ },
+ {
+  "text": "Kakush Uplands",
+  "box": [
+   1514,
+   1067,
+   1787,
+   1122
+  ],
+  "slant": 1.4,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    1624.9,
+    1101.8
+   ],
+   "angle": 0.45,
+   "length": 200.1,
+   "thick": 44.4,
+   "box": [
+    1514,
+    1067,
+    1787,
+    1122
+   ]
+  },
+  "set": {
+   "at": [
+    1653.8,
+    1095.5
+   ],
+   "size": 30,
+   "angle": 0.5
+  },
+  "small": false,
+  "joined": true
+ },
+ {
+  "text": "L. Adon",
+  "box": [
+   445,
+   1096,
+   576,
+   1139
+  ],
+  "slant": 2.4,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    511,
+    1118.6
+   ],
+   "angle": 2.09,
+   "length": 116.5,
+   "thick": 26.8,
+   "box": [
+    445,
+    1096,
+    576,
+    1139
+   ]
+  },
+  "set": {
+   "at": [
+    513.6,
+    1119.9
+   ],
+   "size": 29,
+   "angle": 2.1
+  }
+ },
+ {
+  "text": "LOURDEN",
+  "box": [
+   582,
+   1158,
+   809,
+   1214
+  ],
+  "slant": -90,
+  "conf": 0.89,
+  "retype": true,
+  "ink": {
+   "at": [
+    695.1,
+    1186
+   ],
+   "angle": -0.56,
+   "length": 206,
+   "thick": 32,
+   "box": [
+    582,
+    1158,
+    809,
+    1214
+   ]
+  },
+  "set": {
+   "at": [
+    695.7,
+    1190.4
+   ],
+   "size": 39.4,
+   "angle": -0.6
+  }
+ },
+ {
+  "text": "PITIGOS",
+  "box": [
+   1040,
+   1137,
+   1190,
+   1169
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "PITIGOS",
+  "ink": {
+   "at": [
+    1115.9,
+    1153.6
+   ],
+   "angle": 1.68,
+   "length": 140.4,
+   "thick": 39.2,
+   "box": [
+    1040,
+    1137,
+    1190,
+    1169
+   ]
+  },
+  "set": {
+   "at": [
+    1115.9,
+    1156.8
+   ],
+   "size": 31,
+   "angle": 1.7
+  }
+ },
+ {
+  "text": "R. Galdon",
+  "box": [
+   1047,
+   1176,
+   1095,
+   1318
+  ],
+  "slant": -80.4,
+  "conf": 0.93,
+  "retype": true,
+  "named": "R. Galdon",
+  "ink": {
+   "at": [
+    1070,
+    1257.6
+   ],
+   "angle": -82.45,
+   "length": 123.3,
+   "thick": 41.1,
+   "box": [
+    1047,
+    1176,
+    1095,
+    1318
+   ]
+  },
+  "set": {
+   "at": [
+    1075.1,
+    1248.2
+   ],
+   "size": 27.8,
+   "angle": -82.5
+  },
+  "joined": true
+ },
+ {
+  "text": "ADON",
+  "box": [
+   326,
+   1237,
+   422,
+   1268
+  ],
+  "slant": -1.2,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    374,
+    1256.5
+   ],
+   "angle": 0.02,
+   "length": 86,
+   "thick": 29,
+   "box": [
+    326,
+    1237,
+    422,
+    1268
+   ]
+  }
+ },
+ {
+  "text": "FERRAR",
+  "box": [
+   1304,
+   1204,
+   1442,
+   1232
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "FERRAR",
+  "ink": {
+   "at": [
+    1355.5,
+    1218.9
+   ],
+   "angle": 1,
+   "length": 69.3,
+   "thick": 28.3,
+   "box": [
+    1304,
+    1204,
+    1442,
+    1232
+   ]
+  },
+  "set": {
+   "at": [
+    1371.8,
+    1220.5
+   ],
+   "size": 28.7,
+   "angle": 1
+  },
+  "joined": true
+ },
+ {
+  "text": "VARL",
+  "box": [
+   1090,
+   1260,
+   1191,
+   1299
+  ],
+  "slant": 1.1,
+  "conf": 1,
+  "retype": true,
+  "named": "VARL",
+  "ink": {
+   "at": [
+    1140.5,
+    1278.4
+   ],
+   "angle": 3.92,
+   "length": 93.7,
+   "thick": 26.8,
+   "box": [
+    1090,
+    1260,
+    1191,
+    1299
+   ]
+  }
+ },
+ {
+  "text": "Dylanti Mtns",
+  "box": [
+   613,
+   1285,
+   827,
+   1321
+  ],
+  "slant": 0.3,
+  "conf": 0.93,
+  "retype": true,
+  "named": "Dylanti Mtns",
+  "ink": {
+   "at": [
+    718.5,
+    1302.7
+   ],
+   "angle": 0.18,
+   "length": 219.1,
+   "thick": 42.8,
+   "box": [
+    613,
+    1285,
+    827,
+    1321
+   ]
+  },
+  "set": {
+   "at": [
+    716.6,
+    1302.7
+   ],
+   "size": 31,
+   "angle": 0.2
+  }
+ },
+ {
+  "text": "FIRALOND",
+  "box": [
+   1320,
+   1288,
+   1533,
+   1322
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1425.5,
+    1303.7
+   ],
+   "angle": -0.12,
+   "length": 213,
+   "thick": 31,
+   "box": [
+    1320,
+    1288,
+    1533,
+    1322
+   ]
+  },
+  "set": {
+   "at": [
+    1428.4,
+    1307.6
+   ],
+   "size": 35.7,
+   "angle": -0.1
+  }
+ },
+ {
+  "text": "DECIDUOUS FOREST",
+  "box": [
+   500,
+   1349,
+   633,
+   1395
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false,
+  "lines": [
+   "DECIDUOUS",
+   "FOREST"
+  ]
+ },
+ {
+  "text": "HILLS",
+  "box": [
+   785,
+   1357,
+   860,
+   1382
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "50",
+  "box": [
+   1341,
+   1356,
+   1375,
+   1380
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "100",
+  "box": [
+   1469,
+   1356,
+   1510,
+   1379
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "150",
+  "box": [
+   1597,
+   1356,
+   1638,
+   1380
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "PLAINS",
+  "box": [
+   1071,
+   1391,
+   1176,
+   1430
+  ],
+  "slant": 1,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "MOUNTAINS",
+  "box": [
+   501,
+   1424,
+   650,
+   1448
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "DESERT",
+  "box": [
+   785,
+   1424,
+   881,
+   1448
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "SCALE",
+  "box": [
+   1283,
+   1404,
+   1370,
+   1425
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "75",
+  "box": [
+   1409,
+   1438,
+   1441,
+   1462
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "IN",
+  "box": [
+   1411,
+   1403,
+   1446,
+   1427
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "MILES",
+  "box": [
+   1488,
+   1404,
+   1567,
+   1425
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "125",
+  "box": [
+   1536,
+   1439,
+   1576,
+   1462
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "25",
+  "box": [
+   1280,
+   1441,
+   1311,
+   1462
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "0",
+  "box": [
+   1222,
+   1357,
+   1242,
+   1378
+  ],
+  "where": "",
+  "small": false,
+  "retype": false
+ }
+]

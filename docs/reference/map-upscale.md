@@ -24,8 +24,7 @@ letter; see "How Book 1 got here" below.
 ## The chain, per book
 
 The map editor, opened only inside the import dashboard (`http://localhost:8766/tools/admin/`, the Map cell or a map step's Open) (served by `python tools/serve.py`, on this PC
-only; under the dashboard's grid, where `?embed=1` hides the
-book picker and the dashboard follows the files it changes: `docs/reference/dashboard.md`), walks through every step below in one page: a rail of the ten stages (upscale, draft, labels,
+only; under the dashboard's grid, which picks the book and follows the files the editor changes: `docs/reference/dashboard.md`), walks through every step below in one page: a rail of the ten stages (upscale, draft, labels,
 measure, lettering, erase and letter, Gemini, check, finish, import), each marked done, not done or
 out of date from the files' times. It edits the labels, runs the scripts, copies the prompt and the
 lettered picture for Gemini, takes the round's image back (Ctrl+V, drop or file picker), and shows a
@@ -34,7 +33,7 @@ picture right of a divider dragged across the map, or the whole map while C is h
 exchanges the two: any two of the scan, the lettered picture, the rounds and the 4K map. A round's
 `map-check-<n>/aligned.png` lines up with the scan exactly; Gemini's own file only roughly. The two
 side trays (labels; tools and the label's fields) slide out to give the map the width, by the tabs on
-the map's edges or <kbd>[</kbd> and <kbd>]</kbd>, and stay as left in this browser. The command lines below are still how to run a step by hand.
+the map's edges or <kbd>[</kbd> and <kbd>]</kbd>; both start slid out. The command lines below are still how to run a step by hand.
 
 In the editor each place name has two shapes. Its **box** says where the printed name is: step 3
 erases the letters inside it and Measure reads them. Its **frame**, drawn round the new type, is what
@@ -227,7 +226,7 @@ Commands run from the project root as
 
 ## Tools
 
-- `tools/map-editor.html` with `tools/serve.py`: the page that runs all of the above (endpoints in
+- `tools/map-editor.html` with `tools/serve.py`: the page that runs all of the above, opened from the dashboard only (endpoints in
   serve.py's docstring: `/api/map/<book>/state`, `run/<step>`, `gemini/<n>`; local requests only).
   Its colours are the dashboard's (2026-10-08); the label outlines stay bright to read over any map.
   Its steps and the dashboard's jobs share one lock: one runs at a time.
@@ -253,9 +252,9 @@ Commands run from the project root as
   outlines were added or lost. On Book 4 the blue cells found exactly Gemini's added forest.
 - `tools/map_letter.py`: sets labels in type, onto `map-2k-erased.jpg` (step 4, `-` for the warp)
   or onto a round's 4K upscale (step 8). See its docstring for every label field.
-- `tools/fonts/`: Cabin (used), Darkland Hand (Book 12, our own), Architects Daughter, IM Fell
+- `tools/fonts/`: Cabin (used), Darkland Hand (Book 12, our own), Darkland Serif (Book 9, our own), Architects Daughter, IM Fell
   English and Almendra (tried), all OFL; sources in its README.
-- `tools/map_font.py`: builds Darkland Hand (Thin, Light, Regular, Bold) into `tools/fonts/`: each
+- `tools/map_font.py`: builds Darkland Hand and Darkland Serif (Thin, Light, Regular, Bold each) into `tools/fonts/`. Darkland Serif uses the same nib, still angular, with rounded-diamond bowls (only C, G and c round), an angular S with a round bottom, stronger contrast, a serif at each end of a long steep stroke (an exit flick on a lower-case foot) and closer spacing, after Book 9's calligraphic hand. Darkland Hand: each
   letter a few straight strokes drawn with a chisel nib, after the hand of Books 12 and 13's maps
   (the drawing, the squash, width and spacing are constants at its top). Run it again after
   changing a letter, then Letter.
@@ -267,7 +266,7 @@ Commands run from the project root as
   in angular chisel strokes, so it has `DarklandHand-Regular.ttf` (Thin from 2026-10-16, Regular the same day: Thin looked faint beside the repaint), drawn for it after no
   free font matched (Architects Daughter before it, tried against Patrick Hand, Kalam, Neucha and
   Comic Neue on 2026-10-10; Norse and runic fonts on 2026-10-16). Its names' hand-set sizes were
-  scaled then so each spans the printed name's length.
+  scaled then so each spans the printed name's length. Book 9's map has `DarklandSerif-Regular.ttf` (2026-10-20), drawn for it: Darkland Hand with the serifs of its broad-pen hand.
 - The comparison page, `work/compare.html` in a book's folder (git-ignored): two panes, synced pan and
   zoom, any version in each, file sizes in the menu. Copy Book 1's and edit its file list (the scan
   and the finished map are `../map.png` and `../map-4k.webp` from there).

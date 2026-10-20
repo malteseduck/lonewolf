@@ -21,8 +21,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   steps, as the map editor's rail shows them. Clicking a step's cell scrolls the panel to that step
   and lights it briefly (the map and picture cells open their editor inline instead).
 - **The map editor** opens under the grid, full width (the Map cell, "Open map editor", or any
-  map step's Open): the same `tools/map-editor.html`, with `?embed=1`, which hides its book picker
-  (the dashboard chose the book) and tells the dashboard when its files change, so the grid follows.
+  map step's Open): `tools/map-editor.html?book=<code>&embed=1`, which tells the dashboard when its files change, so the grid follows.
   Closing it asks first if it has unsaved label edits. It opens only here (ADR 0021): at its own address it
   shows only a line pointing to the dashboard.
 - **The picture sheet** ("Open picture sheet" at step 7), inline under the grid like the map editor and

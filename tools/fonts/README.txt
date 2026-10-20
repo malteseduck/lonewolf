@@ -16,3 +16,8 @@ font had its angular capitals with lower case). Not traced from the scans. Named
 maps/12tmod/font.txt in Thin, which matches Book 12's stroke weight once map_letter.py's added stroke
 is counted; Bold is the weight of Book 13's pen. Rebuild with `python tools/map_font.py`, 2026-10-16,
 under the SIL Open Font License 1.1 (OFL-DarklandHand.txt).
+
+Darkland Serif (DarklandSerif-Thin, -Light, -Regular, -Bold): our own, built by the same script from
+Darkland Hand's nib, after the broad-pen hand of Book 9's printed map: still angular, with wedge
+serifs, rounded-diamond bowls and exit flicks on the lower case. Not traced from the scan. 2026-10-20, under the SIL Open
+Font License 1.1 (OFL-DarklandHand.txt covers both).

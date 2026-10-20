@@ -66,7 +66,7 @@ tools/
                             the owner changes: ADR 0021), icons.html (the player's other icons, for
                             every book), iconpicker.js and icons.css (both sheets' icon picker), parchment.js (the tool pages' parchment and charred-rim filter, from
                             shared/ink.js; the map editor loads it too: ADR 0021)
-  map-editor.html           the map steps' page (docs/reference/map-upscale.md); also shown inside the dashboard
+  map-editor.html           the map steps' page (docs/reference/map-upscale.md), shown only inside the dashboard
   plates_file.py            reads and writes assets/plates/plates.json in its layout; the owner's pictures from the
                             picture sheet (api/admin/plate)
   art_sources.py            art/sources.json: each art/ picture's link (ADR 0038); what is here, what can be
