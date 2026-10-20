@@ -56,6 +56,22 @@ describe('changes for some rounds only', () => {
     f.round(n);
     expect(f.foe.ep).toBe(99);
   });
+  it('a change that holds only when he came by a given way (a surprise the choice before grants)', () => {
+    const n = wounding(5);
+    const at = (from) => {
+      const book = { id: 'test', start: from, sections: {
+        5: { text: ['a'], choices: [{ text: 'go', to: '1' }] }, 6: { text: ['b'], choices: [{ text: 'go', to: '1' }] },
+        1: { text: ['x'], combat: { enemies: [foe()], rounds: [{ upTo: 2, heroLoss: 0, came: ['5'] }] }, choices: [{ text: 'on', to: '2' }] }, 2: { text: ['y'] } } };
+      const g = new LW.Game(book, 'test-save');
+      g.start(mkHero());
+      g.go('1');
+      const f = new LW.Fight(g, 'test');
+      f.round(n);
+      return g.hero.ep;
+    };
+    expect(at('5')).toBe(25);
+    expect(at('6')).toBe(25 - LW.combatRound(5, n).hero);
+  });
   it('a killing blow ignored is no blow at all', () => {
     const k = drawWhere(-12, (r) => r.hero === Infinity);
     const { g, f } = fightAt({ enemies: [foe({ cs: 40 })], rounds: [{ upTo: 1, heroLoss: 0 }] });

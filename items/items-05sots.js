@@ -81,6 +81,8 @@ export const SECTIONS = {
   40: { ep: -2, take: [{ gold: 'all' }, { pick: 'backpack', n: 1 }] },
   50: { ep: -2 },
   51: { ep: -1 },
+  // 68 is for one who needs the herb, which is Limbdeath (the baths are reached without it by 31)
+  54: { need: { 68: { any: [{ mark: 'limbdeath' }] }, 154: { any: [{ not: { mark: 'limbdeath' } }] } } },
   52: { loot: [{ gold: 4 }, { item: 'gaolersKeys' }, { item: 'dagger' }, { item: 'sword' }] },
   56: { loot: [{ item: 'jakanBow' }] },
   57: { fight: { rounds: [{ csMod: 2, if: { mark: 'foughtElix' }, note: 'Fought an Elix before' }] } },
@@ -92,6 +94,8 @@ export const SECTIONS = {
   71: { loot: [{ item: 'towel' }] },
   72: { ep: -1 },
   86: { ep: -1 },
+  // the bare-handed fight's length decides the way on, as at 4
+  91: { fight: { won: { within: 4, to: '65', else: '180' } } },
   93: { ep: 1 },
   100: { loot: [{ item: 'prism5' }, { item: 'copperKey5' }] },
   101: { loot: [{ gold: 4 }, { item: 'dagger' }, { item: 'sword' }, { item: 'alether' }, { item: 'blowpipe' }, { item: 'sleepDart' }] },
@@ -119,6 +123,7 @@ export const SECTIONS = {
   162: { ep: -1, rolls: [{ range: [0, 9], ep: 'drawn' }], fight: { byHand: 'you climb past the nest instead of fighting' }, todo: 'to climb past, stop the fight before the first round, then draw (not after a fight won). With a dead arm you must climb.' },
   164: { ep: -1 },
   166: { mark: 'limbdeath' },
+  168: { fight: { won: { within: 3, to: '101', else: '46' } } },
   169: { loot: [{ item: 'blackSash', cost: 2 }] },
   182: { loot: [{ item: 'spear' }, { item: 'broadsword' }] },
   183: { ep: -2 },
@@ -165,14 +170,22 @@ export const SECTIONS = {
   321: { take: [{ item: 'oedeHerb' }] },
   325: { take: [{ item: 'sleepDart' }] },
   329: { need: { 305: { item: 'rope' }, 387: { item: 'rope', not: true } } },
+  // a win within two rounds leads to 243; after two the fight ends (394)
+  330: { fight: { stop: { after: 2, to: '394' }, won: { within: 2, to: '243', else: '394' } } },
   333: { need: { 258: sommerswerd, 348: notSommerswerd } },
+  // the wounds of the first two rounds are ignored only when he was first to recover (226), not from 297 or 360
+  334: { fight: { rounds: [{ upTo: 2, heroLoss: 0, came: ['226'], note: 'First to recover' }] } },
   341: { give: [{ item: 'copperKey5' }], loot: [{ item: 'canteen5' }, { item: 'broadsword' }] },
   344: { need: { 321: { item: 'oedeHerb' } } },
   350: { ep: -3, take: [{ item: 'sommerswerd', stash: 'haakon' }] },
   354: { ep: -2 },
-  355: { fight: { mindforce: 2 } },
+  355: { fight: { mindforce: 2, won: { within: 4, to: '249', else: '304' } } },
   357: { fight: { stop: { drawn: [1], to: '293' } } },
   359: { ep: 2 },
+  // a win within three rounds leads to 288; at a fourth round the fight ends (382)
+  // two numbers drawn and compared: the engine draws only one
+  360: { todo: 'draw twice (Hunting adds 1 to the first), then take the way on the two numbers give: second lower, higher or the same.' },
+  361: { fight: { stop: { after: 3, to: '382' }, won: { within: 3, to: '288', else: '382' } } },
   362: { need: { 237: spend(1) } },
   368: { ep: -3 },
   369: { ep: -6 },
@@ -183,6 +196,8 @@ export const SECTIONS = {
   380: { ep: -2, need: { 229: cube, 247: notCube } },
   382: { need: { 399: star, 294: notStar } },
   385: { ep: -12 },
+  // the leap is the only evasion, told in the prose
+  387: { fight: { evade: [{ after: 0, to: '205', label: 'Jump' }] } },
   388: { loot: shop([['sword', 5], ['dagger', 3], ['broadsword', 9]]) },
   393: { when: mindshield, fight: { rounds: [{ upTo: 1, csMod: -2, note: 'Surprise' }] } },
   395: { need: { 233: { item: 'prism5' }, 245: { item: 'blueTriangle' }, 298: { item: ['prism5', 'blueTriangle'], not: true } } },

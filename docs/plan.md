@@ -22,7 +22,7 @@ done, and when.
 ### The item tables' last todos
 
 The engine work that retires the tables' `todo`s was done on 2026-10-12 (rules-engine.md, book-format.md;
-ADR 0027, ruling R3): 323 todos then, 16 now (the games of chance done the same day; Book 4's underwater fights 2026-10-17). The rest, in order of how often they come up; teach the engine a
+ADR 0027, ruling R3): 323 todos then, 17 now (the games of chance done the same day; Book 4's underwater fights 2026-10-17). The rest, in order of how often they come up; teach the engine a
 case when it is met in play, rather than flagging it (ADR 0027):
 
 1. **Shops**: one item only (B6 10), at most N (B6 123), selling Arrows by the four (B6 98), paying with an
@@ -32,7 +32,9 @@ case when it is met in play, rather than flagging it (ADR 0027):
 3. **Items**: a Helmet and the Silver Helm not counting together (B7 148, a series rule); a stake of items
    (B9 115, 204); the Backpack halved by a coin (B9 91); which remedy was used when he has several (B8
    178, 331, 349); a draw against the Crowns thrown (B3 152); a weapon the text does not name (B11 8).
-4. **Display**: during a contest in target points (Book 6's final) the Endurance gauge shows the points.
+4. **Draws**: two numbers drawn and compared, the first with a discipline's bonus (B5 360: second lower,
+   higher or the same).
+5. **Display**: during a contest in target points (Book 6's final) the Endurance gauge shows the points.
 
 Left to the player whatever the engine does: whether to sleep (B2 41 is now applied by `came`), the Arrows
 spent at B8 164 (the text gives no number), the puzzles, and B5 162's climb (a by-hand stop, `byHand`).

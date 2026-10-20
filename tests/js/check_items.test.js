@@ -98,6 +98,8 @@ describe('check_items.mjs', () => {
     ['a need for a choice that is not there', { '1': { need: { '9': { item: 'thing' } } } }, '1: need for a choice to 9, which it does not have'],
     ['a need for an unknown item', { '1': { need: { '2': { item: 'ghost' } } } }, '1: need for unknown item ghost'],
     ['a need any-of with an unknown item', { '1': { need: { '2': { any: [{ item: 'ghost' }] } } } }, '1: need for unknown item ghost'],
+    ['a need key the engine does not read', { '1': { need: { '2': { mark: 'hurt' } } } }, "1: need for 2: unknown field mark (a Condition's own fields go in any)"],
+    ['an unknown field in a need any-of', { '1': { need: { '2': { any: [{ not: { colour: 1 } }] } } } }, '1: need for 2: unknown field colour'],
     ['a take of weapons other than all or one', { '1': { take: [{ weapons: 'some' }] } }, "1 take: weapons must be 'all', 'one' or 'used'"],
     ['an unknown field in a when', { '1': { when: [{ if: { disc: 'x' }, colour: 1 }] } }, '1 when[0]: unknown field colour'],
     ['an unknown field in a round change', { '2': { fight: { rounds: [{ upTo: 1, speed: 3 }] } } }, '2 fight rounds[0]: unknown field speed'],

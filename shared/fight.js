@@ -74,14 +74,15 @@
     bring() { this.i++; this.foe = this.foes[this.i]; }
 
     /* c.rounds: what holds for some rounds only, or for the whole fight under a condition: [{from, upTo
-       (round numbers, 1 first), fromFoe (the list's index), if, unless (Conditions), ambush (Huntmastery
+       (round numbers, 1 first), fromFoe (the list's index), if, unless (Conditions), came (only when he came from one of
+       these sections), ambush (Huntmastery
        spares it), mind (only while a mind attack is used; 2: only the full Psi-surge or Kai-surge), csMod, note, unarmed, heroLoss, foeLoss
        (multipliers: 0 ignores, 2 doubles, 0.5 halves), heroPlus (more for every wound), heroEach, foeEach
        (lost every round), psi (what the mind's attack adds is multiplied)}] */
     phases(round = this.rounds + 1) {
       const hero = this.hero, ctx = { weapon: this.weapon };
       return (this.c.rounds || []).filter((p) => (!p.from || round >= p.from) && (!p.upTo || round <= p.upTo) && (p.fromFoe == null || this.i >= p.fromFoe)
-        && (!p.if || LW.meets(hero, p.if, ctx)) && !(p.unless && LW.meets(hero, p.unless, ctx)) && !(p.ambush && this.huntmaster()) && (!p.mind || (p.mind === 2 ? this.blasting() === 2 : this.blasting())));
+        && (!p.if || LW.meets(hero, p.if, ctx)) && !(p.unless && LW.meets(hero, p.unless, ctx)) && (!p.came || p.came.includes(this.game.came())) && !(p.ambush && this.huntmaster()) && (!p.mind || (p.mind === 2 ? this.blasting() === 2 : this.blasting())));
     }
     /* the changes that begin with this round, and those that end, for the log */
     changes(round) {

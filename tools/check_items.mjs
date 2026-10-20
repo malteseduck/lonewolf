@@ -45,7 +45,12 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
   const FIGHT = new Set(['csMod', 'csIf', 'csUnless', 'csNote', 'mindforce', 'unless', 'unarmed', 'undead', 'drain', 'with', 'double', 'ambush', 'evade',
     'rounds', 'stop', 'won', 'wounded', 'noEvade', 'noShield', 'noUnarmed', 'weaponCs', 'plain', 'only', 'barred', 'lend', 'mind', 'keep', 'healLost', 'restore', 'noBoost', 'to', 'points', 'lose', 'byHand', 'breath']);
   const WHEN = new Set(['if', 'unless', 'ate', 'came', 'ep', 'epMax', 'cs', 'healLost', 'take', 'back', 'mark', 'unmark', 'settle']);
-  const ROUND = new Set(['from', 'upTo', 'fromFoe', 'if', 'unless', 'ambush', 'mind', 'csMod', 'note', 'unarmed', 'heroLoss', 'foeLoss', 'heroPlus', 'heroEach', 'foeEach', 'psi', 'barred']);
+  // what a choice's need reads (Game.choices and the gold spent on choosing), and what a Condition in its any reads (LW.meets):
+  // any other key is silently ignored by the page
+  const NEED = new Set(['disc', 'every', 'circle', 'any', 'ep', 'rank', 'item', 'not', 'ever', 'gold', 'spend', 'orAll', 'coin', 'n', 'came']);
+  const COND = new Set(['disc', 'every', 'rank', 'item', 'items', 'ep', 'weapon', 'wield', 'mastery', 'skilled', 'meals', 'arrows', 'packItems', 'gold', 'mark', 'any', 'not', 'circle']);
+  const condFields = (c) => (c && typeof c === 'object' ? Object.keys(c).filter((f) => !COND.has(f)).concat([].concat(c.any || []).flatMap(condFields), c.not ? condFields(c.not) : []) : []);
+  const ROUND = new Set(['from', 'upTo', 'fromFoe', 'if', 'unless', 'came', 'ambush', 'mind', 'csMod', 'note', 'unarmed', 'heroLoss', 'foeLoss', 'heroPlus', 'heroEach', 'foeEach', 'psi', 'barred']);
   const STOP = new Set(['after', 'wound', 'foeAt', 'drawn', 'to', 'by', 'if']);
   const known = (id) => id === 'meal' || !!LW.ITEMS[id];
   for (const [k, it] of Object.entries(T.ITEMS)) {
@@ -102,6 +107,8 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
     if (x.ep != null && x.ep !== 'full' && typeof x.ep !== 'number') bad.push(`${id}: ep must be a number or 'full'`);
     for (const [to, n] of Object.entries(x.need || {})) {
       if (!(sec.choices || []).some((c) => c.to === to)) bad.push(`${id}: need for a choice to ${to}, which it does not have`);
+      Object.keys(n || {}).filter((f) => !NEED.has(f)).forEach((f) => bad.push(`${id}: need for ${to}: unknown field ${f}${COND.has(f) ? " (a Condition's own fields go in any)" : ''}`));
+      ((n && n.any) || []).flatMap(condFields).forEach((f) => bad.push(`${id}: need for ${to}: unknown field ${f}`));
       [].concat(n && n.item || []).forEach((i) => { if (!known(i)) bad.push(`${id}: need for unknown item ${i}`); });
       ((n && n.any) || []).forEach((m) => [].concat(m.item || []).forEach((i) => { if (!known(i)) bad.push(`${id}: need for unknown item ${i}`); }));
     }

@@ -421,6 +421,7 @@ def test_combat_with_evade_after_n_rounds(tmp_path):
     ('You may evade combat in the first round only, turn to', {'after': 0, 'to': '2', 'within': 1}),
     ('You may evade combat at any time, turn to', {'after': 0, 'to': '2'}),
     ("You may cease 'combat' at any time, turn to", {'after': 0, 'to': '2'}),
+    ('If you wish to avoid combat at any time by running back up the stairs, turn to', {'after': 0, 'to': '2'}),
 ])
 def test_evade_timing(tmp_path, sentence, expect):
     s = secs(tmp_path, {1: foe('Rat', 5, 5) + choice(sentence, 2), 2: '<p>.</p>'})

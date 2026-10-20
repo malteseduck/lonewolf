@@ -129,7 +129,8 @@ Decide each section by what the text says, outright:
 - **meal**: a forced Meal the importer missed (it reads "must (also) (now) eat a Meal" and "Unless you eat a Meal now", "meal" in either case).
 - **need**: gates on the choice to a section: `{item}`, `{item, not: true}` ("if you do not
   possess"), `{gold, spend: true}` (paying), `{any: [cond, ...]}` (any one condition, which may be
-  `{disc}`, `{rank}` or `{item}`: "Nexus or a Platinum Amulet").
+  `{disc}`, `{rank}` or `{item}`: "Nexus or a Platinum Amulet"). Any other Condition (a `mark`,
+  `packItems`, `items`) goes inside `any`, or the page ignores it; `check_items` reports a key it would ignore.
 - **fight**: where the importer misread a fight's Combat Skill adjustment: `mindforce` for an
   enemy's mind attack that Mindshield blocks (Book 1's Vordaks), `unless: [items]` for a penalty
   an item spares (the Burrowcrawler's darkness and a Torch with Tinderbox), `unarmed: true` when the
