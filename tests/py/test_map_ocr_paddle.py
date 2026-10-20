@@ -31,6 +31,7 @@ def test_merge_keeps_the_best_read_of_each_place_with_its_slant():
     ]
     out = ocr.merge(reads)
     assert [r['text'] for r in out] == ['HOLMGARD', 'TORAN']
+    assert ocr.merge([{'text': 'Kakush Uplands', 'quad': quad(0, 0, 200, 30), 'conf': 0.9}])[0]['text'] == 'Kakush Uplands'  # case kept
     holm = out[0]
     assert abs(holm['slant'] - 20) < 0.1 and holm['conf'] == 0.95
     assert holm['box'] == [90, 100, 288, 197]  # the slanted quad's upright bounds
@@ -40,6 +41,7 @@ def test_merge_keeps_the_best_read_of_each_place_with_its_slant():
 def test_merge_drops_trees_and_border_ornament_read_as_letters():
     reads = [
         {'text': 'TT', 'quad': quad(300, 300, 40, 30), 'conf': 0.98},            # a pair of trees (Book 7)
+        {'text': 'Tt', 'quad': quad(400, 300, 40, 30), 'conf': 0.98},            # the same in mixed case
         {'text': '0J', 'quad': quad(1000, 70, 60, 25, 88), 'conf': 0.9},          # the frame, read on end
         {'text': 'OJ', 'quad': quad(1000, 400, 60, 25, 88), 'conf': 0.9},         # the same inland: a short name
         {'text': 'ASH', 'quad': quad(20, 900, 60, 25), 'conf': 0.9},              # level by the edge: a name

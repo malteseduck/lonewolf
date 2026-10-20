@@ -178,6 +178,32 @@ def test_a_name_set_over_two_lines_goes_whole():
     assert taken(li, lab, letters) > 0.97
 
 
+def letter_row(im, n, x, y, dy, h=18, step=13):
+    """<n> letter-like strokes (an upright with a foot) from <x, y>, the line stepping <dy> px a letter."""
+    m = np.zeros(im.shape[:2], np.uint8)
+    for i in range(n):
+        cx, cy = int(x + i * step), int(y + i * dy)
+        cv2.line(m, (cx, cy), (cx, cy - h), 1, 3)
+        cv2.line(m, (cx, cy), (cx + 7, cy), 1, 3)
+    im[m > 0] = INK
+    return m > 0
+
+
+def test_a_name_bent_between_its_words_goes_whole():
+    """Book 10, Blackshroud Trail: the first word rises, the second sits higher and falls away;
+    one straight strip along the first ran over the second's tops and left the rest."""
+    im = paper(600, 300)
+    first = letter_row(im, 11, 40, 200, -1.5)
+    second = letter_row(im, 5, 196, 148, 3)
+    box = around(first | second, up=6)
+    below = peak(im, 225, box[3] - 2)        # a peak in the box under the second word
+    li = LabelInk(im)
+    lab = {'box': box, 'text': 'ABCDEFGHKMN PQRST'}
+    assert taken(li, lab, first) > 0.97
+    assert taken(li, lab, second) > 0.97
+    assert taken(li, lab, below) == 0
+
+
 def test_joined_takes_the_line_only_along_the_letters():
     im = paper(400, 200)
     letters = word(im, 'ABCDEFGHK', (80, 130))

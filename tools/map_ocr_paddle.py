@@ -58,7 +58,7 @@ def slant(quad):
 def noise(r, size):
     """A tree pair read as "TT", or the frame's ornament read on end by the edge. Neither dropped a
     label on Books 3-6 and 12's checked lists; on Book 7 they took 6 reads the owner had to delete."""
-    al = [ch for ch in r['text'] if ch.isalnum()]
+    al = [ch.upper() for ch in r['text'] if ch.isalnum()]
     if len(al) > 3:
         return False
     if len(set(al)) == 1:
@@ -105,7 +105,8 @@ def main():
             turned = cv2.warpAffine(im, m, size, flags=cv2.INTER_CUBIC, borderValue=(255, 255, 255))
             for r in ocr.predict(turned):
                 for poly, text, score in zip(r['rec_polys'], r['rec_texts'], r['rec_scores']):
-                    reads.append({'text': text.upper().strip(), 'quad': back(poly, m), 'conf': round(float(score), 2)})
+                    reads.append({'text': text.strip(),  # printed case kept: a hand font's lower case is used (ADR 0004)
+                                   'quad': back(poly, m), 'conf': round(float(score), 2)})
     with open(out, 'w', encoding='utf-8') as f:
         json.dump(merge(reads, (im.shape[1], im.shape[0])), f)
 

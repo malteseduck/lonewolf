@@ -39,7 +39,7 @@ def test_main_adds_what_claude_found_fitted_to_the_ink_and_marked(tmp_path, monk
     def fake_ask(pictures):
         seen['n'] = len(pictures)
         # one tile; the missed name with a rough box, and the listed one again
-        return ('[{"tile": 1, "text": "toran", "box": [490, 375, 600, 410]},'
+        return ('[{"tile": 1, "text": "Toran", "box": [490, 375, 600, 410]},'
                 ' {"tile": 1, "text": "HOLM", "box": [98, 182, 178, 204]}]', {'input_tokens': 900, 'output_tokens': 40})
     monkeypatch.setattr(map_missed, 'ask', fake_ask)
     monkeypatch.setattr(sys, 'argv', ['map_missed.py', str(tmp_path / 'map.png'), str(lab)])
@@ -48,12 +48,12 @@ def test_main_adds_what_claude_found_fitted_to_the_ink_and_marked(tmp_path, monk
     labels = json.loads(lab.read_text(encoding='utf-8'))
     assert seen['n'] == 1 and len(labels) == 2
     new = labels[1]
-    assert new['text'] == 'TORAN' and new['found'] == 'claude' and new['retype'] is True
+    assert new['text'] == 'Toran'  # in its printed case and new['found'] == 'claude' and new['retype'] is True
     x0, y0, x1, y1 = new['box']
     assert 495 <= x0 <= 502 and 380 <= y0 <= 390 and 570 <= x1 <= 585 and 400 <= y1 <= 408  # the ink's, not Claude's
     assert (tmp_path / 'labels.json.bak').exists()
     out = capsys.readouterr().out
-    assert '1 added' in out and '940 tokens' in out and 'TORAN' not in out  # counts only, never wordings
+    assert '1 added' in out and '940 tokens' in out and 'Toran' not in out  # counts only, never wordings
 
 
 def test_ask_runs_claude_lean_and_outside_the_project(monkeypatch):

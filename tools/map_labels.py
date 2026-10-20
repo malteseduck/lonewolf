@@ -53,7 +53,7 @@ def ocr(path):
     # rotation_info catches labels set along a river or coast at a steep angle
     for quad, text, conf in r.readtext(im, rotation_info=[90, 270]):
         xs, ys = [p[0] for p in quad], [p[1] for p in quad]
-        out.append({'text': text.upper().strip(), 'box': [int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys))],
+        out.append({'text': text.strip(), 'box': [int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys))],
                     'conf': round(float(conf), 2)})
     return out
 

@@ -157,7 +157,13 @@ Commands run from the project root as
    on (one strip per `lines` entry). So a tight box and the right `text` matter; mountain peaks, tree
    tops, roads and symbols in the box beside the letters stay, as round a slanted name in its level
    box. A shape lying in the box and mostly in the strip is taken whole out to most of a letter's
-   height again (capitals, tails); a line joined to the letters only inside the strip. Checked on the
+   height again (capitals, tails); a line joined to the letters only inside the strip. A name of
+   several words on one line may bend between them (Book 10, Blackshroud Trail: the strip along
+   "Blackshroud" missed "Trail"), so each word of 3 letters or more is looked for again in its share
+   of the line, up to 30° off it; its own strip is added where it holds 1.3 times the ink, lies at
+   least a quarter on the name's line and is no more than 1.25 times as tall (else it had found the
+   peaks or coast beside the word). Of the 429 names on Books 1-10 and 12, 4 changed, each only
+   gaining letters (2026-10-20). Checked on the
    owner's lists of Books 4, 5, 6 and 12 (2026-10-19): of 133 keep boxes, 57 are no longer needed
    (3 before) and 66% of the ink they saved now stays without them; what still needs one lies among
    the letters (a mountain line crossing the name, a flag or tower at its end). `keep: [[box]]`

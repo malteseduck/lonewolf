@@ -42,6 +42,10 @@ EDGE = 0.3    # the line grows while a row across it holds this share of its ink
 GAP = 2       # ... stepping over gaps this many px wide (between a letter's strokes)
 SLACK = 0.12  # the line's height is grown by this share each way for anything ...
 REACH = 0.8   # ... and by this share for a shape lying in the box and mostly in the line
+TURN = 30     # degrees: a word of a bent name may lie this far off the name's line ...
+BETTER = 1.3  # ... and its own strip is added where it holds this much more of the word's ink,
+ON_LINE = 0.25  # this share of it on the name's line,
+TALLER = 1.25   # and it is no taller than this many times the name's
 
 
 class LabelInk:
@@ -120,7 +124,8 @@ class LabelInk:
         if not lab_.get('clip'):  # only the ink along the letters: the peaks, trees and symbols beside them stay
             words = lab_.get('lines') or [lab_.get('text', '')]
             bx0, by0, bx1, by1 = lab_['box']
-            m = self.along_letters(m, take[sub], (bx1 - bx0, by1 - by0), max(len(t.replace(' ', '')) for t in words), len(words))
+            m = self.along_letters(m, take[sub], (bx1 - bx0, by1 - by0), max(len(t.replace(' ', '')) for t in words), len(words),
+                                   () if lab_.get('lines') else lab_.get('text', '').split())
         m = m | self.enclosed(m, self.dark[y0:y1, x0:x1] > 30)
         if lab_.get('keep'):  # a ship inside the label's box; a fifth number turns the box (degrees, clockwise)
             kept = np.zeros(m.shape, np.uint8)
@@ -132,7 +137,7 @@ class LabelInk:
         return m
 
     @staticmethod
-    def along_letters(m, whole, size, chars, lines=1):
+    def along_letters(m, whole, size, chars, lines=1, words=()):
         """Only the ink along the name's line(s) of letters, so the mountain peaks, tree tops, roads and
         symbols in the box beside them stay. The box is drawn round the name: at each angle its
         <chars> letters across the box's length give their height. The line is the strip of that
@@ -140,7 +145,10 @@ class LabelInk:
         on; a name over <lines> lines scores them all at once, then the others are the fullest
         strips of the same height near that angle. A shape lying in the box (<whole>) and mostly in
         a strip is taken out to REACH of its height each way (capitals, tails); anything else only
-        inside a strip, grown by SLACK."""
+        inside a strip, grown by SLACK. A name of several <words> on one line may bend between them
+        (Book 10, Blackshroud Trail): each word of 3 letters or more is looked for again in its share
+        of the line's length, within TURN of its angle, and its own strip is added there if it holds
+        BETTER as much ink, lies partly on the name's line (ON_LINE) and is not much taller (TALLER)."""
         if m.sum() < MIN_INK or chars < 2:
             return m
         h, w = m.shape
@@ -159,13 +167,13 @@ class LabelInk:
             a = xx * -np.sin(t) + yy * np.cos(t)
             return np.round(a - a.min()).astype(int)
 
-        def fullest(a, ink, width, dense=0.0):  # the strip <width> px wide holding the most ink
+        def fullest(a, ink, width, dense=0.0, area=None):  # the strip <width> px wide holding the most ink
             c = np.concatenate([[0], np.cumsum(np.bincount(a[ink], minlength=a.max() + 1))])
             if len(c) <= width:
                 return None
             score = (c[width:] - c[:-width]).astype(float)
             if dense:
-                ca = np.concatenate([[0], np.cumsum(np.bincount(a.ravel()))])
+                ca = np.concatenate([[0], np.cumsum(np.bincount(a.ravel() if area is None else a[area], minlength=a.max() + 1))])
                 score -= dense * (ca[width:] - ca[:-width])
             i = int(np.argmax(score))
             return score[i], i, i + width - 1
@@ -181,15 +189,49 @@ class LabelInk:
         _, deg0, a, lo, hi, tall = best
         if lines > 1:  # the first line: the fullest strip of one line's height among them
             _, lo, hi = fullest(a, m & (a >= lo) & (a <= hi), tall)
-        # grow it while a row across holds EDGE of the strip's ink, stepping over gaps of up to GAP px
-        rows = np.bincount(a[m], minlength=a.max() + 1)
-        floor = EDGE * rows[lo:hi + 1].mean()
-        while lo > 0 and (rows[max(0, lo - GAP):lo] >= floor).any():
-            lo -= 1
-        while hi < len(rows) - 1 and (rows[hi + 1:hi + 1 + GAP] >= floor).any():
-            hi += 1
+
+        def grow(a, ink, lo, hi):  # while a row across holds EDGE of the strip's ink, stepping over gaps of up to GAP px
+            rows = np.bincount(a[ink], minlength=a.max() + 1)
+            floor = EDGE * rows[lo:hi + 1].mean()
+            while lo > 0 and (rows[max(0, lo - GAP):lo] >= floor).any():
+                lo -= 1
+            while hi < len(rows) - 1 and (rows[hi + 1:hi + 1 + GAP] >= floor).any():
+                hi += 1
+            return lo, hi
+
+        guess = tall
+        lo, hi = grow(a, m, lo, hi)
         tall = hi + 1 - lo
-        strips = [(a, lo, hi)]
+        strips = [(a, lo, hi, True)]
+        if lines == 1 and len(words) > 1:  # a bent name: each word on its own strip where that fits it better
+            t = np.radians(deg0)
+            # along the line as it reads: left to right, or upwards on an upright name
+            p = (xx * np.cos(t) + yy * np.sin(t)) * (1 if np.cos(t) > 1e-6 else -1)
+            p0, p1 = np.percentile(p[m], [1, 99])
+            unit = (p1 - p0) / (sum(map(len, words)) + len(words) - 1)
+            core = (a >= lo) & (a <= hi)
+            at = 0
+            for w_ in words:
+                s0, s1 = p0 + at * unit, p0 + (at + len(w_)) * unit
+                at += len(w_) + 1
+                if len(w_) < 3:
+                    continue
+                seg = (p >= s0 - WIDE * guess / 2) & (p <= s1 + WIDE * guess / 2)
+                best = None
+                for deg in range(deg0 - TURN, deg0 + TURN + 1, 2):
+                    a2 = across(deg)
+                    got = fullest(a2, m & seg, guess, DENSE, seg)
+                    if got and (best is None or got[0] > best[0]):
+                        best = (got[0], a2, got[1], got[2])
+                if best is None:
+                    continue
+                _, a2, l2, h2 = best
+                l2, h2 = grow(a2, m & seg, l2, h2)
+                own = m & seg & (a2 >= l2) & (a2 <= h2)
+                # a strip off the name's line, or grown over the peaks or coast beside it, is not the word
+                if (own.sum() > BETTER * (m & seg & core).sum() and (own & core).sum() >= ON_LINE * own.sum()
+                        and h2 + 1 - l2 <= TALLER * tall):
+                    strips.append((a2, l2, h2, seg))
         rest = m
         for _ in range(lines - 1):
             near = (a >= lo - SLACK * tall) & (a <= hi + SLACK * tall)
@@ -203,12 +245,12 @@ class LabelInk:
             if best is None or best[0] < MIN_INK:
                 break
             _, a, lo, hi = best
-            strips.append((a, lo, hi))
+            strips.append((a, lo, hi, True))
         band = np.zeros(m.shape, bool)
         reach = np.zeros(m.shape, bool)
-        for a, lo, hi in strips:
-            band |= (a >= lo - SLACK * tall) & (a <= hi + SLACK * tall)
-            reach |= (a >= lo - REACH * tall) & (a <= hi + REACH * tall)
+        for a, lo, hi, where in strips:
+            band |= (a >= lo - SLACK * tall) & (a <= hi + SLACK * tall) & where
+            reach |= (a >= lo - REACH * tall) & (a <= hi + REACH * tall) & where
         return m & (band | (mostly(band) & mostly(whole) & reach))
 
     @staticmethod

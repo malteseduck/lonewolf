@@ -29,9 +29,9 @@ MODEL = 'sonnet'
 SYSTEM = 'You read the lettering on old printed maps and answer with JSON only.'
 ASK = """These {n} images are overlapping tiles of one old printed fantasy map, numbered in order. Grey ticks and numbers along the top and left edges are tile pixels, every 100.
 Red boxes outline lettering that is already listed: ignore everything inside them.
-List every other piece of lettering on the map: place names, regions, seas, rivers, forests, hand-lettered or printed, at any angle, one entry per name (a name printed over two lines is one entry).
+List every other piece of lettering on the map: place names, regions, seas, rivers, forests, hand-lettered or printed, at any angle, one entry per name (a name printed over two lines is one entry), in its printed capitals and lower case.
 Do not list trees, mountains, hatching, the frame or other drawing, and do not guess at lettering you cannot see.
-Answer only with a JSON list: [{{"tile": 1, "text": "THE WORDING AS PRINTED", "box": [x0, y0, x1, y1]}}], the box tight round the lettering in that tile's pixels. [] if there is none."""
+Answer only with a JSON list: [{{"tile": 1, "text": "The Wording As Printed", "box": [x0, y0, x1, y1]}}], the box tight round the lettering in that tile's pixels. [] if there is none."""
 
 
 def tiles(w, h, size=TILE, overlap=OVERLAP):
@@ -109,7 +109,7 @@ def place(found, rects, labels, ink):
         b = fit(b, ink)
         if any(inside(b, lab['box']) > 0.5 or inside(lab['box'], b) > 0.5 for lab in labels + new):
             continue
-        new.append({'text': f['text'].strip().upper(), 'box': b, 'retype': True, 'found': 'claude'})
+        new.append({'text': f['text'].strip(), 'box': b, 'retype': True, 'found': 'claude'})
     return new
 
 
