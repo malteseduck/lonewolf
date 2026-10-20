@@ -21,7 +21,14 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
   font: 13px/1.35 system-ui, Segoe UI, sans-serif; overflow: hidden; }
 body { display: flex; flex-direction: column; }
 /* minmax(0, 1fr): otherwise the canvas's old pixel height sets the row and pushes the rail off the top */
-#app { display: grid; grid-template-columns: 250px 1fr 290px; grid-template-rows: minmax(0, 1fr); flex: 1; min-height: 0; }
+#app { display: grid; grid-template-columns: var(--lw) 1fr var(--rw); grid-template-rows: minmax(0, 1fr); flex: 1; min-height: 0;
+  --lw: 250px; --rw: 290px; overflow: hidden; transition: grid-template-columns .22s ease; }
+/* the trays slide out to give the map room ([ and ]): the track narrows to 0 and the tray, kept at its width, slides off the edge */
+#app.noleft { --lw: 0px; } #app.noright { --rw: 0px; }
+#left { width: 250px; justify-self: end; } #right { width: 290px; justify-self: start; }
+.tray { position: absolute; top: 50%; z-index: 5; transform: translateY(-50%); padding: 22px 6px; font-size: 22px; font-weight: 700; line-height: 1;
+  background: var(--page) var(--parch, none) center / cover; box-shadow: var(--scorch), 0 2px 8px #000a; border: 0; color: var(--blood); }
+#trayl { left: 0; border-radius: 0 4px 4px 0; } #trayr { right: 0; border-radius: 4px 0 0 4px; }
 #rail, #panel { flex-shrink: 0; }
 #rail, #panel, aside, #booklist, #ask { background: var(--page) var(--parch, none) center / cover; box-shadow: var(--scorch); }
 #rail { display: flex; align-items: center; gap: 4px; padding: 7px 10px; flex-wrap: wrap; }
@@ -129,6 +136,8 @@ body.embed #rail > b, body.embed #bookpick { display: none; }
   </aside>
   <div id="main">
     <canvas id="cv"></canvas>
+    <button id="trayl" class="tray" title="Hide the labels tray ([)">&#8249;</button>
+    <button id="trayr" class="tray" title="Hide the tools tray (])">&#8250;</button>
     <div id="status"></div>
     <div id="msg"></div>
   </div>
@@ -156,6 +165,7 @@ body.embed #rail > b, body.embed #bookpick { display: none; }
       <li><kbd>E</kbd>: edit the erase box (what is erased and measured)</li>
       <li><kbd>K</kbd>: add a keep box inside it (dashed green), left by Erase</li>
       <li>Arrows: nudge 1 px, with <kbd>Shift</kbd> 10</li>
+      <li><kbd>[</kbd> <kbd>]</kbd>: slide the trays out or in</li>
       <li>Empty fields are removed on save</li>
     </ul>
   </aside>
@@ -976,6 +986,7 @@ window.addEventListener('keydown', e => {
   else if (e.key.toLowerCase() === 'h') { if (!hideAll) { hideAll = true; draw(); } }
   else if (e.key.toLowerCase() === 'c') { if (img2 && !peek) { peek = true; draw(); } }
   else if (e.key === 'Delete') del();
+  else if (e.key === '[' || e.key === ']') toggleTray(e.key === '[' ? 'left' : 'right');
   else if (e.key.toLowerCase() === 'm') startMerge();
   else if (e.key.toLowerCase() === 'e') toggleErase();
   else if (e.key.startsWith('Arrow') && sel >= 0) {
@@ -1434,6 +1445,22 @@ window.addEventListener('drop', async e => {
 window.mapEditorDirty = () => snap() !== savedJson;  // asked by the dashboard before it closes the editor
 window.addEventListener('beforeunload', e => { if (snap() !== savedJson) { e.preventDefault(); e.returnValue = ''; } });
 window.addEventListener('resize', resize);
+// the side trays, slid out or in; remembered in this browser only
+function toggleTray(side, on) {
+  const app = $('app'), cls = side === 'left' ? 'noleft' : 'noright';
+  const hide = on === undefined ? !app.classList.contains(cls) : !on;
+  app.classList.toggle(cls, hide);
+  const b = $(side === 'left' ? 'trayl' : 'trayr'), name = side === 'left' ? 'labels' : 'tools';
+  b.innerHTML = (side === 'left') === hide ? '&#8250;' : '&#8249;';
+  b.title = `${hide ? 'Show' : 'Hide'} the ${name} tray (${side === 'left' ? '[' : ']'})`;
+  try { localStorage.setItem('lw-mapedit-' + cls, hide ? '1' : ''); } catch {}
+}
+$('trayl').onclick = () => toggleTray('left');
+$('trayr').onclick = () => toggleTray('right');
+for (const side of ['left', 'right']) {
+  let hid = false; try { hid = !!localStorage.getItem('lw-mapedit-no' + side); } catch {}
+  if (hid) toggleTray(side, false);
+}
 new ResizeObserver(resize).observe(cv);
 resize();
 init();

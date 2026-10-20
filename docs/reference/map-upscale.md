@@ -32,7 +32,9 @@ lettered picture for Gemini, takes the round's image back (Ctrl+V, drop or file 
 suitable background for each stage. **Compare with** (under the background picker) shows a second
 picture right of a divider dragged across the map, or the whole map while C is held, and Swap
 exchanges the two: any two of the scan, the lettered picture, the rounds and the 4K map. A round's
-`map-check-<n>/aligned.png` lines up with the scan exactly; Gemini's own file only roughly. The command lines below are still how to run a step by hand.
+`map-check-<n>/aligned.png` lines up with the scan exactly; Gemini's own file only roughly. The two
+side trays (labels; tools and the label's fields) slide out to give the map the width, by the tabs on
+the map's edges or <kbd>[</kbd> and <kbd>]</kbd>, and stay as left in this browser. The command lines below are still how to run a step by hand.
 
 In the editor each place name has two shapes. Its **box** says where the printed name is: step 3
 erases the letters inside it and Measure reads them. Its **frame**, drawn round the new type, is what

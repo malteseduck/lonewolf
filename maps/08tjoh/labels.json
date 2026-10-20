@@ -1,0 +1,559 @@
+[
+ {
+  "text": "THE DAINARG SWA2HP",
+  "box": [
+   484,
+   61,
+   1563,
+   260
+  ],
+  "slant": 0.4,
+  "conf": 0.92,
+  "retype": true
+ },
+ {
+  "text": "MOG1AN",
+  "box": [
+   752,
+   286,
+   930,
+   381
+  ],
+  "slant": -4.8,
+  "conf": 0.76,
+  "retype": true
+ },
+ {
+  "text": "OCIAN",
+  "box": [
+   671,
+   343,
+   765,
+   391
+  ],
+  "slant": 5.6,
+  "conf": 0.87,
+  "retype": true
+ },
+ {
+  "text": "SKAYOTYPASS",
+  "box": [
+   993,
+   321,
+   1138,
+   419
+  ],
+  "slant": -62.9,
+  "conf": 0.84,
+  "retype": true
+ },
+ {
+  "text": "GNA-KOR-KUZIM",
+  "box": [
+   438,
+   397,
+   579,
+   548
+  ],
+  "slant": 48.1,
+  "conf": 0.93,
+  "retype": true
+ },
+ {
+  "text": "WOJNGAINS",
+  "box": [
+   651,
+   374,
+   796,
+   423
+  ],
+  "slant": -2.4,
+  "conf": 0.77,
+  "retype": true
+ },
+ {
+  "text": "2HAGADOR",
+  "box": [
+   1375,
+   424,
+   1606,
+   500
+  ],
+  "slant": -1.1,
+  "conf": 0.94,
+  "retype": true
+ },
+ {
+  "text": "RALNZIM",
+  "box": [
+   351,
+   447,
+   473,
+   494
+  ],
+  "slant": 2.8,
+  "conf": 0.7,
+  "retype": true
+ },
+ {
+  "text": "BLOKSHROTO TRL",
+  "box": [
+   759,
+   472,
+   980,
+   520
+  ],
+  "slant": 0,
+  "conf": 0.9,
+  "retype": true
+ },
+ {
+  "text": "FOREST",
+  "box": [
+   377,
+   486,
+   454,
+   524
+  ],
+  "slant": 0,
+  "conf": 0.99,
+  "retype": false
+ },
+ {
+  "text": "XANAR",
+  "box": [
+   1153,
+   480,
+   1238,
+   525
+  ],
+  "slant": 1,
+  "conf": 0.98,
+  "retype": true
+ },
+ {
+  "text": "SCHAAD",
+  "box": [
+   1577,
+   592,
+   1699,
+   628
+  ],
+  "slant": -0.9,
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "ARAN",
+  "box": [
+   1484,
+   626,
+   1557,
+   668
+  ],
+  "slant": 0,
+  "conf": 0.72,
+  "retype": true
+ },
+ {
+  "text": "LUUROS",
+  "box": [
+   1234,
+   709,
+   1333,
+   753
+  ],
+  "slant": 0,
+  "conf": 0.89,
+  "retype": true
+ },
+ {
+  "text": "BRIONA",
+  "box": [
+   1496,
+   741,
+   1590,
+   792
+  ],
+  "slant": -2.3,
+  "conf": 0.95,
+  "retype": true
+ },
+ {
+  "text": "15",
+  "box": [
+   1609,
+   759,
+   1680,
+   821
+  ],
+  "slant": 88.6,
+  "conf": 0.88,
+  "retype": true
+ },
+ {
+  "text": "TRACK",
+  "box": [
+   452,
+   791,
+   534,
+   873
+  ],
+  "slant": -44.5,
+  "conf": 0.97,
+  "retype": true
+ },
+ {
+  "text": "RAOIX",
+  "box": [
+   1575,
+   811,
+   1652,
+   862
+  ],
+  "slant": -1.3,
+  "conf": 0.89,
+  "retype": true
+ },
+ {
+  "text": "DELDEN",
+  "box": [
+   1514,
+   849,
+   1699,
+   945
+  ],
+  "slant": -0.6,
+  "conf": 0.85,
+  "retype": true
+ },
+ {
+  "text": "SMADA",
+  "box": [
+   1190,
+   912,
+   1281,
+   968
+  ],
+  "slant": 3.5,
+  "conf": 0.93,
+  "retype": true
+ },
+ {
+  "text": "THE DANARG (UNEXPLORED)",
+  "box": [
+   712,
+   949,
+   873,
+   1028
+  ],
+  "slant": 0.4,
+  "conf": 0.98,
+  "retype": true,
+  "lines": [
+   "THE DANARG",
+   "(UNEXPLORED)"
+  ]
+ },
+ {
+  "text": "LAVINYY",
+  "box": [
+   1492,
+   963,
+   1531,
+   1035
+  ],
+  "slant": -83.4,
+  "conf": 0.76,
+  "retype": true
+ },
+ {
+  "text": "ED",
+  "box": [
+   1267,
+   1047,
+   1342,
+   1108
+  ],
+  "slant": 87.7,
+  "conf": 0.79,
+  "retype": true
+ },
+ {
+  "text": "GREATBOR",
+  "box": [
+   359,
+   1094,
+   479,
+   1128
+  ],
+  "slant": 0.9,
+  "conf": 0.88,
+  "retype": true
+ },
+ {
+  "text": "THARRO",
+  "box": [
+   1257,
+   1093,
+   1357,
+   1136
+  ],
+  "slant": 0,
+  "conf": 0.97,
+  "retype": true
+ },
+ {
+  "text": "ED",
+  "box": [
+   1554,
+   1111,
+   1611,
+   1169
+  ],
+  "slant": 86.5,
+  "conf": 0.92,
+  "retype": true
+ },
+ {
+  "text": "CHANZ",
+  "box": [
+   1615,
+   1117,
+   1686,
+   1160
+  ],
+  "slant": -4.1,
+  "conf": 0.93,
+  "retype": true
+ },
+ {
+  "text": "RANGE",
+  "box": [
+   379,
+   1129,
+   455,
+   1162
+  ],
+  "slant": 0.3,
+  "conf": 0.85,
+  "retype": true
+ },
+ {
+  "text": "WORORIL",
+  "box": [
+   1040,
+   1126,
+   1146,
+   1170
+  ],
+  "slant": -1.7,
+  "conf": 0.94,
+  "retype": true
+ },
+ {
+  "text": "FOREST",
+  "box": [
+   1070,
+   1156,
+   1168,
+   1203
+  ],
+  "slant": -1.6,
+  "conf": 0.97,
+  "retype": false
+ },
+ {
+  "text": "WASY",
+  "box": [
+   1167,
+   1124,
+   1211,
+   1186
+  ],
+  "slant": 76.5,
+  "conf": 0.81,
+  "retype": true
+ },
+ {
+  "text": "ELDENORA",
+  "box": [
+   1418,
+   1160,
+   1620,
+   1239
+  ],
+  "slant": -1.6,
+  "conf": 0.8,
+  "retype": true
+ },
+ {
+  "text": "TALESGRIA",
+  "box": [
+   1066,
+   1209,
+   1295,
+   1303
+  ],
+  "slant": -1.8,
+  "conf": 0.95,
+  "retype": true
+ },
+ {
+  "text": "PHQENA",
+  "box": [
+   1296,
+   1255,
+   1409,
+   1304
+  ],
+  "slant": 0.3,
+  "conf": 0.8,
+  "retype": true
+ },
+ {
+  "text": "0 25 50 75 100 125",
+  "box": [
+   559,
+   1373,
+   891,
+   1407
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "spread": true
+ },
+ {
+  "text": "10",
+  "box": [
+   1361,
+   1392,
+   1379,
+   1410
+  ],
+  "slant": -30,
+  "conf": 0.94,
+  "retype": true
+ },
+ {
+  "text": "SO",
+  "box": [
+   683,
+   1412,
+   711,
+   1441
+  ],
+  "slant": 0.8,
+  "conf": 0.75,
+  "retype": true
+ },
+ {
+  "text": "150",
+  "box": [
+   922,
+   1417,
+   953,
+   1443
+  ],
+  "slant": 0,
+  "conf": 0.98,
+  "retype": true
+ },
+ {
+  "text": "PLAINS",
+  "box": [
+   1120,
+   1429,
+   1180,
+   1462
+  ],
+  "slant": -1.3,
+  "conf": 0.92,
+  "retype": false
+ },
+ {
+  "text": "DILLS",
+  "box": [
+   1198,
+   1431,
+   1242,
+   1458
+  ],
+  "slant": 2.6,
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "2IXTIK 2UAKSI)",
+  "box": [
+   1249,
+   1429,
+   1392,
+   1462
+  ],
+  "slant": 0.1,
+  "conf": 0.78,
+  "retype": true
+ },
+ {
+  "text": "DEGHD.",
+  "box": [
+   1396,
+   1430,
+   1456,
+   1462
+  ],
+  "slant": 1.1,
+  "conf": 0.94,
+  "retype": true
+ },
+ {
+  "text": "GONIF",
+  "box": [
+   1455,
+   1432,
+   1521,
+   1460
+  ],
+  "slant": -0.1,
+  "conf": 0.97,
+  "retype": true
+ },
+ {
+  "text": "SGALE IN 2NHILES",
+  "box": [
+   654,
+   1445,
+   829,
+   1488
+  ],
+  "slant": 0.4,
+  "conf": 0.89,
+  "retype": true
+ },
+ {
+  "text": "KEY",
+  "box": [
+   1222,
+   1453,
+   1279,
+   1498
+  ],
+  "slant": -3,
+  "conf": 0.92,
+  "retype": false
+ },
+ {
+  "text": "FORESE FOREST",
+  "box": [
+   1397,
+   1454,
+   1530,
+   1491
+  ],
+  "slant": -1,
+  "conf": 0.87,
+  "retype": true
+ }
+]
