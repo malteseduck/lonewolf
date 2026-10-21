@@ -5,13 +5,14 @@
        the ranges for the total the engine builds (Weaponmastery with Bow added). Where a shot has no
        draw (a plain hit that only costs an Arrow) the section takes the Arrow instead.
      - Where the text lets the player shoot "if you have a Bow", the choice is gated on any bow (the
-       Bow, or the prize bow once won).
+       Bow, or the prize bow once won) and an Arrow to shoot with (the rules: a Bow needs an Arrow a
+       shot); the way "if you do not have a Bow" opens when he lacks either.
      - The prize Silver Bow is called a Special Item in the text, but the engine reads a bow's bonus
        to a shot only from the weapons carried, so it is entered as a weapon (it takes a weapon place).
      - The archery tournament: the qualifying round (340) is three numbers added, and the bow
        borrowed at 18 is a mark for this adventure (214, 298), ended where the tournament ends. The
-       final (26) is not imported as a fight (its foe's line counts Target points), so it stays by
-       hand. The wager game at 284 (up to three bets) is a game.
+       final (26) is a fight in 50 TARGET points a side, the borrowed bow's penalty in its rounds. The
+       wager game at 284 (up to three bets) is a game.
      - Bribes, fees and the Amory cess are paid at the choice that pays them (need ... spend). The
        dormitory at 17 can also be paid with goods (a footnote), so it alone is left as a note.
    Item names are the book's own labels for them; everything else is in our words. */
@@ -39,8 +40,9 @@ export const ITEMS = {
 };
 
 const bows = ['bow', 'silverBow'];
-// "if you have a Bow" gating the way to a shot, and the way without
-const withBow = (to, other) => ({ [to]: { item: bows }, ...(other ? { [other]: { item: bows, not: true } } : {}) });
+// "if you have a Bow" gating the way to a shot (a Bow and an Arrow), and the way without
+const armed = { item: bows, arrows: 1, label: 'a Bow and an Arrow' };
+const withBow = (to, other) => ({ [to]: { any: [armed] }, ...(other ? { [other]: { any: [{ not: armed, label: 'no Bow, or no Arrow' }] } } : {}) });
 const pay = (gold) => ({ gold, spend: true });
 const cess = { item: 'cess6' };
 const map = { item: 'mapVaretta' };
@@ -76,15 +78,16 @@ export const SECTIONS = {
   10: { loot: [{ item: 'ticketLuyen6', cost: 10 }, { item: 'ticketRhem6', cost: 15 }, { item: 'ticketEula6', cost: 20 }], todo: 'buy one ticket only: the price depends on how far you go.' },
   // the creature is down: his losses in the first two rounds do not count
   12: { fight: { rounds: [{ upTo: 2, heroLoss: 0, note: 'It lies face down' }] } },
-  13: { need: { 56: { item: bows } } },
+  13: { need: withBow('56') },
   // the map is handed over, however he came by it
   16: { give: [map] },
   17: { need: { 202: pay(3), 251: pay(5) }, todo: 'the dormitory costs 2 Gold Crowns; if you cannot pay, hand over a Backpack Item or a Weapon instead.' },
   20: { take: [{ arrows: 1 }] },
   24: { need: { 101: { item: 'rope' } } },
   // the final: 50 TARGET points a side in place of Endurance (his own untouched), fought with a Bow (his own or
-  // the one borrowed at 18), no Shield (footnote); a borrowed bow's penalty, and the Jakan breaking on a 0
-  26: { rnt: null, fight: { points: { n: 50, lose: '183' }, to: '252', lend: 'bow', noShield: true,
+  // the one borrowed at 18), no Shield (footnote), no Psi-surge or Mindblast (ruling R16); a borrowed bow's
+  // penalty, and the Jakan breaking on a 0
+  26: { rnt: null, fight: { points: { n: 50, lose: '183' }, to: '252', lend: 'bow', noShield: true, noMind: true,
     stop: { drawn: [0], to: '335', if: { mark: 'jakan6' } },
     rounds: [{ csMod: -4, if: { mark: 'boneBow6' }, note: 'Kalte bone bow' }, { csMod: -2, if: { mark: 'jakan6' }, note: 'Jakan' }] } },
   27: { need: { 304: pay(3) } },
@@ -113,9 +116,13 @@ export const SECTIONS = {
   85: { ep: -2, need: withBow('178', '39') },
   88: { give: [{ gold: 5 }] },
   91: { rolls: win(5) },
+  // a win in three rounds or fewer, else his comrades come on (215)
+  92: { fight: { won: { within: 3, to: '77', else: '215' } } },
   // an arrow shot: 0-3 miss the creature, 4 or more hit
   95: { bowShot: { 155: [0, 3], 12: [4, 12] } },
   96: { need: { 49: cess, 221: { ...cess, not: true } } },
+  // the cheapest ticket is 10 Crowns
+  102: { need: { 10: { gold: 10 } } },
   // the weapons shop: prices as chalked up; he buys back at a crown less
   98: { loot: [{ item: 'broadsword', cost: 7 }, { item: 'dagger', cost: 2 }, { item: 'shortSword', cost: 3 }, { item: 'warhammer', cost: 6 }, { item: 'spear', cost: 5 }, { item: 'mace', cost: 4 }, { item: 'axe', cost: 3 }, { item: 'bow', cost: 7 }, { item: 'quarterstaff', cost: 3 }, { item: 'sword', cost: 4 }, { arrows: 2, cost: 1 }],
     sell: { broadsword: 6, dagger: 1, shortSword: 2, warhammer: 5, spear: 4, mace: 3, axe: 2, bow: 6, quarterstaff: 2, sword: 3 },
@@ -131,8 +138,10 @@ export const SECTIONS = {
   124: { need: { 59: { item: ['ticketLuyen6', 'ticketRhem6', 'ticketEula6'] }, 290: { item: ['ticketLuyen6', 'ticketRhem6', 'ticketEula6'], not: true } } },
   137: { need: { 332: pay(3) } },
   139: { loot: [{ item: 'axe' }, { gold: 11 }, { item: 'dagger' }, { item: 'silverBrooch6' }] },
-  // the entrance fee is paid on arrival; he must have a bow of his own to enter
-  141: { take: [{ gold: 2 }], need: withBow('340', '18') },
+  // the entrance fee is paid on arrival; he must have a bow of his own to enter (the Arrows are found him)
+  141: { take: [{ gold: 2 }], need: { 340: { item: bows }, 18: { item: bows, not: true } } },
+  // the dive to the deck: less with Nexus or Divination, less again with a shield
+  142: { rntMod: [{ disc: ['nexus', 'divination'], plus: -2 }, { item: 'shield', plus: -3 }], ranges: { 184: [-99, 4], 51: [5, 99] } },
   // a thief took one Backpack Item of his choice in the night
   144: { take: [{ pick: 'backpack', n: 1 }] },
   145: { loot: [{ gold: 12 }, { item: 'rubyRing6' }] },
@@ -177,7 +186,7 @@ export const SECTIONS = {
   227: { need: withBow('20') },
   196: { need: withBow('20') },
   // the room key and the Meal, paid in advance
-  232: { take: [{ gold: 3 }] },
+  232: { take: [{ gold: 3 }], need: { 219: { item: 'meal', spend: true } } },
   74: { need: withBow('20') },
   245: { stake: { key: 'conundrum6' } },
   246: taunor,
@@ -185,7 +194,7 @@ export const SECTIONS = {
   // a hot bath and a good night
   251: { ep: 3 },
   // the room and the horse's keep at 3 Crowns; a Meal is due, or one bought here for a Crown
-  253: { need: { 35: pay(3) }, meal: true, mealCost: 1 },
+  253: { need: { 35: pay(3), 54: { any: [{ not: { gold: 3 } }] } }, meal: true, mealCost: 1 },
   254: { fight: { rounds: [{ upTo: 1, csMod: -2, unless: { disc: 'huntmastery' }, note: 'Attacked from behind' }] } },
   // a bow shot at the beast's eyes
   243: { bowShot: { 155: [0, 3], 292: [4, 8], 264: [9, 12] } },
@@ -202,7 +211,7 @@ export const SECTIONS = {
   // a bet on the rider's feat, up to three rounds, 10 Crowns at most
   284: { game: { kind: 'higher', stake: { min: 1, max: 10 }, win: 2, vs: 3, bets: 3, broke: '76', done: '347', quit: '336' } },
   295: { need: { 321: { item: 'sommerswerd' } } },
-  298: { mark: 'jakan6' },
+  298: { rnt: null, mark: 'jakan6' },
   301: { take: [{ arrows: 1 }] },
   304: { give: [{ item: 'cess6' }] },
   // the cold costs a point unless Nexus spares it
@@ -210,13 +219,17 @@ export const SECTIONS = {
   171: cold,
   // loaves at 2 Crowns, each one a Meal: the Meal due may be one bought here
   307: { loot: [{ meal: 1, cost: 2 }], mealCost: 2 },
+  310: { ep: -2 },
   313: { ep: -8 },
   315: { ep: -4 },
   322: { need: { 332: pay(10) } },
   328: { take: [{ gold: 2 }] },
   330: { need: withBow('20') },
   // a sense of the soldiers is offered only with the right discipline
-  332: { need: { 346: { disc: ['pathsmanship', 'divination'] } } },
+  // with no gold at all, the gambling (91) is the only way; with some, the rest
+  332: { need: { 91: { any: [{ not: { gold: 1 } }] }, 346: { disc: ['pathsmanship', 'divination'], any: [{ gold: 1 }] }, 172: { gold: 1 }, 232: { gold: 1 } } },
+  // the prize bow is the proof of the win
+  325: { need: { 45: { item: 'silverBow' }, 132: { item: 'silverBow', not: true } } },
   334: { need: withBow('209') },
   // light for the pit: a Firesphere, or a Torch and a Tinderbox
   339: { need: { 80: { any: light }, 90: { any: [{ not: { any: light } }] } } },
@@ -225,7 +238,7 @@ export const SECTIONS = {
   // the tournament's ends
   103: bowBack,
   183: bowBack,
-  252: { give: [{ item: 'silverBow' }], ...bowBack },
+  252: { rnt: null, give: [{ item: 'silverBow' }], ...bowBack },
   335: bowBack,
   // evading only after three rounds
   343: { fight: { evade: { after: 3, to: '305' } } },

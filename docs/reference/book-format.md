@@ -147,6 +147,7 @@ Enemies are fought in order, one at a time. An item table's `fight` may also giv
 |---|---|
 | `rounds` | `[{from, upTo, fromFoe, if, unless, came, ambush, mind, csMod, note, unarmed, heroLoss, foeLoss, heroPlus, heroEach, foeEach, psi}]`: what holds in some rounds only (`from`/`upTo`, round numbers, 1 first; `fromFoe`, from that foe of the list on, 0 first), or the whole fight under a condition (`if`/`unless`, Conditions; `came`, only when he came from one of these sections, a surprise the choice before grants; `ambush`, spared by Huntmastery in a Magnakai book; `mind`, only while Mindblast or Psi-surge is used, `mind: 2` only while the full Psi-surge or Kai-surge is). `csMod` (named `note`); `unarmed` (bare-handed); `heroLoss`/`foeLoss` multiply each round's loss (0 ignores it, 2 doubles, 0.5 halves, rounding down); `heroPlus` more for every wound; `heroEach`/`foeEach` lost every round whatever the dice say; `psi` multiplies what Mindblast or Psi-surge adds |
 | `stop` | `{after, wound, foeAt, drawn: [n], to, by}` or a list: the text ends the fight after `after` rounds, at his first wound, when the foe is down to `foeAt`, or at once when a number in `drawn` is drawn; it leads to `to` (one of the section's choices), or opens the choices. `by: {hero, foe, even}`: the way on by who lost more |
+| `noMind` | true: no attack of the mind is offered or counts (Book 6's archery final, ruling R16) |
 | `breath` | `{each}`: the number drawn in the section (0 as 10, with its `rntMod`; drawn when the fight begins if not yet) is how many rounds he lasts; each round after costs `each` more Endurance (Book 4's underwater fights) |
 | `won` | `{within, to, else}`: a win in `within` rounds or fewer leads to `to`, a longer one to `else` |
 | `wounded` | once he has lost any Endurance in it, the fight (won or evaded) leads here |
@@ -173,7 +174,7 @@ his Endurance at the moment, `item` an item id or a list (any held, via `LW.hasI
 `wield` (the weapon he fights with is of these kinds; `true`: he is armed), `mastery` (Weaponskill or Weaponmastery in that
 weapon), `skilled` (his skill counts for the weapon in hand), `meals` / `arrows` / `packItems` / `gold` (at least so many),
 `mark` (a lasting condition or flag, `hero.marks`, carried from book to book), `any` (a list: one of them), `not` (a
-Condition he must not meet). `LW.meets(hero, cond)` tests one, `LW.condName(cond)` names it. Used by `need` on choices
+Condition he must not meet), `label` (its name where the page names it, in place of the one made from its parts). `LW.meets(hero, cond)` tests one, `LW.condName(cond)` names it. Used by `need` on choices
 (the item tables' new ones go in `need.any`, a single member being fine), `rntMod` (`{plus, ...cond}`; `{vsCS: true}`
 takes his COMBAT SKILL off the total), `when`, `lessen`, and the fight's `csIf` / `csUnless` and `rounds`.
 

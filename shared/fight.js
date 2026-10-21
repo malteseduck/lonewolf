@@ -34,8 +34,8 @@
       const missed = c.csIf && !LW.meets(hero, c.csIf), excused = c.csUnless && LW.meets(hero, c.csUnless);
       this.csMod = spared || ambush || missed || excused || (c.unarmed && !LW.armedWith(hero)) ? 0 : c.csMod;
       this.note = c.csIf ? LW.condName(c.csIf) : c.csNote; // a discipline's bonus is named after it
-      // mind: 0 at rest, 1 Mindblast, 2 Psi-surge. power is the most this character can do.
-      this.power = c.mind ? 0 : LW.mindPower(hero); this.mind = this.power ? 1 : 0;
+      // mind: 0 at rest, 1 Mindblast, 2 Psi-surge. power is the most this character can do (noMind: nothing here)
+      this.power = c.mind || c.noMind ? 0 : LW.mindPower(hero); this.mind = this.power ? 1 : 0;
       // breath: rounds he lasts (the number drawn here, 0 as 10, with the section's bonuses; drawn now if
       // not yet), then `each` more lost every round after (Book 4's underwater fights)
       if (c.breath) {
@@ -62,6 +62,7 @@
       else if (spared) log.push(`Your ${c.unless.map(LW.itemName).join(' and ')} spare you the penalty.`);
       else if (ambush) log.push('Huntmastery: the ambush does not catch you off guard.');
       else if (excused && c.csMod) log.push(`${LW.condName(c.csUnless)}: you are spared the penalty.`);
+      if (c.noMind && LW.mindPower(hero)) log.push('No attack of the mind tells here.');
       if (c.mind) log.push('A fight of the mind: no weapon or armour counts.');
       else if (c.with === 'none') log.push(this.ctx.noUnarmed ? 'You fight bare-handed, and lose nothing by it.' : 'You fight bare-handed.');
       else if (c.with) log.push(this.weapon ? `Only your ${LW.itemName(c.with)} can harm it.` : `Only the ${LW.itemName(c.with)} can harm it, and you do not have it.`);

@@ -17,7 +17,7 @@ const SECTIONS = {
   1: { rnt: 'auto', choices: [{ to: '2', range: [0, 4] }, { to: '3', range: [5, 9] }] },
   2: { combat: { enemies: foe('Rat'), won: { within: 1, to: '12', else: '13' } }, choices: [] }, // either way, whatever the dice
   12: { choices: [{ to: '4' }, { to: '9' }] },
-  13: { choices: [{ to: '4' }] },
+  13: { choices: [{ to: '4' }, { to: '19', need: { any: [{ not: { gold: 1 } }] } }] }, // only with no gold: the purse is emptied
   3: { choices: [{ to: '5', need: { item: 'key' } }, { to: '14', need: { item: 'lamp' } }, { to: '4' }] }, // no Key anywhere; the Lamp is at 13
   4: { choices: [{ to: '6', need: { came: ['99'] } }, { to: '7' }, { to: '11' }] },
   7: { combat: { enemies: foe('Ghost'), rounds: [{ foeLoss: 0, heroLoss: 0 }], to: '8' }, choices: [{ to: '8' }] }, // neither side takes harm
@@ -25,7 +25,7 @@ const SECTIONS = {
   9: { combat: { enemies: foe('Champion'), lose: '17', to: '18' }, choices: [{ to: '17' }, { to: '18' }] }, // a contest
   11: { choices: [{ to: '6', need: { came: ['99'] } }] }, // no way on
   10: { choices: [{ to: '16' }] }, // no link leads here (a puzzle's answer)
-  5: end, 6: end, 14: end, 16: end, 17: end, 18: end,
+  5: end, 6: end, 14: end, 19: end, 16: end, 17: end, 18: end,
 };
 const book = (code, more) => `LW.BOOKS['${code}'] = ${JSON.stringify(Object.assign({ id: code, number: 1, series: 'kai', start: '1', sections: SECTIONS }, more))};`;
 
@@ -45,7 +45,8 @@ describe('walk_book.mjs', () => {
     expect(r.crashes.map((c) => c.id)).toEqual(['8']);
     // gates that cannot open whatever he has; those opened only with the item lent, and which item is found nowhere
     expect(r.closed.map((c) => `${c.id}>${c.to}`)).toEqual(['4>6', '11>6']);
-    expect(r.lent).toEqual([{ id: '3', to: '5', why: ['Needs key'], missing: ['key'] }, { id: '3', to: '14', why: ['Needs Lamp'], missing: [] }]);
+    expect(r.lent).toEqual([{ id: '3', to: '5', why: ['Needs key'], missing: ['key'] }, { id: '3', to: '14', why: ['Needs Lamp'], missing: [] },
+      { id: '13', to: '19', why: ['Needs no Gold Crowns'], missing: [] }]);
     expect(r.stuck.map((s) => s.id)).toEqual(['11']);
     expect(r.long).toEqual(['7']);
     expect(r.unreached).toEqual(['6']);
@@ -54,8 +55,8 @@ describe('walk_book.mjs', () => {
     expect(r.look).toEqual(['3', '4', '6', '7', '8', '11']);
     // the fight's two outcomes, the contest won and lost, the endless fight's way on, the lent gates' sections: all reached
     expect(r.standIns.map((s) => s.who)).toEqual(['master', 'novice']);
-    expect(r.standIns[0].reached).toBe(14); // all but 6 (unreachable) and 10, 16 (no link)
-    expect(r.text).toMatch(/^master: reached 14 of 17 sections/);
+    expect(r.standIns[0].reached).toBe(15); // all but 6 (unreachable) and 10, 16 (no link)
+    expect(r.text).toMatch(/^master: reached 15 of 18 sections/);
   });
 
   it('gives the same report twice (the draws are seeded) and writes walk.json with --json', async () => {

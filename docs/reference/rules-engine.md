@@ -241,7 +241,7 @@ and `foeEach` every round; `suffer` takes `heroEach` every round. `changes(r)` l
 and ends. `combat.mind` is a fight of the mind (its own score, no weapon or mind attack). Before the
 first round `boost(id)` swallows a draught (`item.boost`; not with `noBoost`). `combat.keep` keeps the
 foes' wounds in `s.kept` for a later fight with the same foes. `combat.points` fights on target points
-in place of his Endurance.
+in place of his Endurance. `combat.noMind` leaves him no attack of the mind (`power` 0).
 
 The fight ends by `end(how, to)`: `win`, `evade`, `dead`, or `stop` (a `combat.stop` rule: after N rounds,
 at his first wound, the foe down to N but not dead, a number drawn, with `by` for who lost more; or
@@ -270,7 +270,7 @@ arrives with other items or marks than before (only those the book tests), at mo
 with the section before where the way he came matters. From a section it tries:
 
 - every choice open; a gate on Endurance at an Endurance that opens it; a gate still shut, with what
-  it asks for lent (the item put in, or for "if you have no ...", taken away; gold or coins made up);
+  it asks for lent (the item put in, or for "if you have no ...", taken away; gold or coins made up, or for "if you have no Gold Crowns", the purse emptied);
 - every Random Number 0-9 where one is drawn, and a range no number reached (his bonuses carry the
   total past it) at its own number;
 - each fight from full Endurance, up to three times before it counts as lost; each evasion, as soon

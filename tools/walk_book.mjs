@@ -183,12 +183,17 @@ function walk(LW, B, hero) {
     if (need.gold && h.gold < need.gold) { h.gold = Math.min(50, need.gold); out.push(''); }
     if (need.coin) { (h.coins = h.coins || {})[need.coin] = Math.max(h.coins[need.coin] || 0, need.n || 1); out.push(''); }
     // any: the first member that can be met by items: held (item: the first, items: all), or under not, every
-    // item it names put away (and the Meals, for a count of them)
+    // item it names put away (and the Meals, for a count of them; the gold, for an amount)
     if (need.any && !need.any.some((m) => LW.meets(h, m))) {
       const items = (m) => [...[].concat(m.item || []).slice(0, 1), ...(m.items || [])];
       const named = (c) => (!c || typeof c !== 'object' ? [] : [...[].concat(c.item || [], c.items || []), ...Object.values(c).flatMap(named)]);
       const m = need.any.find((x) => items(x).length || x.not);
-      if (m && m.not) { named(m.not).forEach((x) => { for (let n = 0; n < 9 && LW.dropItem(h, x); n++); }); if (JSON.stringify(m.not).includes('"meals"')) h.meals = 0; out.push(''); }
+      if (m && m.not) {
+        named(m.not).forEach((x) => { for (let n = 0; n < 9 && LW.dropItem(h, x); n++); });
+        if (JSON.stringify(m.not).includes('"meals"')) h.meals = 0;
+        if (m.not.gold) h.gold = Math.min(h.gold, m.not.gold - 1); // "if you have no Gold Crowns": the purse emptied
+        out.push('');
+      }
       else if (m) items(m).filter((x) => !LW.hasItem(h, x)).forEach(give);
     }
     return out.length ? out : null;

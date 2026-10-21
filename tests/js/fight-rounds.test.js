@@ -241,6 +241,14 @@ describe('the mind', () => {
     const { f } = fightAt({ enemies: [foe()], mind: { each: 1, over: 3, items: { psychicRing: 3 } } }, hero);
     expect([f.cs(), f.power]).toEqual([15 + 2 + 3, 0]);
   });
+  it('a contest no attack of the mind can touch: neither Psi-surge nor Mindblast is offered', () => {
+    const hero = mkHero({ series: 'magnakai', magnakai: ['psiSurge'], cs: 20 });
+    expect(fightAt({ enemies: [foe()] }, hero).f.cs()).toBe(22); // Psi-surge's lesser Mindblast, +2
+    const { f } = fightAt({ enemies: [foe()], noMind: true }, hero);
+    expect([f.power, f.mind, f.cs()]).toEqual([0, 0, 20]);
+    f.focus();
+    expect(f.cs()).toBe(20);
+  });
 });
 
 describe('after the fight', () => {

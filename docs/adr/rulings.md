@@ -29,6 +29,7 @@ row, not a decision by analogy.
 | R8 | 2 | "No pass" (246) closes when he holds either pass. | 2026-10-01 |
 | R9 | 13+ | **Deliverance** ("once every 20 days") is used once a book, as Archmaster Curing is. | 2026-10-10 |
 | R10 | 13+ | A bow shot whose section gives Grand Weaponmastery with Bow its own bonus (Book 13: 104, 176, 303) adds that number in place of the rules page's +5, never as well. The item table gives `grandBow: n` beside `bowShot`; later Grand Master books mark theirs the same way. | 2026-10-17 |
+| R16 | 6 | The archery final (26) is a contest of bows: neither Psi-surge nor Mindblast counts in it (`noMind`). | 2026-10-21 |
 
 ## Presentation
 

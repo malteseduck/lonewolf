@@ -281,12 +281,12 @@
     return !(c.circle && !c.circle.every((n) => circles.includes(n)));
   };
   const kindName = (k) => (LW.ITEMS[k] ? LW.ITEMS[k].name : k);
-  LW.condName = (c) => [c.disc && [].concat(c.disc).map((d) => (LW.DISCIPLINES[d] || { name: d }).name).join(c.every ? ' and ' : ' or '),
+  LW.condName = (c) => c.label || [c.disc && [].concat(c.disc).map((d) => (LW.DISCIPLINES[d] || { name: d }).name).join(c.every ? ' and ' : ' or '),
     c.rank && 'your rank', c.circle && c.circle.join(' and '), c.item && [].concat(c.item).map(LW.itemName).join(' or '), c.items && c.items.map(LW.itemName).join(' and '),
     c.ep && 'your Endurance', c.each && 'your Magnakai Disciplines', c.weapon && (c.weapon === true ? 'a weapon' : c.weapon.map(kindName).join(' or ')),
     c.wield && (c.wield === true ? 'a weapon in hand' : c.wield.map(kindName).join(' or ') + ' in hand'), c.mastery && `skill with the ${kindName(c.mastery)}`,
     c.skilled && 'skill with your weapon', c.meals && `${c.meals} Meals`, c.arrows && `${c.arrows} Arrows`, c.packItems && `${c.packItems} Backpack Items`,
-    c.gold && `${c.gold} Gold Crowns`, c.mark && (LW.MARKS[c.mark] ? LW.MARKS[c.mark].name : c.mark), c.any && c.any.map(LW.condName).join(', or '), c.not && `not ${LW.condName(c.not)}`].filter(Boolean).join(', ');
+    c.gold && `${c.gold} Gold Crowns`, c.mark && (LW.MARKS[c.mark] ? LW.MARKS[c.mark].name : c.mark), c.any && c.any.map(LW.condName).join(', or '), c.not && (Object.keys(c.not).join() === 'gold' ? (c.not.gold > 1 ? `fewer than ${c.not.gold} Gold Crowns` : 'no Gold Crowns') : `not ${LW.condName(c.not)}`)].filter(Boolean).join(', ');
 
   /* COMBAT SKILL with every modifier spelled out, so the UI can show its working. */
   LW.heroCS = (hero, ctx = {}) => {
