@@ -24,10 +24,11 @@ manifest.webmanifest        the Home Screen app: name, colours, icons (assets/ap
 art/plates/<code>/          git-ignored. Fight pictures the owner gave on the picture sheet (WebP)
 art/sources.json            committed: where each picture in art/ came from, its link or none (ADR 0038;
                             tools/art_sources.py), so a fresh checkout can fetch them again
-art/manifest.json           optional pictures in art/: enemy sprites, Lone Wolf's figure (inventory), the Kai panel portrait
+art/manifest.json           optional pictures in art/: enemy sprites
 assets/icons/               discipline glyphs from game-icons.net (CC BY 3.0, credited in README.txt)
 assets/fonts/               the page's three fonts and fonts.css, from Google Fonts (SIL OFL, licences beside them)
 assets/app/                 the Home Screen icon (README.txt says how it was made)
+assets/hero/                lone-wolf.webp: Lone Wolf, the owner's own drawing (title page, Kai panel; ruling R16)
 assets/plates/              plates.json: pictures for enemies their book does not picture; free pictures,
                             mostly engravings from Wikimedia Commons (credited in README.txt)
   upscaled/<code>.json      the book's fight pictures with a 2x copy beside them (ill_upscale.py --fights), shown from it

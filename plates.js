@@ -199,31 +199,137 @@ export function newWound() {
   return { x1: cx - Math.cos(a) * len / 2, y1: cy - Math.sin(a) * len / 2, x2: cx + Math.cos(a) * len / 2, y2: cy + Math.sin(a) * len / 2, k: 0, spots };
 }
 
-/* Lone Wolf's likeness at the head of the Kai panel, from an ink drawing of him in the owner's own
-   image (crop: [x, y, w, h]). The paper is keyed out, so what is left is ink alone, laid on the
-   page's own parchment, and the edges fade into it as a wash does. Scaled up 2x and smoothed:
-   the screenshots are small. Made at load; never stored. */
+/* Lone Wolf's likeness (title page, Kai panel), from the owner's ink drawing of him (crop: [x, y, w, h]),
+   restyled after the HD character sheet: the paper keyed out, the ink made dense, a soft wash pooled
+   in the shadows, and the edges broken up as a dry brush leaves them, solid out to `fade` of the way
+   from the middle. Made at load; never stored. */
 export function portraitFromArt(img, crop, fade = 0.5) {
-  const [cx, cy, W, H] = crop, k = 2, c = Ink.canvas(W * k, H * k), x = c.getContext('2d', { willReadFrequently: true });
+  const [cx, cy, W, H] = crop, k = Math.min(2, 1600 / Math.max(W, H)), w = Math.round(W * k), h = Math.round(H * k);
+  const c = Ink.canvas(w, h), x = c.getContext('2d', { willReadFrequently: true });
   x.imageSmoothingQuality = 'high';
-  x.drawImage(img, cx, cy, W, H, 0, 0, W * k, H * k);
-  const d = x.getImageData(0, 0, c.width, c.height), p = d.data, lum = new Float32Array(p.length / 4);
-  for (let i = 0; i < lum.length; i++) lum[i] = 0.3 * p[i * 4] + 0.59 * p[i * 4 + 1] + 0.11 * p[i * 4 + 2];
+  const lumOf = (d) => { const l = new Float32Array(d.length / 4); for (let i = 0; i < l.length; i++) l[i] = 0.3 * d[i * 4] + 0.59 * d[i * 4 + 1] + 0.11 * d[i * 4 + 2]; return l; };
   // the paper is the light end of the picture, the ink its darkest few percent
-  const sorted = Float32Array.from(lum).sort(), at = (q) => sorted[Math.floor(q * (sorted.length - 1))];
-  const ink = at(0.03), paper = at(0.7);
-  for (let i = 0; i < lum.length; i++) {
-    const a = Math.max(0, Math.min(1, (paper - lum[i]) / (paper - ink)));
-    p[i * 4] = 38; p[i * 4 + 1] = 28; p[i * 4 + 2] = 18; p[i * 4 + 3] = Math.round(255 * Math.pow(a, 0.85));
+  const ends = (l) => { const s = Float32Array.from(l).sort(), at = (q) => s[Math.floor(q * (s.length - 1))]; return [at(0.03), at(0.7)]; };
+  // the wash: the drawing shrunk and grown back, so the hatching runs together into tone (works on any canvas)
+  const sw = Math.max(2, Math.round(w / 10)), sh = Math.max(2, Math.round(h / 10)), sc = Ink.canvas(sw, sh), sx = sc.getContext('2d');
+  sx.imageSmoothingQuality = 'high'; sx.drawImage(img, cx, cy, W, H, 0, 0, sw, sh);
+  x.drawImage(sc, 0, 0, w, h);
+  const wash = lumOf(x.getImageData(0, 0, w, h).data);
+  x.clearRect(0, 0, w, h); x.drawImage(img, cx, cy, W, H, 0, 0, w, h);
+  const d = x.getImageData(0, 0, w, h), p = d.data, lum = lumOf(p);
+  const [ink, paper] = ends(lum), [wInk, wPaper] = ends(wash);
+  // value noise for the ragged edge, two scales, and a fine grain that speckles it
+  const hash = (i, j) => { const t = Math.sin(i * 127.1 + j * 311.7) * 43758.5453; return t - Math.floor(t); };
+  const vnoise = (u, v) => {
+    const i = Math.floor(u), j = Math.floor(v), fu = u - i, fv = v - j, su = fu * fu * (3 - 2 * fu), sv = fv * fv * (3 - 2 * fv);
+    const a = hash(i, j), b = hash(i + 1, j), e = hash(i, j + 1), f = hash(i + 1, j + 1);
+    return (a + (b - a) * su) * (1 - sv) + (e + (f - e) * su) * sv;
+  };
+  const cell = w / 9, edges = new Float32Array(w * h), inkA = new Float32Array(w * h);
+  for (let y = 0, i = 0; y < h; y++) {
+    for (let X = 0; X < w; X++, i++) {
+      const a = Math.pow(Math.max(0, Math.min(1, (paper - lum[i]) / (paper - ink))), 0.5);
+      const wa = 0.85 * Math.pow(Math.max(0, Math.min(1, (wPaper - wash[i]) / (wPaper - wInk))), 0.75);
+      const u = (X / w) * 2 - 1, v = (y / h) * 2 - 1, r = Math.sqrt(u * u + v * v);
+      const n = vnoise(X / cell, y / cell) * 0.65 + vnoise(X / cell * 3.1, y / cell * 3.1) * 0.35 - 0.5;
+      const m = Math.max(0, Math.min(1, (1 - r + 0.45 * n) / (1 - fade)));
+      const edge = m >= 1 ? 1 : Math.max(0, Math.min(1, m * 1.6 - hash(X, y) * 0.6));
+      edges[i] = edge; inkA[i] = a;
+      const al = 1 - (1 - a) * (1 - wa);
+      // the wash a shade warmer than the ink
+      const t = a / Math.max(1e-3, a + wa);
+      p[i * 4] = 38 + (1 - t) * 22; p[i * 4 + 1] = 28 + (1 - t) * 14; p[i * 4 + 2] = 18 + (1 - t) * 6; p[i * 4 + 3] = Math.round(255 * al);
+    }
   }
   x.putImageData(d, 0, 0);
-  // a wash fades out at its edges: solid out to `fade` of the way from the middle, then gone at the rim
-  x.globalCompositeOperation = 'destination-in';
-  x.translate(c.width / 2, c.height / 2); x.scale(c.width / 2, c.height / 2);
-  const g = x.createRadialGradient(0, 0, 0, 0, 0, 1);
-  g.addColorStop(0, '#000'); g.addColorStop(fade, '#000'); g.addColorStop(1, 'rgba(0,0,0,0)');
-  x.fillStyle = g; x.fillRect(-1, -1, 2, 2);
+  // behind him, an ink smudge and sweeping brush strokes, as the HD sheet has; then the ragged edge over all
+  const sm = Ink.canvas(w, h), smx = sm.getContext('2d', { willReadFrequently: true });
+  inkSmudge(smx, w, h, hash);
+  const sd = smx.getImageData(0, 0, w, h);
+  const body = silhouette(inkA, w, h);
+  for (let y = 0, i = 0; y < h; y++) for (let X = 0; X < w; X++, i++) sd.data[i * 4 + 3] *= 1 - body(X, y);
+  smx.putImageData(sd, 0, 0);
+  x.globalCompositeOperation = 'destination-over'; x.drawImage(sm, 0, 0); x.globalCompositeOperation = 'source-over';
+  const all = x.getImageData(0, 0, w, h), q = all.data;
+  for (let i = 0; i < edges.length; i++) q[i * 4 + 3] *= edges[i];
+  x.putImageData(all, 0, 0);
   return c;
+}
+
+/* Where he stands, solid: on a coarse grid, his ink thickened until the outline closes, everything the
+   paper outside cannot reach from the picture's border filled in, then softened. Returns 0-1 at (x, y). */
+function silhouette(inkA, w, h) {
+  const g = 4, gw = Math.ceil(w / g), gh = Math.ceil(h / g), ink = new Uint8Array(gw * gh);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (inkA[y * w + x] > 0.25) ink[((y / g) | 0) * gw + ((x / g) | 0)] = 1;
+  const grow = (src, r, v) => {  // dilate the cells equal to v by r
+    const out = Uint8Array.from(src);
+    for (let y = 0; y < gh; y++) for (let x = 0; x < gw; x++) {
+      if (src[y * gw + x] !== v) continue;
+      for (let j = Math.max(0, y - r); j <= Math.min(gh - 1, y + r); j++) for (let i = Math.max(0, x - r); i <= Math.min(gw - 1, x + r); i++) out[j * gw + i] = v;
+    }
+    return out;
+  };
+  const closed = grow(ink, 3, 1), outside = new Uint8Array(gw * gh), stack = [];
+  const seed = (x, y) => { const k = y * gw + x; if (!closed[k] && !outside[k]) { outside[k] = 1; stack.push(k); } };
+  for (let x = 0; x < gw; x++) { seed(x, 0); seed(x, gh - 1); }
+  for (let y = 0; y < gh; y++) { seed(0, y); seed(gw - 1, y); }
+  while (stack.length) {
+    const k = stack.pop(), x = k % gw, y = (k / gw) | 0;
+    if (x > 0) seed(x - 1, y); if (x < gw - 1) seed(x + 1, y); if (y > 0) seed(x, y - 1); if (y < gh - 1) seed(x, y + 1);
+  }
+  const inside = grow(outside, 2, 1).map((o) => 1 - o);  // give back most of the thickening
+  const soft = new Float32Array(gw * gh);
+  for (let y = 0; y < gh; y++) for (let x = 0; x < gw; x++) {
+    let t = 0, n = 0;
+    for (let j = Math.max(0, y - 1); j <= Math.min(gh - 1, y + 1); j++) for (let i = Math.max(0, x - 1); i <= Math.min(gw - 1, x + 1); i++) { t += inside[j * gw + i]; n++; }
+    soft[y * gw + x] = t / n;
+  }
+  return (x, y) => soft[Math.min(gh - 1, (y / g) | 0) * gw + Math.min(gw - 1, (x / g) | 0)];
+}
+
+/* The smudge: a few soft blots behind the head and shoulders, and broad strokes laid as a dry brush
+   lays them, many fine hairs side by side, some missing, each starting and lifting off at its own place.
+   Seeded, so it is the same at every load. */
+function inkSmudge(x, w, h, hash) {
+  const S = Math.min(w, h);
+  for (const [bx, by, br, ba] of [[0.52, 0.3, 0.55, 0.45], [0.38, 0.42, 0.4, 0.3], [0.68, 0.22, 0.3, 0.28], [0.5, 0.6, 0.45, 0.22]]) {
+    const g = x.createRadialGradient(bx * w, by * h, 0, bx * w, by * h, br * S);
+    g.addColorStop(0, `rgba(52,36,22,${ba})`); g.addColorStop(0.6, `rgba(52,36,22,${ba * 0.45})`); g.addColorStop(1, 'rgba(52,36,22,0)');
+    x.fillStyle = g; x.fillRect(0, 0, w, h);
+  }
+  // strokes: [from, control, to] as fractions of the picture, breadth as a fraction of its short side
+  const strokes = [
+    [[-0.05, 0.5], [0.4, 0.16], [1.05, 0.26], 0.18, 0.75],
+    [[-0.05, 0.68], [0.45, 0.46], [0.95, 0.56], 0.12, 0.55],
+    [[0.15, 0.12], [0.6, 0.02], [1.05, 0.1], 0.08, 0.4],
+  ];
+  strokes.forEach(([a, b, e, breadth, alpha], si) => {
+    const n = 46, bw = breadth * S, at = (t, o) => {
+      const u = 1 - t, px = (u * u * a[0] + 2 * u * t * b[0] + t * t * e[0]) * w, py = (u * u * a[1] + 2 * u * t * b[1] + t * t * e[1]) * h;
+      const dx = 2 * u * (b[0] - a[0]) * w + 2 * t * (e[0] - b[0]) * w, dy = 2 * u * (b[1] - a[1]) * h + 2 * t * (e[1] - b[1]) * h, l = Math.hypot(dx, dy) || 1;
+      return [px - dy / l * o, py + dx / l * o];
+    };
+    x.lineCap = 'round';
+    for (let j = 0; j < n; j++) {
+      const r = hash(si * 97 + j, 7);
+      if (r < 0.22) continue;  // a gap where the brush ran dry
+      const off = (j / (n - 1) - 0.5) * bw, edgeIn = 1 - Math.abs(j / (n - 1) - 0.5) * 2;
+      const t0 = hash(j, si + 3) * 0.18 + (1 - edgeIn) * 0.12, t1 = 1 - hash(si, j + 5) * 0.25 - (1 - edgeIn) * 0.15;
+      x.strokeStyle = `rgba(48,33,20,${alpha * (0.35 + 0.65 * r) * (0.5 + 0.5 * edgeIn)})`;
+      x.lineWidth = bw / n * (1 + hash(j, si) * 1.6);
+      x.beginPath();
+      for (let k = 0; k <= 40; k++) { const [px, py] = at(t0 + (t1 - t0) * k / 40, off); k ? x.lineTo(px, py) : x.moveTo(px, py); }
+      x.stroke();
+    }
+  });
+  // spatters thrown off the strokes
+  for (let i = 0; i < 260; i++) {
+    const [a, b, e, breadth] = strokes[i % strokes.length], t = hash(i, 11), u = 1 - t;
+    const px = (u * u * a[0] + 2 * u * t * b[0] + t * t * e[0]) * w + (hash(i, 13) - 0.5) * breadth * S * 2.4;
+    const py = (u * u * a[1] + 2 * u * t * b[1] + t * t * e[1]) * h + (hash(i, 17) - 0.5) * breadth * S * 2.4;
+    x.fillStyle = `rgba(48,33,20,${0.15 + hash(i, 19) * 0.35})`;
+    x.beginPath(); x.arc(px, py, S * (0.0015 + hash(i, 23) * 0.005), 0, Math.PI * 2); x.fill();
+  }
 }
 
 /* ---------- Ornate ink frame for the story page, after the HD book ---------- */

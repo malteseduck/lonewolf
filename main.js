@@ -219,7 +219,7 @@ root.setProperty('--crest', `url(${drawCrest().toDataURL()})`);
 root.setProperty('--seal', `url("data:image/svg+xml,${encodeURIComponent(sealPlate())}")`);
 root.setProperty('--wood', `linear-gradient(rgba(10,7,6,0.55), rgba(10,7,6,0.55)), url(${Ink.leather(512).toDataURL('image/jpeg', 0.8)})`);
 gear.innerHTML = gearSVG();
-let portraitURL = null; // Lone Wolf's likeness over the Kai panel, if the owner has a picture of him (art/manifest.json "portrait")
+let portraitURL = null, frontisURL = null; // Lone Wolf's likeness over the Kai panel, and his full figure on the title page (assets/hero, the owner's own drawing)
 const vignettes = {};
 const vignette = (scene) => vignettes[scene] || (vignettes[scene] = Ink.inkScene(scene, 1000, 340).toDataURL());
 
@@ -300,7 +300,7 @@ function titleLeftHTML() {
   return `<div class="titlepage">
     <div class="maker">A solo adventure in Magnamund</div>
     <h1 class="mark"><span>Lone</span><span class="wolfmark">${glyph(UG.titleMark)}</span><span>Wolf</span></h1>
-    <div class="frontis">${portraitURL ? `<img src="${portraitURL}" alt="">` : ''}</div>
+    <div class="frontis">${frontisURL ? `<img src="${frontisURL}" alt="">` : ''}</div>
     <div class="bands">${SHELVES.map((s) => band(s.name, s.from, s.to)).join('')}</div>
   </div>`;
 }
@@ -1252,15 +1252,17 @@ fetch(`assets/icons/${UG.foeEmblem}.svg`).then((r) => r.text()).then((t) => {
   if (d) setEmblem(d);
 }).catch(() => {});
 
+const HERO = { figure: [185, 28, 570, 790], bust: [235, 25, 420, 360] }; // crops of the 896x1200 drawing (the figure: hood to knee)
 /* optional illustrations dropped into art/ */
 const portraitDone = () => { if (mode === 'title') renderLeft(); else if (mode === 'story' && panel === 'kai') renderRight(); };
 fetch('art/manifest.json').then((r) => r.json()).then((m) => {
   for (const kind in m.enemies || {}) { const im = new Image(); im.onload = () => setArt(kind, im); im.src = 'art/' + m.enemies[kind]; }
-  if (m.portrait) {
-    const im = new Image();
-    im.onload = () => { portraitURL = portraitFromArt(im, m.portrait.crop, m.portrait.fade).toDataURL(); portraitDone(); };
-    im.src = 'art/' + m.portrait.src;
-  }
+}).catch(() => {});
+/* Lone Wolf himself: the owner's drawing, hood to knee for the title page, head to belt for the Kai panel */
+fetch('assets/hero/lone-wolf.webp').then((r) => r.blob()).then(createImageBitmap).then((hero) => { // a fetch, so the offline copy takes it
+  frontisURL = portraitFromArt(hero, HERO.figure, 0.92).toDataURL();
+  portraitURL = portraitFromArt(hero, HERO.bust, 0.6).toDataURL();
+  portraitDone();
 }).catch(() => {});
 
 /* the offline copy (sw.js, docs/reference/offline.md): kept over https, as Tailscale serves it, or on
