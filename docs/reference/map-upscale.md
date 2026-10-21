@@ -258,7 +258,7 @@ Commands run from the project root as
   outlines were added or lost. On Book 4 the blue cells found exactly Gemini's added forest.
 - `tools/map_letter.py`: sets labels in type, onto `map-2k-erased.jpg` (step 4, `-` for the warp)
   or onto a round's 4K upscale (step 8). See its docstring for every label field.
-- `tools/fonts/`: Cabin (used), Darkland Hand (Books 11 and 12, our own), Darkland Serif (Book 9, our own), Architects Daughter, IM Fell
+- `tools/fonts/`: Cabin (used), Darkland Hand (Books 11-13, our own), Darkland Serif (Book 9, our own), Architects Daughter, IM Fell
   English and Almendra (tried), all OFL; sources in its README.
 - `tools/map_font.py`: builds Darkland Hand and Darkland Serif (Thin, Light, Regular, Bold each) into `tools/fonts/`. Darkland Serif uses the same nib, still angular, with rounded-diamond bowls (only C, G and c round), an angular S with a round bottom, stronger contrast, a serif at each end of a long steep stroke (an exit flick on a lower-case foot) and closer spacing, after Book 9's calligraphic hand. Darkland Hand: each
   letter a few straight strokes drawn with a chisel nib, after the hand of Books 12 and 13's maps
