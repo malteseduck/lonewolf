@@ -37,7 +37,7 @@ row, not a decision by analogy.
 |---|---|---|---|
 | R11 | A section's single choice that was only a page reference reads "Continue". | spec 4.6; the importer | 2026-09-30 |
 | R12 | **The iPad (landscape and portrait) and the PC's window** are the layouts to fit and judge. Phones are not a target: no work, checks or tests for them. Narrow-window code already there may stay, but nothing is designed or fixed for it, and it may go when it gets in the way. | spec 1, 9 | 2026-10-12 |
-| R16 | **Lone Wolf's likeness is the owner's own drawing** (`assets/hero/lone-wolf.webp`), on the title page (hood to knee) and the Kai panel (head to belt), not Lone Wolf HD art. | `main.js` `HERO`; `assets/hero/README.txt` | 2026-10-21 |
+| R16 | **Lone Wolf's likeness is the owner's own drawing** (`assets/hero/lone-wolf.webp`), on the title page (hood to knee, right of the middle, the burning Kai monastery faint behind him, also the owner's) and the Kai panel (head to belt), not Lone Wolf HD art. | `main.js` `HERO`; `assets/hero/README.txt` | 2026-10-21 |
 
 ## Workflow
 

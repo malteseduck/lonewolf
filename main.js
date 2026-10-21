@@ -1252,16 +1252,20 @@ fetch(`assets/icons/${UG.foeEmblem}.svg`).then((r) => r.text()).then((t) => {
   if (d) setEmblem(d);
 }).catch(() => {});
 
-const HERO = { figure: [185, 28, 570, 790], bust: [235, 25, 420, 360] }; // crops of the 896x1200 drawing (the figure: hood to knee)
+const HERO = { figure: [185, 28, 570, 790], bust: [235, 25, 420, 360] }; // crops in the 896x1200 drawing's units (the figure: hood to knee); the file is smaller
 /* optional illustrations dropped into art/ */
 const portraitDone = () => { if (mode === 'title') renderLeft(); else if (mode === 'story' && panel === 'kai') renderRight(); };
 fetch('art/manifest.json').then((r) => r.json()).then((m) => {
   for (const kind in m.enemies || {}) { const im = new Image(); im.onload = () => setArt(kind, im); im.src = 'art/' + m.enemies[kind]; }
 }).catch(() => {});
 /* Lone Wolf himself: the owner's drawing, hood to knee for the title page, head to belt for the Kai panel */
-fetch('assets/hero/lone-wolf.webp').then((r) => r.blob()).then(createImageBitmap).then((hero) => { // a fetch, so the offline copy takes it
-  frontisURL = portraitFromArt(hero, HERO.figure, 0.92).toDataURL();
-  portraitURL = portraitFromArt(hero, HERO.bust, 0.6).toDataURL();
+// fetches of plain paths, so the offline copy takes them
+const bitmap = (r) => r.blob().then(createImageBitmap);
+Promise.all([fetch('assets/hero/lone-wolf.webp').then(bitmap), fetch('assets/hero/monastery.webp').then(bitmap)]).then(([hero, burning]) => {
+  const at = (crop) => crop.map((n) => n * hero.width / 896);
+  // the title page: him, right of the middle, the Kai monastery burning behind him on the left
+  frontisURL = portraitFromArt(hero, at(HERO.figure), 0.8, { wide: 1.3, at: 0.7, back: burning, weight: 0.6 }).toDataURL();
+  portraitURL = portraitFromArt(hero, at(HERO.bust), 0.6).toDataURL();
   portraitDone();
 }).catch(() => {});
 
