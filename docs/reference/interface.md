@@ -185,9 +185,11 @@ it arrives.
 
 ## The printed map (`maps.js`)
 
-`printedCanvas(img, crop, w, h)` repaints a book's printed map as sepia ink: lightness becomes ink
+`printedCanvas(img, crop, w, h, repaint)` repaints a book's printed map as sepia ink: lightness becomes ink
 depth, water is pushed darker, strong red survives faintly, then parchment grain is multiplied
-over it. `scanOf` (main.js) keeps one painting per image, at twice the image's size for sharp ink
+over it and the edges darkened. With `repaint` (main.js passes it for `map-4k.webp`) it uses the
+lighter `REPAINT` settings: Gemini's repaint is already aged parchment with burnt edges, so it keeps
+more of its own colour, is lifted a little, and gets half the grain and edge (ADR 0004). `scanOf` (main.js) keeps one painting per image, at twice the image's size for sharp ink
 but no wider than 4096 px (`SCAN_MAX`): a 4K map doubled is past the iPad's canvas limit. The image
 is `map-4k.webp` once a book's map is upscaled (`docs/reference/map-upscale.md`), else `map.png`;
 the sepia repaint applies to both (owner, 2026-10-07).

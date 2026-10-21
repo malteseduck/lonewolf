@@ -671,7 +671,7 @@ const scans = {};
 const SCAN_MAX = 4096;
 const scanOf = (img) => {
   const k = Math.min(2, SCAN_MAX / img.naturalWidth);
-  return (scans[img.src] = scans[img.src] || printedCanvas(img, [0, 0, img.naturalWidth, img.naturalHeight], Math.round(img.naturalWidth * k), Math.round(img.naturalHeight * k)));
+  return (scans[img.src] = scans[img.src] || printedCanvas(img, [0, 0, img.naturalWidth, img.naturalHeight], Math.round(img.naturalWidth * k), Math.round(img.naturalHeight * k), /map-4k\.webp$/.test(img.src)));
 };
 
 /* ---------- the map modal ----------
