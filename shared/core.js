@@ -281,7 +281,10 @@
     return !(c.circle && !c.circle.every((n) => circles.includes(n)));
   };
   const kindName = (k) => (LW.ITEMS[k] ? LW.ITEMS[k].name : k);
-  LW.condName = (c) => c.label || [c.disc && [].concat(c.disc).map((d) => (LW.DISCIPLINES[d] || { name: d }).name).join(c.every ? ' and ' : ' or '),
+  /* a price in items (need.instead), in words: "hand over 2 Special Items" */
+  const LISTS = { backpack: 'Backpack Item', packItems: 'Backpack Item', weapons: 'Weapon', weapon: 'Weapon', special: 'Special Item' };
+  LW.handOver = (ins) => { const n = ins.n || 1; return `hand over ${n > 1 ? n : 'a'} ${ins.pick.map((f) => LISTS[f] + (n > 1 ? 's' : '')).join(' or ')}`; };
+  LW.condName =(c) => c.label || [c.disc && [].concat(c.disc).map((d) => (LW.DISCIPLINES[d] || { name: d }).name).join(c.every ? ' and ' : ' or '),
     c.rank && 'your rank', c.circle && c.circle.join(' and '), c.item && [].concat(c.item).map(LW.itemName).join(' or '), c.items && c.items.map(LW.itemName).join(' and '),
     c.ep && 'your Endurance', c.each && 'your Magnakai Disciplines', c.weapon && (c.weapon === true ? 'a weapon' : c.weapon.map(kindName).join(' or ')),
     c.wield && (c.wield === true ? 'a weapon in hand' : c.wield.map(kindName).join(' or ') + ' in hand'), c.mastery && `skill with the ${kindName(c.mastery)}`,
@@ -553,9 +556,18 @@
       events.push(now >= was ? `You win ${now - was} ${what}.` : `You lose ${was - now} ${what}.`);
       delete this.s.stakes[key];
     }
-    /* sec.sell: {id: price}: what a trader here buys. Returns why not, or null. */
+    /* sec.sell: {id: price}: what a trader here buys; arrows: {n, gold}, n Arrows for that price.
+       Returns why not, or null. */
     sell(id) {
       const price = (this.section.sell || {})[id], hero = this.s.hero;
+      if (id === 'arrows' && price) {
+        if ((hero.arrows || 0) < price.n) return `He buys ${price.n} Arrows at a time.`;
+        if (hero.gold + price.gold > 50) return 'Your Belt Pouch has no room for the price.';
+        hero.arrows -= price.n; hero.gold += price.gold;
+        this.s.events.push(`You sell ${price.n} Arrows for ${price.gold} Gold Crown${price.gold > 1 ? 's' : ''}.`);
+        this.save();
+        return null;
+      }
       if (price == null || !LW.hasItem(hero, id)) return 'He does not buy that.';
       if (hero.gold + price > 50) return 'Your Belt Pouch has no room for the price.';
       LW.dropItem(hero, id); hero.gold += price;
@@ -676,7 +688,16 @@
       const fought = !!sec.combat, rolled = this.s.rolled, came = this.came(), game = this.game && sec.game, broke = this.gameBroke;
       // a loss he must choose, or a stake he must set, comes first
       const first = (this.s.picks || []).length ? 'Choose what you lose first' : sec.stake && !(this.s.stakes || {})[sec.stake.key || this.s.at] ? (sec.stake.spend ? 'Give what you will first' : 'Set your stake first') : '';
-      return (sec.choices || []).filter((c) => !(fought && c.evade)).map((c) => {
+      // a price that may be paid in items instead (need.instead: {pick, n, short}): short, only when he is
+      // short of the gold, on the same choice; otherwise as he chooses, a second choice beside it
+      const all = (sec.choices || []).filter((c) => !(fought && c.evade)).flatMap((c) => {
+        const ins = c.need && c.need.instead;
+        if (!ins) return [c];
+        const items = ins.pick.flatMap((f) => this.listed(f)).length >= (ins.n || 1);
+        if (ins.short) return [hero.gold >= c.need.gold || !items ? c : Object.assign({}, c, { pay: 'items', how: LW.handOver(ins) })];
+        return [Object.assign({}, c, { how: `pay ${c.need.gold} Gold Crowns` }), Object.assign({}, c, { pay: 'items', how: LW.handOver(ins), noItems: !items })];
+      });
+      return all.map((c) => {
         let enabled = !first, why = first;
         // a choice with no range is open without the draw: in a bow shot, not shooting; elsewhere, the
         // way taken instead of drawing ("If you have Sixth Sense, ...; otherwise pick a number")
@@ -695,7 +716,8 @@
         if (ids.length && !c.need.not && !held.length) { enabled = false; why = `Needs ${ids.map(LW.itemName).join(' or ')}`; }
         if (ids.length && c.need.not && held.length) { enabled = false; why = `You have the ${LW.itemName(held[0])}`; }
         // orAll: the price, or all he has if that is less
-        if (c.need && c.need.gold && !c.need.orAll && hero.gold < c.need.gold) { enabled = false; why = `Needs ${c.need.gold} Gold Crowns`; }
+        if (c.pay === 'items') { if (c.noItems) { enabled = false; why = `You have nothing to ${c.how}`; } }
+        else if (c.need && c.need.gold && !c.need.orAll && hero.gold < c.need.gold) { enabled = false; why = `Needs ${c.need.gold} Gold Crowns`; }
         if (c.need && c.need.coin && ((hero.coins || {})[c.need.coin] || 0) < (c.need.n || 1)) { enabled = false; why = `Needs ${c.need.n || 1} ${LW.COINS[c.need.coin]}`; }
         // came: open only when he came from one of these sections
         if (c.need && c.need.came && !c.need.came.includes(came)) { enabled = false; why = 'Not the way you came'; }
@@ -727,22 +749,34 @@
     choose(choice, to) {
       const hero = this.s.hero;
       if (choice.need && choice.need.item && choice.need.spend) [].concat(choice.need.item).some((i) => LW.dropItem(hero, i)); // the first he has
-      if (choice.need && choice.need.gold && choice.need.spend) hero.gold -= Math.min(hero.gold, choice.need.gold);
+      if (choice.need && choice.need.gold && choice.need.spend && choice.pay !== 'items') hero.gold -= Math.min(hero.gold, choice.need.gold);
       if (choice.need && choice.need.coin && choice.need.spend) hero.coins[choice.need.coin] -= choice.need.n || 1;
       this.go(to || choice.to, choice.text);
+      // paid in items: what he hands over is chosen on the section he came to, before what it takes
+      if (choice.pay === 'items') {
+        const ins = choice.need.instead, waiting = this.s.picks || [];
+        this.s.picks = [];
+        const ev = this.s.events, was = ev.length;
+        this.lose([{ pick: ins.pick, n: ins.n || 1 }], ev);
+        if (this.s.picks.length) { this.s.picks[0].give = true; ev.splice(was, 1, 'Choose what you hand over, below.'); }
+        this.s.picks.push(...waiting);
+        this.save();
+      }
     }
 
     /* What can be taken here: the section's gifts (sec.give, taken on arrival if they fit) and its
        finds (sec.loot). Each is {gold: n} | {meal: n} | {item: id} | {pack: true} (a Backpack), and
        may carry or: a name shared by finds of which only pick (default 1) may be taken, or cost: a
-       price in Gold Crowns (a shop: bought as often as he likes). i is 'give0' or 0. */
+       price in Gold Crowns (a shop: bought as often as he likes, once with or, max times with max).
+       i is 'give0' or 0. */
     loot() {
       const sec = this.section, all = [...(sec.give || []).map((l, n) => [l, 'give' + n]), ...(sec.loot || []).map((l, n) => [l, n])];
       const got = (i) => !!this.s.looted[this.s.at + ':' + i];
       return all.map(([l, i]) => {
         const label = l.item ? LW.itemName(l.item) : l.coin ? `${l.n} ${LW.COINS[l.coin]}` : l.gold ? `${l.gold} Gold Crowns` : l.meal ? (l.meal > 1 ? `${l.meal} Meals` : 'a Meal') : l.pack ? 'a Backpack' : l.arrows ? `${l.arrows} Arrow${l.arrows > 1 ? 's' : ''}` : '';
         const share = l.or && all.filter(([m, j]) => j !== i && m.or === l.or && got(j)).length >= (l.pick || 1);
-        return { i, label, taken: got(i), closed: share, cost: l.cost, coin: l.item && l.coin, swap: l.for, pick: l.pick, item: l.item || (l.coin ? 'coin' : l.meal ? 'meal' : l.gold ? 'gold' : l.arrows ? 'arrows' : 'pack') };
+        const left = l.max ? l.max - (this.s.looted[this.s.at + ':' + i + ':n'] || 0) : undefined;
+        return { i, label, taken: got(i), closed: share, cost: l.cost, left, coin: l.item && l.coin, swap: l.for, pick: l.pick, item: l.item || (l.coin ? 'coin' : l.meal ? 'meal' : l.gold ? 'gold' : l.arrows ? 'arrows' : 'pack') };
       });
     }
     /* Returns an error string when it cannot be taken. */
@@ -777,9 +811,11 @@
         if (room < l.meal) return room ? `Your backpack has room for only ${room}.` : 'Your backpack is full.';
         hero.meals += l.meal;
       } else { const err = LW.putItem(hero, l.item); if (err) { if (swap) LW.putItem(hero, swap[0]); return err; } }
-      if (l.cost && l.coin) { hero.coins[l.coin] -= l.cost; this.save(); return null; }
-      if (l.cost) { hero.gold -= Math.min(hero.gold, l.cost); this.save(); return null; } // a shop's goods stay on sale
-      this.s.looted[key] = true;
+      if (l.cost && l.coin) hero.coins[l.coin] -= l.cost;
+      else if (l.cost) hero.gold -= Math.min(hero.gold, l.cost);
+      // a shop's goods stay on sale, but for one of several (or) or up to max of a ware
+      const bought = l.cost ? (this.s.looted[key + ':n'] = (this.s.looted[key + ':n'] || 0) + 1) : 0;
+      if (!l.cost || l.or || (l.max && bought >= l.max)) this.s.looted[key] = true;
       this.save();
       return null;
     }

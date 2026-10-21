@@ -89,7 +89,7 @@ Item (`LW.specialLimit`: 12 in every book, ruling R2). `LW.hasItem(hero, id)` ch
   has none. Any entry with `stash` keeps what it takes in `hero.stash[key]` (`drop()`); `unstash(b)`
   gives it back (or the kinds in `only`), saying what will not fit.
 - `setStake(n)` (`sec.stake`: paid now with `spend`, else kept in `s.stakes` until a `settle`),
-  `settle(key, by)`, `sell(id)` (`sec.sell` prices), `came()` (the section before).
+  `settle(key, by)`, `sell(id)` (`sec.sell` prices; `'arrows'` sells `sec.sell.arrows.n` at once), `came()` (the section before).
 - A game of chance (`sec.game`, book-format.md): `game` is the game in hand (`s.game`, begun afresh on
   each visit; its token kept in `s.tokens` by section), `bet(n, pick)` puts a stake down (token
   first, then gold, or the other coin), `play(n)` throws for it (`setRolled` hands the medallion's
@@ -101,7 +101,9 @@ Item (`LW.specialLimit`: 12 in every book, ruling R2). `LW.hasItem(hero, id)` ch
 - `combatPending`: the section has combat not yet won. `wonCombat()` marks it won.
 - `choices()`: the choices with `enabled` and `why` filled in. Returns none while dead, at an
   ending, or while combat is pending. Applies `need.disc` (one, or a list: any, or all with
-  `every`), `need.circle`, `need.rank`, `need.item` (with `not`), `need.gold` (`orAll`), `need.coin`,
+  `every`), `need.circle`, `need.rank`, `need.item` (with `not`), `need.gold` (`orAll`; `instead`: payable in items, which with `short` turns
+  the choice into one paid in items when he is short of gold, and otherwise adds a second choice, `pay: 'items'`,
+  beside it; `choose` then queues the pick, `give: true`, ahead of any the section asks), `need.coin`,
   `need.came`, and shuts them all while a chosen loss or a stake is pending (a game's, as above); the `rnt: 'auto'`
   gate, and hides `evade` choices in sections that have combat. For authored combat with `to`,
   returns a single "Continue". `choose` pays `need.spend` items or gold. Only the choices with a
@@ -119,7 +121,8 @@ Item (`LW.specialLimit`: 12 in every book, ruling R2). `LW.hasItem(hero, id)` ch
 - Inventory: `loot()` (gifts and finds, `i` = `'give0'` or `0`, with `taken` and `closed` for an
   `or` group already used), `takeLoot(i)`, `addItem(id)`, `removeItem(id)`, `adjust('ep'|'gold', by)`,
   `usePotion(id)` (anything with `heal`; a dose of one with `doses`; it cures a mark it is `until`), `dropWeapon(id)`. Loot
-  `{coin, n}` is coins; `{item, cost, coin}` a price in them; `for` takes something of his in exchange
+  `{coin, n}` is coins; `{item, cost, coin}` a price in them; a ware with `cost` stays on sale, but closes once
+  bought in an `or` group, or after `max` (`loot()` gives `left`); `for` takes something of his in exchange
   (his choice through `s.picks` when he has several). Loot `{arrows: n}` needs a Quiver;
   `adjust('arrows', by)` sets them by hand. `takeLoot` and `addItem` return an error
   string when a limit is hit. Special Items with an `ep` value raise and lower `epMax` as they are

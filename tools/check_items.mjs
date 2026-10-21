@@ -47,7 +47,7 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
   const WHEN = new Set(['if', 'unless', 'ate', 'came', 'ep', 'epMax', 'cs', 'healLost', 'take', 'back', 'mark', 'unmark', 'settle']);
   // what a choice's need reads (Game.choices and the gold spent on choosing), and what a Condition in its any reads (LW.meets):
   // any other key is silently ignored by the page
-  const NEED = new Set(['disc', 'every', 'circle', 'any', 'ep', 'rank', 'item', 'not', 'ever', 'gold', 'spend', 'orAll', 'coin', 'n', 'came']);
+  const NEED = new Set(['disc', 'every', 'circle', 'any', 'ep', 'rank', 'item', 'not', 'ever', 'gold', 'spend', 'orAll', 'coin', 'n', 'came', 'instead']);
   const COND = new Set(['disc', 'every', 'rank', 'item', 'items', 'ep', 'weapon', 'wield', 'mastery', 'skilled', 'meals', 'arrows', 'packItems', 'gold', 'mark', 'any', 'not', 'circle', 'label']);
   const condFields = (c) => (c && typeof c === 'object' ? Object.keys(c).filter((f) => !COND.has(f)).concat([].concat(c.any || []).flatMap(condFields), c.not ? condFields(c.not) : []) : []);
   const ROUND = new Set(['from', 'upTo', 'fromFoe', 'if', 'unless', 'came', 'ambush', 'mind', 'csMod', 'note', 'unarmed', 'heroLoss', 'foeLoss', 'heroPlus', 'heroEach', 'foeEach', 'psi', 'barred']);
@@ -97,7 +97,7 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
       ...(x.game ? [x.game.broke, x.game.done, x.game.quit] : [])].filter(Boolean);
     ways.forEach((to) => { if (!(sec.choices || []).some((c) => c.to === to)) bad.push(`${id}: leads to ${to}, which is not one of its choices`); });
     [].concat(x.mark || [], x.unmark || [], ...(x.when || []).map((w) => [].concat(w.mark || [], w.unmark || []))).forEach((m) => { if (!/^\w+$/.test(m)) bad.push(`${id}: bad mark id ${m}`); });
-    Object.keys(x.sell || {}).forEach((i) => { if (!known(i)) bad.push(`${id} sell: unknown item ${i}`); });
+    Object.keys(x.sell || {}).forEach((i) => { if (i !== 'arrows' && !known(i)) bad.push(`${id} sell: unknown item ${i}`); });
     if (x.fight && x.fight.with && x.fight.with !== 'none' && !(LW.ITEMS[x.fight.with] && (LW.ITEMS[x.fight.with].kind === 'weapon' || LW.ITEMS[x.fight.with].weapon))) bad.push(`${id} fight: with ${x.fight.with}, which is not a weapon`);
     (x.loot || []).forEach((l) => { if (l.pick && !l.or) bad.push(`${id} loot: pick without or`); });
     if (x.game && !['wheel', 'dice', 'higher'].includes(x.game.kind)) bad.push(`${id} game: kind must be wheel, dice or higher`);
@@ -110,6 +110,7 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
       Object.keys(n || {}).filter((f) => !NEED.has(f)).forEach((f) => bad.push(`${id}: need for ${to}: unknown field ${f}${COND.has(f) ? " (a Condition's own fields go in any)" : ''}`));
       ((n && n.any) || []).flatMap(condFields).forEach((f) => bad.push(`${id}: need for ${to}: unknown field ${f}`));
       [].concat(n && n.item || []).forEach((i) => { if (!known(i)) bad.push(`${id}: need for unknown item ${i}`); });
+      if (n && n.instead && (!n.gold || !Array.isArray(n.instead.pick) || n.instead.pick.some((f) => !['backpack', 'packItems', 'weapons', 'weapon', 'special'].includes(f)))) bad.push(`${id}: need for ${to}: instead needs a gold price and pick from backpack, packItems, weapons, weapon or special`);
       ((n && n.any) || []).forEach((m) => [].concat(m.item || []).forEach((i) => { if (!known(i)) bad.push(`${id}: need for unknown item ${i}`); }));
     }
   }

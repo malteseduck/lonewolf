@@ -146,6 +146,48 @@ describe('other coins, stakes, selling and paying what he can', () => {
     g.choose(g.choices()[0]);
     expect(g.hero.gold).toBe(0);
   });
+  it('a shop: one ware of several (or), at most N of one (max), Arrows sold by the four', () => {
+    let g = at2({ loot: [{ item: 'torch', cost: 2, or: 'ticket' }, { item: 'rope2', cost: 3, or: 'ticket' }] });
+    expect(g.takeLoot(0)).toBe(null);
+    expect(g.takeLoot(1)).toMatch(/only one/);
+    expect([g.hero.backpack, g.hero.gold, g.loot().map((l) => [l.taken, l.closed])]).toEqual([['torch'], 8, [[true, false], [false, true]]]);
+    g = at2({ loot: [{ item: 'torch', cost: 1, max: 2 }] });
+    g.takeLoot(0);
+    expect(g.loot()[0]).toMatchObject({ taken: false, left: 1 });
+    g.takeLoot(0); g.takeLoot(0);
+    expect([g.hero.backpack, g.hero.gold, g.loot()[0].taken]).toEqual([['torch', 'torch'], 8, true]);
+    g = at2({ sell: { arrows: { n: 4, gold: 1 } } }, mkHero({ special: ['quiver'], arrows: 9 }));
+    g.sell('arrows'); g.sell('arrows');
+    expect(g.sell('arrows')).toMatch(/4 Arrows/);
+    expect([g.hero.arrows, g.hero.gold]).toEqual([1, 12]);
+  });
+  it('a price in gold, or in items: when short of gold only, or as he chooses', () => {
+    // short: one Backpack Item or Weapon in lieu of 2 Gold Crowns, only when he cannot pay
+    const lieu = { choices: [{ text: 'x', to: '3', need: { gold: 2, spend: true, instead: { pick: ['backpack', 'weapons'], n: 1, short: true } } }] };
+    const on = { 3: { text: ['c'], choices: [{ text: 'on', to: '4' }] } };
+    let g = at2(lieu);
+    expect(g.choices()).toHaveLength(1);
+    g.choose(g.choices()[0]);
+    expect([g.hero.gold, g.hero.weapons]).toEqual([8, ['sword']]);
+    g = at2(lieu, mkHero({ gold: 1, backpack: ['torch'] }), on);
+    expect(g.choices()[0]).toMatchObject({ enabled: true, pay: 'items' });
+    g.choose(g.choices()[0]);
+    expect([g.pickable(), g.choices()[0].enabled]).toEqual([['torch', 'sword'], false]);
+    g.pickLoss('torch');
+    expect([g.hero.gold, g.hero.backpack, g.hero.weapons]).toEqual([1, [], ['sword']]);
+    expect(at2(lieu, mkHero({ gold: 1, weapons: [] })).choices()[0].enabled).toBe(false);
+    // either: 20 Gold Crowns or 2 Special Items, both offered
+    const either = { choices: [{ text: 'x', to: '3', need: { gold: 20, spend: true, instead: { pick: ['special'], n: 2 } } }] };
+    g = at2(either, mkHero({ gold: 25, special: ['ring', 'gem', 'quiver'] }));
+    expect(g.choices().map((c) => [c.enabled, c.pay])).toEqual([[true, undefined], [true, 'items']]);
+    g.choose(g.choices()[1]);
+    g.pickLoss('ring'); g.pickLoss('quiver');
+    expect([g.hero.gold, g.hero.special, g.s.picks]).toEqual([25, ['gem'], []]);
+    g = at2(either, mkHero({ gold: 5, special: ['ring', 'gem'] }));
+    expect(g.choices().map((c) => c.enabled)).toEqual([false, true]);
+    g.choose(g.choices()[1]);
+    expect([g.hero.gold, g.hero.special]).toEqual([5, []]); // no more than he must give: both go
+  });
   it('a price that depends on where he came from', () => {
     const g = at2({ choices: [{ text: 'x', to: '3', need: { came: ['1'] } }, { text: 'y', to: '4', need: { came: ['9'] } }] });
     expect(g.choices().map((c) => c.enabled)).toEqual([true, false]);

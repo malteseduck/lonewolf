@@ -161,7 +161,10 @@ Decide each section by what the text says, outright:
   nothing unless the fight has `byHand` (why, in our words): give it only where the text ends the fight
   a way the engine cannot apply, and prefer teaching the engine the case (ADR 0027).
 - **shops** (Book 2 on): each ware is a `loot` entry with `cost`; "choose any two" is a group with
-  `or` and `pick: 2`. Gold won or lost by a number is `rolls` with `gold`.
+  `or` and `pick: 2`, "buy one only" a group with `or` (bought wares too), "up to N" is `max: N`.
+  A trader who buys is `sell`, Arrows by the number at once `arrows: {n, gold}`. A price that may be
+  paid in items is `need.instead` on the choice (`short: true` when only if he cannot pay the gold;
+  Book 6's 17 and 132). Gold won or lost by a number is `rolls` with `gold`.
 - **book weapons**: a Special Item that fights (the Sommerswerd, the Magic Spear) gets `weapon`,
   and `cs` / `undead` where the text gives them. A fight only one weapon can win is `with`; a
   bare-handed one is `with: 'none'` with the importer's -4 cleared (`csMod: 0`).

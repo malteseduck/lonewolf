@@ -44,6 +44,7 @@ const bows = ['bow', 'silverBow'];
 const armed = { item: bows, arrows: 1, label: 'a Bow and an Arrow' };
 const withBow = (to, other) => ({ [to]: { any: [armed] }, ...(other ? { [other]: { any: [{ not: armed, label: 'no Bow, or no Arrow' }] } } : {}) });
 const pay = (gold) => ({ gold, spend: true });
+const horse = { ...pay(20), instead: { pick: ['special'], n: 2 } };
 const cess = { item: 'cess6' };
 const map = { item: 'mapVaretta' };
 const light = [{ item: 'firesphere' }, { items: ['torch', 'tinderbox'] }];
@@ -75,7 +76,7 @@ export const SECTIONS = {
   8: { loot: [{ gold: 10 }, { item: 'laumspur3' }] },
   9: { need: { 332: pay(10) } },
   // a ticket for each of the three stops; the price is for that stop
-  10: { loot: [{ item: 'ticketLuyen6', cost: 10 }, { item: 'ticketRhem6', cost: 15 }, { item: 'ticketEula6', cost: 20 }], todo: 'buy one ticket only: the price depends on how far you go.' },
+  10: { loot: [{ item: 'ticketLuyen6', cost: 10, or: 'ticket6' }, { item: 'ticketRhem6', cost: 15, or: 'ticket6' }, { item: 'ticketEula6', cost: 20, or: 'ticket6' }] },
   // the creature is down: his losses in the first two rounds do not count
   12: { fight: { rounds: [{ upTo: 2, heroLoss: 0, note: 'It lies face down' }] } },
   13: { need: withBow('56') },
@@ -85,7 +86,8 @@ export const SECTIONS = {
   151: { need: { 294: { any: [{ mark: 'visitedMaakenTemple', label: 'a visit to the buried temple of Maaken (Book 4)' }] } } },
   // the map is handed over, however he came by it
   16: { give: [map] },
-  17: { need: { 202: pay(3), 251: pay(5) }, todo: 'the dormitory costs 2 Gold Crowns; if you cannot pay, hand over a Backpack Item or a Weapon instead.' },
+  // the dormitory: a Backpack Item or a Weapon in lieu of the 2 Gold Crowns, if he cannot pay (a footnote)
+  17: { need: { 144: { ...pay(2), instead: { pick: ['backpack', 'weapons'], short: true } }, 202: pay(3), 251: pay(5) } },
   20: { take: [{ arrows: 1 }] },
   24: { need: { 101: { item: 'rope' } } },
   // the final: 50 TARGET points a side in place of Endurance (his own untouched), fought with a Bow (his own or
@@ -129,15 +131,14 @@ export const SECTIONS = {
   102: { need: { 10: { gold: 10 } } },
   // the weapons shop: prices as chalked up; he buys back at a crown less
   98: { loot: [{ item: 'broadsword', cost: 7 }, { item: 'dagger', cost: 2 }, { item: 'shortSword', cost: 3 }, { item: 'warhammer', cost: 6 }, { item: 'spear', cost: 5 }, { item: 'mace', cost: 4 }, { item: 'axe', cost: 3 }, { item: 'bow', cost: 7 }, { item: 'quarterstaff', cost: 3 }, { item: 'sword', cost: 4 }, { arrows: 2, cost: 1 }],
-    sell: { broadsword: 6, dagger: 1, shortSword: 2, warhammer: 5, spear: 4, mace: 3, axe: 2, bow: 6, quarterstaff: 2, sword: 3 },
-    todo: 'he also buys Arrows, 4 for 1 Gold Crown (a footnote): do that by hand.' },
+    sell: { broadsword: 6, dagger: 1, shortSword: 2, warhammer: 5, spear: 4, mace: 3, axe: 2, bow: 6, quarterstaff: 2, sword: 3, arrows: { n: 4, gold: 1 } } }, // Arrows: a footnote
   106: taunor,
   109: { loot: [{ item: 'mapTekaro6' }] },
   111: { loot: [{ item: 'potion' }] },
   112: taunor,
   113: lost,
   114: { fight: { rounds: [{ upTo: 1, csMod: 2, note: 'Surprise' }] } },
-  123: { loot: [{ item: 'alletherBerries6', cost: 3 }], todo: 'buy at most 3 handfuls.' },
+  123: { loot: [{ item: 'alletherBerries6', cost: 3, max: 3 }] },
   // a ticket from Soren, of any of the three kinds, takes the first way
   124: { need: { 59: { item: ['ticketLuyen6', 'ticketRhem6', 'ticketEula6'] }, 290: { item: ['ticketLuyen6', 'ticketRhem6', 'ticketEula6'], not: true } } },
   137: { need: { 332: pay(3) } },
@@ -178,7 +179,9 @@ export const SECTIONS = {
   209: { take: [{ arrows: 1 }] },
   211: { need: { 17: map, 104: { ...map, not: true } } },
   // two Special Items or 20 Gold Crowns, or the prize bow (paid at 45), for the horse
-  212: { todo: 'unless you gave the Silver Bow, hand over 2 Special Items or 20 Gold Crowns for the horse.' },
+  // the horse: the Silver Bow (45), or 2 Special Items or 20 Gold Crowns
+  132: { need: { 212: horse } },
+  148: { need: { 212: horse } },
   45: { need: { 212: { item: 'silverBow', spend: true } } },
   214: { mark: 'boneBow6' },
   219: { need: withBow('301', '78') },

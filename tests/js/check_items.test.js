@@ -107,6 +107,7 @@ describe('check_items.mjs', () => {
     ['an unknown coin', { '1': { give: [{ coin: 'florin', n: 3 }] } }, '1 give: unknown coin florin'],
     ['an unknown item in the take of a when', { '1': { when: [{ take: [{ item: 'ghost' }] }] } }, '1 when[0]: unknown item ghost'],
     ['an unknown item a trader buys', { '1': { sell: { ghost: 2 } } }, '1 sell: unknown item ghost'],
+    ['a price in items from a list the engine lacks', { '1': { need: { 2: { gold: 2, instead: { pick: ['pockets'] } } } } }, '1: need for 2: instead needs a gold price and pick from backpack, packItems, weapons, weapon or special'],
     ['a take of the backpack other than all or items', { '1': { take: [{ backpack: 'some' }] } }, "1 take: backpack must be 'all' or 'items'"],
     ['a take of special items other than all', { '1': { take: [{ special: 'one' }] } }, "1 take: special must be 'all'"],
     ['an unknown item in a roll\'s take', { '1': { rolls: [{ range: [0, 9], take: [{ item: 'ghost' }] }] } }, '1 rolls[0]: unknown item ghost'],

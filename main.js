@@ -392,12 +392,12 @@ function leftHTML() {
   const loot = game.loot();
   // what is found here: each a medallion to touch to take it; things handed over come already taken
   // a shop's goods are bought, as often as he likes; a "choose two" closes once two are taken
-  const note = (l) => (l.taken ? 'yours' : l.closed ? (l.pick > 1 ? 'you have taken your share' : 'you took the other') : l.cost ? `buy it: ${l.cost} Gold Crown${l.cost > 1 ? 's' : ''}` : 'take it');
+  const note = (l) => (l.taken ? 'yours' : l.closed ? (l.pick > 1 ? 'you have taken your share' : 'you took the other') : l.cost ? `buy it: ${l.cost} Gold Crown${l.cost > 1 ? 's' : ''}${l.left != null ? `, ${l.left} more at most` : ''}` : 'take it');
   if (loot.length && !isDead()) h += `<div class="block finds"><span class="eyebrow">${loot.every((l) => l.cost) ? 'For sale' : 'Found here'}</span>${loot.map((l) => `<button type="button" class="find ${l.taken ? 'got' : ''}" data-loot="${l.i}" ${l.taken || l.closed ? 'disabled' : ''}>
       <span class="med ${l.taken ? 'lit' : ''}">${itemGlyph(l.item)}</span><span>${esc(l.label)}<i>${note(l)}</i></span></button>`).join('')}</div>`;
   // a loss he chooses (game.s.picks): what he can lose, a medallion each
   const pickable = !isDead() ? game.pickable() : [];
-  if (pickable.length) h += `<div class="block finds"><span class="eyebrow">${game.s.picks[0].loot != null ? 'Give in exchange' : `Choose what you lose${game.s.picks[0].n > 1 ? ` (${game.s.picks[0].n} more)` : ''}`}</span>${[...new Set(pickable)].map((id) => `<button type="button" class="find" data-pick="${esc(id)}">
+  if (pickable.length) h += `<div class="block finds"><span class="eyebrow">${game.s.picks[0].loot != null ? 'Give in exchange' : game.s.picks[0].give ? `Choose what you hand over${game.s.picks[0].n > 1 ? ` (${game.s.picks[0].n} more)` : ''}` : `Choose what you lose${game.s.picks[0].n > 1 ? ` (${game.s.picks[0].n} more)` : ''}`}</span>${[...new Set(pickable)].map((id) => `<button type="button" class="find" data-pick="${esc(id)}">
       <span class="med">${itemGlyph(id === 'gold' ? 'gold' : id)}</span><span>${esc(id === 'meal' ? 'a Meal' : id === 'gold' ? 'a Gold Crown' : LW.itemName(id))}<i>lose it</i></span></button>`).join('')}</div>`;
   // a stake, or a gift of what he will (sec.stake), set before the way on opens
   const stake = sec.stake, staked = stake && (game.s.stakes || {})[stake.key || id];
@@ -411,10 +411,10 @@ function leftHTML() {
     h += `<div class="block"><span class="eyebrow">The game</span>${gm.log.length ? `<ol class="rounds">${gm.log.map((l) => `<li>${esc(l)}</li>`).join('')}</ol>` : ''}${
       left.length ? `<p class="staked">${esc(left.join('; '))}.</p>` : ''}${gm.bet ? `<p class="staked">${gm.bet.n} staked${gm.bet.pick != null ? ` on ${gm.bet.pick}` : ''}.</p>` : form}</div>`;
   }
-  // what a trader here buys (sec.sell), of what he has
-  const wares = Object.keys(sec.sell || {}).filter((w) => LW.hasItem(game.hero, w));
+  // what a trader here buys (sec.sell), of what he has; Arrows by the number he buys at once
+  const arrowsSold = (sec.sell || {}).arrows, wares = Object.keys(sec.sell || {}).filter((w) => (w === 'arrows' ? (game.hero.arrows || 0) >= arrowsSold.n : LW.hasItem(game.hero, w)));
   if (wares.length && !isDead()) h += `<div class="block finds"><span class="eyebrow">He will buy</span>${wares.map((w) => `<button type="button" class="find" data-sell="${esc(w)}">
-      <span class="med">${itemGlyph(w)}</span><span>${esc(LW.itemName(w))}<i>sell it: ${sec.sell[w]} Gold Crown${sec.sell[w] > 1 ? 's' : ''}</i></span></button>`).join('')}</div>`;
+      <span class="med">${itemGlyph(w)}</span><span>${w === 'arrows' ? `${arrowsSold.n} Arrows` : esc(LW.itemName(w))}<i>${w === 'arrows' ? `sell them: ${arrowsSold.gold} Gold Crown${arrowsSold.gold > 1 ? 's' : ''}` : `sell it: ${sec.sell[w]} Gold Crown${sec.sell[w] > 1 ? 's' : ''}`}</i></span></button>`).join('')}</div>`;
   if (game.combatPending && !isDead()) h += `<div class="block"><span class="eyebrow">You must fight</span>${sec.combat.enemies.map((f) => `<div class="foeline"><span>${esc(f.name)}</span><i>Combat Skill ${f.cs}, Endurance ${f.ep}</i></div>`).join('')}</div>`;
   h += '</div><div class="dialslot" id="dialslot"></div>';
 
@@ -435,7 +435,7 @@ function leftHTML() {
   else {
     const local = game.choices().map((c, i) => ({ c, i }));
     if (local.length) h += `<ul class="choices">${local.map(({ c, i }) => `<li><button type="button" class="choice" data-choice="${i}" ${c.enabled ? '' : 'disabled'}><span>${esc(shown(c.text))}${
-      c.enabled ? (c.need && (c.need.disc || c.need.circle) ? `<em>${esc(LW.condName({ disc: c.need.disc, every: c.need.every, circle: c.need.circle }))}</em>` : c.need && c.need.any ? `<em>${esc(c.need.any.map(LW.condName).join(', or '))}</em>` : c.random ? '<em>Random Number</em>' : '') : `<em>${esc(c.why)}</em>`}</span></button></li>`).join('')}</ul>`;
+      c.enabled ? (c.how ? `<em>${esc(c.how)}</em>` : c.need && (c.need.disc || c.need.circle) ? `<em>${esc(LW.condName({ disc: c.need.disc, every: c.need.every, circle: c.need.circle }))}</em>` : c.need && c.need.any ? `<em>${esc(c.need.any.map(LW.condName).join(', or '))}</em>` : c.random ? '<em>Random Number</em>' : '') : `<em>${esc(c.why)}</em>`}</span></button></li>`).join('')}</ul>`;
     // a puzzle's answer is a section number, which the book leaves the reader to turn to; elsewhere the same
     // box, smaller, is the by-hand way to any section, for a way on the page cannot see, folded into a faint link until touched
     h += sec.puzzle ? turnBox('Turn to section', '') : '<button type="button" class="inkbtn byhand" data-byhand>By hand: turn to a section…</button>';
