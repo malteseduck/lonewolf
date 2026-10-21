@@ -246,6 +246,11 @@ describe('a mark assumed once for a character made before it was recorded (ADR 0
     delete h.marks.visitedGornCove; // a second carry assumes nothing more
     expect((into(4, h).marks || {}).visitedGornCove).toBeUndefined();
   });
+  it('carried into Book 5 or 6, he is taken to have met the stargazer and been to the temple of Maaken (Book 4)', () => {
+    const h = into(5, kaiHero());
+    expect([h.marks.visitedStargazer, h.marks.visitedMaakenTemple]).toEqual([true, true]);
+    expect((into(4, kaiHero()).marks || {}).visitedStargazer).toBeUndefined();
+  });
   it('not into another book, and not for a character made since: his own Book 2 records the visit', () => {
     expect((into(5, kaiHero()).marks || {}).visitedGornCove).toBeUndefined();
     const made = LW.makeHero({ csRoll: 0, epRoll: 0, disciplines: [] });

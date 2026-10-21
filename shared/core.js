@@ -88,11 +88,11 @@
      (an item, or a list of them, whose use ends it)}; or a flag (flag: true: a name only, "having been to
      Ragadorn", not listed among his conditions). Item tables add theirs (MARKS). */
   LW.MARKS = {};
-  /* Flags a later book asks about that were recorded only from 2026-10-17: a character carried into one
-     of these book numbers who was made before then (not in hero.assumed) is taken to have it, once
+  /* Flags a later book asks about that were recorded only from 2026-10-17 (Gorn Cove) or 2026-10-21 (Book 4's
+     two): a character carried into one of these book numbers whose hero.assumed lacks it is taken to have it, once
      (ADR 0011). A character made since has them in hero.assumed from the start (LW.makeHero), so only
      what his own books recorded counts. */
-  LW.ASSUME = { visitedGornCove: [3, 4] };
+  LW.ASSUME = { visitedGornCove: [3, 4], visitedStargazer: [5, 6], visitedMaakenTemple: [5, 6] };
   LW.assumeMarks = (hero, number) => {
     for (const [m, books] of Object.entries(LW.ASSUME)) {
       if ((hero.assumed || []).includes(m) || !books.includes(number)) continue;

@@ -79,6 +79,10 @@ export const SECTIONS = {
   // the creature is down: his losses in the first two rounds do not count
   12: { fight: { rounds: [{ upTo: 2, heroLoss: 0, note: 'It lies face down' }] } },
   13: { need: withBow('56') },
+  // the stargazer's hut and the buried temple of Maaken, as Book 4 records them (ADR 0011)
+  127: { need: { 233: { any: [{ mark: 'visitedStargazer', label: "a visit to the stargazer's hut (Book 4)" }] },
+    6: { any: [{ not: { mark: 'visitedStargazer' }, label: "no visit to the stargazer's hut (Book 4)" }] } } },
+  151: { need: { 294: { any: [{ mark: 'visitedMaakenTemple', label: 'a visit to the buried temple of Maaken (Book 4)' }] } } },
   // the map is handed over, however he came by it
   16: { give: [map] },
   17: { need: { 202: pay(3), 251: pay(5) }, todo: 'the dormitory costs 2 Gold Crowns; if you cannot pay, hand over a Backpack Item or a Weapon instead.' },

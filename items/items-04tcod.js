@@ -39,7 +39,9 @@ const lit = { any: [{ items: ['torch', 'tinderbox'] }, { item: 'firesphere' }] }
 const dark = { any: [{ not: lit }] };
 
 // flags a later section or book tests (core.js, LW.MARKS)
-export const MARKS = { foughtElix: { name: 'having fought an Elix', flag: true } };
+export const MARKS = { foughtElix: { name: 'having fought an Elix', flag: true },
+  visitedStargazer: { name: 'having met the stargazer in his hut', flag: true },
+  visitedMaakenTemple: { name: 'having been to the buried temple of Maaken', flag: true } };
 
 export const SECTIONS = {
   // what the bandits carried; he keeps what he wants and the Backpack if he has none
@@ -76,7 +78,8 @@ export const SECTIONS = {
   78: { loot: [{ item: 'holyWater4' }], noHunt: true },
   // a crate by the tunnel mouth: Tinderbox and Torches
   79: { loot: [{ item: 'tinderbox' }, ...torches(5)] },
-  84: { give: [{ item: 'scroll4' }] },
+  // inside the stargazer's hut (Book 6's 127 asks)
+  84: { give: [{ item: 'scroll4' }], mark: 'visitedStargazer' },
   // all his Backpack is lost with the boat
   94: { take: [{ backpack: 'all' }] },
   95: { need: { 195: { item: 'badge' } } },
@@ -156,5 +159,6 @@ export const SECTIONS = {
   340: { ep: -2 },
   341: { ep: -4 },
   342: { take: [{ backpack: 'all' }] },
-  350: { give: [{ item: 'daggerVashna' }] },
+  // the buried temple of Maaken, where every way through the book ends (Book 6's 151 asks)
+  350: { give: [{ item: 'daggerVashna' }], mark: 'visitedMaakenTemple' },
 };

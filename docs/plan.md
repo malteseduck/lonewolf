@@ -35,9 +35,6 @@ case when it is met in play, rather than flagging it (ADR 0027):
 4. **Draws**: two numbers drawn and compared, the first with a discipline's bonus (B5 360: second lower,
    higher or the same).
 5. **Display**: during a contest in target points (Book 6's final) the Endurance gauge shows the points.
-6. **Flags from earlier books**: B6 127 (a hut on Raider's Road) and 151 (the buried temple of Maaken)
-   open a way for one who has been there in Book 4; both ways stay open to the player. Book 4's table
-   could record the visits as flags, assumed once for a carried character, as ADR 0011 does for Gorn Cove.
 
 Left to the player whatever the engine does: whether to sleep (B2 41 is now applied by `came`), the Arrows
 spent at B8 164 (the text gives no number), the puzzles, and B5 162's climb (a by-hand stop, `byHand`).

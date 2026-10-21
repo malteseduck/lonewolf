@@ -47,9 +47,11 @@ made it.
   +8). A new Grand Master character gets none of the earlier numbers.
 - **Flags assumed once.** A flag a later book asks about that was recorded only after characters were
   already being carried is given once to such a character on entering the books that ask: Book 2's
-  `visitedGornCove` (its section 168, the only way into Gorn Cove), assumed on entering Book 3 or 4.
-  He is not asked or checked again. A character made since is never given it: only his own Book 2
-  counts. A new character rolled for Book 3 or 4 does not have it, and that way stays shut for him.
+  `visitedGornCove` (its section 168, the only way into Gorn Cove), assumed on entering Book 3 or 4;
+  Book 4's `visitedStargazer` (84, inside the hut) and `visitedMaakenTemple` (350, in the temple),
+  assumed on entering Book 5 or 6 (from 2026-10-21). He is not asked or checked again. A character
+  made since is never given them: only his own earlier books count. A new character rolled for a
+  book that asks does not have them, and those ways stay shut for him.
 
 ## Consequences
 
@@ -62,7 +64,8 @@ made it.
   `hero.assumed` from the start. `LW.HeroSetup.build` runs it for a carried character. A later flag
   of the same kind goes in `LW.ASSUME` only if the owner wants it assumed.
 - Book 2's flag is in `items/items-02fotw.js` (`MARKS`, section 168); the gate in
-  `items/items-04tcod.js`.
+  `items/items-04tcod.js`. Book 4's two (`visitedStargazer` at 84, `visitedMaakenTemple` at 350) are
+  in `items/items-04tcod.js`, assumed on entering Book 5 or 6; the gates at Book 6's 127 and 151.
 
 ## Changes
 
@@ -72,3 +75,5 @@ made it.
 - 2026-10-17: Book 2 flags the Gorn Cove visit; a character from before it is assumed to have it once.
 - 2026-10-17: merged in 0018 (earlier disciplines for veterans), the carrying half of 0019 (Grand
   Master readings; Deliverance went to rulings.md) and 0043 (Gorn Cove).
+- 2026-10-21: Book 4 flags the stargazer's hut and the buried temple of Maaken (Book 6 asks); assumed
+  once, as Gorn Cove.
