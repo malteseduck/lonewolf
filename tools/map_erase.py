@@ -46,6 +46,16 @@ TURN = 30     # degrees: a word of a bent name may lie this far off the name's l
 BETTER = 1.3  # ... and its own strip is added where it holds this much more of the word's ink,
 ON_LINE = 0.25  # this share of it on the name's line,
 TALLER = 1.25   # and it is no taller than this many times the name's
+SOLID = 2       # a thick shape lying in the line is a filled letter up to this many letter heights squared,
+BLACK = 4, 30   # and only if it is black (its median chroma and grey at most these): trees and shading are tinted
+
+
+def _medians(cc, n, v):
+    """The median of <v> over each component of <cc>."""
+    order = np.argsort(cc, axis=None, kind='stable')
+    lab, vals = cc.ravel()[order], v.ravel()[order]
+    starts = np.searchsorted(lab, np.arange(n + 1))
+    return [float(np.median(vals[a:b])) if b > a else 0 for a, b in zip(starts[:-1], starts[1:])]
 
 
 class LabelInk:
@@ -69,7 +79,14 @@ class LabelInk:
             ink, size = letters(round(BOLD_NEAR * stroke) | 1), round(BOLD_BLOB * stroke) | 1
         # the scan's trees are near-black blobs; letters are thin strokes. Keep anything thick.
         blob = cv2.morphologyEx(ink, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (size, size)))
-        ink &= (cv2.dilate(blob, np.ones((5, 5), np.uint8)) == 0).astype(np.uint8)
+        thick = cv2.dilate(blob, np.ones((5, 5), np.uint8)) > 0
+        # a tree, or a filled letter (Book 13's R, a, e, o): black ones are kept for along_letters to tell apart
+        n, cc = cv2.connectedComponents(((ink > 0) & thick).astype(np.uint8), connectivity=8)
+        black = np.zeros(n, bool)
+        for c, (cm, gm) in enumerate(zip(*(_medians(cc, n, v) for v in (chroma, g)))):
+            black[c] = c > 0 and cm <= BLACK[0] and gm <= BLACK[1]
+        self.solid = black[cc]
+        ink &= (~thick).astype(np.uint8)
         # the map's straight grid lines join letters crossing them into one long shape: cut them out
         lines = cv2.morphologyEx(ink, cv2.MORPH_OPEN, np.ones((1, 61), np.uint8)) | cv2.morphologyEx(ink, cv2.MORPH_OPEN, np.ones((61, 1), np.uint8))
         ink &= (cv2.dilate(lines, np.ones((3, 3), np.uint8)) == 0).astype(np.uint8)
@@ -125,7 +142,7 @@ class LabelInk:
             words = lab_.get('lines') or [lab_.get('text', '')]
             bx0, by0, bx1, by1 = lab_['box']
             m = self.along_letters(m, take[sub], (bx1 - bx0, by1 - by0), max(len(t.replace(' ', '')) for t in words), len(words),
-                                   () if lab_.get('lines') else lab_.get('text', '').split())
+                                   () if lab_.get('lines') else lab_.get('text', '').split(), self.solid[y0:y1, x0:x1])
         m = m | self.enclosed(m, self.dark[y0:y1, x0:x1] > 30)
         if lab_.get('keep'):  # a ship inside the label's box; a fifth number turns the box (degrees, clockwise)
             kept = np.zeros(m.shape, np.uint8)
@@ -137,7 +154,7 @@ class LabelInk:
         return m
 
     @staticmethod
-    def along_letters(m, whole, size, chars, lines=1, words=()):
+    def along_letters(m, whole, size, chars, lines=1, words=(), solid=None):
         """Only the ink along the name's line(s) of letters, so the mountain peaks, tree tops, roads and
         symbols in the box beside them stay. The box is drawn round the name: at each angle its
         <chars> letters across the box's length give their height. The line is the strip of that
@@ -148,7 +165,9 @@ class LabelInk:
         inside a strip, grown by SLACK. A name of several <words> on one line may bend between them
         (Book 10, Blackshroud Trail): each word of 3 letters or more is looked for again in its share
         of the line's length, within TURN of its angle, and its own strip is added there if it holds
-        BETTER as much ink, lies partly on the name's line (ON_LINE) and is not much taller (TALLER)."""
+        BETTER as much ink, lies partly on the name's line (ON_LINE) and is not much taller (TALLER).
+        A thick shape (<solid>) lying mostly in a strip and no bigger than SOLID letters is a filled
+        letter and goes too; a tree beside the line stays."""
         if m.sum() < MIN_INK or chars < 2:
             return m
         h, w = m.shape
@@ -251,7 +270,14 @@ class LabelInk:
         for a, lo, hi, where in strips:
             band |= (a >= lo - SLACK * tall) & (a <= hi + SLACK * tall) & where
             reach |= (a >= lo - REACH * tall) & (a <= hi + REACH * tall) & where
-        return m & (band | (mostly(band) & mostly(whole) & reach))
+        out = m & (band | (mostly(band) & mostly(whole) & reach))
+        if solid is not None and solid.any():
+            n2, cc2 = cv2.connectedComponents(solid.astype(np.uint8), connectivity=8)
+            size2 = np.bincount(cc2[solid], minlength=n2)
+            ok = (np.bincount(cc2[solid & band], minlength=n2) >= 0.8 * size2) & (size2 <= SOLID * tall * tall)
+            ok[0] = False
+            out |= ok[cc2]
+        return out
 
     @staticmethod
     def enclosed(m, dark):

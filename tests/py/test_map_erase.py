@@ -170,6 +170,24 @@ def test_a_slanted_name_in_its_level_box_leaves_the_corners():
     assert taken(li, lab, corners) == 0
 
 
+def test_a_solid_letter_on_the_line_goes_and_a_tree_above_it_stays():
+    """Book 13: its hand fills the counters of R, a, e, o; thick as a tree, they were left as blots."""
+    im = paper(400, 200)
+    letters = word(im, 'ABCDEFGHK', (80, 130))
+    xs = np.nonzero(letters)[1]
+    solid = np.zeros(im.shape[:2], np.uint8)
+    cv2.circle(solid, (int(xs.max()) + 9, 124), 6, 1, -1)   # a filled o at the end of the name
+    im[solid > 0] = INK
+    box = around(letters | (solid > 0), up=16)
+    tree = np.zeros(im.shape[:2], np.uint8)
+    cv2.circle(tree, (130, box[1] + 8), 6, 1, -1)            # the same blot above the name, in its box
+    im[tree > 0] = INK
+    li = LabelInk(im)
+    lab = {'box': box, 'text': 'ABCDEFGHKO'}
+    assert taken(li, lab, solid > 0) > 0.97
+    assert taken(li, lab, tree > 0) == 0
+
+
 def test_a_name_set_over_two_lines_goes_whole():
     im = paper(400, 200)
     letters = word(im, 'ABC', (130, 100)) | word(im, 'DEFGHKMN', (90, 125))

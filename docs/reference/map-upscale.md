@@ -178,6 +178,11 @@ Commands run from the project root as
    packed letters darkened the window, so their cores were smeared, not taken). Nothing to set;
    map_measure, map_letter and map_missed use the same ink. Book 7 then needed `joined` on 16 names
    (touching a town, road, river or coast) and `clip` on 4 (2026-10-19).
+   A letter filled solid (Book 13's hand fills R, a, e, o) is as thick as a tree, and was left as
+   a black blot: a thick shape lying mostly in the name's line of letters, no bigger than twice a
+   letter's height squared and black (median chroma 4 or less, grey 30 or less; trees and mountain
+   shading on Books 3 and 8 are tinted) goes with the name (2026-10-21; it also took leftover blots
+   on Books 6, 7 and 10, and smudges the foot of Book 1's monastery tower).
 4. **Set them again**: `map_letter.py $W/map-2k.png $L $W/map-2k-erased.jpg - $W/map-2k-lettered.jpg --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"` (or the font `maps/<code>/font.txt` names).
    Each name's angle and size come from the scan's ink (the angle from OCR's `slant` where the ink is a little off it, step 2); each one-line name is set at 1.05 times the map's common size (`common_size()`: the median of the
    lettered one-line names fitted to their own ink) times its own fitted size over that to the 0.6 (`PULL`: most of the way to the common size; on Books 3-6 and 12, 16 of 159 names more than 15% off the owner's hand size, where one size a map left 44), unless fitted over 1.25 times it (a title or
