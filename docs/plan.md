@@ -23,7 +23,7 @@ rather than flagging it (ADR 0027). In order of how often they come up:
    his maximum after round 1 (B12 268).
 2. **Items**: a Helmet and the Silver Helm not counting together (B7 148, a series rule); a stake of
    items (B9 115, 204); the Backpack halved by a coin (B9 91); which one was used when he has several
-   (remedies, B8 178, 331, 349; Lantern or Torch, B14 148); a draw against the Crowns thrown (B3 152);
+   (remedies, B8 178, 331, 349; Lantern or Torch, B14 223); a draw against the Crowns thrown (B3 152);
    a weapon the text does not name (B11 8).
 3. **Draws**: two numbers drawn and compared, the first with a discipline's bonus (B5 360: second
    lower, higher or the same).
