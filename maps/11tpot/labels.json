@@ -52,7 +52,8 @@
     970,
     153
    ]
-  }
+  },
+  "reset": true
  },
  {
   "text": "LJUK",
@@ -254,7 +255,8 @@
     896,
     330
    ]
-  }
+  },
+  "reset": true
  },
  {
   "text": "Tadatizaga",
@@ -289,7 +291,8 @@
    ],
    "size": 19.2,
    "angle": 0
-  }
+  },
+  "reset": true
  },
  {
   "text": "HELGEDAD",
@@ -394,7 +397,8 @@
    ],
    "size": 20.8,
    "angle": -64
-  }
+  },
+  "reset": true
  },
  {
   "text": "Gulf of Durenor",
@@ -464,7 +468,8 @@
    ],
    "size": 16.8,
    "angle": 0.9
-  }
+  },
+  "reset": true
  },
  {
   "text": "Kagazitzaga",
@@ -494,12 +499,13 @@
   },
   "set": {
    "at": [
-    891.6,
-    472.9
+    922,
+    460
    ],
    "size": 20.2,
    "angle": -23.5
-  }
+  },
+  "reset": true
  },
  {
   "text": "HOLMGARD",
@@ -534,7 +540,8 @@
    ],
    "size": 18,
    "angle": -0.6
-  }
+  },
+  "reset": true
  },
  {
   "text": "RAGADORN",
@@ -782,7 +789,8 @@
    ],
    "size": 16,
    "angle": 3.8
-  }
+  },
+  "reset": true
  },
  {
   "text": "Maakengorge",
@@ -1055,7 +1063,8 @@
    ],
    "size": 14.4,
    "angle": -1.1
-  }
+  },
+  "reset": true
  },
  {
   "text": "CASIORN",
@@ -1358,7 +1367,8 @@
     918,
     889
    ]
-  }
+  },
+  "reset": true
  },
  {
   "text": "DUADON",
@@ -1669,7 +1679,8 @@
    ],
    "size": 19.7,
    "angle": -73
-  }
+  },
+  "reset": true
  },
  {
   "text": "R.Storn",
@@ -1883,7 +1894,8 @@
    ],
    "size": 17.5,
    "angle": -0.7
-  }
+  },
+  "reset": true
  },
  {
   "text": "GARTHEN",
@@ -2381,7 +2393,8 @@
    "size": 17.6,
    "angle": 21.8
   },
-  "joined": true
+  "joined": true,
+  "reset": true
  },
  {
   "text": "GLEESH",
