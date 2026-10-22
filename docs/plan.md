@@ -14,11 +14,6 @@ every book can become a step or a check there.
 In order of importance. The owner picks what is done, and when. Books 1-14 are imported; importing
 Books 15-20 (downloaded) is the owner's go-ahead.
 
-### The item tables' last todos
-
-One `todo` is left, the player's whatever the engine does: the Arrows spent at B8 164 (the text
-gives no number); the puzzles too.
-
 ### Book notes outside the steps
 
 Things to check while a book goes through its steps, which no step asks for:
