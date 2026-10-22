@@ -240,7 +240,9 @@ are the entries in force in round `r` (conditions tested with the weapon in hand
 Huntmastery; `mind` only while a mind attack is used); `parts(r)` / `cs(r)` add their `csMod`, fight
 bare-handed under `unarmed`, multiply the mind's bonus by `psi`. `strike` multiplies each side's loss
 by `heroLoss` / `foeLoss` (rounding down; a killing blow ignored is no blow), adds `heroPlus` to a wound
-and `foeEach` every round; `suffer` takes `heroEach` every round. `changes(r)` logs each one as it begins
+and `foeEach` every round; `suffer` takes `heroEach` every round, draws again after a round the table would have wounded him in where a
+`fatal` entry holds (one of its numbers kills him), and lowers his maximum by what he lost where an `offMax`
+entry holds (`behind: r` keeps an entry for when he had lost more than the foes by round `r`, from `tally`). `changes(r)` logs each one as it begins
 and ends. `combat.mind` is a fight of the mind (its own score, no weapon or mind attack). Before the
 first round `boost(id)` swallows a draught (`item.boost`; not with `noBoost`). `combat.keep` keeps the
 foes' wounds in `s.kept` for a later fight with the same foes. `combat.points` fights on target points

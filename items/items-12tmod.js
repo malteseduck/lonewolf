@@ -171,7 +171,7 @@ export const SECTIONS = {
   265: { settle: { 61: 2 } },
   266: { need: { 302: { item: 'fireseed' } } },
   267: { ep: -8 },
-  268: { todo: 'if you lose more ENDURANCE than the bird in the first round, every point you lose after that comes off your basic ENDURANCE for good.' },
+  268: { fight: { rounds: [{ from: 2, behind: 1, offMax: true, note: 'Lasting wounds' }] } },
   271: { loot: [{ item: 'sword' }, { item: 'axe' }, { item: 'broadsword' }, { item: 'bow' }, { item: 'quiver' }, { arrows: 6 }, { item: 'dagger' }, { item: 'mace' }, kika(400)] },
   276: { ep: -3, take: [{ arrows: 1 }], fight: { rounds: [bare(2), ictakko] } },
   282: { give: [{ item: 'korliniumScabbard' }] },

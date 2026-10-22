@@ -50,7 +50,7 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
   const NEED = new Set(['disc', 'every', 'circle', 'any', 'ep', 'rank', 'item', 'not', 'ever', 'gold', 'spend', 'orAll', 'coin', 'n', 'came', 'instead']);
   const COND = new Set(['disc', 'every', 'rank', 'item', 'items', 'ep', 'weapon', 'wield', 'mastery', 'skilled', 'meals', 'arrows', 'packItems', 'gold', 'mark', 'any', 'not', 'circle', 'label']);
   const condFields = (c) => (c && typeof c === 'object' ? Object.keys(c).filter((f) => !COND.has(f)).concat([].concat(c.any || []).flatMap(condFields), c.not ? condFields(c.not) : []) : []);
-  const ROUND = new Set(['from', 'upTo', 'fromFoe', 'if', 'unless', 'came', 'ambush', 'mind', 'csMod', 'note', 'unarmed', 'heroLoss', 'foeLoss', 'heroPlus', 'heroEach', 'foeEach', 'psi', 'barred']);
+  const ROUND = new Set(['from', 'upTo', 'fromFoe', 'if', 'unless', 'came', 'ambush', 'mind', 'csMod', 'note', 'unarmed', 'heroLoss', 'foeLoss', 'heroPlus', 'heroEach', 'foeEach', 'psi', 'barred', 'fatal', 'behind', 'offMax']);
   const STOP = new Set(['after', 'wound', 'foeAt', 'drawn', 'to', 'by', 'if']);
   const known = (id) => id === 'meal' || !!LW.ITEMS[id];
   for (const [k, it] of Object.entries(T.ITEMS)) {

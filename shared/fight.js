@@ -18,7 +18,8 @@
     p.heroLoss === 0 && 'your losses do not count', p.heroLoss && p.heroLoss !== 1 && `your losses ${word(p.heroLoss)}`,
     p.foeLoss === 0 && 'its losses do not count', p.foeLoss && p.foeLoss !== 1 && `its losses ${word(p.foeLoss)}`,
     p.heroPlus && `every wound costs you ${p.heroPlus} more`, p.heroEach && `you lose ${p.heroEach} Endurance every round`,
-    p.foeEach && `it loses ${p.foeEach} more every round`, p.psi && `your mind's attack ${word(p.psi)}`].filter(Boolean).join(', ');
+    p.foeEach && `it loses ${p.foeEach} more every round`, p.psi && `your mind's attack ${word(p.psi)}`,
+    p.fatal && `every wound the dice deal draws again: ${p.fatal.join(' or ')} is death`, p.offMax && 'what you lose comes off your Endurance for good'].filter(Boolean).join(', ');
 
   class Fight {
     constructor(game, bookId) {
@@ -44,7 +45,7 @@
         this.c = c = Object.assign({}, c, { rounds: [...(c.rounds || []), { from: this.breath + 1, heroEach: c.breath.each, note: 'Out of breath' }] });
       }
       this.i = -1; this.foe = null; this.rounds = 0; this.log = []; this.over = null; this.stopTo = null;
-      this.lost = { hero: 0, foe: 0 }; this.startEp = hero.ep; this.boosted = null;
+      this.lost = { hero: 0, foe: 0 }; this.tally = []; this.startEp = hero.ep; this.boosted = null;
       // points: a contest scored in target points ({n, lose}): they stand in for his Endurance while it lasts
       if (c.points) { this.saved = hero.ep; hero.ep = c.points.n; }
       this.ctx = { with: c.with, noShield: c.noShield, noUnarmed: c.noUnarmed && (c.noUnarmed === true || LW.meets(hero, c.noUnarmed)),
@@ -79,11 +80,14 @@
        these sections), ambush (Huntmastery
        spares it), mind (only while a mind attack is used; 2: only the full Psi-surge or Kai-surge), csMod, note, unarmed, heroLoss, foeLoss
        (multipliers: 0 ignores, 2 doubles, 0.5 halves), heroPlus (more for every wound), heroEach, foeEach
-       (lost every round), psi (what the mind's attack adds is multiplied)}] */
+       (lost every round), psi (what the mind's attack adds is multiplied), fatal (numbers drawn again after a
+       round the table would have wounded him in, whatever heroLoss makes of it, that kill him), behind (only if
+       he had lost more than the foes by the end of that round), offMax (his losses lower his maximum too)}] */
     phases(round = this.rounds + 1) {
       const hero = this.hero, ctx = { weapon: this.weapon };
       return (this.c.rounds || []).filter((p) => (!p.from || round >= p.from) && (!p.upTo || round <= p.upTo) && (p.fromFoe == null || this.i >= p.fromFoe)
-        && (!p.if || LW.meets(hero, p.if, ctx)) && !(p.unless && LW.meets(hero, p.unless, ctx)) && (!p.came || p.came.includes(this.game.came())) && !(p.ambush && this.huntmaster()) && (!p.mind || (p.mind === 2 ? this.blasting() === 2 : this.blasting())));
+        && (!p.if || LW.meets(hero, p.if, ctx)) && !(p.unless && LW.meets(hero, p.unless, ctx)) && (!p.came || p.came.includes(this.game.came())) && !(p.ambush && this.huntmaster()) && (!p.mind || (p.mind === 2 ? this.blasting() === 2 : this.blasting()))
+        && (!p.behind || (this.tally[p.behind - 1] && this.tally[p.behind - 1].hero > this.tally[p.behind - 1].foe)));
     }
     /* the changes that begin with this round, and those that end, for the log */
     changes(round) {
@@ -205,6 +209,12 @@
       const hero = this.hero, foe = this.foe, res = o.res, dealt = o.dealt, taken = o.taken;
       hero.ep -= taken;
       this.log.push(`${o.tag} ${res.enemy === Infinity && dealt ? 'A killing blow' : dealt ? `${foe.name} loses ${dealt}` : 'Your blow is turned'}; ${res.hero === Infinity && taken ? 'but it finds the gap in your guard' : taken ? `you lose ${taken}` : 'you are untouched'}.`);
+      const fatal = this.phases(this.rounds).flatMap((p) => p.fatal || []);
+      if (fatal.length && res.hero > 0 && hero.ep > 0) {
+        const n = LW.rand10();
+        if (fatal.includes(n)) { hero.ep = 0; this.log.push(`You drew ${n} again: the wound is mortal.`); }
+        else this.log.push(`You drew ${n} again: it does you no harm.`);
+      }
       if (foe.drain && hero.ep > 0) { // every round fought, the last one too
         if (LW.shielded(hero)) { if (this.rounds === 1) this.log.push('Its mind attack breaks against your shield.'); }
         else { hero.ep -= foe.drain; this.log.push(`Its mind attack costs you ${foe.drain} Endurance.`); }
@@ -218,7 +228,11 @@
       }
       hero.ep = Math.max(0, hero.ep);
       this.lost.hero += o.ep - hero.ep;
+      this.tally.push({ hero: this.lost.hero, foe: this.lost.foe });
       if (hero.ep <= 0) return this.end('dead'), o;
+      if (o.ep > hero.ep && this.phases(this.rounds).some((p) => p.offMax)) {
+        hero.epMax -= o.ep - hero.ep; this.log.push(`Your Endurance is ${o.ep - hero.ep} lower for good.`);
+      }
       // the text's own end (c.stop): at his first wound, the foe down to so much, after so many rounds
       const last = foe.ep <= 0 && this.i + 1 >= this.foes.length, s = this.stops().find((x) => (x.wound && o.ep > hero.ep) || (x.foeAt != null && foe.ep > 0 && foe.ep <= x.foeAt) || (x.after && this.rounds >= x.after && !last));
       if (s) {

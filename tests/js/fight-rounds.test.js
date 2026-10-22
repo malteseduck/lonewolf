@@ -402,3 +402,45 @@ describe('Book 4\'s own fight rules', () => {
     expect(f.breath).toBe(g.s.drawn || 10);
   });
 });
+
+describe('a wound the dice would deal, drawn again', () => {
+  // a padded arm takes the blows, but every round that would have cost him Endurance draws once more
+  const padded = [{ heroLoss: 0, fatal: [9], note: 'Padded arm' }];
+  it('a fatal number drawn after a round that would have wounded him kills him', () => {
+    const { g, f } = fightAt({ enemies: [foe()], rounds: padded });
+    LW.rand10 = () => 9;
+    f.round(wounding(5));
+    expect(g.hero.ep).toBe(0);
+    expect(f.over).toBe('dead');
+  });
+  it('any other number, or a round the dice spared him, and the fight goes on', () => {
+    let { g, f } = fightAt({ enemies: [foe()], rounds: padded });
+    LW.rand10 = () => 3;
+    f.round(wounding(5));
+    expect([g.hero.ep, f.over]).toEqual([25, null]);
+    ({ g, f } = fightAt({ enemies: [foe()], rounds: padded }));
+    LW.rand10 = () => 9;
+    f.round(drawWhere(5, (r) => r.hero === 0));
+    expect([g.hero.ep, f.over]).toEqual([25, null]);
+  });
+});
+
+describe('losses off his maximum', () => {
+  // from round 2, if he lost more than the foe in round 1, what he loses comes off his maximum too
+  const scar = [{ from: 2, behind: 1, offMax: true, note: 'Poisoned wounds' }];
+  it('behind after round 1: every later loss lowers his maximum for good', () => {
+    const n = drawWhere(-5, (r) => r.hero > r.enemy && r.hero < 50), res = LW.combatRound(-5, n);
+    const { g, f } = fightAt({ enemies: [foe({ cs: 20 })], rounds: scar });
+    f.round(n);
+    expect(g.hero.epMax).toBe(25);
+    f.round(n);
+    expect(g.hero.epMax).toBe(25 - res.hero);
+    expect(g.hero.ep).toBe(25 - 2 * res.hero);
+  });
+  it('not behind after round 1: his maximum stays', () => {
+    const n = drawWhere(5, (r) => r.hero < r.enemy && r.hero > 0 && r.enemy < 50);
+    const { g, f } = fightAt({ enemies: [foe()], rounds: scar });
+    f.round(n); f.round(n);
+    expect(g.hero.epMax).toBe(25);
+  });
+});

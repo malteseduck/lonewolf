@@ -76,7 +76,7 @@ export const SECTIONS = {
   84: { loot: [{ item: 'blueTriangle' }] },
   // Weaponskill with the blade put in the lock
   86: { rntMod: [{ any: [{ item: 'dagger', mastery: 'dagger' }, { item: 'boneSword', mastery: 'boneSword' }], plus: 3, label: 'Weaponskill' }], ranges: { 47: [0, 7], 194: [8, 12] } },
-  88: { fight: { rounds: [{ heroLoss: 0, note: 'Padded arm' }] }, todo: 'for each round in which the dice would have cost you ENDURANCE, spin the medallion once more: a 9 is death (the page does not draw it).' },
+  88: { fight: { rounds: [{ heroLoss: 0, fatal: [9], note: 'Padded arm' }] } },
   91: { give: [oil] },
   92: { need: { 133: { item: 'rope' }, 297: { item: 'rope', not: true } } },
   // a drowning on 7-9
