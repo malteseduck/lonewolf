@@ -120,7 +120,8 @@ export const SECTIONS = {
   159: { ep: -2, fight: lyingDown },
   161: { when: [{ healLost: 0.5 }] },
   // climbing past instead of fighting: the number drawn is lost
-  162: { ep: -1, rolls: [{ range: [0, 9], ep: 'drawn' }], fight: { byHand: 'you climb past the nest instead of fighting' }, todo: 'to climb past, stop the fight before the first round, then draw (not after a fight won). With a dead arm you must climb.' },
+  // climbing past the nest instead of fighting: before the first round, the number drawn lost (0 as 10); with a dead arm, the only way
+  162: { ep: -1, rnt: null, fight: { evade: { label: 'Climb past', within: 1, lose: 'drawn', to: '114' }, noStrike: { mark: 'limbdeath' } } },
   164: { ep: -1 },
   166: { mark: 'limbdeath' },
   168: { fight: { won: { within: 3, to: '101', else: '46' } } },
@@ -184,7 +185,8 @@ export const SECTIONS = {
   359: { ep: 2 },
   // a win within three rounds leads to 288; at a fourth round the fight ends (382)
   // two numbers drawn and compared: the engine draws only one
-  360: { todo: 'draw twice (Hunting adds 1 to the first), then take the way on the two numbers give: second lower, higher or the same.' },
+  // two numbers drawn, Hunting adding 1 to the first; the ranges are for the first less the second: lower, higher, the same
+  360: { against: 'draw', rntMod: [{ disc: 'hunting', plus: 1 }], ranges: { 226: [1, 99], 297: [-99, -1], 334: [0, 0] } },
   361: { fight: { stop: { after: 3, to: '382' }, won: { within: 3, to: '288', else: '382' } } },
   362: { need: { 237: spend(1) } },
   368: { ep: -3 },

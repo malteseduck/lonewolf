@@ -53,7 +53,7 @@ Item ids are keys of `LW.ITEMS`, or `pack:Name` / `spec:Name` for items typed in
 `LW.addItems` (from its item table). `LW.putItem(hero, id)` puts one where it belongs, or returns why
 it does not fit (two weapons, a full Backpack: `LW.backpackMax(hero)`, 8, or 10 in the Grand Master series; no Backpack); `LW.dropItem(hero, id)` takes one
 away; both handle Special Items' Endurance. `putItem` also refuses a thirteenth Special
-Item (`LW.specialLimit`: 12 in every book, ruling R2). `LW.hasItem(hero, id)` checks any list.
+Item (`LW.specialLimit`: 12 in every book, ruling R2). And one an item's `apart` keeps from another he wears (the Silver Helm and a Helmet, either way). `LW.hasItem(hero, id)` checks any list.
 
 ## core.js
 
@@ -80,14 +80,16 @@ Item (`LW.specialLimit`: 12 in every book, ruling R2). `LW.hasItem(hero, id)` ch
   `sec.give` through `takeLoot`, `sec.note` onto `hero.notes`, `sec.todo` as a "By hand:" event;
   `sec.lose`; forced Meals, `sec.meal` of them (hunting exempts, else eat a Meal, else a Backpack
   item with `meal: true` (healing its `heal`), else one bought for `sec.mealCost`, else -3 EP); a
-  lasting condition's `ep` for every section passed; then +1 EP healing if the section has no combat.
+  lasting condition's `ep` for every section passed; then +1 EP healing if the section has no combat. `sec.mealUnless`, a
+  Condition, spares the Meal in Hunting's place.
 - `lose(take)`: an item (or the first held of a list), gold / Meals (`'half'`, `'all'`), a coin,
   weapons (`'all'`, `'one'`, `'used'`: `hero.lastWeapon`; `special: true` takes weapon-like Special
   Items too), Arrows, Special Items, the Backpack; `at` by place in the list as shown (`listed()`:
   Meals first); `pick`, the player's choice: pending in `s.picks`, resolved one medallion at a time by
   `pickLoss(id)` (`pickable()` lists them), all at once when he has no more than asked, `else` when he
-  has none. Any entry with `stash` keeps what it takes in `hero.stash[key]` (`drop()`); `unstash(b)`
-  gives it back (or the kinds in `only`), saying what will not fit.
+  has none (`n` by list: his first pick picks the list); `choose`, the one of a list of ids he used (his pick when he holds
+  several); `halve`, half a list lost on a coin. Any entry with `stash` keeps what it takes in `hero.stash[key]` (`drop()`); `unstash(b)`
+  gives it back (or the kinds in `only`), saying what will not fit; `forfeit` drops a stash for good.
 - `setStake(n)` (`sec.stake`: paid now with `spend`, else kept in `s.stakes` until a `settle`),
   `settle(key, by)`, `sell(id)` (`sec.sell` prices; `'arrows'` sells `sec.sell.arrows.n` at once), `came()` (the section before).
 - A game of chance (`sec.game`, book-format.md): `game` is the game in hand (`s.game`, begun afresh on
@@ -114,7 +116,8 @@ Item (`LW.specialLimit`: 12 in every book, ruling R2). `LW.hasItem(hero, id)` ch
   `LW.bowShot`'s bonus (`s.drawn` the number, `s.shot` the parts); `shot()` says which. The text's
   own bonuses (`sec.rntMod`, through `bonuses()`: those whose condition he meets, a per-discipline
   one counted; `vsCS` takes his COMBAT SKILL off) are added the same way, after the bow's, and
-  `sec.draws` more numbers drawn. A matching `rolls` entry's loss (`ep`, or `'drawn'`) is made smaller
+  `sec.draws` more numbers drawn; `sec.zeroTen` counts a 0 as 10; `sec.against` takes a second number
+  drawn, or the section's stake, off the total (`drawWhy()`: not before that stake is set). A matching `rolls` entry's loss (`ep`, or `'drawn'`) is made smaller
   by `sec.lessen`; `dead` ends him; `mark` sets one.
   `resolveRandom(choice, roll)`
   (authored `choice.random`), `choose(choice, to)`.
@@ -256,7 +259,7 @@ records `hero.lastLoss` and `hero.lastWeapon`. `way()` is where it leads: `wound
 Endurance, `won` by the rounds a win took, `combat.to`, `evade.to`, a stop's `to`. `finish()`: a win
 or a stop marks the fight won (`game.wonCombat`, so the choices open) and goes to `way()` if there is
 one; an evasion goes there; a death only saves. Evasion also needs `evade.if`, waits for the foe to fall to `evade.foeAt` or for the foe `evade.fromFoe` of the list, costs nothing with
-`evade.free`, and is shut by `noEvade`. `combat.breath` (Book 4's underwater fights): the number drawn in
+`evade.free` (the number drawn with `evade.lose: 'drawn'`), and is shut by `noEvade`. `combat.noStrike`, a Condition, shuts Strike (`round()` refuses it). `combat.breath` (Book 4's underwater fights): the number drawn in
 the section (0 as 10, its `rntMod` added; drawn by the fight if not yet) is the rounds he lasts, and every
 round after costs `breath.each` more, as a `rounds` entry added when the fight begins. The page draws each round's number out of sight (ruling R3).
 

@@ -50,7 +50,8 @@ const filched = (n) => ({ at: [n], from: 'special', min: 2, else: [{ at: [1], st
 
 export const SECTIONS = {
   // any two of five prizes
-  5: { loot: ['silverBowl9', 'goldDust9', 'altarCloth9', 'scrollHonour9', 'jadinAnklets9'].map((item) => ({ item, or: 'khmar', pick: 2 })) },
+  // the stake at 115 comes back with a right answer (5, or 50 for the second riddle); a second wrong one forfeits it (302)
+  5: { back: ['khmar9'], loot: ['silverBowl9', 'goldDust9', 'altarCloth9', 'scrollHonour9', 'jadinAnklets9'].map((item) => ({ item, or: 'khmar', pick: 2 })) },
   7: { take: [{ item: 'rope' }] },
   11: { meal: 2, need: { 171: bow } },
   12: { take: [{ arrows: 1 }] },
@@ -79,7 +80,7 @@ export const SECTIONS = {
   87: { loot: [{ item: 'psychicRing' }] },
   88: { ep: 'full' },
   89: { ep: -4 },
-  91: { todo: 'halve your Backpack Items: drop the last if their number is odd, split the rest into a first and a second half, and flip a coin for which half is lost. Then draw.' },
+  91: { take: [{ halve: 'backpack' }] },
   93: { ep: -2 },
   97: { fight: { undead: true } },
   99: { bowShot: { 70: [0, 6], 198: [7, 99] } },
@@ -88,7 +89,7 @@ export const SECTIONS = {
   106: { take: [{ item: 'fireseed' }] },
   111: { ep: -3 },
   113: { give: [{ item: 'receipt9' }] },
-  115: { todo: 'stake one Special Item or three Backpack Items before you answer; if you fail (204), they are lost.' },
+  115: { take: [{ pick: ['special', 'backpack'], n: { special: 1, backpack: 3 }, stash: 'khmar9', label: 'Choose your stake: one Special Item, or three Backpack Items' }] },
   116: firstTwo,
   119: { ep: -3 },
   120: { need: { 12: bow } },
@@ -118,7 +119,6 @@ export const SECTIONS = {
   193: { need: { 136: { item: 'invitation9' } } },
   201: { rolls: [{ range: [0, 4], take: [filched(1)] }, { range: [5, 9], take: [filched(2)] }] },
   203: { ep: -3 },
-  204: { todo: 'you lose what you staked at 115.' },
   206: { need: { 271: { item: 'meal', spend: true } } },
   207: { need: { 336: sommerswerd, 67: noSommerswerd } },
   209: { give: [{ item: 'invitation9' }] },

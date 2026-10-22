@@ -1,7 +1,7 @@
 # Plan
 
 Work not yet done that is not a book step. Rough; to be refined with the owner. Last updated
-2026-10-21. What the player does now is in `docs/reference/`, what it is meant to do in
+2026-10-22. What the player does now is in `docs/reference/`, what it is meant to do in
 `docs/spec.md`, and the owner's decisions in `docs/adr/`; finished work leaves this file for those.
 
 Where each book stands, step by step, is not kept here: the import dashboard
@@ -16,23 +16,8 @@ Books 15-20 (downloaded) is the owner's go-ahead.
 
 ### The item tables' last todos
 
-16 `todo`s are left in the item tables (Books 3-14). Teach the engine a case when it is met in play,
-rather than flagging it (ADR 0027). In order of how often they come up:
-
-1. **Items**: a Helmet and the Silver Helm not counting together (B7 148, a series rule); a stake of
-   items (B9 115, 204); the Backpack halved by a coin (B9 91); which one was used when he has several
-   (remedies, B8 178, 331, 349; Lantern or Torch, B14 223); a draw against the Crowns thrown (B3 152);
-   a weapon the text does not name (B11 8).
-2. **Draws**: two numbers drawn and compared, the first with a discipline's bonus (B5 360: second
-   lower, higher or the same).
-3. **Disciplines**: a Meal due with Grand Huntmastery but not Grand Nexus (B14 86); Magi-magic's
-   Flameshaft offered by a footnote (B14 243).
-4. **Display**: during a contest in target points (Book 6's final) the Endurance gauge shows the
-   points.
-
-Left to the player whatever the engine does: the Arrows spent at B8 164 (the text gives no number),
-whether B13 277's fungi are used up (the text does not say), the puzzles, and B5 162's climb (a
-by-hand stop, `byHand`).
+One `todo` is left, the player's whatever the engine does: the Arrows spent at B8 164 (the text
+gives no number); the puzzles too.
 
 ### Book notes outside the steps
 

@@ -51,6 +51,8 @@
       this.ctx = { with: c.with, noShield: c.noShield, noUnarmed: c.noUnarmed && (c.noUnarmed === true || LW.meets(hero, c.noUnarmed)),
         weaponCs: c.weaponCs, plain: c.plain, only: c.only, barred: c.barred, lend: c.lend };
       this.weapon = c.mind ? null : LW.armedWith(hero, this.ctx);
+      // noStrike: under this Condition he cannot fight it (Book 5's 162, a dead arm): only a way out is left
+      this.noStrike = !!(c.noStrike && LW.meets(hero, c.noStrike));
       // keep: the foes' wounds are kept under this name, and a later fight with the same foes starts from them
       const kept = c.keep && (game.s.kept || {})[c.keep];
       this.foes = c.enemies.map((e, i) => Object.assign({}, e, { max: e.ep, at: i }, kept && kept[i] != null ? { ep: kept[i] } : {})).filter((e, i) => !kept || (i < kept.length && e.ep > 0));
@@ -127,7 +129,8 @@
     ratio() { return Math.min(LW.RATIO_CAP, this.cs() - this.foe.cs); }
     // evade.after: not before that many rounds; evade.within: only in the first rounds; evade.if: only
     // with that (a Condition); evade.foeAt: only once the foe is down to that; evade.fromFoe: only from
-    // that foe of the list on (0 first); evade.free: without the blow. A list: several ways out, each its own.
+    // that foe of the list on (0 first); evade.free: without the blow; evade.lose 'drawn': the number drawn
+    // (0 as 10) is lost in its place (a climb past the foe). A list: several ways out, each its own.
     // c.noEvade: the text allows none, whatever the section's choices say
     evades() {
       return this.c.noEvade ? [] : [].concat(this.c.evade || []).map((ev, i) => Object.assign({}, ev, { i,
@@ -184,9 +187,9 @@
     /* Evading (by the evasion `which`, of the list): only his loss counts (none with evade.free), and the fight is over. */
     flee(o, which = this.evades().findIndex((e) => e.open)) {
       const hero = this.hero, ev = [].concat(this.c.evade)[Math.max(0, which)]; this.evaded = ev;
-      const loss = ev.free ? 0 : Math.min(o.res.hero, hero.ep);
+      const loss = ev.lose === 'drawn' ? Math.min(o.n || 10, hero.ep) : ev.free ? 0 : Math.min(o.res.hero, hero.ep);
       hero.ep -= loss; o.taken = loss; this.lost.hero += loss;
-      this.log.push(`${o.tag} You turn and run${loss ? `; it catches you for ${loss}` : ', untouched'}.`);
+      this.log.push(ev.lose === 'drawn' ? `${o.tag} ${ev.label || 'You get past'}: it costs you ${loss}.` : `${o.tag} You turn and run${loss ? `; it catches you for ${loss}` : ', untouched'}.`);
       this.end(hero.ep > 0 ? 'evade' : 'dead');
       return o;
     }
@@ -287,6 +290,7 @@
     }
     /* A whole round at once, as the page plays it without the pauses: 'fight' or 'evade'. */
     round(n, how = 'fight', which) {
+      if (how === 'fight' && this.noStrike) return null;
       const o = this.roll(n);
       if (this.over) return o;
       if (how === 'evade') return this.flee(o, which);

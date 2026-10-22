@@ -52,6 +52,7 @@ export const SECTIONS = {
   4: { loot: [{ item: 'dagger' }, { item: 'cenerRobe' }, { item: 'cenerMask' }, lune(16), { item: 'sword' }] },
   6: { ep: -3 },
   10: { ep: 3 },
+  // the fungi are kept after 277 (ruling R18): he swallows a chunk of the "some" kept at Book 11's 146, and no later book asks for them again
   16: { ep: -2, need: { 277: { item: 'baylonFungi11' }, 136: { item: 'baylonFungi11', not: true } } },
   18: { loot: [{ item: 'copperKey13' }] },
   21: { loot: [{ item: 'dagger' }, { item: 'sword' }, { item: 'broadsword' }, { item: 'bow' }, { arrows: 4 }, { item: 'quiver' }] },
@@ -129,7 +130,6 @@ export const SECTIONS = {
   269: { ep: -5 },
   272: { ep: -5, fight: { rounds: [{ upTo: 1, csMod: -20, note: 'His desperate first strike' }] } },
   276: { need: { 187: bowArrows() } },
-  277: { todo: 'The text does not say whether eating a chunk uses up the Baylon’s Bough Fungi: erase it by hand if you take it so.' },
   280: { need: { 126: disguise, 304: noDisguise } },
   286: { loot: [{ item: 'copperKey13' }] },
   287: { loot: [{ item: 'goldKey13' }] },

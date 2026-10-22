@@ -10,8 +10,8 @@
        taken from the Quiver on arrival; the draws that are shots are `bowShot`.
      - The Helghast can be wounded only by magic: the Sommerswerd, or Paido's blue-steel sword.
      - Lone Wolf's companion Paido has no sheet of his own; his sword is a Special Item you pick up.
-     - Left to the player (todo): the Arrows shot at the dogs (164), and which remedy was used on
-       Paido when he carries more than one kind.
+     - Left to the player (todo): the Arrows shot at the dogs (164). The remedy used on Paido is the
+       one he carries, or the one he says when he carries more than one kind.
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {
   pass: { name: 'Pass', kind: 'special', glyph: 'id-card', about: 'A safe-conduct from Lord Adamas, sealed with his ring. It opens gates in northern Talestria.' },
@@ -43,8 +43,8 @@ const fireseed = { item: 'fireseed' };
 // any Laumspur remedy he could give Paido
 const remedies = ['potion', 'redLaumspur', 'rendalimPotion', 'laumspurHerb', 'rendalim', 'oedeHerb'];
 const remedy = { item: remedies };
-// the remedy used on Paido is gone, when he carries only one kind (with more, he says which)
-const usedOnPaido = { when: remedies.map((id) => ({ if: { item: id }, unless: { item: remedies.filter((x) => x !== id) }, take: [{ item: id }] })), todo: 'if you carry more than one kind of remedy, remove the one you used on Paido.' };
+// the remedy used on Paido is gone: the one he carries, or with more than one kind, the one he says
+const usedOnPaido = { take: [{ item: remedies, choose: true, label: 'Choose the remedy you used on Paido' }] };
 const light = { any: [{ item: 'lantern' }, { items: ['torch', 'tinderbox'] }, { item: 'firesphere' }] };
 const edged = ['sword', 'dagger', 'axe', 'spear', 'shortSword', 'broadsword'];
 const paido = { rounds: [{ heroLoss: 0.5, note: 'Paido beside you' }] };

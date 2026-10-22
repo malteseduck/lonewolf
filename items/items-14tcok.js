@@ -83,6 +83,7 @@ export const SECTIONS = {
   49: { rolls: [...Array(10).keys()].map((n) => ({ range: [n, n], ep: -(n + 3) })) },
   50: { need: { 245: bowArrows } },
   51: { ep: -2 },
+  52: { when: [{ came: ['243'], take: [{ arrows: 1 }] }] },
   55: coldHall,
   58: { fight: { undead: true } },
   62: { take: [{ arrows: 1 }], fight: xaghash },
@@ -93,7 +94,8 @@ export const SECTIONS = {
     { item: 'greenKey14' }, { item: 'brassKey14' }, { item: 'copperKey14' }, { item: 'rope' }, { item: 'comb14' }] },
   83: { ep: 6 },
   // the heat: only Grand Huntmastery and Grand Nexus together spare this Meal
-  86: { meal: true, todo: 'With Grand Huntmastery but not Grand Nexus, this Meal is still due: eat one by hand, or lose 3 ENDURANCE.' },
+  // the heat: a Meal unless he has both Grand Huntmastery and Grand Nexus
+  86: { meal: true, mealUnless: { disc: ['grandHuntmastery', 'grandNexus'], every: true } },
   94: { need: { 223: light, 14: noLight } },
   101: { ep: -3 },
   102: { take: [{ item: 'bow' }] },
@@ -144,8 +146,7 @@ export const SECTIONS = {
   218: { ep: -2 },
   219: { fight: { undead: true } },
   // the light thrown into the pool
-  223: { when: [{ if: { item: 'lantern' }, unless: { item: 'torch' }, take: [{ item: 'lantern' }] }, { if: { item: 'torch' }, unless: { item: 'lantern' }, take: [{ item: 'torch' }] }],
-    todo: 'If you carry both a Lantern and a Torch, erase the one you threw.' },
+  223: { take: [{ item: ['lantern', 'torch'], choose: true, label: 'Choose the light you threw' }] },
   225: { ep: -3 },
   226: { need: { 199: bowArrows } },
   227: { bowShot: { 91: [0, 6], 158: [7, 99] } },
@@ -155,7 +156,8 @@ export const SECTIONS = {
   236: { ep: -3 },
   239: { need: { 61: { item: ['statuetteSlutar', 'daggerVashna', 'helshezag'] }, 137: { item: ['statuetteSlutar', 'daggerVashna', 'helshezag'], not: true } } },
   241: { ep: -3 },
-  243: { todo: 'Footnote: with Magi-magic at Kai Grand Guardian you may cast Flameshaft on the inflammable pool instead: erase an Arrow and turn to 52.' },
+  // footnote 13: Flameshaft, with Magi-magic at Kai Grand Guardian (5 Disciplines), costs an Arrow (taken at 52)
+  243: { add: [{ text: 'With Magi-magic at Kai Grand Guardian, cast Flameshaft on the pool (footnote): turn to 52.', to: '52', need: { disc: 'magiMagic', rank: 5, any: [{ arrows: 1, label: 'an Arrow' }] } }] },
   245: { take: [{ arrows: 1 }] },
   246: { loot: [statZ] },
   247: { ep: -4, need: { 205: sommerswerd, 292: noSommerswerd } },

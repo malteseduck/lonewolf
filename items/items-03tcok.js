@@ -19,7 +19,7 @@ export const ITEMS = {
   effigy: { name: 'Stone Effigy', kind: 'special', glyph: 'third-eye', about: 'A statuette of a tentacled creature.' },
   glowingCrystal: { name: 'Glowing Crystal', kind: 'special', glyph: 'crystal-ball', about: 'Warm to the touch. It is a Doomstone and will sicken whoever carries it.' },
   firesphere: { name: 'Firesphere', kind: 'special', glyph: 'fire-bomb', about: 'Two metal halves that make a ball of fire when joined; animals will not cross it.' },
-  silverHelm: { name: 'Silver Helm', kind: 'special', glyph: 'visored-helm', fightCs: 2, about: '+2 COMBAT SKILL in a fight. Not worn with another helmet.' },
+  silverHelm: { name: 'Silver Helm', kind: 'special', glyph: 'visored-helm', fightCs: 2, apart: ['helmet'], about: '+2 COMBAT SKILL in a fight. Not worn with another helmet.' },
   blackGraveweed: { name: 'Potion of Black Graveweed', kind: 'backpack', glyph: 'round-bottom-flask', about: 'A strong poison.' },
   greenGallowbrush: { name: 'Potion of Green Gallowbrush', kind: 'backpack', glyph: 'round-bottom-flask', about: 'A strong sleeping draught.' },
   redLaumspur: { name: 'Red Potion of Laumspur', kind: 'backpack', glyph: 'health-potion', heal: 5, about: 'Concentrated Laumspur. Drink it after a fight.' },
@@ -112,7 +112,8 @@ export const SECTIONS = {
   150: { when: [{ unless: oil, ep: -2 }], need: { 120: sommerswerd, 310: { item: 'firesphere' } } },
   151: { need: { 209: oil, 339: { item: 'baknarOil', not: true } } },
   // the Crowns thrown are gone whether or not the draw works
-  152: { stake: { min: 1, spend: true }, todo: 'the number drawn (0 counting as 10) against the Crowns thrown: no more, 319; more, 181.' },
+  // the number drawn (0 as 10) against the Crowns thrown: no more, 319; more, 181
+  152: { stake: { min: 1, spend: true }, zeroTen: true, against: 'stake', ranges: { 319: [-99, 0], 181: [1, 99] } },
   155: { noHunt: true },
   156: { loot: [{ item: 'greenGallowbrush' }] },
   157: { ep: 6, take: [{ item: 'greenGallowbrush' }] },

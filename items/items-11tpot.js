@@ -25,6 +25,7 @@ export const ITEMS = {
   senara11: { name: 'Senara', kind: 'backpack', glyph: 'herbs-bundle', heal: 3, meal: true, about: 'Buds of a rare herb, abundant in Vhozada. One serving restores 3 ENDURANCE; it is eaten as a Meal when you have none.' },
   yoacorFood11: { name: 'Yoacor Food', kind: 'backpack', glyph: 'meal', heal: 3, meal: true, about: 'Strange, nourishing Yoacor fare, enough for one Meal. It restores 3 ENDURANCE when eaten.' },
   baylonFungi11: { name: 'Baylon’s Bough Fungi', kind: 'backpack', glyph: 'mushrooms', about: 'Fungi scraped from the bark of a fallen tree. They draw out a blowpipe poison.' },
+  curvedSword11: { name: 'Curvy-bladed Sword', kind: 'weapon', weapon: ['sword'], glyph: 'shining-sword', about: 'The scarlet warrior’s jewelled sword, engraved with a fiery dragon: the mark of Haagadar. The text calls it a sword, so it fights as one (ruling R17).' },
   conchShell11: { name: 'Conch Shell', kind: 'backpack', glyph: 'spiral-shell', about: 'Taken from the Ookor you killed.' },
 };
 
@@ -51,7 +52,7 @@ export const SECTIONS = {
   2: { take: [{ item: 'fireseed' }] },
   5: { loot: [{ meal: 1 }, { meal: 1 }, { meal: 1 }] },
   7: { loot: [{ item: 'ironheartBroadsword' }] },
-  8: { todo: 'if you kept the curvy-bladed sword, add it to your weapons by hand: the text names no kind.' },
+  8: { give: [{ item: 'curvedSword11' }] },
   10: { fight: { rounds: [{ upTo: 2, unarmed: true }] } },
   12: { take: [{ meals: 'all' }] },
   18: { loot: [{ item: 'ookorCharm' }] },

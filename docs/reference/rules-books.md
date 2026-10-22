@@ -378,7 +378,7 @@ Monastery). Clothing is named there but not tracked.
   animal; Curing slows a poison; Huntmastery climbs without aids; Psi-surge shakes an object apart;
   Nexus resists fumes.
 - **Footnotes**: the Jewelled Mace may give +5 COMBAT SKILL at 27; the Silver Helm and a Helmet are
-  not worn together (148); any Arrows are lost in the falls at 137 and 301; the Sommerswerd keeps
+  not worn together (148: *Engine*: yes, the Silver Helm's `apart` refuses either beside the other); any Arrows are lost in the falls at 137 and 301; the Sommerswerd keeps
   its power, as no one but a Kai Lord fought with it (335).
 
 ### Book 8, The Jungle of Horrors (Magnakai)
@@ -604,6 +604,7 @@ which opens when the hero holds it; no effect is applied.
   the Discipline offered at 23, 131 and 320 may be chosen only if he has not used it already; at 186
   he gets rid of a Drakkarim uniform if he wears one; at 243 a Kai Grand Guardian with Magi-magic may
   cast Flameshaft on the inflammable liquid, spending an Arrow, and turn to 52. *Engine*: the puzzles,
-  left to the player; the rest, for the item table (its `todo`s until written), else by hand.
+  left to the player; Flameshaft at 243 is a choice the item table adds (`add`), its Arrow taken at 52;
+  the rest by hand.
 - **Wisdom**: choose the Disciplines with care; completing earlier books is an advantage but not
   needed for this one.

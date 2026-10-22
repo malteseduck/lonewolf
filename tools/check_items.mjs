@@ -41,9 +41,10 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
   // every book's items are known in the page (an item from Book 1 can gate a choice in Book 2)
   for (const f of fs.readdirSync(path.join(root, 'items')).filter((f) => /^items-\w+\.js$/.test(f))) { const t = await imp(path.join(root, 'items', f)); LW.addItems(t.ITEMS, t.MARKS); }
   const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'noHunt', 'todo', 'need', 'fight', 'bowShot', 'grandBow', 'rntMod',
-    'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax', 'game']);
+    'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax', 'game',
+    'zeroTen', 'against', 'mealUnless', 'add', 'forfeit']);
   const FIGHT = new Set(['csMod', 'csIf', 'csUnless', 'csNote', 'mindforce', 'unless', 'unarmed', 'undead', 'drain', 'with', 'double', 'ambush', 'evade',
-    'rounds', 'stop', 'won', 'wounded', 'noEvade', 'noShield', 'noUnarmed', 'weaponCs', 'plain', 'only', 'barred', 'lend', 'mind', 'keep', 'healLost', 'restore', 'noBoost', 'to', 'points', 'lose', 'byHand', 'breath', 'noMind']);
+    'rounds', 'stop', 'won', 'wounded', 'noEvade', 'noShield', 'noUnarmed', 'weaponCs', 'plain', 'only', 'barred', 'lend', 'mind', 'keep', 'healLost', 'restore', 'noBoost', 'to', 'points', 'lose', 'byHand', 'breath', 'noMind', 'noStrike']);
   const WHEN = new Set(['if', 'unless', 'ate', 'came', 'ep', 'epMax', 'cs', 'healLost', 'take', 'back', 'mark', 'unmark', 'settle']);
   // what a choice's need reads (Game.choices and the gold spent on choosing), and what a Condition in its any reads (LW.meets):
   // any other key is silently ignored by the page
@@ -103,6 +104,13 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
     if (x.game && !['wheel', 'dice', 'higher'].includes(x.game.kind)) bad.push(`${id} game: kind must be wheel, dice or higher`);
     if (x.game && !sec.rnt) bad.push(`${id}: game, but the section draws no Random Number`);
     if (x.game && x.game.coin && !LW.COINS[x.game.coin]) bad.push(`${id} game: unknown coin ${x.game.coin}`);
+    if (x.against && !(x.against === 'draw' || (x.against === 'stake' && x.stake))) bad.push(`${id}: against must be 'draw', or 'stake' with a stake`);
+    if ((x.against || x.zeroTen) && !sec.rnt && !x.ranges) bad.push(`${id}: ${x.against ? 'against' : 'zeroTen'}, but the section draws no Random Number`);
+    (x.add || []).forEach((c) => {
+      if (!c.text || !B.sections[c.to]) bad.push(`${id} add: a choice needs its text and a section to go to`);
+      Object.keys(c.need || {}).filter((f) => !NEED.has(f)).forEach((f) => bad.push(`${id} add: need: unknown field ${f}`));
+      ((c.need && c.need.any) || []).flatMap(condFields).forEach((f) => bad.push(`${id} add: need: unknown field ${f}`));
+    });
     if ('rnt' in x && x.rnt !== null) bad.push(`${id}: rnt may only be null (no Random Number here)`);
     if (x.ep != null && x.ep !== 'full' && typeof x.ep !== 'number') bad.push(`${id}: ep must be a number or 'full'`);
     for (const [to, n] of Object.entries(x.need || {})) {

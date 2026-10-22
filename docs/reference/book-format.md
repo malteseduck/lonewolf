@@ -39,6 +39,7 @@ shows the book's printed map. Only the prototypes travel on a map.
 | `puzzle` | true | imported: the text sets a puzzle whose answer is a section number; the page offers "Turn to section" |
 | `meal` | true | a Meal must be eaten on arrival |
 | `noHunt` | true | item table: Hunting does not excuse that Meal (Book 2's Wildlands) |
+| `mealUnless` | Condition | item table: the Meal is spared when he meets it, and Hunting does not stand in for it (Book 14's 86: Grand Huntmastery and Grand Nexus, both) |
 | `bowShot` | true | from an item table's `bowShot: {to: [lo, hi]}`: the Random Number is a bow shot. It needs a Bow and an Arrow, spends the Arrow, and has `LW.bowShot`'s bonus added; the ranges (set on the choices, `rnt` made `auto`) are for the total. A choice with no range stays open without shooting |
 | `grandBow` | n | item table: what Grand Weaponmastery with Bow adds to this section's shot, where the text gives its own number in place of the +5 (ruling R10) |
 | `img` | `{file, full, at}` | imported: illustration file (its `-2x.webp` once `ill_upscale.py` has made it, ADR 0031), whether it is a full-page plate, and the paragraph index it sits before |
@@ -52,12 +53,16 @@ shows the book's printed map. Only the prototypes travel on a map.
 | `todo` | string | item table: a by-hand reminder shown with the arrival events. Only for what the engine cannot do (below) |
 | `when` | `[{if, unless, ate, came, ep, epMax, cs, healLost, take, back, mark, unmark, settle}]` | item table: effects on arrival that hold only under a condition: `if` / `unless` are Conditions; `ate: false` holds unless he ate a Meal here or in the section before; `came` only when he came from one of these sections (an effect the text writes on a choice). `ep` is lost or gained once (`'full'` restores it); `epMax` changes his maximum for good. `healLost`, `epMax` may also stand at the top of a section |
 | `rnt` | `null` | item table: the section draws no Random Number after all (the importer read one into a description) |
-| `take` entries, more | `{pick: list \| [lists], n, else}` | he chooses `n` to lose (the page shows a medallion each, and the way on waits); lists are `backpack` (Meals too), `packItems` (no Meals), `special`, `weapon` (weapon-like Special Items too), `weapons`, `gold` (one Crown each). He has no more than `n`: all go. None: `else` (a `take` list) is lost instead |
+| `take` entries, more | `{pick: list \| [lists], n, else, label}` | he chooses `n` to lose (the page shows a medallion each, and the way on waits; `label` heads them in place of "Choose what you lose"); lists are `backpack` (Meals too), `packItems` (no Meals), `special`, `weapon` (weapon-like Special Items too), `weapons`, `gold` (one Crown each). He has no more than `n`: all go. None: `else` (a `take` list) is lost instead. `n` by list (`{special: 1, backpack: 3}`): so many from one list or the other, his first pick deciding which; only the lists that can make up their number are offered (Book 9's stake at 115) |
+| | `{item: [ids], choose: true, label}` | the one of these he used: the only one held goes; of several, he chooses (Book 8's remedy, Book 14's light) |
+| | `{halve: list}` | the list halved on a coin: the last dropped when they are odd, then the first half (heads) or the second (tails) lost (Book 9's 91) |
 | | `{at: [positions], from, last, min, else}` | by place, 1 first, in the list as the Action Chart shows it (`from` as above, default `backpack`, Meals first). `last`: the last one when the list is shorter. `min`: with fewer than that, `else` instead |
 | | `{item, dose: true}` | one dose of an item that has several, not the whole of it |
 | | `{item: [ids]}`, `{meals \| gold: n \| 'half' \| 'all', round}`, `{coin, n \| 'half' \| 'all'}`, `{weapons: 'used'}`, `{weapons: 'one' \| 'all', special: true}` | the first held of a list; half his Meals or gold (round down, or `round: 'up'`); another coin; the weapon he fought with last, else the one in hand; a weapon-like Special Item counts as a weapon (lost when it is his only one, or with all) |
 | | `stash: key` on any entry | what is lost is kept under that name (`hero.stash`), to be given back by `back` |
 | `back` | `[key \| {stash, only: [weapon, backpack, special, gold]}]` | what was taken into that stash is given back (or the kinds listed); what does not fit is said so |
+| `forfeit` | key \| [keys] | what was taken into that stash is lost for good (a stake of items not won back) |
+| `add` | `[{text, to, need}]` | item table: a way on the text gives outside its choices (a footnote's), added to them with its gate; `text` in our words |
 | `mark`, `unmark` | id \| [ids] | a lasting condition set or ended (`hero.marks`), defined in the table's `MARKS` (below), or a bare flag a later book can test ("fought an Elix") |
 | `note` | string | a note put on the Action Chart (a number to remember), our words |
 | `stake` | `{key, min, max, coin, spend}` | the page asks for an amount before the way on opens (again on every visit). `spend`: given now (alms, a fee "as much as you like"). Otherwise kept as a stake under `key` (default the section) |
@@ -68,6 +73,8 @@ shows the book's printed map. Only the prototypes travel on a map.
 | `meal` | n | more than one Meal asked for |
 | `lessen` | `[{n, if, min}]` | a loss drawn by `rolls` is `n` smaller when he meets `if`, never below `min` (0) |
 | `draws` | n | the text asks for that many numbers added: the page draws the others |
+| `zeroTen` | true | a 0 drawn counts as 10 |
+| `against` | `'draw'` \| `'stake'` | the number is measured against a second one the page draws, or against the section's `stake` (which must be set before the draw): that is taken off the total, so the `ranges` are for the difference (Book 5's 360: second lower `[1, 99]`, higher `[-99, -1]`, the same `[0, 0]`) |
 | `ranges` | `{to: [lo, hi]}` | as `bowShot`'s, for a draw that is no shot: the ranges of the total for each choice, when `rntMod` changes the number in ways the importer could not read |
 | `ep` | number \| `'full'` | authored, or item table: Endurance change on arrival; `'full'` restores it to the maximum |
 | `lose` | `{meal: 1}` | authored: something lost on arrival |
@@ -82,7 +89,7 @@ story sentence, the instruction in the next, and many are conditional. So each b
 read and written down by hand in `items/items-<code>.js` (Book 1: `items/items-01fftd.js`,
 52 sections, 2026-10-01) It exports `ITEMS` (the book's own items: `name`,
 `kind` (`weapon` | `backpack` | `special`), optionally `glyph` (an icon in `assets/icons/`), `heal`,
-`ep`, `about`, `meal` (eaten when a Meal is due and he has none, healing its `heal`), `shot` (a bow of
+`ep`, `about`, `meal` (eaten when a Meal is due and he has none, healing its `heal`), `apart` (ids of things not worn with it, either way round: the Silver Helm and a Helmet), `shot` (a bow of
 the book's own: what it adds to a shot), and for a Special Item that is also a weapon `weapon` (the kinds it counts as for
 Weaponskill), `cs` (what it adds in a fight) and `undead` (it doubles undead foes' losses)) and
 `SECTIONS` (by section number: any of the fields above, plus `meal` where the
@@ -147,12 +154,13 @@ Enemies are fought in order, one at a time. An item table's `fight` may also giv
 |---|---|
 | `rounds` | `[{from, upTo, fromFoe, if, unless, came, ambush, mind, csMod, note, unarmed, heroLoss, foeLoss, heroPlus, heroEach, foeEach, psi, fatal, behind, offMax}]`: what holds in some rounds only (`from`/`upTo`, round numbers, 1 first; `fromFoe`, from that foe of the list on, 0 first), or the whole fight under a condition (`if`/`unless`, Conditions; `came`, only when he came from one of these sections, a surprise the choice before grants; `ambush`, spared by Huntmastery in a Magnakai book; `mind`, only while Mindblast or Psi-surge is used, `mind: 2` only while the full Psi-surge or Kai-surge is). `csMod` (named `note`); `unarmed` (bare-handed); `heroLoss`/`foeLoss` multiply each round's loss (0 ignores it, 2 doubles, 0.5 halves, rounding down); `heroPlus` more for every wound; `heroEach`/`foeEach` lost every round whatever the dice say; `psi` multiplies what Mindblast or Psi-surge adds; `fatal: [n]`, after a round the table would have wounded him in (whatever `heroLoss` makes of it), a number is drawn again and one of these kills him; `behind: r`, only if by the end of round `r` he had lost more than the foes; `offMax`, what he loses lowers his maximum Endurance too |
 | `stop` | `{after, wound, foeAt, drawn: [n], to, by}` or a list: the text ends the fight after `after` rounds, at his first wound, when the foe is down to `foeAt`, or at once when a number in `drawn` is drawn; it leads to `to` (one of the section's choices), or opens the choices. `by: {hero, foe, even}`: the way on by who lost more |
+| `noStrike` | a Condition under which he cannot fight it: Strike is shut and only a way out is left (Book 5's 162 with a dead arm) |
 | `noMind` | true: no attack of the mind is offered or counts (Book 6's archery final, ruling R16) |
 | `breath` | `{each}`: the number drawn in the section (0 as 10, with its `rntMod`; drawn when the fight begins if not yet) is how many rounds he lasts; each round after costs `each` more Endurance (Book 4's underwater fights) |
 | `won` | `{within, to, else}`: a win in `within` rounds or fewer leads to `to`, a longer one to `else` |
 | `wounded` | once he has lost any Endurance in it, the fight (won or evaded) leads here |
 | `to` | the way on after a win |
-| `noEvade`, `evade.if`, `evade.foeAt`, `evade.fromFoe`, `evade.free`, `evade.label` | no evading whatever the choices say; evading only with a Condition; only once the foe is down to that ENDURANCE (Book 13's Giganite); only from that foe of the list on, 0 first (Book 4's 143, once the first guard is dead); evading without the blow. `evade` may be a list: several ways out, each a medallion of its own, a second named by its `label` |
+| `noEvade`, `evade.if`, `evade.foeAt`, `evade.fromFoe`, `evade.free`, `evade.label` | no evading whatever the choices say; evading only with a Condition; only once the foe is down to that ENDURANCE (Book 13's Giganite); only from that foe of the list on, 0 first (Book 4's 143, once the first guard is dead); evading without the blow; `evade.lose: 'drawn'`, the number drawn that round (0 as 10) lost in the blow's place (Book 5's climb past the nest at 162, `within: 1`). `evade` may be a list: several ways out, each a medallion of its own, a second named by its `label` |
 | `rounds` `barred` | in a round entry: weapons (ids or kinds) not to be used in those rounds |
 | `stop.if` | a stop rule that holds only under a Condition (a bow that breaks on a 0 only if it is the Jakan) |
 | `lose` | a contest, not a fight to the death: brought to 0 he has lost, keeps his Endurance (as it was with `restore`, else 1) and goes here |

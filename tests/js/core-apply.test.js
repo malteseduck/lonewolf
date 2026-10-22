@@ -58,3 +58,13 @@ describe('a typed name', () => {
     expect(LW.itemByName('no such thing')).toBe(null);
   });
 });
+
+describe('a way on the text gives outside its choices', () => {
+  it('is added as a choice, with its gate (a footnote\'s spell at a rank)', () => {
+    const b = book();
+    LW.applyItems(b, { ITEMS: {}, SECTIONS: { 3: { add: [{ text: 'cast the spell', to: '7', need: { disc: 'tracking', rank: 5 } }] } } });
+    expect(b.sections[3].choices.map((c) => c.to)).toEqual(['5', '6', '6', '7']);
+    expect(b.sections[3].choices[3].need).toEqual({ disc: 'tracking', rank: 5 });
+    expect(b.sections[3].add).toBeUndefined();
+  });
+});

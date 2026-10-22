@@ -370,3 +370,80 @@ describe('flags from an earlier book, for an adventure saved before they existed
     expect(LW.flagsFrom(sections, ['1', '2'])).toEqual([]);
   });
 });
+
+describe('the item tables\' last cases', () => {
+  it('a Helmet is not worn with a Silver Helm, either way round', () => {
+    LW.addItems({ silverHelm: { name: 'Silver Helm', kind: 'special', fightCs: 2, apart: ['helmet'] } });
+    const h = mkHero({ special: ['silverHelm'] });
+    expect(LW.putItem(h, 'helmet')).toMatch(/Silver Helm/);
+    const k = mkHero({ special: ['helmet'] });
+    expect(LW.putItem(k, 'silverHelm')).toMatch(/Helmet/);
+    expect([h.special, k.special]).toEqual([['silverHelm'], ['helmet']]);
+  });
+  it('a stake of one Special Item or three Backpack Items: the first pick decides which, and it comes back or is forfeit', () => {
+    const more = { 3: { text: ['c'], back: ['bet'], choices: [] }, 4: { text: ['d'], forfeit: 'bet', choices: [] } };
+    const stake = { take: [{ pick: ['special', 'backpack'], n: { special: 1, backpack: 3 }, stash: 'bet' }] };
+    let g = at2(stake, mkHero({ special: ['ring'], backpack: ['torch', 'rope2', 'potion', 'gem2'] }), more);
+    expect(g.pickable()).toEqual(['ring', 'torch', 'rope2', 'potion', 'gem2']);
+    g.pickLoss('torch');
+    expect(g.pickable()).toEqual(['rope2', 'potion', 'gem2']);
+    g.pickLoss('potion'); g.pickLoss('rope2');
+    expect([g.hero.backpack, g.hero.special, g.choices()[0].enabled]).toEqual([['gem2'], ['ring'], true]);
+    g.choose(g.choices()[0]);
+    expect(g.hero.backpack.sort()).toEqual(['gem2', 'potion', 'rope2', 'torch']);
+    g = at2(stake, mkHero({ special: ['ring', 'gem'], backpack: ['torch'] }), more);
+    expect(g.pickable()).toEqual(['ring', 'gem']); // two Backpack Items short of a stake of three
+    g.pickLoss('gem');
+    expect(g.s.picks).toEqual([]);
+    g.choose(g.choices()[1]);
+    expect([g.hero.special, g.hero.stash.bet]).toEqual([['ring'], undefined]);
+  });
+  it('half the Backpack lost on a coin: the last dropped if they are odd, then the first or the second half', () => {
+    const hero = () => mkHero({ meals: 1, backpack: ['torch', 'rope2', 'potion', 'gem2'] });
+    dice(LW, 2);
+    let g = at2({ take: [{ halve: 'backpack' }] }, hero());
+    expect([g.hero.meals, g.hero.backpack]).toEqual([0, ['rope2', 'potion']]);
+    dice(LW, 7);
+    g = at2({ take: [{ halve: 'backpack' }] }, hero());
+    expect([g.hero.meals, g.hero.backpack]).toEqual([1, ['torch']]);
+  });
+  it('the one of several things he used: the only one held goes, of more he chooses', () => {
+    const sec = { take: [{ item: ['potion', 'torch', 'rope2'], choose: true, label: 'Choose the one you used' }] };
+    let g = at2(sec, mkHero({ backpack: ['torch', 'gem2'] }));
+    expect(g.hero.backpack).toEqual(['gem2']);
+    g = at2(sec, mkHero({ backpack: ['torch', 'gem2', 'rope2'] }));
+    expect([g.pickable(), g.s.picks[0].label]).toEqual([['torch', 'rope2'], 'Choose the one you used']);
+    g.pickLoss('rope2');
+    expect(g.hero.backpack).toEqual(['torch', 'gem2']);
+  });
+  it('a draw against the stake: 0 counts as 10, and the stake must be set first', () => {
+    const sec = { stake: { min: 1, spend: true }, rnt: 'auto', zeroTen: true, against: 'stake',
+      choices: [{ text: 'no more', to: '3', range: [-99, 0] }, { text: 'more', to: '4', range: [1, 99] }] };
+    const g = at2(sec);
+    expect(g.setRolled(3)).toMatch(/stake/);
+    g.setStake(4);
+    g.setRolled(0);
+    expect([g.s.drawn, g.s.rolled, g.hero.gold, g.choices().map((c) => c.enabled)]).toEqual([0, 6, 6, [false, true]]);
+    g.s.rolled = null; g.setRolled(4);
+    expect(g.choices().map((c) => c.enabled)).toEqual([true, false]);
+  });
+  it('a second number drawn and compared: lower, higher or the same, the first with a bonus', () => {
+    const sec = { rnt: 'auto', against: 'draw', rntMod: [{ disc: 'hunting', plus: 1 }],
+      choices: [{ text: 'lower', to: '3', range: [1, 99] }, { text: 'higher', to: '4', range: [-99, -1] }, { text: 'same', to: '5', range: [0, 0] }] };
+    const more = { 5: { text: ['e'], choices: [] } };
+    const open = (g) => g.choices().filter((c) => c.enabled).map((c) => c.to);
+    let g = at2(sec, mkHero({ disciplines: ['hunting'] }), more);
+    dice(LW, 5);
+    g.setRolled(4);
+    expect([g.s.rolled, open(g)]).toEqual([0, ['5']]);
+    g = at2(sec, mkHero(), more);
+    dice(LW, 5);
+    g.setRolled(4);
+    expect(open(g)).toEqual(['4']);
+  });
+  it('a Meal due unless he meets a condition, which Hunting does not stand in for', () => {
+    const sec = { meal: true, mealUnless: { disc: ['hunting', 'healing'], every: true } };
+    expect(at2(sec, mkHero({ meals: 1, disciplines: ['hunting'] })).hero.meals).toBe(0);
+    expect(at2(sec, mkHero({ meals: 1, disciplines: ['hunting', 'healing'] })).hero.meals).toBe(1);
+  });
+});

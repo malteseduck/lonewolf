@@ -397,7 +397,7 @@ function leftHTML() {
       <span class="med ${l.taken ? 'lit' : ''}">${itemGlyph(l.item)}</span><span>${esc(l.label)}<i>${note(l)}</i></span></button>`).join('')}</div>`;
   // a loss he chooses (game.s.picks): what he can lose, a medallion each
   const pickable = !isDead() ? game.pickable() : [];
-  if (pickable.length) h += `<div class="block finds"><span class="eyebrow">${game.s.picks[0].loot != null ? 'Give in exchange' : game.s.picks[0].give ? `Choose what you hand over${game.s.picks[0].n > 1 ? ` (${game.s.picks[0].n} more)` : ''}` : `Choose what you lose${game.s.picks[0].n > 1 ? ` (${game.s.picks[0].n} more)` : ''}`}</span>${[...new Set(pickable)].map((id) => `<button type="button" class="find" data-pick="${esc(id)}">
+  if (pickable.length) h += `<div class="block finds"><span class="eyebrow">${game.s.picks[0].loot != null ? 'Give in exchange' : game.s.picks[0].label ? esc(game.s.picks[0].label) : game.s.picks[0].give ? `Choose what you hand over${game.s.picks[0].n > 1 ? ` (${game.s.picks[0].n} more)` : ''}` : `Choose what you lose${game.s.picks[0].n > 1 ? ` (${game.s.picks[0].n} more)` : ''}`}</span>${[...new Set(pickable)].map((id) => `<button type="button" class="find" data-pick="${esc(id)}">
       <span class="med">${itemGlyph(id === 'gold' ? 'gold' : id)}</span><span>${esc(id === 'meal' ? 'a Meal' : id === 'gold' ? 'a Gold Crown' : LW.itemName(id))}<i>lose it</i></span></button>`).join('')}</div>`;
   // a stake, or a gift of what he will (sec.stake), set before the way on opens
   const stake = sec.stake, staked = stake && (game.s.stakes || {})[stake.key || id];
@@ -454,6 +454,7 @@ function mountRnt() {
     if (busy || (sec.rnt === 'auto' && game.s.rolled != null)) return;
     if (shot && shot.why) return void LW.UI.toast(shot.why);
     if (game.game && game.gameWhy(false)) return void LW.UI.toast(game.gameWhy(false));
+    if (game.drawWhy()) return void LW.UI.toast(game.drawWhy());
     busy = true;
     const n = await dial.spin();
     game.setRolled(n); busy = false;
@@ -765,9 +766,10 @@ function closeMap() { if (M) M.close(); }
    a dark window in a bronze frame with its medallion at one end. Endurance carries a thread of red
    showing how much is left. */
 function gauges(cs, h) {
-  const ep = Math.max(0, h.ep), g = (id, art, label, v, extra = '') => `<span class="gauge ${id}" title="${label}" aria-label="${label} ${v.replace(/<[^>]+>/g, '')}"><span class="med">${art}</span><b>${v}</b>${extra}</span>`;
+  // a contest in target points (Book 6's final): they stand in his Endurance's place while it lasts, so the gauge shows them
+  const pts = B && !B.over && B.c && B.c.points, ep = Math.max(0, h.ep), most = pts ? pts.n : h.epMax, g = (id, art, label, v, extra = '') => `<span class="gauge ${id}" title="${label}" aria-label="${label} ${v.replace(/<[^>]+>/g, '')}"><span class="med">${art}</span><b>${v}</b>${extra}</span>`;
   return g('cs', glyph(UG.statCs), 'Combat Skill', String(cs))
-    + g('ep', glyph(UG.statEp), 'Endurance', `${ep}<small>/${h.epMax}</small>`, `<i class="thread"><i style="width:${Math.round((ep / h.epMax) * 100)}%"></i></i>`)
+    + g('ep', glyph(UG.statEp), pts ? 'Target points' : 'Endurance', `${ep}<small>/${most}</small>`, `<i class="thread"><i style="width:${Math.round((ep / most) * 100)}%"></i></i>`)
     + g('gold', glyph(UG.statGold), 'Gold Crowns', String(h.gold));
 }
 function renderRight() {
@@ -1087,13 +1089,13 @@ function updateBattle() {
   const locked = B.lock || B.over;
   const med = (id, ic, label, note, off, extra = '') => `<div class="medcap"><button type="button" class="med ${extra}" data-cmd="${id}" ${locked || off ? 'disabled' : ''} aria-label="${label}">${ic}</button>${label}<small>${note}</small></div>`;
   const n = hero.backpack.filter((b) => b === 'potion').length, psi = LW.psi(hero), cure = LW.cureOf(hero);
-  const left = med('fight', B.weapon ? itemGlyph(B.weapon) : glyph(UG.strike), 'Strike', 'attack')
+  const left = med('fight', B.weapon ? itemGlyph(B.weapon) : glyph(UG.strike), 'Strike', B.noStrike ? 'you cannot fight' : 'attack', B.noStrike)
     + (B.power ? med('mind', glyph(B.power === 2 ? UG.psiSurge : UG.mindblast), B.power === 2 ? psi.name : 'Mindblast', B.deaf() ? 'no effect' : foe.immune && B.mind === 1 ? 'as Mindblast: no effect' : ['at rest', B.power === 2 ? `as Mindblast, +${psi.blast}` : 'focused, +2', `+${psi.surge}, costs ${psi.cost} a round`][B.mind], false, B.blasting() ? 'lit' : '') : '');
   const right = (n ? med('item', itemGlyph('potion'), 'Laumspur', `${n} left`, hero.ep >= hero.epMax) : '')
     + (LW.canCure(hero, book.id) ? med('cure', glyph(UG.cure), cure.name, hero.ep <= cure.at ? '20 back, once a book' : `at ${cure.at} or less`, hero.ep > cure.at) : '')
     + B.boosts().map((id) => med('boost:' + id, itemGlyph(id), esc(LW.itemName(id)), 'before you strike')).join('')
     // one medallion for each way out the text allows (B.evades()); a second one is named by its own label
-    + B.evades().map((e) => med('evade:' + e.i, glyph(e.free ? UG.evadeFree : UG.evade), e.label ? esc(e.label) : 'Evade', e.open ? (e.free ? 'untouched' : 'take one blow') : e.late ? 'too late' : e.if && !LW.meets(hero, e.if) ? `needs ${esc(LW.condName(e.if))}` : `after round ${e.after}`, !e.open)).join('');
+    + B.evades().map((e) => med('evade:' + e.i, glyph(e.free ? UG.evadeFree : UG.evade), e.label ? esc(e.label) : 'Evade', e.open ? (e.lose === 'drawn' ? 'lose the number drawn' : e.free ? 'untouched' : 'take one blow') : e.late ? 'too late' : e.if && !LW.meets(hero, e.if) ? `needs ${esc(LW.condName(e.if))}` : `after round ${e.after}`, !e.open)).join('');
   const cmds = q('cmds');
   cmds.innerHTML = left + right;
   renderLeft();

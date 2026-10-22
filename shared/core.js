@@ -142,8 +142,10 @@
     for (const [id, x] of Object.entries(t.SECTIONS)) {
       const sec = b.sections[id];
       if (!sec) continue;
-      const { need, fight, bowShot, ranges, ...rest } = x;
+      const { need, fight, bowShot, ranges, add, ...rest } = x;
       Object.assign(sec, rest);
+      // add: a way on the text gives outside its choices (a footnote's), with its gate
+      if (add) sec.choices = [...(sec.choices || []), ...add.map((c) => Object.assign({}, c))];
       // a bow shot: the ranges are for the total, so the importer could not read them; given here per choice.
       // ranges: the same for a draw the importer misread (a total with something added the page now adds)
       if (bowShot) sec.bowShot = true;
@@ -178,6 +180,9 @@
     const it = LW.ITEMS[id] || {};
     // it.free: a Special Item the text keeps out of the limit; it.arrow: it rides in the Quiver in an Arrow's place
     if (kind === 'special' && !it.free && LW.counted(hero) >= LW.specialLimit(hero)) return 'You can carry at most 12 Special Items. Drop one first.';
+    // apart: things not worn together (the Silver Helm and a Helmet, Book 7's footnote), either way round
+    const worn = hero.special.find((s) => (it.apart || []).includes(s) || ((LW.ITEMS[s] || {}).apart || []).includes(id));
+    if (worn) return `You cannot wear the ${LW.itemName(id)} with the ${LW.itemName(worn)}.`;
     if (it.arrow && !hero.special.includes('quiver')) return 'It goes in a Quiver, and you have none.';
     if (it.arrow && (hero.arrows || 0) >= LW.quiverRoom(hero)) return 'Your Quiver is full: drop an Arrow first.';
     if (it.doses) (hero.doses = hero.doses || {})[id] = it.doses;
@@ -358,9 +363,12 @@
         hero.meals -= 1;
         events.push('A Meal is lost from your pack.');
       }
-      // meal: true, or the number of Meals the text asks for; mealCost: one may be bought here instead of going hungry
-      for (let m = 0; m < (sec.meal === true ? 1 : sec.meal || 0); m++) {
-        if (LW.hunts(hero) && !sec.noHunt) { events.push(`${LW.hunts(hero)}: you catch what you need and keep your Meals.${LW.huntNote(hero)}`); break; }
+      // meal: true, or the number of Meals the text asks for; mealCost: one may be bought here instead of going hungry;
+      // mealUnless: a Condition that spares it, in place of Hunting (Book 14's 86: Grand Huntmastery and Grand Nexus)
+      const spared = sec.mealUnless && LW.meets(hero, sec.mealUnless);
+      if (spared) events.push(`${LW.condName(sec.mealUnless)}: you need no Meal here.`);
+      for (let m = 0; m < (spared ? 0 : sec.meal === true ? 1 : sec.meal || 0); m++) {
+        if (LW.hunts(hero) && !sec.noHunt && !sec.mealUnless) { events.push(`${LW.hunts(hero)}: you catch what you need and keep your Meals.${LW.huntNote(hero)}`); break; }
         else if (hero.meals > 0) { hero.meals -= 1; this.s.ateAt = this.s.trail.length; events.push('You eat a Meal.'); }
         else if (hero.backpack.some((b) => LW.ITEMS[b] && LW.ITEMS[b].meal)) {
           const food = hero.backpack.find((b) => LW.ITEMS[b] && LW.ITEMS[b].meal), heal = LW.ITEMS[food].heal || 0;
@@ -419,6 +427,8 @@
       }
       for (const m of [].concat(x.unmark || [])) if (hero.marks && hero.marks[m]) { delete hero.marks[m]; if (LW.MARKS[m]) events.push(`${LW.MARKS[m].name}: no longer.`); }
       for (const [k, v] of Object.entries(x.settle || {})) this.settle(k, v, events);
+      // forfeit: what was taken into that stash is lost for good (a stake of items not won back)
+      for (const k of [].concat(x.forfeit || [])) if (hero.stash && hero.stash[k]) { delete hero.stash[k]; events.push('What you staked is lost for good.'); }
     }
     hurt(n, events) {
       const hero = this.s.hero;
@@ -450,7 +460,15 @@
         const st = t.stash, all = (list) => { list.slice().forEach((x) => this.drop(x, st)); };
         // pick: n of these lists (backpack, packItems, special, weapon, gold) for the player to choose;
         // all of them when he has no more than n, and `else` when he has none
-        if (t.pick) {
+        // n by list ({special: 1, backpack: 3}): so many from one list or another, his first pick deciding which;
+        // only the lists that can make it up are offered (else those with anything in them)
+        if (t.pick && typeof t.n === 'object') {
+          const from = [].concat(t.pick), can = from.filter((f) => this.listed(f).length >= t.n[f]), offer = can.length ? can : from.filter((f) => this.listed(f).length);
+          if (!offer.length) this.lose(t.else, events);
+          else if (offer.length === 1 && this.listed(offer[0]).length <= t.n[offer[0]]) this.listed(offer[0]).forEach((x) => this.drop(x, st, events));
+          else { (this.s.picks = this.s.picks || []).push({ from: offer, n: 1, per: t.n, stash: st, label: t.label }); events.push(`${t.label || 'Choose what you lose'}, below.`); }
+        }
+        else if (t.pick) {
           const from = [].concat(t.pick), have = from.flatMap((f) => this.listed(f)), n = t.n || 1;
           if (!have.length) this.lose(t.else, events);
           else if (have.length <= n) { have.forEach((x) => this.drop(x, st, events)); }
@@ -463,6 +481,18 @@
           if (short) { this.lose(t.else, events); continue; }
           const at = [...new Set(t.at.map((p) => (p <= list.length ? p - 1 : t.last ? list.length - 1 : -1)).filter((i) => i >= 0))];
           at.forEach((i) => this.drop(list[i], st, events));
+        }
+        // halve: the list halved on a coin (Book 9's 91): the last dropped if they are odd, then heads the first half, tails the second
+        else if (t.halve) {
+          const list = this.listed(t.halve), odd = list.length % 2, keep = odd ? list.slice(0, -1) : list, h = keep.length / 2;
+          if (odd) this.drop(list[list.length - 1], st, events);
+          if (h) { const heads = LW.rand10() < 5; events.push(`The coin falls ${heads ? 'heads: the first' : 'tails: the second'} half of the list is lost.`); (heads ? keep.slice(0, h) : keep.slice(h)).forEach((x) => this.drop(x, st, events)); }
+        }
+        // choose: the one of these he used; the only one held goes, of several he says which
+        else if (t.item && t.choose) {
+          const held = [...new Set([].concat(t.item))].filter((i) => LW.hasItem(hero, i));
+          if (held.length === 1) this.drop(held[0], st, events);
+          else if (held.length) { (this.s.picks = this.s.picks || []).push({ ids: held, n: 1, stash: st, label: t.label }); events.push(`${t.label || 'Choose what you lose'}, below.`); }
         }
         // dose: one use of an item that has several (LW.useUp), not the whole of it
         else if (t.item && t.dose) { const id = [].concat(t.item).find((i) => LW.hasItem(hero, i)); if (id) { LW.useUp(hero, id); events.push(`A dose of the ${name(id)} is used.`); } }
@@ -519,7 +549,9 @@
     pickLoss(id) {
       const p = (this.s.picks || [])[0];
       if (!p || !this.pickable().includes(id)) return false;
+      const f = p.per && p.from.find((x) => this.listed(x).includes(id)); // a count by list: the first pick picks the list
       this.drop(id, p.stash, this.s.events);
+      if (f) { p.from = [f]; p.n = p.per[f]; delete p.per; }
       if (--p.n <= 0 || !this.pickable().length) {
         this.s.picks.shift();
         // an exchange: what was given is gone, and what it was given for is now taken
@@ -701,9 +733,10 @@
         let enabled = !first, why = first;
         // a choice with no range is open without the draw: in a bow shot, not shooting; elsewhere, the
         // way taken instead of drawing ("If you have Sixth Sense, ...; otherwise pick a number")
-        if (sec.rnt === 'auto' && c.range) {
+        // (a stake to set first says so; a draw against something names the number drawn, not the difference)
+        if (sec.rnt === 'auto' && c.range && !first) {
           if (rolled == null) { enabled = false; why = 'Spin the medallion first'; }
-          else if (rolled < c.range[0] || rolled > c.range[1]) { enabled = false; why = `You drew ${rolled}`; }
+          else if (rolled < c.range[0] || rolled > c.range[1]) { enabled = false; why = `You drew ${sec.against ? this.s.drawn : rolled}`; }
         }
         if (c.need && (c.need.disc || c.need.circle) && !LW.meets(hero, { disc: c.need.disc, every: c.need.every, circle: c.need.circle })) {
           enabled = false; why = `Needs ${LW.condName({ disc: c.need.disc, every: c.need.every, circle: c.need.circle })}`;
@@ -830,14 +863,24 @@
       // vsCS: the draw is measured against his COMBAT SKILL, which is taken off the total
       return (this.section.rntMod || []).filter((m) => LW.meets(hero, m) && times(m)).map((m) => (m.vsCS ? { label: 'Your Combat Skill', n: -LW.heroCS(hero).total } : { label: m.label || LW.condName(m) || 'Added', n: m.plus * times(m) }));
     }
+    /* why the section's number cannot be drawn yet: a draw against the stake waits for it */
+    drawWhy() {
+      const sec = this.section;
+      return sec.against === 'stake' && !(this.s.stakes || {})[sec.stake.key || this.s.at] ? 'Set your stake first.' : null;
+    }
     setRolled(n) {
       if (this.game) return this.play(n);
-      const shot = this.shot();
+      const shot = this.shot(), sec = this.section;
       if (shot && shot.why) return shot.why;
+      if (this.drawWhy()) return this.drawWhy();
       if (shot) this.s.hero.arrows -= 1;
-      const parts = [...(shot ? shot.parts : []), ...this.bonuses()];
+      // zeroTen: 0 counts as 10
+      const parts = [...(sec.zeroTen && !n ? [{ label: 'for the 0, counted as 10', n: 10 }] : []), ...(shot ? shot.parts : []), ...this.bonuses()];
       // draws: the text asks for several numbers added; the page draws the others
-      for (let k = 1; k < (this.section.draws || 1); k++) { const m = LW.rand10(); parts.push({ label: 'and', n: m }); }
+      for (let k = 1; k < (sec.draws || 1); k++) { const m = LW.rand10(); parts.push({ label: 'and', n: m }); }
+      // against: the number is measured against a second drawn, or the stake set here: the ranges are for the difference
+      if (sec.against === 'draw') parts.push({ label: 'the second number', n: -LW.rand10() });
+      if (sec.against === 'stake') parts.push({ label: 'Crowns thrown', n: -this.s.stakes[sec.stake.key || this.s.at].n });
       this.s.shot = parts.length ? parts : null;
       this.s.drawn = n;
       this.s.rolled = n + parts.reduce((t, p) => t + p.n, 0);

@@ -39,7 +39,6 @@ const rope = { item: 'rope' };
 const noRope = { item: 'rope', not: true };
 const spent = [{ arrows: 1 }];
 const emptied = [{ arrows: 'all' }];
-const nest = 'a Helmet and a Silver Helm are not worn together: only one of them counts.';
 const n123 = 'the number 123, from a coiled snake';
 // venom: his losses doubled unless he has Curing
 const venom = { heroLoss: 2, unless: { disc: 'curing' }, note: 'Venom' };
@@ -105,7 +104,7 @@ export const SECTIONS = {
   131: { take: [{ weapons: 'one' }, { at: [2] }] },
   134: { ep: -4 },
   143: { need: { 10: fireseed, 317: sommerswerd, 331: { item: ['fireseed', 'sommerswerd'], not: true } } },
-  148: { loot: [{ item: 'mace' }, { item: 'leatherWaistcoat' }, { item: 'sword' }, { item: 'helmet' }, { item: 'blanket7' }, { item: 'wineBottle7' }, { item: 'dagger' }, { item: 'potion' }], todo: nest },
+  148: { loot: [{ item: 'mace' }, { item: 'leatherWaistcoat' }, { item: 'sword' }, { item: 'helmet' }, { item: 'blanket7' }, { item: 'wineBottle7' }, { item: 'dagger' }, { item: 'potion' }] }, // the Helmet is refused beside the Silver Helm (its `apart`)
   150: { need: { 310: rope } },
   152: { take: spent },
   154: { ep: -3, need: { 310: rope, 211: noRope } },

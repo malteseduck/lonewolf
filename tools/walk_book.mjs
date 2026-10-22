@@ -235,6 +235,7 @@ function walk(LW, B, hero) {
       g.hero.ep = g.hero.epMax;
       const f = new LW.Fight(g, B.id);
       if (evade === 'lose') { f.end('dead'); f.finish(); return on(); } // a contest lost leads on (c.lose)
+      if (f.noStrike && evade == null) return true; // he cannot fight it here (c.noStrike): only its ways out
       while (!f.over && f.rounds < MAX_ROUNDS) {
         if (evade != null && (f.evades()[evade] || {}).open) { f.round(LW.rand10(), 'evade', evade); break; }
         f.round(LW.rand10());

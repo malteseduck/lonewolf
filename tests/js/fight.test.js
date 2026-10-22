@@ -225,3 +225,28 @@ describe('healing mid-fight', () => {
     expect(LW.canCure(g.hero, 'test')).toBe(false);
   });
 });
+
+describe('a way past the fight that costs the number drawn (Book 5\'s 162)', () => {
+  const climb = { label: 'Climb past', within: 1, lose: 'drawn', to: '2' };
+  it('is open before the first round only, and costs the number (0 as 10) in place of the blow', () => {
+    let { g, f } = fightAt({ enemies: [foe({ ep: 100 })], evade: climb });
+    expect(f.evadeOpen).toBe(true);
+    f.round(0, 'evade');
+    expect([f.over, g.hero.ep]).toEqual(['evade', 15]);
+    f.finish();
+    expect(g.s.at).toBe('2');
+    ({ g, f } = fightAt({ enemies: [foe({ ep: 100 })], evade: climb }));
+    f.round(4);
+    expect([f.evadeOpen, f.evadeLate]).toEqual([false, true]);
+  });
+  it('is the only way when he cannot fight: Strike is shut under the text\'s condition', () => {
+    LW.addItems({}, { limb: { name: 'A dead arm', cs: -3 } });
+    const { g, f } = fightAt({ enemies: [foe()], evade: climb, noStrike: { mark: 'limb' } }, mkHero({ marks: { limb: true }, ep: 5 }));
+    expect(f.noStrike).toBe(true);
+    f.round(3);
+    expect([f.rounds, f.over]).toEqual([0, null]);
+    f.round(7, 'evade');
+    expect([f.over, g.hero.ep]).toEqual(['dead', 0]);
+    expect(fightAt({ enemies: [foe()], evade: climb, noStrike: { mark: 'limb' } }).f.noStrike).toBe(false);
+  });
+});
