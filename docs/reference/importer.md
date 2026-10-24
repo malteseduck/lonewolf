@@ -66,7 +66,8 @@ Heuristics layered on top, all by regular expression:
   Nexus" is Grand Nexus. "Grand Weaponmastery (with Bow)" is not read: it needs the Bow mastered.
   The twelve Grand Master ranks are known. "The rank of Y in the Discipline of X" (Book 14's 107) is the discipline
   and the rank: his rank is his own, the same in every discipline.
-- **Gates** (`gate()`): the choice's condition, up to its first comma or "turn to". Negative
+- **Gates** (`gate()`): the choice's condition, up to its first comma or "turn to" (a comma inside a
+  list of disciplines, "of A, B, or C", does not end it; "and you have reached ..." joins a rank to it). Negative
   phrasings ("if you do not have", "have yet to", "neither") are left open. "X, or have reached the rank of Y" (parts joined by "or (if you) have/possess/reached/attained") is split and each part read as a condition; if all parse, `need: {any: [...]}`, else the choice is left open. A
   looser reading still gates "If you wish to use the Kai Discipline of X ..." (also "... of X in order to ...").
 - **Random Number ranges** (`span()`): "0–4", "−2–+3" (the books' minus sign), "5 or more" / "or

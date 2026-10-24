@@ -351,6 +351,20 @@ describe('more gaps the books showed', () => {
     g.choose(g.choices()[0]);
     expect([g.hero.noPack, g.hero.backpack]).toEqual([false, ['torch']]);
   });
+  it('what a give-back cannot fit is offered there, to take once he has made room', () => {
+    const more = { 3: { text: ['c'], back: ['cell'], choices: [] } };
+    const g = at2({ take: [{ weapons: 'all', stash: 'cell' }] }, mkHero({ weapons: ['sword', 'bow'] }), more);
+    g.hero.weapons = ['axe', 'mace']; // found on the way
+    g.choose(g.choices()[0]);
+    expect(g.hero.weapons).toEqual(['axe', 'mace']);
+    const left = g.loot().filter((l) => /^back:/.test(l.i));
+    expect(left.map((l) => l.label)).toEqual(['Sword', 'Bow']);
+    expect(g.takeLoot(left[1].i)).toMatch(/./); // no room yet
+    LW.dropItem(g.hero, 'mace');
+    expect(g.takeLoot(left[1].i)).toBeFalsy();
+    expect(g.hero.weapons).toEqual(['axe', 'bow']);
+    expect(g.loot().filter((l) => /^back:/.test(l.i)).map((l) => l.label)).toEqual(['Sword']);
+  });
 });
 
 describe('flags', () => {

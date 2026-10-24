@@ -60,7 +60,7 @@ shows the book's printed map. Only the prototypes travel on a map.
 | | `{item, dose: true}` | one dose of an item that has several, not the whole of it |
 | | `{item: [ids]}`, `{meals \| gold: n \| 'half' \| 'all', round}`, `{coin, n \| 'half' \| 'all'}`, `{weapons: 'used'}`, `{weapons: 'one' \| 'all', special: true}` | the first held of a list; half his Meals or gold (round down, or `round: 'up'`); another coin; the weapon he fought with last, else the one in hand; a weapon-like Special Item counts as a weapon (lost when it is his only one, or with all) |
 | | `stash: key` on any entry | what is lost is kept under that name (`hero.stash`), to be given back by `back` |
-| `back` | `[key \| {stash, only: [weapon, backpack, special, gold]}]` | what was taken into that stash is given back (or the kinds listed); what does not fit is said so |
+| `back` | `[key \| {stash, only: [weapon, backpack, special, gold]}]` | what was taken into that stash is given back (or the kinds listed); what does not fit is said so, stays in the stash and is offered there as loot, his to take once he has made room |
 | `forfeit` | key \| [keys] | what was taken into that stash is lost for good (a stake of items not won back) |
 | `add` | `[{text, to, need}]` | item table: a way on the text gives outside its choices (a footnote's), added to them with its gate; `text` in our words |
 | `mark`, `unmark` | id \| [ids] | a lasting condition set or ended (`hero.marks`), defined in the table's `MARKS` (below), or a bare flag a later book can test ("fought an Elix") |

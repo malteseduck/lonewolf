@@ -805,15 +805,28 @@
     loot() {
       const sec = this.section, all = [...(sec.give || []).map((l, n) => [l, 'give' + n]), ...(sec.loot || []).map((l, n) => [l, n])];
       const got = (i) => !!this.s.looted[this.s.at + ':' + i];
+      // what a give-back here could not fit, still in its stash: his to take once he has made room
+      const kept = [].concat(sec.back || []).flatMap((b) => { const k = b.stash || b, st = (this.s.hero.stash || {})[k]; return st ? st.items.map((id, n) => ({ i: `back:${k}:${n}`, label: id === 'meal' ? 'a Meal' : LW.itemName(id), taken: false, item: id })) : []; });
       return all.map(([l, i]) => {
         const label = l.item ? LW.itemName(l.item) : l.coin ? `${l.n} ${LW.COINS[l.coin]}` : l.gold ? `${l.gold} Gold Crowns` : l.meal ? (l.meal > 1 ? `${l.meal} Meals` : 'a Meal') : l.pack ? 'a Backpack' : l.arrows ? `${l.arrows} Arrow${l.arrows > 1 ? 's' : ''}` : '';
         const share = l.or && all.filter(([m, j]) => j !== i && m.or === l.or && got(j)).length >= (l.pick || 1);
         const left = l.max ? l.max - (this.s.looted[this.s.at + ':' + i + ':n'] || 0) : undefined;
         return { i, label, taken: got(i), closed: share, cost: l.cost, left, coin: l.item && l.coin, swap: l.for, pick: l.pick, item: l.item || (l.coin ? 'coin' : l.meal ? 'meal' : l.gold ? 'gold' : l.arrows ? 'arrows' : 'pack') };
-      });
+      }).concat(kept);
     }
     /* Returns an error string when it cannot be taken. */
     takeLoot(i) {
+      if (String(i).startsWith('back:')) {
+        const [, k, n] = String(i).split(':'), hero = this.s.hero, st = (hero.stash || {})[k], id = st && st.items[+n];
+        if (!id) return null;
+        const why = id === 'meal' ? null : LW.putItem(hero, id);
+        if (why) return why;
+        if (id === 'meal') hero.meals += 1;
+        st.items.splice(+n, 1);
+        if (!st.items.length && !st.gold && !st.pack) delete hero.stash[k];
+        this.save();
+        return null;
+      }
       const sec = this.section, l = String(i).startsWith('give') ? sec.give[+String(i).slice(4)] : sec.loot[i];
       const hero = this.s.hero, key = this.s.at + ':' + i;
       if (!l || this.s.looted[key]) return null;

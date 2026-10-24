@@ -189,7 +189,8 @@
       const hero = this.hero, ev = [].concat(this.c.evade)[Math.max(0, which)]; this.evaded = ev;
       const loss = ev.lose === 'drawn' ? Math.min(o.n || 10, hero.ep) : ev.free ? 0 : Math.min(o.res.hero, hero.ep);
       hero.ep -= loss; o.taken = loss; this.lost.hero += loss;
-      this.log.push(ev.lose === 'drawn' ? `${o.tag} ${ev.label || 'You get past'}: it costs you ${loss}.` : `${o.tag} You turn and run${loss ? `; it catches you for ${loss}` : ', untouched'}.`);
+      // a free way out with a name of its own (dispelling an illusion, slipping away unseen) says so, not that he runs
+      this.log.push(ev.lose === 'drawn' ? `${o.tag} ${ev.label || 'You get past'}: it costs you ${loss}.` : ev.free && ev.label ? `${o.tag} ${ev.label}: untouched.` : `${o.tag} You turn and run${loss ? `; it catches you for ${loss}` : ', untouched'}.`);
       this.end(hero.ep > 0 ? 'evade' : 'dead');
       return o;
     }

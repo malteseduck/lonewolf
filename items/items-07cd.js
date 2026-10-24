@@ -33,7 +33,10 @@ export const ITEMS = {
 const loss = (add) => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => ({ range: [n, n], ep: -(n + add) }));
 const sommerswerd = { item: 'sommerswerd' };
 const noSommerswerd = { item: 'sommerswerd', not: true };
-const bow = { item: 'bow' };
+// a shot needs a Bow (Book 6's Silver Bow of Duadon too) and an Arrow; another shot, an Arrow
+const bows = ['bow', 'silverBow'];
+const bow = { any: [{ item: bows, arrows: 1, label: 'a Bow and an Arrow' }] };
+const anArrow = { any: [{ arrows: 1, label: 'an Arrow' }] };
 const fireseed = { item: 'fireseed' };
 const rope = { item: 'rope' };
 const noRope = { item: 'rope', not: true };
@@ -52,6 +55,10 @@ const dark = { any: [{ not: { any: lights } }] };
 // weapons taken at the Great Hall, given back at 15
 const seized = { weapons: 'all', special: true, stash: 'maze7' };
 // the shield's blow: 8, or 6 with Nexus
+// the fight with the guards: won within three rounds, or the dwarf's sleep gas at 160
+const quick = (to) => ({ won: { within: 3, to, else: '160' } });
+// the bubbles cut with a sword
+const cut = { need: { 151: sword } };
 const shield = { when: [{ unless: { disc: 'nexus' }, ep: -8 }, { if: { disc: 'nexus' }, ep: -6 }] };
 
 export const SECTIONS = {
@@ -60,17 +67,20 @@ export const SECTIONS = {
   10: { take: [{ item: 'fireseed' }] },
   15: { back: ['maze7'], loot: [{ item: 'jarLaumspur7' }, { item: 'platinumAmulet' }] },
   16: { need: { 61: light, 277: dark } },
-  18: { ep: -2 },
+  // the Flask of Wine or Bottle of Water emptied into the pit, and lost
+  18: { ep: -2, take: [{ item: ['wineFlask7', 'waterBottle7'], choose: true, label: 'The container you emptied' }] },
   19: { fight: { rounds: [{ upTo: 2, csMod: -3, unless: { disc: 'huntmastery' }, note: 'Surprise' }] } },
   26: { rolls: loss(3), lessen: [{ n: 2, if: { mastery: 'sword' } }] },
-  27: { fight: { rounds: [{ upTo: 3, csMod: -3, unless: { disc: 'huntmastery' }, note: 'Surprise' }] } },
+  // with Psi-screen the Oudakon is dispelled before the fight (38)
+  27: { fight: { rounds: [{ upTo: 3, csMod: -3, unless: { disc: 'huntmastery' }, note: 'Surprise' }], to: '5', evade: { after: 0, within: 1, to: '38', if: { disc: 'psiScreen' }, free: true, label: 'Dispel the illusion' } } },
   31: { give: [{ item: 'skeletonKey7' }, { item: 'parchment7' }], need: { 266: bow } },
   // the weapon he reached in with (a Sword or a Spear, his choice) is torn away
   32: { take: [{ pick: 'weapon', n: 1 }] },
   34: { need: { 347: { item: 'silverWhistle7' } } },
+  40: { fight: quick('248') },
   42: { ep: -3, need: { 174: sommerswerd, 202: noSommerswerd } },
   44: { ep: -3 },
-  50: { take: spent },
+  50: { take: spent, fight: quick('248') },
   53: { ep: -5, need: { 157: fireseed } },
   // the Beastmen's packs
   56: {
@@ -80,17 +90,20 @@ export const SECTIONS = {
   59: { when: [{ unless: { disc: 'nexus', rank: 4 }, ep: -3 }] },
   60: { ep: -4, need: { 230: { item: 'sabito' }, 263: { item: 'sabito', not: true } } },
   66: { need: { 252: sword, 263: noSword } },
+  67: { need: { 175: anArrow } },
   68: { need: { 182: rope } },
   69: { need: { 50: bow } },
   73: { loot: [{ item: 'diamond' }], note: n123 },
+  75: { fight: quick('248') },
   76: { fight: { noShield: true, barred: ['broadsword', 'spear', 'quarterstaff'], rounds: [{ heroLoss: 3, note: 'Venom' }] } },
-  79: { take: spent },
+  79: { take: spent, need: { 328: anArrow } },
   80: { loot: [{ item: 'spear' }, { item: 'shortSword' }, { item: 'shortSword' }, { item: 'axe' }, { item: 'dagger' }, { item: 'dagger' }, { item: 'mace' }, { gold: 6 }] },
   85: { rolls: loss(2), lessen: [{ n: 2, if: { disc: 'huntmastery', rank: 4 } }] },
   88: { ep: -2 },
   90: { need: { 24: { any: [{ disc: 'nexus' }, { item: 'platinumAmulet' }] } } },
   96: { give: [{ item: 'sword' }] },
   97: { need: { 10: fireseed, 317: sommerswerd, 331: { item: ['fireseed', 'sommerswerd'], not: true } } },
+  98: { need: { 174: sommerswerd, 202: noSommerswerd } },
   103: shield,
   104: { when: [{ unless: { disc: 'nexus' }, ep: -3 }], need: { 225: bow } },
   107: { ep: -6, need: { 26: sword, 51: { any: [{ item: 'lantern' }, { items: ['torch', 'tinderbox'] }] }, 145: { item: 'firesphere' }, 292: { any: [{ not: { any: [swords, ...lights] } }] } } },
@@ -103,16 +116,17 @@ export const SECTIONS = {
   // a weapon of his choice, and the second Backpack Item on his list
   131: { take: [{ weapons: 'one' }, { at: [2] }] },
   134: { ep: -4 },
+  142: { fight: { won: { within: 3, to: '238', else: '212' } } },
   143: { need: { 10: fireseed, 317: sommerswerd, 331: { item: ['fireseed', 'sommerswerd'], not: true } } },
   148: { loot: [{ item: 'mace' }, { item: 'leatherWaistcoat' }, { item: 'sword' }, { item: 'helmet' }, { item: 'blanket7' }, { item: 'wineBottle7' }, { item: 'dagger' }, { item: 'potion' }] }, // the Helmet is refused beside the Silver Helm (its `apart`)
   150: { need: { 310: rope } },
-  152: { take: spent },
+  152: { take: spent, need: { 253: anArrow } },
   154: { ep: -3, need: { 310: rope, 211: noRope } },
   155: { ep: -2 },
   157: { take: [{ item: 'fireseed' }] },
   158: { take: [{ meals: 'all' }, { pick: 'packItems', n: 2 }] },
   161: { loot: [{ item: 'spear' }, { item: 'broadsword' }] },
-  164: { need: { 7: bow } },
+  164: { need: { 7: { item: bows } } },
   165: { need: { 335: sommerswerd, 264: noSommerswerd } },
   168: { need: { 32: { any: [{ weapon: ['sword', 'spear'] }] }, 263: { any: [{ not: { weapon: ['sword', 'spear'] } }] } } },
   170: { ep: -4 },
@@ -123,6 +137,7 @@ export const SECTIONS = {
   178: { need: { 191: fireseed }, fight: { rounds: [venom] } },
   181: { need: { 206: bow } },
   182: { give: [{ item: 'sword' }] },
+  184: { need: { 230: { item: 'sabito' } } },
   186: { give: [{ item: 'silverWhistle7' }], loot: [{ item: 'spear' }] },
   187: { need: { 79: bow } },
   190: { ep: -2 },
@@ -130,7 +145,8 @@ export const SECTIONS = {
   197: { need: { 266: bow } },
   198: { ep: -2 },
   199: { loot: [{ gold: 6 }, { item: 'rope' }, { item: 'redRobe7' }] },
-  206: { take: spent },
+  205: { need: { 79: bow } },
+  206: { take: spent, fight: quick('17') },
   208: { need: { 310: rope, 211: noRope } },
   // the door is fought as if unarmed, without the penalty for Nexus
   214: { fight: { with: 'none', noUnarmed: { disc: 'nexus' } } },
@@ -142,7 +158,10 @@ export const SECTIONS = {
   222: { ep: -3 },
   225: { bowShot: { 196: [0, 6], 112: [7, 99] } },
   // the dead warrior's pack: the Power-key is a Special Item, the rest are Backpack Items
+  226: { need: { 157: fireseed } },
   227: { loot: [{ meal: 1 }, { item: 'rope' }, { item: 'blanket7' }, { item: 'dagger' }, { item: 'sabito' }, { item: 'waterBottle7' }, { item: 'powerKey' }] },
+  230: { take: [{ item: 'sabito' }] },
+  232: { need: { 152: anArrow } },
   233: { fight: { rounds: [{ foeLoss: 2, mind: true }] } },
   236: { loot: [{ item: 'spear' }, { item: 'broadsword' }] },
   238: { loot: [{ item: 'axe' }, { item: 'shortSword' }, { item: 'dagger' }, { gold: 2 }] },
@@ -152,6 +171,8 @@ export const SECTIONS = {
   253: { take: spent },
   257: { ep: -2, fight: { csMod: -2, csNote: 'Unseen foe', ambush: true, rounds: [{ csMod: 1, if: { item: ['blanket7', 'redRobe7', 'towel'] }, note: 'Wrapped arm' }] } },
   258: { need: { 289: light, 277: dark } },
+  259: cut,
+  261: { need: { 18: { item: ['wineFlask7', 'waterBottle7'] }, 304: { item: ['wineFlask7', 'waterBottle7'], not: true } } },
   262: { loot: [{ item: 'shortSword' }, { item: 'shield' }] },
   // the Backpack, gold and Special Items stay; only his weapons are taken here
   264: { take: [seized] },
@@ -161,19 +182,23 @@ export const SECTIONS = {
   270: { need: { 207: { item: 'skeletonKey7' }, 242: { item: 'skeletonKey7', not: true } } },
   271: { loot: [{ item: 'goldKey7' }] },
   274: { need: { 333: { item: 'goldKey7' }, 54: { item: 'goldKey7', not: true } } },
-  276: { take: spent },
+  276: { take: spent, need: { 50: anArrow } },
   279: { give: [{ item: 'sword' }] },
+  // a win within three rounds frees Tavig alive (291)
+  280: { fight: { won: { within: 3, to: '291', else: '156' } } },
   284: shield,
   285: { fight: { rounds: [venom] } },
+  287: { need: { 218: sword } },
   290: { fight: { double: true } },
   295: { need: { 276: bow } },
   297: { ep: -2, need: { 157: fireseed } },
-  298: { need: { 151: sword } },
+  298: cut,
   301: { fight: { rounds: [venom] } },
   304: { ep: -3 },
   305: { give: [{ item: 'diamond' }] },
   311: { ep: -2 },
   313: { ep: -3, need: { 4: { ep: [10, 99] }, 263: { ep: [-99, 9] } } },
+  316: { fight: quick('248') },
   324: { ep: -4 },
   325: { fight: { rounds: [{ heroEach: 2, note: 'No air' }] } },
   // a shot with a Lore-circle's bonus

@@ -101,5 +101,5 @@ without them; the importer marks the highest section `victory` even when it is a
 
 ### Not yet checked
 
-- Magnakai rules in play in Books 7-12 (Book 6 played through on 2026-10-21; Book 12 tried on a few sections).
+- Magnakai rules in play in Books 8-12 (Books 6 and 7 played through on 2026-10-21 and 2026-10-23; Book 12 tried on a few sections).
 - The 4K map's fit, zoom and 4096 px canvas cap on the iPad.

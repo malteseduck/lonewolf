@@ -134,6 +134,9 @@ def test_condition_reads_disciplines_ranks_circles_and_endurance(kai, text, expe
      {'any': [{'disc': 'hunting'}, {'rank': 4}]}),
     ('If you wish to use the Kai Discipline of Hunting, turn to 7.', {'disc': 'hunting'}),
     ('If you have the Kai Discipline of Hunting and wish to go left, turn to 7.', {'disc': 'hunting'}),
+    # a list of three: the comma inside it is not the end of the condition
+    ('If you have the Kai Disciplines of Tracking, Hunting, or Sixth Sense, turn to 2.', {'disc': ['tracking', 'hunting', 'sixthSense']}),
+    ('If you have the Kai Discipline of Hunting and you have reached the Kai rank of Guardian, turn to 9.', {'disc': 'hunting', 'rank': 7}),
 ])
 def test_gate_reads_the_condition_before_the_comma(kai, text, expect):
     assert kai['gate'](text) == expect

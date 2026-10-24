@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-13 (order); offered steps 2026-10-14; scripts first 2026-10-14
-- Amended: 2026-10-17
+- Amended: 2026-10-17, 2026-10-23
 
 ## Context
 
@@ -54,6 +54,13 @@ everything; but a draft that flags every section is just as pointless (2026-10-1
 - A fresh checkout is set up from the dashboard: a Setup panel checks and installs each tool (uv,
   npm), and downloads the tools' own files (Real-ESRGAN, OCR models) behind a gated button.
 - The map's Gemini repaint stays the owner's manual hand-off (no paid API).
+- **Test play is driven in Node, the browser only spot-checks** (2026-10-23). After the walk, the
+  agent checks the book with the engine in Node, as `walk_book.mjs` loads it (no server): each
+  section's text beside what the engine reads from it, then scripted checks of the gates, draws,
+  bow shots, fights and arrival effects against the text, and a route to the book's last section.
+  The page (`http://127.0.0.1:8766/`, storage writes off) is used only for what Node cannot show:
+  a control or log the page draws (a fight's way out, loot offered), or where a test was not enough.
+  Driving fights and routes through the page costs far more for the same check.
 
 ## Consequences
 
@@ -74,5 +81,7 @@ everything; but a draft that flags every section is just as pointless (2026-10-1
 - 2026-10-15: "Send to agent" (a new Claude Desktop session per prompt) tried and dropped as clunky;
   Copy prompt is back.
 - 2026-10-17: drafts lean to flagging, on general signs only, for every drafter and scanner (owner).
+- 2026-10-23: test play driven in Node, the browser for spot checks only (owner, after Book 7's
+  play-through spent most of its effort clicking through the page).
 - 2026-10-17: merged 0034 (the order), 0039 (every step offered where it can work) and 0036 (scripts
   first) into this one record.

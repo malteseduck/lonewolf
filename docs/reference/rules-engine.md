@@ -89,7 +89,7 @@ Item (`LW.specialLimit`: 12 in every book, ruling R2). And one an item's `apart`
   `pickLoss(id)` (`pickable()` lists them), all at once when he has no more than asked, `else` when he
   has none (`n` by list: his first pick picks the list); `choose`, the one of a list of ids he used (his pick when he holds
   several); `halve`, half a list lost on a coin. Any entry with `stash` keeps what it takes in `hero.stash[key]` (`drop()`); `unstash(b)`
-  gives it back (or the kinds in `only`), saying what will not fit; `forfeit` drops a stash for good.
+  gives it back (or the kinds in `only`), saying what will not fit, which `loot()` then offers on that section (`back:<key>:<n>`) to take once there is room; `forfeit` drops a stash for good.
 - `setStake(n)` (`sec.stake`: paid now with `spend`, else kept in `s.stakes` until a `settle`),
   `settle(key, by)`, `sell(id)` (`sec.sell` prices; `'arrows'` sells `sec.sell.arrows.n` at once), `came()` (the section before).
 - A game of chance (`sec.game`, book-format.md): `game` is the game in hand (`s.game`, begun afresh on

@@ -99,7 +99,7 @@ def condition(text):
         return None  # "Grand Weaponmastery (with Bow)": the Bow must be one of his weapons, which a condition cannot say
     text = re.sub(r'\s*\([^)]*\)?', '', text)  # "(you possess 8 Kai Disciplines)", or one cut short at its comma
     text = re.sub(r'\s+and therefore\b.*$', '', text)
-    for clause in re.split(r',?\s+and\s+(?:if you\s+)?(?:also\s+)?(?=have\b|possess\b|completed\b|reached\b|attained\b)', text.strip()):
+    for clause in re.split(r',?\s+and\s+(?:if you\s+|you\s+)?(?:also\s+)?(?=have\b|possess\b|completed\b|reached\b|attained\b)', text.strip()):
         clause = clause.strip()
         d = re.fullmatch(r'(?:have|possess)(?: and wish to use)? (?:either |both )?(?:of )?the (?:Kai |Magnakai )?Disciplines? (?:either |both )?(?:of )?(.+)', clause)
         if not d and series == 'grandmaster':
@@ -151,7 +151,8 @@ def condition(text):
 def gate(text):
     """A choice open only to a hero with a discipline, rank or Lore-circle (need), or None.
     Negative phrasings ("if you do not have", "have yet to") are left open."""
-    head = re.split(r',|\s+turn to\b', text, maxsplit=1)[0]
+    # the condition ends at the first comma, unless the comma is inside a list of disciplines ("of A, B, or C")
+    head = re.split(r',(?!\s*(?:(?:or|and)\s+)?(?:%s)\b)|\s+turn to\b' % '|'.join(re.escape(k) for k in DISC), text, maxsplit=1, flags=re.I)[0]
     if re.search(r"\b(?:not|neither|nor|yet to)\b|n't\b", head, re.I):
         return None
     # the whole condition, when it is only disciplines, a rank and Lore-circles ("... and have reached the rank of Primate")
