@@ -69,7 +69,9 @@
       if (c.mind) log.push('A fight of the mind: no weapon or armour counts.');
       else if (c.with === 'none') log.push(this.ctx.noUnarmed ? 'You fight bare-handed, and lose nothing by it.' : 'You fight bare-handed.');
       else if (c.with) log.push(this.weapon ? `Only your ${LW.itemName(c.with)} can harm it.` : `Only the ${LW.itemName(c.with)} can harm it, and you do not have it.`);
-      if (this.weapon && LW.ITEMS[this.weapon] && (LW.ITEMS[this.weapon].cs || c.lend)) log.push(`You fight with the ${LW.itemName(this.weapon)}.`);
+      // the weapon of the first round: one out of reach then is not named (Book 12's 75)
+      const first = this.inHand(1);
+      if (first && LW.ITEMS[first] && (LW.ITEMS[first].cs || c.lend)) log.push(`You fight with the ${LW.itemName(first)}.`);
       this.changes(1);
     }
 
@@ -126,6 +128,12 @@
         psiTimes: psi, enemy: this.foe, csMod: this.csMod, csNote: this.note, more }));
     }
     cs(round) { return this.parts(round).total; }
+    /* the weapon he fights with in this round: none in a fight of the mind or a bare-handed round */
+    inHand(round = this.rounds + 1) {
+      const ph = this.phases(round), barred = ph.flatMap((p) => p.barred || []);
+      if (this.c.mind || ph.some((p) => p.unarmed)) return null;
+      return LW.armedWith(this.hero, Object.assign({}, this.ctx, barred.length ? { barred: [...(this.ctx.barred || []), ...barred] } : {}));
+    }
     ratio() { return Math.min(LW.RATIO_CAP, this.cs() - this.foe.cs); }
     // evade.after: not before that many rounds; evade.within: only in the first rounds; evade.if: only
     // with that (a Condition); evade.foeAt: only once the foe is down to that; evade.fromFoe: only from
@@ -225,6 +233,11 @@
       }
       const each = this.sum('heroEach', this.rounds);
       if (each && hero.ep > 0) { hero.ep -= each; this.log.push(`It costs you ${each} Endurance more.`); }
+      // a weapon that feeds on its wielder (Book 12's Helshezag): from round `from`, off his maximum too
+      const w = this.inHand(this.rounds), cost = w && (LW.ITEMS[w] || {}).wieldCost;
+      if (cost && this.rounds >= cost.from && hero.ep > 0) {
+        hero.ep -= cost.ep; hero.epMax -= cost.ep; this.log.push(`The ${LW.itemName(w)} costs you ${cost.ep} Endurance for good.`);
+      }
       if (this.blasting() === 2 && hero.ep > 0) {
         const psi = LW.psi(hero);
         hero.ep -= psi.cost; this.log.push(`The ${psi.name} costs you ${psi.cost} Endurance.`);

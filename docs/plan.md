@@ -74,6 +74,13 @@ What a book's play-through left to the player that the engine could take over:
   sections could be gated. Book 10 asks the same of lands: Talestria (6, 179) and the Danarg (80,
   142, 219, 328), both crossed in Book 8, and the Stornlands (200, 306), where which books count is
   the owner's reading; flags set on Book 8's way through each would gate them.
+- **The weapon he fights with, chosen in the fight.** The engine fights with the weapon that adds
+  most, so a choice the text leaves to him is not his: Book 12's Helshezag, which costs 1 ENDURANCE
+  for good a round, is taken up only where a fight names it (133, 230, 88), so "if you wish to use
+  it" at 104 and 342 (and in later books) cannot be taken; and the best weapon is picked before a
+  fight's penalty on its kind is counted (Book 12's 68: -2 with any weapon but a broadsword, spear or
+  quarterstaff, so a mastered spear can lose to a sword it ties with). A weapon picker on the fight's
+  panel would do both.
 - **Things kept from one place** (Book 9's 154: "if you kept any of the items you found in the hut",
   190 or 265). The hut's Rope and Lantern are found elsewhere too, so holding them proves nothing; a
   mark set when a loot entry is taken (`loot: [{ item, mark }]`) would do it.
@@ -82,9 +89,6 @@ What a book's play-through left to the player that the engine could take over:
 
 Things to check while a book goes through its steps, which no step asks for:
 
-- Weapon bonuses through `lend` / `weaponCs`, which replace the weapon's own bonus: Book 12's
-  Helshezag (133) and weapon of increased power (88); check those in play. (Book 11's Ironheart
-  Broadsword at 204 was a `csMod` added on top of another mastered weapon; it is a `weaponCs` now.)
 - Book 3's sledge food is left to the text.
 - Book 3: what its 2026-10-09 play-through left to the player is now applied (Sixth Sense below
   Guardian, the Effigy or the Sommerswerd at 173, 108's two ways out in mid-fight); check it in the
@@ -119,5 +123,6 @@ without them; the importer marks the highest section `victory` even when it is a
 
 ### Not yet checked
 
-- Magnakai rules in play in Books 11-12 (Books 6-10 played through from 2026-10-21 to 2026-10-23; Book 12 tried on a few sections).
+- Magnakai rules in play: Books 6-12 played through with the engine in Node from 2026-10-21 to
+  2026-10-23; not yet on the iPad.
 - The 4K map's fit, zoom and 4096 px canvas cap on the iPad.

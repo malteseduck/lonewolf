@@ -38,7 +38,7 @@ shows the book's printed map. Only the prototypes travel on a map.
 | `rntMod` | `[{plus, ...condition}]` | imported, or from an item table: what the text adds to the number (minus: takes away) when he meets the condition (see Conditions below); `{plus, each: 'magnakai', over}` adds `plus` for every Magnakai Discipline beyond the first `over`. The ranges are for the total |
 | `puzzle` | true | imported: the text sets a puzzle whose answer is a section number; the page offers "Turn to section" |
 | `meal` | true | a Meal must be eaten on arrival |
-| `noHunt` | true | item table: Hunting does not excuse that Meal (Book 2's Wildlands) |
+| `noHunt` | true \| `'Hunting'` | item table: Hunting does not excuse that Meal (Book 2's Wildlands); `'Hunting'`: only Kai Hunting fails, Huntmastery still spares it (Book 12 past 200) |
 | `mealUnless` | Condition | item table: the Meal is spared when he meets it, and Hunting does not stand in for it (Book 14's 86: Grand Huntmastery and Grand Nexus, both) |
 | `bowShot` | true | from an item table's `bowShot: {to: [lo, hi]}`: the Random Number is a bow shot. It needs a Bow and an Arrow, spends the Arrow, and has `LW.bowShot`'s bonus added; the ranges (set on the choices, `rnt` made `auto`) are for the total. A choice with no range stays open without shooting |
 | `grandBow` | n | item table: what Grand Weaponmastery with Bow adds to this section's shot, where the text gives its own number in place of the +5 (ruling R10) |
@@ -91,7 +91,10 @@ read and written down by hand in `items/items-<code>.js` (Book 1: `items/items-0
 `kind` (`weapon` | `backpack` | `special`), optionally `glyph` (an icon in `assets/icons/`), `heal`,
 `ep`, `about`, `meal` (eaten when a Meal is due and he has none, healing its `heal`), `apart` (ids of things not worn with it, either way round: the Silver Helm and a Helmet), `shot` (a bow of
 the book's own: what it adds to a shot), and for a Special Item that is also a weapon `weapon` (the kinds it counts as for
-Weaponskill), `cs` (what it adds in a fight) and `undead` (it doubles undead foes' losses)) and
+Weaponskill), `cs` (what it adds in a fight), `undead` (it doubles undead foes' losses) and `wieldCost` (`{from, ep}`:
+from round `from` of every fight it is used in, `ep` off his Endurance and his maximum; the engine takes such a weapon
+up only where the fight names it, by `lend`, `with`, `weaponCs` or `only`, or when he has no other: Book 12's
+Helshezag)) and
 `SECTIONS` (by section number: any of the fields above, plus `meal` where the
 importer's pattern missed one, plus `need: {to: {item | gold, not, spend}}` to gate the choice
 leading to `to`, plus `fight` to correct what the importer read of the section's combat:

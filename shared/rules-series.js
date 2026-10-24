@@ -121,7 +121,11 @@
     if (ctx.with === 'none') return null;
     if (ctx.lend) return ctx.lend;
     // a Bow fights only where the text names it (ctx.with)
-    const all = [...hero.weapons, ...hero.special.filter((s) => LW.ITEMS[s] && LW.ITEMS[s].weapon)].filter((w) => (ctx.with ? w === ctx.with : !(LW.ITEMS[w] || {}).ranged) && allowed(w, ctx));
+    let all = [...hero.weapons, ...hero.special.filter((s) => LW.ITEMS[s] && LW.ITEMS[s].weapon)].filter((w) => (ctx.with ? w === ctx.with : !(LW.ITEMS[w] || {}).ranged) && allowed(w, ctx));
+    // a weapon that costs its wielder (wieldCost) is taken up only where the fight names it, or when he has no other
+    const named = (w) => ctx.lend === w || ctx.with === w || (ctx.weaponCs && w in ctx.weaponCs) || (ctx.only && ctx.only.includes(w));
+    const free = all.filter((w) => !(LW.ITEMS[w] || {}).wieldCost || named(w));
+    if (free.length) all = free;
     const sum = (w) => weaponParts(hero, w, ctx).reduce((t, p) => t + p.n, 0);
     return all.reduce((best, w) => (best == null || sum(w) > sum(best) ? w : best), null);
   };

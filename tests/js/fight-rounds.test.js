@@ -437,6 +437,24 @@ describe('losses off his maximum', () => {
     expect(g.hero.epMax).toBe(25 - res.hero);
     expect(g.hero.ep).toBe(25 - 2 * res.hero);
   });
+  it('a weapon that costs its wielder (wieldCost): from the round given, every round, off his maximum too', () => {
+    LW.ITEMS.blackBlade = { name: 'Black Blade', kind: 'special', weapon: ['sword'], cs: 5, wieldCost: { from: 2, ep: 1 } };
+    const n = wounding(5), res = LW.combatRound(5, n);
+    const { g, f } = fightAt({ enemies: [foe({ cs: 15 })] }, mkHero({ weapons: [], special: ['blackBlade'] }));
+    f.round(n);
+    expect([g.hero.ep, g.hero.epMax]).toEqual([25 - res.hero, 25]);
+    f.round(n);
+    expect([g.hero.ep, g.hero.epMax]).toEqual([25 - 2 * res.hero - 1, 24]);
+    // not when he fights with another weapon
+    const other = fightAt({ enemies: [foe({ cs: 10 })], barred: ['blackBlade'] }, mkHero({ weapons: ['sword'], special: ['blackBlade'] }));
+    other.f.round(n); other.f.round(n);
+    expect(other.g.hero.epMax).toBe(25);
+    // he does not take it up of his own accord over another weapon, only where the fight names it
+    const left = fightAt({ enemies: [foe()] }, mkHero({ weapons: ['sword'], special: ['blackBlade'] }));
+    expect(left.f.inHand(1)).toBe('sword');
+    const named = fightAt({ enemies: [foe()], weaponCs: { blackBlade: 7 } }, mkHero({ weapons: ['sword'], special: ['blackBlade'] }));
+    expect(named.f.inHand(1)).toBe('blackBlade');
+  });
   it('not behind after round 1: his maximum stays', () => {
     const n = drawWhere(5, (r) => r.hero < r.enemy && r.hero > 0 && r.enemy < 50);
     const { g, f } = fightAt({ enemies: [foe()], rounds: scar });

@@ -452,8 +452,13 @@ Monastery). Clothing is named there but not tracked.
   armour keeps his current score above it; the Dagger of Vashna adds 7 COMBAT SKILL against a
   Darklord of Helgedad (75, 230); at 75 he cannot harm Kraagenskûl for three rounds without it.
   *Engine*: the Dagger's 7 and those three rounds through the item table (`weaponCs`, `rounds`); 268's
-  losses off his maximum after a first round he lost (`rounds` `offMax`, `behind`). Death at a base of 0
-  under armour, no.
+  losses off his maximum after a first round he lost (`rounds` `offMax`, `behind`); Helshezag's 1 a
+  round from the second, off his base (240; the item's `wieldCost`, taken up only where a fight names
+  it or he has no other weapon). Death at a base of 0 under armour, no.
+- **Meals**: past 200 Kai Hunting no longer feeds him in the Darklands; Huntmastery still does.
+  *Engine*: yes (`noHunt: 'Hunting'` at 36, 144, 338).
+- **Armour**: Kagonite Chainmail +3 COMBAT SKILL and +1 ENDURANCE, Bronin Vest +3 and +1 (not with a
+  Chainmail Waistcoat), Silver Bracers +2 and +1. *Engine*: yes (`fightCs`, `ep`, `apart`).
 - **Money**: Kika, 10 to the Gold Crown (in the text). *Engine*: counted in their own purse
   (`hero.coins`), found, staked, paid and lost through the item table.
 

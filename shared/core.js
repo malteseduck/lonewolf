@@ -368,7 +368,8 @@
       const spared = sec.mealUnless && LW.meets(hero, sec.mealUnless);
       if (spared) events.push(`${LW.condName(sec.mealUnless)}: you need no Meal here.`);
       for (let m = 0; m < (spared ? 0 : sec.meal === true ? 1 : sec.meal || 0); m++) {
-        if (LW.hunts(hero) && !sec.noHunt && !sec.mealUnless) { events.push(`${LW.hunts(hero)}: you catch what you need and keep your Meals.${LW.huntNote(hero)}`); break; }
+        // noHunt: true, no hunting here; noHunt: 'Hunting', only Kai Hunting fails (Book 12 past 200)
+        if (LW.hunts(hero) && sec.noHunt !== true && sec.noHunt !== LW.hunts(hero) && !sec.mealUnless) { events.push(`${LW.hunts(hero)}: you catch what you need and keep your Meals.${LW.huntNote(hero)}`); break; }
         else if (hero.meals > 0) { hero.meals -= 1; this.s.ateAt = this.s.trail.length; events.push('You eat a Meal.'); }
         else if (hero.backpack.some((b) => LW.ITEMS[b] && LW.ITEMS[b].meal)) {
           const food = hero.backpack.find((b) => LW.ITEMS[b] && LW.ITEMS[b].meal), heal = LW.ITEMS[food].heal || 0;

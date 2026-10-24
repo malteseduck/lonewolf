@@ -1,0 +1,1592 @@
+[
+ {
+  "text": "Lands & Territories of the",
+  "box": [
+   302,
+   78,
+   922,
+   125
+  ],
+  "slant": -90,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    612.5,
+    101.3
+   ],
+   "angle": -0.07,
+   "length": 591.0,
+   "thick": 37.9,
+   "box": [
+    302,
+    78,
+    922,
+    125
+   ]
+  }
+ },
+ {
+  "text": "WESTERN TENTARIAS",
+  "box": [
+   299,
+   120,
+   925,
+   167
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    610.0,
+    140.2
+   ],
+   "angle": 0.23,
+   "length": 620.1,
+   "thick": 49.9,
+   "box": [
+    299,
+    120,
+    925,
+    167
+   ]
+  }
+ },
+ {
+  "text": "DANTOG",
+  "box": [
+   800,
+   194,
+   897,
+   215
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "DANTOG",
+  "ink": {
+   "at": [
+    847.3,
+    205.4
+   ],
+   "angle": -1.64,
+   "length": 101.1,
+   "thick": 16.1,
+   "box": [
+    800,
+    194,
+    897,
+    215
+   ]
+  }
+ },
+ {
+  "text": "AKAGAZAD",
+  "box": [
+   1222,
+   213,
+   1358,
+   233
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1291.0,
+    224.0
+   ],
+   "angle": -0.17,
+   "length": 132.0,
+   "thick": 14.0,
+   "box": [
+    1222,
+    213,
+    1358,
+    233
+   ]
+  }
+ },
+ {
+  "text": "Tozazajak Mtns",
+  "box": [
+   1403,
+   215,
+   1606,
+   235
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1507.0,
+    225.7
+   ],
+   "angle": -0.3,
+   "length": 204.0,
+   "thick": 18.4,
+   "box": [
+    1403,
+    215,
+    1606,
+    235
+   ]
+  }
+ },
+ {
+  "text": "TANOZHEZA",
+  "box": [
+   172,
+   250,
+   315,
+   281
+  ],
+  "slant": 1.4,
+  "conf": 1,
+  "retype": true,
+  "named": "TANOZHEZA",
+  "ink": {
+   "at": [
+    244.5,
+    266.3
+   ],
+   "angle": 0.9,
+   "length": 133.2,
+   "thick": 20.1,
+   "box": [
+    172,
+    250,
+    315,
+    281
+   ]
+  }
+ },
+ {
+  "text": "AZTARDAT",
+  "box": [
+   474,
+   272,
+   594,
+   292
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "AZTARDAT",
+  "ink": {
+   "at": [
+    534.5,
+    282.5
+   ],
+   "angle": -0.68,
+   "length": 115.1,
+   "thick": 14.1,
+   "box": [
+    474,
+    272,
+    594,
+    292
+   ]
+  }
+ },
+ {
+  "text": "ZALDIR",
+  "box": [
+   345,
+   341,
+   469,
+   369
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    406.9,
+    355.5
+   ],
+   "angle": -0.73,
+   "length": 116.0,
+   "thick": 20.2,
+   "box": [
+    345,
+    341,
+    469,
+    369
+   ]
+  }
+ },
+ {
+  "text": "Lenag",
+  "box": [
+   719,
+   334,
+   798,
+   363
+  ],
+  "slant": 2.2,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    755.5,
+    353.3
+   ],
+   "angle": 2.2,
+   "length": 76.9,
+   "thick": 21.4,
+   "box": [
+    719,
+    334,
+    798,
+    363
+   ]
+  }
+ },
+ {
+  "text": "Tozaz Forest",
+  "box": [
+   1150,
+   334,
+   1318,
+   356
+  ],
+  "slant": 0,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    1228.0,
+    342.3
+   ],
+   "angle": -0.43,
+   "length": 162.0,
+   "thick": 18.6,
+   "box": [
+    1150,
+    334,
+    1318,
+    356
+   ]
+  }
+ },
+ {
+  "text": "NENZEE",
+  "box": [
+   250,
+   395,
+   353,
+   421
+  ],
+  "slant": 0.2,
+  "conf": 0.98,
+  "retype": true,
+  "named": "NENZEE",
+  "ink": {
+   "at": [
+    302.0,
+    413.8
+   ],
+   "angle": -0.37,
+   "length": 90.1,
+   "thick": 20.1,
+   "box": [
+    250,
+    395,
+    353,
+    421
+   ]
+  }
+ },
+ {
+  "text": "TOKLUZ",
+  "box": [
+   666,
+   363,
+   762,
+   402
+  ],
+  "slant": 0.4,
+  "conf": 0.82,
+  "retype": true,
+  "named": "TOKLUZ",
+  "ink": {
+   "at": [
+    708.5,
+    381.5
+   ],
+   "angle": 0.4,
+   "length": 92.9,
+   "thick": 27.5,
+   "box": [
+    666,
+    363,
+    762,
+    402
+   ]
+  }
+ },
+ {
+  "text": "AKLUZ",
+  "box": [
+   1444,
+   387,
+   1529,
+   408
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "AKLUZ",
+  "ink": {
+   "at": [
+    1486.0,
+    398.1
+   ],
+   "angle": -1.37,
+   "length": 78.3,
+   "thick": 13.7,
+   "box": [
+    1444,
+    387,
+    1529,
+    408
+   ]
+  }
+ },
+ {
+  "text": "R. Shug",
+  "box": [
+   1029,
+   438,
+   1103,
+   511
+  ],
+  "slant": -32.2,
+  "conf": 0.88,
+  "retype": true,
+  "ink": {
+   "at": [
+    1065.6,
+    475.5
+   ],
+   "angle": -32.2,
+   "length": 82.2,
+   "thick": 27.2,
+   "box": [
+    1029,
+    438,
+    1103,
+    511
+   ]
+  }
+ },
+ {
+  "text": "SHPYDER",
+  "box": [
+   402,
+   462,
+   515,
+   486
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    459.0,
+    477.6
+   ],
+   "angle": 0.37,
+   "length": 106.1,
+   "thick": 20.6,
+   "box": [
+    402,
+    462,
+    515,
+    486
+   ]
+  }
+ },
+ {
+  "text": "NYRAS",
+  "box": [
+   880,
+   458,
+   983,
+   486
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    931.9,
+    472.1
+   ],
+   "angle": 1.22,
+   "length": 94.2,
+   "thick": 19.8,
+   "box": [
+    880,
+    458,
+    983,
+    486
+   ]
+  }
+ },
+ {
+  "text": "KAGORST",
+  "box": [
+   1519,
+   440,
+   1651,
+   464
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1584.0,
+    449.9
+   ],
+   "angle": 0.6,
+   "length": 138.3,
+   "thick": 24.8,
+   "box": [
+    1519,
+    440,
+    1651,
+    464
+   ]
+  }
+ },
+ {
+  "text": "EGINAZEE",
+  "box": [
+   265,
+   515,
+   398,
+   542
+  ],
+  "slant": -1.1,
+  "conf": 1,
+  "retype": true,
+  "named": "EGINAZEE",
+  "ink": {
+   "at": [
+    329.6,
+    526.7
+   ],
+   "angle": 1.27,
+   "length": 123.1,
+   "thick": 20.9,
+   "box": [
+    265,
+    515,
+    398,
+    542
+   ]
+  }
+ },
+ {
+  "text": "GAGHEZA",
+  "box": [
+   543,
+   506,
+   670,
+   530
+  ],
+  "slant": -0.9,
+  "conf": 1,
+  "retype": true,
+  "named": "GAGHEZA",
+  "ink": {
+   "at": [
+    606.0,
+    522.0
+   ],
+   "angle": 0.06,
+   "length": 122.0,
+   "thick": 22.0,
+   "box": [
+    543,
+    506,
+    670,
+    530
+   ]
+  }
+ },
+ {
+  "text": "HOKIDAT",
+  "box": [
+   740,
+   495,
+   847,
+   518
+  ],
+  "slant": -1.1,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    796.0,
+    508.8
+   ],
+   "angle": -0.43,
+   "length": 100.0,
+   "thick": 15.2,
+   "box": [
+    740,
+    495,
+    847,
+    518
+   ]
+  }
+ },
+ {
+  "text": "DEJEZA",
+  "box": [
+   1359,
+   488,
+   1464,
+   509
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "DEJEZA",
+  "ink": {
+   "at": [
+    1412.0,
+    499.8
+   ],
+   "angle": -0.5,
+   "length": 97.9,
+   "thick": 13.5,
+   "box": [
+    1359,
+    488,
+    1464,
+    509
+   ]
+  }
+ },
+ {
+  "text": "SHUGKONA",
+  "box": [
+   1102,
+   540,
+   1246,
+   560
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1174.5,
+    548.4
+   ],
+   "angle": 0.29,
+   "length": 137.0,
+   "thick": 19.1,
+   "box": [
+    1102,
+    540,
+    1246,
+    560
+   ]
+  }
+ },
+ {
+  "text": "NYVOZ",
+  "box": [
+   1520,
+   532,
+   1633,
+   563
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1577.0,
+    546.0
+   ],
+   "angle": -0.04,
+   "length": 102.0,
+   "thick": 24.0,
+   "box": [
+    1520,
+    532,
+    1633,
+    563
+   ]
+  }
+ },
+ {
+  "text": "SHUKZEE",
+  "box": [
+   385,
+   573,
+   503,
+   603
+  ],
+  "slant": -0.6,
+  "conf": 0.99,
+  "retype": true,
+  "named": "SHUKZEE",
+  "ink": {
+   "at": [
+    448.0,
+    590.2
+   ],
+   "angle": -0.29,
+   "length": 116.0,
+   "thick": 16.1,
+   "box": [
+    385,
+    573,
+    503,
+    603
+   ]
+  }
+ },
+ {
+  "text": "KONOZOD",
+  "box": [
+   871,
+   598,
+   984,
+   619
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    928.0,
+    610.4
+   ],
+   "angle": -0.22,
+   "length": 106.0,
+   "thick": 15.0,
+   "box": [
+    871,
+    598,
+    984,
+    619
+   ]
+  }
+ },
+ {
+  "text": "R.Gourneni",
+  "box": [
+   1215,
+   602,
+   1346,
+   730
+  ],
+  "slant": -44.7,
+  "conf": 0.95,
+  "retype": true,
+  "ink": {
+   "at": [
+    1272.7,
+    669.1
+   ],
+   "angle": -43.74,
+   "length": 165.0,
+   "thick": 22.5,
+   "box": [
+    1215,
+    602,
+    1346,
+    730
+   ]
+  }
+ },
+ {
+  "text": "ZEEGAZAD",
+  "box": [
+   585,
+   674,
+   727,
+   694
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "ZEEGAZAD",
+  "ink": {
+   "at": [
+    657.0,
+    684.5
+   ],
+   "angle": 0.21,
+   "length": 136.0,
+   "thick": 13.4,
+   "box": [
+    585,
+    674,
+    727,
+    694
+   ]
+  }
+ },
+ {
+  "text": "ODAKZEE",
+  "box": [
+   369,
+   690,
+   477,
+   711
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "ODAKZEE",
+  "ink": {
+   "at": [
+    422.5,
+    701.1
+   ],
+   "angle": 0.18,
+   "length": 101.0,
+   "thick": 14.0,
+   "box": [
+    369,
+    690,
+    477,
+    711
+   ]
+  }
+ },
+ {
+  "text": "ODNENGA",
+  "box": [
+   750,
+   705,
+   872,
+   728
+  ],
+  "slant": -0.9,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    810.5,
+    720.7
+   ],
+   "angle": 1.42,
+   "length": 115.1,
+   "thick": 21.0,
+   "box": [
+    750,
+    705,
+    872,
+    728
+   ]
+  }
+ },
+ {
+  "text": "LOZONZEE",
+  "box": [
+   1162,
+   748,
+   1297,
+   773
+  ],
+  "slant": -0.2,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1225.6,
+    758.0
+   ],
+   "angle": -0.97,
+   "length": 128.8,
+   "thick": 20.2,
+   "box": [
+    1162,
+    748,
+    1297,
+    773
+   ]
+  }
+ },
+ {
+  "text": "KLAKONA",
+  "box": [
+   847,
+   789,
+   959,
+   806
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "KLAKONA",
+  "ink": {
+   "at": [
+    903.5,
+    800.5
+   ],
+   "angle": 0.14,
+   "length": 109.0,
+   "thick": 17.1,
+   "box": [
+    847,
+    789,
+    959,
+    806
+   ]
+  }
+ },
+ {
+  "text": "Dakushna's",
+  "box": [
+   1242,
+   781,
+   1394,
+   806
+  ],
+  "slant": -0.7,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1312.6,
+    791.8
+   ],
+   "angle": -0.98,
+   "length": 144.9,
+   "thick": 16.2,
+   "box": [
+    1242,
+    781,
+    1394,
+    806
+   ]
+  }
+ },
+ {
+  "text": "Channel",
+  "box": [
+   1405,
+   785,
+   1516,
+   839
+  ],
+  "slant": 17.1,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1464.8,
+    808.8
+   ],
+   "angle": 16.88,
+   "length": 107.8,
+   "thick": 22.2,
+   "box": [
+    1405,
+    785,
+    1516,
+    839
+   ]
+  }
+ },
+ {
+  "text": "NAZEE",
+  "box": [
+   479,
+   838,
+   561,
+   863
+  ],
+  "slant": -0.4,
+  "conf": 0.99,
+  "retype": true,
+  "named": "NAZEE",
+  "ink": {
+   "at": [
+    520.4,
+    850.8
+   ],
+   "angle": -1.51,
+   "length": 71.0,
+   "thick": 12.9,
+   "box": [
+    479,
+    838,
+    561,
+    863
+   ]
+  }
+ },
+ {
+  "text": "DARKE",
+  "box": [
+   587,
+   822,
+   675,
+   846
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    635.5,
+    831.6
+   ],
+   "angle": -0.17,
+   "length": 85.0,
+   "thick": 22.9,
+   "box": [
+    587,
+    822,
+    675,
+    846
+   ]
+  }
+ },
+ {
+  "text": "ZANDHEZA",
+  "box": [
+   717,
+   850,
+   847,
+   871
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "ZANDHEZA",
+  "ink": {
+   "at": [
+    782.0,
+    861.6
+   ],
+   "angle": -0.39,
+   "length": 124.0,
+   "thick": 18.2,
+   "box": [
+    717,
+    850,
+    847,
+    871
+   ]
+  }
+ },
+ {
+  "text": "GULF OF LENCIA",
+  "box": [
+   171,
+   908,
+   378,
+   931
+  ],
+  "slant": -0.2,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    274.0,
+    920.5
+   ],
+   "angle": 0.17,
+   "length": 198.0,
+   "thick": 13.6,
+   "box": [
+    171,
+    908,
+    378,
+    931
+   ]
+  }
+ },
+ {
+  "text": "Shad Forest",
+  "box": [
+   765,
+   881,
+   932,
+   908
+  ],
+  "slant": 0.4,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    848.0,
+    894.8
+   ],
+   "angle": -0.91,
+   "length": 149.9,
+   "thick": 15.8,
+   "box": [
+    765,
+    881,
+    932,
+    908
+   ]
+  }
+ },
+ {
+  "text": "MAYCASTLE",
+  "box": [
+   493,
+   949,
+   664,
+   987
+  ],
+  "slant": 2.4,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    573.2,
+    967.4
+   ],
+   "angle": 4.82,
+   "length": 168.3,
+   "thick": 36.1,
+   "box": [
+    493,
+    949,
+    664,
+    987
+   ]
+  }
+ },
+ {
+  "text": "ZANDZEE",
+  "box": [
+   660,
+   921,
+   776,
+   950
+  ],
+  "slant": -0.1,
+  "conf": 0.95,
+  "retype": true,
+  "named": "ZANDZEE",
+  "ink": {
+   "at": [
+    719.0,
+    934.2
+   ],
+   "angle": -0.25,
+   "length": 106.0,
+   "thick": 20.0,
+   "box": [
+    660,
+    921,
+    776,
+    950
+   ]
+  }
+ },
+ {
+  "text": "ZINODOG",
+  "box": [
+   859,
+   944,
+   983,
+   964
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "ZINODOG",
+  "ink": {
+   "at": [
+    918.5,
+    951.0
+   ],
+   "angle": 0.1,
+   "length": 125.0,
+   "thick": 22.1,
+   "box": [
+    859,
+    944,
+    983,
+    964
+   ]
+  }
+ },
+ {
+  "text": "Mayne Is.",
+  "box": [
+   394,
+   991,
+   519,
+   1018
+  ],
+  "slant": 87.3,
+  "conf": 0.83,
+  "retype": true,
+  "ink": {
+   "at": [
+    454.7,
+    1001.3
+   ],
+   "angle": -2.05,
+   "length": 118.0,
+   "thick": 23.8,
+   "box": [
+    394,
+    991,
+    519,
+    1018
+   ]
+  }
+ },
+ {
+  "text": "THE HELLSWAMP",
+  "box": [
+   1182,
+   974,
+   1472,
+   1006
+  ],
+  "slant": -0.3,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1330.5,
+    993.3
+   ],
+   "angle": -0.11,
+   "length": 289.0,
+   "thick": 32.0,
+   "box": [
+    1182,
+    974,
+    1472,
+    1006
+   ]
+  }
+ },
+ {
+  "text": "VADERA",
+  "box": [
+   697,
+   1109,
+   800,
+   1131
+  ],
+  "slant": 0.4,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    748.0,
+    1118.0
+   ],
+   "angle": 0.81,
+   "length": 94.2,
+   "thick": 18.4,
+   "box": [
+    697,
+    1109,
+    800,
+    1131
+   ]
+  }
+ },
+ {
+  "text": "Battle Is.",
+  "box": [
+   829,
+   1083,
+   937,
+   1104
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    884.5,
+    1094.5
+   ],
+   "angle": 0.3,
+   "length": 101.1,
+   "thick": 13.4,
+   "box": [
+    829,
+    1083,
+    937,
+    1104
+   ]
+  }
+ },
+ {
+  "text": "OAISLE BAY",
+  "box": [
+   502,
+   1124,
+   655,
+   1147
+  ],
+  "slant": 0.4,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    579.6,
+    1131.9
+   ],
+   "angle": -1.44,
+   "length": 147.3,
+   "thick": 23.2,
+   "box": [
+    502,
+    1124,
+    655,
+    1147
+   ]
+  }
+ },
+ {
+  "text": "Isle of Avieron",
+  "box": [
+   153,
+   1175,
+   356,
+   1203
+  ],
+  "slant": 0.4,
+  "conf": 1,
+  "retype": true,
+  "named": "Isle of Avieron",
+  "ink": {
+   "at": [
+    255.5,
+    1190.4
+   ],
+   "angle": 0.16,
+   "length": 191.0,
+   "thick": 15.0,
+   "box": [
+    153,
+    1175,
+    356,
+    1203
+   ]
+  }
+ },
+ {
+  "text": "WYDE COVE",
+  "box": [
+   811,
+   1176,
+   962,
+   1198
+  ],
+  "slant": -0.1,
+  "conf": 0.94,
+  "retype": true,
+  "named": "WYYE COVE",
+  "ink": {
+   "at": [
+    883.1,
+    1189.6
+   ],
+   "angle": -1.85,
+   "length": 147.9,
+   "thick": 20.9,
+   "box": [
+    811,
+    1176,
+    962,
+    1198
+   ]
+  }
+ },
+ {
+  "text": "The Tentarias",
+  "box": [
+   1036,
+   1208,
+   1179,
+   1341
+  ],
+  "slant": 42.4,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1107.0,
+    1274.6
+   ],
+   "angle": 43.35,
+   "length": 160.5,
+   "thick": 14.9,
+   "box": [
+    1036,
+    1208,
+    1179,
+    1341
+   ]
+  }
+ },
+ {
+  "text": "STARBEACH",
+  "box": [
+   582,
+   1257,
+   726,
+   1277
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "STARBEACH",
+  "ink": {
+   "at": [
+    652.6,
+    1265.5
+   ],
+   "angle": 1.04,
+   "length": 139.1,
+   "thick": 17.4,
+   "box": [
+    582,
+    1257,
+    726,
+    1277
+   ]
+  }
+ },
+ {
+  "text": "WESTHAVEN",
+  "box": [
+   300,
+   1301,
+   451,
+   1322
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "named": "WESTHAVEN",
+  "ink": {
+   "at": [
+    374.0,
+    1312.1
+   ],
+   "angle": -0.4,
+   "length": 144.0,
+   "thick": 13.3,
+   "box": [
+    300,
+    1301,
+    451,
+    1322
+   ]
+  }
+ },
+ {
+  "text": "LENCIA",
+  "box": [
+   650,
+   1307,
+   792,
+   1337
+  ],
+  "slant": 0.8,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    718.5,
+    1323.3
+   ],
+   "angle": 0.98,
+   "length": 125.3,
+   "thick": 19.5,
+   "box": [
+    650,
+    1307,
+    792,
+    1337
+   ]
+  }
+ },
+ {
+  "text": "LOYTON",
+  "box": [
+   867,
+   1305,
+   967,
+   1328
+  ],
+  "slant": 1.1,
+  "conf": 1,
+  "retype": true,
+  "named": "LOYTON",
+  "ink": {
+   "at": [
+    917.0,
+    1318.0
+   ],
+   "angle": 0.18,
+   "length": 92.0,
+   "thick": 12.2,
+   "box": [
+    867,
+    1305,
+    967,
+    1328
+   ]
+  }
+ },
+ {
+  "text": "MOUNTAINS",
+  "box": [
+   331,
+   1393,
+   484,
+   1413
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "CONIFEROUS FOREST",
+  "box": [
+   598,
+   1384,
+   757,
+   1426
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false,
+  "lines": [
+   "CONIFEROUS",
+   "FOREST"
+  ]
+ },
+ {
+  "text": "ROADS",
+  "box": [
+   865,
+   1392,
+   951,
+   1416
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "0 50 100",
+  "box": [
+   1053,
+   1368,
+   1334,
+   1391
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false,
+  "spread": true
+ },
+ {
+  "text": "SCALE",
+  "box": [
+   1056,
+   1407,
+   1124,
+   1425
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "IN",
+  "box": [
+   1171,
+   1406,
+   1201,
+   1426
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "MILES",
+  "box": [
+   1251,
+   1403,
+   1324,
+   1429
+  ],
+  "slant": 0.3,
+  "conf": 0.84,
+  "retype": false
+ },
+ {
+  "text": "HILLS",
+  "box": [
+   331,
+   1469,
+   406,
+   1490
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "PLAINS",
+  "box": [
+   596,
+   1467,
+   695,
+   1493
+  ],
+  "slant": 1.2,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "TRACKS",
+  "box": [
+   865,
+   1471,
+   966,
+   1491
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "SWAMP",
+  "box": [
+   1149,
+   1467,
+   1243,
+   1488
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": false
+ }
+]

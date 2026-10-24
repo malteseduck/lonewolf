@@ -85,6 +85,17 @@ describe('arriving: Meals, Hunting and Healing', () => {
     expect(g.hero.ep).toBe(17);
     expect(g.s.events).toContain('You have nothing to eat. You lose 3 ENDURANCE.');
   });
+  it('noHunt: \'Hunting\' fails only Kai Hunting; Huntmastery still spares the Meal', () => {
+    const veteran = (magnakai) => mkHero({ series: 'magnakai', disciplines: ['hunting'], magnakai, completed: ['01a', '02b', '03c', '04d', '05e'] });
+    const kai = play({ 2: { meal: true, noHunt: 'Hunting' }, 3: { meal: true } }, veteran(['nexus']));
+    kai.go('2');
+    expect(kai.hero.meals).toBe(0);
+    kai.hero.meals = 1; kai.go('3');
+    expect(kai.hero.meals).toBe(1);
+    const magnakai = play({ 2: { meal: true, noHunt: 'Hunting' } }, veteran(['huntmastery']));
+    magnakai.go('2');
+    expect(magnakai.hero.meals).toBe(1);
+  });
   it('Healing gives +1 ENDURANCE in a section without a fight, up to the maximum', () => {
     const g = play({ 2: {} }, mkHero({ disciplines: ['healing'] }));
     g.hero.ep = 20; // starting at section 1 already healed once
