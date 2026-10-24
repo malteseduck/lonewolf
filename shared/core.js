@@ -160,11 +160,20 @@
       for (const [to, n] of Object.entries(need || {})) sec.choices.filter((c) => c.to === to).forEach((c) => { if (n === null) delete c.need; else c.need = n.any ? n : Object.assign({}, c.need, n); });
     }
   };
-  /* The item a typed name is (the Sommerswerd), with its kind and powers; the ids in `first` (the open
-     book's own) are tried first, where two books share a name. */
-  LW.itemByName = (name, first = []) => {
-    const n = name.toLowerCase();
-    return [...first, ...Object.keys(LW.ITEMS)].find((id) => (LW.ITEMS[id].name || '').toLowerCase() === n) || null;
+  /* What adding by hand offers in the open book (tables: every book's item table, by book id, whose code
+     starts with its number): the engine's own items and the book's, by kind, and the Special Items of
+     earlier books, the only ones carried from book to book, each under the first book to have it. */
+  LW.pickable = (tables, bookId) => {
+    const num = (id) => parseInt(id, 10) || 0, own = (tables[bookId] || {}).ITEMS || {};
+    const inTables = new Set(Object.values(tables).flatMap((t) => Object.keys(t.ITEMS || {})));
+    const ids = [...Object.keys(LW.ITEMS).filter((id) => !inTables.has(id)), ...Object.keys(own)];
+    const seen = new Set(Object.keys(own)), past = [];
+    for (const b of Object.keys(tables).filter((b) => num(b) < num(bookId)).sort((a, c) => num(a) - num(c))) {
+      const items = Object.keys(tables[b].ITEMS || {}).filter((id) => LW.itemKind(id) === 'special' && !seen.has(id));
+      items.forEach((id) => seen.add(id));
+      if (items.length) past.push({ book: b, items });
+    }
+    return { backpack: ['meal', ...ids.filter((id) => LW.itemKind(id) === 'backpack')], special: ids.filter((id) => LW.itemKind(id) === 'special'), past };
   };
   const listOf = (hero, id) => ({ weapon: hero.weapons, backpack: hero.backpack, special: hero.special }[LW.itemKind(id)]);
   LW.hasItem = (hero, id) => (id === 'meal' ? hero.meals > 0 : listOf(hero, id).includes(id));

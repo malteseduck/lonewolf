@@ -48,7 +48,7 @@ has its tests in `tests/js/` (`core-*`, `rules-series`, `fight`).
 }
 ```
 
-Item ids are keys of `LW.ITEMS`, or `pack:Name` / `spec:Name` for items typed in by hand.
+Item ids are keys of `LW.ITEMS`, or `pack:Name` / `spec:Name` for items typed in by hand (older saves; the picker no longer takes a name).
 `LW.itemName(id)` and `LW.itemKind(id)` handle both. A book's own items join `LW.ITEMS` through
 `LW.addItems` (from its item table). `LW.putItem(hero, id)` puts one where it belongs, or returns why
 it does not fit (two weapons, a full Backpack: `LW.backpackMax(hero)`, 8, or 10 in the Grand Master series; no Backpack); `LW.dropItem(hero, id)` takes one
@@ -64,7 +64,7 @@ Item (`LW.specialLimit`: 12 in every book, ruling R2). And one an item's `apart`
 | Kai disciplines, items, limits | `LW.DISCIPLINES`, `LW.ITEMS` (with the kit items: `shield` has `fightCs: 2`, `leatherWaistcoat` `ep: 2`, each book's map), `LW.WEAPONS`, `LW.MAX_WEAPONS`, `LW.MAX_BACKPACK`, `LW.backpackMax(hero)`, `LW.MAX_ARROWS`, `LW.bookNumber`, `LW.specialLimit(hero)` |
 | New Kai character | `LW.makeHero({csRoll, epRoll, disciplines, bonusItem})`. Book 1's kit: Axe, one Meal, the map, gold = Random Number; Book 1's bonus item table. For a later book the dialog empties it and gives that book's kit |
 | Default hooks | `LW.has`, `LW.heals`, `LW.hunts`, `LW.rankCount`, `LW.heroCS` (all replaced by `rules-series.js` when it is loaded) |
-| Item tables | `LW.applyItems(book, table)`: lays a book's `items-<code>.js` over its sections, once (book-format.md, "Item tables"). `LW.itemByName(name, first)`: the item a typed name is, the open book's own (`first`) tried first |
+| Item tables | `LW.applyItems(book, table)`: lays a book's `items-<code>.js` over its sections, once (book-format.md, "Item tables"). `LW.pickable(tables, bookId)`: what adding by hand offers: the engine's and the open book's items by kind, and earlier books' Special Items by book |
 | Conditions | `LW.meets(hero, cond, ctx)`, `LW.condName(cond)`: disciplines (any, or all), rank, Lore-circles, Endurance now; from item tables also items (any, or all), weapons of a kind held or in hand (`ctx.weapon` in a fight, else `LW.inHand`), Weaponskill / Weaponmastery (`LW.skilledWith`), counts, gold, marks, `any`, `not` (book-format.md, Conditions). `need.any` is a list of them, any one opening the choice (checked in `choices()`) |
 | Lasting conditions, coins | `LW.MARKS` (from the tables' `MARKS`, through `LW.addItems(items, marks)`), `LW.marksOf(hero)` (those in force in this book); `LW.COINS` |
 | Item uses | `LW.useUp(hero, id)`: one dose, else the item. `LW.counted(hero)` (Special Items under the limit, without `free` ones), `LW.quiverRoom(hero)` (Arrows, less what rides in their place) |

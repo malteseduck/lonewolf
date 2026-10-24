@@ -637,39 +637,24 @@ function packHTML() {
       ails.length && !adding ? `<p class="kept">${esc(ails.join('. '))}.</p>` : ''}${
       (h.notes || []).length && !adding ? `<p class="kept">Noted: ${esc(h.notes.join('; '))}.</p>` : ''}`;
 }
-/* Adding by hand: the items as medallions in place of the worn kit, so the Backpack below fills
-   while you pick. "Something else" asks for a name on the line beneath. */
-let adding = false, naming = null; // naming: 'pack' or 'spec' while a name is being typed
+/* Adding by hand: every item of every book as medallions in place of the worn kit, so the Backpack
+   below fills while you pick. Earlier books' Special Items fold away, filtered to one book. */
+let adding = false, pastOpen = false, pastBook = ''; // pastBook: the book the earlier Special Items are narrowed to, '' for all
 function pickerHTML() {
   const pick = (id) => `<button type="button" class="disc item" data-add="${id}" title="${esc(LW.itemName(id))}" aria-label="Add ${esc(LW.itemName(id))}">${itemGlyph(id)}</button>`;
-  const other = (kind, g, label) => `<button type="button" class="disc item other ${naming === kind ? 'sel' : ''}" data-add="other:${kind}" title="${label}" aria-label="${label}">${glyph(g)}</button>`;
   const row = (name, discs) => `<div class="pickrow"><em>${name}</em><div>${discs}</div></div>`;
-  const pastItems = [];
-  const currentNum = book.number || 0;
-  Object.entries(ITEM_TABLES).forEach(([id, table]) => {
-    const tableBookNumber = BOOKS[id] ? BOOKS[id].number : 0;
-    if (tableBookNumber > 0 && tableBookNumber < currentNum && table.ITEMS) {
-      Object.keys(table.ITEMS).forEach((itemId) => {
-        if (LW.itemKind(itemId) === 'special' && !pastItems.includes(itemId) && (!ITEM_TABLES[book.id] || !ITEM_TABLES[book.id].ITEMS[itemId])) {
-          pastItems.push(itemId);
-        }
-      });
-    }
-  });
-
+  const p = LW.pickable(ITEM_TABLES, book.id), bookName = (b) => (BOOKS[b] ? `${BOOKS[b].number}. ${BOOKS[b].title}` : `Book ${parseInt(b, 10)}`);
+  if (pastBook && !p.past.some((g) => g.book === pastBook)) pastBook = '';
+  const shown = p.past.filter((g) => !pastBook || g.book === pastBook);
   return `<div class="picker">${ruled('Add an item <button type="button" class="inkbtn" data-adding="close">done</button>')}
     ${row('Weapons', LW.WEAPONS.map(pick).join(''))}
-    ${row('Backpack', pick('meal') + pick('potion') + other('pack', UG.otherPack, 'Another Backpack Item'))}
-    ${row('Special Items', pick('helmet') + pick('chainmail') + pick('map') + other('spec', UG.otherSpecial, 'Another Special Item'))}
-    ${pastItems.length ? `
-      <details>
-        <summary>View Special Items from Past Books</summary>
-        <div style="padding-top: 10px;">
-          ${row('Past Items', pastItems.map(pick).join(''))}
-        </div>
-      </details>
-    ` : ''}
-    ${naming ? `<input id="itemname" class="pickname" placeholder="Name it, then press Enter" aria-label="Item name" data-prefix="${naming}">` : '<p class="pickname">Touch an item to add it.</p>'}</div>`;
+    ${row('Backpack', p.backpack.map(pick).join(''))}
+    ${row('Special Items', p.special.map(pick).join(''))}
+    ${p.past.length ? `<details class="pastitems" ${pastOpen ? 'open' : ''}><summary>Special Items from earlier books</summary>
+      <select id="pastbook" class="pickfilter" aria-label="Which earlier book"><option value="">Every earlier book</option>${
+        p.past.map((g) => `<option value="${g.book}" ${g.book === pastBook ? 'selected' : ''}>${esc(bookName(g.book))}</option>`).join('')}</select>
+      ${shown.map((g) => row(`Book ${parseInt(g.book, 10)}`, g.items.map(pick).join(''))).join('')}</details>` : ''}
+    <p class="pickname">Touch an item to add it.</p></div>`;
 }
 
 /* the current book's printed map, or null until it has loaded (an open map modal starts then) */
@@ -1192,12 +1177,9 @@ bookEl.addEventListener('click', (e) => {
   else if ('rename' in d) { renaming = d.rename || null; renderRight(); const box = $('#advname'); if (box) { box.focus(); box.select(); } }
   else if ('forget' in d) { if ('sure' in d) forgetAdventure(d.forget); forgetting = 'sure' in d ? null : d.forget || null; renderRight(); }
   else if (d.panel === 'map') openMap();
-  else if (d.panel) { panel = d.panel; sel = null; adding = false; naming = null; render(); }
-  else if (d.adding) { adding = d.adding === 'open'; naming = null; renderRight(); }
-  else if (d.add) {
-    if (!d.add.startsWith('other:')) return void addItem(d.add);
-    naming = d.add.slice(6); renderRight(); $('#itemname').focus();
-  }
+  else if (d.panel) { panel = d.panel; sel = null; adding = false; render(); }
+  else if (d.adding) { adding = d.adding === 'open'; renderRight(); }
+  else if (d.add) addItem(d.add);
   else if (d.sel) { const [kind, id] = d.sel.split('|'); sel = { kind, id }; renderRight(); }
   else if (d.adj) { const [field, by] = d.adj.split(':'); game.adjust(field, +by); render(); }
   else if (d.loot != null) { const err = game.takeLoot(/^\d+$/.test(d.loot) ? +d.loot : d.loot); if (err) LW.UI.toast(err); render(); }
@@ -1232,15 +1214,9 @@ bookEl.addEventListener('keydown', (e) => {
   renaming = null; renderRight();
 });
 function addItem(id) { const err = game.addItem(id); if (err) LW.UI.toast(err); render(); }
-/* a typed name that is a known item's (the Sommerswerd) adds that item, with its kind and powers;
-   the open book's own items first, where two books share a name */
-const knownItem = (name) => LW.itemByName(name, ITEM_TABLES[book.id] ? Object.keys(ITEM_TABLES[book.id].ITEMS) : []);
-pr.addEventListener('keydown', (e) => {
-  if (e.target.id !== 'itemname' || (e.key !== 'Enter' && e.key !== 'Escape')) return;
-  const name = e.key === 'Enter' && e.target.value.trim().replace(/[|"<>]/g, ''), prefix = e.target.dataset.prefix;
-  naming = null;
-  if (name) addItem(knownItem(name) || `${prefix}:${name}`); else renderRight();
-});
+// the earlier books' Special Items: which book, and whether folded (kept across the redraw each add makes)
+pr.addEventListener('change', (e) => { if (e.target.id === 'pastbook') { pastBook = e.target.value; renderRight(); } });
+pr.addEventListener('toggle', (e) => { if (e.target.matches('details.pastitems')) pastOpen = e.target.open; }, true);
 /* the picker names whatever the pointer is over */
 pr.addEventListener('pointerover', (e) => {
   const t = e.target.closest('[data-add]'), line = pr.querySelector('p.pickname');

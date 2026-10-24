@@ -375,11 +375,12 @@ button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background:
 .page .pickrow em { flex: none; box-sizing: border-box; width: 7.4em; min-width: 0; padding-top: 1em; align-self: flex-start; line-height: 1.15; white-space: normal; }
 .page .pickrow div { flex: 1; min-width: 0; }
 .pickrow .disc::after { display: none; }
-.disc.other::before { content: '+'; position: absolute; right: -0.15em; bottom: -0.15em; width: 1.05em; height: 1.05em; border-radius: 50%; background: var(--enamel-lo); box-shadow: 0 0 0 0.07em var(--pewter); color: var(--glyph); font: 400 0.75em/1.05em var(--title); text-align: center; }
 .pickname { margin: 0.1em 0 0 5.7em; min-height: 1.3em; font-size: 1.05em; color: var(--ink-dim); }
-input.pickname { width: calc(100% - 5.7em); padding: 0 0.1em; border: 0; border-bottom: 1px solid var(--ink); background: none; color: var(--ink); font: 700 1.05em var(--script); color-scheme: light; }
-input.pickname:focus { outline: none; border-bottom-color: var(--blood); }
-input.pickname::placeholder { color: var(--ink-dim); font-weight: 400; }
+.pastitems summary { cursor: pointer; font: 400 0.75em var(--title); letter-spacing: 0.08em; color: var(--ink-dim); }
+.pastitems[open] summary { margin-bottom: 0.35em; }
+.pickfilter { display: block; margin: 0 0 0.35em 7.9em; padding: 0.1em 0.2em; border: 0; border-bottom: 1px solid var(--ink); background: none; color: var(--ink); font: 700 0.95em var(--script); color-scheme: light; }
+.pickfilter:focus { outline: none; border-bottom-color: var(--blood); }
+.pastitems .pickrow + .pickrow { margin-top: 0.35em; }
 .purse { display: inline-flex; align-items: center; gap: 0.3em; font: 400 0.9em var(--title); white-space: nowrap; }
 .purse b { font-weight: 400; font-size: 1.3em; font-variant-numeric: lining-nums; }
 .purse .glyph { width: 1.4em; height: 1.4em; }

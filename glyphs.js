@@ -53,8 +53,6 @@ export const UI_GLYPH = {
   statEp: 'heart-drop',
   statGold: 'two-coins',
   purse: 'shiny-purse',
-  otherPack: 'swap-bag',
-  otherSpecial: 'gem-pendant',
   beginFight: 'crossed-swords',
   strike: 'spinning-sword',
   mindblast: 'brainstorm',
@@ -65,7 +63,7 @@ export const UI_GLYPH = {
   foeEmblem: 'fish-monster',
 };
 
-/* an item with no glyph of its own (one typed in by hand, or a table's item without one), by its kind */
+/* an item with no glyph of its own (one typed in by hand in an older save, or a table's item without one), by its kind */
 export const KIND_GLYPH = {
   gold: 'two-coins',
   pack: 'backpack',
@@ -88,8 +86,6 @@ export const WHERE = {
   statEp: ['Gauges and inventory', 'the Endurance gauge'],
   statGold: ['Gauges and inventory', 'the Gold Crowns gauge'],
   purse: ['Gauges and inventory', 'the purse lines in the inventory (Gold Crowns and other coins)'],
-  otherPack: ['Gauges and inventory', '"Another Backpack Item" when adding by hand'],
-  otherSpecial: ['Gauges and inventory', '"Another Special Item" when adding by hand'],
   beginFight: ['Fights', 'the medallion that begins a fight'],
   strike: ['Fights', 'Strike, when he has no weapon in hand'],
   mindblast: ['Fights', 'Mindblast'],

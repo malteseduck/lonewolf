@@ -49,13 +49,23 @@ describe('an item table laid over a book', () => {
   });
 });
 
-describe('a typed name', () => {
-  it('finds the item of that name, in any case, the open book\'s own first', () => {
-    LW.addItems({ bookAKey: { name: 'Iron Key', kind: 'special' }, bookBKey: { name: 'Iron Key', kind: 'special' } });
-    expect(LW.itemByName('iron key')).toBe('bookAKey');
-    expect(LW.itemByName('IRON KEY', ['bookBKey'])).toBe('bookBKey');
-    expect(LW.itemByName('Shield')).toBe('shield');
-    expect(LW.itemByName('no such thing')).toBe(null);
+describe('the items to add by hand', () => {
+  const tables = {
+    '01one': { ITEMS: { key1: { name: 'Iron Key', kind: 'special' }, herb1: { name: 'Herb', kind: 'backpack' } } },
+    '02two': { ITEMS: { ring2: { name: 'Ring', kind: 'special' }, key1: { name: 'Iron Key', kind: 'special' }, club2: { name: 'Club', kind: 'weapon' } } },
+    '03three': { ITEMS: { cup3: { name: 'Cup', kind: 'backpack' }, gem3: { name: 'Gem', kind: 'special' } } },
+  };
+  beforeEach(() => Object.values(tables).forEach((t) => LW.addItems(t.ITEMS)));
+  it('offers every engine item and the open book\'s own, by kind', () => {
+    const p = LW.pickable(tables, '03three');
+    expect(p.backpack).toEqual(expect.arrayContaining(['meal', 'potion', 'rope', 'cup3']));
+    expect(p.special).toEqual(expect.arrayContaining(['helmet', 'shield', 'gem3']));
+    expect([...p.backpack, ...p.special]).not.toContain('herb1');
+    expect(p.special).not.toContain('ring2');
+  });
+  it('offers earlier books\' Special Items by book, each once, none of the open book\'s or a later one\'s', () => {
+    expect(LW.pickable(tables, '03three').past).toEqual([{ book: '01one', items: ['key1'] }, { book: '02two', items: ['ring2'] }]);
+    expect(LW.pickable(tables, '02two').past).toEqual([]);
   });
 });
 

@@ -152,15 +152,14 @@ on the same medallion again, or Escape closes it; touching another medallion mov
   standard items, else the item's own `glyph` from its book's item table, else a pouch or pendant
   by kind; gold and a found Backpack have their own.
   "Add an item by hand" (`adding`) swaps the weapons and Special Items for `pickerHTML()`: rows of small medallions
-  (weapons, Backpack Items, Special Items, and folded under "View Special Items from Past Books" the
-  Special Items of earlier books' item tables) that add on a touch and stay open, with "+" medallions
-  for something else, which ask for a name on an inked line (`naming`; Enter adds, Escape cancels).
-  A typed name that is a known item's (`knownItem`: "Sommerswerd") adds that item, with its kind and
-  powers; any other becomes a plain Backpack or Special Item of that name.
+  of every item there is (`LW.pickable`): the weapons, the engine's own Backpack and Special Items with
+  the open book's, and folded under "Special Items from earlier books" those of every earlier book's
+  item table, a row per book, narrowed to one book by a drop-down (`pastOpen`, `pastBook`). They add
+  on a touch and stay open. Nothing is typed in: every book's items are in its table.
   The picker takes exactly their space and scrolls within it (overriding the fixed height
   `shared/shared.css` gives `.picker`), so the Backpack below does not move; its row labels are one
   width, wrapping when long, top-aligned. The picker's own line names whatever is under the pointer.
-  Item glyphs are game-icons.net SVGs (`itemglyphs.js`, changed on the dashboard's item sheet); items typed in by hand get a pouch or a
+  Item glyphs are game-icons.net SVGs (`itemglyphs.js`, changed on the dashboard's item sheet); items typed in by hand (older saves) get a pouch or a
   pendant by their kind (`KIND_GLYPH`). Every other icon the player draws is named in `glyphs.js` (`UI_GLYPH`) and changed on the
   dashboard's icon sheet.
 - **map**: not a panel. Its tab medallion opens `openMap()`'s modal over the whole window (see "The map modal"
