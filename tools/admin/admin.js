@@ -257,6 +257,8 @@ function openIcons() {  // every icon the player draws beside the books' items: 
 $('[data-open="icons"]').onclick = openIcons;
 // every picture in art/: its link, none, or made with AI and moved into the committed library (ADR 0038, 0042)
 $('[data-open="sources"]').onclick = () => openInline({ code: '' }, '/tools/admin/sources.html?embed=1', 'Picture sources');
+// Lone Wolf on the title page and the Kai panel, baked into assets/hero/ (hero.html)
+$('[data-open="hero"]').onclick = () => openInline({ code: '' }, '/tools/admin/hero.html?embed=1', "Lone Wolf's pictures");
 function openMap(b, step) {
   if (!b?.folder) return toast('Download the book first', 3000);
   openInline(b, `/tools/map-editor.html?book=${encodeURIComponent(b.code)}&embed=1${step ? '&step=' + step : ''}`, `Map editor: ${b.n}. ${b.title}`);

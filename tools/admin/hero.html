@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lone Wolf's pictures</title>
+<link rel="stylesheet" href="admin.css">
+<script type="module" src="parchment.js"></script>
+<style>
+  .sheet-top { display: flex; gap: 12px; align-items: center; padding: 16px 24px 8px; flex-wrap: wrap; }
+  .sheet-top .sum { color: var(--dim); flex: 1; }
+  .note { margin: 0 24px 6px; color: var(--dim); font-size: 12px; max-width: 900px; }
+  .cards { display: flex; gap: 16px; padding: 8px 24px 32px; flex-wrap: wrap; align-items: flex-start; }
+  /* on the player's own paper, as they will show */
+  .card { background: var(--paper) center / cover; color: var(--ink); border-radius: 3px; padding: 10px; box-shadow: 0 2px 8px rgba(40, 24, 10, .45); }
+  .card img { display: block; max-width: 100%; }
+  .card b { display: block; font: 14px var(--title); margin-top: 6px; }
+  .card small { display: block; color: #6b553c; font-size: 12px; }
+  body.embed { padding: 0; }
+  body.embed::before, body.embed::after { display: none; }
+</style>
+</head>
+<body>
+<header class="sheet-top"><span class="sum" id="sum">Drawing...</span><button id="save" disabled>Save both</button></header>
+<p class="note">Lone Wolf on the title page and over the Kai panel, drawn from the owner's drawing (<code>assets/hero/lone-wolf.webp</code>)
+  and the burning monastery (<code>monastery.webp</code>) by <code>portraitFromArt</code> in <code>plates.js</code>. The player loads
+  the saved <code>frontis.webp</code> and <code>likeness.webp</code>, so after changing either drawing, the crops below or the
+  restyle, save them again here. Each is as big as it shows at 2x on the largest iPad.</p>
+<main class="cards" id="cards"></main>
+<div class="toast" id="toast" hidden></div>
+
+<script type="module">
+import * as Ink from '../../shared/ink.js';
+import { portraitFromArt } from '../../plates.js';
+const $ = (s) => document.querySelector(s);
+const params = new URLSearchParams(location.search);
+// like the other sheets, it opens only inside the dashboard (ADR 0021)
+if (!(params.get('embed') === '1' && window.parent !== window)) {
+  document.body.innerHTML = '<p style="padding:24px">This page opens only inside the import dashboard, <a href="/tools/admin/">/tools/admin/</a>.</p>';
+  throw new Error('not embedded');
+}
+document.body.classList.add('embed');
+document.documentElement.style.setProperty('--paper', `url(${Ink.parchment(900, 1300, false, true).toDataURL('image/jpeg', 0.86)})`);
+
+// crops in the 896x1200 original's units (the file is smaller); size: the longer side, as each shows at 2x on
+// the largest iPad (the frontispiece 902 px wide, the likeness 386 tall)
+const PICTURES = [
+  { name: 'frontis', what: 'Title page: hood to knee, the monastery behind', crop: [185, 28, 570, 790], fade: 0.8, opts: { wide: 1.3, at: 0.7, weight: 0.6, size: 920 }, back: true },
+  { name: 'likeness', what: 'Kai panel: head to belt', crop: [235, 25, 420, 360], fade: 0.6, opts: { size: 460 } },
+];
+const bitmap = (src) => fetch(src, { cache: 'no-store' }).then((r) => r.blob()).then(createImageBitmap);
+const webp = (c) => new Promise((ok) => c.toBlob(ok, 'image/webp', 0.9));
+const made = {};
+
+async function draw() {
+  const [hero, burning] = await Promise.all([bitmap('/assets/hero/lone-wolf.webp'), bitmap('/assets/hero/monastery.webp')]);
+  const at = (crop) => crop.map((n) => n * hero.width / 896);
+  for (const p of PICTURES) {
+    const b = await webp(portraitFromArt(hero, at(p.crop), p.fade, { ...p.opts, back: p.back ? burning : null }));
+    if (b.type !== 'image/webp') throw new Error('this browser cannot save WebP: use Chrome on the PC');
+    made[p.name] = b;
+  }
+  $('#cards').innerHTML = await Promise.all(PICTURES.map(async (p) => {
+    const url = URL.createObjectURL(made[p.name]), im = await createImageBitmap(made[p.name]);
+    return `<div class="card"><img src="${url}" alt="" style="width:${im.width / 2}px"><b>${p.name}.webp</b>
+      <small>${p.what}; ${im.width} x ${im.height}, ${Math.round(made[p.name].size / 1024)} KB</small></div>`;
+  })).then((h) => h.join(''));
+  $('#sum').textContent = 'Shown at the iPad\'s size. Save both writes them to assets/hero/.';
+  $('#save').disabled = false;
+}
+
+$('#save').onclick = async () => {
+  $('#save').disabled = true;
+  for (const p of PICTURES) {
+    const data = btoa(Array.from(new Uint8Array(await made[p.name].arrayBuffer()), (c) => String.fromCharCode(c)).join(''));
+    const r = await fetch('/api/admin/hero', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: p.name, data }) }).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (!r || !r.ok) { $('#save').disabled = false; return toast(j.error || `Not saved (${r ? r.status : 'no answer'})`, 6000); }
+  }
+  $('#save').disabled = false;
+  toast('Saved: assets/hero/frontis.webp and likeness.webp', 4000);
+};
+
+let toastTimer;
+function toast(t, ms = 3000) {
+  const el = $('#toast'); el.textContent = t; el.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, ms);
+}
+draw().catch((e) => { $('#sum').textContent = `Not drawn: ${e.message}`; });
+</script>
+</body>
+</html>

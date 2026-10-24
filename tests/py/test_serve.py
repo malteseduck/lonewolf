@@ -529,3 +529,23 @@ def test_item_sheet_icons_listed_previewed_and_an_item_glyph_changed(root, monke
     assert (st, got) == (200, {'file': 'glyphs.js', 'was': 'key', 'glyph': 'crown'})
     assert jsend('POST', '/api/admin/ui-glyph', {'list': 'UI_GLYPH', 'key': 'nope', 'glyph': 'key'})[0] == 400
     assert jsend('POST', '/api/admin/ui-glyph', {'list': 'UI_GLYPH', 'key': 'crest', 'glyph': 'key'}, addr='192.168.1.5')[0] == 403
+
+
+# ---------------------------------------------------------------- Lone Wolf's pictures, baked
+
+WEBP = b'RIFF\x10\x00\x00\x00WEBPVP8 ' + b'0' * 8
+
+
+def test_hero_saves_a_baked_picture_into_assets_hero(root):
+    import base64
+    st, got = jsend('POST', '/api/admin/hero', {'name': 'frontis', 'data': base64.b64encode(WEBP).decode()})
+    assert st == 200 and got == {'saved': 'assets/hero/frontis.webp'}
+    assert (root / 'assets' / 'hero' / 'frontis.webp').read_bytes() == WEBP
+
+
+@pytest.mark.parametrize('name, data', [('lone-wolf', WEBP), ('../x', WEBP), ('likeness', PNG), ('likeness', b'')])
+def test_hero_refuses_another_name_or_not_webp(root, name, data):
+    import base64
+    st, got = jsend('POST', '/api/admin/hero', {'name': name, 'data': base64.b64encode(data).decode()})
+    assert st == 400 and 'error' in got
+    assert not (root / 'assets').exists()

@@ -81,6 +81,12 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   `/api/admin/art-link` (ADR 0038); Made with AI, for a fight picture, posts `made: 'ai'`, which moves
   it into the committed `assets/plates/` (`art_sources.make_ai`, ADR 0042). The picture sheet offers
   the same choice for a new picture and in its Link... dialog.
+- **Lone Wolf's pictures** (in the tools row; `tools/admin/hero.html`, inline only): draws the title
+  page's and the Kai panel's Lone Wolf from `assets/hero/lone-wolf.webp` and `monastery.webp` with
+  `portraitFromArt` (`plates.js`), at the crops and sizes the page holds, and shows them on the
+  player's paper at the iPad's size. Save both posts each, as WebP, to `/api/admin/hero`, which writes
+  `assets/hero/frontis.webp` and `likeness.webp`, the files the player loads. Needs Chrome (it saves
+  WebP). Run it again after changing a drawing, a crop or the restyle.
 - **Setup** (ADR 0036), above the tools: what the tools need on this PC, from `tools/setup.py`. One line
   while everything is there ("Show" opens it); a row per part, open, while any is missing: uv and
   Node (yours to install), the Python packages (`tools/.venv`, from `tools/pyproject.toml` and `uv.lock`), the npm

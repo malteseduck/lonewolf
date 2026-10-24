@@ -45,7 +45,9 @@ Static files as `python -m http.server` serves them, from the project root, plus
                                       the owner's picture for one enemy, saved as art/plates/<book>/<slug>.webp and
                                       written into assets/plates/plates.json (tools/plates_file.py). Or src: a picture
                                       already on disk (assets/, art/, data/) to stand in, instead of image
-    POST /api/admin/picture-url       {url}: the picture at an address (or the one its page names), {type, data: base64}
+    POST /api/admin/hero              {name: frontis|likeness, data: base64 WebP}: Lone Wolf's picture, baked by
+                                      tools/admin/hero.html, written to assets/hero/<name>.webp
+    POST /api/admin/picture-url      {url}: the picture at an address (or the one its page names), {type, data: base64}
     POST /api/admin/art-link          {src, url|null}: a link for a picture already in art/ (art/sources.json, ADR 0038)
     GET  /api/admin/standins          every picture a fight can borrow: [{src, group, size, shows?, near?}]
     GET  /api/admin/ills?book=<code>  the illustration sheet: [{name, bytes, big, bigBytes, sections}] (tools/ill_upscale.py)
@@ -154,6 +156,7 @@ def _labels_ok(data):
 MAP_MAX = 30 * 1024 * 1024
 PY = ['uv', 'run', '--project', 'tools', 'python']
 LOCAL = ('127.0.0.1', '::1', '::ffff:127.0.0.1')
+HERO_PICTURES = ('frontis', 'likeness')  # the only files POST /api/admin/hero writes, in assets/hero/
 FONTS = ['--hand', 'Cabin.ttf|SemiBold', '--caps', 'Cabin.ttf|SemiBold']
 
 
@@ -651,7 +654,7 @@ class Handler(SimpleHTTPRequestHandler):
         body = {}
         if method == 'POST':
             size = int(self.headers.get('Content-Length') or 0)
-            if size > (25 * 1024 * 1024 if parts == ['plate'] else 64 * 1024):  # a plate carries a picture
+            if size > (25 * 1024 * 1024 if parts in (['plate'], ['hero']) else 64 * 1024):  # these carry a picture
                 self.close_connection = True
                 return self._json(413, {'error': 'too large'})
             try:
@@ -694,6 +697,21 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(200, plates_file.standins())
         if method == 'POST' and parts == ['plate']:
             return self._admin_plate(body)
+        if method == 'POST' and parts == ['hero']:  # Lone Wolf's two pictures, baked by tools/admin/hero.html
+            import base64
+            name = str(body.get('name') or '')
+            try:
+                data = base64.b64decode(str(body.get('data') or ''))
+            except ValueError:
+                data = b''
+            if name not in HERO_PICTURES or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
+                return self._json(400, {'error': 'expected frontis or likeness, as WebP'})
+            file = os.path.join(ROOT, 'assets', 'hero', name + '.webp')
+            os.makedirs(os.path.dirname(file), exist_ok=True)
+            with open(file + '.part', 'wb') as f:
+                f.write(data)
+            os.replace(file + '.part', file)
+            return self._json(200, {'saved': f'assets/hero/{name}.webp'})
         if method == 'GET' and parts == ['art-sources']:  # the picture-sources sheet (ADR 0038, 0042)
             import art_sources
             return self._json(200, {'pictures': art_sources.listing()})

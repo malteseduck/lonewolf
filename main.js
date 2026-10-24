@@ -2,7 +2,7 @@
    Left page: the story. Right page: a panel (Kai Disciplines, inventory, or the fight); the map is a modal.
    Plays the books imported by tools/import_projectaon.py. */
 import * as Ink from './shared/ink.js';
-import { drawCreature, setArt, setEmblem, newWound, portraitFromArt, drawFrame, drawBanner, drawCrest, gearSVG } from './plates.js';
+import { drawCreature, setArt, setEmblem, newWound, drawFrame, drawBanner, drawCrest, gearSVG } from './plates.js';
 import { printedCanvas } from './maps.js';
 import { compilePlates, pickPlate, pinKey, upscaledSrc } from './platepick.js';
 import * as Adv from './adventures.js';
@@ -1250,22 +1250,17 @@ fetch(`assets/icons/${UG.foeEmblem}.svg`).then((r) => r.text()).then((t) => {
   if (d) setEmblem(d);
 }).catch(() => {});
 
-const HERO = { figure: [185, 28, 570, 790], bust: [235, 25, 420, 360] }; // crops in the 896x1200 drawing's units (the figure: hood to knee); the file is smaller
 /* optional illustrations dropped into art/ */
 const portraitDone = () => { if (mode === 'title') renderLeft(); else if (mode === 'story' && panel === 'kai') renderRight(); };
 fetch('art/manifest.json').then((r) => r.json()).then((m) => {
   for (const kind in m.enemies || {}) { const im = new Image(); im.onload = () => setArt(kind, im); im.src = 'art/' + m.enemies[kind]; }
 }).catch(() => {});
-/* Lone Wolf himself: the owner's drawing, hood to knee for the title page, head to belt for the Kai panel */
-// fetches of plain paths, so the offline copy takes them
-const bitmap = (r) => r.blob().then(createImageBitmap);
-Promise.all([fetch('assets/hero/lone-wolf.webp').then(bitmap), fetch('assets/hero/monastery.webp').then(bitmap)]).then(([hero, burning]) => {
-  const at = (crop) => crop.map((n) => n * hero.width / 896);
-  // the title page: him, right of the middle, the Kai monastery burning behind him on the left
-  frontisURL = portraitFromArt(hero, at(HERO.figure), 0.8, { wide: 1.3, at: 0.7, back: burning, weight: 0.6 }).toDataURL();
-  portraitURL = portraitFromArt(hero, at(HERO.bust), 0.6).toDataURL();
-  portraitDone();
-}).catch(() => {});
+/* Lone Wolf himself, from the owner's drawing: hood to knee for the title page, head to belt for the Kai
+   panel, baked by the dashboard's hero sheet (tools/admin/hero.html); fetches of plain paths, so the
+   offline copy takes them */
+const blobURL = (r) => (r.ok ? r.blob().then((b) => URL.createObjectURL(b)) : Promise.reject(r.status));
+fetch('assets/hero/frontis.webp').then(blobURL).then((u) => { frontisURL = u; portraitDone(); }).catch(() => {});
+fetch('assets/hero/likeness.webp').then(blobURL).then((u) => { portraitURL = u; portraitDone(); }).catch(() => {});
 
 /* the offline copy (sw.js, docs/reference/offline.md): kept over https, as Tailscale serves it, or on
    any address given ?offline (to try it at home). The corner at the bottom right says how it stands. */

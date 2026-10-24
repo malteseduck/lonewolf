@@ -28,7 +28,7 @@ art/manifest.json           optional pictures in art/: enemy sprites
 assets/icons/               discipline glyphs from game-icons.net (CC BY 3.0, credited in README.txt)
 assets/fonts/               the page's three fonts and fonts.css, from Google Fonts (SIL OFL, licences beside them)
 assets/app/                 the Home Screen icon (README.txt says how it was made)
-assets/hero/                the owner's own pictures: Lone Wolf (title page, Kai panel), the burning monastery (title page); ruling R16
+assets/hero/                the owner's own pictures: Lone Wolf, the burning monastery, and the two baked from them that the player shows (title page, Kai panel); ruling R16
 assets/plates/              plates.json: pictures for enemies their book does not picture; free pictures,
                             mostly engravings from Wikimedia Commons (credited in README.txt)
   upscaled/<code>.json      the book's fight pictures with a 2x copy beside them (ill_upscale.py --fights), shown from it

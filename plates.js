@@ -205,8 +205,9 @@ export function newWound() {
    from the middle. `wide` (width over height) widens the picture to that shape, more of the drawing's
    paper either side of him, with him standing at `at` of the way across. `back`, a drawing, then stands
    faintly behind him in place of the smudge. `weight` below 1 inks him lighter, the wash thinner. On a wide
-   picture the faded edge is squarer, so the sides fade only near them. Made at load; never stored. */
-export function portraitFromArt(img, crop, fade = 0.5, { wide = 0, at = 0.5, back = null, weight = 1 } = {}) {
+   picture the faded edge is squarer, so the sides fade only near them. `size` is its longer side in
+   pixels, no more than it shows at on the iPad. Made at load; never stored. */
+export function portraitFromArt(img, crop, fade = 0.5, { wide = 0, at = 0.5, back = null, weight = 1, size = 1100 } = {}) {
   if (wide && crop[3] * wide > crop[2]) {
     // the wider paper: as much of the drawing as there is, on its own paper colour where it runs out
     const [cx, cy, W, H] = crop, Wd = Math.round(H * wide), pc = Ink.canvas(Wd, H), px = pc.getContext('2d', { willReadFrequently: true });
@@ -216,7 +217,7 @@ export function portraitFromArt(img, crop, fade = 0.5, { wide = 0, at = 0.5, bac
     px.drawImage(img, cx + W / 2 - Wd * at, cy, Wd, H, 0, 0, Wd, H);
     img = pc; crop = [0, 0, Wd, H];
   }
-  const [cx, cy, W, H] = crop, k = Math.min(2, 1100 / Math.max(W, H)), w = Math.round(W * k), h = Math.round(H * k);
+  const [cx, cy, W, H] = crop, k = Math.min(2, size / Math.max(W, H)), w = Math.round(W * k), h = Math.round(H * k);
   const c = Ink.canvas(w, h), x = c.getContext('2d', { willReadFrequently: true });
   x.imageSmoothingQuality = 'high';
   const lumOf = (d) => { const l = new Float32Array(d.length / 4); for (let i = 0; i < l.length; i++) l[i] = 0.3 * d[i * 4] + 0.59 * d[i * 4 + 1] + 0.11 * d[i * 4 + 2]; return l; };
