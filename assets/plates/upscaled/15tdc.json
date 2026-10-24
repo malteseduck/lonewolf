@@ -1,0 +1,26 @@
+{
+ "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
+ "srcs": [
+  "art/plates/10tdot/lite-death-knights.webp",
+  "art/plates/15tdc/nad-jaguz.webp",
+  "data/projectaon/02fotw/ill19.png",
+  "data/projectaon/08tjoh/ill4.png",
+  "data/projectaon/09tcof/ill13.png",
+  "data/projectaon/10tdot/ill10.png",
+  "data/projectaon/10tdot/ill19.png",
+  "data/projectaon/10tdot/ill4.png",
+  "data/projectaon/10tdot/ill5.png",
+  "data/projectaon/10tdot/ill9.png",
+  "data/projectaon/12tmod/ill1.png",
+  "data/projectaon/15tdc/ill13.png",
+  "data/projectaon/15tdc/ill15.png",
+  "data/projectaon/15tdc/ill16.png",
+  "data/projectaon/15tdc/ill19.png",
+  "data/projectaon/15tdc/ill2.png",
+  "data/projectaon/15tdc/ill20.png",
+  "data/projectaon/15tdc/ill3.png",
+  "data/projectaon/15tdc/ill5.png",
+  "data/projectaon/15tdc/ill6.png",
+  "data/projectaon/15tdc/ill9.png"
+ ]
+}
