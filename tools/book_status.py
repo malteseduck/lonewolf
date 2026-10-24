@@ -44,7 +44,13 @@ CATALOGUE = [
     ('16tlov', 'The Legacy of Vashna'), ('17tdoi', 'The Deathlord of Ixia'), ('18dotd', 'Dawn of the Dragons'),
     ('19wb', "Wolf's Bane"), ('20tcon', 'The Curse of Naar'),
 ]
-SERIES = lambda n: 'kai' if n <= 5 else 'magnakai' if n <= 12 else 'grand master'
+SERIES = lambda n: 'kai' if n <= 5 or n == DEMO_NUMBER else 'magnakai' if n <= 12 else 'grand master'
+# The made-up demo book (ruling R20): its source is committed in demo/99ember/, tools/demo_book.py installs it into
+# data/projectaon/ so the importer, the dashboard and the map editor treat it as any other book. It is no part
+# of the catalogue, the checklist, the whole-library checks, the release or the iPad.
+DEMO_NUMBER = 99
+DEMO = {'99ember': 'The Ember Road'}
+DEMO_SRC = os.path.join(ROOT, 'demo')
 
 
 def engine_series():
@@ -94,12 +100,15 @@ def find(book):
     for i, (code, title) in enumerate(CATALOGUE):
         if book in (code, str(i + 1), f'{i + 1:02d}'):
             return code, title, i + 1
+    if book in DEMO:
+        return book, DEMO[book], DEMO_NUMBER
     return None
 
 
-def importer_books():
-    """The codes tools/import_projectaon.py knows (its BOOKS table)."""
-    return set(re.findall(r"'(\w+)': \(\d+, '", read(IMPORTER)))
+def importer_books(demo=False):
+    """The codes tools/import_projectaon.py knows (its BOOKS table); the demo book only if asked, so the
+    whole-library tools (tools/reimport_all.py) leave it alone."""
+    return {c for c in re.findall(r"'(\w+)': \(\d+, '", read(IMPORTER)) if demo or c not in DEMO}
 
 
 def load_hand():
@@ -286,7 +295,7 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
     b['stale'] = stale
     b['rulesHeading'] = bool(re.search(rf'^### Book {n},', rules_md, re.M))
     reg = re.search(r'const ITEM_TABLES = \{([\s\S]*?)\};', main_js)
-    items_js = os.path.join(ROOT, 'items', f'items-{code}.js')
+    items_js = os.path.join(DEMO_SRC, code, 'items.js') if code in DEMO else os.path.join(ROOT, 'items', f'items-{code}.js')
     check = None
     try:
         with open(os.path.join(d, 'check-items.json'), encoding='utf-8') as f:
@@ -296,7 +305,7 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
     # a table tools/items_draft.mjs wrote keeps that first line until it has been read (ADR 0036)
     b['items'] = {'draft': os.path.isfile(items_js) and read(items_js).startswith('// DRAFT by tools/items_draft.mjs'),
                   'exists': os.path.isfile(items_js),'todos': len(re.findall(r'\btodo:', read(items_js))) if os.path.isfile(items_js) else None,
-                  'registered': bool(reg and f"'{code}':" in reg.group(1)), 'check': check,
+                  'registered': code in DEMO or bool(reg and f"'{code}':" in reg.group(1)), 'check': check,
                   'checkTime': mtime(os.path.join(d, 'check-items.json')), 'time': mtime(items_js)}
     # step 3's leftover scan (tools/phrasings_scan.py --json): out of date once book.js or the importer is newer
     scan_path = os.path.join(d, 'phrasings.json')
@@ -473,14 +482,20 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
         st['ills'] = {'state': 'done', 'ev': f'{len(ills)} illustrations upscaled and shown in the player', 'src': 'disk'}
     if not playable:  # ADR 0036: no test play until the engine has the series
         st['testplay'] = {'state': 'na', 'ev': f'Waits for {waits}', 'src': 'hand'}
+    if code in DEMO:  # written for the showcase: nothing to download, read from rules pages or play through, no fight pictures to find
+        b['demo'] = True
+        for sid in ('fetch', 'phrasings', 'rules', 'testplay', 'pictures'):
+            if st[sid]['state'] != 'done':
+                st[sid] = {'state': 'na', 'ev': 'Made-up demo book (ruling R20)', 'src': 'disk'}
     b['stages'] = st
     return b
 
 
 def all_status():
     hand, main_js = load_hand(), read(os.path.join(ROOT, 'main.js'))
-    rules_md, known = read(os.path.join(ROOT, 'docs', 'reference', 'rules-books.md')), importer_books()
-    return {'books': [book_status(c, t, i + 1, hand, main_js, rules_md, known) for i, (c, t) in enumerate(CATALOGUE)],
+    rules_md, known = read(os.path.join(ROOT, 'docs', 'reference', 'rules-books.md')), importer_books(demo=True)
+    demo = [book_status(c, t, DEMO_NUMBER, hand, main_js, rules_md, known) for c, t in DEMO.items() if os.path.isdir(os.path.join(DEMO_SRC, c))]
+    return {'books': [book_status(c, t, i + 1, hand, main_js, rules_md, known) for i, (c, t) in enumerate(CATALOGUE)] + demo,
             'steps': {n: {'id': s[0], 'label': s[1], 'hand': n in HAND} for n, s in STEPS.items()}}
 
 
@@ -491,7 +506,7 @@ MARK = {'done': '✅', 'todo': '⬜', 'na': '➖', 'warn': '⚠️', 'bad': '❌
 
 
 def checklist_table(books):
-    shown = [b for b in books if b['n'] <= 12 or b['folder']]
+    shown = [b for b in books if not b.get('demo') and (b['n'] <= 12 or b['folder'])]
     lines = ['| Step | ' + ' | '.join(str(b['n']) for b in shown) + ' |', '|---|' + '---|' * len(shown)]
     starts = {s: g for g, s in GROUPS}
     for n, (sid, label) in STEPS.items():

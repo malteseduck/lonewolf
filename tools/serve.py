@@ -98,6 +98,7 @@ NAME = re.compile(r'^[^\\/:*?"<>|\x00-\x1f]{1,120}\.json\Z')  # \Z: $ would let 
 # (pictures and its one map); plates.json, art/manifest.json and assets/plates/approved/*.json bring the
 # pictures they name.
 OFFLINE_ENTRY = 'index.html'
+DEMO_BOOKS = ('99ember',)  # book_status.DEMO: not in the offline copy or the release
 # paths built at runtime, which the walk cannot see: main.js asks for `assets/icons/${name}.svg`
 OFFLINE_DIRS = {'assets/icons': ('.svg',)}
 BOOK_IMAGE = re.compile(r'"([\w.-]+\.(?:png|jpe?g|gif|webp))"', re.I)
@@ -375,7 +376,8 @@ def offline_list(root=ROOT, fill=None):
         if not url or re.match(r'^(?:[a-z][\w+.-]*:|//)', url, re.I) or '${' in url:
             return
         rel = posixpath.normpath(url.lstrip('/') if url.startswith('/') else posixpath.join(base, url))
-        if not rel.startswith('..') and not rel.startswith('api/'):
+        # the made-up demo book is for the PC alone (ruling R20): index.js names it, the iPad never gets it
+        if not rel.startswith('..') and not rel.startswith('api/') and not any(rel.startswith(f'data/projectaon/{c}/') for c in DEMO_BOOKS):
             todo.append(rel)
 
     while todo:
@@ -539,7 +541,9 @@ def admin_start(stage, book, confirm):
         code = hit[0]
         if spec.get('folder') and not os.path.isdir(os.path.join(ROOT, 'data', 'projectaon', code)):
             return None, 'that book is not downloaded', 409
-        if spec.get('known') and code not in book_status.importer_books():
+        if code in book_status.DEMO and stage in ('fetch', 'fetch-rules'):
+            return None, 'the demo book is made up: nothing to download', 409
+        if spec.get('known') and code not in book_status.importer_books(demo=True):
             return None, 'the importer does not know that book', 409
     if spec.get('gated') and confirm != (code or 'all'):
         return None, 'this step needs the owner\'s confirmation', 428
@@ -964,6 +968,11 @@ def main():
             print('Nothing released yet: run python tools/release.py', flush=True)
     else:
         handler = partial(Handler, directory=ROOT)
+        try:  # the made-up demo book (ruling R20), from its committed source into data/projectaon/
+            import demo_book
+            demo_book.install()
+        except (OSError, SystemExit) as e:
+            print(f'demo book not installed: {e}', flush=True)
         print(f'Serving {ROOT} on http://{a.bind}:{a.port}/ (backups in {BACKUPS})', flush=True)
     server = ThreadingHTTPServer((a.bind, a.port), handler)
     try:

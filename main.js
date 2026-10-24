@@ -37,6 +37,11 @@ const ITEM_TABLES = {
   '13tplor': ITEMS_13,
   '14tcok': ITEMS_14,
 };
+/* The made-up demo book (ruling R20) is on the PC alone: its table loads only where its book.js does, and
+   a release (which has neither) never shows it. */
+if (BOOKS['99ember']) {
+  try { ITEM_TABLES['99ember'] = await import('./demo/99ember/items.js'); } catch (e) { delete BOOKS['99ember']; }
+}
 Object.values(ITEM_TABLES).forEach((t) => LW.addItems(t.ITEMS, t.MARKS));
 const applyItems = (b) => LW.applyItems(b, ITEM_TABLES[b.id]);
 
@@ -301,7 +306,7 @@ function titleLeftHTML() {
     <div class="maker">A solo adventure in Magnamund</div>
     <h1 class="mark"><span>Lone</span><span class="wolfmark">${glyph(UG.titleMark)}</span><span>Wolf</span></h1>
     <div class="frontis">${frontisURL ? `<img src="${frontisURL}" alt="">` : ''}</div>
-    <div class="bands">${SHELVES.map((s) => band(s.name, s.from, s.to)).join('')}</div>
+    <div class="bands">${SHELVES.map((s) => band(s.name, s.from, s.to)).join('')}${BOOKS['99ember'] ? `<div class="band demoband"><button type="button" class="inkbtn" data-book="99ember" title="A made-up book for showing the player; this PC only">Demo: ${esc(BOOKS['99ember'].title)}</button></div>` : ''}</div>
   </div>`;
 }
 /* the right page of the title spread: every adventure, or the books of the one chosen (shelf) */

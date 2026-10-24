@@ -89,6 +89,10 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
 
 ## Status
 
+The made-up demo book `99ember` (ruling R20) is listed last, as Book 99, once `demo/99ember/` exists. Its steps that need a download, the
+rules pages or a play-through show as not applicable, its item table is `demo/99ember/items.js`, it has no download button and is
+left out of the checklist table. `tools/demo_book.py` installs it (the server runs it at start).
+
 `tools/book_status.py` works every step out; the page reads it through `GET /api/admin/status`.
 
 | Step | From | Done when |

@@ -28,6 +28,7 @@ BOOKS = {  # code: (number, series, title)
     '15tdc': (15, 'grandmaster', 'The Darke Crusade'),
     '16tlov': (16, 'grandmaster', 'The Legacy of Vashna'),
     '20tcon': (20, 'grandmaster', 'The Curse of Naar'),
+    '99ember': (99, 'kai', 'The Ember Road'),  # the made-up demo book (demo/99ember, ruling R20)
 }
 DISC = {'camouflage': 'camouflage', 'hunting': 'hunting', 'sixth sense': 'sixthSense', 'tracking': 'tracking', 'healing': 'healing',
         'weaponskill': 'weaponskill', 'mindshield': 'mindshield', 'mindblast': 'mindblast', 'animal kinship': 'animalKinship',
@@ -487,7 +488,7 @@ for sec in sections.values():
 
 # the upscaled map once it is done (docs/reference/map-upscale.md), else the scan as served
 map_file = 'map-4k.webp' if os.path.exists(os.path.join(src, 'map-4k.webp')) else 'map.png'
-out = {'id': book, 'number': number, 'series': series, 'title': title, 'subtitle': 'Project Aon edition, imported for personal use',
+out = {'id': book, 'number': number, 'series': series, 'title': title, 'subtitle': 'A stand-in book written for the showcase' if book == '99ember' else 'Project Aon edition, imported for personal use',
        'start': '1', 'assets': f'data/projectaon/{book}/', 'map': map_file, 'bonusItem': book == '01fftd', 'intro': intro, 'sections': sections}
 def write_if_changed(path, text):
     """Leave the file alone when it already holds this text: the reading copy and the item check count

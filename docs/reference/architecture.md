@@ -36,6 +36,9 @@ assets/plates/              plates.json: pictures for enemies their book does no
                             section/enemy number -> picture; no book text (ADR 0008)
 CLAUDE.md, README.md
 docs/                       spec, plan, reference
+demo/99ember/               the made-up demo book (ruling R20): pages in Project Aon's layout, pictures, map, items.js; tools/demo_book.py
+                            installs it into data/projectaon/; PC only, never released
+  showcase/                 the public showcase (README with images, Gemini prompts, the stand-in book and map maker); stand-in content only, ruling R19
   book-status.json          the book steps no file can show (checklist 3, 4, 6, 7), with the date each was
                             marked done; written by tools/book_status.py (docs/reference/dashboard.md)
 shared/                     used by the player and the prototypes (classic scripts on a global LW)

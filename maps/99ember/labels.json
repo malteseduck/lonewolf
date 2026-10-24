@@ -1,0 +1,357 @@
+[
+ {
+  "text": "THE EMBERLANDS",
+  "box": [
+   753,
+   102,
+   1331,
+   205
+  ],
+  "where": "title scroll, top centre",
+  "small": false,
+  "ok": true,
+  "retype": false
+ },
+ {
+  "text": "The Quiet Sea",
+  "box": [
+   139,
+   388,
+   573,
+   500
+  ],
+  "where": "sea, north west",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    353.9,
+    442.5
+   ],
+   "angle": -6.31,
+   "length": 428.6,
+   "thick": 52.1,
+   "box": [
+    139,
+    388,
+    573,
+    500
+   ]
+  }
+ },
+ {
+  "text": "Ashgrove",
+  "box": [
+   1270,
+   563,
+   1514,
+   651
+  ],
+  "where": "north east coast, on the mountains",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    1393.7,
+    603.7
+   ],
+   "angle": 11.49,
+   "length": 256.5,
+   "thick": 74.6,
+   "box": [
+    1270,
+    563,
+    1514,
+    651
+   ]
+  }
+ },
+ {
+  "text": "Gloamwater",
+  "box": [
+   1470,
+   709,
+   1777,
+   805
+  ],
+  "where": "east coast, over the forest",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    1619.4,
+    751.0
+   ],
+   "angle": 5.6,
+   "length": 314.4,
+   "thick": 116.1,
+   "box": [
+    1470,
+    709,
+    1777,
+    805
+   ]
+  },
+  "clip": true
+ },
+ {
+  "text": "Cairn Peaks",
+  "box": [
+   527,
+   717,
+   863,
+   856
+  ],
+  "where": "west of the mountains, slanted",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    700.6,
+    790.2
+   ],
+   "angle": -4.05,
+   "length": 337.7,
+   "thick": 160.6,
+   "box": [
+    527,
+    717,
+    863,
+    856
+   ]
+  },
+  "clip": true,
+  "angle": -17
+ },
+ {
+  "text": "Vale of Hollin",
+  "box": [
+   856,
+   797,
+   1200,
+   892
+  ],
+  "where": "centre, over the mountains",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    1028.4,
+    845.1
+   ],
+   "angle": -1.11,
+   "length": 351.0,
+   "thick": 104.1,
+   "box": [
+    856,
+    797,
+    1200,
+    892
+   ]
+  }
+ },
+ {
+  "text": "Old Emberhold",
+  "box": [
+   834,
+   614,
+   1097,
+   666
+  ],
+  "where": "north centre, by the castle",
+  "small": true,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    967.8,
+    640.5
+   ],
+   "angle": 2.56,
+   "length": 257.9,
+   "thick": 63.5,
+   "box": [
+    834,
+    614,
+    1097,
+    666
+   ]
+  }
+ },
+ {
+  "text": "Saltmere",
+  "box": [
+   524,
+   971,
+   644,
+   1021
+  ],
+  "where": "west coast, by the town",
+  "small": true,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    585.4,
+    996.3
+   ],
+   "angle": -12.85,
+   "length": 126.4,
+   "thick": 79.6,
+   "box": [
+    524,
+    971,
+    644,
+    1021
+   ]
+  },
+  "clip": true
+ },
+ {
+  "text": "Marrow Ford",
+  "box": [
+   1334,
+   951,
+   1597,
+   1006
+  ],
+  "where": "east, below the forest",
+  "small": true,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    1466.0,
+    983.0
+   ],
+   "angle": 0.04,
+   "length": 246.0,
+   "thick": 51.9,
+   "box": [
+    1334,
+    951,
+    1597,
+    1006
+   ]
+  }
+ },
+ {
+  "text": "Brindle Cross",
+  "box": [
+   1112,
+   1042,
+   1353,
+   1097
+  ],
+  "where": "south centre, by the town",
+  "small": true,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    1232.0,
+    1069.0
+   ],
+   "angle": -0.35,
+   "length": 247.9,
+   "thick": 63.4,
+   "box": [
+    1112,
+    1042,
+    1353,
+    1097
+   ]
+  },
+  "clip": true
+ },
+ {
+  "text": "Thornwick",
+  "box": [
+   753,
+   1080,
+   944,
+   1129
+  ],
+  "where": "south west, by the town",
+  "small": true,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    845.1,
+    1097.5
+   ],
+   "angle": -2.81,
+   "length": 192.2,
+   "thick": 44.1,
+   "box": [
+    753,
+    1080,
+    944,
+    1129
+   ]
+  }
+ },
+ {
+  "text": "The Cinder Wastes",
+  "box": [
+   878,
+   1170,
+   1387,
+   1251
+  ],
+  "where": "southern waste, slanted",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    1132.5,
+    1210.2
+   ],
+   "angle": -0.82,
+   "length": 516.2,
+   "thick": 93.3,
+   "box": [
+    878,
+    1170,
+    1387,
+    1251
+   ]
+  },
+  "clip": true
+ },
+ {
+  "text": "The Ashen Reach",
+  "box": [
+   790,
+   1382,
+   1261,
+   1448
+  ],
+  "where": "sea, south",
+  "small": false,
+  "ok": true,
+  "retype": true,
+  "ink": {
+   "at": [
+    1022.5,
+    1414.1
+   ],
+   "angle": 0.54,
+   "length": 461.3,
+   "thick": 42.0,
+   "box": [
+    790,
+    1382,
+    1261,
+    1448
+   ]
+  }
+ }
+]
