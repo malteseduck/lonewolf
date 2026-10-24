@@ -222,7 +222,10 @@ before the first round, one medallion each, `B.boosts()`) and `stop` (the faint 
 reads its reason and the section's choices open, otherwise it reads "stop the fight (it is not won)" and the
 section then offers only the turn box, or "fight it after all": ADR 0027). A number drawn that the text
 says ends the fight (`stop.drawn`) ends it before any blow. With six commands or more they are drawn
-smaller so the row stays on the panel. The mind medallion reads "as Mindblast: no
+smaller so the row stays on the panel. What the fight is (`B.words`, from `combat.kind`: rules-engine.md)
+names Strike (Batter, Heave, Wrestle, Will), the foe's Endurance (Resistance for a door, Points in a
+contest), Evade's note ("at no cost" leaving a door) and the outcome's heading and line; only a duel
+draws red wounds, and a door does not lunge (his loss is the page's flash). The mind medallion reads "as Mindblast: no
 effect" against a foe immune to Mindblast only, and "no effect" when `B.deaf()`. Evade reads "take
 one blow" (or "untouched" with `evade.free`) when `B.evadeOpen`, "too late" when `B.evadeLate`, "needs ..." without
 `evade.if`; it is not shown at all with `noEvade`. The log names each change for some rounds as it begins

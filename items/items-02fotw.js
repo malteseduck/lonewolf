@@ -161,7 +161,7 @@ export const SECTIONS = {
   274: { loot: [{ item: 'sword' }, { gold: 6 }, { item: 'mace' }] },
   // an arm-wrestling contest, his ENDURANCE as it was afterwards; with Mindblast he need not wrestle
   276: {
-    fight: { restore: true, to: '305', lose: '192', evade: { after: 0, to: '14', if: { disc: 'mindblast' }, free: true } },
+    fight: { kind: 'contest', act: { label: 'Wrestle', note: 'bear down' }, restore: true, to: '305', lose: '192', evade: { after: 0, to: '14', if: { disc: 'mindblast' }, free: true } },
   },
   283: { loot: shop([['sword', 4], ['dagger', 2], ['broadsword', 6], ['spear', 5], ['meal', 2], ['goldRing', 8], ['blanket', 3], ['pack', 1]]) },
   // footnotes: without the Seal he leaves the alchemist's at once; the refused food needs a Meal in its place

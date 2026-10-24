@@ -613,6 +613,17 @@ def test_report_counts_and_ids(tmp_path):
 
 
 
+def test_a_door_in_resistance_points_is_an_obstacle(tmp_path):
+    # "ENDURANCE (RESISTANCE points) 35": a thing broken down, fought as an enemy (combat kind 'obstacle')
+    s = secs(tmp_path, {
+        1: '<p>A door.</p><p class="combat">Door: <span class="cs">COMBAT SKILL</span> 13 '
+           '<span class="ep">ENDURANCE</span> (RESISTANCE points) 35</p>' + choice('If you break it, turn to', 2),
+        2: '<p>.</p>'})
+    c = s['1']['combat']
+    assert c['enemies'][0]['ep'] == 35 and c['kind'] == 'obstacle'
+    assert 'kind' not in secs(tmp_path, {1: foe('Giak', 10, 10) + choice('Turn to', 2), 2: '<p>.</p>'})['1']['combat']
+
+
 def test_a_contest_in_target_points_is_a_combat_on_points(tmp_path):
     # "ENDURANCE (TARGET points) 50": a contest scored in points on each side, his Endurance untouched
     s = secs(tmp_path, {

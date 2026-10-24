@@ -21,11 +21,35 @@
     p.foeEach && `it loses ${p.foeEach} more every round`, p.psi && `your mind's attack ${word(p.psi)}`,
     p.fatal && `every wound the dice deal draws again: ${p.fatal.join(' or ')} is death`, p.offMax && 'what you lose comes off your Endurance for good'].filter(Boolean).join(', ');
 
+  /* combat.kind: what the fight is, for its words and the page's drawing only; the numbers are the same.
+     An obstacle (a door broken down, Book 6's 156, Book 7's 214) is fought by the normal rules, his losses
+     the effort; leaving it costs no blow and Mindblast does not touch it (rulings R23, R24). A contest
+     (arm-wrestling, an archery final) and a fight of the mind are named as such. `line` words a round:
+     what he did to it, what it cost him; Infinity is the table's outright result. combat.act: the
+     Strike medallion's {label, note} for this fight (Batter, Heave). */
+  const KINDS = {
+    fight: { act: 'Strike', note: 'attack', ep: 'EP', wounds: true, lunge: true,
+      win: ['The way is clear', 'Your enemy lies dead at your feet.'], away: ['You are away', 'You leave the fight behind you.'], won: 'The fight is won', left: 'You break away from the fight',
+      line: (foe, d, t, kd, kt) => `${kd ? 'A killing blow' : d ? `${foe} loses ${d}` : 'Your blow is turned'}; ${kt ? 'but it finds the gap in your guard' : t ? `you lose ${t}` : 'you are untouched'}` },
+    obstacle: { act: 'Force', note: 'put your strength to it', ep: 'Resistance', leave: 'Leave it', leaveNote: 'at no cost',
+      win: ['The way is open', 'At last it gives way.'], away: ['You leave it be', 'You go on another way.'], won: 'It gives way', left: 'You leave it be',
+      line: (foe, d, t, kd, kt) => `${kd ? `${foe} gives way at once` : d ? `${foe} gives ${d}` : `${foe} holds`}; ${kt ? 'but the effort is too much for you' : t ? `the effort costs you ${t}` : 'you keep your strength'}` },
+    contest: { act: 'Contend', note: 'try your strength', ep: 'EP', lunge: true,
+      win: ['The contest is yours', 'You have the better of it.'], away: ['You are away', 'You leave the contest.'], won: 'The contest is won', left: 'You leave the contest',
+      line: (foe, d, t, kd, kt) => `${kd ? 'You carry it outright' : d ? `${foe} loses ${d}` : `${foe} holds`}; ${kt ? 'but you are beaten outright' : t ? `you lose ${t}` : 'you hold'}` },
+    mind: { act: 'Will', note: 'press your mind', ep: 'EP', lunge: true,
+      win: ['Your will prevails', 'Its mind gives way before yours.'], away: ['You are away', 'You draw your mind back.'], won: 'The fight is won', left: 'You break away from the fight',
+      line: (foe, d, t, kd, kt) => `${kd ? 'Your will overwhelms it' : d ? `Your will costs ${foe} ${d}` : `${foe} withstands your will`}; ${kt ? 'but its will overwhelms yours' : t ? `its will costs you ${t}` : 'your mind holds'}` },
+  };
+  LW.FIGHT_KINDS = KINDS;
+
   class Fight {
     constructor(game, bookId) {
       const sec = game.section, hero = game.hero;
       let c = sec.combat;
       this.game = game; this.bookId = bookId; this.hero = hero; this.c = c;
+      this.kind = c.kind || (c.mind ? 'mind' : c.points ? 'contest' : 'fight');
+      this.words = Object.assign({}, KINDS[this.kind], c.act && c.act.label && { act: c.act.label }, c.act && c.act.note && { note: c.act.note }, c.points && { ep: 'Points' });
       // the fight's own adjustment, unless he carries what the text says spares him it (a torch), or
       // it is the text's "unarmed" penalty and he has no weapon anyway (heroCS already counts that)
       const spared = (c.unless || []).length && c.unless.every((i) => LW.hasItem(hero, i));
@@ -55,7 +79,9 @@
       this.noStrike = !!(c.noStrike && LW.meets(hero, c.noStrike));
       // keep: the foes' wounds are kept under this name, and a later fight with the same foes starts from them
       const kept = c.keep && (game.s.kept || {})[c.keep];
-      this.foes = c.enemies.map((e, i) => Object.assign({}, e, { max: e.ep, at: i }, kept && kept[i] != null ? { ep: kept[i] } : {})).filter((e, i) => !kept || (i < kept.length && e.ep > 0));
+      // an obstacle has no mind: Mindblast cannot touch it, Psi-surge (which shakes things apart) can (ruling R24)
+      const mindless = this.kind === 'obstacle' && { immune: 'mindblast' };
+      this.foes = c.enemies.map((e, i) => Object.assign({}, mindless, e, { max: e.ep, at: i }, kept && kept[i] != null ? { ep: kept[i] } : {})).filter((e, i) => !kept || (i < kept.length && e.ep > 0));
       this.bring();
       const log = this.log, csMod = this.csMod;
       if (kept) log.push('These foes still carry the wounds you gave them.');
@@ -66,7 +92,9 @@
       else if (ambush) log.push('Huntmastery: the ambush does not catch you off guard.');
       else if (excused && c.csMod) log.push(`${LW.condName(c.csUnless)}: you are spared the penalty.`);
       if (c.noMind && LW.mindPower(hero)) log.push('No attack of the mind tells here.');
+      if (mindless && this.power) log.push(`It has no mind: Mindblast cannot touch it${this.power === 2 ? `, but ${LW.psi(hero).name} can shake it apart` : ''}.`);
       if (c.mind) log.push('A fight of the mind: no weapon or armour counts.');
+      else if (c.with === 'none' && mindless) log.push(this.ctx.noUnarmed ? 'Your bare hands only, and you lose nothing by it.' : 'Your bare hands only.');
       else if (c.with === 'none') log.push(this.ctx.noUnarmed ? 'You fight bare-handed, and lose nothing by it.' : 'You fight bare-handed.');
       else if (c.with) log.push(this.weapon ? `Only your ${LW.itemName(c.with)} can harm it.` : `Only the ${LW.itemName(c.with)} can harm it, and you do not have it.`);
       // the weapon of the first round: one out of reach then is not named (Book 12's 75)
@@ -139,9 +167,10 @@
     // with that (a Condition); evade.foeAt: only once the foe is down to that; evade.fromFoe: only from
     // that foe of the list on (0 first); evade.free: without the blow; evade.lose 'drawn': the number drawn
     // (0 as 10) is lost in its place (a climb past the foe). A list: several ways out, each its own.
-    // c.noEvade: the text allows none, whatever the section's choices say
+    // c.noEvade: the text allows none, whatever the section's choices say. Leaving an obstacle is free (ruling R23)
     evades() {
-      return this.c.noEvade ? [] : [].concat(this.c.evade || []).map((ev, i) => Object.assign({}, ev, { i,
+      const leave = this.kind === 'obstacle';
+      return this.c.noEvade ? [] : [].concat(this.c.evade || []).map((ev, i) => Object.assign({}, ev, leave && { free: true, label: ev.label || this.words.leave }, { i,
         open: (!ev.if || LW.meets(this.hero, ev.if)) && this.rounds >= (ev.after || 0) && !(ev.foeAt != null && this.foe && this.foe.ep > ev.foeAt) && !(ev.fromFoe != null && this.i < ev.fromFoe) && !(ev.within && this.rounds >= ev.within),
         late: !!ev.within && this.rounds >= ev.within }));
     }
@@ -151,6 +180,7 @@
     /* Mindblast, Psi-surge (Kai-surge), at rest, in turn */
     focus() {
       const hero = this.hero, foe = this.foe, psi = LW.psi(hero);
+      if (this.deaf() && this.kind === 'obstacle') return void this.log.push(`Mindblast cannot touch the ${foe.name}: it has no mind.`);
       if (this.deaf()) return void this.log.push(`${foe.name} is immune to ${foe.immune === true ? 'attacks of the mind' : foe.immune === 'psi' ? 'Mindblast and Psi-surge' : 'Mindblast'}.`);
       this.mind = (this.mind + 1) % (this.power + 1);
       if (this.mind === 2 && hero.ep <= psi.floor) { this.mind = 0; this.log.push(`You are too weak to ${psi.name}.`); }
@@ -194,11 +224,12 @@
     }
     /* Evading (by the evasion `which`, of the list): only his loss counts (none with evade.free), and the fight is over. */
     flee(o, which = this.evades().findIndex((e) => e.open)) {
-      const hero = this.hero, ev = [].concat(this.c.evade)[Math.max(0, which)]; this.evaded = ev;
+      const hero = this.hero, ev = this.evades()[Math.max(0, which)]; this.evaded = ev;
       const loss = ev.lose === 'drawn' ? Math.min(o.n || 10, hero.ep) : ev.free ? 0 : Math.min(o.res.hero, hero.ep);
       hero.ep -= loss; o.taken = loss; this.lost.hero += loss;
       // a free way out with a name of its own (dispelling an illusion, slipping away unseen) says so, not that he runs
-      this.log.push(ev.lose === 'drawn' ? `${o.tag} ${ev.label || 'You get past'}: it costs you ${loss}.` : ev.free && ev.label ? `${o.tag} ${ev.label}: untouched.` : `${o.tag} You turn and run${loss ? `; it catches you for ${loss}` : ', untouched'}.`);
+      if (this.kind === 'obstacle' && !ev.lose) this.log.push(`You leave the ${this.foe.name} as it is.`);
+      else this.log.push(ev.lose === 'drawn' ? `${o.tag} ${ev.label || 'You get past'}: it costs you ${loss}.` : ev.free && ev.label ? `${o.tag} ${ev.label}: untouched.` : `${o.tag} You turn and run${loss ? `; it catches you for ${loss}` : ', untouched'}.`);
       this.end(hero.ep > 0 ? 'evade' : 'dead');
       return o;
     }
@@ -220,7 +251,7 @@
       if (this.over) return o;
       const hero = this.hero, foe = this.foe, res = o.res, dealt = o.dealt, taken = o.taken;
       hero.ep -= taken;
-      this.log.push(`${o.tag} ${res.enemy === Infinity && dealt ? 'A killing blow' : dealt ? `${foe.name} loses ${dealt}` : 'Your blow is turned'}; ${res.hero === Infinity && taken ? 'but it finds the gap in your guard' : taken ? `you lose ${taken}` : 'you are untouched'}.`);
+      this.log.push(`${o.tag} ${this.words.line(foe.name, dealt, taken, res.enemy === Infinity && dealt, res.hero === Infinity && taken)}.`);
       const fatal = this.phases(this.rounds).flatMap((p) => p.fatal || []);
       if (fatal.length && res.hero > 0 && hero.ep > 0) {
         const n = LW.rand10();
@@ -324,8 +355,8 @@
     /* The fight is over: the way on. A fight broken off opens the section's choices as a win does. */
     finish() {
       const g = this.game, to = this.way();
-      if (this.over === 'win' || this.over === 'stop') { g.wonCombat(); if (to) g.go(to, this.over === 'win' ? 'The fight is won' : 'The fight is broken off'); }
-      else if (this.over === 'evade') g.go(to, 'You break away from the fight');
+      if (this.over === 'win' || this.over === 'stop') { g.wonCombat(); if (to) g.go(to, this.over === 'win' ? this.words.won : 'The fight is broken off'); }
+      else if (this.over === 'evade') g.go(to, this.words.left);
       else if (this.over === 'broken') g.breakOff();
       else g.save();
     }

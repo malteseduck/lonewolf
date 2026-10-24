@@ -49,7 +49,7 @@ It works on the contents of `<div class="maintext">`, in document order:
 | `<p class="choice">` with `<a href="sectN.htm">` | a choice to N with the paragraph as its text |
 | `<p class="choice">` with no section link | a paragraph; if the section has no other way on, `end: 'failed'` (Book 3's 61, a mission given up) |
 | `<p class="puzzle">` | a paragraph, and `puzzle: true`: the answer is a section number (Books 5, 7-9) |
-| `<p class="combat">` "Name: COMBAT SKILL n ENDURANCE m" | an enemy; also "ENDURANCE (RESISTANCE points) m", a door fought as one (Book 6 156, Book 7 214). Not "(TARGET points)": Book 6's archery contest leaves his Endurance alone |
+| `<p class="combat">` "Name: COMBAT SKILL n ENDURANCE m" | an enemy; also "ENDURANCE (RESISTANCE points) m", a door fought as one (Book 6 156, Book 7 214), the combat's `kind: 'obstacle'`. Not "(TARGET points)": Book 6's archery contest leaves his Endurance alone |
 | `<img src>` | `img`, `full` when the file name starts with `ill` |
 | a link to `random.htm` anywhere | the section needs a Random Number |
 

@@ -238,6 +238,13 @@ Grand Master's Kai-surge tells: `Fight.allDeaf(foe, hero)` looks at `LW.psi(hero
 +4, does not). `evadeOpen`: `evade.after` rounds
 fought and, with `evade.within`, fewer than that (`evadeLate` once past it).
 
+**What the fight is** (`combat.kind`, `this.kind`): `'fight'`, `'obstacle'`, `'contest'` or `'mind'`
+(the last two by default with `points` and `mind`). The numbers are the same for all; `this.words`
+(from `LW.FIGHT_KINDS`, with `combat.act` over it) words the rounds, the end and the medallions, and
+says whether the page draws wounds and the lunge. An obstacle is a door: every evasion it offers is
+free and named "Leave it" (ruling R23), and its foes are `immune: 'mindblast'` unless the book says
+otherwise (ruling R24).
+
 What holds for some rounds only, or under a condition, is `combat.rounds` (book-format.md): `phases(r)`
 are the entries in force in round `r` (conditions tested with the weapon in hand; `ambush` spared by
 Huntmastery; `mind` only while a mind attack is used); `parts(r)` / `cs(r)` add their `csMod`, fight

@@ -132,6 +132,39 @@ describe('evading', () => {
   });
 });
 
+describe('a fight that is not a duel (combat.kind)', () => {
+  const door = (over = {}) => ({ kind: 'obstacle', enemies: [foe({ name: 'Door', ep: 100 })], evade: { after: 0, to: '2' }, ...over });
+  it('a door: leaving it costs nothing, and the log speaks of effort, not blows', () => {
+    const { g, f } = fightAt(door(), mkHero({ ep: 100, epMax: 100 }));
+    expect(f.kind).toBe('obstacle');
+    expect(f.evades()[0]).toMatchObject({ free: true, label: 'Leave it' });
+    const n = drawWhere(5, (r) => r.hero > 0 && r.enemy > 0), res = LW.combatRound(5, n);
+    f.round(n);
+    expect(f.log.at(-1)).toMatch(new RegExp(`Door gives ${res.enemy}; the effort costs you ${res.hero}\\.$`));
+    f.round(n, 'evade');
+    expect([f.over, g.hero.ep]).toEqual(['evade', 100 - res.hero]);
+    expect(f.log.at(-1)).not.toMatch(/run|catches/);
+    expect(f.words.win[1]).not.toMatch(/dead/);
+  });
+  it('a door has no mind: Mindblast does not tell, Psi-surge does', () => {
+    const kai = fightAt(door(), mkHero({ disciplines: ['mindblast'] })).f;
+    expect([kai.cs(), kai.deaf()]).toEqual([15, true]);
+    const mk = fightAt(door(), mkHero({ series: 'magnakai', magnakai: ['psiSurge'], cs: 30 })).f;
+    expect(mk.cs()).toBe(30);
+    mk.focus();
+    expect(mk.cs()).toBe(34);
+  });
+  it('a contest and a fight of the mind are named for what they are; a duel stays a duel', () => {
+    expect(fightAt({ enemies: [foe()], points: { n: 50 } }).f.kind).toBe('contest');
+    expect(fightAt({ enemies: [foe()], mind: { cs: 15 } }).f.kind).toBe('mind');
+    expect(fightAt({ enemies: [foe()] }).f.kind).toBe('fight');
+    const { f } = fightAt({ kind: 'contest', act: { label: 'Wrestle' }, enemies: [foe({ ep: 100 })] });
+    expect(f.words.act).toBe('Wrestle');
+    f.round(drawWhere(5, (r) => r.hero === 0));
+    expect(f.log.join(' ')).not.toMatch(/blow|untouched/);
+  });
+});
+
 describe('the mind', () => {
   it('Mindblast adds 2, unless the foe is immune to it', () => {
     const hero = () => mkHero({ disciplines: ['mindblast'] });

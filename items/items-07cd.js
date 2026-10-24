@@ -149,7 +149,8 @@ export const SECTIONS = {
   206: { take: spent, fight: quick('17') },
   208: { need: { 310: rope, 211: noRope } },
   // the door is fought as if unarmed, without the penalty for Nexus
-  214: { fight: { with: 'none', noUnarmed: { disc: 'nexus' } } },
+  // the tunnel door, lifted (an obstacle: combat.kind)
+  214: { fight: { with: 'none', noUnarmed: { disc: 'nexus' }, act: { label: 'Heave', note: 'lift it' } } },
   // the weapon is on the floor for the first two rounds
   219: { ep: -6, fight: { rounds: [{ upTo: 2, unarmed: true }, venom] } },
   220: { loot: [{ item: 'axe' }, { item: 'dagger' }] },

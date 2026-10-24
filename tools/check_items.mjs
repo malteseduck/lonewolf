@@ -44,7 +44,7 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
     'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax', 'game',
     'zeroTen', 'against', 'mealUnless', 'add', 'forfeit']);
   const FIGHT = new Set(['csMod', 'csIf', 'csUnless', 'csNote', 'mindforce', 'unless', 'unarmed', 'undead', 'drain', 'with', 'double', 'ambush', 'evade',
-    'rounds', 'stop', 'won', 'wounded', 'noEvade', 'noShield', 'noUnarmed', 'weaponCs', 'plain', 'only', 'barred', 'lend', 'mind', 'keep', 'healLost', 'restore', 'noBoost', 'to', 'points', 'lose', 'byHand', 'breath', 'noMind', 'noStrike']);
+    'rounds', 'stop', 'won', 'wounded', 'noEvade', 'noShield', 'noUnarmed', 'weaponCs', 'plain', 'only', 'barred', 'lend', 'mind', 'keep', 'healLost', 'restore', 'noBoost', 'to', 'points', 'lose', 'byHand', 'breath', 'noMind', 'noStrike', 'kind', 'act']);
   const WHEN = new Set(['if', 'unless', 'ate', 'came', 'ep', 'epMax', 'cs', 'healLost', 'take', 'back', 'mark', 'unmark', 'settle']);
   // what a choice's need reads (Game.choices and the gold spent on choosing), and what a Condition in its any reads (LW.meets):
   // any other key is silently ignored by the page
@@ -101,6 +101,7 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
     Object.keys(x.sell || {}).forEach((i) => { if (i !== 'arrows' && !known(i)) bad.push(`${id} sell: unknown item ${i}`); });
     if (x.fight && x.fight.with && x.fight.with !== 'none' && !(LW.ITEMS[x.fight.with] && (LW.ITEMS[x.fight.with].kind === 'weapon' || LW.ITEMS[x.fight.with].weapon))) bad.push(`${id} fight: with ${x.fight.with}, which is not a weapon`);
     (x.loot || []).forEach((l) => { if (l.pick && !l.or) bad.push(`${id} loot: pick without or`); });
+    if (x.fight && x.fight.kind && !['fight', 'obstacle', 'contest', 'mind'].includes(x.fight.kind)) bad.push(`${id} fight: kind must be fight, obstacle, contest or mind`);
     if (x.game && !['wheel', 'dice', 'higher'].includes(x.game.kind)) bad.push(`${id} game: kind must be wheel, dice or higher`);
     if (x.game && !sec.rnt) bad.push(`${id}: game, but the section draws no Random Number`);
     if (x.game && x.game.coin && !LW.COINS[x.game.coin]) bad.push(`${id} game: unknown coin ${x.game.coin}`);

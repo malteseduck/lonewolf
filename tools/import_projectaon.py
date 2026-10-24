@@ -356,7 +356,7 @@ for n in numbers:
     page = open(os.path.join(src, f'sect{n}.htm'), encoding='utf-8', errors='replace').read()
     main = page[page.find('<div class="maintext'):page.find('<p id="page-navigation"')]
     sec = {'text': [], 'choices': []}
-    enemies, lost, target = [], False, None
+    enemies, lost, target, obstacle = [], False, None, False
     # a list (what is on offer, what a body carries) is a paragraph per item, a signpost or a table one
     # per line or row, all marked as list lines (`list`, drawn small); verse set as lines with no
     # paragraph of its own, a paragraph per line
@@ -382,6 +382,7 @@ for n in numbers:
                 enemies.append({'name': c.group(1).strip(), 'cs': int(c.group(2)), 'ep': int(c.group(4))})
                 if c.group(3) == 'TARGET':
                     target = int(c.group(4))
+                obstacle = obstacle or c.group(3) == 'RESISTANCE'
         elif cls == 'choice' and re.search(r'href="sect\d+\.htm"', body):
             text = plain(body)
             for to in re.findall(r'href="sect(\d+)\.htm"', body):
@@ -436,6 +437,8 @@ for n in numbers:
         combat = {'enemies': enemies}
         if target:
             combat['points'] = {'n': target}
+        if obstacle:
+            combat['kind'] = 'obstacle'  # broken down, not killed: the engine words it so, and leaving it is free
         # the sentence that grants immunity; when it names some of the enemies, only they are immune
         said = next((x for x in re.split(r'(?<=\.)\s+', whole) if re.search(r'immune to (?:the effects of )?(?:Mindblast|Psi-surge|all (?:forms of )?psychic attacks?)', x, re.I)), '')
         named = [e for e in enemies if re.sub(r'\s+\d+$', '', e['name']).lower() in said.lower()]

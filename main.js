@@ -385,7 +385,7 @@ function leftHTML() {
   const badge = `<div class="badge"><div class="med" style="--s:3.300em"><span style="font:400 1em var(--title)">${esc(id)}</span></div></div>`;
 
   if (mode === 'battle') {
-    const over = B.over && { win: ['The way is clear', 'Your enemy lies dead at your feet.'], evade: ['You are away', 'You leave the fight behind you.'], stop: ['The fight ends', 'The fighting stops here.'], broken: ['Stopped by hand', 'The fight is not won. Turn to the section the text names.'], dead: ['Your adventure ends here', 'The last of the Kai falls.'] }[B.over];
+    const over = B.over && { win: B.words.win, evade: B.words.away, stop: ['The fight ends', 'The fighting stops here.'], broken: ['Stopped by hand', 'The fight is not won. Turn to the section the text names.'], dead: ['Your adventure ends here', 'The last of the Kai falls.'] }[B.over];
     return `${badge}<div class="story"><div class="scroll" id="scroll">
         <div class="text"><p class="first">${esc(sec.text[0])}</p></div>
         <div class="block"><span class="eyebrow">The fight</span><ol class="rounds">${B.log.map((l) => `<li>${esc(l)}</li>`).join('') || '<li>Choose your action.</li>'}</ol>${
@@ -1088,17 +1088,17 @@ function updateBattle() {
   const hero = game.hero, foe = B.foe, q = (k) => B.node.querySelector(`[data-b=${k}]`), r = B.ratio();
   q('name').textContent = foe.name;
   B.node.querySelector('.bar i').style.width = Math.max(0, (foe.ep / foe.max) * 100) + '%';
-  q('stats').textContent = `CS ${foe.cs} · EP ${Math.max(0, foe.ep)} · Ratio ${r > 0 ? '+' : ''}${r}`;
+  q('stats').textContent = `CS ${foe.cs} · ${B.words.ep} ${Math.max(0, foe.ep)} · Ratio ${r > 0 ? '+' : ''}${r}`;
   const locked = B.lock || B.over;
   const med = (id, ic, label, note, off, extra = '') => `<div class="medcap"><button type="button" class="med ${extra}" data-cmd="${id}" ${locked || off ? 'disabled' : ''} aria-label="${label}">${ic}</button>${label}<small>${note}</small></div>`;
   const n = hero.backpack.filter((b) => b === 'potion').length, psi = LW.psi(hero), cure = LW.cureOf(hero);
-  const left = med('fight', B.weapon ? itemGlyph(B.weapon) : glyph(UG.strike), 'Strike', B.noStrike ? 'you cannot fight' : 'attack', B.noStrike)
+  const left = med('fight', B.weapon ? itemGlyph(B.weapon) : glyph(UG.strike), esc(B.words.act), B.noStrike ? 'you cannot fight' : esc(B.words.note), B.noStrike)
     + (B.power ? med('mind', glyph(B.power === 2 ? UG.psiSurge : UG.mindblast), B.power === 2 ? psi.name : 'Mindblast', B.deaf() ? 'no effect' : foe.immune && B.mind === 1 ? 'as Mindblast: no effect' : ['at rest', B.power === 2 ? `as Mindblast, +${psi.blast}` : 'focused, +2', `+${psi.surge}, costs ${psi.cost} a round`][B.mind], false, B.blasting() ? 'lit' : '') : '');
   const right = (n ? med('item', itemGlyph('potion'), 'Laumspur', `${n} left`, hero.ep >= hero.epMax) : '')
     + (LW.canCure(hero, book.id) ? med('cure', glyph(UG.cure), cure.name, hero.ep <= cure.at ? '20 back, once a book' : `at ${cure.at} or less`, hero.ep > cure.at) : '')
     + B.boosts().map((id) => med('boost:' + id, itemGlyph(id), esc(LW.itemName(id)), 'before you strike')).join('')
     // one medallion for each way out the text allows (B.evades()); a second one is named by its own label
-    + B.evades().map((e) => med('evade:' + e.i, glyph(e.free ? UG.evadeFree : UG.evade), e.label ? esc(e.label) : 'Evade', e.open ? (e.lose === 'drawn' ? 'lose the number drawn' : e.free ? 'untouched' : 'take one blow') : e.late ? 'too late' : e.if && !LW.meets(hero, e.if) ? `needs ${esc(LW.condName(e.if))}` : `after round ${e.after}`, !e.open)).join('');
+    + B.evades().map((e) => med('evade:' + e.i, glyph(e.free ? UG.evadeFree : UG.evade), e.label ? esc(e.label) : 'Evade', e.open ? (e.lose === 'drawn' ? 'lose the number drawn' : e.free ? B.words.leaveNote || 'untouched' : 'take one blow') : e.late ? 'too late' : e.if && !LW.meets(hero, e.if) ? `needs ${esc(LW.condName(e.if))}` : `after round ${e.after}`, !e.open)).join('');
   const cmds = q('cmds');
   cmds.innerHTML = left + right;
   renderLeft();
@@ -1106,10 +1106,12 @@ function updateBattle() {
   const gq = pr.querySelector('.gauges');
   if (gq) gq.innerHTML = gauges(B.cs(), hero);
 }
+// a door does not lunge at him (B.words.lunge): his loss is only the flash of the page
 async function lunge(n) {
-  await tween(200, (k) => { B.fx.lunge = k * k; });
+  const at = B.words.lunge ? 1 : 0;
+  await tween(200, (k) => { B.fx.lunge = at * k * k; });
   if (n) { bookEl.classList.remove('hurt'); void bookEl.offsetWidth; bookEl.classList.add('hurt'); setTimeout(() => bookEl.classList.remove('hurt'), 420); }
-  await tween(320, (k) => { B.fx.lunge = 1 - k; });
+  await tween(320, (k) => { B.fx.lunge = at * (1 - k); });
 }
 async function battleAct(id) {
   if (!B || B.lock || B.over) return;
@@ -1127,7 +1129,7 @@ async function battleAct(id) {
     else {
       B.strike(o);
       await wait(still ? 0 : 140);
-      if (o.dealt) { B.fx.wounds.push(newWound()); B.fx.hit = 1; }
+      if (o.dealt) { if (B.words.wounds) B.fx.wounds.push(newWound()); B.fx.hit = 1; } // red wounds on a foe that bleeds; anything else only shakes
       updateBattle();
       await wait(still ? 0 : 480);
       const foeUp = B.foe.ep > 0;

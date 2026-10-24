@@ -93,7 +93,7 @@ export const SECTIONS = {
   // the final: 50 TARGET points a side in place of Endurance (his own untouched), fought with a Bow (his own or
   // the one borrowed at 18), no Shield (footnote), no Psi-surge or Mindblast (ruling R16); a borrowed bow's
   // penalty, and the Jakan breaking on a 0
-  26: { rnt: null, fight: { points: { n: 50, lose: '183' }, to: '252', lend: 'bow', noShield: true, noMind: true,
+  26: { rnt: null, fight: { points: { n: 50, lose: '183' }, act: { label: 'Shoot', note: 'loose an arrow' }, to: '252', lend: 'bow', noShield: true, noMind: true,
     stop: { drawn: [0], to: '335', if: { mark: 'jakan6' } },
     rounds: [{ csMod: -4, if: { mark: 'boneBow6' }, note: 'Kalte bone bow' }, { csMod: -2, if: { mark: 'jakan6' }, note: 'Jakan' }] } },
   27: { need: { 304: pay(3) } },
@@ -153,6 +153,8 @@ export const SECTIONS = {
   153: { ep: -5, need: withBow('178', '39') },
   // the first round bare-handed; evading only after four
   155: { fight: { rounds: [{ upTo: 1, unarmed: true }], evade: { after: 4, to: '305' } } },
+  // the sewer door, battered down (an obstacle: combat.kind)
+  156: { fight: { act: { label: 'Batter', note: 'break it down' } } },
   157: { ep: 1, loot: [{ meal: 1 }, { meal: 1 }] },
   // the cellar: Gwynian gives the key, and the rest is for the taking
   158: { give: [{ item: 'smallSilverKey6' }], loot: [{ item: 'quarterstaff' }, { meal: 1 }, { meal: 1 }, { meal: 1 }, { item: 'mace' }, { item: 'brassWhistle6' }, { item: 'rope' }, { item: 'shortSword' }] },

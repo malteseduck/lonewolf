@@ -14,6 +14,8 @@ Cite a ruling by its id: "ruling R1".
 | R1 | The Combat Ratio counts for **+10 at most**: the table's "+11 or more" column is never used. No floor below. Every fight, every book, whatever the weapon. A house rule, after the Sommerswerd made early fights a formality. | `LW.RATIO_CAP` (shared/fight.js); rules-books.md, rules-engine.md name it as a house rule | 2026-10-04 |
 | R2 | **At most 12 Special Items in every book**, Kai and Magnakai too (the books set it from Book 8). Items marked `free` still do not count; over 12 may be left at the Monastery where the kit step allows. A character carried in with more (an old save) keeps them but takes no more until under. | `LW.specialLimit()`, `LW.putItem`, `LW.KitSetup` (core.js); rules-books.md marks it as the owner's | 2026-10-12 |
 | R3 | **A fight draws its Random Numbers out of sight**: Strike and Evade draw at once (`LW.rand10()`), no medallion, the log still saying the number. A section's own Random Number is still spun on the page. | `battleAct` (main.js) | 2026-10-12 |
+| R23 | **Leaving an obstacle costs no blow.** A door fought as an enemy (combat `kind: 'obstacle'`, Book 6's 156, Book 7's 214) cannot strike him as he goes: the way out the text gives is free, named "Leave it". | `Fight#evades` (shared/fight.js) | 2026-10-24 |
+| R24 | **Mindblast does not touch an obstacle; Psi-surge and Kai-surge do.** A door has no mind, but the Magnakai books' Psi-surge shakes objects apart, so an obstacle is fought as a foe immune to Mindblast only (`immune: 'mindblast'`). | `Fight` constructor (shared/fight.js) | 2026-10-24 |
 
 ## Book readings
 

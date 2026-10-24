@@ -58,6 +58,7 @@ table, not here.
 | Rounds go on until one side is at 0 or below | yes |
 | No weapon: −4 COMBAT SKILL, bare hands | yes (less with Weaponmastery from Tutelary: see the Magnakai series) |
 | Evasion only where the text offers it: the round is fought, only his loss counts, and he is away | yes (`evade`) |
+| A door fought as an enemy ("RESISTANCE points"): the normal rules, his losses the effort | yes (`kind: 'obstacle'`); leaving it costs no blow and Mindblast does not touch it (rulings R23, R24) |
 | Several enemies "one at a time" are fought in turn; "as one enemy" is one combat line | importer |
 
 ### Carrying a character on
@@ -367,6 +368,8 @@ Monastery). Clothing is named there but not tracked.
   Item or Weapon (17); in the bow fight at 26 only the Bow counts, and Weaponmastery with Bow gives
   +3 COMBAT SKILL there; the shop buys 4 Arrows for 1 Gold Crown (98); the bow at 252 adds 3 more to
   shots, on top of Weaponmastery.
+- **The sewer door** (156) is battered down by the normal combat rules, his losses the effort.
+  *Engine*: yes, an obstacle (rulings R23, R24).
 
 ### Book 7, Castle Death (Magnakai)
 
@@ -380,6 +383,8 @@ Monastery). Clothing is named there but not tracked.
 - **Footnotes**: the Jewelled Mace may give +5 COMBAT SKILL at 27; the Silver Helm and a Helmet are
   not worn together (148: *Engine*: yes, the Silver Helm's `apart` refuses either beside the other); any Arrows are lost in the falls at 137 and 301; the Sommerswerd keeps
   its power, as no one but a Kai Lord fought with it (335).
+- **The tunnel door** (214) is lifted by the normal combat rules, bare-handed unless he has Nexus, his
+  losses the effort. *Engine*: yes, an obstacle (rulings R23, R24).
 
 ### Book 8, The Jungle of Horrors (Magnakai)
 
