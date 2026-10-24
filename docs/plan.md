@@ -82,9 +82,9 @@ What a book's play-through left to the player that the engine could take over:
 
 Things to check while a book goes through its steps, which no step asks for:
 
-- Weapon bonuses the item tables give as the fight's `csMod`, to check in play against the engine's
-  own weapon bonus (that the two do not add): Book 11's Ironheart Broadsword +8 (204). Book 12's Helshezag (133) and weapon of increased power (88) use `lend` /
-  `weaponCs`, which replace the weapon's own bonus; check those in play too.
+- Weapon bonuses through `lend` / `weaponCs`, which replace the weapon's own bonus: Book 12's
+  Helshezag (133) and weapon of increased power (88); check those in play. (Book 11's Ironheart
+  Broadsword at 204 was a `csMod` added on top of another mastered weapon; it is a `weaponCs` now.)
 - Book 3's sledge food is left to the text.
 - Book 3: what its 2026-10-09 play-through left to the player is now applied (Sixth Sense below
   Guardian, the Effigy or the Sommerswerd at 173, 108's two ways out in mid-fight); check it in the

@@ -152,7 +152,8 @@ def gate(text):
     """A choice open only to a hero with a discipline, rank or Lore-circle (need), or None.
     Negative phrasings ("if you do not have", "have yet to") are left open."""
     # the condition ends at the first comma, unless the comma is inside a list of disciplines ("of A, B, or C")
-    head = re.split(r',(?!\s*(?:(?:or|and)\s+)?(?:%s)\b)|\s+turn to\b' % '|'.join(re.escape(k) for k in DISC), text, maxsplit=1, flags=re.I)[0]
+    # nor at ", or if you possess ..." (Book 11's 215: a rank in one discipline, or another discipline)
+    head = re.split(r',(?!\s*(?:(?:or|and)\s+)?(?:%s)\b)(?!\s*or if you\b)|\s+turn to\b' % '|'.join(re.escape(k) for k in DISC), text, maxsplit=1, flags=re.I)[0]
     if re.search(r"\b(?:not|neither|nor|yet to)\b|n't\b", head, re.I):
         return None
     # the whole condition, when it is only disciplines, a rank and Lore-circles ("... and have reached the rank of Primate")
@@ -269,6 +270,9 @@ def number_rules(whole):
         if not cond:
             return None
         mods.append(dict(cond, plus=int(m.group(3)) * (1 if m.group(2) == 'add' else -1)))
+        # "If you have Huntmastery, add 1 ... for every Magnakai Discipline you possess (after the first three)" (Book 11's 189)
+        if re.search(r'\bfor every Magnakai Discipline\b', s, re.I):
+            mods[-1].update({'each': 'magnakai', 'over': 3 if re.search(r'\b(?:above|in excess of|after) (?:the|your) (?:first|initial)\b', s) else 0})
         if both:
             if len(cond.get('disc', [])) < 2 or cond.get('every') or m.group(2) != 'add' or int(both.group(1)) <= int(m.group(3)):
                 return None

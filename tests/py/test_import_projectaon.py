@@ -207,6 +207,20 @@ def test_number_rules_reads_discipline_bonus_and_penalty(kai):
         {'disc': ['hunting'], 'plus': 1}]
 
 
+def test_number_rules_reads_a_bonus_per_discipline_with_a_condition(magnakai):
+    nr = magnakai['number_rules']
+    assert nr('If you have the Magnakai Discipline of Invisibility, add 1 to this number for every Magnakai Discipline you possess.') == [
+        {'disc': ['invisibility'], 'plus': 1, 'each': 'magnakai', 'over': 0}]
+    assert nr('If you have the Magnakai Discipline of Huntmastery add 1 to this number for every Magnakai Discipline you have mastered after the first three.') == [
+        {'disc': ['huntmastery'], 'plus': 1, 'each': 'magnakai', 'over': 3}]
+
+
+def test_gate_reads_a_rank_or_another_discipline(magnakai):
+    assert magnakai['gate']('If you possess the Magnakai Discipline of Pathsmanship and have reached the rank of Scion-kai, '
+                            'or if you possess the Magnakai Discipline of Animal Control, turn to 325.') == {
+        'any': [{'disc': 'pathsmanship', 'rank': 8}, {'disc': 'animalControl'}]}
+
+
 def test_number_rules_reads_however_if(kai):
     assert kai['number_rules']('However, if you have the Kai Discipline of Hunting, add 1 to the number.') == [
         {'disc': ['hunting'], 'plus': 1}]

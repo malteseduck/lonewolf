@@ -67,7 +67,8 @@ Heuristics layered on top, all by regular expression:
   The twelve Grand Master ranks are known. "The rank of Y in the Discipline of X" (Book 14's 107) is the discipline
   and the rank: his rank is his own, the same in every discipline.
 - **Gates** (`gate()`): the choice's condition, up to its first comma or "turn to" (a comma inside a
-  list of disciplines, "of A, B, or C", does not end it; "and you have reached ..." joins a rank to it). Negative
+  list of disciplines, "of A, B, or C", does not end it, nor does one before "or if you ...", as in Book 11's 215,
+  "Pathsmanship and the rank of Scion-kai, or if you possess Animal Control"; "and you have reached ..." joins a rank to it). Negative
   phrasings ("if you do not have", "have yet to", "neither") are left open. "X, or have reached the rank of Y" (parts joined by "or (if you) have/possess/reached/attained") is split and each part read as a condition; if all parse, `need: {any: [...]}`, else the choice is left open. A
   looser reading still gates "If you wish to use the Kai Discipline of X ..." (also "... of X in order to ...").
 - **Random Number ranges** (`span()`): "0–4", "−2–+3" (the books' minus sign), "5 or more" / "or
@@ -75,7 +76,8 @@ Heuristics layered on top, all by regular expression:
   or COMBAT SKILL.
 - **Random Number bonuses** (`number_rules()`): each sentence that adds to or takes from the number
   must be "If <condition>, add / deduct N (to the number)" (the comma may be missing), "add another / a further N",
-  "add 1 for every Magnakai Discipline you possess (above the first three)", or "(Pick a number ... and) add N
+  "add 1 for every Magnakai Discipline you possess (above the first three)", the same after a condition ("If you
+  have Huntmastery, add 1 ... for every Magnakai Discipline ... after the first three", Book 11's 189), or "(Pick a number ... and) add N
   to the number you have chosen" with no condition, which always applies. Rules listed after a lead-in
   ending in a colon are read one by one. A parenthesis "if you have both, add only N" is taken as read;
   "add 3 (if you possess both of these ..., add 7)" after an either-of is read as that rule plus an
