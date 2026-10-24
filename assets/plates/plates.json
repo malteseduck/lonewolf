@@ -1,6 +1,16 @@
 {
   "_readme": "Pictures for fights whose section has no illustration of its own. The first entry whose match (a regular expression, case ignored) is found in the enemy's name is used, so put the narrower ones first. book, if given, limits an entry to that book (its own characters, or a stand-in that would be wrong elsewhere); book entries go first. src is relative to the project root: files in assets/plates/ are free to redistribute (sources in README.txt); files under data/projectaon/ are Project Aon illustrations on the owner's machine only, from the same book or borrowed from another, and files under art/ are pictures the owner supplied for personal use (git-ignored); a missing one falls back to the drawn emblem. crop, if given, is the part of the picture to use, [x, y, w, h] as fractions. over: true makes the entry win even where the section has an illustration of its own (the owner preferred another picture). levels, if given, is [black, white] (0-255): the tones that become full ink and bare paper, for a painting whose mid-tones would otherwise all turn to solid ink. draft, if given, marks an entry tools/plates_draft.py wrote (where it came from) that the owner has not yet adjusted on the picture sheet. See docs/reference/interface.md, Art pipeline, and docs/reference/items.md, Fight pictures.",
   "plates": [
+    { "match": "^demoness shamath \\(in the guise of gnekasha the worm-thrall\\)$", "book": "16tlov", "src": "art/plates/16tlov/demoness-shamath-in-the-guise-of-gnekasha-the-worm-thrall.webp", "crop": [0.0461, 0.0309, 0.9197, 0.9321], "levels": [18, 194] },
+    { "match": "^vortexi \\(weakened by psychic attack\\)$", "book": "16tlov", "src": "art/plates/16tlov/vortexi.webp", "crop": [0.0578, 0.0538, 0.9067, 0.7963] },
+    { "match": "^vortexi$", "book": "16tlov", "src": "art/plates/16tlov/vortexi.webp", "crop": [0.0578, 0.0538, 0.9067, 0.7963] },
+    { "match": "^acolytes of vashna \\(in battle-frenzy\\)$", "book": "16tlov", "src": "data/projectaon/16tlov/ill20.png", "draft": "this book" },
+    { "match": "arch druid cadak$", "book": "16tlov", "src": "data/projectaon/13tplor/ill14.png" },
+    { "match": "durncrag scavenger", "book": "16tlov", "src": "data/projectaon/15tdc/ill14.png", "crop": [0.2, 0.25, 0.75, 0.75] },
+    { "match": "lavas$", "book": "16tlov", "src": "data/projectaon/16tlov/ill4.png" },
+    { "match": "shamath automaton", "book": "16tlov", "src": "data/projectaon/16tlov/ill16.png", "crop": [0, 0.48, 1, 0.52] },
+    { "match": "^vakovarian brigand captain$", "book": "16tlov", "src": "data/projectaon/16tlov/ill14.png", "draft": "this book, a picture 2 links before the fight" },
+    { "match": "^vakovarian brigands$", "book": "16tlov", "src": "data/projectaon/16tlov/ill14.png", "draft": "this book" },
     { "match": "^nad-jaguz$", "book": "15tdc", "src": "art/plates/15tdc/nad-jaguz.webp", "crop": [0.021, 0.2019, 0.9606, 0.6315] },
     { "match": "armoury guards$", "book": "15tdc", "src": "data/projectaon/09tcof/ill13.png" },
     { "match": "^death knight$", "book": "15tdc", "src": "data/projectaon/10tdot/ill9.png", "draft": "Book 10" },

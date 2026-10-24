@@ -312,7 +312,8 @@ picture, the draft's and the rest, against what the enemy is (a Death Knight und
 guard does not match; Book 15's Armoury Guards are Drakkarim), searching by what it is as well as by
 name, and shows the owner a contact sheet of the candidates rather than describing them (the owner's
 request, 2026-10-24; the step 7 prompt). A creature particular to Lone Wolf that no book pictures gets
-no stand-in: the owner generates its picture from a prompt the agent gives in its report (2026-10-24);
+no stand-in: the agent names it in its report and the owner generates its picture with the sheet's
+**Prompt** button, from its `foe-about.json` entry (2026-10-24; the agent writes no prompt itself);
 a stand-in found by searching is for ordinary things (animals, plain humans, a door).
 
 Where a fight's picture comes from, first that applies (ADR 0008):
