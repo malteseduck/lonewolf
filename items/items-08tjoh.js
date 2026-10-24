@@ -4,14 +4,13 @@
      - Money: the book counts in Lune, 4 to the Gold Crown (rules-books.md). Prizes and prices are
        written here in Crowns at that rate (20 Lune = 5 Crowns); the Arrows at the bowyer's are two
        for a Crown.
-     - Bows: a choice that says "if you have a Bow" is gated on the Bow or the Silver Bow of Duadon. The
-       Silver Bow is only a Special Item here (it is carried on from Book 7): the engine does not shoot
-       it, so a shot with it is worked out by hand. Arrows fired by the text outside a draw are
-       taken from the Quiver on arrival; the draws that are shots are `bowShot`.
+     - Bows: a choice that says "if you have a Bow" is gated on the Bow or the Silver Bow of Duadon (carried
+       on from Book 7, shot as there) and an Arrow. Arrows fired by the text outside a draw are taken from
+       the Quiver on arrival; the draws that are shots are `bowShot`, which spend their own Arrow.
      - The Helghast can be wounded only by magic: the Sommerswerd, or Paido's blue-steel sword.
      - Lone Wolf's companion Paido has no sheet of his own; his sword is a Special Item you pick up.
-     - Left to the player (todo): the Arrows shot at the dogs (164). The remedy used on Paido is the
-       one he carries, or the one he says when he carries more than one kind.
+     - The remedy used on Paido is the one he carries, or the one he says when he carries more than one kind.
+     - Left to the player (todo): the Special Items sold to the merchant at 139.
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {
   pass: { name: 'Pass', kind: 'special', glyph: 'id-card', about: 'A safe-conduct from Lord Adamas, sealed with his ring. It opens gates in northern Talestria.' },
@@ -36,8 +35,10 @@ export const MARKS = {
   korovax: { name: 'Korovax', about: 'An infected wound: only a Tincture of Oxydine or an Oede Herb cures it.', until: ['oxydine', 'oedeHerb'], book: true },
 };
 
-// anyone with a Bow of either kind
-const bow = { item: ['bow', 'silverBow'] };
+// anyone with a Bow of either kind and an Arrow to shoot
+const bows = ['bow', 'silverBow'];
+const bow = { any: [{ item: bows, arrows: 1, label: 'a Bow and an Arrow' }] };
+const anArrow = { any: [{ arrows: 1, label: 'an Arrow' }] };
 const sommerswerd = { item: 'sommerswerd' };
 const fireseed = { item: 'fireseed' };
 // any Laumspur remedy he could give Paido
@@ -61,6 +62,13 @@ export const SECTIONS = {
   15: { ep: -2, take: [fireseed] },
   16: { give: [{ gold: 5 }] },
   18: { ep: -2 },
+  40: { ep: -2 },
+  // the stew, a Meal of his own, or nothing: no Meal is asked on arrival
+  78: { meal: false, need: { 217: { item: 'meal' } } },
+  217: { take: [{ item: 'meal' }] },
+  174: { ep: -3 },
+  // won in six rounds, or broken off after them
+  13: { fight: { stop: { after: 6, to: '158' }, won: { within: 6, to: '79', else: '158' } } },
   // the fortune-teller's fee is 80 Lune
   244: { need: { 20: { gold: 20, spend: true } } },
   34: { take: [{ item: 'meal' }] },
@@ -75,13 +83,13 @@ export const SECTIONS = {
   // the barge: 40 Lune a head
   89: { need: { 266: { gold: 10, spend: true } } },
   299: { need: { 266: { gold: 10, spend: true } } },
-  6: { take: [arrow] },
   64: { loot: sacks },
   66: { ep: -2 },
   // 3 for good, and 2 more for this adventure
   71: { cs: -3, mark: 'burns8' },
   74: { fight: { mind: { cs: 15 }, noBoost: true } },
-  77: { take: [arrow] },
+  // 17's shot is a draw (bowShot), which spends the Arrow
+  17: { bowShot: { 6: [0, 7], 77: [8, 99] } },
   81: { ep: -12, take: [fireseed] },
   83: { ep: -5 },
   86: { rolls: loss() },
@@ -99,7 +107,7 @@ export const SECTIONS = {
   127: { need: { 209: bow } },
   132: { need: { 15: fireseed } },
   135: { need: { 68: { item: 'pass' }, 92: { item: 'pass', not: true } } },
-  139: { give: [{ item: 'greyRing' }] },
+  139: { give: [{ item: 'greyRing' }], todo: 'any Special Items but the Ring may be sold here for 8 Gold Crowns each: drop them and add the Crowns by hand.' },
   143: { need: { 18: { item: 'pass' } } },
   145: { take: [{ gold: 4 }] },
   146: { ep: -5 },
@@ -110,7 +118,12 @@ export const SECTIONS = {
   31: { need: { 237: { any: [{ mark: 'korovax' }] }, 91: { any: [{ not: { mark: 'korovax' } }] } } },
   159: { ep: -5, fight: paido },
   161: { take: [arrow], need: { 208: bow } },
-  164: { todo: 'the dogs were shot down: erase the Arrows used by hand (the text gives no number).' },
+  // the two Arrows 305 asks for, spent on the dogs
+  164: { take: [{ arrows: 2 }] },
+  305: { fight: { to: '231', evade: { after: 0, within: 1, to: '164', if: { item: bows, arrows: 2 }, free: true, label: 'Shoot the dogs' } } },
+  125: { need: { 90: anArrow } },
+  90: { take: [arrow] },
+  324: { take: [arrow] },
   // the bowyer's price list, in Crowns at 4 Lune to the Crown (Arrows are 2 Lune each)
   168: {
     loot: [{ arrows: 2, cost: 1 }, { item: 'bow', cost: 8 }, { item: 'quiver', cost: 3 }, { item: 'wristGuards8', cost: 2 }, { item: 'bowCaseWood8', cost: 5 }, { item: 'bowCaseLeather8', cost: 3 }, { item: 'bowstring8', cost: 1 }],
@@ -168,7 +181,6 @@ export const SECTIONS = {
   290: { need: { 97: { item: 'dagger' }, 132: { item: 'dagger', not: true } } },
   294: { take: [{ item: 'meal' }] },
   298: { fight: { rounds: [{ upTo: 2, csMod: -3, unless: { disc: 'huntmastery' }, note: 'Surprise' }] } },
-  305: { need: { 164: bow } },
   306: { loot: [{ item: 'mapTharro8' }, { meal: 1 }, { item: 'axe' }] },
   308: { fight: { with: 'sommerswerd', undead: true, drain: 2 } },
   30: { fight: { with: 'sommerswerd', undead: true, drain: 2 } },

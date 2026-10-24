@@ -59,6 +59,14 @@ each book's steps as usual. In order:
 9. **Book 21's currencies** at setting out (the exchange for Ren, the mixed pouch), if item 1 says
    to track them.
 
+### Engine work found in play
+
+What a book's play-through left to the player that the engine could take over:
+
+- **A trader who buys any Special Item at one price** (Book 8's 139: 8 Gold Crowns each, the Ring
+  just bought excepted). `sell` takes item ids only; a `special: price` with an `except` list would
+  do it.
+
 ### Book notes outside the steps
 
 Things to check while a book goes through its steps, which no step asks for:
@@ -101,5 +109,5 @@ without them; the importer marks the highest section `victory` even when it is a
 
 ### Not yet checked
 
-- Magnakai rules in play in Books 8-12 (Books 6 and 7 played through on 2026-10-21 and 2026-10-23; Book 12 tried on a few sections).
+- Magnakai rules in play in Books 9-12 (Books 6, 7 and 8 played through on 2026-10-21, 2026-10-23 and 2026-10-23; Book 12 tried on a few sections).
 - The 4K map's fit, zoom and 4096 px canvas cap on the iPad.
