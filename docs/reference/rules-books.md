@@ -422,7 +422,8 @@ Monastery). Clothing is named there but not tracked.
   Weaponmastery number, yes, for the Bow.
 - **Footnotes**: when told to lose a Weapon, a weapon-like Special Item goes only if he has no
   ordinary Weapon (11, 210); the Dagger of Vashna at 142 likewise, or he may keep it; at 203 a 0
-  counts as 10, and at least 1 point is lost even with Curing's −3.
+  counts as 10, and at least 1 point is lost even with Curing's −3. *Engine*: yes (item table); the
+  Dagger of Vashna opens 142 as a Dagger and is kept there (the footnote's alternative).
 
 ### Book 11, The Prisoners of Time (Magnakai)
 

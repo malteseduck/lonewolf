@@ -7,7 +7,14 @@
      - The Signet Ring is given at 176 and, by the text, does not count against the twelve Special
        Items (free).
      - The one surprise penalty (28, first round only) names Huntmastery itself, so it is an unless.
-     - Kalte Firesphere is the Book 3 item (firesphere); the Sommerswerd is Book 2's.
+     - Kalte Firesphere is the Book 3 item (firesphere); the Sommerswerd is Book 2's; the Skeleton Key
+       at 285 is Book 7's (skeletonKey7), the only one an earlier book gives. The Oede herb at 246 is
+       Book 5's, a Backpack Item, which does not carry over: no hero has it here, so 205 stays shut.
+     - A Weapon lost at 11 and 210 is a weapon-like Special Item only when he has no ordinary Weapon
+       (the footnotes); a Dagger of Vashna opens 142 like a Dagger, and is kept there (the footnote's
+       alternative: the player may delete it by hand).
+     - Left to the player: the visits "in a previous adventure" (Talestria at 6 and 179, the Danarg
+       at 80, 142, 219 and 328, the Stornlands at 200 and 306).
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {
   bullwhip: { name: 'Bullwhip', kind: 'special', glyph: 'whip', about: 'A studded whip taken from a partisan leader’s brother. Its copper nuggets glow against the undead: +2 COMBAT SKILL in a fight with them. Some partisans will know it.' },
@@ -15,13 +22,15 @@ export const ITEMS = {
   signetRing10: { name: 'Signet Ring', kind: 'special', glyph: 'globe-ring', free: true, about: 'Prince Graygor’s royal crest, worn on the right hand to show the court’s friendship. It does not count against the twelve Special Items.' },
   gorodonHorn: { name: 'Gorodon Horn', kind: 'special', glyph: 'mighty-horn', about: 'Cut from a Gorodon; potion-makers in Humbold would pay well for it. Carried strapped to the pack.' },
   blackKey10: { name: 'Black Key', kind: 'special', glyph: 'key', about: 'Taken from a Drakkarim officer. It opens a black steel door in Torgar.' },
-  skeletonKey10: { name: 'Skeleton Key', kind: 'special', glyph: 'skeleton-key', about: 'Picks the lock of the black steel door. Not found in this book.' },
   laumwort: { name: 'Laumwort', kind: 'backpack', glyph: 'herbs-bundle', heal: 2, about: 'A herb like Laumspur: eat the leaves to restore 2 ENDURANCE.' },
   bottleOfWater10: { name: 'Bottle of Water', kind: 'backpack', glyph: 'round-bottom-flask' },
   blanket10: { name: 'Blanket', kind: 'backpack', glyph: 'blanket', about: 'Spares you a bad night’s sleep on the straw at Prince Graygor’s camp.' },
 };
 
 const bow = { item: 'bow' };
+// a Dagger, or the Dagger of Vashna (Book 4), which fights as one
+const dagger = { item: ['dagger', 'daggerVashna'] };
+const handWeapons = ['dagger', 'spear', 'mace', 'shortSword', 'warhammer', 'axe', 'sword', 'quarterstaff', 'broadsword'];
 const rope = { item: 'rope' };
 const sommerswerd = { item: 'sommerswerd' };
 const notSommerswerd = { item: 'sommerswerd', not: true };
@@ -40,8 +49,8 @@ const wolf = { stop: { after: 4, to: '234' }, to: '202' };
 export const SECTIONS = {
   8: { need: { 131: bow } },
   9: { need: { 113: sommerswerd, 126: notSommerswerd } },
-  // the weapon he blocked with: the one he fought with at 126, the only way here
-  11: { take: [{ weapons: 'used' }] },
+  // the weapon he blocked with: of two, his choice; a weapon-like Special Item only when he has no other (a footnote)
+  11: { take: [{ weapons: 'one', special: true }] },
   15: { ep: -1 },
   22: { need: { 293: bow } },
   26: { ep: -1, need: { 147: bow } },
@@ -76,12 +85,12 @@ export const SECTIONS = {
   123: { need: { 48: rope } },
   126: { fight: { won: { within: 4, to: '11', else: '321' } } },
   128: { rntMod: [{ wield: ['dagger', 'quarterstaff'], plus: -3 }, { wield: ['axe', 'mace'], plus: 1 }, { disc: 'huntmastery', plus: 2 }], ranges: { 95: [-9, 6], 233: [7, 99] } },
-  130: { need: { 142: { item: 'dagger' }, 17: { item: 'dagger', not: true } } },
+  130: { need: { 142: dagger, 17: { any: [{ not: { any: [{ disc: 'nexus' }, dagger] } }] } } },
   131: { take: [{ arrows: 1 }], need: { 344: { any: [{ arrows: 2 }] } } },
   133: { fight: { undead: true } },
   134: { ep: -3, need: { 214: whip, 327: notWhip } },
   135: { ep: -3 },
-  // the dagger snaps in the lock
+  // the dagger snaps in the lock (an ordinary one; see the top)
   142: { take: [{ item: 'dagger' }] },
   145: { loot: [{ item: 'bullwhip' }, { gold: 9 }, { item: 'torch' }, { item: 'tinderbox' }, { item: 'bottleOfWater10' }] },
   146: { loot: [{ meal: 1 }, { meal: 1 }, { meal: 1 }, { meal: 1 }, { meal: 1 }] },
@@ -105,11 +114,11 @@ export const SECTIONS = {
   186: { meal: true },
   187: { fight: wolf },
   192: { ep: -3 },
-  // the number drawn is the loss (the text does not make 0 count as 10), less 3 with Curing
-  203: { rolls: [1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => ({ range: [n, n], ep: -n })), lessen: [{ n: 3, if: { disc: 'curing' } }] },
+  // the number drawn is the loss, 0 counting as 10, less 3 with Curing but never below 1 (the footnote)
+  203: { rolls: [{ range: [0, 9], ep: 'drawn' }], lessen: [{ n: 3, if: { disc: 'curing' }, min: 1 }] },
   208: { ep: -2 },
-  // the weapon he struck with, his choice of those he has
-  210: { ep: -2, take: [{ pick: 'weapon', n: 1 }] },
+  // the weapon he struck with: as at 11; "another weapon" to cut the amulet with is a hand weapon
+  210: { ep: -2, take: [{ weapons: 'one', special: true }], need: { 128: { any: [{ weapon: handWeapons, label: 'a hand weapon' }] } } },
   213: { ep: -5, need: { 147: bow } },
   215: { ep: -2 },
   217: { loot: [{ item: 'gorodonHorn' }] },
@@ -137,7 +146,7 @@ export const SECTIONS = {
   // the number drawn is the loss, 0 counting as 10
   281: { rolls: [{ range: [0, 9], ep: 'drawn' }] },
   283: { ep: -3, need: { 131: bow } },
-  285: { need: { 80: { item: 'blackKey10' }, 219: { item: 'skeletonKey10' }, 130: { item: ['blackKey10', 'skeletonKey10'], not: true } } },
+  285: { need: { 80: { item: 'blackKey10' }, 219: { item: 'skeletonKey7' }, 130: { item: ['blackKey10', 'skeletonKey7'], not: true } } },
   286: { fight: { stop: { foeAt: 20, to: '20' } } },
   293: { bowShot: { 149: [0, 7], 164: [8, 99] } },
   // what the dead Drakkar carried

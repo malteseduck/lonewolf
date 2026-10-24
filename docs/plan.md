@@ -71,7 +71,9 @@ What a book's play-through left to the player that the engine could take over:
   flag set at Book 6's 158, Gwynian's cellar, on every way to its end. A hero made since 2026-10-12
   has `flagsRead` and is never backfilled, so one who played Book 6 before the new flag would find the
   gate shut wrongly. With the backfill run once per flag (`flagsRead` a list of the flags read), both
-  sections could be gated.
+  sections could be gated. Book 10 asks the same of lands: Talestria (6, 179) and the Danarg (80,
+  142, 219, 328), both crossed in Book 8, and the Stornlands (200, 306), where which books count is
+  the owner's reading; flags set on Book 8's way through each would gate them.
 - **Things kept from one place** (Book 9's 154: "if you kept any of the items you found in the hut",
   190 or 265). The hut's Rope and Lantern are found elsewhere too, so holding them proves nothing; a
   mark set when a loot entry is taken (`loot: [{ item, mark }]`) would do it.
@@ -117,5 +119,5 @@ without them; the importer marks the highest section `victory` even when it is a
 
 ### Not yet checked
 
-- Magnakai rules in play in Books 9-12 (Books 6, 7 and 8 played through on 2026-10-21, 2026-10-23 and 2026-10-23; Book 12 tried on a few sections).
+- Magnakai rules in play in Books 11-12 (Books 6-10 played through from 2026-10-21 to 2026-10-23; Book 12 tried on a few sections).
 - The 4K map's fit, zoom and 4096 px canvas cap on the iPad.
