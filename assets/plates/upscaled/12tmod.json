@@ -1,7 +1,11 @@
 {
  "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
  "srcs": [
+  "art/plates/12tmod/darklord-kraagensk-l-without-helshezag.webp",
+  "art/plates/12tmod/darklord-kraagensk-l-wounded.webp",
+  "art/plates/12tmod/darklord-kraagensk-l.webp",
   "art/plates/12tmod/darklord-taktaal-wounded.webp",
+  "art/plates/12tmod/giak-sentries.webp",
   "art/plates/12tmod/mind-reaper-smoke-spirit.webp",
   "data/projectaon/01fftd/ill4.png",
   "data/projectaon/02fotw/ill19.png",
@@ -10,7 +14,6 @@
   "data/projectaon/10tdot/ill5.png",
   "data/projectaon/12tmod/ill1.png",
   "data/projectaon/12tmod/ill10.png",
-  "data/projectaon/12tmod/ill12.png",
   "data/projectaon/12tmod/ill13.png",
   "data/projectaon/12tmod/ill15.png",
   "data/projectaon/12tmod/ill19.png",
