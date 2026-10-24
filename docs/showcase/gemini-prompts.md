@@ -1,6 +1,6 @@
 # Prompts for finer showcase art (Gemini)
 
-The showcase's made-up art is drawn by script (`make/make_map.py`) or borrowed from public-domain
+The showcase's made-up art is the demo book's (`demo/99ember/`) or borrowed from public-domain
 engravings. These prompts are for painting richer versions to swap in. None names a living artist or a book.
 Give Gemini the picture named in "Reference" where there is one, and keep any text exactly as listed.
 

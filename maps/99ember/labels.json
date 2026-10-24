@@ -9,7 +9,6 @@
   ],
   "where": "title scroll, top centre",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -22,7 +21,6 @@
   ],
   "where": "sea, north west",
   "small": false,
-  "ok": true,
   "retype": true,
   "ink": {
    "at": [
@@ -50,7 +48,6 @@
   ],
   "where": "north east coast, on the mountains",
   "small": false,
-  "ok": true,
   "retype": true,
   "ink": {
    "at": [
@@ -71,26 +68,25 @@
  {
   "text": "Gloamwater",
   "box": [
-   1470,
-   709,
+   1466,
+   713,
    1777,
    805
   ],
   "where": "east coast, over the forest",
   "small": false,
-  "ok": true,
   "retype": true,
   "ink": {
    "at": [
-    1619.4,
-    751.0
+    1617.9,
+    754.3
    ],
-   "angle": 5.6,
-   "length": 314.4,
-   "thick": 116.1,
+   "angle": 4.36,
+   "length": 316.5,
+   "thick": 109.0,
    "box": [
-    1470,
-    709,
+    1466,
+    713,
     1777,
     805
    ]
@@ -100,28 +96,27 @@
  {
   "text": "Cairn Peaks",
   "box": [
-   527,
-   717,
-   863,
-   856
+   530,
+   735,
+   859,
+   869
   ],
   "where": "west of the mountains, slanted",
   "small": false,
-  "ok": true,
   "retype": true,
   "ink": {
    "at": [
-    700.6,
-    790.2
+    698.6,
+    801.2
    ],
-   "angle": -4.05,
-   "length": 337.7,
-   "thick": 160.6,
+   "angle": -1.62,
+   "length": 330.5,
+   "thick": 147.3,
    "box": [
-    527,
-    717,
-    863,
-    856
+    530,
+    735,
+    859,
+    869
    ]
   },
   "clip": true,
@@ -131,83 +126,81 @@
   "text": "Vale of Hollin",
   "box": [
    856,
-   797,
+   810,
    1200,
-   892
+   890
   ],
   "where": "centre, over the mountains",
   "small": false,
-  "ok": true,
   "retype": true,
   "ink": {
    "at": [
-    1028.4,
-    845.1
+    1029.9,
+    849.4
    ],
-   "angle": -1.11,
-   "length": 351.0,
-   "thick": 104.1,
+   "angle": -1.32,
+   "length": 347.8,
+   "thick": 92.2,
    "box": [
     856,
-    797,
+    810,
     1200,
-    892
+    890
    ]
-  }
+  },
+  "joined": true
  },
  {
   "text": "Old Emberhold",
   "box": [
-   834,
-   614,
-   1097,
-   666
+   820,
+   608,
+   1114,
+   669
   ],
   "where": "north centre, by the castle",
   "small": true,
-  "ok": true,
   "retype": true,
   "ink": {
    "at": [
-    967.8,
-    640.5
+    967.7,
+    637.4
    ],
-   "angle": 2.56,
-   "length": 257.9,
-   "thick": 63.5,
+   "angle": 1.43,
+   "length": 257.5,
+   "thick": 72.9,
    "box": [
-    834,
-    614,
-    1097,
-    666
+    820,
+    608,
+    1114,
+    669
    ]
   }
  },
  {
   "text": "Saltmere",
   "box": [
-   524,
+   509,
    971,
-   644,
-   1021
+   655,
+   1028
   ],
   "where": "west coast, by the town",
   "small": true,
-  "ok": true,
   "retype": true,
   "ink": {
    "at": [
-    585.4,
-    996.3
+    581.3,
+    997.8
    ],
-   "angle": -12.85,
-   "length": 126.4,
-   "thick": 79.6,
+   "angle": -9.52,
+   "length": 161.5,
+   "thick": 84.0,
    "box": [
-    524,
+    509,
     971,
-    644,
-    1021
+    655,
+    1028
    ]
   },
   "clip": true
@@ -222,48 +215,47 @@
   ],
   "where": "east, below the forest",
   "small": true,
-  "ok": true,
   "retype": true,
   "ink": {
    "at": [
-    1466.0,
-    983.0
+    1469.5,
+    981.1
    ],
-   "angle": 0.04,
-   "length": 246.0,
-   "thick": 51.9,
+   "angle": -0.29,
+   "length": 253.1,
+   "thick": 56.1,
    "box": [
     1334,
     951,
     1597,
     1006
    ]
-  }
+  },
+  "joined": true
  },
  {
   "text": "Brindle Cross",
   "box": [
    1112,
    1042,
-   1353,
+   1373,
    1097
   ],
   "where": "south centre, by the town",
   "small": true,
-  "ok": true,
   "retype": true,
   "ink": {
    "at": [
-    1232.0,
-    1069.0
+    1242.2,
+    1068.9
    ],
-   "angle": -0.35,
-   "length": 247.9,
-   "thick": 63.4,
+   "angle": -0.58,
+   "length": 268.2,
+   "thick": 64.5,
    "box": [
     1112,
     1042,
-    1353,
+    1373,
     1097
    ]
   },
@@ -279,7 +271,6 @@
   ],
   "where": "south west, by the town",
   "small": true,
-  "ok": true,
   "retype": true,
   "ink": {
    "at": [
@@ -307,7 +298,6 @@
   ],
   "where": "southern waste, slanted",
   "small": false,
-  "ok": true,
   "retype": true,
   "ink": {
    "at": [
@@ -336,7 +326,6 @@
   ],
   "where": "sea, south",
   "small": false,
-  "ok": true,
   "retype": true,
   "ink": {
    "at": [
@@ -353,5 +342,53 @@
     1448
    ]
   }
+ },
+ {
+  "text": "PLAINS",
+  "box": [
+   1619,
+   109,
+   1758,
+   167
+  ],
+  "where": "",
+  "small": false,
+  "retype": false
+ },
+ {
+  "text": "WASTELAND",
+  "box": [
+   1614,
+   192,
+   1852,
+   242
+  ],
+  "where": "",
+  "small": false,
+  "retype": false
+ },
+ {
+  "text": "HILLS",
+  "box": [
+   1618,
+   264,
+   1729,
+   314
+  ],
+  "where": "",
+  "small": false,
+  "retype": false
+ },
+ {
+  "text": "MOUNTAINS",
+  "box": [
+   1621,
+   342,
+   1845,
+   390
+  ],
+  "where": "",
+  "small": false,
+  "retype": false
  }
 ]

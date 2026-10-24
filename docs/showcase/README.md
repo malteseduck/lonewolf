@@ -9,7 +9,7 @@ printed map. Plain HTML, CSS and JavaScript; no build step; plays offline on an 
 
 > **Representative screens only, to keep licensed content out.** Nothing on this page comes from a
 > Lone Wolf book. The screens are a stand-in book written for this showcase (*The Ember Road*), public-domain
-> engravings, the owner's own art and a made-up map. The real player plays the books from Project Aon
+> engravings, the owner's own art and a made-up map, run through the real pipeline. The real player plays the books from Project Aon
 > files kept locally and never committed. See [Credits](#credits).
 
 ## The player
@@ -109,7 +109,8 @@ table, *Release to the iPad* (the offline check first) and *Setup* for a fresh c
 ## Maps
 
 The printed maps are Project Aon's, so none is shown here. The process is shown on a made-up map, the
-Emberlands ([`make/make_map.py`](make/make_map.py) paints it and its stages from nothing):
+Emberlands: the demo book's own map (`demo/99ember/`), the owner's degraded Gemini scan run through every
+step of the real pipeline. The pictures below are real captures of it, a corner of the map at each stage:
 
 ![The Emberlands](images/45-emberlands-map.jpg)
 
@@ -118,13 +119,15 @@ Emberlands ([`make/make_map.py`](make/make_map.py) paints it and its stages from
 | ![](images/30-stage-1-scan.jpg) | ![](images/31-stage-2-upscale.jpg) | ![](images/32-stage-3-erase.jpg) | ![](images/33-stage-4-letter.jpg) | ![](images/34-stage-5-paint.jpg) | ![](images/35-stage-6-finish.jpg) |
 
 The names are erased from the scan and set again in a font; Gemini repaints the ground; and the finish step
-warps the paint onto the scan and re-sets any name it garbled (here "Thornwick").
+warps the paint onto the scan and re-sets any name it garbled.
 
 ![Before](images/36-zoom-before.jpg) ![After](images/37-zoom-after.jpg)
 
 *Before and after, the same spot: the 1024 px scan enlarged, and the 4K repaint.*
 
-Why not Gemini alone? It repaints beautifully but misspells names. (The middle picture imitates that failure.)
+Why not Gemini alone? It repaints beautifully but can misspell names and cannot go past its own size
+(this round came back with the names right, and the check still looked at every one). The pipeline keeps
+the scan's geometry and a 4K frame.
 
 | The scan | Gemini alone | The pipeline |
 |---|---|---|
@@ -135,16 +138,17 @@ moved (red) or outlines appeared or vanished (blue), and a label sheet sets each
 
 ![Check flags](images/41-check-flags.jpg) ![Label sheet](images/42-check-labels.jpg)
 
-One page, the map editor, runs every step (mock-ups on the made-up map):
+One page, the map editor, runs every step. Here it is inside the dashboard on the demo map, with its stage rail:
 
 ![Editor, labels](images/43-editor-labels.jpg) ![Editor, Gemini step](images/44-editor-gemini.jpg)
 
+![The editor's stage rail](images/46-editor-rail.jpg)
+
 ## Making this showcase again
 
-- [`make/ember-road-book.js`](make/ember-road-book.js): the stand-in book. Paste it into the player's console
+- The player screens (01-09) were taken on the stand-in book [`make/ember-road-book.js`](make/ember-road-book.js), now the real demo book `demo/99ember/` (start `python tools/serve.py`, use the title page link; or paste the old file into the player's console
   with `__lw.BOOKS['99ember'] = eval(`...`)` and `__lw.begin('99ember', true, true)`; serve its pictures from
-  `demo-book/` (a public-domain engraving from `assets/plates/` for the story page and the foe, and the map).
-- [`make/make_map.py`](make/make_map.py): `uv run --project tools python docs/showcase/make/make_map.py <outdir>`.
+  `demo-book/` (a public-domain engraving from `assets/plates/` for the story page and the foe, and the map)).
 - [`gemini-prompts.md`](gemini-prompts.md): prompts for painting finer versions of the made-up art in Gemini.
 
 ## Credits
@@ -154,7 +158,7 @@ One page, the map editor, runs every step (mock-ups on the made-up map):
 - *Lone Wolf HD Remastered* (Forge Reply): the look follows it; none of its art is used.
 - The drawing of Lone Wolf and the burning monastery: the owner's own (the monastery made with Google Gemini
   from the drawing).
-- *The Ember Road*, the Emberlands and its stages, and the editor mock-ups: made up for this showcase.
+- *The Ember Road* and the Emberlands (its map and every stage and screen shown of it): made up for this showcase.
 - Engravings (public domain, Wikimedia Commons): Brehm, Knobel, Rosomak, Schongauer, Doré, Piranesi, Haeckel,
   the Beast of Gévaudan print and others; see `assets/plates/README.txt`.
 - Icons: game-icons.net by Lorc, Delapouite and Skoll, CC BY 3.0 (`assets/icons/README.txt`). Fonts:
