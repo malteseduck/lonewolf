@@ -3,7 +3,13 @@
 A personal-use player for the Lone Wolf gamebooks (Kai, Magnakai and Grand Master), styled after
 *Lone Wolf HD Remastered*: one open book that is the whole interface, the story on the left and the
 hero, inventory, map or fight on the right. Plain HTML, CSS and JavaScript, no build step. It is
-played mainly on an iPad, offline, and on the PC. `docs/showcase/` shows it.
+played mainly on an iPad, offline, and on the PC.
+
+**See it:** the [showcase](docs/showcase/README.md) walks through the player, the import dashboard
+and the map pipeline in screenshots (all from a made-up demo book, no licensed content), and the
+[slide deck](https://claude.ai/artifact/DD9UiF2WCQtGyZ7HRHFsCj) tells the same story.
+
+![A story page](docs/showcase/images/05-story.jpg)
 
 ## Run it
 
