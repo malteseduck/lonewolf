@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Picture sources</title>
+<link rel="stylesheet" href="admin.css">
+<script type="module" src="parchment.js"></script>
+<style>
+  .sheet-top { display: flex; gap: 12px; align-items: center; padding: 16px 24px 8px; flex-wrap: wrap; }
+  .sheet-top .sum { color: var(--dim); }
+  .note { margin: 0 24px 6px; color: var(--dim); font-size: 12px; max-width: 900px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; padding: 8px 24px 32px; }
+  /* the book's own tan, as on the picture sheet */
+  .card { background: linear-gradient(#e2d3aa, #cfbb89); color: var(--ink); border-radius: 3px; padding: 8px; box-shadow: 0 2px 8px rgba(40, 24, 10, .45); }
+  .card .pic { height: 170px; display: grid; place-items: center; }
+  .card img { max-width: 100%; max-height: 170px; mix-blend-mode: multiply; }
+  .card b { display: block; font: 14px var(--title); margin-top: 6px; overflow-wrap: anywhere; }
+  .card small { display: block; color: #6b553c; font-size: 12px; overflow-wrap: anywhere; }
+  .card small.state { color: #7d1d14; }
+  .card small.state.ok { color: #3f5a2a; }
+  .card input[type=url] { width: 100%; box-sizing: border-box; margin-top: 6px; }
+  .card .acts { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .card .acts button { font-size: 12px; padding: 3px 8px; }
+  body.embed { padding: 0; }
+  body.embed::before, body.embed::after { display: none; }
+</style>
+</head>
+<body>
+<header class="sheet-top"><span class="sum" id="sum">Reading the pictures...</span>
+  <label><input type="checkbox" id="all"> Show those with a link too</label></header>
+<p class="note">Every picture in <code>art/</code>, which git does not keep. Give each its link, so Setup can fetch it again on a
+  new checkout (ADR 0038); or mark it as having none (a screenshot, your own drawing); or, for a fight picture made with AI
+  from a text prompt alone (the picture sheet's Prompt button, no book picture given to it), "Made with AI": it moves into
+  the committed <code>assets/plates/</code>, so it is never lost (ADR 0042).</p>
+<main class="cards" id="cards"></main>
+<div class="toast" id="toast" hidden></div>
+
+<script type="module">
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const params = new URLSearchParams(location.search);
+// like the other sheets, it opens only inside the dashboard (ADR 0021)
+if (!(params.get('embed') === '1' && window.parent !== window)) {
+  document.body.innerHTML = '<p style="padding:24px">This page opens only inside the import dashboard, <a href="/tools/admin/">/tools/admin/</a>.</p>';
+  throw new Error('not embedded');
+}
+document.body.classList.add('embed');
+let pics = [];
+
+async function load() {
+  const r = await fetch('/api/admin/art-sources', { cache: 'no-store' }).catch(() => null);
+  pics = r && r.ok ? (await r.json()).pictures : [];
+  render();
+}
+
+function state(p) {
+  if (p.entry.url) return `<small class="state ok">link: ${esc(new URL(p.entry.url).hostname)}</small>`;
+  return 'url' in p.entry ? '<small class="state ok">no link</small>' : '<small class="state">not said yet</small>';
+}
+
+function render() {
+  const unsaid = pics.filter((p) => !('url' in p.entry)).length, nolink = pics.filter((p) => 'url' in p.entry && !p.entry.url).length;
+  $('#sum').textContent = `${pics.length} pictures: ${pics.length - unsaid - nolink} with a link, ${nolink} with none, ${unsaid} not said yet`;
+  const shown = $('#all').checked ? pics : pics.filter((p) => !p.entry.url);
+  $('#cards').innerHTML = shown.map((p) => `<div class="card" data-src="${esc(p.src)}">
+      <div class="pic"><img loading="lazy" src="/${esc(p.src)}" alt=""></div>
+      <b>${esc(p.src.replace(/^art\//, ''))}</b>
+      <small>${p.used.length ? 'used in ' + esc(p.used.join(', ')) : 'used by no fight'}</small>${state(p)}
+      <input type="url" placeholder="https://... its page, or the picture's own address" value="${esc(p.entry.url || '')}">
+      <div class="acts"><button data-do="link">Save link</button><button data-do="none">No link</button>${p.src.startsWith('art/plates/') ? '<button data-do="ai">Made with AI</button>' : ''}</div>
+    </div>`).join('') || '<p class="note">Every picture has its link.</p>';
+}
+
+$('#all').onchange = render;
+$('#cards').onclick = async (e) => {
+  const b = e.target.closest('button[data-do]');
+  if (!b) return;
+  const card = b.closest('.card'), src = card.dataset.src, url = card.querySelector('input').value.trim();
+  if (b.dataset.do === 'link' && !/^https?:\/\/\S+$/.test(url)) return toast('The link must start with http:// or https://', 5000);
+  const body = b.dataset.do === 'ai' ? { src, made: 'ai' } : { src, url: b.dataset.do === 'link' ? url : null };
+  b.disabled = true;
+  const r = await fetch('/api/admin/art-link', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).catch(() => null);
+  const j = r ? await r.json().catch(() => ({})) : {};
+  b.disabled = false;
+  if (!r || !r.ok) return toast(j.error || `Not saved (${r ? r.status : 'no answer'})`, 6000);
+  toast(body.made ? `Moved to ${j.src}` : body.url ? 'Link saved' : 'Marked: no link', 3000);
+  await load();
+};
+
+let toastTimer;
+function toast(t, ms = 3000) {
+  const el = $('#toast'); el.textContent = t; el.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, ms);
+}
+load();
+</script>
+</body>
+</html>

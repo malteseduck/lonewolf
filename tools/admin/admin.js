@@ -255,6 +255,8 @@ function openIcons() {  // every icon the player draws beside the books' items: 
   openInline({ code: '' }, '/tools/admin/icons.html?embed=1', 'Player icons');
 }
 $('[data-open="icons"]').onclick = openIcons;
+// every picture in art/: its link, none, or made with AI and moved into the committed library (ADR 0038, 0042)
+$('[data-open="sources"]').onclick = () => openInline({ code: '' }, '/tools/admin/sources.html?embed=1', 'Picture sources');
 function openMap(b, step) {
   if (!b?.folder) return toast('Download the book first', 3000);
   openInline(b, `/tools/map-editor.html?book=${encodeURIComponent(b.code)}&embed=1${step ? '&step=' + step : ''}`, `Map editor: ${b.n}. ${b.title}`);

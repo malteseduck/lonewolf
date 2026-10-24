@@ -49,8 +49,10 @@ served from the owner's PC; it is played on the owner's iPad, mainly, with or wi
   commit messages, chat logs or code comments.
 - Anything made from that content (reading copies, restyled or upscaled pictures, repaints and
   their prompts) stays beside it, uncommitted.
-- Our own work about a book is committed: its item table, and its map's label list and repaint
-  style. These record readings and decisions, not the book's text.
+- Our own work about a book is committed: its item table, its map's label list and repaint style,
+  and our descriptions of its pictures and enemies. These record readings and decisions in our own
+  words, not the book's text; nothing committed may rebuild a book, its text or its structure.
+- Pictures made for this project with an AI from a text prompt alone are our own and are committed.
 - The repository itself contains only original work and assets free to redistribute (CC0 or
   similar, each with its source noted): the engine, the interface, drawn art, icons, fonts, and a
   short demo chapter written for this project.

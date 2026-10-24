@@ -8,15 +8,16 @@ Read from the books' own section files, so books fetched but not imported are in
 `ill*.png`: its section, the fight there (enemy names), the fights an imported book gives it in other
 sections (fought_at, from book.js), the sections it links to and from, the fights
 within two links either way, and the plates.json entries that borrow it. `shows` is what the picture
-shows, in our own words, kept by hand in data/projectaon/ill-notes.json ({"08tjoh/ill6.png": "..."})
+shows, in our own words, kept by hand in about/ill-notes.json ({"08tjoh/ill6.png": "..."})
 and merged in here, so re-running never loses it. `about` is what the picture is: who or what, at
 which moment, as the book has it (the wiki where the book does not say); kept by hand the same way in
-data/projectaon/ill-about.json. Every picture a plates.json entry uses from outside the books (a
+about/ill-about.json. Every picture a plates.json entry uses from outside the books (a
 stand-in in art/ or assets/plates/) has an entry too, keyed by its path, with `book` None and its
 `about` saying what it stands for. `foes` holds what each enemy is, by the book, whatever picture
 stands in for it ({book: {name: text}}, kept by hand in foe-about.json): the picture sheet shows that,
-the illustration sheet a picture's `about`. All these files are git-ignored with the books: they
-describe Project Aon's pictures and enemies, in our own words. Names and ids only, never the books' prose.
+the illustration sheet a picture's `about`. The three hand-kept files are in about/ and committed: they
+describe Project Aon's pictures and enemies in our own words, never the books' (tools/about_check.py, ADR 0042).
+The index itself stays git-ignored with the books.
 """
 import html
 import json
@@ -27,9 +28,10 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PA = os.path.join(ROOT, 'data', 'projectaon')
 OUT = os.path.join(PA, 'ill-index.json')
-NOTES = os.path.join(PA, 'ill-notes.json')
-ABOUT = os.path.join(PA, 'ill-about.json')
-FOE_ABOUT = os.path.join(PA, 'foe-about.json')
+ABOUT_DIR = os.path.join(ROOT, 'about')  # committed: our own words (ADR 0042)
+NOTES = os.path.join(ABOUT_DIR, 'ill-notes.json')
+ABOUT = os.path.join(ABOUT_DIR, 'ill-about.json')
+FOE_ABOUT = os.path.join(ABOUT_DIR, 'foe-about.json')
 PLATES = os.path.join(ROOT, 'assets', 'plates', 'plates.json')
 NEAR = 2  # links either way
 

@@ -122,6 +122,7 @@
   <div class="src" id="ed-src" hidden>
     <label>Where it came from <input type="url" id="ed-link" placeholder="https://... its page, or the picture's own address"></label>
     <label><input type="checkbox" id="ed-nolink"> No link (a screenshot, your own drawing)</label>
+    <label title="Made from the Prompt button's text alone, no picture given to the AI: it is ours, so it goes into the committed library (ADR 0042)"><input type="checkbox" id="ed-ai"> Made with AI from a text prompt</label>
   </div>
   <menu>
     <button id="ed-whole">Whole picture</button>
@@ -145,6 +146,7 @@
 <dialog id="ask" style="width:min(600px,90vw);box-sizing:border-box;padding:18px 20px;overflow:hidden">
   <form method="dialog">
     <label><span id="ask-q"></span><input type="text" id="ask-v" style="display:block;width:100%;box-sizing:border-box;margin-top:8px"></label>
+    <div id="ask-ai-l" hidden style="margin-top:8px"><label title="Made from the Prompt button's text alone, no picture given to the AI: it is ours, so it goes into the committed library (ADR 0042)"><input type="checkbox" id="ask-ai"> Made with AI from a text prompt (no link needed)</label></div>
     <menu style="display:flex;gap:8px;padding:0;margin:14px 0 0"><span style="flex:1"></span><button value="cancel" formnovalidate>Cancel</button><button value="ok" id="ask-ok">OK</button></menu>
   </form>
 </dialog>
@@ -196,7 +198,7 @@ async function loadPlates() {
   // where each picture in art/ came from (ADR 0038, tools/art_sources.py)
   const a = await fetch('/art/sources.json', { cache: 'no-store' }).catch(() => null);
   sources = a && a.ok ? ((await a.json().catch(() => null))?.sources || {}) : {};
-  // what each picture is (tools/ill_index.py: `about`, kept in data/projectaon/ill-about.json)
+  // what each picture is (tools/ill_index.py: `about`, kept in about/ill-about.json)
   const x = await fetch('/data/projectaon/ill-index.json', { cache: 'no-store' }).catch(() => null);
   index = x && x.ok ? ((await x.json().catch(() => null)) || {}) : {};
 }
@@ -384,8 +386,9 @@ async function copyPrompt(foe) {
 }
 
 /* The answer typed in the #ask dialog, or null if cancelled (Escape, Cancel). */
-function ask(question, value, placeholder) {
+function ask(question, value, placeholder, aiChoice = false) {
   const d = $('#ask'), v = $('#ask-v');
+  $('#ask-ai-l').hidden = !aiChoice; $('#ask-ai').checked = false;  // read by the caller after it closes
   $('#ask-q').textContent = question;
   v.value = value; v.placeholder = placeholder || '';
   v.onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); d.close('ok'); } };  // not the form's first button, Cancel
@@ -407,17 +410,20 @@ async function fromAddress(foe, address) {
   take(foe, new Blob([bytes], { type: j.type }), address);
 }
 
-/* The link of a picture already in art/: given afterwards, for the pictures that came before the list. */
+/* The link of a picture already in art/: given afterwards, for the pictures that came before the list.
+   Or, for a fight picture, made with AI from a text prompt: moved into the committed library (ADR 0042). */
 async function linkFor(foe) {
   const src = ownFile(foe);
-  const v = await ask(`Where ${src.split('/').pop()} came from: its link (leave it empty for no link)`, sources[src]?.url || '', 'https://...');
+  const v = await ask(`Where ${src.split('/').pop()} came from: its link (leave it empty for no link)`, sources[src]?.url || '', 'https://...', src.startsWith('art/plates/'));
   if (v === null) return;
-  const r = await fetch('/api/admin/art-link', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ src, url: v.trim() || null }) });
+  const ai = $('#ask-ai').checked;
+  const r = await fetch('/api/admin/art-link', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(ai ? { src, made: 'ai' } : { src, url: v.trim() || null }) });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) return toast(j.error || `Not saved (${r.status})`, 6000);
+  stamp = Date.now();
   await loadPlates();
   await render();
-  toast(v.trim() ? 'Link saved' : 'Marked: no link', 2500);
+  toast(ai ? `Made with AI: moved to ${j.src}` : v.trim() ? 'Link saved' : 'Marked: no link', 3000);
 }
 
 /* A picture from the owner: at most LONG px on its long side, as WebP, then into the editor. */
@@ -520,7 +526,7 @@ async function edit(foe, upload) {
   $('#ed-img').src = src;
   $('#ed-remove').hidden = !foe.mine;
   // a new picture asks where it came from (ADR 0038): its address, filled in when it was fetched by one
-  $('#ed-src').hidden = !ed.webp; $('#ed-link').value = upload?.link || ''; $('#ed-nolink').checked = false;
+  $('#ed-src').hidden = !ed.webp; $('#ed-link').value = upload?.link || ''; $('#ed-nolink').checked = false; $('#ed-ai').checked = false;
   if (!$('#ed').open) $('#ed').showModal();
   await $('#ed-img').decode().catch(() => {});
   place(); preview();
@@ -603,9 +609,10 @@ $('#ed-whole').onclick = () => { ed.crop = [0, 0, 1, 1]; place(); preview(); };
 $('#ed-cancel').onclick = () => $('#ed').close();
 $('#ed-save').onclick = () => {
   const link = $('#ed-link').value.trim();
-  if (ed.webp && !link && !$('#ed-nolink').checked) return toast('Say where it came from: its link, or tick No link.', 5000);
+  const ai = !!ed.webp && $('#ed-ai').checked;
+  if (ed.webp && !link && !ai && !$('#ed-nolink').checked) return toast('Say where it came from: its link, or tick No link or Made with AI.', 5000);
   if (ed.webp && link && !/^https?:\/\/\S+$/.test(link)) return toast('The link must start with http:// or https://', 5000);
-  send({ image: ed.webp || undefined, link: ed.webp ? link || null : undefined, src: ed.src || undefined, crop: ed.crop.map((v) => +v.toFixed(4)), levels: levels() || undefined, flip: $('#flip').checked || undefined });
+  send({ image: ed.webp || undefined, link: ed.webp && !ai ? link || null : undefined, made: ai ? 'ai' : undefined, src: ed.src || undefined, crop: ed.crop.map((v) => +v.toFixed(4)), levels: levels() || undefined, flip: $('#flip').checked || undefined });
 };
 $('#ed-remove').onclick = () => {
   if (window.confirm(`Remove your picture for ${ed.foe.name}? It goes back to what it had before.`)) send({ remove: true });

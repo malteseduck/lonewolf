@@ -108,7 +108,7 @@ For step 7 in the books still open (all git-ignored, personal use):
   careful crop (photographed at an angle, text wrapped round) and a levels setting.
 - Citadel's Dec 1984 Lone Wolf miniatures flyer (`art/plates/citadel-c41-flyer-1984.jpg`; personal
   use, the site says not to copy): line drawings, eight crops used in Books 1-2; more may suit.
-- The illustration index (`data/projectaon/ill-index.json`, `ill-notes.json`) notes all 405 pictures
+- The illustration index (`data/projectaon/ill-index.json`, `about/ill-notes.json`) notes all 405 pictures
   of Books 1-20, for borrowing another book's picture (items.md, "Fight pictures").
 - **What each picture and enemy is** (`about` and `foes`, ADR 0008), left for the owner: reading
   them on the sheets and correcting any; about 110 pictures, mostly small, say the text does not say

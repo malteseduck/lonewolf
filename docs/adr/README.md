@@ -63,6 +63,7 @@ Changes list names what it took in.
 | [0004](0004-maps.md) | The book's own printed map only, upscaled by a Gemini repaint over names set in type (the map's `font.txt`), shown in sepia | 2026-10-17 |
 | [0008](0008-fight-pictures.md) | A fight's picture: its own, the same creature in this book, then another, then a stand-in; plain humans varied; shown whole; upscaled 2x; pinned once approved | 2026-10-17 |
 | [0038](0038-art-keeps-its-source-links.md) | Pictures added to `art/` keep their source link where there is one, so Setup can fetch them again | |
+| [0042](0042-what-of-a-book-is-committed.md) | Our descriptions (`about/`, never 8 of the book's words in a row) and AI-made fight pictures are committed; `book.js` is not, nor split | |
 
 ### The rules engine
 

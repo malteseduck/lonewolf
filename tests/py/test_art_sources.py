@@ -27,6 +27,9 @@ def root(tmp_path, monkeypatch):
             f.write_bytes(data)
             return f
 
+        def path(self, rel):
+            return str(tmp_path.joinpath(*rel.split('/')))
+
         def exists(self, rel):
             return tmp_path.joinpath(*rel.split('/')).exists()
     return T()
@@ -106,3 +109,34 @@ def test_fetch_missing_writes_each_picture_back_converted_as_before(root):
     assert im.format == 'WEBP' and im.size == (2000, 500)  # as the picture sheet saves: 2000 px on its long side
     assert not root.exists('art/broken.png')
     assert asrc.summary()['missing'] == ['art/broken.png']
+
+
+def test_a_picture_made_with_ai_moves_to_the_committed_library_and_every_mention_follows(root):
+    # ADR 0042: made from a text prompt alone, it is ours, so it is committed rather than fetched again
+    root.file('art/plates/10xx/orc.webp', b'pic')
+    root.file('art/plates/10xx/orc-2x.webp', b'pic2')
+    root.file('assets/plates/plates.json', b'{"plates": [{"match": "^orc$", "book": "10xx", "src": "art/plates/10xx/orc.webp"}]}')
+    root.file('assets/plates/approved/10xx.json', b'{"pins": {"1/0": {"plate": {"src": "art/plates/10xx/orc.webp"}}}}')
+    root.file('assets/plates/upscaled/10xx.json', b'{"srcs": ["art/plates/10xx/orc.webp", "art/plates/10xx/orcish.webp"]}')
+    root.file('about/ill-about.json', b'{"art/plates/10xx/orc.webp": "an orc"}')
+    root.file('assets/plates/README.txt', b'Fight plates.\n')
+    asrc.record('art/plates/10xx/orc.webp', None)
+    assert asrc.make_ai('art/plates/10xx/orc.webp', today='2026-10-24') == 'assets/plates/10xx/orc.webp'
+    assert not root.exists('art/plates/10xx/orc.webp') and not root.exists('art/plates/10xx/orc-2x.webp')
+    assert root.exists('assets/plates/10xx/orc.webp') and root.exists('assets/plates/10xx/orc-2x.webp')
+    for rel in ('assets/plates/plates.json', 'assets/plates/approved/10xx.json', 'about/ill-about.json'):
+        text = open(root.path(rel), encoding='utf-8').read()
+        assert 'assets/plates/10xx/orc.webp' in text and 'art/plates/10xx/orc.webp' not in text
+    assert 'art/plates/10xx/orcish.webp' in open(root.path('assets/plates/upscaled/10xx.json'), encoding='utf-8').read()
+    assert 'art/plates/10xx/orc.webp' not in asrc.load()
+    readme = open(root.path('assets/plates/README.txt'), encoding='utf-8').read()
+    assert '10xx/orc.webp' in readme and 'AI' in readme
+
+
+def test_made_with_ai_refuses_what_is_not_a_fight_picture_here_or_would_overwrite_one(root):
+    root.file('art/me.png')
+    root.file('art/plates/10xx/orc.webp')
+    root.file('assets/plates/10xx/orc.webp')
+    for rel in ('art/me.png', 'art/plates/10xx/none.webp', 'art/plates/10xx/orc.webp'):
+        with pytest.raises(ValueError):
+            asrc.make_ai(rel)

@@ -694,10 +694,15 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(200, plates_file.standins())
         if method == 'POST' and parts == ['plate']:
             return self._admin_plate(body)
+        if method == 'GET' and parts == ['art-sources']:  # the picture-sources sheet (ADR 0038, 0042)
+            import art_sources
+            return self._json(200, {'pictures': art_sources.listing()})
         if method == 'POST' and parts in (['picture-url'], ['art-link']):
             import art_sources
             import base64
             try:
+                if parts == ['art-link'] and body.get('made') == 'ai':  # ours: into the committed library (ADR 0042)
+                    return self._json(200, {'src': art_sources.make_ai(str(body.get('src') or ''))})
                 if parts == ['art-link']:  # a link for a picture already in art/ (ADR 0038)
                     return self._json(200, art_sources.link_existing(str(body.get('src') or ''), body.get('url') or None))
                 # the picture sheet's picture by address: fetched here, shrunk and saved by the page as a dropped file is
@@ -743,7 +748,7 @@ class Handler(SimpleHTTPRequestHandler):
     def _admin_plate(self, body):
         """The picture sheet's drop and adjust: the owner's own picture (or crop) for one enemy, written
         to plates.json by tools/plates_file.py. Body: {book, enemy, image?: base64 WebP, crop?, levels?,
-        flip?, remove?}. The file name is made from the enemy's name, never taken from the request."""
+        flip?, remove?, link?, made?: 'ai'}. The file name is made from the enemy's name, never taken from the request."""
         import base64
         import binascii
         import book_status
@@ -760,7 +765,9 @@ class Handler(SimpleHTTPRequestHandler):
             entry, msg = plates_file.put(hit[0], book_status.load_book(hit[0]), str(body.get('enemy') or ''), image=image,
                                          crop=body.get('crop'), levels=body.get('levels'), remove=bool(body.get('remove')),
                                          src=body.get('src'), flip=body.get('flip') is True)
-            if image is not None and 'link' in body:
+            if image is not None and body.get('made') == 'ai':  # ours: into the committed library (ADR 0042)
+                entry['src'] = art_sources.make_ai(entry['src'], replace=True)
+            elif image is not None and 'link' in body:
                 art_sources.record(entry['src'], link)
         except (ValueError, binascii.Error) as e:
             return self._json(400, {'error': str(e)})

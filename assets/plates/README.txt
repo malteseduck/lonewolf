@@ -58,3 +58,143 @@ hounds-stag-wellcome.jpg
   Wellcome Collection V0021541, CC BY 4.0. Commons' 1920 px copy, cropped to the hounds and the
   stag's forequarters (caption cut off), greyscale.
   https://commons.wikimedia.org/wiki/File:A_stag_with_his_antlers_caught_in_a_bush_is_pounced_on_by_ho_Wellcome_V0021541.jpg
+
+01fftd/black-bear.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+01fftd/giak.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+01fftd/giaks.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+01fftd/vordak.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+02fotw/szall-1.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+03tcok/kalkoth-1.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+07cd/lord-zahda-with-power-staff.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+07cd/lord-zahda.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+10tdot/bhakish.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+10tdot/cener-ghosts.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+10tdot/hammerlander.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+10tdot/lite-death-knights.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+10tdot/roark.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+11tpot/giant-guakor-lizard.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+11tpot/khozinda.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+11tpot/sandai-temple-guards.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+11tpot/scarlet-warrior.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+11tpot/shadow-reavers-corporeal.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+11tpot/shadow-reavers.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+11tpot/zhengha.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+12tmod/darklord-kraagensk-l-without-helshezag.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+12tmod/darklord-kraagensk-l-wounded.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+12tmod/darklord-kraagensk-l.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+12tmod/darklord-taktaal-wounded.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+12tmod/giak-sentries.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+13tplor/2-ruel-giganite.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+13tplor/high-priest.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+13tplor/vazhag-archer.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+14tcok/3-vordak-in-psychic-shock.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+14tcok/3-vordaks.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+14tcok/vodok.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+15tdc/nad-jaguz.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+16tlov/demoness-shamath-in-the-guise-of-gnekasha-the-worm-thrall.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+16tlov/vortexi.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.
+
+knight-shield-pencil.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-24.

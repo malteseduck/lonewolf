@@ -1,12 +1,12 @@
 {
  "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
  "srcs": [
-  "art/plates/02fotw/szall-1.webp",
+  "assets/plates/02fotw/szall-1.webp",
   "art/plates/guard-gold-trim-painted.png",
   "art/plates/guard-halberd-portcullis.png",
   "art/plates/guard-halberdier-plate.webp",
   "art/plates/guard-sword-shield-tower.png",
-  "art/plates/knight-shield-pencil.webp",
+  "assets/plates/knight-shield-pencil.webp",
   "art/plates/rogue-helmeted-dagger.png",
   "art/plates/rogue-masked-blades.webp",
   "art/plates/rogue-sneaking.webp",

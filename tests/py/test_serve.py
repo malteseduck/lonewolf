@@ -496,6 +496,12 @@ def test_picture_by_address_and_a_link_for_one_already_here(root, monkeypatch, t
     assert st == 200 and art_sources.load()['art/plates/rat.png'] == {'url': None}
     st, _ = jsend('POST', '/api/admin/art-link', {'src': 'art/plates/none.png', 'url': None})
     assert st == 400  # only a picture that is here
+    st, got = jsend('GET', '/api/admin/art-sources')
+    assert st == 200 and [(p['src'], p['entry']) for p in got['pictures']] == [('art/plates/rat.png', {'url': None})]
+    # made with an AI from a text prompt: moved into the committed library (ADR 0042)
+    st, got = jsend('POST', '/api/admin/art-link', {'src': 'art/plates/rat.png', 'made': 'ai'})
+    assert st == 200 and got['src'] == 'assets/plates/rat.png'
+    assert (tmp_path / 'assets' / 'plates' / 'rat.png').exists() and 'art/plates/rat.png' not in art_sources.load()
 
 
 # ---------------------------------------------------------------- the item sheet's icons

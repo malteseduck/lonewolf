@@ -337,13 +337,14 @@ Where a fight's picture comes from, first that applies (ADR 0008):
    `about`, what it is (ADR 0008): who or what, at which moment, as the book has it (read the picture's
    section, and the sections around it: the man at a desk may be the High Priest's clerk, not the
    High Priest), or the wiki where the book does not say; never from looking at the picture. An
-   enemy the book says little about is topped up from the wiki, that sentence ending "(wiki)". The notes are kept by hand in git-ignored
-   `data/projectaon/ill-notes.json` and `ill-about.json` and merged in, so a re-run keeps them;
+   enemy the book says little about is topped up from the wiki, that sentence ending "(wiki)". The notes are kept by hand in committed
+   `about/ill-notes.json` and `about/ill-about.json`, in our own words (`tools/about_check.py`: never 8
+   of the book's words in a row, ADR 0042), and merged in, so a re-run keeps them;
    `--missing` lists pictures with none. The small pictures (`small*.png`) are in it too, marked
    `small` (described, never a fight picture), and so is every picture from outside the books a
    `plates.json` entry uses, keyed by its path (`book` null), its `about` saying what it stands for
    in each book. `foes` holds what each enemy is by the book, whatever picture stands in for it
-   (`foe-about.json`, `{book: {enemy name: text}}`; a name's variants, "2 Ruel Giganite" or "Plague
+   (`about/foe-about.json`, `{book: {enemy name: text}}`; a name's variants, "2 Ruel Giganite" or "Plague
    Hound (wounded)", fall back to the plain kind's), which the picture sheet shows on each card: read
    where the enemy is met and fought. All 405 `ill*` pictures of Books 1-20 have a `shows` note (2026-10-11); every picture
    of Books 1-20 (`ill*` and `small*`) and every stand-in a fight uses has an `about`, and every

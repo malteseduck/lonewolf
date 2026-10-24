@@ -5,6 +5,8 @@ that a fresh checkout can fetch its pictures again.
     python tools/art_sources.py --json              the same as JSON
     python tools/art_sources.py link <art/...> <url> record a picture's link
     python tools/art_sources.py nolink <art/...>     mark a picture as having none (a screenshot, your own drawing)
+    python tools/art_sources.py ai <art/plates/...>  made with an AI from a text prompt: moved to the committed
+                                                    assets/plates/ (ADR 0042)
     python tools/art_sources.py fetch               fetch every missing picture from its link (a download: the
                                                     dashboard's Setup gates it)
 
@@ -98,6 +100,62 @@ def forget(rel):
     sources = load()
     if sources.pop(rel, None) is not None:
         save(sources)
+
+
+AI_NOTE = ('  Made with an AI image generator from a text prompt alone (the picture sheet\'s Prompt button);\n'
+           '  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here {date}.\n')
+
+
+def make_ai(rel, today=None, replace=False):
+    """A fight picture the owner made with an AI from a text prompt (ADR 0042): it leaves git-ignored
+    art/plates/ for the committed assets/plates/, its -2x copy with it, and every mention of its path
+    follows (plates.json, the approved pins, the upscaled lists, about/ill-about.json). Its link entry
+    goes; assets/plates/README.txt says what it is. Returns the new path."""
+    path = lambda r: os.path.join(ROOT, *r.split('/'))
+    if not (counts(rel) and rel.startswith('art/plates/') and os.path.isfile(path(rel))):
+        raise ValueError('not a fight picture under art/plates/ on this PC')
+    new = 'assets/plates/' + rel[len('art/plates/'):]
+    if os.path.exists(path(new)) and not replace:  # replace: the owner's new picture for the same enemy
+        raise ValueError(f'{new} is already there')
+    stem = lambda r: r.rsplit('.', 1)[0] + '-2x.webp'
+    moves = [(rel, new)] + ([(stem(rel), stem(new))] if os.path.isfile(path(stem(rel))) else [])
+    for old, to in moves:
+        os.makedirs(os.path.dirname(path(to)), exist_ok=True)
+        os.replace(path(old), path(to))
+    mentions = ['assets/plates/plates.json', 'about/ill-about.json']
+    for sub in ('approved', 'upscaled'):
+        d = path(f'assets/plates/{sub}')
+        mentions += [f'assets/plates/{sub}/{n}' for n in sorted(os.listdir(d))] if os.path.isdir(d) else []
+    for m in mentions:
+        if not os.path.isfile(path(m)):
+            continue
+        with open(path(m), encoding='utf-8', newline='') as f:
+            text = f.read()
+        changed = text
+        for old, to in moves:  # quoted, so another picture whose name starts the same is left alone
+            changed = changed.replace(f'"{old}"', f'"{to}"')
+        if changed != text:
+            with open(path(m) + '.part', 'w', encoding='utf-8', newline='') as f:
+                f.write(changed)
+            os.replace(path(m) + '.part', path(m))
+    forget(rel)
+    with open(path('assets/plates/README.txt'), 'a', encoding='utf-8', newline='\n') as f:
+        f.write(f'\n{new[len("assets/plates/"):]}\n' + AI_NOTE.format(date=today or datetime.date.today().isoformat()))
+    return new
+
+
+def listing():
+    """The picture-sources sheet's list (tools/admin/sources.html): every picture here with its entry
+    ({} when none was given) and the books whose plates.json entries use it, those without a link first."""
+    sources = load()
+    try:
+        with open(os.path.join(ROOT, 'assets', 'plates', 'plates.json'), encoding='utf-8') as f:
+            plates = json.load(f)['plates']
+    except (FileNotFoundError, ValueError, KeyError):
+        plates = []
+    out = [{'src': r, 'entry': sources.get(r, {}), 'used': sorted({p.get('book') or 'any' for p in plates if p.get('src') == r})}
+           for r in pictures()]
+    return sorted(out, key=lambda p: (bool(p['entry'].get('url')), p['src']))
 
 
 def summary():
@@ -200,6 +258,9 @@ def main(argv):
         return fetch_missing()
     if len(argv) == 3 and argv[0] == 'link':
         print(record(argv[1], argv[2]))
+        return 0
+    if len(argv) == 2 and argv[0] == 'ai':
+        print(make_ai(argv[1]))
         return 0
     if len(argv) == 2 and argv[0] == 'nolink':
         print(record(argv[1], None))

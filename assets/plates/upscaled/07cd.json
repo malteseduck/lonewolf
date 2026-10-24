@@ -2,8 +2,8 @@
  "_readme": "The fight pictures of this book with a Real-ESRGAN 2x copy beside them, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
  "srcs": [
   "art/plates/07cd/flame-man-wandering-dm.jpg",
-  "art/plates/07cd/lord-zahda-with-power-staff.webp",
-  "art/plates/07cd/lord-zahda.webp",
+  "assets/plates/07cd/lord-zahda-with-power-staff.webp",
+  "assets/plates/07cd/lord-zahda.webp",
   "art/plates/07cd/oudagorg-worm.jpg",
   "assets/plates/demons-whips-dore.jpg",
   "assets/plates/portcullis-carcassonne.png",

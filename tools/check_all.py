@@ -100,6 +100,7 @@ AFTER_REIMPORT = [
     ('Item tables', step_items),
     ('Approved fight pictures', step_pins),
     ('Offline copy', lambda: run(PY + ['tools/offline_check.py'])),
+    ('Descriptions in our own words', lambda: run(PY + ['tools/about_check.py'])),
 ]
 
 failed, _print = [], threading.Lock()

@@ -83,7 +83,7 @@ async function load() {
   const j = r && await r.json().catch(() => null);
   if (!r || !r.ok || !Array.isArray(j)) { $('#sum').textContent = (j && j.error) || 'The server did not answer.'; return; }
   ills = j;
-  // what each picture is (tools/ill_index.py: `about`, kept in data/projectaon/ill-about.json)
+  // what each picture is (tools/ill_index.py: `about`, kept in about/ill-about.json)
   const x = await fetch('/data/projectaon/ill-index.json', { cache: 'no-store' }).catch(() => null);
   const index = x && x.ok ? ((await x.json().catch(() => null)) || {}) : {};
   for (const i of ills) i.about = index[`${code}/${i.name}`]?.about || '';

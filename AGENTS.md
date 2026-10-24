@@ -178,7 +178,9 @@ no release is made: those stay the owner's call.
   the custom maps on 2026-10-05: no replicas, made-up places, town plans or travel on the map.
   Their symbols are kept in git-ignored `art/reference/map-symbols/from-game/`.
 - **Our own work about a book is committed; the book is not.** Item tables are `items/items-<code>.js`;
-  a map's label list, repaint style and step marks are in `maps/<code>/`. Anything copied or made
+  a map's label list, repaint style and step marks are in `maps/<code>/`; what each picture and enemy
+  is, in our own words, is in `about/` (never 8 of the book's words in a row: `tools/about_check.py`);
+  a fight picture made with AI from a text prompt alone moves to `assets/plates/` (ADR 0042). Anything copied or made
   from Project Aon's text or images (reading copies, upscales, repaints, prompts) stays in
   `data/projectaon/<code>/`.
 - **A book's items** (what each section gives, takes, or needs) are read and written by hand in

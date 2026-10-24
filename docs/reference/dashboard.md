@@ -75,6 +75,12 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   item sheet's picker; it writes `glyphs.js` (`item_icons.set_ui_glyph()`, only an entry already
   there) or, for an engine item, `itemglyphs.js`. The compass rose and the plates' ornaments are drawn
   in code and not on it.
+- **The picture-sources sheet** ("Picture sources" in the tools row; `tools/admin/sources.html`, inline
+  only): every picture in `art/` from `GET /api/admin/art-sources` (`art_sources.listing()`), those
+  without a link first, each with the books whose fights use it. Save link and No link post to
+  `/api/admin/art-link` (ADR 0038); Made with AI, for a fight picture, posts `made: 'ai'`, which moves
+  it into the committed `assets/plates/` (`art_sources.make_ai`, ADR 0042). The picture sheet offers
+  the same choice for a new picture and in its Link... dialog.
 - **Setup** (ADR 0036), above the tools: what the tools need on this PC, from `tools/setup.py`. One line
   while everything is there ("Show" opens it); a row per part, open, while any is missing: uv and
   Node (yours to install), the Python packages (`tools/.venv`, from `tools/pyproject.toml` and `uv.lock`), the npm
@@ -241,7 +247,7 @@ downloads and imports still need the owner's word (AGENTS.md).
 - `python tools/offline_check.py --json` prints its figures as one JSON object.
 - `tools/check_all.py`: `npm test` and pytest beside `reimport_all.py`; once the re-import is done,
   together, `check_items.mjs --json` for every book with an item table, `plates_pin.mjs --all --json`
-  (pictures waiting for approval are a note, not a failure) and `offline_check.py`. A line as each
+  (pictures waiting for approval are a note, not a failure), `offline_check.py` and `about_check.py`. A line as each
   step ends, the tail of a failed one's output; exits 1 on any failure. About 6 s. The syntax check
   is now each suite's parse test (ADR 0022).
 

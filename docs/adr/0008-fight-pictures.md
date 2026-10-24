@@ -80,8 +80,8 @@ the very same creature. The owner set the order.
 - The illustration index (`tools/ill_index.py`) holds every illustration of every downloaded book,
   fight pictures too, and a picture's fights in other sections (`fought_at`), so steps 2 and 3 of the
   order are a search of it by the creature's name. `tools/plates_draft.py` (ADR 0036) drafts by name.
-  Its `about` (from `data/projectaon/ill-about.json`) is a picture's description and `foes` (from
-  `foe-about.json`, by book and enemy name) an enemy's; it also holds the small pictures (marked
+  Its `about` (from `about/ill-about.json`, committed: ADR 0042) is a picture's description and `foes` (from
+  `about/foe-about.json`, by book and enemy name) an enemy's; it also holds the small pictures (marked
   `small`, never a draft's source) and the stand-ins fights use, keyed by path.
 - The procedure is `docs/reference/items.md`, "Fight pictures" (Book 4 is the worked example for
   plain humans); the step 7 prompt in `tools/admin/prompts.js` gives the same order.

@@ -75,12 +75,15 @@ tools/
                             picture sheet (api/admin/plate)
   art_sources.py            art/sources.json: each art/ picture's link (ADR 0038); what is here, what can be
                             fetched again, and the fetch (Setup's gated setup-art); a page link is followed to
-                            the picture it names (og:image)
-  ill_index.py              writes data/projectaon/ill-index.json: every book's illustrations, the fights near
-                            each, and hand notes of what each shows (data/projectaon/ill-notes.json) and
-                            what it is (ill-about.json), also for the stand-ins fights use, and what each
-                            enemy is by the book (foe-about.json); all
-                            git-ignored (docs/reference/items.md, Fight pictures)
+                            the picture it names (og:image); `ai` moves a fight picture made with AI into
+                            the committed assets/plates/ (ADR 0042)
+  ill_index.py              writes git-ignored data/projectaon/ill-index.json: every book's illustrations, the
+                            fights near each, and the committed hand notes of what each shows
+                            (about/ill-notes.json) and what it is (about/ill-about.json), also for the
+                            stand-ins fights use, and what each enemy is by the book (about/foe-about.json)
+                            (docs/reference/items.md, Fight pictures)
+  about_check.py            no description in about/ shares a run of 8 words with its book (ADR 0042);
+                            check_all.py runs it
   setup.py                  what the tools need on this PC and installing it (the dashboard's Setup; standard
                             library only, run with --no-project); pyproject.toml and uv.lock: the tools as a uv project, its
                             packages and their exact versions, venv tools/.venv (ADR 0037)
@@ -110,6 +113,8 @@ tools/
                             (both: docs/reference/map-upscale.md; Python in tools/.venv)
   realesrgan/               git-ignored. Real-ESRGAN's Windows build, used by map_upscale.py and ill_upscale.py
                             (setup.py install realesrgan fetches it)
+about/                      committed: what each picture and enemy is, in our own words (foe-about.json,
+                            ill-about.json, ill-notes.json; ADR 0042, tools/about_check.py)
 maps/<code>/                the owner's work on each book's printed map, committed: labels.json (the label
                             list), style.txt (the repaint's look), labels-checked.txt (step 3 done);
                             labels.json.bak is git-ignored (docs/reference/map-upscale.md)
