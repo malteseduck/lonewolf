@@ -278,7 +278,8 @@ arrives with other items or marks than before (only those the book tests), at mo
 with the section before where the way he came matters. From a section it tries:
 
 - every choice open; a gate on Endurance at an Endurance that opens it; a gate still shut, with what
-  it asks for lent (the item put in, or for "if you have no ...", taken away; gold or coins made up, or for "if you have no Gold Crowns", the purse emptied);
+  it asks for lent (the item put in, or for "if you have no ...", taken away; gold or coins made up, or for "if you have no Gold Crowns", the purse emptied;
+  a mark set, or for "not", cleared);
 - every Random Number 0-9 where one is drawn, and a range no number reached (his bonuses carry the
   total past it) at its own number;
 - each fight from full Endurance, up to three times before it counts as lost; each evasion, as soon
@@ -291,7 +292,7 @@ with the section before where the way he came matters. From a section it tries:
 He sets out from every section at full Endurance. The draws are seeded, so two walks agree. The
 report, by section id: crashes (the engine threw), gates that never opened even lent, gates opened
 only with an item lent that this book, its kit and the earlier books' Weapons and Special Items never
-give (or a range no total can make), sections with no way on, fights past 100 rounds, sections linked
+give, or a mark no section of this book's table or an earlier one's sets (or a range no total can make), sections with no way on, fights past 100 rounds, sections linked
 from the start but never reached. Listed apart, as information: the fights no stand-in won (a hard
 fight, or one he came to unarmed), the sections no link leads to (puzzle answers, turns by hand) and
 those only past them. `look` is the first list's ids; `--json` writes it all to `walk.json` beside

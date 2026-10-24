@@ -407,7 +407,8 @@ Monastery). Clothing is named there but not tracked.
   help; Invisibility makes no sound; Huntmastery sees far at will; Psi-surge sows doubt in an
   enemy; Nexus puts out fires by will.
 - **Footnotes**: a Tutelary with Weaponmastery fights unarmed at −2 (316); weapon-like Special
-  Items not found at 177 may still be recovered later.
+  Items not found at 177 may still be recovered later. *Engine*: kept apart from the rest when he is
+  stripped, given back at 54, or at 350 with his Weapons (item table).
 
 ### Book 10, The Dungeons of Torgar (Magnakai)
 

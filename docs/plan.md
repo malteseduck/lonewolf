@@ -66,14 +66,22 @@ What a book's play-through left to the player that the engine could take over:
 - **A trader who buys any Special Item at one price** (Book 8's 139: 8 Gold Crowns each, the Ring
   just bought excepted). `sell` takes item ids only; a `special: price` with an `except` list would
   do it.
+- **A flag that came after the hero passed its section** (Book 9's 142 and 323: "visited Varetta or
+  a hut on the Ruanon Pike" before). The hut is Book 4's `visitedStargazer` (84); Varetta would be a
+  flag set at Book 6's 158, Gwynian's cellar, on every way to its end. A hero made since 2026-10-12
+  has `flagsRead` and is never backfilled, so one who played Book 6 before the new flag would find the
+  gate shut wrongly. With the backfill run once per flag (`flagsRead` a list of the flags read), both
+  sections could be gated.
+- **Things kept from one place** (Book 9's 154: "if you kept any of the items you found in the hut",
+  190 or 265). The hut's Rope and Lantern are found elsewhere too, so holding them proves nothing; a
+  mark set when a loot entry is taken (`loot: [{ item, mark }]`) would do it.
 
 ### Book notes outside the steps
 
 Things to check while a book goes through its steps, which no step asks for:
 
 - Weapon bonuses the item tables give as the fight's `csMod`, to check in play against the engine's
-  own weapon bonus (that the two do not add): Book 9's Psychic Ring +8 (214), Book 11's Ironheart
-  Broadsword +8 (204). Book 12's Helshezag (133) and weapon of increased power (88) use `lend` /
+  own weapon bonus (that the two do not add): Book 11's Ironheart Broadsword +8 (204). Book 12's Helshezag (133) and weapon of increased power (88) use `lend` /
   `weaponCs`, which replace the weapon's own bonus; check those in play too.
 - Book 3's sledge food is left to the text.
 - Book 3: what its 2026-10-09 play-through left to the player is now applied (Sixth Sense below

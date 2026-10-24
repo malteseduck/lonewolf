@@ -82,12 +82,15 @@ function drawable(sec, to) {
 }
 
 /* Every item he could hold in this book: what its table and kit give, and the Weapons and Special Items
-   the earlier books' tables and kits give (carried over; Backpack Items are not). */
+   the earlier books' tables and kits give (carried over; Backpack Items are not). And every mark ('mark:'
+   and its id) a section of this book's table or an earlier one's sets, on arrival or by a draw. */
 function obtainable(LW, B, tables) {
   const ids = new Set(['meal']), kitIds = (k) => (k ? [...(k.give || []), ...(k.from || [])].map((x) => (typeof x === 'string' ? x : x.item)).filter(Boolean) : []);
   const given = (t) => Object.values(t.SECTIONS || {}).flatMap((x) => [...(x.give || []), ...(x.loot || [])].map((l) => l.item).filter(Boolean));
+  const marks = (t) => Object.values(t.SECTIONS || {}).flatMap((x) => [x, ...(x.when || []), ...(x.rolls || [])].flatMap((y) => [].concat(y.mark || [])));
   for (const [c, t] of Object.entries(tables)) {
     const n = parseInt(c, 10);
+    if (n <= B.number) marks(t).forEach((m) => ids.add(`mark:${m}`));
     if (n === B.number) given(t).forEach((x) => ids.add(x));
     else if (n < B.number) [...given(t), ...kitIds(LW.KITS[n])].filter((x) => LW.itemKind(x) !== 'backpack').forEach((x) => ids.add(x));
   }
@@ -183,18 +186,21 @@ function walk(LW, B, hero) {
     if (need.gold && h.gold < need.gold) { h.gold = Math.min(50, need.gold); out.push(''); }
     if (need.coin) { (h.coins = h.coins || {})[need.coin] = Math.max(h.coins[need.coin] || 0, need.n || 1); out.push(''); }
     // any: the first member that can be met by items: held (item: the first, items: all), or under not, every
-    // item it names put away (and the Meals, for a count of them; the gold, for an amount)
+    // item it names put away (and the Meals, for a count of them; the gold, for an amount, the marks); a mark
+    // asked for is set ('mark:' and its id lent)
     if (need.any && !need.any.some((m) => LW.meets(h, m))) {
       const items = (m) => [...[].concat(m.item || []).slice(0, 1), ...(m.items || [])];
-      const named = (c) => (!c || typeof c !== 'object' ? [] : [...[].concat(c.item || [], c.items || []), ...Object.values(c).flatMap(named)]);
-      const m = need.any.find((x) => items(x).length || x.not);
+      const named = (c, k = ['item', 'items']) => (!c || typeof c !== 'object' ? [] : [...k.flatMap((x) => [].concat(c[x] || [])), ...Object.values(c).flatMap((v) => named(v, k))]);
+      const m = need.any.find((x) => items(x).length || x.not || x.mark);
       if (m && m.not) {
         named(m.not).forEach((x) => { for (let n = 0; n < 9 && LW.dropItem(h, x); n++); });
+        named(m.not, ['mark']).forEach((x) => { if (h.marks) delete h.marks[x]; });
         if (JSON.stringify(m.not).includes('"meals"')) h.meals = 0;
         if (m.not.gold) h.gold = Math.min(h.gold, m.not.gold - 1); // "if you have no Gold Crowns": the purse emptied
         out.push('');
       }
-      else if (m) items(m).filter((x) => !LW.hasItem(h, x)).forEach(give);
+      else if (m && items(m).length) items(m).filter((x) => !LW.hasItem(h, x)).forEach(give);
+      else if (m) { (h.marks = h.marks || {})[m.mark] = true; out.push(`mark:${m.mark}`); }
     }
     return out.length ? out : null;
   }
@@ -376,7 +382,7 @@ function report(LW, B, book, walkers, json, dir, found) {
     `crashes: ${r.crashes.length}${r.crashes.map((c) => `\n  ${c.id} (${c.who}, ${c.where}): ${c.error}`).join('')}`,
     `gates never opened: ${r.closed.length}${r.closed.map((c) => `\n  ${c.id} -> ${c.to}: ${c.why.join('; ') || '?'}`).join('')}`,
     `gates opened only with what they ask for lent: ${r.lent.length}${r.lent.filter((c) => c.missing.length).map((c) => `
-  ${c.id} -> ${c.to}: ${c.missing.map((x) => (x === '#drawn' ? 'a total no draw can make' : `${x}, given nowhere he could have it`)).join('; ')}`).join('')}`,
+  ${c.id} -> ${c.to}: ${c.missing.map((x) => (x === '#drawn' ? 'a total no draw can make' : x.startsWith('mark:') ? `the mark ${x.slice(5)}, set nowhere` : `${x}, given nowhere he could have it`)).join('; ')}`).join('')}`,
     `no way on: ${r.stuck.length}${r.stuck.map((s) => `\n  ${s.id}: ${s.why.join('; ') || 'no choices'}`).join('')}`,
     `fights past ${MAX_ROUNDS} rounds: ${r.long.length ? r.long.join(' ') : 'none'}`,
     `fights no stand-in won (three tries each; a hard fight, or he came unarmed): ${r.lostFights.length ? r.lostFights.join(' ') : 'none'}`,

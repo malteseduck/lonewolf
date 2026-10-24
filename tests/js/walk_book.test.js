@@ -16,7 +16,8 @@ const end = { end: 'victory' }, foe = (name) => [{ name, cs: 5, ep: 6 }];
 const SECTIONS = {
   1: { rnt: 'auto', choices: [{ to: '2', range: [0, 4] }, { to: '3', range: [5, 9] }] },
   2: { combat: { enemies: foe('Rat'), won: { within: 1, to: '12', else: '13' } }, choices: [] }, // either way, whatever the dice
-  12: { choices: [{ to: '4' }, { to: '9' }] },
+  // a mark set at 13 (never on the way here), and one set nowhere
+  12: { choices: [{ to: '4' }, { to: '9' }, { to: '14', need: { any: [{ mark: 'met' }] } }, { to: '19', need: { any: [{ mark: 'lost' }] } }] },
   13: { choices: [{ to: '4' }, { to: '19', need: { any: [{ not: { gold: 1 } }] } }] }, // only with no gold: the purse is emptied
   3: { choices: [{ to: '5', need: { item: 'key' } }, { to: '14', need: { item: 'lamp' } }, { to: '4' }] }, // no Key anywhere; the Lamp is at 13
   4: { choices: [{ to: '6', need: { came: ['99'] } }, { to: '7' }, { to: '11' }] },
@@ -32,7 +33,7 @@ const book = (code, more) => `LW.BOOKS['${code}'] = ${JSON.stringify(Object.assi
 beforeAll(() => {
   tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'lw-walk-'));
   for (const f of ['core.js', 'rules-series.js', 'fight.js']) w(`shared/${f}`, fs.readFileSync(path.join(ROOT, 'shared', f), 'utf8'));
-  w('items/items-01tt.js', `export const ITEMS = { lamp: { name: 'Lamp', kind: 'backpack' } }; export const SECTIONS = { 13: { give: [{ item: 'lamp' }] } };`);
+  w('items/items-01tt.js', `export const ITEMS = { lamp: { name: 'Lamp', kind: 'backpack' } }; export const SECTIONS = { 13: { give: [{ item: 'lamp' }], mark: 'met' } };`);
   w('data/projectaon/01tt/book.js', book('01tt'));
   w('data/projectaon/21no/book.js', book('21no', { number: 21, series: 'neworder' }));
 });
@@ -43,16 +44,18 @@ describe('walk_book.mjs', () => {
     const r = await walkBook({ root: tmp, book: '01tt' });
     expect(r.code).toBe(0);
     expect(r.crashes.map((c) => c.id)).toEqual(['8']);
-    // gates that cannot open whatever he has; those opened only with the item lent, and which item is found nowhere
+    // gates that cannot open whatever he has; those opened only with the item or mark lent, and which is found nowhere
     expect(r.closed.map((c) => `${c.id}>${c.to}`)).toEqual(['4>6', '11>6']);
     expect(r.lent).toEqual([{ id: '3', to: '5', why: ['Needs key'], missing: ['key'] }, { id: '3', to: '14', why: ['Needs Lamp'], missing: [] },
+      { id: '12', to: '14', why: ['Needs met'], missing: [] }, { id: '12', to: '19', why: ['Needs lost'], missing: ['mark:lost'] },
       { id: '13', to: '19', why: ['Needs no Gold Crowns'], missing: [] }]);
     expect(r.stuck.map((s) => s.id)).toEqual(['11']);
     expect(r.long).toEqual(['7']);
     expect(r.unreached).toEqual(['6']);
     expect(r.orphans).toEqual(['10']);
     expect(r.pastOrphans).toEqual(['16']);
-    expect(r.look).toEqual(['3', '4', '6', '7', '8', '11']);
+    expect(r.look).toEqual(['3', '4', '6', '7', '8', '11', '12']);
+    expect(r.text).toContain('12 -> 19: the mark lost, set nowhere');
     // the fight's two outcomes, the contest won and lost, the endless fight's way on, the lent gates' sections: all reached
     expect(r.standIns.map((s) => s.who)).toEqual(['master', 'novice']);
     expect(r.standIns[0].reached).toBe(15); // all but 6 (unreachable) and 10, 16 (no link)
