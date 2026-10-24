@@ -24,3 +24,5 @@ maps/*/*.part
 release/
 # Vitest cache
 .vitest/
+# the demo book's Gemini inputs and outputs (docs/showcase/gemini-prompts.md): made with Book 1 as a style example, never committed
+data/demo/
