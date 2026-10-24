@@ -83,6 +83,9 @@ file's first line (`// DRAFT by tools/items_draft.mjs`) marks it unread: step 5 
 there, and the items-tables test leaves such a file out. The draft writes no book items, fights,
 `bowShot`, marks or stakes: those, and the reading list's other sections, are step 3's.
 
+The made-up demo book's table (ruling R20) is `demo/<code>/items.js`; the draft and `check_items.mjs` read it
+there, so it counts as a table already there.
+
 With a table already there the draft never touches it: it goes to `data/projectaon/<book>/items-draft.js`
 and is compared with the table, reading by reading. On Books 1-12 (2026-10-14) the tables agree with 457
 of its 473 readings (Endurance 220 of 226, gates 194 of 202, finds 38 of 40, losses 5 of 5); most of the

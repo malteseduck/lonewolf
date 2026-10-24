@@ -112,6 +112,14 @@ describe('items_draft.mjs', () => {
     expect(r.text).toContain('items-t1.js exists and was left alone');
   });
 
+  it('treats the demo book\'s table, demo/<code>/items.js, as its hand-made table (ruling R20)', async () => {
+    w('demo/t1/items.js', `export const ITEMS = {};\nexport const SECTIONS = { 2: { give: [{ gold: 6 }] } };\n`);
+    const r = await draftItems({ root: tmp, book: 't1' });
+    expect(fs.existsSync(path.join(tmp, 'items', 'items-t1.js'))).toBe(false);
+    expect(r.file).toBe(path.join(tmp, 'data', 'projectaon', 't1', 'items-draft.js'));
+    expect(r.compared.stats.give).toEqual({ draft: 1, agree: 1 });
+  });
+
   it('redrafts its own draft, and names nothing from another book\'s draft', async () => {
     w('items/items-t1.js', `${HEADER} (old)\nexport const ITEMS = {};\nexport const SECTIONS = {};\n`);
     w('items/items-t2.js', `${HEADER} (old)\nexport const ITEMS = { lamp: { name: 'Lamp', kind: 'backpack' } };\nexport const SECTIONS = {};\n`);

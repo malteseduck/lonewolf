@@ -10,7 +10,7 @@ export const MARKS = {};
 
 export const SECTIONS = {
   1: { give: [{ item: 'emberLetter' }] },
-  52: { need: { 90: { item: 'emberLetter' } } },
+  52: { need: { 90: { item: 'emberLetter' }, 38: { item: 'emberLetter', not: true } } },
   61: { loot: [{ item: 'dagger' }, { item: 'marshDraught' }] },
   73: { ep: -3 },
 };

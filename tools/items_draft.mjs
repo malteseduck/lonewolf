@@ -17,6 +17,7 @@ import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
 import { fileURLToPath, pathToFileURL } from 'url';
+import { tableFile } from './check_items.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -414,7 +415,7 @@ export async function draftItems({ root = ROOT, book }) {
   (0, eval)(fs.readFileSync(bookJs, 'utf8'));
   const B = LW.BOOKS[book];
   const sections = draftBook(B, itemNames(sources));
-  const table = path.join(root, 'items', `items-${book}.js`);
+  const table = tableFile(root, book);
   const hand = fs.existsSync(table) && !fs.readFileSync(table, 'utf8').startsWith(HEADER);
   const file = hand ? path.join(root, 'data', 'projectaon', book, 'items-draft.js') : table;
   fs.mkdirSync(path.dirname(file), { recursive: true });
@@ -427,7 +428,7 @@ export async function draftItems({ root = ROOT, book }) {
   if (hand) {
     const T = await import(pathToFileURL(table).href + `?t=${Date.now()}`);
     compared = compare(sections, T.SECTIONS);
-    lines.push(`items-${book}.js exists and was left alone; the draft against it (readings the table agrees with):`);
+    lines.push(`${path.basename(table)} exists and was left alone; the draft against it (readings the table agrees with):`);
     for (const [f, s] of Object.entries(compared.stats)) lines.push(`  ${f}: ${s.agree} of ${s.draft}${compared.wrong[f] ? `  (not in the table: ${compared.wrong[f].join(' ')})` : ''}`);
     lines.push(`  ${compared.missed.length} table sections the draft neither filled nor flagged: ${compared.missed.join(' ')}`);
   }

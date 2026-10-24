@@ -19,10 +19,14 @@ const require = createRequire(import.meta.url);
 let stamp = 0; // a new query per edit, so a table edited between calls is read again
 const loaded = new Map(); // path + text -> module, so an unchanged table is not parsed twice
 
+/* Where a book's table lives: items/items-<book>.js, or demo/<book>/items.js for the made-up demo book (ruling R20). */
+export const tableFile = (root, book) => (fs.existsSync(path.join(root, 'demo', book))
+  ? path.join(root, 'demo', book, 'items.js') : path.join(root, 'items', `items-${book}.js`));
+
 /* Check one book under `root`; returns {code, text, errors, counts, leftOut, items, sections}. No printing, no exit:
    the command line below does that. With json, also writes check-items.json beside the book. */
 export async function checkItems({ root = ROOT, book = '01fftd', json = false } = {}) {
-  const file = path.join(root, 'items', `items-${book}.js`);
+  const file = tableFile(root, book);
   if (!fs.existsSync(file)) return { code: 0, text: `no items-${book}.js yet: the book's items are all by hand (docs/reference/items.md)`, missing: true };
 
   // the engine's own items, then the book's; loaded afresh so each call sees its own root
@@ -40,6 +44,7 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
   const T = await imp(file), B = LW.BOOKS[book];
   // every book's items are known in the page (an item from Book 1 can gate a choice in Book 2)
   for (const f of fs.readdirSync(path.join(root, 'items')).filter((f) => /^items-\w+\.js$/.test(f))) { const t = await imp(path.join(root, 'items', f)); LW.addItems(t.ITEMS, t.MARKS); }
+  LW.addItems(T.ITEMS, T.MARKS); // the demo book's table is not in items/
   const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'noHunt', 'todo', 'need', 'fight', 'bowShot', 'grandBow', 'rntMod',
     'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax', 'game',
     'zeroTen', 'against', 'mealUnless', 'add', 'forfeit']);

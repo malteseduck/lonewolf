@@ -68,6 +68,14 @@ describe('check_items.mjs', () => {
     expect(r.out[1]).toBe('2 book items; 3 sections: give 1, loot 1, take 1, ep 2, rolls 1, need 2, fight 1, todo 1');
   });
 
+  it('checks the demo book\'s table where it lives, demo/<code>/items.js (ruling R20)', async () => {
+    w('data/projectaon/t9/book.js', `LW.BOOKS['t9'] = { sections: { '1': { choices: [] } } };`);
+    w('demo/t9/items.js', `export const ITEMS = { flask9: { name: 'Flask', kind: 'backpack', glyph: 'present' } }; export const SECTIONS = { '1': { ep: -1, loot: [{ item: 'flask9' }] } };`);
+    const r = await run('t9');
+    expect(r.out[0]).toBe('no errors');
+    expect(r.out[1]).toMatch(/^1 book items; 1 sections: .*ep 1/);
+  });
+
   it('defaults to Book 1 (01fftd) when no code is given, saying so when the table is absent here', async () => {
     expect((await run()).out[0]).toMatch(/^no items-01fftd\.js yet/);
   });
