@@ -82,7 +82,8 @@ that might be out of date. A cog is a script, a hand is the owner, a quill is Cl
 
 **The fight picture sheet** shows every kind of enemy in a book with the picture the player would show,
 where it came from and what the enemy is. Pictures can be dropped, pasted or fetched by address (each asks
-for its source link), cropped, flipped and levelled with the fight panel previewed, and approved with a date.
+for its source link, or is marked as made with AI from a text prompt, and then kept in the repository), cropped,
+flipped and levelled with the fight panel previewed, and approved with a date.
 A picture the owner supplies wins over every other source.
 
 ![The illustration sheet](images/23-sheet-illustrations.jpg)
@@ -102,8 +103,9 @@ need it. *Change icon...* picks another from the icons on this PC or from game-i
 as it is picked).
 
 Other tools on the dashboard: *Check everything* (re-imports every book against its last report, runs every
-item table's check, the approved fight pictures and the offline copy, then both test suites, in about six
-seconds), *Scan phrasings*, *Diff rules*, *Walk the book* (a play-through in Node), *Draft and compare* an item
+item table's check, the approved fight pictures, the offline copy and a check that no description repeats a
+book's wording, then both test suites, in about ten seconds), *Picture sources* (where each borrowed picture
+came from), *Scan phrasings*, *Diff rules*, *Walk the book* (a play-through in Node), *Draft and compare* an item
 table, *Release to the iPad* (the offline check first) and *Setup* for a fresh checkout.
 
 ## Maps
@@ -146,9 +148,12 @@ One page, the map editor, runs every step. Here it is inside the dashboard on th
 
 ## Making this showcase again
 
-- The player screens (01-09) were taken on the stand-in book [`make/ember-road-book.js`](make/ember-road-book.js), now the real demo book `demo/99ember/` (start `python tools/serve.py`, use the title page link; or paste the old file into the player's console
-  with `__lw.BOOKS['99ember'] = eval(`...`)` and `__lw.begin('99ember', true, true)`; serve its pictures from
-  `demo-book/` (a public-domain engraving from `assets/plates/` for the story page and the foe, and the map)).
+- The player screens (01-09) were taken on the demo book, `demo/99ember/`: start the server
+  (`uv run --project tools python tools/serve.py`) and use the title page's "Demo: The Ember Road" link.
+  [`make/ember-road-book.js`](make/ember-road-book.js) is the stand-in it grew from, kept for reference.
+- The map pictures (30-46) are captures of the demo map (`demo/99ember/map.png`, the owner's degraded
+  Gemini scan) run through the map editor's steps. [`make/make_map.py`](make/make_map.py), a procedural
+  made-up map, is the earlier stand-in it replaced.
 - [`gemini-prompts.md`](gemini-prompts.md): prompts for painting finer versions of the made-up art in Gemini.
 
 ## Credits

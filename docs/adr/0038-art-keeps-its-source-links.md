@@ -2,12 +2,17 @@
 
 - Status: Accepted
 - Date: 2026-10-14
+- Amended: 2026-10-24
 
 ## Context
 
 `art/` (the owner's fight pictures and borrowed art) is git-ignored, so a fresh checkout has none of
 it and the Setup panel (ADR 0036) can only say "copy it from the old checkout". The owner asked that
 a picture added from the web keep its link, so that it can be downloaded again.
+
+On 2026-10-24 the owner marked every picture then in `art/`: a link where one was known, none for
+screenshots and drawings, and "Made with AI" for the fight pictures made from a text prompt, which
+leave `art/` for the committed library (ADR 0042).
 
 ## Decision
 
@@ -24,6 +29,12 @@ a picture added from the web keep its link, so that it can be downloaded again.
 
 - Crops, flips and levels stay in `plates.json`, so a picture fetched again from its link and
   converted as before shows the same.
-- Links break; recovery is likely, not certain. The pictures already in `art/` have no link until
-  the owner gives one.
+- Links break; recovery is likely, not certain.
+- The dashboard's Picture sources sheet lists every picture in `art/` with its link, none, or a
+  Made with AI button (ADR 0042), those not yet said first.
 - The work is D9 in `docs/plan.md`.
+
+## Changes
+
+- 2026-10-24: every picture in `art/` marked; the Picture sources sheet; AI-made fight pictures move
+  out of `art/` into the committed library (ADR 0042).

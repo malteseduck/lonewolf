@@ -1,5 +1,7 @@
 Fight plates for enemies the books do not picture. Listed in plates.json.
-All from Wikimedia Commons; free to redistribute under the licence given.
+Engravings from Wikimedia Commons, free to redistribute under the licence given; and, in the book
+folders (01fftd/ ...) and at the end of this list, pictures the owner made with an AI from a text
+prompt alone, which are ours (ADR 0042).
 
 grizzly-brehm.png
   "Grizzlydeer.png", from Alfred Brehm, Brehms Tierleben (1894). Public domain.

@@ -1,77 +1,61 @@
 # Lone Wolf player
 
-A personal-use player for the Lone Wolf gamebooks: a flat book after *Lone Wolf HD Remastered*.
-Framed story page on the left, a panel on the right (Kai Disciplines, inventory, map, combat).
-Combat is on the page with medallion controls. No build step. Serve the folder and open it:
+A personal-use player for the Lone Wolf gamebooks (Kai, Magnakai and Grand Master), styled after
+*Lone Wolf HD Remastered*: one open book that is the whole interface, the story on the left and the
+hero, inventory, map or fight on the right. Plain HTML, CSS and JavaScript, no build step. It is
+played mainly on an iPad, offline, and on the PC. `docs/showcase/` shows it.
 
-    python tools/serve.py
+## Run it
 
-then go to http://localhost:8766/. It must be served, not opened as a file: `main.js` is an ES module.
-`tools/serve.py` is `python -m http.server 8766 --bind 127.0.0.1` plus somewhere to keep backups:
-an adventure's "backup" writes `backups/<name>.<date>.<time>.json`, and "restore" lists them. Served any
-other way, backups are downloaded instead.
+Every Python run goes through [uv](https://docs.astral.sh/uv/). On a fresh checkout:
 
-To play from the iPad at home, serve it on the home network instead:
+    uv run --no-project python tools/setup.py install all
 
-    python tools/serve.py 8766 --bind 0.0.0.0
+then serve the folder and open http://localhost:8766/:
 
-and open `http://<this PC's address>:8766/` on the device (`ipconfig` shows the PC's IPv4 address;
-Windows may ask to let Python through the firewall the first time). This plain-HTTP "lan" server
-plays and backs up but keeps no offline copy. To play offline on an iPad and sync with the PC when
-in reach, see `docs/reference/offline.md` (Tailscale).
+    uv run --project tools python tools/serve.py
+
+It must be served, not opened as a file (`main.js` is an ES module). `tools/serve.py` also keeps an
+adventure's backups in `backups/` and runs the import dashboard, http://localhost:8766/tools/admin/
+(this PC only).
+
+To play from the iPad at home, serve it on the network (`... tools/serve.py 8766 --bind 0.0.0.0`)
+and open `http://<this PC's address>:8766/`. That plain-HTTP server keeps no offline copy; to play
+offline and sync with the PC when in reach, see `docs/reference/offline.md`.
+
+## The real books
+
+Project Aon's editions may be downloaded for personal use but not redistributed, so they are
+fetched onto this machine and kept out of git (`data/projectaon/` is git-ignored):
+
+    uv run --project tools python tools/fetch_projectaon.py 01fftd
+    uv run --project tools python tools/import_projectaon.py 01fftd
+
+The importer reads choices, discipline and item gates, Random Number ranges, combats and their
+rules; what it cannot read with certainty stays as text, with by-hand controls on the page. What
+each section gives, takes or needs is read by hand into the book's item table (`items/`). Each
+book goes through nine steps, which the dashboard tracks (`docs/book-checklist.md`).
+
+What we make about a book is committed; the book is not (ADR 0042): item tables, map label lists,
+fight-picture choices and our own descriptions of its pictures and enemies are in git, its text,
+pictures and anything made from them are not.
+
+A made-up demo book, *The Ember Road* (`demo/99ember/`), is committed and plays like an imported
+one, on the PC only (ruling R20).
+
+## Where things are
 
 | | |
 |---|---|
-| `index.html`, `main.js`, `plates.js`, `maps.js` | The player. Markup and CSS, the game loop and rendering, the ink art, the printed map's restyling |
-| `art/` | Optional enemy illustrations. List them in `art/manifest.json` to replace the drawn ones |
-| `shared/` | Rules and widgets, see below |
-| `tools/` | Downloader and importer for the Project Aon editions |
-| `docs/` | Spec, plan and reference |
-| `prototypes/` | Three earlier looks that were not taken further. Kept for reference only, not maintained |
+| `index.html`, `main.js`, `plates.js`, `maps.js`, `platepick.js`, `adventures.js`, `glyphs.js`, `itemglyphs.js`, `sw.js` | The player |
+| `shared/` | The rules engine (`core.js`, `rules-series.js`), its widgets and the ink scenes |
+| `items/`, `maps/`, `about/` | Our work about each book: item tables, map label lists, descriptions |
+| `assets/` | Fonts, icons, the app icon and the fight-picture library, all free to redistribute |
+| `art/` | Git-ignored: borrowed pictures for personal use; `art/sources.json` says where each came from |
+| `demo/` | The demo book |
+| `tools/` | Downloader, importer, checkers, server, dashboard and map pipeline (a uv project) |
+| `tests/` | Vitest (`npm test`) and pytest (`uv run --project tools python -m pytest`) |
+| `docs/` | The spec, the decisions (`adr/`), the reference, the plan and the showcase |
 
-In `shared/`:
-
-- `core.js`: rules (Combat Results Table, disciplines, inventory limits, meals, healing) and the book runner with save and rewind
-- `rules-series.js`: what differs between the Kai and Magnakai series
-- `book-demo.js`: the demo chapter, 20 sections, in the data format the importer targets (prototypes only)
-- `ui.js`, `shared.css`: Random Number Table, character creation, Action Chart
-- `ink.js`: procedural parchment, leather and ink-wash scenes
-- `battle.js`, `art.js`, `flow.js`: used by prototypes A and B only
-
-## Playing the real books
-
-Project Aon's editions may be downloaded for personal use but not redistributed, so they are fetched
-onto this machine and kept out of version control (`data/projectaon/` is git-ignored).
-
-    python tools/fetch_projectaon.py 01fftd     # section pages, illustrations, map
-    python tools/import_projectaon.py 01fftd    # writes data/projectaon/01fftd/book.js
-
-The title page then offers the book. The importer reads choices, discipline gates,
-Random Number ranges, combat stat lines, evasion, Mindblast immunity, Combat Skill adjustments, forced
-Meals and dead ends. Item pick-ups, gold and other special rules stay as text: apply them with the
-by-hand controls on the inventory and Kai panels.
-
-### Series rules and carrying a character on
-
-`shared/rules-series.js` holds what differs between series: the Kai and Magnakai discipline lists,
-ranks, Lore-circle bonuses, Weaponmastery, Psi-surge, and which discipline heals or hunts. Each
-imported book names its series. Finishing a real book saves the character; the next book you start
-begins with that character (scores, disciplines, weapons, pack, gold) plus the new discipline it has
-earned. "new character" on the title page rolls a fresh one instead.
-
-Several games can run at once: each adventure on the title page has its own saves and its own
-Lone Wolf. Saves live in the browser, so each device and browser keeps its own.
-
-The Magnakai numbers were written from memory. Check them against the books' rules pages.
-Bow shots, Arrows and each book's starting kit are still applied by hand.
-
-## About the text
-
-The demo prose is placeholder text written for this project. Project Aon's licence forbids
-redistributing their editions, so the real books cannot be checked into this project or hosted.
-The way round it is the importer above, run on the owner's own machine, which converts Project
-Aon's book files into the `book-demo.js` shape.
-
-## State of the work
-
-See `docs/plan.md` for what is done, what is untested and what comes next.
+Start with `docs/spec.md`, `docs/adr/README.md` and `docs/plan.md`. `AGENTS.md` holds the rules for
+working on the code.

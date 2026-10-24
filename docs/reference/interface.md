@@ -261,7 +261,8 @@ story on.
   illustration, or one the importer borrowed from the same book), else the first entry of `assets/plates/plates.json`
   whose `match` is found in its name and whose `book`, if it has one, is the open book (`PLATES`;
   `__lw.plates` in the console), else the drawn
-  sprite. Library entries are free engravings in `assets/plates/` (sources in its README.txt),
+  sprite. Library entries are free engravings and the owner's AI-made pictures in `assets/plates/`
+  (sources in its README.txt; ADR 0042),
   pictures the owner supplied or that were found by search and are not free, in git-ignored `art/`
   (Winged Serpent; the links of found ones in the committed `art/sources.json`, ADR 0038), or Project Aon
   illustrations by path under `data/projectaon/`: the same book's, often cropped to one figure

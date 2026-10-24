@@ -248,7 +248,7 @@ downloads and imports still need the owner's word (AGENTS.md).
 - `tools/check_all.py`: `npm test` and pytest beside `reimport_all.py`; once the re-import is done,
   together, `check_items.mjs --json` for every book with an item table, `plates_pin.mjs --all --json`
   (pictures waiting for approval are a note, not a failure), `offline_check.py` and `about_check.py`. A line as each
-  step ends, the tail of a failed one's output; exits 1 on any failure. About 6 s. The syntax check
+  step ends, the tail of a failed one's output; exits 1 on any failure. About 11 s. The syntax check
   is now each suite's parse test (ADR 0022).
 
 ## The prompts

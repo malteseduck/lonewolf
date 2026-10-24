@@ -12,8 +12,9 @@ intent changes; a decision within the intent gets an ADR or a ruling instead.
 
 ## 1. Purpose
 
-A personal-use player for Joe Dever's Lone Wolf gamebooks, starting with the Kai series (books 1-5)
-and the Magnakai series (books 6-12), with room for the later series. It replaces reading the
+A personal-use player for Joe Dever's Lone Wolf gamebooks: the Kai series (books 1-5), the
+Magnakai series (books 6-12) and the Grand Master series (books 13-20), with room for the New Order
+series after them. It replaces reading the
 Project Aon web edition beside a separate action chart. It should feel like the 2013 game
 *Joe Dever's Lone Wolf HD Remastered*: a dark, aged book that is itself the interface.
 
@@ -55,7 +56,7 @@ served from the owner's PC; it is played on the owner's iPad, mainly, with or wi
 - Pictures made for this project with an AI from a text prompt alone are our own and are committed.
 - The repository itself contains only original work and assets free to redistribute (CC0 or
   similar, each with its source noted): the engine, the interface, drawn art, icons, fonts, and a
-  short demo chapter written for this project.
+  short demo book written for this project (ruling R20).
 - Pictures the owner supplies for personal use (screenshots of Lone Wolf HD, drawings, scans) are
   kept in an uncommitted folder. The player uses them when present and falls back to its own
   drawing when not.
@@ -294,10 +295,14 @@ All run by the owner on their own machine.
 - A **downloader** fetches one book's pages, illustrations and map from Project Aon.
 - An **importer** converts a downloaded book to the book model and reports what it understood:
   counts of sections, combats, gates, Random Number sections, endings, and any broken links.
-- A **checker** validates each book's item table against the book.
+- A **checker** validates each book's item table against the book, and another that our committed
+  descriptions repeat none of the books' wording.
+- An **import dashboard** shows where each book stands in its steps, runs the script steps, gives the
+  steps that need judgement as a ready prompt, and holds the sheets for a book's fight pictures,
+  illustrations and items, the player's icons, and where each of the owner's pictures came from.
 - A **map editor** edits a map's label list and runs every step of the map upscale (6.4).
 - A **server** on the PC serves the player, keeps backups, lists the offline copy, and drives the
-  map editor's steps.
+  dashboard's jobs and the map editor's steps.
 - An **offline check** reports what the offline copy holds: file count, size per book, the largest
   files, and anything named but missing.
 

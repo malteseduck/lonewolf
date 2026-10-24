@@ -68,7 +68,8 @@ tools/
                             pictures), ills.html (one book's illustrations, each original beside its
                             2x upscale), items.html and itemsheet.js (one book's items and their icons, which
                             the owner changes: ADR 0021), icons.html (the player's other icons, for
-                            every book), iconpicker.js and icons.css (both sheets' icon picker), parchment.js (the tool pages' parchment and charred-rim filter, from
+                            every book), sources.html (every picture in art/: its link, none, or made
+                            with AI: ADR 0038, 0042), iconpicker.js and icons.css (both sheets' icon picker), parchment.js (the tool pages' parchment and charred-rim filter, from
                             shared/ink.js; the map editor loads it too: ADR 0021)
   map-editor.html           the map steps' page (docs/reference/map-upscale.md), shown only inside the dashboard
   plates_file.py            reads and writes assets/plates/plates.json in its layout; the owner's pictures from the

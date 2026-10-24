@@ -87,8 +87,8 @@ uv run --project tools python -m pytest
 (`npm install` once for Vitest; pytest is in `tools/.venv`.) There is no linter.
 
 `uv run --project tools python tools/check_all.py` (the dashboard's "Check everything") puts the real books through every
-script, and both suites alongside (about 6 s): re-import every book against its last report, every item table's
-check, the approved fight pictures, the offline copy. Run it after changing the importer, an item
+script, and both suites alongside: re-import every book against its last report, every item table's
+check, the approved fight pictures, the offline copy, and that no description in `about/` repeats a book's wording. Run it after changing the importer, an item
 table or anything the books' data goes through.
 
 ## Verify a change
@@ -149,10 +149,10 @@ no release is made: those stay the owner's call.
   `data/projectaon/` (git-ignored) and nowhere else. Do not paste section text into code,
   comments, docs, commit messages or chat. When inspecting imported data, print counts and ids,
   not prose.
-- **Downloading a book needs the owner's go-ahead for that download.** Books 1-12 are fetched
-  (2-12 on 2026-10-01, for their art; not imported yet). Ask, naming the books and rough size,
-  before running `tools/fetch_projectaon.py` for any other. Importing a book is a separate step;
-  ask before importing 2-12 too.
+- **Downloading a book needs the owner's go-ahead for that download.** Which books are downloaded
+  and imported is in `docs/book-checklist.md` (steps 1 and 2) and on the dashboard. Ask, naming the
+  books and rough size, before running `tools/fetch_projectaon.py` for any other. Importing a book is
+  a separate step; ask before importing any not yet imported.
 - **No real-time 3D, no pixel art, no bright flat colour.** See spec section 6.6.
 - **Automate only what is certain.** If a rule cannot be read reliably from the text, leave it as
   text and rely on the by-hand controls (spec principle 2 and 3).
@@ -174,8 +174,8 @@ no release is made: those stay the owner's call.
   in the repo must be free to redistribute (CC0 or similar; say where they came from, as
   `assets/icons/README.txt` does). Project Aon images stay in `data/projectaon/` and are
   only restyled at runtime. Downloading a new asset pack needs the owner's go-ahead.
-- **The map is the book's own printed map**, restyled at runtime (`maps.js`). The owner dropped
-  the custom maps on 2026-10-05: no replicas, made-up places, town plans or travel on the map.
+- **The map is the book's own printed map**, restyled at runtime (`maps.js`; ADR 0004): no
+  replicas, made-up places, town plans or travel on the map.
   Their symbols are kept in git-ignored `art/reference/map-symbols/from-game/`.
 - **Our own work about a book is committed; the book is not.** Item tables are `items/items-<code>.js`;
   a map's label list, repaint style and step marks are in `maps/<code>/`; what each picture and enemy
@@ -239,3 +239,5 @@ pages (`docs/reference/rules-books.md`), and its text is not copied into the rep
 
 Keep them current: a change to behaviour updates the matching reference file in the same piece of
 work; when work in `plan.md` is finished, take it out of `plan.md` (the reference file records it).
+This file holds instructions only, never state (what is imported, timings, dates): that belongs in the
+files above, which it may point to (ruling R21).

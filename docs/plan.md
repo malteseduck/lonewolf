@@ -11,8 +11,8 @@ every book can become a step or a check there.
 
 ## Next steps
 
-In order of importance. The owner picks what is done, and when. Books 1-14 are imported; importing
-Books 15-20 (downloaded) is the owner's go-ahead.
+In order of importance. The owner picks what is done, and when. Books 1-16 and 20 are imported;
+importing Books 17-19 (downloaded) is the owner's go-ahead.
 
 ### The New Order series (Books 21 on)
 
