@@ -69,7 +69,8 @@ ember on hover and focus; disabled it is greyed.
   URL) and `.vignette.small` shows it 7.5em high, never wider than the column. Hidden until cut.
   Checked on every illustrated section of Book 1 (2026-10-01): small ones 195px high, in a 1274x914
   window. A portrait plate is 308x548 in a 1463x914 window (2026-10-12).
-- `.scroll` holds the text and scrolls if the section is long. What follows is pinned below it.
+- `.scroll` holds the text and scrolls if the section is long. What follows is pinned below it. A redraw of the same
+  section (a medallion or tab touched, an item taken) keeps it where it was scrolled; a new section opens at the top.
 - `#dialslot`: for `rnt` sections the Random Number medallion is mounted here by `mountRnt()`.
   In a bow shot (`bowShot`) the line under it says what the shot costs, or why he cannot shoot
   (a toast if touched), and afterwards shows the sum: the number drawn, each bonus, the total.

@@ -468,7 +468,15 @@ function mountRnt() {
   if (game.game) { const why = game.gameWhy(false), gs = sec.game; note.textContent = why || (typeof gs.stake === 'number' ? `Touch the medallion to throw: ${gs.stake} Gold Crowns a throw${gs.coin ? ` (or ${gs.stake * gs.rate} ${LW.COINS[gs.coin]})` : ''}.` : 'Touch the medallion to throw.'); }
   slot.append(dial.el, note);
 }
-function renderLeft() { pl.innerHTML = leftHTML(); mountRnt(); mountSetup(); trimSmall(); widenPlates(); }
+/* a redraw of the same page (a medallion touched, an item taken) keeps the text where the reader had scrolled it;
+   a new section, or another visit to one, starts at the top */
+const leftKey = () => [mode, intro, game && game.s ? `${game.s.trail.length}:${game.s.at}` : ''].join('|');
+function renderLeft() {
+  const was = $('#scroll'), key = leftKey(), top = was && was.dataset.key === key ? was.scrollTop : 0;
+  pl.innerHTML = leftHTML(); mountRnt(); mountSetup(); trimSmall(); widenPlates();
+  const sc = $('#scroll');
+  if (sc) { sc.dataset.key = key; if (top) sc.scrollTop = top; }
+}
 /* Project Aon draws its plates one column wide (portrait) or across both columns (landscape); a
    landscape one at the portrait width came out cramped, so it spans the column (CSS .vignette.wide). */
 function widenPlates() {
