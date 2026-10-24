@@ -27,6 +27,7 @@ BOOKS = {  # code: (number, series, title)
     '14tcok': (14, 'grandmaster', 'The Captives of Kaag'),
     '15tdc': (15, 'grandmaster', 'The Darke Crusade'),
     '16tlov': (16, 'grandmaster', 'The Legacy of Vashna'),
+    '20tcon': (20, 'grandmaster', 'The Curse of Naar'),
 }
 DISC = {'camouflage': 'camouflage', 'hunting': 'hunting', 'sixth sense': 'sixthSense', 'tracking': 'tracking', 'healing': 'healing',
         'weaponskill': 'weaponskill', 'mindshield': 'mindshield', 'mindblast': 'mindblast', 'animal kinship': 'animalKinship',

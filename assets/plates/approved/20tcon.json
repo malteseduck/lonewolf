@@ -1,0 +1,32 @@
+{
+ "_readme": "The fight pictures the owner approved for this book (step 7 marked done): the player shows these whatever plates.json or a re-import would now pick. Keyed by section/enemy number; name is a hash of the enemy's name, so a pin is not used for another enemy; plate is {src, crop?, levels?, flip?} or null for the drawn emblem. Written by tools/plates_pin.mjs; see docs/reference/interface.md, Art pipeline.",
+ "approved": "2026-10-24",
+ "pins": {
+  "24/0": {"name":"1cyn8lr","plate":{"src":"data/projectaon/20tcon/ill3.png"}},
+  "30/0": {"name":"fs3hm2","plate":{"src":"data/projectaon/20tcon/ill6.png"}},
+  "32/0": {"name":"1ga4gly","plate":{"src":"data/projectaon/20tcon/ill2.png"}},
+  "46/0": {"name":"1cyn8lr","plate":{"src":"data/projectaon/20tcon/ill3.png"}},
+  "64/0": {"name":"107szoc","plate":{"src":"data/projectaon/20tcon/ill4.png"}},
+  "69/0": {"name":"1n9ony5","plate":{"src":"data/projectaon/20tcon/ill1.png"}},
+  "74/0": {"name":"xu278j","plate":{"src":"data/projectaon/20tcon/ill5.png"}},
+  "92/0": {"name":"1n9ony5","plate":{"src":"data/projectaon/20tcon/ill1.png"}},
+  "93/0": {"name":"1e10oxb","plate":{"src":"data/projectaon/18dotd/ill12.png"}},
+  "94/0": {"name":"fs3hm2","plate":{"src":"data/projectaon/20tcon/ill6.png"}},
+  "121/0": {"name":"11fx6xz","plate":{"src":"data/projectaon/20tcon/ill13.png"}},
+  "147/0": {"name":"1oi5wet","plate":{"src":"data/projectaon/20tcon/ill12.png"}},
+  "185/0": {"name":"107szoc","plate":{"src":"data/projectaon/20tcon/ill4.png"}},
+  "193/0": {"name":"1cyn8lr","plate":{"src":"data/projectaon/20tcon/ill3.png"}},
+  "197/0": {"name":"fs3hm2","plate":{"src":"data/projectaon/20tcon/ill6.png"}},
+  "211/0": {"name":"11fx6xz","plate":{"src":"data/projectaon/20tcon/ill13.png"}},
+  "212/0": {"name":"lw2luc","plate":{"src":"data/projectaon/20tcon/ill20.png"}},
+  "226/0": {"name":"1cyn8lr","plate":{"src":"data/projectaon/20tcon/ill3.png"}},
+  "234/0": {"name":"xu278j","plate":{"src":"data/projectaon/20tcon/ill5.png"}},
+  "254/0": {"name":"1oi5wet","plate":{"src":"data/projectaon/20tcon/ill12.png"}},
+  "282/0": {"name":"11fx6xz","plate":{"src":"data/projectaon/20tcon/ill13.png"}},
+  "299/0": {"name":"1cyn8lr","plate":{"src":"data/projectaon/20tcon/ill3.png"}},
+  "304/0": {"name":"1cyn8lr","plate":{"src":"data/projectaon/20tcon/ill3.png"}},
+  "310/0": {"name":"1oi5wet","plate":{"src":"data/projectaon/20tcon/ill12.png"}},
+  "318/0": {"name":"lw2luc","plate":{"src":"data/projectaon/20tcon/ill20.png"}},
+  "345/0": {"name":"1cyn8lr","plate":{"src":"data/projectaon/20tcon/ill3.png"}}
+ }
+}
