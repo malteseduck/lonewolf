@@ -25,14 +25,17 @@ the very same creature. The owner set the order.
 ## Decision
 
 - **Where a fight's picture comes from**, first that applies:
-  1. The fight's own picture, if its section has one.
+  1. The fight's own picture, if its section has one: drawn for that fight, it wins all but very
+     rarely (2026-10-24), and an agent's check leaves it unless it plainly shows something else.
   2. The same creature in the same book: any of the book's illustrations, fight pictures included
      (another fight's, or one where the creature is met but not fought), whole or cropped.
   3. The same creature in another book, likewise.
   4. A stand-in: the owner's `art/plates/` pictures, the library in `assets/plates/`, or a picture
-     found by searching.
+     found by searching, for ordinary things (animals, plain humans, a door). A creature particular to
+     Lone Wolf that no book pictures takes none: the owner generates its picture from a prompt.
 
-  A picture the owner sets on the picture sheet is the owner's choice and stands whatever the order.
+  A picture matches only if it shows that creature or that kind of foe (a Death Knight is not some
+  guard). A picture the owner sets on the picture sheet is the owner's choice and stands whatever the order.
 - **Plain human enemies** (guards, soldiers, mercenaries, robbers): each kind in a book gets its own
   entry, a different illustration or a different figure cropped from one, from the book's non-fight
   pictures or other books' plain humans; another book's plain human and an `art/plates/` stand-in rank
@@ -102,3 +105,10 @@ the very same creature. The owner set the order.
   owner set had lost its card's description).
 - 2026-10-18: descriptions come only from the book's text or the wiki, not from the picture; an
   enemy the book says little about is topped up from the wiki.
+- 2026-10-24: a picture must show that creature or that kind of foe (a Death Knight is not "some
+  guard"): the agent judges every enemy's picture, not only the draft's, searches by what the enemy is
+  as well as its name, and shows the owner candidate pictures, not descriptions. The draft also
+  redrafts an enemy shown only the library's broad stand-in, and another book's enemy of the very same
+  name of more than a person's word ("Death Knight") ranks before a stand-in. A creature particular to
+  Lone Wolf that no book pictures takes no stand-in: the agent gives a prompt and the owner generates
+  the picture; web stand-ins are for ordinary things (animals, plain humans).

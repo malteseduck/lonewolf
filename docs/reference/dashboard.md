@@ -163,7 +163,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `items-draft` | `node items_draft.mjs <code>`: step 5's draft (items.md, "The draft"); with a table already there, only `items-draft.js` beside the book and the comparison | |
 | `check-items` | `node check_items.mjs <code> --json` | |
 | `approve-pictures` | `node plates_pin.mjs <code> --approve` | gated: the owner's approval of changed fight pictures |
-| `pictures-draft` | `ill_index.py`, then `plates_draft.py <code>`: step 7's draft (items.md, "The draft"), a `plates.json` entry marked `draft` for each enemy with no picture that it can match; shown while any has none ("Draft pictures") | |
+| `pictures-draft` | `ill_index.py`, then `plates_draft.py <code>`: step 7's draft (items.md, "The draft"), a `plates.json` entry marked `draft` for each enemy with no picture, or only the library's broad stand-in, that it can match; shown while any has none ("Draft pictures") | |
 | `fights-up` | `ill_upscale.py --fights <code>` (step 7's Upscale 2x: every picture the book's fights can show, now or approved, sized for the iPad (ADR 0008); about 5-10 s a picture) | |
 | `ills` | `ill_upscale.py <code>` (Real-ESRGAN on this PC; about 3 s a picture) | |
 | `check` | `check_all.py` (re-imports every book, ADR 0022) | |

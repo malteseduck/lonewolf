@@ -76,9 +76,9 @@ def test_each_enemy_with_no_picture_gets_one_in_adr_0008s_order_and_is_written_f
     tree.file('art/plates/guard-with-halberd-2x.webp')
     tree.file('assets/plates/water-snake.jpg')
     tree.book(CODE, fight(('Rat', 'ill1.png')), fight('Rats 2'), fight('Gloom Beast'), fight('Marsh Thing'), fight('Lurker'),
-              fight('Town Guard'), fight('Giak Officer'), fight('Swamp Snake'), fight('Zorg'), fight('Sea Hag'))
+              fight('Guard'), fight('Giak Officer'), fight('Swamp Snake'), fight('Zorg'), fight('Sea Hag'))
     tree.book('01aa', fight(('Gloom Beast', 'ill1.png')))
-    tree.book('03cc', fight(('Gloom Beasts', 'ill1.png')), fight(('Town Guard', 'ill2.png')), fight('Giak'), fight('Sea Hag'))
+    tree.book('03cc', fight(('Gloom Beasts', 'ill1.png')), fight(('Guard', 'ill2.png')), fight('Giak'), fight('Sea Hag'))
     tree.plates([{'match': '^giak$', 'src': 'data/projectaon/03cc/ill2.png', 'crop': [0, 0, 0.5, 1]},
                  {'match': '^sea hag$', 'book': '03cc', 'src': 'data/projectaon/03cc/ill1.png'}])
     tree.index({f'{CODE}/ill1.png': ill(CODE, ['Rat']), f'{CODE}/ill2.png': ill(CODE, shows='a marsh thing rising from mud'),
@@ -91,7 +91,7 @@ def test_each_enemy_with_no_picture_gets_one_in_adr_0008s_order_and_is_written_f
     assert picks['Marsh Thing'] == ({'src': f'data/projectaon/{CODE}/ill2.png'}, 'this book')   # a note names it
     assert picks['Gloom Beast'] == ({'src': 'data/projectaon/03cc/ill1.png'}, 'Book 3')        # the nearest book's, before a guess
     assert picks['Lurker'] == ({'src': f'data/projectaon/{CODE}/ill3.png'}, 'this book, a picture 1 link before the fight')
-    assert picks['Town Guard'] == ({'src': 'art/plates/guard-with-halberd.png'}, 'stand-in')   # a person: a stand-in first (ADR 0008)
+    assert picks['Guard'] == ({'src': 'art/plates/guard-with-halberd.png'}, 'stand-in')   # a person's lone word: a stand-in first (ADR 0008)
     assert picks['Giak Officer'] == ({'src': 'data/projectaon/03cc/ill2.png', 'crop': [0, 0, 0.5, 1]}, 'Book 3')  # a Giak, cropped as shown
     assert picks['Swamp Snake'] == ({'src': 'assets/plates/water-snake.jpg'}, 'stand-in')
     assert picks['Zorg'] == (None, None)
@@ -103,6 +103,24 @@ def test_each_enemy_with_no_picture_gets_one_in_adr_0008s_order_and_is_written_f
     rats = next(p for p in mine if p['match'] == pf.anchored('Rats 2'))
     assert rats == {'match': '^rats 2$', 'book': CODE, 'src': f'data/projectaon/{CODE}/ill1.png', 'draft': 'this book'}
     assert pd.draft(CODE) == [('Zorg', None, None)]                               # run again: only what is still bare
+
+
+def test_an_enemy_shown_only_the_librarys_broad_stand_in_is_drafted_again_by_its_own_kind(tree):
+    # a Death Knight under the library's "soldier|guard" picture is not pictured: another book's very same
+    # name beats a stand-in, even for a person's word; a lone "Guard" keeps the library's when nothing better
+    tree.file('data/projectaon/03cc/ill1.png')
+    tree.file(f'data/projectaon/{CODE}/ill1.png')
+    tree.file('assets/plates/guard-halberd.jpg')
+    tree.file('art/plates/guard-with-halberd.png')
+    tree.book(CODE, fight('Skull Knights'), fight('Guard'), fight('Ice Lurker'))
+    tree.book('03cc', fight(('Skull Knight', 'ill1.png')))
+    tree.plates([{'match': 'soldier|guard|knight', 'src': 'assets/plates/guard-halberd.jpg'},
+                 {'match': 'lurker', 'src': 'assets/plates/guard-halberd.jpg'}])
+    tree.index({f'{CODE}/ill1.png': ill(CODE, shows='a knight in mail with a mace')})   # some knight, not a Skull Knight
+    picks = {name: (plate, why) for name, plate, why in pd.draft(CODE)}
+    assert picks == {'Skull Knights': ({'src': 'data/projectaon/03cc/ill1.png'}, 'Book 3')}
+    assert pd.main([CODE]) == 0
+    assert tree.plates()[0]['match'] == '^skull knights$' and pd.draft(CODE) == []
 
 
 def test_dry_run_writes_nothing_and_compare_drafts_a_set_book_afresh(tree, capsys):

@@ -288,7 +288,9 @@ add is written some other way (`ice barbarian$`, `kalkoth`).
 
 **The draft** (ADR 0036): `python tools/plates_draft.py <code>`, the dashboard's **Draft pictures** at step 7
 (shown while any enemy has none; it re-runs `ill_index.py` first), gives each enemy with no picture one in the
-order below and adds its entry to `plates.json`, written as the owner's would be (the exact name, anchored,
+order below, and each enemy shown only a broad library stand-in (a `soldier|guard|...` entry, no
+book's) its own kind's picture where it finds one (a stand-in does not replace a stand-in), and adds its
+entry to `plates.json`, written as the owner's would be (the exact name, anchored,
 `book` set, at the top) plus `"draft"`, where it came from ("this book", "Book 3", "stand-in", "this book, a
 picture 1 link before the fight"). The sheet labels such a card "the script's pick"; Adjust there makes it
 the owner's (the entry is rewritten without `draft`), Remove drops it. It matches by name only: numbers,
@@ -298,16 +300,26 @@ picture now, as shown, crop and all, or an illustration whose note names it), th
 (nearest first) or a fetched book's index; then a picture of this book with no fight of its own one or two
 links before the fight (a guess); then a library or `art/plates/` picture with a word of the name in its file
 name (the one this book uses least). A plain human (a person's word last, "guard", "swordsman", with no
-creature named before it: "Giak Officer" is a Giak) takes this book's same kind, else a stand-in, else
-another book's only by the very same name (ADR 0008). It never takes another draft as a source. What it
+creature named before it: "Giak Officer" is a Giak) takes this book's same kind (a note naming it
+must hold the whole name, "death knight", not any knight; a lone "guard" by that word), else a
+stand-in, else another book's only by the very same name; a very same name of more than the person's
+word ("Death Knight", not "Guard") comes before the stand-in (ADR 0008). It never takes another draft as a source. What it
 cannot match is listed, for the agent's prompt or the sheet's Stand-in.... `--compare` on Books 2-12 (their
 own entries left out) (106 enemies, 2026-10-14) gives the owner's very picture for a third of them and some picture
 for two thirds; the rest of the owner's choices were by eye (variety, a better figure), which is what the
-sheet is for.
+sheet is for. The draft matches names, not creatures: the step's agent then judges every enemy's
+picture, the draft's and the rest, against what the enemy is (a Death Knight under a picture of some
+guard does not match; Book 15's Armoury Guards are Drakkarim), searching by what it is as well as by
+name, and shows the owner a contact sheet of the candidates rather than describing them (the owner's
+request, 2026-10-24; the step 7 prompt). A creature particular to Lone Wolf that no book pictures gets
+no stand-in: the owner generates its picture from a prompt the agent gives in its report (2026-10-24);
+a stand-in found by searching is for ordinary things (animals, plain humans, a door).
 
 Where a fight's picture comes from, first that applies (ADR 0008):
 
-1. **The fight's own picture**, which the importer gives it from its section (above).
+1. **The fight's own picture**, which the importer gives it from its section (above). It is drawn for
+   that fight and wins all but very rarely: the agent's check leaves it unless it plainly shows
+   something else (the owner, 2026-10-24).
 2. **The same creature in the same book**: any of its illustrations, fight pictures included (another
    fight's: Book 9's lone Doomwolf is the front wolf cropped from its Doomwolves and Giak riders), a
    page of portraits, or a creature pictured where it is met but not fought. A `crop` cuts one figure

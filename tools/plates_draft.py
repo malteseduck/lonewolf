@@ -144,14 +144,19 @@ def plate_of(src, entry):
     return p
 
 
+def broad(entry):
+    """A library entry for many kinds ("soldier|guard|..."), no book's: a stand-in, not this enemy's picture."""
+    return bool(entry) and not entry.get('book') and '|' in entry['match']
+
+
 def pictured(code, book, plates):
     """[(name, plate)] for each enemy of the book with a picture now, as the player shows it. Another
     draft is not a source: nobody has looked at it yet."""
     out = []
     for name in sorted(pf.enemy_names(book)):
         src, entry = pf.current(plates, code, book, name)
-        # nor a broad library entry ("soldier|guard|..."): a stand-in for many kinds, not this one
-        if src and not (entry and (entry.get('draft') or not entry.get('book') and '|' in entry['match'])):
+        # nor a broad library entry: a stand-in for many kinds, not this one
+        if src and not (entry and (entry.get('draft') or broad(entry))):
             out.append((name, plate_of(src, entry)))
     return out
 
@@ -187,11 +192,12 @@ def match(k, s, human, here):
     if s['how'] == 'near':  # the fight's own enemy, met a link or two after the picture
         steps = [st for st, e in s['near'] if e == k and st > 0]
         return min(steps) if steps else None
-    # a note names the creature: all its words, in order; a person by their last word, in this book only
+    # a note names the creature: all its words, in order; a person, in this book only, by their last word
+    # if that is all the name is, else by all of it ("death knight", not any knight)
     if sum(map(len, k)) < 3:
         return None
     if human:
-        return 'held' if here and held(head(k)[-1:], s['words']) else None
+        return 'held' if here and held(head(k) if len(head(k)) > 1 else head(k)[-1:], s['words']) else None
     return 'held' if held(k, s['words']) else None
 
 
@@ -216,7 +222,8 @@ def standin(k, files, used):
 
 
 def draft(code, plates=None, index=None, others=None):
-    """[(name, plate or None, why)] for each enemy of the book with no picture, in name order. plates:
+    """[(name, plate or None, why)] for each enemy of the book with no picture, in name order, and each
+    shown only a broad library stand-in that has its own kind's picture somewhere (else it is left out). plates:
     plates.json's list (default: the file's); others: {code: book} of the other books to borrow from
     (default: every imported book)."""
     plates = pf.load_plates()['plates'] if plates is None else plates
@@ -224,7 +231,8 @@ def draft(code, plates=None, index=None, others=None):
     book = load_book(code)
     books = {c: load_book(c) for c in imported() if c != code} if others is None else dict(others)
     books[code] = book
-    bare = sorted(n for n in pf.enemy_names(book) if not pf.current(plates, code, book, n)[0])
+    now = {n: pf.current(plates, code, book, n) for n in pf.enemy_names(book)}
+    bare = sorted(n for n, (src, entry) in now.items() if not src or broad(entry))
     pool = sources(plates, books, index)
     creatures = {s['kind'] for s in pool if s['how'] == 'fight' and not plain(s['kind'])}
     files = standin_files()
@@ -251,13 +259,16 @@ def draft(code, plates=None, index=None, others=None):
                 there.append(((s['how'] == 'shows', m != 'exact', abs(book_no(s['book']) - n0), book_no(s['book'])), s))
         for hs in (here, there, near):
             hs.sort(key=lambda h: h[0])
-        sub = standin(head(k), files, used)
-        # the order of ADR 0008; a person's stand-in ranks with another book's (ADR 0008), a guess from
-        # the links last of the pictures
+        lib = bool(now[name][0])  # it has the library's stand-in: only its own kind's picture replaces it
+        sub = None if lib else standin(head(k), files, used)
+        # the order of ADR 0008; a person's stand-in ranks with another book's (ADR 0008), unless that
+        # book's enemy has the very same name of more than the person's word ("Death Knight", not "Guard");
+        # a guess from the links last of the pictures
+        named = bool(there) and len(head(k)) > 1
         pick = why = None
         if here:
             pick, why = here[0][1]['plate'], here[0][1].get('why', 'this book')
-        elif human and sub:
+        elif human and sub and not named:
             pick, why = {'src': sub}, 'stand-in'
         elif there:
             pick, why = there[0][1]['plate'], f"Book {book_no(there[0][1]['book'])}"
@@ -270,7 +281,8 @@ def draft(code, plates=None, index=None, others=None):
             used[pick['src']] = used.get(pick['src'], 0) + 1
             # the next enemy of the same kind takes the same picture
             pool.append({'book': code, 'kind': k, 'plate': pick, 'how': 'fight', 'why': why})
-        out.append((name, pick, why))
+        if pick or not lib:
+            out.append((name, pick, why))
     return out
 
 
