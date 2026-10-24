@@ -302,6 +302,18 @@ describe('Book 14 kit', () => {
   });
 });
 
+describe('Book 15 kit', () => {
+  it('is the map of the Western Tentarias, 20 + a Random Number in gold, and any 5 of the same nine', () => {
+    const k = LW.KITS[15];
+    expect(k.give).toEqual(['mapTentarias']);
+    expect(k.gold).toBe(20);
+    expect(k.choose).toBe(5);
+    expect(k.from).toEqual(['sword', 'bow', 'quiver', 'axe', { meal: 4 }, 'rope', 'potion', 'spear', 'dagger']);
+    expect(k.store && k.storeGold && !k.newOnly).toBe(true);
+    expect(LW.ITEMS.mapTentarias.kind).toBe('special');
+  });
+});
+
 describe('LW.KitSetup', () => {
   const setup = (n, hero, book = {}) => LW.KitSetup(book, LW.KITS[n], hero);
   const empty = (over = {}) => Object.assign({ cs: 15, ep: 20, epMax: 20, weapons: [], backpack: [], special: [], meals: 0, gold: 0, series: 'kai', disciplines: [] }, over);
