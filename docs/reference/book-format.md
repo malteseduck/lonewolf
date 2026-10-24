@@ -31,6 +31,7 @@ shows the book's printed map. Only the prototypes travel on a map.
 | Field | Type | Meaning |
 |---|---|---|
 | `text` | string[] | paragraphs, plain text |
+| `list` | number[] | imported: the paragraphs of `text` (by index) that are list lines, a list's items, a sign's lines, a table's rows; the page sets each run of them as one list in smaller type |
 | `choices` | Choice[] | ways on. Empty for an ending |
 | `end` | `'death'` \| `'victory'` \| `'failed'` | set on endings. `failed`: the book's own ending short of death (a mission given up); played as a death |
 | `combat` | Combat | must be won (or evaded) before choices open |

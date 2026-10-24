@@ -72,6 +72,12 @@ def lines(s):
     return [t for t in (plain(x) for x in re.split(r'<br\s*/?>', s)) if t]
 
 
+def rows(s):
+    """A table (a price board): a line per row, its cells joined by a dash."""
+    return [t for t in (' — '.join(c for c in (plain(x) for x in re.findall(r'<t[hd][^>]*>(.*?)</t[hd]>', r, re.S)) if c)
+                        for r in re.findall(r'<tr[^>]*>(.*?)</tr>', s, re.S)) if t]
+
+
 def sentences(text):
     return [s.strip() for s in re.split(r'(?<!i\.e\.)(?<!e\.g\.)(?<=[.!?])\s+', text) if s.strip()]  # "(i.e. you possess ...)"
 
@@ -351,12 +357,19 @@ for n in numbers:
     main = page[page.find('<div class="maintext'):page.find('<p id="page-navigation"')]
     sec = {'text': [], 'choices': []}
     enemies, lost, target = [], False, None
-    # a list (what is on offer, what a body carries) is a paragraph per item; a signpost, one line;
-    # verse set as lines with no paragraph of its own, a paragraph per line
-    for m in re.finditer(r'<p(?: class="(\w+)")?>(.*?)</p>|<img[^>]+src="([^"]+)"|<div class="signpost">(.*?)</div>|<li>(.*?)</li>|<blockquote[^>]*>((?:(?!<p[ >]).)*?)</blockquote>', main, re.S):
+    # a list (what is on offer, what a body carries) is a paragraph per item, a signpost or a table one
+    # per line or row, all marked as list lines (`list`, drawn small); verse set as lines with no
+    # paragraph of its own, a paragraph per line
+    listed = []
+    for m in re.finditer(r'<p(?: class="(\w+)")?>(.*?)</p>|<img[^>]+src="([^"]+)"|<div class="signpost">(.*?)</div>|<li>(.*?)</li>|<blockquote[^>]*>((?:(?!<p[ >]).)*?)</blockquote>|<table[^>]*>(.*?)</table>|<ul class="unbulleted">(.*?)</ul>', main, re.S):
         cls, body, img = m.group(1), m.group(2), m.group(3)
-        if m.group(4) is not None or m.group(5) is not None:
-            sec['text'].append(('' if m.group(4) is not None else '– ') + plain(m.group(4) or m.group(5)))
+        if m.group(4) is not None or m.group(5) is not None or m.group(7) is not None or m.group(8) is not None:
+            got = (rows(m.group(4)) if '<tr' in m.group(4) else lines(m.group(4))) if m.group(4) is not None \
+                else ['– ' + plain(m.group(5))] if m.group(5) is not None \
+                else rows(m.group(7)) if m.group(7) is not None \
+                else [plain(x) for x in re.findall(r'<li>(.*?)</li>', m.group(8), re.S)]
+            listed += range(len(sec['text']), len(sec['text']) + len(got))
+            sec['text'] += got
         elif m.group(6) is not None:
             sec['text'].extend(lines(m.group(6)))
         elif img:
@@ -393,6 +406,8 @@ for n in numbers:
                 lost = True
             elif cls == 'puzzle':
                 sec['puzzle'] = True  # its answer is a section number: the page offers "turn to"
+    if listed:
+        sec['list'] = listed
     whole = ' '.join(sec['text'])
     if n == numbers[-1]:
         sec['end'] = 'victory'

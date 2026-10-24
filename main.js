@@ -279,7 +279,12 @@ function storyText(sec) {
   const pic = sec.img ? (sec.img.full ? `<img class="vignette full" src="${asset(sec.img.file)}" alt="">` : `<img class="vignette small" data-trim src="${asset(sec.img.file)}" alt="">`)
     : sec.scene ? `<img class="vignette" src="${vignette(sec.scene)}" alt="">` : '';
   const at = sec.img ? Math.min(sec.img.at, sec.text.length) : 1;
-  return sec.text.map((p, i) => `${i === at ? pic : ''}<p class="${i ? '' : 'first'}">${esc(p)}</p>`).join('') + (at >= sec.text.length ? pic : '');
+  // list lines (wares, a sign, a price board) run together in one smaller block
+  const list = new Set(sec.list || []);
+  return sec.text.map((p, i) => {
+    const li = list.has(i), open = li && (!list.has(i - 1) || i === at), close = li && (!list.has(i + 1) || i + 1 === at);
+    return `${i === at ? pic : ''}${open ? '<div class="list">' : ''}<p class="${li ? '' : i ? '' : 'first'}">${esc(p)}</p>${close ? '</div>' : ''}`;
+  }).join('') + (at >= sec.text.length ? pic : '');
 }
 /* ---------- the title spread, after the HD title page ---------- */
 /* the series as tools/import_projectaon.py knows it, so books not yet downloaded can show on the shelf */

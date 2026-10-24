@@ -373,6 +373,20 @@ def test_choices_with_gates_and_several_links(tmp_path):
     assert s['1']['text'] == ['A crossroads.']
 
 
+def test_lists_signposts_and_tables_are_list_lines(tmp_path):
+    s = secs(tmp_path, {
+        1: '<p>A shop.</p><div class="signpost">Sword &#8212; 4<br/>Dagger &#8212; 2</div><p>Buy.</p>',
+        2: '<p>Wares:</p><ul><li>Rope</li><li>Lamp</li></ul><ul class="unbulleted"><li>Cloak</li></ul>',
+        3: '<p>Prices:</p><table class="table"><tr><th>Item</th><th>Cost</th></tr>'
+           '<tr><td>Mace</td><td>3</td></tr></table>',
+        4: '<p>It reads:</p><div class="signpost">INN</div>'})
+    assert s['1']['text'] == ['A shop.', 'Sword — 4', 'Dagger — 2', 'Buy.'] and s['1']['list'] == [1, 2]
+    assert s['2']['text'] == ['Wares:', '– Rope', '– Lamp', 'Cloak'] and s['2']['list'] == [1, 2, 3]
+    assert s['3']['text'] == ['Prices:', 'Item — Cost', 'Mace — 3'] and s['3']['list'] == [1, 2]
+    assert s['4']['list'] == [1]
+    assert 'list' not in s['999']
+
+
 
 
 def test_endings_deadend_failed_puzzle_victory(tmp_path):

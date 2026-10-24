@@ -41,8 +41,9 @@ It works on the contents of `<div class="maintext">`, in document order:
 | Markup | Becomes |
 |---|---|
 | `<p>` | a paragraph of `text` (tags and Project Aon's footnote marks stripped, entities decoded; a `<br>` starts a new paragraph) |
-| `<li>` | a paragraph of its own, starting with a dash (lists of wares and finds) |
-| `<div class="signpost">` | a paragraph (a sign the story shows) |
+| `<li>` | a paragraph of its own, starting with a dash (lists of wares and finds); in `<ul class="unbulleted">` (Book 13), no dash. A list line |
+| `<div class="signpost">` | a paragraph per line (`<br>`): a sign or price board the story shows (Book 6's 98). List lines |
+| `<table>`, alone or in a signpost | a paragraph per row, its cells joined by " — " (Book 16's 226, Book 18's 339). List lines |
 | `<blockquote>` with no `<p>` inside | verse: a paragraph per line (Book 4) |
 | `<p class="deadend">` | a paragraph, and `end: 'death'` |
 | `<p class="choice">` with `<a href="sectN.htm">` | a choice to N with the paragraph as its text |
