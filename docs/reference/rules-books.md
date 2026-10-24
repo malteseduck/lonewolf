@@ -269,7 +269,7 @@ Master. *Engine*: `LW.SERIES.grandmaster.ranks`.
 
 ### Improved Disciplines
 
-Promised by rank in later books; Book 13 lists none, Book 14 those of Kai Grand Guardian (its addendum). The Handbook gathers those of Books 14–20 by
+Promised by rank in later books; Book 13 lists none, Book 14 those of Kai Grand Guardian, Book 15 those of Sun Knight (their addenda). The Handbook gathers those of Books 14–20 by
 rank; the ones with numbers, for when those books come: Grand Weaponmastery at Sun Knight (6)
 wields two-handed weapons one-handed, at Sun Lord (7) sets a non-magical blade alight for +1
 enemy loss a winning round, at Grand Crown (10) +3 bare-handed; Kai-surge at Kai Grand Guardian (5)
@@ -613,5 +613,101 @@ which opens when the hero holds it; no effect is applied.
   cast Flameshaft on the inflammable liquid, spending an Arrow, and turn to 52. *Engine*: the puzzles,
   left to the player; Flameshaft at 243 is a choice the item table adds (`add`), its Arrow taken at 52;
   the rest by hand.
+- **Wisdom**: choose the Disciplines with care; completing earlier books is an advantage but not
+  needed for this one.
+
+### Book 15, The Darke Crusade (Grand Master)
+
+Read from its own rules pages against Book 14's (tools/rules_diff.py, 2026-10-24): the levels, combat
+results and Random Number Table are unchanged; the book has no Lore-circles page.
+
+- **Scores**: a new character: COMBAT SKILL = **25** + a Random Number (0 counts as zero), ENDURANCE =
+  **30** + a Random Number. ENDURANCE can never rise above its value at the start of the adventure; at
+  zero or below he is dead. One who completed any of Books 1-14 may carry his scores over, including
+  the Weaponmastery, Curing and Psi-surge bonuses earned in the Kai (1-5) and Magnakai (6-12) books;
+  those bonuses help in play only if he completed those books, and do not raise his permanent scores
+  (footnote 2). *Engine*: the scores, yes (25 and 30 for a new character; a carried one keeps his);
+  the earlier Disciplines' help in play, for the Magnakai ones he chose (`LW.chose`).
+- **Carried over**: Weapons (still two at most) and Backpack Items (up to **ten**); Gold Crowns. A
+  character coming from the Kai or Magnakai books keeps only these Special Items: Crystal Star
+  Pendant, Sommerswerd, Silver Helm, Dagger of Vashna, Silver Bracers, Jewelled Mace, Silver Bow of
+  Duadon, Helshezag, Kagonite Chainmail, Korlinium Scabbard; one coming from Book 13 or 14 keeps all
+  his Special Items. *Engine*: yes (`LW.SERIES.grandmaster.keeps` on entering the series; between
+  Grand Master books everything carries).
+- **Disciplines**: he holds every Kai and Magnakai Discipline and four Grand Master Disciplines. For
+  **each** Grand Master book he completed (13, 14), he chooses one more Grand Master Discipline and
+  adds **+1** to his basic COMBAT SKILL and **+2** to his basic ENDURANCE (footnote 3); in all, each
+  Grand Master Discipline past four adds 1 and 2, kept for later books. Completing this book earns a
+  further Discipline in Book 16. *Engine*: yes (the four, one a book, the bonus past four:
+  `LW.SERIES.grandmaster.first`, `LW.readyHero`).
+
+| Grand Master Discipline | Effect | Engine |
+|---|---|---|
+| Grand Weaponmastery | +5 COMBAT SKILL with a mastered weapon (two to start, one more for each Grand Master book completed); the weapons are the ten of Weaponmastery (Spear, Dagger, Mace, Short Sword, Warhammer, Bow, Quarterstaff, Broadsword, Axe, Sword); with the Bow, +5 to a Random Number picked for a shot. Replaces Weaponmastery's bonus, not added to it; Mentora's +2 on bow shots is not added to the +5 (footnote 4) | yes (`hero.grandMastery`; `weaponParts`, `weaponBonus`) |
+| Animal Mastery | Considerable control over hostile non-sentient creatures; talks with birds and fish and uses them as guides | gates only |
+| Deliverance (Advanced Curing) | In a fight at 8 ENDURANCE or less, restore 20; once every 20 days (owner: once a book, ruling R9) | yes (`LW.cureOf`) |
+| Assimilance (Advanced Invisibility) | Striking changes of appearance lasting a few days; almost undetectable in open country | gates only |
+| Grand Huntmastery | Sees in total darkness, keener touch and taste; no Meal ticked off when told to eat | the Meal (`LW.hunts`); the rest, gates only |
+| Grand Pathsmanship | Resists entrapment by hostile plants; keen awareness of ambush in woods and dense forest | gates only |
+| Kai-surge | Psychic attack: +8 COMBAT SKILL, costing 1 ENDURANCE a round; or Mindblast +4 at no cost. Not together with Psi-surge or Mindblast; not at 6 ENDURANCE or less | yes (`LW.psi`) |
+| Kai-screen | Mind fortresses for himself and others in psychic combat, stronger with rank | shields from a foe's mind attack (`LW.shielded`) |
+| Grand Nexus | Withstands flames and acids an hour or more; grows with rank | gates only |
+| Telegnosis (Advanced Divination) | Spirit-walks far longer with fewer ill effects; duration and the body's protection grow with rank | gates only |
+| Magi-magic | Old Kingdom battle-magic of the Vakeros; grows with rank | gates only |
+| Kai-alchemy | Left-handed magic; grows with rank, and crafts new Kai weapons and artefacts | gates only |
+
+"Gates only" means the importer reads a section's check on the Discipline (and on a rank), which
+opens when the hero holds it; no effect is applied.
+
+- **Gold**: 20 + a Random Number, added to any he carries. At most 50 in the Belt Pouch; the rest may
+  be left at the Monastery. *Engine*: yes, `gold: 20` in `LW.KITS[15]`; the purse's 50 and the
+  Monastery for the rest.
+- **Money**: Nyras's Kika, 10 to the Gold Crown. *Engine*: counted in their own purse (`hero.coins`),
+  found, staked, paid and lost through the item table.
+- **Kit**: a map of the Western Tentarias. Choose any **5** of: Sword, Bow, Quiver (Special Item, six
+  Arrows), Axe, four Meals (a Backpack space each), Rope, Potion of Laumspur (4 ENDURANCE after a
+  fight, one dose, never just before one), Spear, Dagger; added to what he carries. Weapons and Bow
+  are carried in the hand, the Quiver over the shoulder, Meals, Rope and Potion in the Backpack.
+  *Engine*: yes, `LW.KITS[15]` (the map as a Special Item, `mapTentarias`), with Monastery storage for
+  Special Items.
+- **Carrying**: two Weapons; ten Backpack Items, Meals included, one Backpack; twelve Special Items,
+  the surplus left at the Monastery; fifty Gold Crowns. No food when told to eat: lose 3 ENDURANCE.
+  *Engine*: yes (`LW.backpackMax`, `LW.specialLimit`, the Meal rule).
+- **Bow**: used only when the section allows; needs a Quiver and an Arrow, one Arrow a shot; useless
+  hand to hand. *Engine*: yes (`ranged`, `hero.arrows`, `bowShot`).
+- **Combat**: as in Book 14, with the Grand Master bonuses and Special Items added to COMBAT SKILL;
+  Kai-surge costs 1 ENDURANCE each round it is used. Evasion only where the section allows it: that
+  round is fought, the enemy's losses are ignored and only he loses ENDURANCE. *Engine*: yes.
+- **Ranks**: Kai Grand Master Senior, Superior, Kai Grand Sentinel, Kai Grand Defender, Kai Grand
+  Guardian, Sun Knight, Sun Lord, Sun Thane, Grand Thane, Grand Crown, Sun Prince, Kai Supreme Master,
+  by the number of Grand Master Disciplines. *Engine*: yes (`LW.SERIES.grandmaster.ranks`).
+- **Improved Disciplines, Kai Grand Guardian** (5 Disciplines): Animal Mastery summons a few forest
+  animals as loyal allies, outdoors only; Assimilance raises a fog within 15 yards that blinds normal
+  sight and infravision, lasting longer by rank; Grand Huntmastery moves faster over any ground, on
+  foot or mounted, to outrun pursuit; **Kai-surge attacks up to three enemies at once in psychic
+  combat**; Kai-screen gives Mindblend, hiding his mind from a hostile probe; Magi-magic gives two
+  battle-spells: Splinter (shatters bottles, mirrors, windows and the like; range by rank) and
+  Flameshaft (sets an arrow's tip alight with a flame hard to put out). *Engine*: gates only (a
+  section's check on the Discipline and the rank); Kai-surge against several foes at once, no: the
+  engine fights one enemy at a time, so it is left to the player.
+- **Improved Disciplines introduced: Sun Knight** (6 Disciplines): Grand Weaponmastery wields the
+  two-handed weapons (Broadsword, Quarterstaff, Spear) one-handed at full effect; Deliverance heals a
+  serious wound in another creature by the laying on of hands, faster by rank; Grand Pathsmanship
+  repels normal-sized insects within three yards, range and number growing by rank; Grand Nexus feigns
+  death in suspended animation, keeping only his hearing; Telegnosis speaks telepathically over about
+  100 miles, farther by rank; Kai-alchemy gives two Brotherhood Spells: Halt Missile (stops one
+  missile aimed at his life in mid-air for 2-3 seconds; more missiles by rank) and Strength (greater
+  strength for a short time, to move heavy things or raise COMBAT SKILL and ENDURANCE in a fight; the
+  page prints no numbers). *Engine*: gates only (a section's check on the Discipline and the rank);
+  none has a number to apply: a section that gives Strength a number is read in the item table, else
+  it is left to the player.
+- **Footnotes**: the locks are puzzles answered by the sections that say so: the dragon door lock
+  (221) by 5, the octagonal door lock (89) by 40. At 25 he turns to 315 only if he met Captain Prarg
+  at the Battle of Cetza (Book 10); 315's account of that meeting does not match Book 10's. At 190 and
+  312 the Kai-surge used costs 1 ENDURANCE. At 290 the use of Kai-alchemy on the lock may be taken as
+  optional. 72 and 194 cannot be reached (72 is the same as 349 and 185, 194 a lesser 19). The land
+  is spelt Nyras in this book (Nyraz earlier). *Engine*: the puzzles, left to the player; the meeting
+  with Prarg is not recorded from Book 10, so the choice at 25 is left to the player; the ENDURANCE
+  at 190 and 312 and the choice at 290 are for the item table (step 5); 72 and 194, nothing.
 - **Wisdom**: choose the Disciplines with care; completing earlier books is an advantage but not
   needed for this one.

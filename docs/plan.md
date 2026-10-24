@@ -115,6 +115,19 @@ For step 7 in the books still open (all git-ignored, personal use):
   what they show. The stand-ins' entries still describe the picture itself (owner to decide). The
   small pictures have no `shows` note (`--missing`, "no note").
 
+### Rules sweep once the series is done (after Book 20)
+
+Book addenda are written per book and checked by the rules diff, so they need no re-read. What can
+fall behind is the rest:
+
+- **Engine features reaching back.** A mechanic added for a later book (as `grandBow`, `wieldCost`,
+  coin purses and stakes were) may cover a spot an earlier book left to the player or as a `todo`.
+  Each time one is added, grep the earlier addenda in `rules-books.md` and the item tables for "left
+  to the player", "by hand" and `todo` that it now covers (mechanical: a Sonnet subagent's job).
+- **The series sections.** After Book 20, read the common, Kai, Magnakai and Grand Master sections
+  of `rules-books.md` once against what the engine does then, and bring every Engine column and
+  "Book N lists ..." line into line.
+
 ### Oddities the unit tests noticed
 
 Maybe deliberate, so left: `plates_file.put()` drops an entry's earlier crop or levels when saved
