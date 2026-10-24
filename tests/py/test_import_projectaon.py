@@ -293,6 +293,28 @@ def test_grand_master_immunity_and_drain(tmp_path):
     assert s['3']['combat']['enemies'][0]['immune'] == 'psi'   # Kai-surge still gets through; its halving is the item table's
 
 
+def test_immune_to_the_effects_of_mindblast_and_psi_surge_with_kai_surge_lessened(tmp_path):
+    s = secs(tmp_path, {
+        1: '<p>The beast is immune to the effects of Mindblast and Psi-surge. If you choose to use Kai-surge, add only '
+           '1 point to your COMBAT SKILL.</p>' + foe('Rat', 1, 1),
+        2: '<p>The beast is immune to the effects of Mindblast.</p>' + foe('Rat', 1, 1)}, book='15tdc')
+    assert s['1']['combat']['enemies'][0]['immune'] == 'psi'   # Kai-surge's smaller bonus is the item table's
+    assert s['2']['combat']['enemies'][0]['immune'] is True
+
+
+def test_grand_master_draw_on_rank(grand):
+    nr = grand['number_rules']
+    assert nr('If your present Kai rank is Grand Guardian or higher, add 1.') == [{'rank': 5, 'plus': 1}]
+    assert nr('If your present ENDURANCE points score is 20 or higher, add 2 to the number you have picked.') == [
+        {'ep': [20, 99], 'plus': 2}]
+    # one rank's bonus in place of the lower one's: the higher rank adds the difference on top
+    assert nr('If you have reached the rank of Kai Grand Guardian, add 1. If you have reached the rank of Sun Knight, '
+              'add 2. These bonuses are not cumulative (i.e. if you hold the rank of Sun Knight, you add just 2 not 3).') == [
+        {'rank': 5, 'plus': 1}, {'rank': 6, 'plus': 1}]
+    assert nr('For every level of Kai rank you have attained above Kai Grand Master Superior, add 1 to the number '
+              'you have picked.') == [{'plus': 1, 'each': 'grandmaster', 'over': 2}]
+
+
 def test_cs_rule_a_penalty_from_the_foes_weapons_is_for_the_whole_fight(kai):
     assert kai['cs_rule']("Due to the length of your enemies’ weapons, you must reduce your COMBAT SKILL by 4 "
                           'for the duration of this combat.') == (-4, None, None)
@@ -494,6 +516,14 @@ def test_combat_skill_adjustment_with_a_discipline_condition(tmp_path):
     assert (c2['csMod'], c2['csUnless'], 'csIf' in c2) == (-2, {'disc': ['camouflage']}, False)
     assert c3['csMod'] == -3 and 'csIf' not in c3 and 'csUnless' not in c3
     assert 'csMod' not in c4
+
+
+def test_combat_skill_score_increased_for_the_whole_fight(tmp_path):
+    s = secs(tmp_path, {
+        1: '<p>From the high ground, increase your COMBAT SKILL score by 3 points for the duration of this fight.</p>' + foe('Rat', 1, 1),
+        2: '<p>Reduce your COMBAT SKILL score by 3 points for the first round of this combat only.</p>' + foe('Rat', 1, 1)})
+    assert s['1']['combat']['csMod'] == 3
+    assert 'csMod' not in s['2']['combat']
 
 
 

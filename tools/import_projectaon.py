@@ -111,7 +111,10 @@ def condition(text):
         r = re.fullmatch(r'(?:have )?(?:also )?(?:reached|attained) the (?:Kai |Magnakai )?[Rr]ank of ([A-Za-z -]+?)(?: or (?:higher|above|more))?(?: \([^)]*\))?'
                          r'(?: in the (?:Grand Master |Magnakai |Kai )?Discipline of ([A-Za-z -]+))?', clause)
         c = re.fullmatch(r'(?:(?:have )?completed|possess) the (?:Magnakai )?Lore-circles? of (.+)', clause)
-        e = re.fullmatch(r'your (?:current )?ENDURANCE(?: points?)?(?: point)?(?: total| score)? is (?:now )?(.+)', clause)
+        # "your present Kai rank is Grand Guardian or higher" (Book 15's 224): the "Kai" of the rank's name may be left off
+        k = re.fullmatch(r'your (?:present |current )?(?:Kai |Magnakai )?rank is ([A-Za-z -]+?)(?: or (?:higher|above|more))?', clause)
+        k = k and (RANKS.get(k.group(1).lower()) or RANKS.get('kai ' + k.group(1).lower()))
+        e = re.fullmatch(r'your (?:current |present )?ENDURANCE(?: points?)?(?: point)?(?: total| score)? is (?:now )?(.+)', clause)
         if e and 'ep' not in out:  # his Endurance as he draws: "less than 10", "20 or more"
             x = e.group(1)
             m = (re.fullmatch(r'(?:less|lower|fewer) than (\d+)|below (\d+)|under (\d+)', x), re.fullmatch(r'(?:greater|more|higher) than (\d+)|above (\d+)|over (\d+)', x),
@@ -126,6 +129,8 @@ def condition(text):
                 out['ep'] = [-OPEN, int(m[3].group(1))]
             else:
                 return None
+        elif k and 'rank' not in out:
+            out['rank'] = k
         elif r and r.group(1).strip().lower() in RANKS and 'rank' not in out:  # before d: a Grand Master book's bare "have X" takes any words
             out['rank'] = RANKS[r.group(1).strip().lower()]
             if r.group(2):
@@ -256,6 +261,20 @@ def number_rules(whole):
             over = 3 if re.search(r'\b(?:above|in excess of)\b', s) else 0
             mods.append({'plus': int(each.group(1)), 'each': 'magnakai', 'over': over})
             continue
+        # "For every level of Kai rank you have attained above Kai Grand Master Superior, add 1" (Book 15's 102):
+        # his rank is his count of the series' Disciplines, so a level more is a Discipline more
+        per = re.fullmatch(r'For every level of (?:Kai |Magnakai )?rank you have (?:attained|reached) above (?:that of )?([A-Za-z -]+?),? add (\d+)(?: (?:to|from) the (?:number|total)\b.*)?\.?', s)
+        if per and per.group(1).lower() in RANKS and series != 'kai':
+            mods.append({'plus': int(per.group(2)), 'each': series, 'over': RANKS[per.group(1).lower()]})
+            continue
+        # "These bonuses are not cumulative (i.e. ... you add just 2 not 3)" (Book 15's 59): the higher rank's bonus
+        # replaces the lower's, so each rank above the first adds only the difference
+        if re.match(r'(?:These|The) bonuses are not cumulative\b', s):
+            ranked = [m for m in mods if list(m) == ['rank', 'plus']]
+            if len(ranked) != len(mods) or len(mods) < 2 or any(a['rank'] >= b['rank'] or a['plus'] >= b['plus'] for a, b in zip(mods, mods[1:])):
+                return None
+            mods = [mods[0]] + [dict(b, plus=b['plus'] - a['plus']) for a, b in zip(mods, mods[1:])]
+            continue
         # "Pick a number from the Random Number Table and add 3 to the number you have chosen" (Book 13's 124)
         plain_add = re.fullmatch(r'(?:Pick a number from the Random Number Table and )?(add|deduct|subtract) (\d+) (?:to|from) the number you have (?:chosen|picked)\.?', s, re.I)
         if plain_add:
@@ -286,7 +305,7 @@ def number_rules(whole):
 def reach(mods):
     """The lowest and highest totals the bonuses can make of a number 0-9."""
     def most(m, sign):
-        n = m['plus'] * (10 - m['over'] if 'each' in m else 1)
+        n = m['plus'] * ((12 if m['each'] == 'grandmaster' else 10) - m['over'] if 'each' in m else 1)
         if list(m) == ['plus']:
             return n  # no condition: it always applies
         return n if n * sign > 0 else 0
@@ -301,9 +320,10 @@ def cs_rule(whole):
     for s in sentences(whole):
         if 'COMBAT SKILL' not in s:
             continue
-        m = (re.search(r'\b(add|increase)\b(?: your COMBAT SKILL by)? (?:an additional |a further |an extra )?(\d+)(?: points?)?(?: to your COMBAT SKILL)?', s, re.I)
-             or re.search(r'\b(deduct|subtract|reduce)\b(?: your COMBAT SKILL by)? (\d+)(?: points?)?(?: from your COMBAT SKILL)?', s, re.I))
-        if not m or not re.search(r'(?:to|from) your COMBAT SKILL|your COMBAT SKILL by', s):
+        # "increase your COMBAT SKILL score by 3 points" (Book 15's 6)
+        m = (re.search(r'\b(add|increase)\b(?: your COMBAT SKILL(?: score)? by)? (?:an additional |a further |an extra )?(\d+)(?: points?)?(?: to your COMBAT SKILL)?', s, re.I)
+             or re.search(r'\b(deduct|subtract|reduce)\b(?: your COMBAT SKILL(?: score)? by)? (\d+)(?: points?)?(?: from your COMBAT SKILL)?', s, re.I))
+        if not m or not re.search(r'(?:to|from) your COMBAT SKILL|your COMBAT SKILL(?: score)? by', s):
             continue
         # some rounds only; in place of a bonus the engine gives ("instead of the normal 2"); or a weapon's
         # or item's power, which its own bonus may already count (not the foes' weapons given as the
@@ -401,14 +421,15 @@ for n in numbers:
         if target:
             combat['points'] = {'n': target}
         # the sentence that grants immunity; when it names some of the enemies, only they are immune
-        said = next((x for x in re.split(r'(?<=\.)\s+', whole) if re.search(r'immune to (?:Mindblast|Psi-surge|all (?:forms of )?psychic attacks?)', x, re.I)), '')
+        said = next((x for x in re.split(r'(?<=\.)\s+', whole) if re.search(r'immune to (?:the effects of )?(?:Mindblast|Psi-surge|all (?:forms of )?psychic attacks?)', x, re.I)), '')
         named = [e for e in enemies if re.sub(r'\s+\d+$', '', e['name']).lower() in said.lower()]
         for e in enemies:
             if named and e not in named:
                 continue
-            if re.search(r'immune to Mindblast[\s,(]*but not (?:to )?Psi-surge', whole):
+            if re.search(r'immune to (?:the effects of )?Mindblast[\s,(]*but not (?:to )?Psi-surge', whole):
                 e['immune'] = 'mindblast'  # Psi-surge still works
-            elif re.search(r'immune to Mindblast and Psi-surge(?:[\s,(]*but not (?:to )?|; only (?:the Grand Mastery of )?|, and suffers only half-damage [^.]*?)Kai-surge', whole):
+            elif re.search(r'immune to (?:the effects of )?Mindblast and Psi-surge(?:[\s,(]*but not (?:to )?|; only (?:the Grand Mastery of )?|, and suffers only half-damage [^.]*?'
+                           r'|\. If you (?:choose to )?use )Kai-surge', whole):
                 e['immune'] = 'psi'  # Kai-surge still works
             elif said:
                 e['immune'] = True

@@ -58,7 +58,8 @@ Heuristics layered on top, all by regular expression:
   disciplines ("of X", "of either X or Y" = any, "of X and Y" = all), a rank ("reached the Kai rank
   of Guardian or higher", mapped to a discipline count), Lore-circles ("completed the (Magnakai) Lore-circle
   of Fire", "possess the Lore-circle of ...") and, for Random Number bonuses, his Endurance ("your current ENDURANCE point total is
-  less than 10", "your ENDURANCE score is 20 or higher", "your ENDURANCE is less than 10"), joined by "and have ...". Anything else in it (an item, a weapon in hand, "or have
+  less than 10", "your ENDURANCE score is 20 or higher", "your ENDURANCE is less than 10", "your present ENDURANCE points score is ..."),
+  his rank as "your present Kai rank is Grand Guardian or higher" (the rank's "Kai" may be left off), joined by "and have ...". Anything else in it (an item, a weapon in hand, "or have
   reached") and the rule is not read. Written as in book-format.md, Conditions.
   In a Grand Master book (Book 13 on) a discipline is also read as "the Grand Master Discipline of
   X", "(the) Grand Mastery of X", "Mastery of X" (or "mastery of X"), "the Discipline of X", "the skill of X" or bare ("If you possess
@@ -76,12 +77,14 @@ Heuristics layered on top, all by regular expression:
   or COMBAT SKILL.
 - **Random Number bonuses** (`number_rules()`): each sentence that adds to or takes from the number
   must be "If <condition>, add / deduct N (to the number)" (the comma may be missing), "add another / a further N",
-  "add 1 for every Magnakai Discipline you possess (above the first three)", the same after a condition ("If you
+  "add 1 for every Magnakai Discipline you possess (above the first three)", "For every level of (Kai) rank you have attained
+  above (that of) Y, add N" (a Discipline of the series more for each rank above Y's count; Book 15's 102), the same after a condition ("If you
   have Huntmastery, add 1 ... for every Magnakai Discipline ... after the first three", Book 11's 189), or "(Pick a number ... and) add N
   to the number you have chosen" with no condition, which always applies. Rules listed after a lead-in
   ending in a colon are read one by one. A parenthesis "if you have both, add only N" is taken as read;
   "add 3 (if you possess both of these ..., add 7)" after an either-of is read as that rule plus an
-  all-of rule for the 4 more; "(for example ...)" is skipped. Anything else (an item, a
+  all-of rule for the 4 more; "(for example ...)" is skipped. "These bonuses are not cumulative" after rank-only bonuses rising with the rank
+  (Book 15's 59: Kai Grand Guardian 1, Sun Knight 2) gives each higher rank the difference, so the highest held counts alone. Anything else (an item, a
   bow's "missile bonuses", a weapon, "0 = 10") leaves the section `free`.
 - **auto or free**: `auto` when the bonuses were all read, every total they can make is covered by
   exactly one choice's range, and every choice without a range is an "If you have / possess ..."
@@ -92,12 +95,13 @@ Heuristics layered on top, all by regular expression:
   round of combat only" sets `within: 1`.
 - **Mind immunity**: "immune to Mindblast / Psi-surge / all (forms of) psychic attack(s)" in the section; "immune to Mindblast (but
   not Psi-surge)" makes it `'mindblast'`; "immune to Mindblast and Psi-surge (but not Kai-surge)",
-  "...; only (the Grand Mastery of) Kai-surge" or "..., and suffers only half-damage ... Kai-surge" makes it `'psi'`
+  "...; only (the Grand Mastery of) Kai-surge" or "..., and suffers only half-damage ... Kai-surge" or "... . If you (choose to) use Kai-surge, add only N" makes it `'psi'`;
+  "immune to the effects of ..." is read the same
   (the halving is the item table's).
 - **Mind drain**: "Unless you possess the Discipline of Mindshield (Psi-screen in a Magnakai
   book, Kai-screen in a Grand Master one), deduct N ENDURANCE points every round" sets each enemy's `drain`.
 - **Combat Skill adjustment** (`cs_rule()`): one sentence that adds to, deducts from or reduces
-  "your COMBAT SKILL" for the fight, taken as `csMod`, with "If you have X," (or "If you have X you may ...", no comma) as `csIf` and
+  "your COMBAT SKILL (score)" for the fight, taken as `csMod`, with "If you have X," (or "If you have X you may ...", no comma) as `csIf` and
   "unless you have X" as `csUnless` (disciplines, a rank, Lore-circles). "add an additional / a
   further / an extra N" counts. Sentences are not split after "i.e." or "e.g.". Left as text: a change for some rounds only, one
   "instead of" the engine's own bonus, one from a weapon's or item's power (its own bonus may count
@@ -218,6 +222,16 @@ forms of psychic attack" (14, 126); Kai-screen as the shield against a drain (16
 Psi-surge, and suffers only half-damage ... Kai-surge" as `'psi'` (229, which had been read as immune to all).
 Books 1-13 unchanged by it. Left free: 177, 232 (odd or even: a range cannot say it), 74 ("0 = 10"), the rest
 counting or changed by an item (the item table's).
+
+Book 15 as of 2026-10-24, after its step 3: 350 sections, 34 fights, Random 30 (21) / 6, gates 38 / 15 / 0,
+illustrated 44, dead 6, puzzles 2, Meals 10, fights 2 / 3 (0) / 0 / 0, enemies 7 / 16 / 0 (before it: Random 26 (17) / 10,
+fights 1 / 1 (0) / 0 / 0). Step 3 taught: "your present ENDURANCE points score is" (86); "your present Kai rank is Grand
+Guardian or higher" (224); "For every level of Kai rank you have attained above ..." (102); "These bonuses are not
+cumulative" (59); "immune to the effects of Mindblast and Psi-surge. If you choose to use Kai-surge, add only 1" as `'psi'`
+(121, 297; the smaller Kai-surge bonus is the item table's); "increase your COMBAT SKILL score by 3" (6). Books 1-14 and 16
+unchanged by it; Book 20 gained 208 and 247 (its rank wording). Left: 105 (odd or even), 147 and 323 (the number counts),
+193, 238, 270 (an item, weapon or wound: the item table's); 121 and 297's Kai-alchemy boost, which raises his ENDURANCE too
+and costs it after the fight (the item table's).
 
 Introductions: 7, 7, 9, 4, 10, 7, 10, 10, 8, 9, 8, 8 paragraphs. The free Random Number sections
 left are those where the number counts gold or Endurance, plays a game, or is changed by a bow, a
