@@ -245,6 +245,12 @@ def test_a_forced_meal_is_read_whatever_the_case_of_meal(tmp_path):
     assert (s['1'].get('meal'), s['2'].get('meal')) == (True, None)
 
 
+def test_a_forced_meal_written_as_a_count(tmp_path):
+    s = secs(tmp_path, {1: '<p>Unless you possess Grand Huntmastery, you must eat 1 Meal or lose 3 ENDURANCE points.</p>' + choice('Turn to', 2),
+                        2: '<p>Unless you possess Grand Huntmastery, you must eat 2 meals or lose 6 ENDURANCE points.</p>' + choice('Turn to', 1)})
+    assert (s['1'].get('meal'), s['2'].get('meal')) == (True, 2)   # Book 16's 222 and 112
+
+
 def test_random_number_auto_with_a_bonus_for_everyone(tmp_path):
     s = secs(tmp_path, {1: '<p>Pick a number from the <a href="random.htm">Random Number Table</a> and add 3 to the '
                         'number you have chosen.</p>' + choice('If your total score is now 3–4, turn to', 2)
@@ -291,6 +297,12 @@ def test_grand_master_immunity_and_drain(tmp_path):
     assert s['1']['combat']['enemies'][0]['immune'] is True
     assert s['2']['combat']['enemies'][0]['drain'] == 2
     assert s['3']['combat']['enemies'][0]['immune'] == 'psi'   # Kai-surge still gets through; its halving is the item table's
+
+
+def test_immune_to_mindblast_and_psi_surge_but_vulnerable_to_kai_surge(tmp_path):
+    s = secs(tmp_path, {1: '<p>The druid is immune to Mindblast and Psi-surge, but he is vulnerable to Kai-surge and '
+                           'Kai-blast.</p>' + foe('Rat', 1, 1)}, book='16tlov')
+    assert s['1']['combat']['enemies'][0]['immune'] == 'psi'   # Book 16's Cadak
 
 
 def test_immune_to_the_effects_of_mindblast_and_psi_surge_with_kai_surge_lessened(tmp_path):
@@ -492,6 +504,7 @@ def test_combat_with_evade_after_n_rounds(tmp_path):
 @pytest.mark.parametrize('sentence,expect', [
     ('You may evade combat after the first round, turn to', {'after': 1, 'to': '2'}),
     ('You can evade combat after 3 rounds, turn to', {'after': 3, 'to': '2'}),
+    ('You may evade this combat after six rounds by turning to', {'after': 6, 'to': '2'}),   # Book 16's 39, 52
     ('You may evade combat until the beginning of the third round, turn to', {'after': 2, 'to': '2'}),
     ('You may evade combat in the first round only, turn to', {'after': 0, 'to': '2', 'within': 1}),
     ('You may evade combat at any time, turn to', {'after': 0, 'to': '2'}),

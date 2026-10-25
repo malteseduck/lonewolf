@@ -828,8 +828,9 @@ opens when the hero holds it; no effect is applied.
   Crowns for a Backpack Item of his choice; with neither, ignore the cost. At 345 the Deathstaff is
   no weapon he was trained in, so no Weaponmastery or Grand Weaponmastery bonus; or the player may
   allow Grand Weaponmastery with Quarterstaff or Spear. *Engine*: the puzzles, left to the player;
-  the Deathstaff, the 5 ENDURANCE, Helshezag's loss, the Sommerswerd's 4, the turn at 93 and the
-  costs at 21 and 332 are for the item table (step 5); the Deathstaff's bonus is the player's choice,
-  to be settled there.
+  the item table (2026-10-25) gives the Deathstaff, takes Helshezag with 5 ENDURANCE at 57, 92 and 157,
+  asks a Backpack Item at 332 of one with no Gold Crown, and leaves 21's choice and 93's turn as
+  by-hand notes; the Deathstaff fights with no bonus but its +10 at 345 (the footnote's first reading),
+  and the Sommerswerd's 4 is not applied (a suggestion), both open to the owner's ruling.
 - **Wisdom**: choose the Disciplines with care; northern Magador is wild and its people unfriendly;
   completing earlier books is an advantage but not needed for this one.

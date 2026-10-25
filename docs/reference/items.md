@@ -3,8 +3,8 @@
 Two jobs done by hand for each imported book, after importing it and writing its reading copy
 (`tools/reading_copy.py`): the **item table**, so the engine gives, offers, takes and gates what the
 text says (spec 4.5a), and the **fight pictures**, so every fight has a plate (spec 6.5). Book 1
-has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-14 have
-their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 and 14 2026-10-17). The field reference is in `book-format.md` ("Section", "Item tables").
+has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-14 and 16 have
+their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 and 14 2026-10-17, 16 2026-10-25). The field reference is in `book-format.md` ("Section", "Item tables").
 
 Never put the book's text anywhere but `data/projectaon/`: tools print section numbers and
 counts, the table holds only the book's short item names, and everything else is in our words.
@@ -129,7 +129,7 @@ Decide each section by what the text says, outright:
   "or lose 3" (that is `meal`), and not a loss tied to a Random Number (that is `rolls`).
 - **rolls**: what a number drawn in the section does, where the text says so in the section itself
   rather than in choices ("if 0-6, the Kraan has ripped away your Backpack").
-- **meal**: a forced Meal the importer missed (it reads "must (also) (now) eat a Meal" and "Unless you eat a Meal now", "meal" in either case).
+- **meal**: a forced Meal the importer missed (it reads "must (also) (now) eat a Meal", "1 Meal" or "2 meals", and "Unless you eat a Meal now", "meal" in either case).
 - **need**: gates on the choice to a section: `{item}`, `{item, not: true}` ("if you do not
   possess"), `{gold, spend: true}` (paying), `{any: [cond, ...]}` (any one condition, which may be
   `{disc}`, `{rank}` or `{item}`: "Nexus or a Platinum Amulet"). Any other Condition (a `mark`,
@@ -226,7 +226,14 @@ wrong (140's Spear both given and offered; the bow gates without an Arrow) and 2
 fights (undead Vordaks, won-within rounds, doubled psychic bonuses, the Sommerswerd doubled), Endurance in brackets or in
 prose (6, 21, 83, 101, 179, 207, 225), a forced Meal written "consume" (86), the climb's Rope bonus the importer could
 not read (164, 277), and the sphere's spells tried once (marks). 128's fight ends when his ENDURANCE falls below 12, which
-the engine cannot stop on: `byHand`, with the two ways on gated by his ENDURANCE.
+the engine cannot stop on: `byHand`, with the two ways on gated by his ENDURANCE. Book 16 (from the draft,
+2026-10-25): no errors; 20 items, 132 sections; 96 left out. Of the draft's 136 sections, 94 with a todo, 20 needed nothing
+(Meals the importer reads, Arrows already spent by a bow shot, gates on earlier adventures) and its 12 bow gates lacked the
+Arrow. 16 sections it did not touch needed an entry: the Deathstaff taken (57, 157, 225, 318) and used (65, 345), fights
+(rank bonuses, rounds-only penalties, halved psychic bonuses, 39, 97, 132, 257, 284, 306, 336), 174's fee and 236's gate on the
+weapon held, and footnote 10's turn (93). Three importer misses came back here and are fixed in the importer: evasion
+"after six rounds" read as 0 (39, 52, 268, 304), "immune to Mindblast and Psi-surge, but he is vulnerable to Kai-surge" read
+as immune to all (Cadak), and forced Meals written "eat 1 Meal" or "eat 2 meals" (222, 112).
 `--json` also writes `data/projectaon/<book>/check-items.json`, which `tools/book_status.py` reads
 for checklist step 5 (the dashboard's "Check items" runs it so).
 

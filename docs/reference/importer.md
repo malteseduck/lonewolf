@@ -94,11 +94,12 @@ Heuristics layered on top, all by regular expression:
   exactly one choice's range, and every choice without a range is an "If you have / possess ..."
   taken instead of drawing. Otherwise `free`, and the ranges are dropped.
 - **Evasion**: a choice containing "evade" (or a door's "cease 'combat'") becomes the fight's evade exit (not "if you lose any ENDURANCE, even when attempting to evade, turn to
-  ...", which stays a choice shown after the fight: Book 3's 138, 263, Book 4's 133); "after N rounds",
+  ...", which stays a choice shown after the fight: Book 3's 138, 263, Book 4's 133); "after N rounds" (N in figures
+  or a word up to ten: Book 16's "after six rounds" was read as 0 until 2026-10-25),
   "after the first round" and "until the beginning of the third round" set the wait; "in the first
   round of combat only" sets `within: 1`.
 - **Mind immunity**: "immune to Mindblast / Psi-surge / all (forms of) psychic attack(s)" in the section; "immune to Mindblast (but
-  not Psi-surge)" makes it `'mindblast'`; "immune to Mindblast and Psi-surge (but not Kai-surge)",
+  not Psi-surge)" makes it `'mindblast'`; "immune to Mindblast and Psi-surge (but not Kai-surge)", "..., but he is vulnerable to Kai-surge" (Book 16's Cadak),
   "...; only (the Grand Mastery of) Kai-surge" or "..., and suffers only half-damage ... Kai-surge" or "... . If you (choose to) use Kai-surge, add only N" makes it `'psi'`;
   "immune to the effects of ..." is read the same
   (the halving is the item table's).
@@ -110,7 +111,8 @@ Heuristics layered on top, all by regular expression:
   further / an extra N" counts. Sentences are not split after "i.e." or "e.g.". Left as text: a change for some rounds only, one
   "instead of" the engine's own bonus, one from a weapon's or item's power (its own bonus may count
   it; the enemies' weapons given as the reason do not count), one with any other condition, and a section with two.
-- **Forced Meal**: "must (also) (now) eat a Meal", "Unless you eat a Meal now", "Meal" in either case (Book 13 writes "a meal").
+- **Forced Meal**: "must (also) (now) eat a Meal" (or "1 Meal", "one Meal"), "Unless you eat a Meal now", "Meal" in either case (Book 13 writes "a meal");
+  "must eat 2 (two) meals" sets `meal: 2` (Book 16's 112).
 - **Victory**: the highest-numbered section.
 - **Enemy plates**: an enemy uses the full-page illustration of its own section if there is one;
   otherwise one from a section where the same kind of enemy is both fought and pictured; otherwise
