@@ -920,7 +920,9 @@
       this.s.drawn = n;
       this.s.rolled = n + parts.reduce((t, p) => t + p.n, 0);
       n = this.s.rolled;
-      const hero = this.s.hero, r = (this.section.rolls || []).find((x) => n >= x.range[0] && n <= x.range[1]);
+      // an entry's if / unless: it holds only for who meets (or does not meet) that Condition; the first that holds wins
+      const hero = this.s.hero, r = (this.section.rolls || []).find((x) => n >= x.range[0] && n <= x.range[1]
+        && (!x.if || LW.meets(hero, x.if)) && (!x.unless || !LW.meets(hero, x.unless)));
       if (r && !this.s.looted[this.s.at + ':rolled']) {
         this.s.looted[this.s.at + ':rolled'] = true;
         // ep: 'drawn' loses the number drawn (0 counts as 10); sec.lessen: [{n, if, min}] makes a loss smaller for what he has

@@ -272,6 +272,17 @@ describe('the Random Number drawn in a section (setRolled)', () => {
     expect(h.s.events).toContain('You win 7 Gold Crowns.');
     expect(h.s.events).toContain('You regain 2 ENDURANCE.');
   });
+  it('takes the first entry for the number whose if / unless he meets', () => {
+    const rolls = [{ range: [0, 9], unless: { disc: 'hunting' }, ep: -6 }, { range: [0, 9], ep: -3 }];
+    const g = play({ 2: { rolls } });
+    g.go('2');
+    g.setRolled(3);
+    expect(g.hero.ep).toBe(14);
+    const h = play({ 2: { rolls } }, mkHero({ disciplines: ['hunting'] }));
+    h.go('2');
+    h.setRolled(3);
+    expect(h.hero.ep).toBe(17);
+  });
 });
 
 

@@ -99,11 +99,12 @@ Endurance; "If you possess X as well" is not read (it may lean on the rule befor
 - **Evasion**: a choice containing "evade" (or a door's "cease 'combat'") becomes the fight's evade exit (not "if you lose any ENDURANCE, even when attempting to evade, turn to
   ...", which stays a choice shown after the fight: Book 3's 138, 263, Book 4's 133); "after N rounds" (N in figures
   or a word up to ten: Book 16's "after six rounds" was read as 0 until 2026-10-25),
-  "after the first round" and "until the beginning of the third round" set the wait; "in the first
+  "after the first round", "after the third round" (an ordinal up to sixth: Book 17's 89, 110, 275, read as 0 until 2026-10-25)
+  and "until the beginning of the third round" set the wait; "in the first
   round of combat only" sets `within: 1`.
 - **Mind immunity**: "immune to Mindblast / Psi-surge / all (forms of) psychic attack(s)" in the section; "immune to Mindblast (but
   not Psi-surge)" makes it `'mindblast'`; "immune to Mindblast and Psi-surge (but not Kai-surge)", "..., but he is vulnerable to Kai-surge" (Book 16's Cadak),
-  "...; only (the Grand Mastery of) Kai-surge" or "..., and suffers only half-damage ... Kai-surge" or "... . If you (choose to) use Kai-surge, add only N" makes it `'psi'`;
+  "...; only (the Grand Mastery of) Kai-surge" or "..., and suffers only half-damage ... Kai-surge" or "... . If you (choose to) use Kai-surge, add only N" or "immune to all forms of psychic attack, except Kai-surge" (Book 17, 2026-10-25) makes it `'psi'`;
   "immune to the effects of ..." is read the same
   (the halving is the item table's).
 - **Mind drain**: "Unless you possess the Discipline of Mindshield (Psi-screen in a Magnakai

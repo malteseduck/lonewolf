@@ -305,6 +305,12 @@ def test_immune_to_mindblast_and_psi_surge_but_vulnerable_to_kai_surge(tmp_path)
     assert s['1']['combat']['enemies'][0]['immune'] == 'psi'   # Book 16's Cadak
 
 
+def test_immune_to_all_psychic_attack_except_kai_surge(tmp_path):
+    s = secs(tmp_path, {1: '<p>These beings are immune to all forms of psychic attack, except Kai-surge and '
+                           'Kai-blast.</p>' + foe('Rat', 1, 1)}, book='17tdoi')
+    assert s['1']['combat']['enemies'][0]['immune'] == 'psi'   # Book 17's undead: Kai-surge still works
+
+
 def test_immune_to_the_effects_of_mindblast_and_psi_surge_with_kai_surge_lessened(tmp_path):
     s = secs(tmp_path, {
         1: '<p>The beast is immune to the effects of Mindblast and Psi-surge. If you choose to use Kai-surge, add only '
@@ -528,6 +534,8 @@ def test_combat_with_evade_after_n_rounds(tmp_path):
     ('You may evade combat after the first round, turn to', {'after': 1, 'to': '2'}),
     ('You can evade combat after 3 rounds, turn to', {'after': 3, 'to': '2'}),
     ('You may evade this combat after six rounds by turning to', {'after': 6, 'to': '2'}),   # Book 16's 39, 52
+    ('You may evade the combat at any time after the third round by turning to', {'after': 3, 'to': '2'}),   # Book 17's 89
+    ('You may evade combat at any time after the fourth round by turning to', {'after': 4, 'to': '2'}),   # Book 17's 275
     ('You may evade combat until the beginning of the third round, turn to', {'after': 2, 'to': '2'}),
     ('You may evade combat in the first round only, turn to', {'after': 0, 'to': '2', 'within': 1}),
     ('You may evade combat at any time, turn to', {'after': 0, 'to': '2'}),

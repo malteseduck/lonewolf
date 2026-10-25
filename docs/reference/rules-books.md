@@ -957,8 +957,8 @@ opens when the hero holds it; no effect is applied.
   ENDURANCE. At 303 the Sommerswerd may add 4 more COMBAT SKILL on the Plane of Darkness, as Book 18's
   section 98 suggests. *Engine*: the puzzles, left to the player; the meeting with Prarg and the visit
   to Darke or Shamath's domain are not recorded from earlier books, so the choices at 22 and 150 are
-  left to the player; the Sommerswerd at 23, 50, 239 and 242, the undead Deathlord at 214 (the importer
-  does not mark him) and the ENDURANCE at 234 are for the item table (step 5); the Sommerswerd's 4 at
+  left to the player; the Sommerswerd barred at 23, 50, 239 and 242, the undead Deathlord at 214 and the
+  ENDURANCE at 234, yes (the item table); the Sommerswerd's 4 at
   303 is a suggestion, not applied unless the owner rules otherwise.
 - **Wisdom**: choose the Disciplines with care; Ixia is cruel and treacherous, and its creatures give
   no help at all; completing earlier books is an advantage but not needed for this one.

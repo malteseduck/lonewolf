@@ -111,7 +111,7 @@ Item (`LW.specialLimit`: 12 in every book, ruling R2). And one an item's `apart`
   returns a single "Continue". `choose` pays `need.spend` items or gold. Only the choices with a
   range wait for the draw: in a bow shot the others are for not shooting, elsewhere the way taken
   instead of drawing ("If you have Sixth Sense, ...; otherwise pick a number").
-- `setRolled(n)` (also applies the matching `sec.rolls` entry, once). In a `bowShot` section it
+- `setRolled(n)` (also applies the matching `sec.rolls` entry, once: the first for the number whose `if` / `unless` holds). In a `bowShot` section it
   returns why he cannot shoot, or spends an Arrow and sets `s.rolled` to the total with
   `LW.bowShot`'s bonus (`s.drawn` the number, `s.shot` the parts); `shot()` says which. The text's
   own bonuses (`sec.rntMod`, through `bonuses()`: those whose condition he meets, a per-discipline

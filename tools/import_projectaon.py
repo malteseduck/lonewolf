@@ -49,7 +49,8 @@ RANKS = {  # rank name: how many disciplines of the series it takes
 CIRCLES = {'fire': 'Circle of Fire', 'light': 'Circle of Light', 'solaris': 'Circle of Solaris', 'spirit': 'Circle of the Spirit'}
 # Plates for enemies pictured in a section other than the one where they are fought. Checked by eye.
 PLATE_FIXES = {'01fftd': {'kraan': 'ill3.png', 'vordak': 'ill3.png', 'giak': 'ill4.png', 'doomwolf': 'ill4.png', 'gourgaz': 'ill7.png'}}
-WORDS = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10, 'first': 1}
+WORDS = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10, 'first': 1,
+         'second': 2, 'third': 3, 'fourth': 4, 'fifth': 5, 'sixth': 6}  # "after the third round": after three
 OPEN = 99  # the far end of "5 or more" / "4 or less"
 
 book = sys.argv[1] if len(sys.argv) > 1 else '01fftd'
@@ -483,7 +484,8 @@ for n in numbers:
             if re.search(r'immune to (?:the effects of )?Mindblast[\s,(]*but not (?:to )?Psi-surge', whole):
                 e['immune'] = 'mindblast'  # Psi-surge still works
             elif re.search(r'immune to (?:the effects of )?Mindblast and Psi-surge(?:[\s,(]*but not (?:to )?|[\s,]*but (?:he|she|it|they) (?:is|are) vulnerable to |; only (?:the Grand Mastery of )?|, and suffers only half-damage [^.]*?'
-                           r'|\. If you (?:choose to )?use )Kai-surge', whole):
+                           r'|\. If you (?:choose to )?use )Kai-surge'
+                           r'|immune to all forms of psychic attacks?,? except (?:the )?Kai-surge', whole):
                 e['immune'] = 'psi'  # Kai-surge still works
             elif said:
                 e['immune'] = True

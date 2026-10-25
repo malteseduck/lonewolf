@@ -3,8 +3,8 @@
 Two jobs done by hand for each imported book, after importing it and writing its reading copy
 (`tools/reading_copy.py`): the **item table**, so the engine gives, offers, takes and gates what the
 text says (spec 4.5a), and the **fight pictures**, so every fight has a plate (spec 6.5). Book 1
-has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-16 have
-their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 and 14 2026-10-17, 15 and 16 2026-10-25). The field reference is in `book-format.md` ("Section", "Item tables").
+has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-17 have
+their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 and 14 2026-10-17, 15, 16 and 17 2026-10-25). The field reference is in `book-format.md` ("Section", "Item tables").
 
 Never put the book's text anywhere but `data/projectaon/`: tools print section numbers and
 counts, the table holds only the book's short item names, and everything else is in our words.
@@ -241,6 +241,14 @@ without loss, won within or stopped after so many rounds, psychic bonuses double
 254, 297, 305, 335), Endurance in prose (145, 190, 312), the Jadin Amulet's bonus on a later draw (81), and two draws the importer left
 free (193's Rope bonus, 238's by the weapon in hand). Three engine gaps were filled: `epCap` (156), `wield: ['special']` (238) and a
 chosen thing used by one dose (212). No importer miss came back.
+Book 17 (from the draft, 2026-10-25): no errors; 9 items, 124 sections; 110 left out. Of the draft's 105 sections, 70 with a todo,
+about 15 needed nothing (Meals the importer reads, gates on earlier adventures, Ropes retrieved, not lost) and its bow gates lacked
+the Arrow; 68's and 138's "all but spaces 4 and 6" it read as the whole Backpack. Sections it did not touch needed an entry: fights
+(undead foes, the Sommerswerd barred or required, psychic bonuses doubled, won within so many rounds, stopped after one or two, Tagazin
+stopped at 25, 67's and 137's two-handed weapons; 23, 31, 42, 50, 53, 77, 89, 110, 121, 125, 130, 167, 214, 230, 239, 242, 260, 264, 275,
+277, 279, 288, 310, 341), 123's number carried to 45 by marks, and 171's seizure given back at 63. Two importer misses were fixed:
+"immune to all forms of psychic attack, except Kai-surge" read as immune to all (25 fights) and "after the third round" read as 0
+(89, 110, 275); the engine's `rolls` took `if` / `unless` (75: the loss doubled unless he has Deliverance).
 `--json` also writes `data/projectaon/<book>/check-items.json`, which `tools/book_status.py` reads
 for checklist step 5 (the dashboard's "Check items" runs it so).
 
