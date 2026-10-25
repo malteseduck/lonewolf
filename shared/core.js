@@ -82,6 +82,7 @@
     mapDarklands: { name: 'Map of the Darklands', kind: 'special', glyph: 'treasure-map' },
     mapRuel: { name: 'Map of Ruel', kind: 'special', glyph: 'treasure-map' },
     mapTentarias: { name: 'Map of the Western Tentarias', kind: 'special', glyph: 'treasure-map' },
+    mapMaakengorge: { name: 'Map of the Maakengorge', kind: 'special', glyph: 'treasure-map' },
   };
   /* Items typed in by hand are stored as 'pack:Name' or 'spec:Name'. */
   /* Lasting conditions a section puts on him (hero.marks: id -> true, or the book number for one that

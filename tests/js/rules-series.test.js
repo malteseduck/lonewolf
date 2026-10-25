@@ -314,6 +314,18 @@ describe('Book 15 kit', () => {
   });
 });
 
+describe('Book 16 kit', () => {
+  it('is the map of the Maakengorge, 20 + a Random Number in gold, and any 4 of nine with 2 Meals and a Quarterstaff', () => {
+    const k = LW.KITS[16];
+    expect(k.give).toEqual(['mapMaakengorge']);
+    expect(k.gold).toBe(20);
+    expect(k.choose).toBe(4);
+    expect(k.from).toEqual(['sword', 'bow', 'quiver', 'axe', { meal: 2 }, 'rope', 'potion', 'quarterstaff', 'dagger']);
+    expect(k.store && k.storeGold && !k.newOnly).toBe(true);
+    expect(LW.ITEMS.mapMaakengorge.kind).toBe('special');
+  });
+});
+
 describe('LW.KitSetup', () => {
   const setup = (n, hero, book = {}) => LW.KitSetup(book, LW.KITS[n], hero);
   const empty = (over = {}) => Object.assign({ cs: 15, ep: 20, epMax: 20, weapons: [], backpack: [], special: [], meals: 0, gold: 0, series: 'kai', disciplines: [] }, over);
