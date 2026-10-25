@@ -204,7 +204,7 @@ downloads and imports still need the owner's word (AGENTS.md).
 - `tools/setup.py`: what a checkout needs (above, Setup); `setup.py` lists it, `--json` as the page
   reads it, `install <part>` installs one, `install all` the venv and the npm packages (a fresh
   checkout's first step, before the server can run from tools/.venv: AGENTS.md, Run it).
-- `python tools/add_book.py <code>`: a book the importer does not know is added to its `BOOKS` table
+- `python tools/add_book.py <code>`: a book the importer does not know is added to its `BOOKS` table, in number order
   (ADR 0036): number, series and title from `book_status.CATALOGUE`, one line before the table's
   closing brace. Writes the importer only, imports nothing; refuses a book already there or not in the
   catalogue. The new-book prompt has the agent check the rules pages for what the entry cannot

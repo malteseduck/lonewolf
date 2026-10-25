@@ -32,8 +32,16 @@ def add(book):
         return False, f'{code} is already in the importer'
     nl = '\r\n' if '\r\n' in src else '\n'
     line = f'    {code!r}: ({n}, {book_status.SERIES(n).replace(" ", "")!r}, {title!r}),{nl}'
-    end = m.end() - 1  # the closing brace, at the start of its line
-    src = src[:end] + line + src[end:]
+    # Before the first line holding a higher number, so the table stays in number order; else last.
+    at = m.end() - 1  # the closing brace, at the start of its line
+    pos = m.start() + m.group(0).index('\n') + 1
+    for row in m.group(0).splitlines(keepends=True)[1:]:
+        first = re.search(r"'\w+': \((\d+), ", row)
+        if first and int(first.group(1)) > n:
+            at = pos
+            break
+        pos += len(row)
+    src = src[:at] + line + src[at:]
     tmp = IMPORTER + '.part'
     with open(tmp, 'w', encoding='utf-8', newline='') as f:
         f.write(src)

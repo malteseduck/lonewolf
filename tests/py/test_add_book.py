@@ -40,6 +40,14 @@ def test_a_book_from_the_catalogue_is_added_with_its_number_series_and_title(tmp
     assert 'DISC' in f.read_text(encoding='utf-8')
 
 
+def test_the_entry_goes_in_number_order(tmp_path, monkeypatch):
+    f = setup(tmp_path, monkeypatch)
+    f.write_text(IMPORTER.replace("Ruel'),\n", "Ruel'),\n    '20tcon': (20, 'grandmaster', 'The Curse of Naar'),\n"
+                                  "    '99ember': (99, 'kai', 'The Ember Road'),  # the demo\n"), encoding='utf-8')
+    assert add_book.add('6')[0] and add_book.add('18')[0] and add_book.add('19')[0]
+    assert list(books(f)) == ['01fftd', '02fotw', '06tkot', '13tplor', '18dotd', '19wb', '20tcon', '99ember']
+
+
 def test_a_known_book_or_one_not_in_the_catalogue_is_refused_and_nothing_written(tmp_path, monkeypatch):
     f = setup(tmp_path, monkeypatch)
     for book in ('13', '01fftd', '29', 'xyz'):

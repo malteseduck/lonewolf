@@ -28,6 +28,7 @@ BOOKS = {  # code: (number, series, title)
     '15tdc': (15, 'grandmaster', 'The Darke Crusade'),
     '16tlov': (16, 'grandmaster', 'The Legacy of Vashna'),
     '17tdoi': (17, 'grandmaster', 'The Deathlord of Ixia'),
+    '18dotd': (18, 'grandmaster', 'Dawn of the Dragons'),
     '20tcon': (20, 'grandmaster', 'The Curse of Naar'),
     '99ember': (99, 'kai', 'The Ember Road'),  # the made-up demo book (demo/99ember, ruling R20)
 }
