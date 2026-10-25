@@ -1104,7 +1104,7 @@ function updateBattle() {
     + (LW.canCure(hero, book.id) ? med('cure', glyph(UG.cure), cure.name, hero.ep <= cure.at ? '20 back, once a book' : `at ${cure.at} or less`, hero.ep > cure.at) : '')
     + B.boosts().map((id) => med('boost:' + id, itemGlyph(id), esc(LW.itemName(id)), 'before you strike')).join('')
     // one medallion for each way out the text allows (B.evades()); a second one is named by its own label
-    + B.evades().map((e) => med('evade:' + e.i, glyph(e.free ? UG.evadeFree : UG.evade), e.label ? esc(e.label) : 'Evade', e.open ? (e.lose === 'drawn' ? 'lose the number drawn' : e.free ? B.words.leaveNote || 'untouched' : 'take one blow') : e.late ? 'too late' : e.if && !LW.meets(hero, e.if) ? `needs ${esc(LW.condName(e.if))}` : `after round ${e.after}`, !e.open)).join('');
+    + B.evades().map((e) => med('evade:' + e.i, glyph(e.free ? UG.evadeFree : UG.evade), e.label ? esc(e.label) : 'Evade', e.open ? (e.lose === 'drawn' ? 'lose the number drawn' : e.free ? B.words.leaveNote || 'untouched' : 'take one blow') : e.late ? 'too late' : e.if && !LW.meets(hero, e.if) ? `needs ${esc(LW.condName(e.if))}` : e.wait, !e.open)).join('');
   const cmds = q('cmds');
   cmds.innerHTML = left + right;
   renderLeft();

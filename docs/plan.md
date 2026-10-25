@@ -1,7 +1,7 @@
 # Plan
 
 Work not yet done that is not a book step. Rough; to be refined with the owner. Last updated
-2026-10-22. What the player does now is in `docs/reference/`, what it is meant to do in
+2026-10-25. What the player does now is in `docs/reference/`, what it is meant to do in
 `docs/spec.md`, and the owner's decisions in `docs/adr/`; finished work leaves this file for those.
 
 Where each book stands, step by step, is not kept here: the import dashboard
@@ -73,7 +73,10 @@ What a book's play-through left to the player that the engine could take over:
   gate shut wrongly. With the backfill run once per flag (`flagsRead` a list of the flags read), both
   sections could be gated. Book 10 asks the same of lands: Talestria (6, 179) and the Danarg (80,
   142, 219, 328), both crossed in Book 8, and the Stornlands (200, 306), where which books count is
-  the owner's reading; flags set on Book 8's way through each would gate them.
+  the owner's reading; flags set on Book 8's way through each would gate them. Book 13's 285 asks
+  for the town of Quarlen or the ruins of Maaken in an earlier book: Maaken is Book 4's
+  `visitedMaakenTemple`, Quarlen would be a flag set at Book 6's 332 (the town reached), which the
+  backfill would also need.
 - **The weapon he fights with, chosen in the fight.** The engine fights with the weapon that adds
   most, so a choice the text leaves to him is not his: Book 12's Helshezag, which costs 1 ENDURANCE
   for good a round, is taken up only where a fight names it (133, 230, 88), so "if you wish to use
@@ -93,6 +96,10 @@ Things to check while a book goes through its steps, which no step asks for:
 - Book 3: what its 2026-10-09 play-through left to the player is now applied (Sixth Sense below
   Guardian, the Effigy or the Sommerswerd at 173, 108's two ways out in mid-fight); check it in the
   next play.
+- Book 13's 16 asks for Baylon's Bough Fungi, found in Book 11 (146), a Backpack Item: Book 12's
+  rules carry only Weapons and Special Items, so no character can bring them to Book 13 and 277
+  never opens (ruling R18 keeps them after 277). The owner's reading: leave it, or carry Book 11's
+  Backpack Items through Book 12 (as the Grand Master series carries them in).
 - Book 2's `labels.json` is still a copy of Book 1's, kept apart so Book 2 can gain its own city
   maps. Its `style.txt` is its own (written for a repaint never made), not the one the map was
   painted with.

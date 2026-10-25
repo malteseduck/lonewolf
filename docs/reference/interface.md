@@ -231,7 +231,8 @@ contest), Evade's note ("at no cost" leaving a door) and the outcome's heading a
 draws red wounds, and a door does not lunge (his loss is the page's flash). The mind medallion reads "as Mindblast: no
 effect" against a foe immune to Mindblast only, and "no effect" when `B.deaf()`. Evade reads "take
 one blow" (or "untouched" with `evade.free`) when `B.evadeOpen`, "too late" when `B.evadeLate`, "needs ..." without
-`evade.if`; it is not shown at all with `noEvade`. The log names each change for some rounds as it begins
+`evade.if`, and otherwise what it waits for (`wait`: "after round 4", "foe down to 36", "from foe 2"); it is not
+shown at all with `noEvade`. The log names each change for some rounds as it begins
 and ends. When `B.over` is set the left page
 shows the outcome and a "Turn the page" button, which calls `endBattle` (`B.finish()`) to move the
 story on.

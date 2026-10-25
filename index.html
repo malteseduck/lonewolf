@@ -403,6 +403,7 @@ button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background:
 .fight .cmds::before { background: linear-gradient(rgba(178, 154, 112, 0), rgba(176, 152, 110, 0.95) 45%, rgba(176, 152, 110, 0.95) 72%, rgba(176, 152, 110, 0)); } /* faded at the foot too, so it meets the paper without an edge */
 .cmds .medcap .med { --s: 5.4em; }
 .cmds { display: flex; align-items: flex-end; justify-content: center; gap: 0.7em; }
+.cmds:has(> :nth-child(5)) > .medcap { font-size: 0.56em; } /* five (a Grand Master's Deliverance beside Laumspur and Evade): smaller, to stay inside the frame */
 /* The Random Number: a medallion like the others, its bronze bezel engraved 0-9. The bezel turns;
    the black face shuffles the digits and settles on the one under the notch at the top. */
 .dial { position: relative; flex: none; width: 4.6em; height: 4.6em; border: 0; padding: 0; border-radius: 50%; color: #1c1208; font: inherit;

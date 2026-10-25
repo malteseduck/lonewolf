@@ -167,12 +167,17 @@
     // with that (a Condition); evade.foeAt: only once the foe is down to that; evade.fromFoe: only from
     // that foe of the list on (0 first); evade.free: without the blow; evade.lose 'drawn': the number drawn
     // (0 as 10) is lost in its place (a climb past the foe). A list: several ways out, each its own.
-    // c.noEvade: the text allows none, whatever the section's choices say. Leaving an obstacle is free (ruling R23)
+    // c.noEvade: the text allows none, whatever the section's choices say. Leaving an obstacle is free (ruling R23).
+    // wait: what a shut one waits for, as the medallion words it
     evades() {
       const leave = this.kind === 'obstacle';
-      return this.c.noEvade ? [] : [].concat(this.c.evade || []).map((ev, i) => Object.assign({}, ev, leave && { free: true, label: ev.label || this.words.leave }, { i,
-        open: (!ev.if || LW.meets(this.hero, ev.if)) && this.rounds >= (ev.after || 0) && !(ev.foeAt != null && this.foe && this.foe.ep > ev.foeAt) && !(ev.fromFoe != null && this.i < ev.fromFoe) && !(ev.within && this.rounds >= ev.within),
-        late: !!ev.within && this.rounds >= ev.within }));
+      return this.c.noEvade ? [] : [].concat(this.c.evade || []).map((ev, i) => {
+        const early = this.rounds < (ev.after || 0), strong = ev.foeAt != null && this.foe && this.foe.ep > ev.foeAt, before = ev.fromFoe != null && this.i < ev.fromFoe;
+        return Object.assign({}, ev, leave && { free: true, label: ev.label || this.words.leave }, { i,
+          open: (!ev.if || LW.meets(this.hero, ev.if)) && !early && !strong && !before && !(ev.within && this.rounds >= ev.within),
+          late: !!ev.within && this.rounds >= ev.within,
+          wait: early ? `after round ${ev.after}` : strong ? `foe down to ${ev.foeAt}` : before ? `from foe ${ev.fromFoe + 1}` : '' });
+      });
     }
     get evadeOpen() { return this.evades().some((e) => e.open); }
     get evadeLate() { const e = this.evades(); return !!e.length && e.every((x) => x.late); }

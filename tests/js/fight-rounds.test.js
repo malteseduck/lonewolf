@@ -204,8 +204,13 @@ describe('whole-fight conditions', () => {
   it('an evasion open only once the foe is down to a score', () => {
     const { f } = fightAt({ enemies: [foe({ ep: 20 })], evade: { foeAt: 15, to: '2' } }, mkHero({ cs: 30 }));
     expect(f.evadeOpen).toBe(false);
+    expect(f.evades()[0].wait).toBe('foe down to 15');
     f.round(drawWhere(15, (r) => r.enemy >= 5 && r.enemy < 20));
     expect(f.evadeOpen).toBe(true);
+  });
+  it('a shut evasion says what it waits for', () => {
+    expect(fightAt({ enemies: [foe()], evade: { after: 4, to: '2' } }).f.evades()[0].wait).toBe('after round 4');
+    expect(fightAt({ enemies: [foe(), foe()], evade: { fromFoe: 1, to: '2' } }).f.evades()[0].wait).toBe('from foe 2');
   });
   it('the same foes fought again keep their wounds, and those already dead stay so', () => {
     const { g, f } = fightAt({ enemies: [foe({ name: 'K1', ep: 1 }), foe({ name: 'K2', ep: 9 })], keep: 'kalkoth', evade: { after: 1, to: '2' } });
