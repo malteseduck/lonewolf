@@ -1,6 +1,9 @@
 {
  "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
  "srcs": [
+  "assets/plates/17tdoi/3-kajarda.webp",
+  "assets/plates/17tdoi/ixian-gybia.webp",
+  "assets/plates/17tdoi/suggaz.webp",
   "assets/plates/prison-door-piranesi.jpg",
   "data/projectaon/17tdoi/ill14.png",
   "data/projectaon/17tdoi/ill15.png",
