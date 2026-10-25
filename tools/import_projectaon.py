@@ -430,8 +430,8 @@ for n in numbers:
                 if r:
                     ch['range'] = r
                 # a door's "cease 'combat' at any time", "avoid combat at any time" (Book 5's 334); not "if
-                # you lose any, even when attempting to evade"
-                if re.search(r'\bevade\b|\bcease [‘\'"]?combat\b|\bavoid combat at any time\b', text, re.I) and not re.search(r'\beven (?:when|if)\b[^.,]*\bevad', text, re.I):
+                # you lose any, even when attempting to evade"; "escape from this creature after three rounds" (Book 17's 264)
+                if re.search(r'\bevade\b|\bcease [‘\'"]?combat\b|\bavoid combat at any time\b|\bescape from this \w+ after\b', text, re.I) and not re.search(r'\beven (?:when|if)\b[^.,]*\bevad', text, re.I):
                     ch['evade'] = True
                 sec['choices'].append(ch)
         else:
