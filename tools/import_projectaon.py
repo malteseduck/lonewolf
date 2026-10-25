@@ -245,13 +245,27 @@ def span(text):
     return None
 
 
+LEVEL = r'(?:level of (?:Kai |Magnakai |Grand Master )?(?:rank|Mastery)|(?:Kai |Magnakai |Grand Master )?(?:rank|level))'
+
+
+def per_rank(s):
+    """"For every level of Kai rank you have attained above Y, add N" and its kin: (N, Y's count), or None."""
+    above = r'for every %s you (?:have (?:attained|reached)|are) above (?:that of |the rank of )?(?P<rank>[A-Za-z -]+?)' % LEVEL
+    to = r'(?: (?:to|from) the (?:number|total)\b.*)?\.?'
+    p = (re.fullmatch(r'(?:Also, )?[Ff]' + above[1:] + r',? add (?P<n>\d+)' + to, s)
+         or re.fullmatch(r'add (?P<n>\d+) ' + above + to, s))
+    return (int(p['n']), RANKS[p['rank'].lower()]) if p and p['rank'].lower() in RANKS else None
+
+
 def number_rules(whole):
     """The bonuses the text adds to the Random Number: [{plus, disc|rank|circle...}], or None when
     the number is changed in any way that cannot be read for certain (Endurance, items, "0 = 10")."""
     if re.search(r'0\s*=\s*10', whole):
         return None
     mods = []
-    # a list of rules after a lead-in ending in a colon (Book 13's 116): each rule is a sentence of its own
+    # a list of rules after a lead-in ending in a colon (Book 13's 116): each rule is a sentence of its own;
+    # so is each of rules joined by semicolons ("add 3; and if you possess ..., add 2", Book 16's 74)
+    whole = re.sub(r';\s+(?:and\s+)?(?=(?:if|for every)\b)', '. ', whole)
     for s in sentences(re.sub(r':\s+(?=If\b)', '. ', re.sub(r'\s*\(for example[^)]*\)', '', whole))):
         if not re.search(r'\b(?:add|deduct|subtract)\b', s, re.I):
             continue
@@ -270,9 +284,13 @@ def number_rules(whole):
             continue
         # "For every level of Kai rank you have attained above Kai Grand Master Superior, add 1" (Book 15's 102):
         # his rank is his count of the series' Disciplines, so a level more is a Discipline more
-        per = re.fullmatch(r'For every level of (?:Kai |Magnakai )?rank you have (?:attained|reached) above (?:that of )?([A-Za-z -]+?),? add (\d+)(?: (?:to|from) the (?:number|total)\b.*)?\.?', s)
-        if per and per.group(1).lower() in RANKS and series != 'kai':
-            mods.append({'plus': int(per.group(2)), 'each': series, 'over': RANKS[per.group(1).lower()]})
+        # Book 16 names the levels "Grand Master rank", "level of Kai Mastery", "Kai level", puts the "add" first
+        # ("add 1 for every Kai level you are above ..."), or a discipline before it ("If you possess X, for every ...")
+        lead = re.fullmatch(r'(?:Also, )?[Ii]f (you .+?), ((?:for every|add)\b.*)', s)
+        per = per_rank(lead.group(2) if lead else s)
+        cond = lead and condition(re.sub(r'^you ', '', lead.group(1)))
+        if per and series != 'kai' and (cond or not lead):
+            mods.append(dict(cond or {}, plus=per[0], each=series, over=per[1]))
             continue
         # "These bonuses are not cumulative (i.e. ... you add just 2 not 3)" (Book 15's 59): the higher rank's bonus
         # replaces the lower's, so each rank above the first adds only the difference
@@ -292,7 +310,8 @@ def number_rules(whole):
         both = re.search(r'\s*\(if you (?:have|possess) both\b[^)]*?,? add (\d+)\)', s, re.I)
         if both:
             s = s[:both.start()] + s[both.end():]
-        m = re.match(r'(?:However, |Also, )?[Ii]f (you .+?|your .+?),? (?:then )?(?:you may (?:also )?)?(add|deduct|subtract) (?:another |a further |an additional |an extra )?(\d+)(?: points?)?(?: (?:to|from) (?:the|this|your) (?:total |final )?(?:number|total|score|figure)\b.*)?\.?$', s)
+        # "If have the ... Discipline of X" (Book 16's 2): the "you" is missing from the print
+        m = re.match(r'(?:However, |Also, )?[Ii]f (you .+?|your .+?|(?:have|possess) .+?),? (?:then )?(?:you may (?:also )?)?(add|deduct|subtract) (?:another |a further |an additional |an extra )?(\d+)(?: points?)?(?: (?:to|from) (?:the|this|your) (?:total |final )?(?:number|total|score|figure)\b.*)?\.?$', s)
         if not m:
             return None
         cond = condition(re.sub(r'^you ', '', m.group(1)))

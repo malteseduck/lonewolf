@@ -315,6 +315,28 @@ def test_grand_master_draw_on_rank(grand):
               'you have picked.') == [{'plus': 1, 'each': 'grandmaster', 'over': 2}]
 
 
+def test_grand_master_draw_book_16_phrasings(grand):
+    nr = grand['number_rules']
+    # the rank's levels named every way, with or without a condition, before or after the "add"
+    for s in ('For every Grand Master rank you have attained above that of Sun Knight, add 2 to the number you have picked.',
+              'For every level of Kai rank you have attained above the rank of Sun Knight, add 2 to the number you have picked.',
+              'Also, for every level of Kai Mastery you have attained above the rank of Sun Knight, add 2.'):
+        assert nr(s) == [{'plus': 2, 'each': 'grandmaster', 'over': 6}], s
+    assert nr('If you possess Grand Nexus, for every level you have attained above the rank of Sun Knight add 1 to the '
+              'number you have picked.') == [{'disc': ['grandNexus'], 'plus': 1, 'each': 'grandmaster', 'over': 6}]
+    assert nr('If you have Grand Nexus, add 1 for every Kai level you are above the rank of Sun Knight to the number you '
+              'have picked.') == [{'disc': ['grandNexus'], 'plus': 1, 'each': 'grandmaster', 'over': 6}]
+    # rules joined by semicolons are read one by one; a "you" missing from "If have" is taken as written
+    assert nr('Also, if you possess Kai-surge, add 2; and if you possess Assimilance, add 1.') == [
+        {'disc': ['kaiSurge'], 'plus': 2}, {'disc': ['assimilance'], 'plus': 1}]
+    assert nr('Also, if your current ENDURANCE points total is 12 or more, add 1; if your current ENDURANCE points total '
+              'is 11 or less, deduct 1.') == [{'ep': [12, 99], 'plus': 1}, {'ep': [-99, 11], 'plus': -1}]
+    assert nr('If have the Grand Master Discipline of Assimilance, add 2 to the number you have picked.') == [
+        {'disc': ['assimilance'], 'plus': 2}]
+    # an item among them still leaves the draw unread
+    assert nr('Also, if you possess Assimilance, add 1; if you possess a Lantern, deduct 2.') is None
+
+
 def test_cs_rule_a_penalty_from_the_foes_weapons_is_for_the_whole_fight(kai):
     assert kai['cs_rule']("Due to the length of your enemies’ weapons, you must reduce your COMBAT SKILL by 4 "
                           'for the duration of this combat.') == (-4, None, None)

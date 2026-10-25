@@ -79,7 +79,10 @@ Heuristics layered on top, all by regular expression:
 - **Random Number bonuses** (`number_rules()`): each sentence that adds to or takes from the number
   must be "If <condition>, add / deduct N (to the number)" (the comma may be missing), "add another / a further N",
   "add 1 for every Magnakai Discipline you possess (above the first three)", "For every level of (Kai) rank you have attained
-  above (that of) Y, add N" (a Discipline of the series more for each rank above Y's count; Book 15's 102), the same after a condition ("If you
+  above (that of) Y, add N" (a Discipline of the series more for each rank above Y's count; Book 15's 102; also "every Grand Master rank",
+  "level of Kai Mastery", "Kai level" or "level", "above the rank of Y", "add N for every Kai level you are above ..." and the same after
+  "If you possess X," as that discipline's bonus, Book 16), rules joined by semicolons ("add 3; and if you ...") read one by one,
+  "If have" (the "you" missing, Book 16's 2), the same after a condition ("If you
   have Huntmastery, add 1 ... for every Magnakai Discipline ... after the first three", Book 11's 189), or "(Pick a number ... and) add N
   to the number you have chosen" with no condition, which always applies. Rules listed after a lead-in
   ending in a colon are read one by one. A parenthesis "if you have both, add only N" is taken as read;
@@ -233,6 +236,14 @@ cumulative" (59); "immune to the effects of Mindblast and Psi-surge. If you choo
 unchanged by it; Book 20 gained 208 and 247 (its rank wording). Left: 105 (odd or even), 147 and 323 (the number counts),
 193, 238, 270 (an item, weapon or wound: the item table's); 121 and 297's Kai-alchemy boost, which raises his ENDURANCE too
 and costs it after the fight (the item table's).
+
+Book 16 as of 2026-10-24, after its step 3: 350 sections, 36 fights, Random 24 (15) / 13, gates 49 / 19 / 0,
+illustrated 44, dead 7, puzzles 3, Meals 6, fights 12 / 5 (0) / 0 / 10, enemies 5 / 12 / 0 (before it: Random 14 (5) / 23).
+Step 3 taught: rank levels as "every Grand Master rank ... above that of" (15), "level of Kai rank ... above the rank of" (269),
+"level of Kai Mastery" (171), after a discipline "If you possess X, for every level ... add 1" (23) and "add 1 for every Kai
+level you are above ..." (341); rules joined by semicolons (74, 331, 162, 263, with his ENDURANCE either side of 18 in the last
+two); "If have the ... Discipline of" (2). Books 1-15 and 20 unchanged by it. Left: 285 (odd or even), 143 and 150 (a Runic
+Disc and the Sommerswerd among the bonuses: the item table's), and the counting and item draws as before.
 
 Introductions: 7, 7, 9, 4, 10, 7, 10, 10, 8, 9, 8, 8 paragraphs. The free Random Number sections
 left are those where the number counts gold or Endurance, plays a game, or is changed by a bow, a
