@@ -6,72 +6,82 @@
 <title>Book import</title>
 <link rel="stylesheet" href="admin.css">
 </head>
-<body>
-<header class="top">
-  <div class="brand">
-    <h1>Book import</h1>
-    <p class="sub">Every book's way from Project Aon to the player, read from the files on disk and <code>docs/book-status.json</code>.</p>
-  </div>
-  <div class="legend">
-    <span><span class="kind" data-kind="script"></span>script</span>
-    <span><span class="kind" data-kind="owner"></span>you, by hand</span>
-    <span><span class="kind" data-kind="agent"></span>Claude Code (copy prompt)</span>
-  </div>
-  <nav class="links">
-    <a href="/">Player</a>
+<!-- A rail of books, the picked book's steps as tabs, one step shown, each sheet opened inside the step
+     it belongs to; only the panes scroll (admin.js, docs/reference/dashboard.md, ADR 0021). -->
+<body class="dash">
+<header class="bar">
+  <h1>Book import</h1>
+  <nav class="tools" aria-label="Whole-project tools">
+    <button data-global="check" title="Every book re-imported and checked against its last report, then all the unit tests"><span class="kind" data-kind="script"></span>Check everything</button>
+    <button data-open="icons" title="The disciplines, tabs, gauges, fight medallions and the engine's items, for every book"><span class="kind" data-kind="owner"></span>Player icons</button>
+    <button data-open="sources" title="Where each of your pictures came from: its link, none, or made with AI (then committed)"><span class="kind" data-kind="owner"></span>Picture sources</button>
+    <button data-open="hero" title="The title page's and Kai panel's pictures, drawn from your drawing and saved as WebP"><span class="kind" data-kind="owner"></span>Lone Wolf</button>
+    <button id="setup-btn" title="What the tools need on this PC"><span class="st todo" id="setup-seal"></span>Setup</button>
+    <button data-global="release" title="The offline check, then the last commit with the books and art as they are now"><span class="kind" data-kind="owner"></span>Release to the iPad</button>
   </nav>
+  <span class="legend" title="Who does a step">
+    <span><span class="kind" data-kind="script"></span>script</span>
+    <span><span class="kind" data-kind="owner"></span>you</span>
+    <span><span class="kind" data-kind="agent"></span>Claude Code</span>
+  </span>
+  <button id="keys-btn" title="Keyboard">?</button>
+  <a class="player" href="/">Player</a>
 </header>
 
-<section class="setup" id="setup" aria-label="Setup" hidden></section>
+<div class="setup-pop sheet" id="setup-pop" hidden>
+  <section class="setup" id="setup" aria-label="Setup" hidden></section>
+</div>
+<div class="keys sheet" id="keys" hidden>
+  <b>Keyboard</b>
+  <dl>
+    <dt>↑ ↓</dt><dd>book before, after</dd>
+    <dt>← →</dt><dd>step before, after</dd>
+    <dt>1-9, 0</dt><dd>a step by its place in the row</dd>
+    <dt>N</dt><dd>the book's next step</dd>
+    <dt>A</dt><dd>all steps at once</dd>
+    <dt>O</dt><dd>every book, every step (the grid)</dd>
+    <dt>F</dt><dd>a sheet full window, and back</dd>
+    <dt>Esc</dt><dd>out of full window, the grid or a tool</dd>
+  </dl>
+  <p>Inside a sheet the keys are the sheet's: click outside it first.</p>
+</div>
 
-<section class="tools-row" aria-label="Whole-project tools">
-  <div class="tool">
-    <span class="kind" data-kind="script"></span>
-    <div><b>Check everything</b><small>Every book re-imported and checked against its last report, then all the unit tests</small></div>
-    <button data-global="check">Run</button>
-  </div>
-  <div class="tool">
-    <span class="kind" data-kind="owner"></span>
-    <div><b>Player icons</b><small>The disciplines, tabs, gauges, fight medallions and the engine's items, for every book</small></div>
-    <button data-open="icons">Open</button>
-  </div>
-  <div class="tool">
-    <span class="kind" data-kind="owner"></span>
-    <div><b>Picture sources</b><small>Where each of your pictures came from: its link, none, or made with AI (then committed)</small></div>
-    <button data-open="sources">Open</button>
-  </div>
-  <div class="tool">
-    <span class="kind" data-kind="owner"></span>
-    <div><b>Lone Wolf's pictures</b><small>The title page's and Kai panel's, drawn from your drawing and saved as WebP: again after changing either</small></div>
-    <button data-open="hero">Open</button>
-  </div>
-  <div class="tool">
-    <span class="kind" data-kind="owner"></span>
-    <div><b>Release to the iPad</b><small>The offline check, then the last commit with the books and art as they are now (nothing, if the iPad has it all)</small></div>
-    <button data-global="release">Release</button>
-  </div>
-</section>
-
-<main class="layout">
-  <section class="board" aria-label="Books">
-    <table class="grid" id="grid">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
-    <p class="loading" id="loading">Reading the books on disk...</p>
-  </section>
-  <aside class="detail" id="detail" aria-live="polite">
-    <p class="hint">Pick a book to see its steps.</p>
+<div class="shell" id="shell">
+  <aside class="rail" id="rail" aria-label="Books">
+    <div class="rail-head">
+      <button id="ov-btn" title="Every book, every step (O)">All books</button>
+      <button id="rail-fold" title="Narrow the list">«</button>
+    </div>
+    <div class="rail-list" id="rail-list"></div>
   </aside>
-</main>
 
-<section class="mapwrap" id="mapwrap" hidden>
-  <header><b id="map-title">Map editor</b><button id="map-close">Close</button></header>
-  <iframe id="mapframe" title="Map editor" allow="clipboard-read; clipboard-write"></iframe>
-</section>
+  <main class="work" id="work" data-view="steps">
+    <div class="bookhead" id="bookhead"></div>
+    <nav class="strip" id="strip" aria-label="Steps"></nav>
+    <div class="toolhead" id="toolhead"></div>
+    <div class="stage" id="stage">
+      <aside class="detail" id="detail" aria-live="polite">
+        <p class="hint">Pick a book to see its steps.</p>
+      </aside>
+      <section class="board" id="overview" aria-label="Every book">
+        <table class="grid" id="grid">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+        <p class="loading" id="loading">Reading the books on disk...</p>
+      </section>
+      <section class="mapwrap" id="mapwrap" hidden>
+        <header><b id="map-title">Map editor</b>
+          <button id="sheet-max" title="Full window (F)">Full window</button>
+          <button id="map-close">Close</button></header>
+        <iframe id="mapframe" title="Map editor" allow="clipboard-read; clipboard-write"></iframe>
+      </section>
+    </div>
+  </main>
+</div>
 
 <section class="log" id="log" hidden>
-  <header><b id="log-title">Job</b><span id="log-state"></span><button id="log-close" aria-label="Close the log">Close</button></header>
+  <header><b id="log-title">Job</b><span id="log-state"></span><button id="log-min" title="Shrink the log to its last line">Shrink</button><button id="log-close" aria-label="Close the log">Close</button></header>
   <pre id="log-out"></pre>
 </section>
 

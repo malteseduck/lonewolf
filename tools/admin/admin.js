@@ -1,6 +1,9 @@
 /* The import dashboard: every book's steps from GET /api/admin/status (tools/book_status.py), jobs
    run through /api/admin/run and followed by polling, hand steps marked through /api/admin/mark, the
-   map editor inline, and the agent steps' prompts. docs/reference/dashboard.md. */
+   sheets and the map editor inside the step they belong to, and the agent steps' prompts.
+   The window holds a rail of books, the picked book's steps as tabs with one step shown, and the
+   step's sheet under it; only the panes scroll. Where you are is kept in the address (#/<code>/<step>).
+   docs/reference/dashboard.md. */
 import { PROMPTS } from './prompts.js';
 
 const PY = 'uv run --project tools python';
@@ -19,11 +22,21 @@ const STAGES = [
   { id: 'map', group: 'Pictures', label: 'Map', kind: 'owner', step: 8 },
   { id: 'ills', group: 'Pictures', label: 'Illustrations', kind: 'script', step: 9 },
 ];
+const SERIES = { kai: 'Kai', magnakai: 'Magnakai', 'grand master': 'Grand Master', 'new order': 'New Order' };
+const WHO = { agent: 'Claude Code: copy the prompt', owner: 'yours', script: 'a script' };
+// the step each sheet belongs to; a page not here spans the books, and takes the work area alone
+const SHEET_STEP = { 'fights.html': 'pictures', 'items.html': 'items', 'ills.html': 'ills', 'map-editor.html': 'map' };
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const when = (t) => (t ? new Date(t).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) : 'never');
-let books = [], selected = null, showLater = false, running = null;
+let books = [], running = null;
+/* where the owner is: the book, its step, the pane (steps, the grid of every book, a tool), every step at
+   once, a sheet full window, the rail narrowed by hand (null: narrow while a sheet is open), the fold */
+const ui = { code: null, step: null, view: 'steps', all: false, max: false, narrow: null, later: false };
+const KEEP = 'lw-admin-layout';
+try { const k = JSON.parse(localStorage.getItem(KEEP) || '{}'); Object.assign(ui, { code: k.code ?? null, all: !!k.all, narrow: k.narrow ?? null, later: !!k.later }); } catch { /* none kept */ }
+const keep = () => { try { localStorage.setItem(KEEP, JSON.stringify({ code: ui.code, all: ui.all, narrow: ui.narrow, later: ui.later })); } catch { /* not kept */ } };
 
 // ---------- status ----------
 async function api(path, opts) {
@@ -32,21 +45,25 @@ async function api(path, opts) {
     return { status: r.status, j: await r.json().catch(() => ({})) };
   } catch (e) { return { status: 0, j: { error: String(e.message || e) } }; }
 }
+let first = true;
 async function load() {
   const { status, j } = await api('status');
   if (status !== 200) {
     $('#loading').textContent = status === 403 ? 'The dashboard answers this PC only: open it at http://localhost:8766/tools/admin/.'
       : `No status from the server (${j.error || status}). Is it tools/serve.py, restarted since the dashboard was added?`;
+    ui.view = 'overview'; layout();
     return;
   }
   books = j.books;
   running = j.running;
+  if (first) { first = false; fromAddress(); }
   render();
   loadSetup();
 }
+const book = (code) => books.find((b) => b.code === code);
 
-// ---------- setup: what the tools need on this PC (tools/setup.py, ADR 0036) ----------
-let setup = [], showSetup = false;
+// ---------- setup: what the tools need on this PC (tools/setup.py, ADR 0036), under the bar's Setup ----------
+let setup = [];
 async function loadSetup() {
   const { status, j } = await api('setup');
   if (status !== 200 || !Array.isArray(j)) return;
@@ -55,17 +72,16 @@ async function loadSetup() {
 }
 function renderSetup() {
   const el = $('#setup'), lack = setup.filter((r) => r.state === 'missing');
-  const open = showSetup || lack.length > 0;
   const seal = (s) => (s === 'ok' ? 'done' : s === 'missing' ? 'todo' : 'na');
   el.hidden = false;
+  $('#setup-seal').className = 'st ' + (lack.length ? 'warn' : 'done');
+  $('#setup-btn').title = lack.length ? `${lack.length} part${lack.length === 1 ? '' : 's'} missing on this PC` : 'Everything the tools need is here';
   el.innerHTML = `<header><span class="kind" data-kind="script"></span><b>Setup</b>
-      <span class="say">${lack.length ? `${lack.length} part${lack.length === 1 ? '' : 's'} missing on this PC` : 'Everything the tools need is here'}</span>
-      <button id="setup-toggle">${open ? 'Hide' : 'Show'}</button></header>` +
-    (open ? setup.map((r, i) => `<div class="part"><span class="st ${seal(r.state)}"></span>
+      <span class="say">${lack.length ? `${lack.length} part${lack.length === 1 ? '' : 's'} missing on this PC` : 'Everything the tools need is here'}</span></header>` +
+    setup.map((r, i) => `<div class="part"><span class="st ${seal(r.state)}"></span>
       <span class="kind" data-kind="${r.install ? 'script' : 'owner'}"></span><b>${esc(r.label)}</b>
       <div>${esc(r.detail)}<small>${esc(r.what)}</small></div>
-      <div>${r.state === 'missing' && r.install ? `<button data-setup="${i}" ${running ? 'disabled title="a job is running"' : ''}>${r.gated ? 'Download...' : 'Install'}</button>` : ''}</div></div>`).join('') : '');
-  $('#setup-toggle').onclick = () => { showSetup = !open; renderSetup(); };
+      <div>${r.state === 'missing' && r.install ? `<button data-setup="${i}" ${running ? 'disabled title="a job is running"' : ''}>${r.gated ? 'Download...' : 'Install'}</button>` : ''}</div></div>`).join('');
 }
 $('#setup').addEventListener('click', async (e) => {
   const btn = e.target.closest('button[data-setup]');
@@ -83,16 +99,23 @@ function nextStage(b) {
   return STAGES.find((s) => ['todo', 'bad'].includes(b.stages[s.id].state)) || STAGES.find((s) => b.stages[s.id].state === 'warn') || null;
 }
 
-// ---------- the grid ----------
 function render() {
   $('#loading').hidden = true;
+  renderGrid();
+  renderRail();
+  renderDetail(book(ui.code));
+  layout();
+}
+
+// ---------- the grid of every book ("All books") ----------
+function renderGrid() {
   const groups = [...new Set(STAGES.map((s) => s.group))];
   $('#grid thead').innerHTML =
     `<tr class="groups"><th></th>${groups.map((g) => `<th colspan="${STAGES.filter((s) => s.group === g).length}">${esc(g)}</th>`).join('')}<th></th></tr>` +
     `<tr><th class="book">Book</th>${STAGES.map((s) => `<th title="${esc(s.kind)}"><span class="kind" data-kind="${s.kind}"></span>${esc(s.label)}</th>`).join('')}<th class="book">Next</th></tr>`;
   const row = (b) => {
     const nx = nextStage(b);
-    return `<tr data-code="${b.code}" class="${b.code === selected ? 'sel' : ''} ${!b.folder ? 'later' : ''}">
+    return `<tr data-code="${b.code}" class="${b.code === ui.code ? 'sel' : ''} ${!b.folder ? 'later' : ''}">
       <td class="book"><b>${b.n}</b><span>${esc(b.title)}</span><small>${b.code} · ${b.series}</small></td>
       ${STAGES.map((s, i) => {
         const x = b.stages[s.id];
@@ -106,31 +129,56 @@ function render() {
   const runs = [...later].sort((a, b) => a.n - b.n).reduce((r, b) => { const last = r.at(-1); if (last && last[1] === b.n - 1) last[1] = b.n; else r.push([b.n, b.n]); return r; }, [])
     .map(([a, z]) => (a === z ? `${a}` : `${a}-${z}`)).join(', ');
   $('#grid tbody').innerHTML = now.map(row).join('') + (later.length
-    ? `<tr class="fold"><td colspan="${STAGES.length + 2}">${showLater ? '▾' : '▸'} Books ${runs}: not downloaded; each is offered every step that works for it once it is</td></tr>` +
-      (showLater ? later.map(row).join('') : '') : '');
-  if (selected) renderDetail(books.find((b) => b.code === selected));
+    ? `<tr class="fold"><td colspan="${STAGES.length + 2}">${ui.later ? '▾' : '▸'} Books ${runs}: not downloaded; each is offered every step that works for it once it is</td></tr>` +
+      (ui.later ? later.map(row).join('') : '') : '');
 }
 
+// a cell takes you to that book at that step; the book's name, to its next step
 $('#grid').addEventListener('click', (e) => {
-  if (e.target.closest('tr.fold')) { showLater = !showLater; return render(); }
+  if (e.target.closest('tr.fold')) { ui.later = !ui.later; keep(); return render(); }
   const tr = e.target.closest('tbody tr[data-code]');
   if (!tr) return;
-  selected = tr.dataset.code;
-  render();
-  const b = books.find((x) => x.code === selected);
-  const cell = e.target.closest('td[data-stage]');
-  if (!cell) return;
-  if (cell.dataset.stage === 'map') return openMap(b);
-  showStep(cell.dataset.stage);
+  pick(tr.dataset.code, e.target.closest('td[data-stage]')?.dataset.stage);
 });
-function showStep(id) {  // a step's cell in the grid scrolls the book's panel to that step and lights it
-  const el = document.querySelector(`#detail .step[data-stage="${id}"]`);
-  if (!el) return;
-  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
-}
 
-// ---------- one book ----------
+// ---------- the rail: a book a line, its steps as ten small seals ----------
+function renderRail() {
+  const row = (b) => `<button class="bk ${b.code === ui.code ? 'sel' : ''} ${b.folder ? '' : 'later'}" data-code="${b.code}" title="${esc(`${b.n}. ${b.title}`)}">
+      <b class="n ${nextStage(b) ? '' : 'done'}">${b.n}</b><span class="t">${esc(b.title)}</span>
+      <span class="dots">${STAGES.map((s) => `<i class="${b.stages[s.id].state}"></i>`).join('')}</span></button>`;
+  let html = '', heading = null;
+  for (const b of books.filter((x) => x.folder)) {
+    const h = b.n >= 99 ? 'Demo' : SERIES[b.series] || b.series;  // the made-up demo book (ruling R20) comes last
+    if (h !== heading) { heading = h; html += `<div class="series">${esc(h)}</div>`; }
+    html += row(b);
+  }
+  const later = books.filter((b) => !b.folder);
+  if (later.length) html += `<button class="fold" id="rail-later">${ui.later ? '▾' : '▸'} Not downloaded (${later.length})</button>` + (ui.later ? later.map(row).join('') : '');
+  $('#rail-list').innerHTML = html;
+  $('#rail-list .bk.sel')?.scrollIntoView?.({ block: 'nearest' });
+}
+$('#rail-list').addEventListener('click', (e) => {
+  if (e.target.closest('#rail-later')) { ui.later = !ui.later; keep(); return render(); }
+  const bk = e.target.closest('.bk');
+  if (bk) pick(bk.dataset.code);
+});
+
+/* A book at a step (its next one, unless named; the same step when it is the book already open). */
+function pick(code, step) {
+  const b = book(code);
+  if (!b) return;
+  if (!b.folder && !ui.later) ui.later = true;
+  const changed = ui.code !== code;
+  ui.code = code;
+  ui.step = step || (changed || !ui.step ? nextStage(b)?.id || 'fetch' : ui.step);
+  if (step) ui.all = false;
+  ui.view = 'steps';
+  keep();
+  render();
+}
+function toStep(id) { ui.step = id; ui.all = false; ui.view = 'steps'; layout(); }
+
+// ---------- one book: its head, its steps as tabs, the step ----------
 const ACTIONS = {
   fetch: (b) => b.stages.fetch.state === 'todo'
     ? [run('Download...', 'fetch', { gate: 'download' })]
@@ -169,9 +217,18 @@ function actHtml(a, b) {
 }
 
 async function renderDetail(b) {
-  if (!b) return;
+  if (!b) { $('#bookhead').innerHTML = ''; $('#strip').innerHTML = ''; $('#detail').innerHTML = '<p class="hint">Pick a book to see its steps.</p>'; return; }
   acts = [];
   const nx = nextStage(b);
+  $('#bookhead').innerHTML = `<h2>${b.n}. ${esc(b.title)}</h2>
+    <span class="meta">${b.code} · ${b.series}${b.imp ? ` · ${b.imp.sections} sections, ${b.imp.fights} fights, ${b.imp.kinds} kinds of enemy` : ''}</span>
+    ${nx ? `<button class="nextup" data-step="${nx.id}" title="${esc(WHO[nx.kind])}">Next: <b>${esc(nx.label)}</b> →</button>` : '<span class="nextup done">Every step done</span>'}
+    <button class="away" id="back-sheet" hidden></button>`;
+  // the tabs, under the grid's groups; a dot on the one whose sheet is open
+  const groups = [...new Set(STAGES.map((s) => s.group))];
+  $('#strip').innerHTML = groups.map((g) => `<div class="grp"><div class="gl">${esc(g)}</div><div class="tabs">${STAGES.filter((s) => s.group === g).map((s) =>
+    `<button class="tab" data-step="${s.id}" title="${esc(b.stages[s.id].ev)}"><span class="tt"><span class="st ${b.stages[s.id].state}"></span><span class="kind" data-kind="${s.kind}"></span>${s.step ? `<small>${s.step}</small>` : ''}</span><span class="lb">${esc(s.label)}</span><span class="open" hidden>●</span></button>`).join('')}</div></div>`).join('') +
+    '<div class="grp all"><div class="gl">&nbsp;</div><div class="tabs"><button class="tab" data-all="1" title="Every step at once (A)"><span class="tt">☰</span><span class="lb">All steps</span></button></div></div>';
   const steps = STAGES.map((s) => {
     const x = b.stages[s.id];
     const list = x.state === 'na' && s.id !== 'import' ? [] : ACTIONS[s.id]?.(b) || [];
@@ -179,16 +236,19 @@ async function renderDetail(b) {
       <div class="what"><b>${s.step ? s.step + '. ' : ''}${esc(s.label)}</b><div class="ev">${esc(x.ev)}</div><div class="src">${x.src === 'disk' ? 'from the files' : 'marked by hand (docs/book-status.json)'}</div></div>
       <div class="acts">${list.map((a) => actHtml(a, b)).join('')}</div></div>`;
   }).join('');
-  $('#detail').innerHTML = `<h2>${b.n}. ${esc(b.title)}</h2>
-    <div class="meta">${b.code} · ${b.series}${b.imp ? ` · ${b.imp.sections} sections, ${b.imp.fights} fights, ${b.imp.kinds} kinds of enemy` : ''}</div>
-    ${nx ? `<div class="nextup">Next: <b>${esc(nx.label)}</b> (${nx.kind === 'agent' ? 'Claude Code: copy the prompt' : nx.kind === 'owner' ? 'yours' : 'a script'})</div>` : '<div class="nextup">Every step done.</div>'}
-    <h3>Steps</h3>${steps}<h3>Map, step by step</h3><div id="mapsteps"><p class="hint">${b.folder ? 'Reading the map files...' : 'After download.'}</p></div>`;
+  $('#detail').innerHTML = `${steps}<h3>Map, step by step</h3><div id="mapsteps"><p class="hint">${b.folder ? 'Reading the map files...' : 'After download.'}</p></div>`;
+  layout();
   if (b.folder) renderMap(b, await (await fetch(`/api/map/${b.code}/state`, { cache: 'no-store' }).catch(() => null))?.json().catch(() => null));
 }
+window.addEventListener('click', (e) => {
+  const t = e.target.closest('#strip [data-step], #bookhead [data-step]');
+  if (t) return toStep(t.dataset.step);
+  if (e.target.closest('#strip [data-all]')) { ui.all = !ui.all; ui.view = 'steps'; keep(); layout(); }
+});
 
 /* The map editor's rail, summarised: what is done, who does it, and the editor opened at that step. */
 function renderMap(b, state) {
-  if (selected !== b.code || !$('#mapsteps')) return;
+  if (ui.code !== b.code || !$('#mapsteps')) return;
   if (!state || !state.files) { $('#mapsteps').innerHTML = '<p class="hint">The map API did not answer.</p>'; return; }
   const f = state.files, has = (n) => n in f, rounds = state.rounds?.filter((n) => n > 0) || [];
   const last = rounds.at(-1);
@@ -239,7 +299,65 @@ $('#detail').addEventListener('click', async (e) => {
   }
 });
 
-// ---------- the map editor and the picture sheet, inline under the grid (one at a time) ----------
+/* Which pane shows. Steps: the picked step; under it its sheet, when that is open for this book (the
+   step shrinks to a bar over it). A tool: its sheet alone. The grid: every book. A sheet open
+   elsewhere is kept, and the book's head offers the way back to it. */
+function sheet() {
+  const fr = $('#mapframe'), src = fr.dataset.src || '';
+  if ($('#mapwrap').hidden || !src) return null;
+  const page = src.split('?')[0].split('/').pop();
+  return { page, step: SHEET_STEP[page] || null, book: fr.dataset.book || '', title: $('#map-title').textContent };
+}
+function layout() {
+  const sh = sheet(), w = $('#work'), d = $('#detail');
+  if (ui.view === 'tool' && (!sh || sh.step)) ui.view = 'steps';
+  const here = sh && sh.step && sh.book === ui.code && sh.step === ui.step && !ui.all && ui.view === 'steps';
+  const shown = here || (ui.view === 'tool');
+  w.dataset.view = ui.view;
+  w.classList.toggle('with-sheet', !!shown);
+  $('#mapwrap').classList.toggle('off', !shown);
+  d.classList.toggle('all', ui.all);
+  d.dataset.step = ui.step || '';
+  d.querySelectorAll(':scope > .step').forEach((s) => s.classList.toggle('on', s.dataset.stage === ui.step));
+  document.querySelectorAll('#strip .tab[data-step]').forEach((t) => {
+    t.classList.toggle('on', t.dataset.step === ui.step && !ui.all);
+    t.querySelector('.open').hidden = !(sh && sh.book === ui.code && sh.step === t.dataset.step);
+  });
+  $('#strip [data-all]')?.classList.toggle('on', ui.all);
+  const back = $('#back-sheet');
+  if (back) { back.hidden = !sh || shown; if (sh) back.textContent = `${sh.title.split(':')[0]}${sh.book && sh.book !== ui.code ? `, Book ${book(sh.book)?.n}` : ''} open ↗`; }
+  const shell = $('#shell');
+  shell.classList.toggle('narrow', ui.narrow ?? !!(shown || ui.view === 'overview'));
+  shell.classList.toggle('max', ui.max && !!shown);
+  $('#rail-fold').textContent = shell.classList.contains('narrow') ? '»' : '«';
+  $('#sheet-max').textContent = ui.max ? 'Leave full window' : 'Full window';
+  $('#toolhead').innerHTML = ui.view === 'tool' && sh ? `<h2>${esc(sh.title)}</h2><span class="meta">for every book</span>` : '';
+  $('#ov-btn').classList.toggle('on', ui.view === 'overview');
+  document.querySelectorAll('#rail-list .bk').forEach((x) => x.classList.toggle('sel', x.dataset.code === ui.code));
+  const h = ui.view === 'overview' ? '#/all' : ui.view === 'tool' && sh ? `#/tool/${sh.page.replace('.html', '')}`
+    : ui.code ? `#/${ui.code}/${ui.all ? 'all' : ui.step}` : '';
+  if (h && location.hash !== h) history.replaceState(null, '', h);
+}
+window.addEventListener('click', (e) => {
+  if (!e.target.closest('#back-sheet')) return;
+  const sh = sheet();
+  if (!sh) return;
+  if (!sh.step) { ui.view = 'tool'; return layout(); }
+  if (sh.book !== ui.code) pick(sh.book, sh.step); else toStep(sh.step);
+});
+/* The address: #/<code>/<step> (or /all), #/all for the grid, #/tool/<page>; else the last book. */
+function fromAddress() {
+  const [a, s] = location.hash.replace(/^#\/?/, '').split('/');
+  if (a === 'all') { ui.view = 'overview'; return; }
+  if (a === 'tool' && s) { queueMicrotask(() => $(`[data-open="${s}"]`)?.click()); return; }
+  const b = book(a) || book(ui.code) || books.find((x) => x.folder && nextStage(x)) || books[0];
+  if (!b) return;
+  ui.code = b.code;
+  ui.all = s === 'all';
+  ui.step = STAGES.some((x) => x.id === s) ? s : nextStage(b)?.id || 'fetch';
+}
+
+// ---------- the sheets, each in its step (or, for the tools, the work area), one at a time ----------
 function openSheet(b) {
   if (!b?.imp) return toast('Import the book first', 3000);
   openInline(b, `/tools/admin/fights.html?book=${encodeURIComponent(b.code)}&embed=1`, `Fight pictures: ${b.n}. ${b.title}`);
@@ -269,17 +387,22 @@ function openInline(b, src, title) {
   $('#map-title').textContent = title;
   if (frame.dataset.src !== src) { frame.src = src; frame.dataset.src = src; frame.dataset.book = b.code; }
   wrap.hidden = false;
-  wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const step = SHEET_STEP[src.split('?')[0].split('/').pop()];
+  if (step) { ui.code = b.code; ui.step = step; ui.all = false; ui.view = 'steps'; } else ui.view = 'tool';
+  render();
 }
 function leaveMap() {  // the editor's unsaved labels, or a picture being adjusted, would go with the frame
   let dirty = false;
   try { const w = $('#mapframe').contentWindow; dirty = w.mapEditorDirty?.() || w.document.querySelector('#ed')?.open; } catch { /* not loaded */ }
-  return !dirty || window.confirm('The page below has unsaved changes. Close it and lose them?');
+  return !dirty || window.confirm('The sheet open has unsaved changes. Close it and lose them?');
 }
 $('#map-close').onclick = () => {
   if (!leaveMap()) return;
   $('#mapwrap').hidden = true;
   const frame = $('#mapframe'); frame.src = 'about:blank'; frame.dataset.src = ''; frame.dataset.book = '';
+  ui.max = false;
+  if (ui.view === 'tool') ui.view = 'steps';
+  layout();
   load();
 };
 window.addEventListener('message', (e) => {
@@ -287,6 +410,43 @@ window.addEventListener('message', (e) => {
 });
 window.addEventListener('beforeunload', (e) => {
   try { if ($('#mapframe').contentWindow.mapEditorDirty?.()) { e.preventDefault(); e.returnValue = ''; } } catch { /* none */ }
+});
+
+// ---------- the bar, the rail's buttons, the keys ----------
+const overview = () => { ui.view = ui.view === 'overview' ? 'steps' : 'overview'; layout(); };
+$('#ov-btn').onclick = overview;
+$('#rail-fold').onclick = () => { ui.narrow = !$('#shell').classList.contains('narrow'); keep(); layout(); };
+$('#sheet-max').onclick = () => { ui.max = !ui.max; layout(); };
+const pop = (id, by) => {  // a popover under its button
+  const el = $(id); el.hidden = !el.hidden;
+  if (el.hidden) return;
+  const r = $(by).getBoundingClientRect();
+  el.style.top = r.bottom + 6 + 'px'; el.style.left = Math.max(30, Math.min(r.left, innerWidth - el.offsetWidth - 30)) + 'px';
+};
+$('#setup-btn').onclick = () => pop('#setup-pop', '#setup-btn');
+$('#keys-btn').onclick = () => pop('#keys', '#keys-btn');
+window.addEventListener('click', (e) => {
+  for (const [p, by] of [['#setup-pop', '#setup-btn'], ['#keys', '#keys-btn']]) if (!e.target.closest(p) && !e.target.closest(by)) $(p).hidden = true;
+});
+$('#log-min').onclick = () => {
+  const min = $('#log').classList.toggle('min');
+  $('#log-min').textContent = min ? 'Grow' : 'Shrink';
+  const o = $('#log-out'); o.scrollTop = o.scrollHeight;
+};
+window.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.metaKey || e.altKey || e.target.closest?.('input, textarea, select, dialog, [contenteditable]') || $('#confirm').open) return;
+  const k = e.key, list = books.filter((b) => b.folder || ui.later), i = list.findIndex((b) => b.code === ui.code);
+  const ids = STAGES.map((s) => s.id), j = ids.indexOf(ui.step);
+  if (k === 'ArrowDown' || k === 'ArrowUp') { const b = list[Math.max(0, Math.min(list.length - 1, i + (k === 'ArrowDown' ? 1 : -1)))]; if (b) pick(b.code); }
+  else if ((k === 'ArrowRight' || k === 'ArrowLeft') && ui.code) toStep(ids[Math.max(0, Math.min(ids.length - 1, j + (k === 'ArrowRight' ? 1 : -1)))]);
+  else if (/^[0-9]$/.test(k) && ui.code) toStep(ids[(+k + 9) % 10]);
+  else if (k === 'n' || k === 'N') { const nx = book(ui.code) && nextStage(book(ui.code)); if (nx) toStep(nx.id); }
+  else if (k === 'a' || k === 'A') { ui.all = !ui.all; ui.view = 'steps'; keep(); layout(); }
+  else if (k === 'o' || k === 'O') overview();
+  else if (k === 'f' || k === 'F') { if (sheet()) { ui.max = !ui.max; layout(); } }
+  else if (k === 'Escape') { if (ui.max) ui.max = false; else if (ui.view !== 'steps') ui.view = 'steps'; layout(); }
+  else return;
+  e.preventDefault();
 });
 
 // ---------- the deliberate steps: downloading, and any import ----------

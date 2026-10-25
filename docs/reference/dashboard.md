@@ -3,28 +3,49 @@
 `http://localhost:8766/tools/admin/`, served by `python tools/serve.py`, on this PC only (its API
 refuses other machines, even when the server is bound to the LAN). One page for every book's way from
 Project Aon into the player: where each book stands, a button for each step that is a script, the
-map editor inline, and a ready prompt for each step that needs Claude Code. Built 2026-10-08.
+map editor and the sheets inside the step they belong to, and a ready prompt for each step that needs Claude Code. Built 2026-10-08.
 
 ## The page
 
-- **The grid**: every downloaded book; those not downloaded are folded below (download only). Each book
-  is offered every step that can work for it (ADR 0036): test play and registering the item table need
-  the engine to have the book's series (`book_status.engine_series()`, the keys of `LW.SERIES`), so a
-  Grand Master book has neither yet, its item table stopping at "read and checked". One column per step, grouped as in `docs/book-checklist.md`. Each cell is
-  a seal: done, not yet, a warning (stale, or the files and the marks disagree), failed, or not
-  needed. A cell shows the seal alone; its tooltip says what is left (todos, enemies with no picture, the map's stage).
-  "Next" is the first step not done. The icon over each column says who does it: a cog (a script),
-  a hand (the owner), a quill (Claude Code).
-- **A book** (click its row): every step with its evidence, where it came from (the files, or a hand
-  mark), and its buttons: **Run** for a script, **Copy prompt** for an agent step, **Mark done** for a
-  hand step, links to the player, the test address and the picture sheet. Under it, the map's own
-  steps, as the map editor's rail shows them. Clicking a step's cell scrolls the panel to that step
-  and lights it briefly (the map and picture cells open their editor inline instead).
-- **The map editor** opens under the grid, full width (the Map cell, "Open map editor", or any
-  map step's Open): `tools/map-editor.html?book=<code>&embed=1`, which tells the dashboard when its files change, so the grid follows.
-  Closing it asks first if it has unsaved label edits. It opens only here (ADR 0021): at its own address it
-  shows only a line pointing to the dashboard.
-- **The picture sheet** ("Open picture sheet" at step 7), inline under the grid like the map editor and
+The window holds a bar, a rail of books and the work area; only the panes inside scroll, so a book,
+a step or a sheet is a click away at any width (ADR 0021). Where you are is kept in the address
+(`#/<code>/<step>`, `#/<code>/all`, `#/all` for the grid, `#/tool/<page>`), so a reload lands there;
+with none, the last book picked (kept in `localStorage`, `lw-admin-layout`), else the first with a
+step left.
+
+- **The bar**: the whole-project tools as buttons (below), Setup's seal, the legend of who does a
+  step (a cog: a script; a hand: the owner; a quill: Claude Code), the keys (?) and the player.
+- **The rail**: every downloaded book under its series (the demo book last), each with its ten steps
+  as small seals in the checklist's groups; the books not downloaded are folded under it (download
+  only). Each book is offered every step that can work for it (ADR 0036): test play and registering
+  the item table need the engine to have the book's series (`book_status.engine_series()`, the keys
+  of `LW.SERIES`), so a Grand Master book has neither yet, its item table stopping at "read and
+  checked". « narrows it to the books' numbers; it narrows by itself while a sheet or the grid is open.
+- **The book's head and its steps**: its title, its counts, and "Next: <step> →", the first step not
+  done (an undone one first, then a stale one). Under it the steps as tabs, grouped as in
+  `docs/book-checklist.md`, each with its seal (done, not yet, a warning: stale, or the files and the
+  marks disagree; failed; not needed), who does it and its checklist number; its tooltip says what is
+  left. A book opens at its next step.
+- **A step**: its evidence, where it came from (the files, or a hand mark), and its buttons: **Run**
+  for a script, **Copy prompt** for an agent step, **Mark done** for a hand step, links to the test
+  address and the step's sheet. The Map step lists the map's own steps under it, as the map editor's
+  rail shows them, each with its Open. "All steps" shows every step of the book in one list.
+- **A sheet opens inside its step** (one at a time): the picture sheet in Fights, the item sheet in
+  Item table, the illustration sheet in Illustrations, the map editor in Map. The step shrinks to a
+  bar over it, keeping its buttons; Full window (F) hides the bar and the rail as well. Looking at
+  another step or book keeps it open: its tab has a dot, and the book's head says it is open, a click
+  away. Close asks first if the map editor has unsaved label edits or a picture is being adjusted.
+  The sheets that span the books (Player icons, Picture sources, Lone Wolf's pictures) take the work
+  area alone; Close goes back to the book.
+- **All books** (O): the grid, every book a row and every step a column with its seal, the books not
+  downloaded folded below. A cell opens that book at that step.
+- **Keys** (outside a sheet): ↑ ↓ a book, ← → a step, 1-9 and 0 a step by its place, N the next
+  step, A all steps, O the grid, F a sheet full window, Esc out of full window, the grid or a tool.
+- **The map editor** (the Map step's "Open map editor", or any map step's Open):
+  `tools/map-editor.html?book=<code>&embed=1`, which tells the dashboard when its files change, so the
+  seals follow. It opens only here (ADR 0021): at its own address it shows only a line pointing to the
+  dashboard.
+- **The picture sheet** ("Open picture sheet" at step 7), inside the step like the map editor and
   only there (`tools/admin/fights.html` at its own address shows only a line pointing to the dashboard). Every kind of enemy in the book with
   the picture the player would show (the same choice as `nextFoe()` in `main.js`), inked as in a
   fight, the sections it is fought in, where the picture comes from, the file the player loads (the copy
@@ -33,9 +54,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   whatever its picture (`foes` in `data/projectaon/ill-index.json`: its own name, else the name without
   numbers and bracketed notes; "not yet said" in rust where there is none; ADR 0008). The Stand-in
   picker shows and searches each picture's own `about`. Checklist step 7, after the
-  agent's work: the owner looks here and marks it. It opens
-  inline under the grid like the map editor (Open picture sheet here, `?embed=1`; the step 7 cell
-  only goes to that step's line in the book's list), and on its own. A picture file dropped, pasted or chosen on a card becomes that enemy's
+  agent's work: the owner looks here and marks it. A picture file dropped, pasted or chosen on a card becomes that enemy's
   picture, and so does one by its address (dragged from another site, pasted, or By address...: the server fetches it);
   a new picture asks for its link, or No link (ADR 0038), and Link... gives one to a picture already in `art/`; Adjust crops any card's picture, flips it left to right and sets levels, with the fight panel previewed as it will look (and, for a picture shown from its 2x copy, Show original to compare);
   Remove takes the owner's entry away. A card's buttons are Adjust, Prompt and a Picture menu (Choose file...,
@@ -43,8 +62,8 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   `about`, asked for as a tall black-and-white pen-and-ink illustration in the style of Gary Chalk's Lone Wolf art,
   on plain white so it inks as it is (`promptFor()`). It avoids a person's words (portrait, fighting stance) and asks
   that a beast keep its own body, as described, not be made humanoid (2026-10-18: beasts were coming out standing up). Each save redraws the cards and the "with none" count, and the
-  dashboard's grid follows. The rules for the entry: `docs/reference/items.md`, "Fight pictures".
-- **The illustration sheet** ("Open illustration sheet" at step 9), inline under the grid like the
+  dashboard's seals follow. The rules for the entry: `docs/reference/items.md`, "Fight pictures".
+- **The illustration sheet** ("Open illustration sheet" at step 9), inside the step like the
   others and only there (`tools/admin/ills.html`): every `ill*` and `small*` picture of the book on
   a card, with the sections it is in and what it is (its `about` in the index, also in the side-by-side
   view's title), marked "not upscaled" until its `-2x.webp` is made, and the
@@ -52,8 +71,8 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   by side at one size; "1:1" draws both at the upscale's own pixels (the original stretched by the
   browser, as the player would) and the two scroll together; the arrow keys go to the next picture.
   It only looks: nothing on it changes a file.
-- **The item sheet** ("Open item sheet" at step 5, once the book has a table; ADR 0021), inline like the
-  others and only there (`tools/admin/items.html`, its reading of the tables in `itemsheet.js`): the
+- **The item sheet** ("Open item sheet" at step 5, once the book has a table; ADR 0021), inside the step like
+  the others and only there (`tools/admin/items.html`, its reading of the tables in `itemsheet.js`): the
   book's own items, then those from elsewhere its sections name (the engine's, another book's), each
   with its icon as the inventory draws it and large, its id, kind and other fields, its `about`, the
   sections that offer, give, take or test it (by the section's field), the other books whose tables
@@ -66,7 +85,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   book's). One from game-icons.net is first saved to `assets/icons/` (square removed; `name-author`
   if another author's icon has the name) and credited in its README, on its author's "picked on the
   item sheet" line. The picker is `iconpicker.js` (styles in `icons.css`), shared with the icon sheet.
-- **The icon sheet** ("Player icons" in the tools row; ADR 0021), inline like the others and only there
+- **The icon sheet** ("Player icons" in the bar; ADR 0021), in the work area and only there
   (`tools/admin/icons.html`): every icon the player draws other than a book's own items, which spans
   the books: the disciplines by series, the title, panels and tabs, the gauges and inventory, the fight's
   medallions (`UI_GLYPH`, grouped and described by `WHERE`), the icons an item gets by its kind
@@ -75,20 +94,20 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   item sheet's picker; it writes `glyphs.js` (`item_icons.set_ui_glyph()`, only an entry already
   there) or, for an engine item, `itemglyphs.js`. The compass rose and the plates' ornaments are drawn
   in code and not on it.
-- **The picture-sources sheet** ("Picture sources" in the tools row; `tools/admin/sources.html`, inline
-  only): every picture in `art/` from `GET /api/admin/art-sources` (`art_sources.listing()`), those
+- **The picture-sources sheet** ("Picture sources" in the bar; `tools/admin/sources.html`, in the
+  work area only): every picture in `art/` from `GET /api/admin/art-sources` (`art_sources.listing()`), those
   without a link first, each with the books whose fights use it. Save link and No link post to
   `/api/admin/art-link` (ADR 0038); Made with AI, for a fight picture, posts `made: 'ai'`, which moves
   it into the committed `assets/plates/` (`art_sources.make_ai`, ADR 0042). The picture sheet offers
   the same choice for a new picture and in its Link... dialog.
-- **Lone Wolf's pictures** (in the tools row; `tools/admin/hero.html`, inline only): draws the title
+- **Lone Wolf's pictures** (in the bar; `tools/admin/hero.html`, in the work area only): draws the title
   page's and the Kai panel's Lone Wolf from `assets/hero/lone-wolf.webp` and `monastery.webp` with
   `portraitFromArt` (`plates.js`), at the crops and sizes the page holds, and shows them on the
   player's paper at the iPad's size. Save both posts each, as WebP, to `/api/admin/hero`, which writes
   `assets/hero/frontis.webp` and `likeness.webp`, the files the player loads. Needs Chrome (it saves
   WebP). Run it again after changing a drawing, a crop or the restyle.
-- **Setup** (ADR 0036), above the tools: what the tools need on this PC, from `tools/setup.py`. One line
-  while everything is there ("Show" opens it); a row per part, open, while any is missing: uv and
+- **Setup** (ADR 0036), the bar's Setup, a popover: what the tools need on this PC, from
+  `tools/setup.py`; its seal turns amber while any part is missing. A row per part: uv and
   Node (yours to install), the Python packages (`tools/.venv`, from `tools/pyproject.toml` and `uv.lock`), the npm
   packages, Real-ESRGAN and the map OCR (downloads: gated), the books (a count; each downloaded from
   its row) and `art/` (git-ignored: how many pictures are here, with a link, with none, not asked yet; those missing
@@ -96,7 +115,7 @@ map editor inline, and a ready prompt for each step that needs Claude Code. Buil
   part that a script can install has **Install** (or **Download...**, gated).
 - **Whole-project tools**: check everything (`check_all.py`), the player icons (the icon sheet, below), the
   release (the offline check, then `release.py`; ruling R15).
-- **The job log** at the foot: a job's output line by line while it runs. A job started in another
+- **The job log** at the foot: a job's output line by line while it runs; Shrink keeps its last lines. A job started in another
   tab, or before a reload, is followed too.
 
 ## Status

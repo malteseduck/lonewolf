@@ -10,7 +10,7 @@ import { PROMPTS } from '../../tools/admin/prompts.js';
 
 const BODY = (() => {
   const html = fs.readFileSync(path.join(ROOT, 'tools', 'admin', 'index.html'), 'utf8');
-  return html.slice(html.indexOf('<body>') + 6, html.indexOf('</body>')).replace(/<script[\s\S]*?<\/script>/g, '');
+  return html.slice(html.indexOf('>', html.indexOf('<body')) + 1, html.indexOf('</body>')).replace(/<script[\s\S]*?<\/script>/g, '');
 })();
 
 const STAGE_IDS = ['fetch', 'import', 'phrasings', 'rules', 'reading', 'items', 'testplay', 'pictures', 'map', 'ills'];
@@ -52,10 +52,12 @@ const $$ = (s) => [...document.querySelectorAll(s)];
 const flush = () => new Promise((r) => setTimeout(r, 0));
 const until = (fn) => vi.waitFor(fn, { timeout: 2000, interval: 5 });
 const post = (key) => calls.filter((c) => c.key === key);
-const pickBook = async (code) => { $(`tr[data-code="${code}"] td.book`).click(); await until(() => expect($('#detail h2')).not.toBeNull()); };
+const pickBook = async (code) => { $(`tr[data-code="${code}"] td.book`).click(); await until(() => expect($('#bookhead h2')).not.toBeNull()); };
 const btn = (text) => $$('#detail button, #detail a.btn').find((b) => b.textContent === text);
 
 beforeEach(() => {
+  localStorage.clear();
+  history.replaceState(null, '', location.pathname);
   listeners = [];
   const add = window.addEventListener.bind(window);
   vi.spyOn(window, 'addEventListener').mockImplementation((t, fn, o) => { listeners.push([t, fn, o]); add(t, fn, o); });
@@ -125,17 +127,18 @@ describe('one book', () => {
     await setup(book(1));
     await pickBook('01book1');
     expect($('tr[data-code="01book1"]').classList.contains('sel')).toBe(true);
-    expect($('#detail h2').textContent).toBe('1. Stand-in 1');
+    expect($('#bookhead h2').textContent).toBe('1. Stand-in 1');
     expect($$('#detail .step:not(.sub)')).toHaveLength(10);
-    expect($('#detail .meta').textContent).toContain('350 sections, 40 fights, 25 kinds of enemy');
-    expect($('#detail .nextup').textContent).toBe('Every step done.');
+    expect($('#bookhead .meta').textContent).toContain('350 sections, 40 fights, 25 kinds of enemy');
+    expect($('#bookhead .nextup').textContent).toBe('Every step done');
   });
 
 
   it('says what is next and who does it', async () => {
     await setup(withStages(book(1), { phrasings: stage('todo') }));
     await pickBook('01book1');
-    expect($('#detail .nextup').textContent).toBe('Next: Phrasings (Claude Code: copy the prompt)');
+    expect($('#bookhead .nextup').textContent).toBe('Next: Phrasings →');
+    expect($('#bookhead .nextup').title).toBe('Claude Code: copy the prompt');
   });
 
 
@@ -199,7 +202,7 @@ describe('actions', () => {
     expect(post('POST admin/run/fights-up')[0].body).toEqual({});
   });
 
-  it('opens the illustration sheet for the book inline under the grid', async () => {
+  it('opens the illustration sheet for the book inside its step', async () => {
     await setup(book(1));
     const step = $('#detail .step[data-stage="ills"]');
     [...step.querySelectorAll('button')].find((b) => b.textContent === 'Open illustration sheet').click();
@@ -208,7 +211,7 @@ describe('actions', () => {
     expect($('#map-title').textContent).toBe('Illustrations: 1. Stand-in 1');
   });
 
-  it('opens the item sheet for a book with an item table, inline under the grid', async () => {
+  it('opens the item sheet for a book with an item table, inside its step', async () => {
     await setup(book(1));
     const button = () => [...$('#detail .step[data-stage="items"]').querySelectorAll('button')].find((b) => b.textContent === 'Open item sheet');
     button().click();
@@ -312,3 +315,98 @@ describe('the whole-project buttons', () => {
 
 });
 
+
+describe('finding your way: the book list, the steps as tabs, a sheet in its step', () => {
+  const state = () => [200, { files: {}, rounds: [] }];
+  const books = () => [
+    book(1),
+    withStages(book(2), { rules: stage('todo') }),
+    book(13, { series: 'grand master', known: false, folder: false, imp: null }),
+  ];
+  const go = (extra = {}) => boot({ books: books(), running: null }, { 'GET map/*': state, ...extra });
+  const key = (k) => document.body.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true }));
+  const shown = () => $$('#detail > .step.on').map((s) => s.dataset.stage);
+
+  it('lists the downloaded books under their series, ten seals each, and folds the rest', async () => {
+    await go();
+    expect($$('#rail-list .series').map((s) => s.textContent)).toEqual(['Kai']);
+    expect($$('#rail-list .bk').map((b) => b.dataset.code)).toEqual(['01book1', '02book2']);
+    expect($$('#rail-list .bk[data-code="02book2"] .dots i').map((i) => i.className)).toEqual(['done', 'done', 'done', 'todo', 'done', 'done', 'done', 'done', 'done', 'done']);
+    expect($('#rail-later').textContent).toContain('Not downloaded (1)');
+    $('#rail-later').click();
+    expect($$('#rail-list .bk').map((b) => b.dataset.code)).toEqual(['01book1', '02book2', '13book13']);
+  });
+
+  it('opens a book from the list at its next step, one step shown, its tab lit', async () => {
+    await go();
+    $('#rail-list .bk[data-code="02book2"]').click();
+    await until(() => expect($('#bookhead h2').textContent).toBe('2. Stand-in 2'));
+    expect(shown()).toEqual(['rules']);
+    expect($$('#strip .tab[data-step]')).toHaveLength(10);
+    expect($('#strip .tab.on').dataset.step).toBe('rules');
+    expect(location.hash).toBe('#/02book2/rules');
+  });
+
+  it('goes to another step by its tab, and shows them all on asking', async () => {
+    await go();
+    $('#rail-list .bk[data-code="01book1"]').click();
+    $('#strip .tab[data-step="items"]').click();
+    expect(shown()).toEqual(['items']);
+    $('#strip [data-all]').click();
+    expect($('#detail').classList.contains('all')).toBe(true);
+  });
+
+  it('opens a sheet inside the step it belongs to, keeps it while another step is looked at, and goes back to it', async () => {
+    await go();
+    $('#rail-list .bk[data-code="01book1"]').click();
+    $('#strip .tab[data-step="ills"]').click();
+    btn('Open illustration sheet').click();
+    expect($('#work').classList.contains('with-sheet')).toBe(true);
+    expect($('#mapwrap').classList.contains('off')).toBe(false);
+    $('#strip .tab[data-step="fetch"]').click();
+    expect($('#mapwrap').classList.contains('off')).toBe(true);
+    expect($('#mapframe').dataset.src).toBe('/tools/admin/ills.html?book=01book1&embed=1');
+    $('#back-sheet').click();
+    expect(shown()).toEqual(['ills']);
+    expect($('#mapwrap').classList.contains('off')).toBe(false);
+  });
+
+  it('opens the map editor in the map step, from the grid\'s cell too', async () => {
+    await go();
+    $('#ov-btn').click();
+    expect($('#work').dataset.view).toBe('overview');
+    $('tr[data-code="02book2"] td[data-stage="map"]').click();
+    expect($('#work').dataset.view).toBe('steps');
+    expect(shown()).toEqual(['map']);
+    btn('Open map editor').click();
+    expect($('#mapframe').dataset.src).toBe('/tools/map-editor.html?book=02book2&embed=1');
+    expect($('#work').classList.contains('with-sheet')).toBe(true);
+  });
+
+  it('gives a whole-project tool the work area, and Close goes back to the book', async () => {
+    await go();
+    $('[data-open="sources"]').click();
+    expect($('#work').dataset.view).toBe('tool');
+    expect(location.hash).toBe('#/tool/sources');
+    $('#map-close').click();
+    expect($('#work').dataset.view).toBe('steps');
+  });
+
+  it('opens at the book and step the address names', async () => {
+    history.replaceState(null, '', '#/02book2/items');
+    await go();
+    await until(() => expect($('#bookhead h2')?.textContent).toBe('2. Stand-in 2'));
+    expect(shown()).toEqual(['items']);
+  });
+
+  it('moves between books with the up and down keys, and steps with left and right', async () => {
+    await go();
+    $('#rail-list .bk[data-code="01book1"]').click();
+    $('#strip .tab[data-step="fetch"]').click();
+    key('ArrowRight');
+    expect(shown()).toEqual(['import']);
+    key('ArrowDown');
+    expect($('#bookhead h2').textContent).toBe('2. Stand-in 2');
+    expect(shown()).toEqual(['rules']);
+  });
+});

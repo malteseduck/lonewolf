@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-11
-- Amended: 2026-10-17
+- Amended: 2026-10-25
 
 ## Context
 
@@ -29,9 +29,21 @@ they span the books, so they are not a book step.
   console. The map editor's bars and side panels are parchment too, without the charred rim; its
   canvas and bright label colours stay as they were, so the labels read over any map.
 - **Sheets open inside the dashboard.** The picture sheet, the illustration sheet, the item sheet and
-  the map editor open only inside the dashboard, under its grid, on plain parchment (the charred rim
-  is the dashboard's). At their own addresses they show only a line pointing to the dashboard; there
-  are no links to open them on their own, and agents do not open them there.
+  the map editor open only inside the dashboard, on plain parchment (the charred rim is the
+  dashboard's). At their own addresses they show only a line pointing to the dashboard; there are no
+  links to open them on their own, and agents do not open them there.
+- **The dashboard's layout.** The window holds a bar, a rail of books and the work area, and only the
+  panes inside scroll. The bar has the whole-project tools as buttons (Check everything, Player icons,
+  Picture sources, Lone Wolf, Setup as a popover, Release). The rail lists the downloaded books under
+  their series, each with its steps as small seals; the books not downloaded are folded under it. The
+  picked book's steps are a row of tabs under the checklist's groups, one step shown at a time ("All
+  steps" shows the list). Each sheet opens inside the step it belongs to (the picture sheet in Fights,
+  the item sheet in Item table, the illustration sheet in Illustrations, the map editor in Map), the
+  step shrunk to a bar over it and the rail to the books' numbers; one that spans the books (the icon
+  sheet, picture sources, Lone Wolf's pictures) takes the work area alone. A sheet stays open while
+  another step or book is looked at, and the book's head offers the way back to it. The grid of every
+  book is "All books"; a cell opens that book at that step. Where the owner is stays in the address,
+  and the keys move between books and steps.
 - **The item sheet.** "Open item sheet" at step 5 (Item table) opens `tools/admin/items.html`: the
   book's own items, then the ones from elsewhere its sections name (the engine's, another book's),
   each with its icon as the inventory draws it and large, its fields, its `about`, the sections that
@@ -43,7 +55,7 @@ they span the books, so they are not a book step.
   credited under its author in `assets/icons/README.txt`, as `fetch_icons.py` does.
 - The change is written where the glyph is named: the item's entry in its book's table, or, for the
   engine's own items, `itemglyphs.js`, which every book shares.
-- **The icon sheet.** "Player icons" in the dashboard's tools row (not a book step: it is the same
+- **The icon sheet.** "Player icons" in the dashboard's bar (not a book step: it is the same
   in every book) opens `tools/admin/icons.html`: every icon the player draws other than a book's own
   items, grouped by where it shows (the disciplines by series, the title and panels, the gauges and
   inventory, the fights, an item's default by kind, the engine's items), each where it is drawn, as a
@@ -74,3 +86,6 @@ they span the books, so they are not a book step.
 - 2026-10-17: the item sheet added (was 0042), merged into this record.
 - 2026-10-17: the icon sheet added for the player's other icons, named in `glyphs.js`; the owner asked
   for them to be reviewed and changed as the items' are.
+- 2026-10-25: the dashboard laid out as a rail of books and one book's steps as tabs, each sheet inside its
+  step, instead of the grid with the book and the sheet below it; the owner found too much scrolling
+  between books and steps at the width they work at.

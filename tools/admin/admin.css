@@ -31,7 +31,7 @@ body::before { inset: -40px; box-shadow: inset 0 0 0 50px #140a04, inset 0 0 22p
 body::after { inset: 0; box-shadow: inset 0 0 160px rgba(84, 50, 18, .55), inset 0 0 50px rgba(60, 32, 10, .45); }
 
 /* a panel inked on the page: a ruled box, the paper a shade lighter inside */
-.board, .detail, .tool, .proto, .mapwrap {
+.proto {
   background: rgba(255, 248, 226, .22); border: 1px solid var(--line);
   box-shadow: inset 0 0 0 3px rgba(255, 248, 226, .18), inset 0 0 24px rgba(120, 84, 40, .14);
 }
@@ -65,20 +65,6 @@ button.danger:hover:not(:disabled) { border-color: var(--bad); color: var(--bad)
 .proto { margin: 0 24px 12px; padding: 8px 12px; border: 1px dashed var(--accent); border-radius: 4px; color: var(--dim); }
 .proto strong { color: var(--bronze-hi); font-weight: 600; }
 
-.tools-row { display: flex; gap: 10px; margin: 0 24px 14px; flex-wrap: wrap; align-items: stretch; }
-/* the four share one row; they wrap only below ~1100px */
-.tool { flex: 1 1 240px; display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 3px; }
-.tool > div { flex: 1; min-width: 0; }
-.tool b { display: block; font-weight: 600; }
-.tool small { display: block; color: var(--dim); }
-/* Setup (tools/setup.py): one line while everything is there, a row per part otherwise */
-.setup { margin: 0 24px 14px; padding: 8px 12px; border-radius: 3px; background: rgba(255, 248, 226, .22); border: 1px solid var(--line); }
-.setup > header { display: flex; gap: 10px; align-items: center; }
-.setup > header b { font-weight: 600; }
-.setup > header .say { flex: 1; color: var(--dim); }
-.setup .part { display: grid; grid-template-columns: 20px 18px 150px 1fr auto; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid var(--line); }
-.setup .part:first-of-type { margin-top: 8px; }
-.setup .part small { display: block; color: var(--dim); }
 .legend { margin-left: auto; display: flex; gap: 14px; align-items: center; color: var(--dim); font-size: 12px; }
 .legend > span { display: inline-flex; gap: 5px; align-items: center; }
 
@@ -92,12 +78,6 @@ button.danger:hover:not(:disabled) { border-color: var(--bad); color: var(--bad)
 .kind[data-kind="agent"] { color: var(--agent);
   --m: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21.5 2.2c-5.2.6-10.4 3.3-13.4 8.2-1 1.7-1.8 3.6-2.2 5.6l-2.6 5.4 1.1.5 2.4-5c1.6.3 3.4-.1 4.9-.9l-1.8-.4 3.3-1.3c1.5-.9 2.7-2.1 3.6-3.5l-2.4.1 3.5-1.6c1.5-2.4 2.6-5 3.6-7.1zM8.6 14.2c.9-2.4 2.6-4.6 4.8-6.3-1.9 2.1-3.3 4.3-4.1 6.6z'/%3E%3C/svg%3E"); }
 
-.layout { display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 16px; padding: 0 24px 24px; align-items: start; }
-@media (max-width: 1250px) { .layout { grid-template-columns: 1fr; } }
-
-/* clip, not auto: a scrolling box would hold the sticky header to itself instead of the window */
-.board { border-radius: 3px; overflow-x: clip; }
-@media (max-width: 960px) { .board { overflow-x: auto; } }
 .grid { border-collapse: collapse; width: 100%; min-width: 900px; }
 /* the header stays in view while the table scrolls past, on the page's own parchment (fixed, so it lines up).
    A collapsed border does not travel with a sticky cell, so its lines are drawn as inset shadows, and, while it is
@@ -138,11 +118,6 @@ button.danger:hover:not(:disabled) { border-color: var(--bad); color: var(--bad)
 .st.bad::before { content: '\00d7'; }
 .loading { padding: 16px; color: var(--dim); }
 
-.detail { border-radius: 3px; padding: 18px 20px; position: sticky; top: 30px; max-height: calc(100vh - 60px); overflow: auto; }
-.detail .hint { color: var(--dim); }
-.detail h2 { margin: 0; font: 22px/1.15 var(--title); color: var(--bronze-hi); }
-.detail .meta { color: var(--dim); margin: 4px 0 10px; font-size: 12px; }
-.detail .nextup { padding: 8px 10px; border-left: 3px solid var(--blood); background: rgba(120, 88, 48, .1); margin-bottom: 12px; }
 .detail h3 { font: 13px var(--title); color: var(--rubric); letter-spacing: .05em; margin: 16px 0 6px; border-bottom: 1px solid var(--line-lo); padding-bottom: 3px; }
 .step { display: grid; grid-template-columns: 22px 18px 1fr; gap: 4px 8px; align-items: start; padding: 7px 0; border-bottom: 1px dotted var(--line-lo); }
 .step .kind { margin-top: 1px; }
@@ -154,9 +129,6 @@ button.danger:hover:not(:disabled) { border-color: var(--bad); color: var(--bad)
 .step .acts a.btn:hover { border-color: var(--bronze); color: var(--btn-hi); }
 .step .acts .proposed { font-size: 11px; color: var(--faint); align-self: center; }
 .step.sub { padding-left: 14px; }
-.step { scroll-margin: 12px; }
-.step.flash { animation: flash 1.6s ease-out; }
-@keyframes flash { from { background: rgba(160, 138, 88, .28); box-shadow: inset 3px 0 0 var(--bronze); } to { background: transparent; box-shadow: inset 3px 0 0 transparent; } }
 
 /* the job log stays a dark console, over the charred rim */
 .log { --line: #4a3a26; --line-lo: #31261a; --dim: #9a8c70; --bronze-hi: #e2d09a; --warn: #c9923f;
@@ -178,15 +150,184 @@ dialog ul { padding-left: 18px; color: var(--dim); }
 
 .toast { position: fixed; top: 14px; left: 50%; transform: translateX(-50%); padding: 9px 18px; border-radius: 3px; z-index: 10; --burn: 22px; }
 
-/* the map editor, inline under the grid */
-.mapwrap { margin: 0 24px 24px; border-radius: 3px; overflow: hidden; scroll-margin-top: 8px; padding: 0 10px 10px; }
-.mapwrap header { display: flex; gap: 14px; align-items: center; padding: 7px 12px; border-bottom: 1px solid var(--line); }
-.mapwrap header b { font: 16px var(--title); color: var(--bronze-hi); }
-.mapwrap header a { font-size: 12px; }
-.mapwrap header button { margin-left: auto; }
-.mapwrap iframe { display: block; width: 100%; height: calc(100vh - 70px); min-height: 560px; border: 1px solid var(--line); background: var(--page); }
-
 dialog table.dates { border-collapse: collapse; margin: 8px 0; }
 dialog table.dates th { text-align: left; font-weight: 400; color: var(--dim); padding: 2px 14px 2px 0; }
 dialog .stale { color: var(--warn); }
 dialog .hint { color: var(--dim); font-size: 12px; }
+
+/* ---------- the dashboard (index.html): a bar, a rail of books and the work area; only the panes inside
+   scroll. One book's steps as tabs, one step shown, its sheet under it (ADR 0021). ---------- */
+body.dash { height: 100vh; overflow: hidden; display: flex; flex-direction: column; padding: 16px 22px 18px; }
+
+/* ---------- the bar ---------- */
+.dash .bar { display: flex; align-items: center; gap: 10px; padding: 8px 14px 10px; flex: none; }
+.dash .bar h1 { margin: 0 8px 0 0; font: 22px/1 var(--title); color: var(--bronze-hi); white-space: nowrap; }
+.dash .bar .tools { display: flex; gap: 5px; flex-wrap: wrap; min-width: 0; }
+.dash .bar .tools button { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; padding: 3px 9px; }
+.dash .bar .tools .kind { width: 13px; height: 13px; }
+.dash .bar .tools .st { width: 13px; height: 13px; font-size: 9px; }
+.dash .bar .tools .st.todo { width: 11px; height: 11px; }
+.dash .bar .legend { margin-left: auto; gap: 9px; font-size: 11px; }
+.dash .bar .legend .kind { width: 12px; height: 12px; }
+.dash .bar #keys-btn { padding: 3px 8px; }
+.dash .bar .player { padding: 3px 10px; border: 1px solid var(--btn-line); border-radius: 4px; text-decoration: none; background: var(--btn); }
+@media (max-width: 1180px) { .dash .bar .legend { display: none; } }
+
+/* the popovers under the bar */
+.dash .setup-pop, .dash .keys { position: fixed; z-index: 8; --burn: 30px; padding: 12px 16px; border-radius: 3px; }
+.dash .setup-pop { width: min(760px, calc(100vw - 80px)); }
+.dash .setup-pop .setup { margin: 0; background: none; border: 0; padding: 0; }
+/* Setup (tools/setup.py): a row per part */
+.setup > header { display: flex; gap: 10px; align-items: center; }
+.setup > header b { font-weight: 600; }
+.setup > header .say { flex: 1; color: var(--dim); }
+.setup .part { display: grid; grid-template-columns: 20px 18px 150px 1fr auto; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid var(--line); }
+.setup .part:first-of-type { margin-top: 8px; }
+.setup .part small { display: block; color: var(--dim); }
+.dash .keys { width: 300px; font-size: 13px; }
+.dash .keys dl { display: grid; grid-template-columns: 60px 1fr; gap: 3px 10px; margin: 8px 0; }
+.dash .keys dt { font: 12px Consolas, monospace; color: var(--bronze-hi); }
+.dash .keys dd { margin: 0; }
+.dash .keys p { margin: 6px 0 0; color: var(--dim); font-size: 12px; }
+
+/* ---------- rail | work ---------- */
+.dash .shell { flex: 1; min-height: 0; display: grid; grid-template-columns: 238px minmax(0, 1fr); gap: 12px; padding: 0 10px 6px; }
+.dash .shell.narrow { grid-template-columns: 52px minmax(0, 1fr); }
+.dash .shell.max { grid-template-columns: minmax(0, 1fr); }
+.dash .shell.max .rail { display: none; }
+body.dash:has(.shell.max) .bar { display: none; }
+
+.dash .rail, .dash .work { background: rgba(255, 248, 226, .22); border: 1px solid var(--line); border-radius: 3px;
+  box-shadow: inset 0 0 0 3px rgba(255, 248, 226, .18), inset 0 0 24px rgba(120, 84, 40, .14); min-height: 0; }
+
+/* the rail: a book a line, its steps as ten small seals */
+.dash .rail { display: flex; flex-direction: column; overflow: hidden; }
+.dash .rail-head { display: flex; gap: 5px; padding: 7px; border-bottom: 1px solid var(--line-lo); }
+.dash .rail-head #ov-btn { flex: 1; }
+.dash .rail-head button.on { border-color: var(--blood); color: var(--blood); background: var(--picked); }
+.dash .rail-list { overflow-y: auto; flex: 1; padding: 2px 0 8px; scrollbar-width: thin; }
+.dash .rail .series { font: 11px var(--title); color: var(--rubric); letter-spacing: .06em; padding: 9px 10px 2px; }
+.dash .rail .bk { display: grid; grid-template-columns: 26px 1fr; grid-template-rows: auto auto; gap: 1px 6px; width: 100%; text-align: left;
+  border: 0; border-radius: 0; background: none; padding: 4px 10px 5px 8px; white-space: normal; }
+.dash .rail .bk:hover { background: var(--hover); color: inherit; }
+.dash .rail .bk.sel { background: var(--picked); box-shadow: inset 3px 0 0 var(--blood); }
+.dash .rail .bk.later { opacity: .55; }
+.dash .rail .bk .n { grid-row: span 2; font: 15px/1.2 var(--title); color: var(--bronze-hi); text-align: right; }
+.dash .rail .bk .t { font-size: 13px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dash .rail .bk .dots { display: flex; gap: 3px; align-items: center; }
+/* the dots split as the grid's groups: Getting the book | Items | Play | Pictures */
+.dash .rail .bk .dots i:nth-child(5), .dash .rail .bk .dots i:nth-child(7), .dash .rail .bk .dots i:nth-child(8) { margin-left: 5px; }
+.dash .dots i { width: 8px; height: 8px; border-radius: 50%; display: block; }
+.dash .dots i.done { background: radial-gradient(circle at 35% 30%, #c9c08a, #6f6a3e); }
+.dash .dots i.warn { background: radial-gradient(circle at 35% 30%, #e0ac5a, #7d5520); }
+.dash .dots i.bad { background: radial-gradient(circle at 35% 30%, #c96a58, #6d2a1e); }
+.dash .dots i.todo { border: 1.3px solid var(--todo); }
+.dash .dots i.na { width: 6px; height: 1.5px; border-radius: 0; background: var(--faint); margin: 0 1px; }
+.dash .rail .fold { width: calc(100% - 16px); margin: 10px 8px 2px; font-size: 12px; color: var(--dim); text-align: left; }
+/* narrow: the numbers only, ringed when every step is done */
+.dash .shell.narrow .rail .series, .dash .shell.narrow .rail .bk .t, .dash .shell.narrow .rail .bk .dots, .dash .shell.narrow #ov-btn { display: none; }
+.dash .shell.narrow .rail-head { justify-content: center; }
+.dash .shell.narrow .rail .bk { grid-template-columns: 1fr; padding: 4px 0; }
+.dash .shell.narrow .rail .bk .n { text-align: center; grid-row: auto; }
+.dash .shell.narrow .rail .fold { width: auto; margin: 8px 4px; padding: 4px; font-size: 0; }
+.dash .shell.narrow .rail .fold::first-letter { font-size: 12px; }
+
+/* ---------- the work area ---------- */
+.dash .work { display: flex; flex-direction: column; overflow: hidden; }
+.dash .bookhead, .dash .toolhead { display: flex; align-items: baseline; gap: 12px; padding: 10px 16px 4px; flex: none; flex-wrap: wrap; }
+.dash .bookhead:empty, .dash .toolhead:empty { display: none; }
+.dash .bookhead h2, .dash .toolhead h2 { margin: 0; font: 21px/1.15 var(--title); color: var(--bronze-hi); }
+.dash .bookhead .meta, .dash .toolhead .meta { color: var(--dim); font-size: 12px; }
+.dash .bookhead { flex-wrap: nowrap; }
+.dash .bookhead h2 { white-space: nowrap; }
+.dash .bookhead .meta { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dash .bookhead .nextup, .dash .bookhead .away { flex: none; }
+.dash .bookhead .nextup { margin-left: auto; border-left: 3px solid var(--blood); border-radius: 0 4px 4px 0; background: rgba(120, 88, 48, .1); }
+.dash .bookhead .nextup.done { padding: 4px 10px; }
+.dash .bookhead .away { color: var(--blood); border-style: dashed; font-size: 12px; }
+
+/* the steps as tabs under their groups */
+.dash .strip { display: flex; gap: 6px; padding: 4px 12px 0; border-bottom: 1px solid var(--line); flex: none; overflow-x: auto; scrollbar-width: none; }
+.dash .strip:empty { display: none; }
+.dash .strip .grp { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; }
+.dash .strip .grp:nth-child(1) { flex-grow: 4; } .dash .strip .grp:nth-child(2), .dash .strip .grp:nth-child(4) { flex-grow: 2; }
+.dash .strip .grp.all { flex: none; }
+.dash .strip .tabs .tab { flex: 1 1 0; min-width: 0; }
+.dash .strip .tab .lb { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.dash .strip .gl { font: 11px var(--title); color: var(--rubric); letter-spacing: .05em; padding: 0 4px 2px; border-bottom: 1px solid var(--line-lo); white-space: nowrap; }
+.dash .strip .tabs { display: flex; }
+.dash .strip .tab { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 5px 3px 6px;
+  border: 0; border-radius: 3px 3px 0 0; background: none; font-size: 12px; color: var(--dim); }
+.dash .strip .tab:hover { background: var(--hover); }
+.dash .strip .tab.on { color: var(--blood); background: var(--picked); box-shadow: inset 0 -3px var(--blood); }
+.dash .strip .tab .tt { display: flex; align-items: center; gap: 3px; height: 18px; font-size: 14px; }
+.dash .strip .tab .tt .st { width: 16px; height: 16px; font-size: 10px; }
+.dash .strip .tab .tt .st.todo { width: 13px; height: 13px; }
+.dash .strip .tab .tt .kind { width: 12px; height: 12px; }
+.dash .strip .tab .tt small { font-size: 10px; color: var(--faint); }
+.dash .strip .tab .open { position: absolute; top: 2px; right: 3px; font-size: 8px; color: var(--blood); }
+
+/* the stage: one pane at a time */
+.dash .mapwrap iframe { display: block; width: 100%; border: 1px solid var(--line); background: var(--page); }
+.dash #overview .grid thead th { background-color: var(--page); }
+.dash .stage { flex: 1; min-height: 0; display: flex; flex-direction: column; position: relative; }
+.dash .work:not([data-view="overview"]) #overview,
+.dash .work[data-view="overview"] .bookhead, .dash .work[data-view="overview"] .strip, .dash .work[data-view="overview"] #detail,
+.dash .work[data-view="tool"] .bookhead, .dash .work[data-view="tool"] .strip, .dash .work[data-view="tool"] #detail,
+.dash .work:not([data-view="tool"]) .toolhead,
+.dash #mapwrap.off { display: none !important; }
+
+/* the steps pane: admin.js's detail, its own head hidden (the bookhead has it), one step shown */
+.dash #detail { position: static; max-height: none; flex: 1; min-height: 0; overflow: auto; border: 0; box-shadow: none; background: none; border-radius: 0; padding: 14px 20px; }
+.dash #detail > h2, .dash #detail > .meta, .dash #detail > .nextup, .dash #detail > h3:first-of-type { display: none; }
+.dash #detail:not(.all) > .step:not(.on) { display: none; }
+.dash #detail:not(.all):not([data-step="map"]) > h3, .dash #detail:not(.all):not([data-step="map"]) > #mapsteps { display: none; }
+.dash #detail:not(.all) > .step.on { grid-template-columns: 30px 22px 1fr; border-bottom: 0; padding: 4px 0 10px; font-size: 15px; }
+.dash #detail:not(.all) > .step.on .st { width: 24px; height: 24px; font-size: 14px; }
+.dash #detail:not(.all) > .step.on .st.todo { width: 20px; height: 20px; }
+.dash #detail:not(.all) > .step.on .kind { width: 20px; height: 20px; }
+.dash #detail:not(.all) > .step.on .what b { font: 18px var(--title); color: var(--bronze-hi); }
+.dash #detail:not(.all) > .step.on .what .ev { font-size: 13.5px; color: var(--fg); margin-top: 4px; }
+.dash #detail:not(.all) > .step.on .acts { margin-top: 10px; gap: 8px; }
+.dash #detail:not(.all) > .step.on .acts button { padding: 5px 13px; }
+/* the map's steps summarised, a line each, its button at the end */
+.dash #detail #mapsteps .step { grid-template-columns: 22px 18px 1fr auto; align-items: center; padding: 4px 0 4px 6px; }
+.dash #detail #mapsteps .step .acts { grid-column: 4; margin: 0; }
+.dash #detail #mapsteps .step .acts button { padding: 2px 10px; font-size: 12px; }
+.dash #detail #mapsteps .step .what { display: flex; gap: 10px; align-items: baseline; min-width: 0; }
+.dash #detail #mapsteps .step .what .ev { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dash #detail.all > .step { padding: 6px 0; }
+
+/* a sheet in its step: the step's card shrinks to a bar over it, the sheet takes the rest */
+.dash .work.with-sheet #detail { flex: none; overflow: visible; padding: 6px 16px; border-bottom: 1px solid var(--line-lo); }
+.dash .work.with-sheet #detail > .step.on { grid-template-columns: 22px 18px minmax(0, 1fr) auto; align-items: center; padding: 0; font-size: 13px; }
+.dash .work.with-sheet #detail > .step.on .acts { flex-wrap: nowrap; }
+.dash .work.with-sheet #detail > .step.on .st { width: 18px; height: 18px; font-size: 11px; }
+.dash .work.with-sheet #detail > .step.on .kind { width: 16px; height: 16px; }
+.dash .work.with-sheet #detail > .step.on .what { display: flex; gap: 10px; align-items: baseline; min-width: 0; }
+.dash .work.with-sheet #detail > .step.on .what b { font: 15px var(--title); white-space: nowrap; }
+.dash .work.with-sheet #detail > .step.on .what .ev { font-size: 12px; color: var(--dim); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 380px; }
+.dash .work.with-sheet #detail > .step.on .what .src { display: none; }
+.dash .work.with-sheet #detail > .step.on .acts { grid-column: 4; margin: 0; justify-content: flex-end; gap: 5px; }
+.dash .work.with-sheet #detail > .step.on .acts button { padding: 2px 9px; font-size: 12px; }
+.dash .work.with-sheet #detail > h3, .dash .work.with-sheet #detail > #mapsteps { display: none; }
+
+.dash #mapwrap { margin: 0; flex: 1; min-height: 0; display: flex; flex-direction: column; border: 0; box-shadow: none; background: none; border-radius: 0; padding: 0 6px 6px; }
+.dash #mapwrap header { padding: 3px 8px; border-bottom: 0; gap: 8px; }
+.dash #mapwrap header b { font-size: 13px; color: var(--dim); font-family: var(--body); font-weight: 600; }
+.dash #mapwrap header #sheet-max { margin-left: auto; }
+.dash #mapwrap header #map-close { margin-left: 0; }
+.dash #mapwrap header button { padding: 2px 9px; font-size: 12px; }
+.dash #mapwrap iframe { flex: 1; height: auto; min-height: 0; }
+.dash .work[data-view="tool"] #mapwrap header b { display: none; }
+
+/* the grid of every book, in the work area */
+.dash #overview { flex: 1; min-height: 0; overflow: auto; border: 0; box-shadow: none; background: none; border-radius: 0; }
+.dash #overview .grid { min-width: 860px; }
+.dash #overview .grid thead { top: 0; }
+.dash #overview .grid thead tr.groups th::before { display: none; }
+.dash #overview .grid thead th { background-attachment: scroll, scroll; }
+
+/* the log docks at the foot, inside the rim; shrunk, its last line */
+.dash .log { left: 46px; right: 46px; bottom: 26px; max-height: 34vh; }
+.dash .log.min pre { max-height: 2.4em; scrollbar-width: none; }

@@ -23,8 +23,8 @@ letter; see "How Book 1 got here" below.
 
 ## The chain, per book
 
-The map editor, opened only inside the import dashboard (`http://localhost:8766/tools/admin/`, the Map cell or a map step's Open) (served by `python tools/serve.py`, on this PC
-only; under the dashboard's grid, which picks the book and follows the files the editor changes: `docs/reference/dashboard.md`), walks through every step below in one page: a rail of the ten stages (upscale, draft, labels,
+The map editor, opened only inside the import dashboard (`http://localhost:8766/tools/admin/`, a book's Map step: "Open map editor" or a map step's Open) (served by `python tools/serve.py`, on this PC
+only; inside the dashboard's Map step, which picks the book and follows the files the editor changes: `docs/reference/dashboard.md`), walks through every step below in one page: a rail of the ten stages (upscale, draft, labels,
 measure, lettering, erase and letter, Gemini, check, finish, import), each marked done, not done or
 out of date from the files' times. It edits the labels, runs the scripts, copies the prompt and the
 lettered picture for Gemini, takes the round's image back (Ctrl+V, drop or file picker), and shows a

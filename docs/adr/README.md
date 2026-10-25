@@ -75,7 +75,7 @@ Changes list names what it took in.
 
 | # | Decision | Amended |
 |---|---|---|
-| [0021](0021-dashboard-pages.md) | The dashboard is the map's burnt parchment; its sheets open only inside it; the item and icon sheets pick icons | 2026-10-17 |
+| [0021](0021-dashboard-pages.md) | The dashboard is the map's burnt parchment; a rail of books, a book's steps as tabs, each sheet inside its step; the item and icon sheets pick icons | 2026-10-25 |
 
 ### Rulings
 

@@ -286,7 +286,7 @@ stand-in that suits that book), and put book entries first. The sheet labels a b
 add is written some other way (`ice barbarian$`, `kalkoth`).
 
 **The owner's own picture** stands whatever the order below (ADR 0008). The owner puts it in on the picture sheet
-   (inline in the dashboard at step 7, "Open picture sheet"): drop a picture file on
+   (in the dashboard's step 7, "Open picture sheet"): drop a picture file on
    the enemy's card, paste it, or Choose; the page shrinks it to 2000 px on its long side as WebP and
    `POST /api/admin/plate` saves it as git-ignored `art/plates/<code>/<name>.webp` (or, ticked "Made with AI
    from a text prompt", moves it to the committed `assets/plates/<code>/`: `art_sources.make_ai`, ADR 0042)
