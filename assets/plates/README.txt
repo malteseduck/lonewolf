@@ -228,3 +228,23 @@ knight-shield-pencil.webp
 19wb/bangrol.webp
   Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
   no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-25.
+
+05sots/vestibule-guard.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-25.
+
+05sots/vestibule-guard-2.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-25.
+
+05sots/armoury-guard.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-25.
+
+05sots/darklord-haakon.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-25.
+
+05sots/darklord-haakon.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-25.
