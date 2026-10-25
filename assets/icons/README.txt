@@ -20,6 +20,7 @@ its white fill were removed, so the page can use the shape as a mask.
     and for Book 13 (fetched 2026-10-17): jigsaw-box
     and for Book 14 (fetched 2026-10-17): claw-hammer, evil-minion, imp
     and for Book 16 (fetched 2026-10-25): rune-stone, spyglass
+    and for Book 15 (fetched 2026-10-25): metal-bar, square-bottle
     and picked on the item sheet (tools/admin/items.html): moebius-triangle, circle-cage, elderberry, crystal-shine, jeweled-chalice, crystal-cluster, shiny-purse, battle-gear, spinning-sword
   by Delapouite (https://delapouite.com):
     healing, health-potion, herbs-bundle, invisible, meal, quiver, two-coins,
@@ -30,6 +31,7 @@ its white fill were removed, so the page can use the shape as a mask.
     rolled-cloth, scabbard, towel, war-pick, water-flask, whistle, wine-bottle,
     and for Book 13 (fetched 2026-10-17): covered-jar
     and for Book 16 (fetched 2026-10-25): animal-hide, cape, fur-shirt, hexagonal-nut, token, winter-gloves
+    and for Book 15 (fetched 2026-10-25): emerald-necklace, yarn
     and picked on the item sheet (tools/admin/items.html): mighty-horn, power-ring, rusty-sword, holy-water, straight-pipe, dart, flanged-mace, black-belt, bow-string, globe-ring, crescent-staff, switch-weapon, fish-monster, boulder-dash, sword-brandish
   by Skoll:
     footsteps, gladius

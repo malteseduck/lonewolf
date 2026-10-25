@@ -52,6 +52,26 @@ describe('arriving: ENDURANCE', () => {
     expect(g.hero.ep).toBe(25);
     expect(g.s.events).toContain('You regain 10 ENDURANCE.');
   });
+  it('brings ENDURANCE down to a cap (epCap) only when it is above it', () => {
+    const g = play({ 2: { epCap: 15 } });
+    g.go('2');
+    expect(g.hero.ep).toBe(15);
+    expect(g.s.events).toContain('Your ENDURANCE is brought down to 15.');
+    const h = play({ 2: { epCap: 15 } }, mkHero({ ep: 9 }));
+    h.go('2');
+    expect(h.hero.ep).toBe(9);
+    expect(h.s.events).toEqual([]);
+  });
+});
+
+describe('a Condition on the weapon in hand (wield)', () => {
+  it('"special" is met by a weapon-like Special Item, which also counts as its kinds', () => {
+    LW.ITEMS.oldBlade = { name: 'Old Blade', kind: 'special', weapon: ['dagger'] };
+    const h = mkHero({ weapons: ['axe'], special: ['oldBlade'] });
+    expect(LW.meets(h, { wield: ['special'] }, { weapon: 'oldBlade' })).toBe(true);
+    expect(LW.meets(h, { wield: ['dagger'] }, { weapon: 'oldBlade' })).toBe(true);
+    expect(LW.meets(h, { wield: ['special'] }, { weapon: 'axe' })).toBe(false);
+  });
 });
 
 describe('arriving: what the section gives and takes (once only)', () => {

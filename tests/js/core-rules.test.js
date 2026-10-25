@@ -430,6 +430,14 @@ describe('the item tables\' last cases', () => {
     g.pickLoss('rope2');
     expect(g.hero.backpack).toEqual(['torch', 'gem2']);
   });
+  it('the one he swallowed, of several, with dose: only one dose of the one chosen goes', () => {
+    LW.addItems({ pills: { name: 'Pills', kind: 'backpack', doses: 2 } });
+    const sec = { take: [{ item: ['pills', 'potion'], choose: true, dose: true }] };
+    const hero = mkHero(); LW.putItem(hero, 'pills'); LW.putItem(hero, 'potion');
+    const g = at2(sec, hero);
+    g.pickLoss('pills');
+    expect([g.hero.backpack, g.hero.doses.pills]).toEqual([['pills', 'potion'], 1]);
+  });
   it('a draw against the stake: 0 counts as 10, and the stake must be set first', () => {
     const sec = { stake: { min: 1, spend: true }, rnt: 'auto', zeroTen: true, against: 'stake',
       choices: [{ text: 'no more', to: '3', range: [-99, 0] }, { text: 'more', to: '4', range: [1, 99] }] };

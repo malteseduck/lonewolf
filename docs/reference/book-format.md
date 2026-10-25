@@ -55,7 +55,7 @@ shows the book's printed map. Only the prototypes travel on a map.
 | `when` | `[{if, unless, ate, came, ep, epMax, cs, healLost, take, back, mark, unmark, settle}]` | item table: effects on arrival that hold only under a condition: `if` / `unless` are Conditions; `ate: false` holds unless he ate a Meal here or in the section before; `came` only when he came from one of these sections (an effect the text writes on a choice). `ep` is lost or gained once (`'full'` restores it); `epMax` changes his maximum for good. `healLost`, `epMax` may also stand at the top of a section |
 | `rnt` | `null` | item table: the section draws no Random Number after all (the importer read one into a description) |
 | `take` entries, more | `{pick: list \| [lists], n, else, label}` | he chooses `n` to lose (the page shows a medallion each, and the way on waits; `label` heads them in place of "Choose what you lose"); lists are `backpack` (Meals too), `packItems` (no Meals), `special`, `weapon` (weapon-like Special Items too), `weapons`, `gold` (one Crown each). He has no more than `n`: all go. None: `else` (a `take` list) is lost instead. `n` by list (`{special: 1, backpack: 3}`): so many from one list or the other, his first pick deciding which; only the lists that can make up their number are offered (Book 9's stake at 115) |
-| | `{item: [ids], choose: true, label}` | the one of these he used: the only one held goes; of several, he chooses (Book 8's remedy, Book 14's light) |
+| | `{item: [ids], choose: true, label}` | the one of these he used: the only one held goes; of several, he chooses (Book 8's remedy, Book 14's light); with `dose: true`, one dose of it (Book 15's 212) |
 | | `{halve: list}` | the list halved on a coin: the last dropped when they are odd, then the first half (heads) or the second (tails) lost (Book 9's 91) |
 | | `{at: [positions], from, last, min, else}` | by place, 1 first, in the list as the Action Chart shows it (`from` as above, default `backpack`, Meals first). `last`: the last one when the list is shorter. `min`: with fewer than that, `else` instead |
 | | `{item, dose: true}` | one dose of an item that has several, not the whole of it |
@@ -78,6 +78,7 @@ shows the book's printed map. Only the prototypes travel on a map.
 | `against` | `'draw'` \| `'stake'` | the number is measured against a second one the page draws, or against the section's `stake` (which must be set before the draw): that is taken off the total, so the `ranges` are for the difference (Book 5's 360: second lower `[1, 99]`, higher `[-99, -1]`, the same `[0, 0]`) |
 | `ranges` | `{to: [lo, hi]}` | as `bowShot`'s, for a draw that is no shot: the ranges of the total for each choice, when `rntMod` changes the number in ways the importer could not read |
 | `ep` | number \| `'full'` | authored, or item table: Endurance change on arrival; `'full'` restores it to the maximum |
+| `epCap` | n | item table: ENDURANCE brought down to n on arrival, if it is above (Book 15's 156) |
 | `lose` | `{meal: 1}` | authored: something lost on arrival |
 
 `give`, `take`, `cs`, `todo` and gains through `give` happen once per section in a playthrough
@@ -185,7 +186,7 @@ The importer writes what a rule depends on as `{disc, every, rank, circle, ep}`,
 disciplines of the book's series, `circle` a list of Lore-circle names (all needed), `ep` `[lo, hi]`
 his Endurance at the moment, `item` an item id or a list (any held, via `LW.hasItem`; authored in item tables only). Item tables also use:
 `items` (all of these held), `weapon` (a weapon of these kinds held, weapon-like Special Items by their kinds; `true`: any),
-`wield` (the weapon he fights with is of these kinds; `true`: he is armed), `mastery` (Weaponskill or Weaponmastery in that
+`wield` (the weapon he fights with is of these kinds, `'special'` among them for a weapon-like Special Item; `true`: he is armed), `mastery` (Weaponskill or Weaponmastery in that
 weapon), `skilled` (his skill counts for the weapon in hand), `meals` / `arrows` / `packItems` / `gold` (at least so many),
 `mark` (a lasting condition or flag, `hero.marks`, carried from book to book), `any` (a list: one of them), `not` (a
 Condition he must not meet), `label` (its name where the page names it, in place of the one made from its parts). `LW.meets(hero, cond)` tests one, `LW.condName(cond)` names it. Used by `need` on choices

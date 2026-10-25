@@ -3,8 +3,8 @@
 Two jobs done by hand for each imported book, after importing it and writing its reading copy
 (`tools/reading_copy.py`): the **item table**, so the engine gives, offers, takes and gates what the
 text says (spec 4.5a), and the **fight pictures**, so every fight has a plate (spec 6.5). Book 1
-has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-14 and 16 have
-their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 and 14 2026-10-17, 16 2026-10-25). The field reference is in `book-format.md` ("Section", "Item tables").
+has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-16 have
+their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 and 14 2026-10-17, 15 and 16 2026-10-25). The field reference is in `book-format.md` ("Section", "Item tables").
 
 Never put the book's text anywhere but `data/projectaon/`: tools print section numbers and
 counts, the table holds only the book's short item names, and everything else is in our words.
@@ -234,6 +234,13 @@ Arrow. 16 sections it did not touch needed an entry: the Deathstaff taken (57, 1
 weapon held, and footnote 10's turn (93). Three importer misses came back here and are fixed in the importer: evasion
 "after six rounds" read as 0 (39, 52, 268, 304), "immune to Mindblast and Psi-surge, but he is vulnerable to Kai-surge" read
 as immune to all (Cadak), and forced Meals written "eat 1 Meal" or "eat 2 meals" (222, 112).
+Book 15 (from the draft, 2026-10-25): no errors; 11 items, 86 sections; 161 left out. Of the draft's 98 sections, 73 with a todo,
+about 20 needed nothing (Meals the importer reads, Arrows already spent, a coin tossed and put back at 56, which the draft read as
+found), and its 9 bow gates lacked the Arrow. Sections it did not touch needed an entry: fights (rounds-only penalties, a first round
+without loss, won within or stopped after so many rounds, psychic bonuses doubled, Kai-surge adding only 1: 32, 44, 121, 198, 232, 244,
+254, 297, 305, 335), Endurance in prose (145, 190, 312), the Jadin Amulet's bonus on a later draw (81), and two draws the importer left
+free (193's Rope bonus, 238's by the weapon in hand). Three engine gaps were filled: `epCap` (156), `wield: ['special']` (238) and a
+chosen thing used by one dose (212). No importer miss came back.
 `--json` also writes `data/projectaon/<book>/check-items.json`, which `tools/book_status.py` reads
 for checklist step 5 (the dashboard's "Check items" runs it so).
 

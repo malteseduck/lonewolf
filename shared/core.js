@@ -283,7 +283,8 @@
     if (c.items && !c.items.every((i) => LW.hasItem(hero, i))) return false;
     if (c.ep && (hero.ep < c.ep[0] || hero.ep > c.ep[1])) return false;
     if (c.weapon && !LW.weaponsHeld(hero).some((w) => c.weapon === true || kindsOf(w).some((k) => c.weapon.includes(k)))) return false;
-    if (c.wield) { const w = LW.inHand(hero, ctx); if (!w || (c.wield !== true && !kindsOf(w).some((k) => c.wield.includes(k)))) return false; }
+    // wield 'special': a weapon-like Special Item in hand (Book 15's 238), which still counts as its kinds too
+    if (c.wield) { const w = LW.inHand(hero, ctx); if (!w || (c.wield !== true && !kindsOf(w).some((k) => c.wield.includes(k)) && !(c.wield.includes('special') && LW.itemKind(w) === 'special'))) return false; }
     if (c.mastery && !LW.skilledWith(hero, c.mastery)) return false;
     if (c.skilled && !LW.skilledWith(hero, LW.inHand(hero, ctx))) return false;
     if (c.meals && hero.meals < c.meals) return false;
@@ -364,6 +365,8 @@
         hero.ep = Math.min(hero.epMax, hero.ep + sec.ep);
         events.push(sec.ep < 0 ? `You lose ${-sec.ep} ENDURANCE.` : `You regain ${sec.ep} ENDURANCE.`);
       }
+      // epCap: ENDURANCE brought down to this if it is above it (Book 15's 156)
+      if (sec.epCap != null && hero.ep > sec.epCap) { hero.ep = sec.epCap; events.push(`Your ENDURANCE is brought down to ${sec.epCap}.`); }
       const had = LW.marksOf(hero); // a condition set here costs nothing until the next section
       if (sec.stake && this.s.stakes) delete this.s.stakes[sec.stake.key || id]; // asked again on a return
       // a game of chance starts afresh on every visit; its token is given on the first only
@@ -500,14 +503,14 @@
           if (odd) this.drop(list[list.length - 1], st, events);
           if (h) { const heads = LW.rand10() < 5; events.push(`The coin falls ${heads ? 'heads: the first' : 'tails: the second'} half of the list is lost.`); (heads ? keep.slice(0, h) : keep.slice(h)).forEach((x) => this.drop(x, st, events)); }
         }
-        // choose: the one of these he used; the only one held goes, of several he says which
+        // choose: the one of these he used; the only one held goes, of several he says which (dose: one dose of it)
         else if (t.item && t.choose) {
           const held = [...new Set([].concat(t.item))].filter((i) => LW.hasItem(hero, i));
-          if (held.length === 1) this.drop(held[0], st, events);
-          else if (held.length) { (this.s.picks = this.s.picks || []).push({ ids: held, n: 1, stash: st, label: t.label }); events.push(`${t.label || 'Choose what you lose'}, below.`); }
+          if (held.length === 1) this.useOrDrop(held[0], t.dose, st, events);
+          else if (held.length) { (this.s.picks = this.s.picks || []).push({ ids: held, n: 1, stash: st, label: t.label, dose: t.dose }); events.push(`${t.label || 'Choose what you lose'}, below.`); }
         }
         // dose: one use of an item that has several (LW.useUp), not the whole of it
-        else if (t.item && t.dose) { const id = [].concat(t.item).find((i) => LW.hasItem(hero, i)); if (id) { LW.useUp(hero, id); events.push(`A dose of the ${name(id)} is used.`); } }
+        else if (t.item && t.dose) { const id = [].concat(t.item).find((i) => LW.hasItem(hero, i)); if (id) this.useOrDrop(id, true, st, events); }
         else if (t.item) { const id = [].concat(t.item).find((i) => LW.hasItem(hero, i)); if (id) this.drop(id, st, events); }
         else if (t.coin) {
           const have = (hero.coins || {})[t.coin] || 0, n = t.n === 'all' ? have : t.n === 'half' ? half(have, t) : Math.min(have, t.n);
@@ -557,12 +560,18 @@
       if (back.length) events.push(`What was taken from you is given back${left.length ? `, but for what will not fit: ${left.map(LW.itemName).join(', ')}` : ''}.`);
       if (!st.items.length && !st.gold && !st.pack) delete hero.stash[key];
     }
+    /* a thing lost, or with dose only one dose of it (LW.useUp) */
+    useOrDrop(id, dose, st, events) {
+      if (!dose) return this.drop(id, st, events);
+      LW.useUp(this.s.hero, id);
+      events.push(`A dose of the ${LW.itemName(id)} is used.`);
+    }
     /* one of the losses he chooses (s.picks), from the medallions the page shows */
     pickLoss(id) {
       const p = (this.s.picks || [])[0];
       if (!p || !this.pickable().includes(id)) return false;
       const f = p.per && p.from.find((x) => this.listed(x).includes(id)); // a count by list: the first pick picks the list
-      this.drop(id, p.stash, this.s.events);
+      this.useOrDrop(id, p.dose, p.stash, this.s.events);
       if (f) { p.from = [f]; p.n = p.per[f]; delete p.per; }
       if (--p.n <= 0 || !this.pickable().length) {
         this.s.picks.shift();

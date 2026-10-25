@@ -713,7 +713,7 @@ opens when the hero holds it; no effect is applied.
   optional. 72 and 194 cannot be reached (72 is the same as 349 and 185, 194 a lesser 19). The land
   is spelt Nyras in this book (Nyraz earlier). *Engine*: the puzzles, left to the player; the meeting
   with Prarg is not recorded from Book 10, so the choice at 25 is left to the player; the ENDURANCE
-  at 190 and 312 and the choice at 290 are for the item table (step 5); 72 and 194, nothing.
+  at 190 and 312, yes (the item table); the choice at 290 is open to all, as imported; 72 and 194, nothing.
 - **Wisdom**: choose the Disciplines with care; completing earlier books is an advantage but not
   needed for this one.
 

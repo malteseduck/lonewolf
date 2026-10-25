@@ -23,6 +23,7 @@ import * as ITEMS_11 from './items/items-11tpot.js';
 import * as ITEMS_12 from './items/items-12tmod.js';
 import * as ITEMS_13 from './items/items-13tplor.js';
 import * as ITEMS_14 from './items/items-14tcok.js';
+import * as ITEMS_15 from './items/items-15tdc.js';
 import * as ITEMS_16 from './items/items-16tlov.js';
 
 const LW = window.LW;
@@ -37,6 +38,7 @@ const ITEM_TABLES = {
   '07cd': ITEMS_07, '08tjoh': ITEMS_08, '09tcof': ITEMS_09, '10tdot': ITEMS_10, '11tpot': ITEMS_11, '12tmod': ITEMS_12,
   '13tplor': ITEMS_13,
   '14tcok': ITEMS_14,
+  '15tdc': ITEMS_15,
   '16tlov': ITEMS_16,
 };
 /* The made-up demo book (ruling R20) is on the PC alone: its table loads only where its book.js does, and
