@@ -155,6 +155,26 @@ def _drop(src):
     art_sources.forget(src)
 
 
+def _unupscale(code, src):
+    """A picture replaced in place: its -2x copy (ADR 0031) is of the old one, and the player shows the
+    copy of a listed picture, so both go until step 7's Upscale makes the copy again."""
+    try:
+        os.remove(os.path.join(ROOT, *(src.rsplit('.', 1)[0] + '-2x.webp').split('/')))
+    except OSError:
+        pass
+    listed = os.path.join(ROOT, 'assets', 'plates', 'upscaled', code + '.json')
+    try:
+        with open(listed, encoding='utf-8') as f:
+            data = json.load(f)
+    except (OSError, ValueError):
+        return
+    if src in data.get('srcs', []):
+        data['srcs'].remove(src)
+        with open(listed + '.part', 'w', encoding='utf-8', newline='\n') as f:
+            f.write(json.dumps(data, indent=1) + '\n')  # as ill_upscale.py writes it
+        os.replace(listed + '.part', listed)
+
+
 def put(code, book, name, image=None, crop=None, levels=None, remove=False, src=None, flip=False):
     """Write (or remove) the owner's entry for one enemy. image: WebP bytes, or None to keep the
     picture it has; src: instead, a picture already on disk to stand in (see standins()); flip: mirror it
@@ -207,6 +227,7 @@ def put(code, book, name, image=None, crop=None, levels=None, remove=False, src=
         with open(path + '.part', 'wb') as f:
             f.write(image)
         os.replace(path + '.part', path)
+        _unupscale(code, src)
     elif mine is not None:
         src = plates[mine]['src']
     else:

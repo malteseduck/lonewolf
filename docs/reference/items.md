@@ -293,7 +293,9 @@ add is written some other way (`ice barbarian$`, `kalkoth`).
    and writes the entry
    (`tools/plates_file.py`): `match` the enemy's exact name, escaped and anchored, `book` set, at the top
    of the list so it wins; `over: true` where the book has its own picture, or a broader `over` entry would
-   win. A second picture for the same enemy replaces the entry and the file. **Adjust** on any card opens
+   win. A second picture for the same enemy replaces the entry and the file, and drops the old one's
+   2x copy and its line in `assets/plates/upscaled/<code>.json` (the player would show that copy), so
+   the card is **Not upscaled** until step 7's Upscale runs again. **Adjust** on any card opens
    the same editor on the picture it has (a book's own, a library entry's): a crop box on the original and
    the fight panel as it will look, through `inkPlate`, with a levels control for paintings and a left-to-right flip; saving a re-crop
    writes the owner's entry pointing at that same file. Once step 7's **Upscale 2x** has run, a

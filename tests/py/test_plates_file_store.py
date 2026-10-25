@@ -108,6 +108,17 @@ def test_put_saves_a_new_picture_as_the_top_entry(tree):
     assert not tree.exists('art/plates/02fotw/rat-chief.webp.part')
 
 
+def test_put_a_new_picture_drops_the_old_ones_upscaled_copy(tree):
+    # the player shows the -2x copy of a listed picture: left behind, it shows the picture replaced
+    tree.file('art/plates/02fotw/rat.webp', b'old')
+    tree.file('art/plates/02fotw/rat-2x.webp', b'old2x')
+    tree.file('assets/plates/upscaled/02fotw.json', json.dumps({'_readme': 'r', 'srcs': ['art/plates/02fotw/rat.webp', 'lib/eel.webp']}).encode())
+    pf.put(CODE, book('Rat'), 'Rat', image=WEBP)
+    assert not tree.exists('art/plates/02fotw/rat-2x.webp')
+    listed = json.loads((tree.root / 'assets' / 'plates' / 'upscaled' / '02fotw.json').read_text(encoding='utf-8'))
+    assert listed == {'_readme': 'r', 'srcs': ['lib/eel.webp']}
+
+
 def test_put_rejects_a_picture_that_is_not_webp(tree):
     for bad in (b'', b'RIFF\x00\x00\x00\x00WAVEfmt ', b'\x89PNG\r\n\x1a\n' + b'0' * 20):
         with pytest.raises(ValueError, match='must be WebP'):
