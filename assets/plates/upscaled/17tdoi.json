@@ -1,0 +1,18 @@
+{
+ "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
+ "srcs": [
+  "assets/plates/prison-door-piranesi.jpg",
+  "data/projectaon/17tdoi/ill14.png",
+  "data/projectaon/17tdoi/ill15.png",
+  "data/projectaon/17tdoi/ill16.png",
+  "data/projectaon/17tdoi/ill18.png",
+  "data/projectaon/17tdoi/ill2.png",
+  "data/projectaon/17tdoi/ill20.png",
+  "data/projectaon/17tdoi/ill3.png",
+  "data/projectaon/17tdoi/ill4.png",
+  "data/projectaon/17tdoi/ill5.png",
+  "data/projectaon/17tdoi/ill6.png",
+  "data/projectaon/17tdoi/ill7.png",
+  "data/projectaon/17tdoi/ill9.png"
+ ]
+}

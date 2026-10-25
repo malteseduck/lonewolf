@@ -1,6 +1,15 @@
 {
   "_readme": "Pictures for fights whose section has no illustration of its own. The first entry whose match (a regular expression, case ignored) is found in the enemy's name is used, so put the narrower ones first. book, if given, limits an entry to that book (its own characters, or a stand-in that would be wrong elsewhere); book entries go first. src is relative to the project root: files in assets/plates/ are free to redistribute (sources in README.txt); files under data/projectaon/ are Project Aon illustrations on the owner's machine only, from the same book or borrowed from another, and files under art/ are pictures the owner supplied for personal use (git-ignored); a missing one falls back to the drawn emblem. crop, if given, is the part of the picture to use, [x, y, w, h] as fractions. over: true makes the entry win even where the section has an illustration of its own (the owner preferred another picture). levels, if given, is [black, white] (0-255): the tones that become full ink and bare paper, for a painting whose mid-tones would otherwise all turn to solid ink. draft, if given, marks an entry tools/plates_draft.py wrote (where it came from) that the owner has not yet adjusted on the picture sheet. See docs/reference/interface.md, Art pipeline, and docs/reference/items.md, Fight pictures.",
   "plates": [
+    { "match": "^3 cabalah$", "book": "17tdoi", "src": "data/projectaon/17tdoi/ill16.png", "draft": "this book" },
+    { "match": "^bulkhead door$", "book": "17tdoi", "src": "assets/plates/prison-door-piranesi.jpg", "draft": "stand-in" },
+    { "match": "chaos horde$", "book": "17tdoi", "src": "data/projectaon/17tdoi/ill14.png" },
+    { "match": "^demonlord tagazin \\(injured\\)$", "book": "17tdoi", "src": "data/projectaon/17tdoi/ill3.png", "draft": "this book" },
+    { "match": "^demonlord tagazin \\(with power helm\\)$", "book": "17tdoi", "src": "data/projectaon/17tdoi/ill3.png", "draft": "this book" },
+    { "match": "^dentaag$", "book": "17tdoi", "src": "data/projectaon/17tdoi/ill2.png", "draft": "this book, a picture 2 links before the fight" },
+    { "match": "drakkarim marines \\(undead", "book": "17tdoi", "src": "data/projectaon/17tdoi/ill9.png" },
+    { "match": "undead drakkarim search party", "book": "17tdoi", "src": "data/projectaon/17tdoi/ill15.png", "crop": [0, 0.08, 0.58, 0.92] },
+    { "match": "^ziog \\(damaged\\)$", "book": "17tdoi", "src": "data/projectaon/17tdoi/ill7.png", "draft": "this book" },
     { "match": "^zantaz$", "book": "20tcon", "src": "data/projectaon/20tcon/ill12.png", "draft": "this book" },
     { "match": "lavas sentry$", "book": "20tcon", "src": "data/projectaon/18dotd/ill12.png" },
     { "match": "^nemagog swarm$", "book": "20tcon", "src": "data/projectaon/20tcon/ill1.png", "draft": "this book, a picture 1 link before the fight" },
