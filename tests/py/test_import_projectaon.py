@@ -349,6 +349,29 @@ def test_grand_master_draw_book_16_phrasings(grand):
     assert nr('Also, if you possess Assimilance, add 1; if you possess a Lantern, deduct 2.') is None
 
 
+def test_grand_master_draw_book_17_phrasings(grand):
+    nr = grand['number_rules']
+    # "If you ENDURANCE score ...": the "r" missing from the print
+    assert nr('If you ENDURANCE score is 24 or higher, add 1.') == [{'ep': [24, 99], 'plus': 1}]
+    # either gives 1, both "you may add 3": both together make 3, an all-of rule for the 2 more
+    assert nr('If you possess either Grand Huntmastery or Grand Pathsmanship, add 1 to the number you have picked. '
+              'If you possess both of these Grand Master Disciplines, you may add 3.') == [
+        {'disc': ['grandHuntmastery', 'grandPathsmanship'], 'plus': 1},
+        {'disc': ['grandHuntmastery', 'grandPathsmanship'], 'every': True, 'plus': 2}]
+    # with no either-of before it, "both of these" names nothing
+    assert nr('If you possess Grand Nexus, add 1. If you possess both of these, you may add 3.') is None
+    # "as well" may lean on the rule before it: not read
+    assert nr('If you possess Grand Pathsmanship, add 1. If you possess Grand Nexus as well, add 1.') is None
+
+
+@pytest.mark.parametrize('text,expect', [
+    ('If the number you have picked is 0 or 1, turn to 9.', [0, 1]),
+    ('If the number you have picked is 0 or 5, turn to 9.', None),   # not a range
+])
+def test_span_reads_two_neighbouring_numbers(kai, text, expect):
+    assert kai['span'](text) == expect
+
+
 def test_cs_rule_a_penalty_from_the_foes_weapons_is_for_the_whole_fight(kai):
     assert kai['cs_rule']("Due to the length of your enemies’ weapons, you must reduce your COMBAT SKILL by 4 "
                           'for the duration of this combat.') == (-4, None, None)

@@ -74,7 +74,8 @@ Heuristics layered on top, all by regular expression:
   phrasings ("if you do not have", "have yet to", "neither") are left open. "X, or have reached the rank of Y" (parts joined by "or (if you) have/possess/reached/attained") is split and each part read as a condition; if all parse, `need: {any: [...]}`, else the choice is left open. A
   looser reading still gates "If you wish to use the Kai Discipline of X ..." (also "... of X in order to ...").
 - **Random Number ranges** (`span()`): "0–4", "−2–+3" (the books' minus sign), "5 or more" / "or
-  higher", "4 or less", "below 7", "above 6", or a single number. Not in a choice about ENDURANCE
+  higher", "4 or less", "below 7", "above 6", two neighbouring numbers "0 or 1" (Book 17's 86; any
+  other pair is no range), or a single number. Not in a choice about ENDURANCE
   or COMBAT SKILL.
 - **Random Number bonuses** (`number_rules()`): each sentence that adds to or takes from the number
   must be "If <condition>, add / deduct N (to the number)" (the comma may be missing), "add another / a further N",
@@ -87,7 +88,9 @@ Heuristics layered on top, all by regular expression:
   to the number you have chosen" with no condition, which always applies. Rules listed after a lead-in
   ending in a colon are read one by one. A parenthesis "if you have both, add only N" is taken as read;
   "add 3 (if you possess both of these ..., add 7)" after an either-of is read as that rule plus an
-  all-of rule for the 4 more; "(for example ...)" is skipped. "These bonuses are not cumulative" after rank-only bonuses rising with the rank
+  all-of rule for the 4 more, and so is a sentence of its own after one, "If you possess both of these ..., (you may) add 3"
+(Book 17's 124: an all-of rule for the 2 more); "If you ENDURANCE score is ..." (the "r" missing, Book 17's 36) is his
+Endurance; "If you possess X as well" is not read (it may lean on the rule before it); "(for example ...)" is skipped. "These bonuses are not cumulative" after rank-only bonuses rising with the rank
   (Book 15's 59: Kai Grand Guardian 1, Sun Knight 2) gives each higher rank the difference, so the highest held counts alone. Anything else (an item, a
   bow's "missile bonuses", a weapon, "0 = 10") leaves the section `free`.
 - **auto or free**: `auto` when the bonuses were all read, every total they can make is covered by
@@ -246,6 +249,12 @@ Step 3 taught: rank levels as "every Grand Master rank ... above that of" (15), 
 level you are above ..." (341); rules joined by semicolons (74, 331, 162, 263, with his ENDURANCE either side of 18 in the last
 two); "If have the ... Discipline of" (2). Books 1-15 and 20 unchanged by it. Left: 285 (odd or even), 143 and 150 (a Runic
 Disc and the Sommerswerd among the bonuses: the item table's), and the counting and item draws as before.
+
+Book 17 as of 2026-10-25, after its step 3: 350 sections, 52 fights, Random 28 (24) / 4, gates 44 / 17 / 0,
+illustrated 43, dead 16, puzzles 3, Meals 3, fights 6 / evasion 10, enemies 9 / 0 / 13 (before it: Random 25 (22) / 7).
+Step 3 taught: "If you ENDURANCE score is" (36, the "r" missing); "0 or 1" as a range (86); "If you possess both of these
+..., you may add 3" after an either-of (124). Books 1-16 and 20 unchanged by it. Left: 296 ("If you possess Grand Nexus as
+well": it may lean on the rule before it, the owner's to say), 75, 123, 131 (the number counts).
 
 Introductions: 7, 7, 9, 4, 10, 7, 10, 10, 8, 9, 8, 8 paragraphs. The free Random Number sections
 left are those where the number counts gold or Endurance, plays a game, or is changed by a bow, a

@@ -122,7 +122,8 @@ def condition(text):
         # "your present Kai rank is Grand Guardian or higher" (Book 15's 224): the "Kai" of the rank's name may be left off
         k = re.fullmatch(r'your (?:present |current )?(?:Kai |Magnakai )?rank is ([A-Za-z -]+?)(?: or (?:higher|above|more))?', clause)
         k = k and (RANKS.get(k.group(1).lower()) or RANKS.get('kai ' + k.group(1).lower()))
-        e = re.fullmatch(r'your (?:current |present )?ENDURANCE(?: points?)?(?: point)?(?: total| score)? is (?:now )?(.+)', clause)
+        # "If you ENDURANCE score is 24 or higher" (Book 17's 36): the "r" missing from the print, so no "your" once "you " is cut
+        e = re.fullmatch(r'(?:your )?(?:current |present )?ENDURANCE(?: points?)?(?: point)?(?: total| score)? is (?:now )?(.+)', clause)
         if e and 'ep' not in out:  # his Endurance as he draws: "less than 10", "20 or more"
             x = e.group(1)
             m = (re.fullmatch(r'(?:less|lower|fewer) than (\d+)|below (\d+)|under (\d+)', x), re.fullmatch(r'(?:greater|more|higher) than (\d+)|above (\d+)|over (\d+)', x),
@@ -228,6 +229,11 @@ def span(text):
     r = re.search(r'(?<!\d)' + NUM + r'\s*[–-]\s*' + NUM + r'(?!\d)', text)
     if r:
         return [as_int(r.group(1)), as_int(r.group(2))]
+    # "0 or 1" (Book 17's 86): two neighbouring numbers are a range; any other pair is not one
+    r = re.search(r'(?<!\d)' + NUM + r' or ' + NUM + r'(?!\d)', text)
+    if r:
+        a, b = as_int(r.group(1)), as_int(r.group(2))
+        return [a, b] if b == a + 1 else None
     r = re.search(r'(?<!\d)' + NUM + r' or (?:more|higher|over|above|greater)\b', text)
     if r:
         return [as_int(r.group(1)), OPEN]
@@ -305,6 +311,15 @@ def number_rules(whole):
         plain_add = re.fullmatch(r'(?:Pick a number from the Random Number Table and )?(add|deduct|subtract) (\d+) (?:to|from) the number you have (?:chosen|picked)\.?', s, re.I)
         if plain_add:
             mods.append({'plus': int(plain_add.group(2)) * (1 if plain_add.group(1).lower() == 'add' else -1)})
+            continue
+        # "If you possess either X or Y, add 1. If you possess both of these ..., you may add 3." (Book 17's 124): as Book 13's
+        # 245 below, both together make the larger sum, an all-of rule for the difference on the either-of rule before it
+        both = re.fullmatch(r'If you (?:have|possess) both(?: of these)?\b[^,]*, (?:you may )?add (\d+)(?: (?:to|from) the (?:number|total)\b.*)?\.?', s)
+        if both:
+            prev = mods[-1] if mods else {}
+            if list(prev) != ['disc', 'plus'] or len(prev['disc']) < 2 or int(both.group(1)) <= prev['plus']:
+                return None
+            mods.append({'disc': prev['disc'], 'every': True, 'plus': int(both.group(1)) - prev['plus']})
             continue
         # "add 3 (if you possess both of these Grand Master Disciplines, add 7)" (Book 13's 245): both
         # together make the larger sum, read as an all-of rule for the difference
