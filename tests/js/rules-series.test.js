@@ -326,6 +326,18 @@ describe('Book 16 kit', () => {
   });
 });
 
+describe('Book 17 kit', () => {
+  it('is the map of Ixia and the Hardlands, 20 + a Random Number in gold, and any 4 of nine with a Broadsword and 2 Meals', () => {
+    const k = LW.KITS[17];
+    expect(k.give).toEqual(['mapIxia']);
+    expect(k.gold).toBe(20);
+    expect(k.choose).toBe(4);
+    expect(k.from).toEqual(['broadsword', 'bow', 'quiver', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe']);
+    expect(k.store && k.storeGold && !k.newOnly).toBe(true);
+    expect(LW.ITEMS.mapIxia.kind).toBe('special');
+  });
+});
+
 describe('LW.KitSetup', () => {
   const setup = (n, hero, book = {}) => LW.KitSetup(book, LW.KITS[n], hero);
   const empty = (over = {}) => Object.assign({ cs: 15, ep: 20, epMax: 20, weapons: [], backpack: [], special: [], meals: 0, gold: 0, series: 'kai', disciplines: [] }, over);

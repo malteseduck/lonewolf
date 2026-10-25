@@ -309,6 +309,7 @@
     14: { give: ['mapDarklands'], gold: 20, choose: 5, from: ['sword', 'bow', 'quiver', 'axe', { meal: 4 }, 'rope', 'potion', 'spear', 'dagger'], store: true, storeGold: true },
     15: { give: ['mapTentarias'], gold: 20, choose: 5, from: ['sword', 'bow', 'quiver', 'axe', { meal: 4 }, 'rope', 'potion', 'spear', 'dagger'], store: true, storeGold: true },
     16: { give: ['mapMaakengorge'], gold: 20, choose: 4, from: ['sword', 'bow', 'quiver', 'axe', { meal: 2 }, 'rope', 'potion', 'quarterstaff', 'dagger'], store: true, storeGold: true },
+    17: { give: ['mapIxia'], gold: 20, choose: 4, from: ['broadsword', 'bow', 'quiver', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe'], store: true, storeGold: true },
   };
   const entry = (x) => (typeof x === 'string' ? { item: x, n: 1 } : Object.assign({ n: 1 }, x));
   const entryName = (x) => (x.meal ? x.name || (x.meal > 1 ? `${x.meal} Meals` : 'a Meal') : x.n > 1 ? `${x.n} × ${LW.itemName(x.item)}` : LW.itemName(x.item));
