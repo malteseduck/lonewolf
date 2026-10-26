@@ -65,7 +65,10 @@ tools/
   admin/                    the import dashboard, /tools/admin/ (docs/reference/dashboard.md): index.html,
                             admin.js, admin.css, prompts.js (the agent steps' prompts), fights.html (one
                             book's fight pictures on a sheet, where the owner drops, crops and removes
-                            pictures), ills.html (one book's illustrations, each original beside its
+                            pictures), proposals.html (the agent's candidate fight pictures with the
+                            book's text about each enemy and an image-generator prompt, where the owner picks or pastes an AI picture:
+                            ruling R23; plateprompt.js, that prompt's house style, shared with fights.html), ills.html
+                            (one book's illustrations, each original beside its
                             2x upscale), items.html and itemsheet.js (one book's items and their icons, which
                             the owner changes: ADR 0021), icons.html (the player's other icons, for
                             every book), sources.html (every picture in art/: its link, none, or made
@@ -78,6 +81,8 @@ tools/
                             fetched again, and the fetch (Setup's gated setup-art); a page link is followed to
                             the picture it names (og:image); `ai` moves a fight picture made with AI into
                             the committed assets/plates/ (ADR 0042)
+  plates_proposals.py       checks data/projectaon/<code>/plate-proposals.json, the agent's step 7 candidates
+                            for the proposal sheet (ruling R23)
   ill_index.py              writes git-ignored data/projectaon/ill-index.json: every book's illustrations, the
                             fights near each, and the committed hand notes of what each shows
                             (about/ill-notes.json) and what it is (about/ill-about.json), also for the

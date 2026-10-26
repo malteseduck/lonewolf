@@ -47,6 +47,8 @@ Static files as `python -m http.server` serves them, from the project root, plus
                                       already on disk (assets/, art/, data/) to stand in, instead of image
     POST /api/admin/hero              {name: frontis|likeness, data: base64 WebP}: Lone Wolf's picture, baked by
                                       tools/admin/hero.html, written to assets/hero/<name>.webp
+    POST /api/admin/proposals         {book, enemy, how: chosen|kept|null, src?}: the owner's decision on one row of the
+                                      proposal sheet; /proposals/finish {book} ends the round (tools/plates_proposals.py)
     POST /api/admin/picture-url      {url}: the picture at an address (or the one its page names), {type, data: base64}
     POST /api/admin/art-link          {src, url|null}: a link for a picture already in art/ (art/sources.json, ADR 0038)
     GET  /api/admin/standins          every picture a fight can borrow: [{src, group, size, shows?, near?}]
@@ -697,6 +699,18 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(200, plates_file.standins())
         if method == 'POST' and parts == ['plate']:
             return self._admin_plate(body)
+        if method == 'POST' and parts in (['proposals'], ['proposals', 'finish']):  # the proposal sheet (ruling R23)
+            import plates_proposals
+            code = str(body.get('book') or '')
+            if not re.fullmatch(r'[\w-]{1,40}', code):
+                return self._json(400, {'error': 'not a book code'})
+            try:
+                if parts[-1] == 'finish':
+                    return self._json(200, {'rows': plates_proposals.finish(code)})
+                row = plates_proposals.decide(code, str(body.get('enemy') or ''), body.get('how') or None, body.get('src') or None)
+                return self._json(200, {'row': row, 'open': plates_proposals.open_rows(code)})
+            except ValueError as e:
+                return self._json(400, {'error': str(e)})
         if method == 'POST' and parts == ['hero']:  # Lone Wolf's two pictures, baked by tools/admin/hero.html
             import base64
             name = str(body.get('name') or '')

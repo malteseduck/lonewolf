@@ -419,6 +419,12 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
     # 7 fight pictures: every enemy has one and each is upscaled 2x (from the files), then the owner's
     # look at the sheet (a mark, refused until then)
     m7 = hand_mark(7)
+    # the agent's proposals, for the dashboard's "Open proposals" (tools/plates_proposals.py, ruling R23)
+    try:
+        rows = json.loads(read(os.path.join(DATA, code, 'plate-proposals.json'))).get('enemies', [])
+        b['proposals'] = {'rows': len(rows), 'open': sum('decided' not in e for e in rows)}
+    except (OSError, ValueError):
+        pass
     blunt, plate_srcs = fights_not_upscaled(code, imp) if imp else ([], [])
     if not imp:
         st['pictures'] = {'state': 'todo', 'ev': 'After import', 'src': 'disk'}

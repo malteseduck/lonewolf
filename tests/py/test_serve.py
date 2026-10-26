@@ -549,3 +549,21 @@ def test_hero_refuses_another_name_or_not_webp(root, name, data):
     st, got = jsend('POST', '/api/admin/hero', {'name': name, 'data': base64.b64encode(data).decode()})
     assert st == 400 and 'error' in got
     assert not (root / 'assets').exists()
+
+
+# ---------------------------------------------------------------- proposal sheet (ruling R23)
+
+def test_proposals_route_records_a_decision_and_finishes_the_round(root, monkeypatch):
+    import plates_proposals
+    monkeypatch.setattr(plates_proposals, 'ROOT', str(root))
+    d = root / 'data' / 'projectaon' / '05xx'
+    d.mkdir(parents=True)
+    (d / 'plate-proposals.json').write_text(json.dumps({'enemies': [{'name': 'Mire Toad', 'candidates': []}]}), encoding='utf-8')
+    st, got = jsend('POST', '/api/admin/proposals', {'book': '05xx', 'enemy': 'Mire Toad', 'how': 'kept'})
+    assert st == 200 and got['row']['decided']['how'] == 'kept' and got['open'] == 0
+    st, got = jsend('POST', '/api/admin/proposals', {'book': '05xx', 'enemy': 'Nobody', 'how': 'kept'})
+    assert st == 400
+    st, got = jsend('POST', '/api/admin/proposals/finish', {'book': '05xx'})
+    assert st == 200 and got['rows'] == 1 and (d / 'plate-proposals.done.json').exists()
+    assert jsend('POST', '/api/admin/proposals/finish', {'book': '05xx'})[0] == 400
+    assert jsend('POST', '/api/admin/proposals', {'book': '../x', 'enemy': 'Mire Toad', 'how': 'kept'})[0] == 400

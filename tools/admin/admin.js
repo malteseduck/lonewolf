@@ -25,7 +25,7 @@ const STAGES = [
 const SERIES = { kai: 'Kai', magnakai: 'Magnakai', 'grand master': 'Grand Master', 'new order': 'New Order' };
 const WHO = { agent: 'Claude Code: copy the prompt', owner: 'yours', script: 'a script' };
 // the step each sheet belongs to; a page not here spans the books, and takes the work area alone
-const SHEET_STEP = { 'fights.html': 'pictures', 'items.html': 'items', 'ills.html': 'ills', 'map-editor.html': 'map' };
+const SHEET_STEP = { 'fights.html': 'pictures', 'proposals.html': 'pictures', 'items.html': 'items', 'ills.html': 'ills', 'map-editor.html': 'map' };
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -194,7 +194,7 @@ const ACTIONS = {
   items: (b) => [run(b.items.exists && !b.items.draft ? 'Draft and compare' : 'Draft table', 'items-draft'), prompt('items'), run('Check items', 'check-items'), ...(b.items.check?.errors?.length ? [prompt('itemsFix', 'Copy fix prompt')] : []),
     ...(b.items.exists ? [{ t: 'items', label: 'Open item sheet' }] : [])],
   // the draft first (ADR 0036), while an enemy has no picture: the script's picks, judged on the sheet
-  pictures: (b) => [...(b.imp?.bare ? [run('Draft pictures', 'pictures-draft')] : []), prompt('pictures'), { t: 'sheet', label: 'Open picture sheet' }, run('Upscale 2x', 'fights-up'), mark(7),
+  pictures: (b) => [...(b.imp?.bare ? [run('Draft pictures', 'pictures-draft')] : []), prompt('pictures'), ...(b.proposals ? [{ t: 'proposals', label: `Open proposals (${b.proposals.open ? b.proposals.open + ' to settle' : 'all settled: Finish'})` }] : []), { t: 'sheet', label: 'Open picture sheet' }, run('Upscale 2x', 'fights-up'), mark(7),
     ...(b.pins?.waiting ? [run('Approve picture changes...', 'approve-pictures', { gate: 'pictures' })] : [])],
   // the walk first (ADR 0036): the engine over every section in Node, what is wrong by id; then the agent plays
   testplay: (b) => [...(b.imp ? [run('Walk the book', 'walk')] : []), prompt('testplay'), link('Test address', 'http://127.0.0.1:8766/'), mark(6)],
@@ -210,7 +210,7 @@ function mark(step) { return { t: 'mark', step }; }
 let acts = [];
 function actHtml(a, b) {
   const i = acts.push({ ...a, b }) - 1;
-  if (a.t === 'sheet' || a.t === 'ills' || a.t === 'items') return `<button data-act="${i}">${esc(a.label)}</button>`;
+  if (a.t === 'sheet' || a.t === 'proposals' || a.t === 'ills' || a.t === 'items') return `<button data-act="${i}">${esc(a.label)}</button>`;
   if (a.t === 'link') return `<a class="btn" href="${esc(a.href)}" target="_blank">${esc(a.label)}</a>`;
   if (a.t === 'mark') return `<button data-act="${i}">${b.marks[a.step] ? 'Mark not done' : 'Mark done'}</button>`;
   return `<button data-act="${i}" ${a.t === 'run' && running ? 'disabled title="a job is running"' : ''}>${esc(a.label)}</button>`;
@@ -281,6 +281,7 @@ $('#detail').addEventListener('click', async (e) => {
   if (a.t === 'prompt') return copy(PROMPTS[a.key](a.b), 'Prompt copied: paste it into Claude Code');
   if (a.t === 'map') return openMap(a.b, a.step);
   if (a.t === 'sheet') return openSheet(a.b);
+  if (a.t === 'proposals') return openProposals(a.b);
   if (a.t === 'ills') return openIlls(a.b);
   if (a.t === 'items') return openItems(a.b);
   if (a.t === 'mark') {
@@ -361,6 +362,9 @@ function fromAddress() {
 function openSheet(b) {
   if (!b?.imp) return toast('Import the book first', 3000);
   openInline(b, `/tools/admin/fights.html?book=${encodeURIComponent(b.code)}&embed=1`, `Fight pictures: ${b.n}. ${b.title}`);
+}
+function openProposals(b) {  // the agent's candidates for some enemies, with their context, to pick from (ruling R23)
+  openInline(b, `/tools/admin/proposals.html?book=${encodeURIComponent(b.code)}&embed=1`, `Picture proposals: ${b.n}. ${b.title}`);
 }
 function openIlls(b) {  // every illustration, and each one's original beside its upscale (step 9)
   if (!b?.folder) return toast('Download the book first', 3000);

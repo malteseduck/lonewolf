@@ -248,3 +248,19 @@ knight-shield-pencil.webp
 05sots/darklord-haakon.webp
   Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
   no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-25.
+
+19wb/temple-portal.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-26.
+
+19wb/ekmakon.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-26.
+
+19wb/caq.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-26.
+
+19wb/kataka.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-26.

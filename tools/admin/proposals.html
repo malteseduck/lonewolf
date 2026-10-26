@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Picture proposals</title>
+<link rel="stylesheet" href="admin.css">
+<script type="module" src="parchment.js"></script>
+<style>
+  .sheet-top { display: flex; gap: 12px; align-items: center; padding: 16px 24px 8px; flex-wrap: wrap; }
+  .sheet-top h1 { margin: 0; font: 26px var(--title); color: var(--bronze-hi); }
+  .sheet-top .sum { color: var(--dim); }
+  .note { margin: 0 24px 6px; color: var(--dim); font-size: 12px; }
+  .foes { display: grid; gap: 22px; padding: 8px 24px 40px; }
+  .foe { border-top: 1px solid var(--line); padding-top: 12px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 34%); gap: 18px; align-items: start; }
+  /* the pictures stay in view while the book's text beside them is read */
+  .foe > div:first-child { position: sticky; top: 0; }
+  .foe h2 { margin: 0; font: 22px var(--title); color: var(--bronze-hi); }
+  .foe .meta { color: var(--dim); font-size: 12px; }
+  .foe .about { font-style: italic; margin: 6px 0; }
+  .foe .why { margin: 6px 0; padding: 6px 10px; border-left: 3px solid var(--agent); background: var(--btn); border-radius: 0 3px 3px 0; }
+  .cands { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin-top: 10px; }
+  /* the book's own tan, plain, as the fight panel's paper, so a picture looks as it will in play */
+  .cand { background: linear-gradient(#e2d3aa, #cfbb89); color: var(--ink); border-radius: 3px; padding: 8px; box-shadow: 0 2px 8px rgba(40, 24, 10, .45); position: relative; outline: 2px solid transparent; }
+  .cand.now { outline: 2px dashed var(--ink-dim); }
+  .cand.pick { outline-color: var(--agent); }
+  .cand .pic { height: 210px; display: grid; place-items: center; }
+  .cand canvas, .cand img.raw { max-width: 100%; max-height: 210px; }
+  .cand .none { font: 14px var(--title); color: #7d1d14; text-align: center; padding: 16px; border: 1px dashed #7d1d14; }
+  .cand .badge { position: absolute; top: 6px; right: 6px; z-index: 1; font: 12px var(--title); color: #f3e6c4; background: #7d1d14; border-radius: 3px; padding: 2px 7px; }
+  .cand .badge.now { background: #6b553c; left: 6px; right: auto; }
+  .cand small { display: block; font-size: 12px; color: #4a3a28; margin-top: 3px; overflow-wrap: anywhere; }
+  .cand small.path { color: #6b553c; font-family: Consolas, monospace; font-size: 11px; }
+  .cand small.about { font-style: italic; }
+  .cand .tools { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; align-items: center; }
+  .cand .tools button { font-size: 12px; padding: 2px 9px; }
+  .cand .tools a { font-size: 12px; }
+  .text { font-size: 13.5px; line-height: 1.5; }
+  .foe.active > div:first-child .cands { outline: 1px dashed var(--line); outline-offset: 4px; }
+  .foe.over > div:first-child .cands { outline: 2px dashed var(--blood); }
+  .cand.ai { outline-color: var(--owner); }
+  .cand .badge.ai { background: var(--owner); }
+  .cand fieldset { border: 0; padding: 0; margin: 4px 0 0; font-size: 11.5px; display: grid; gap: 2px; }
+  .cand fieldset label { display: flex; gap: 5px; align-items: flex-start; }
+  .prompt { margin-top: 12px; }
+  .prompt summary { cursor: pointer; font: 14px var(--title); color: var(--bronze-hi); }
+  .prompt textarea { width: 100%; box-sizing: border-box; min-height: 9em; font: 12.5px var(--body); color: var(--ink); background: var(--btn); border: 1px solid var(--line); border-radius: 3px; padding: 6px 8px; resize: vertical; }
+  .prompt .refs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .prompt .refs a { display: grid; gap: 2px; width: 120px; font: 11px Consolas, monospace; color: var(--dim); text-decoration: none; overflow-wrap: anywhere; }
+  .prompt .refs img { width: 120px; height: 90px; object-fit: contain; background: #e2d3aa; border: 1px solid var(--line-lo); }
+  .prompt .row { display: flex; gap: 10px; align-items: center; margin-top: 4px; font-size: 12px; color: var(--dim); }
+  .text details { border-bottom: 1px solid var(--line-lo); padding: 3px 0; }
+  .text summary { cursor: pointer; color: var(--dim); font-size: 12.5px; }
+  .text summary b { font: 15px var(--title); color: var(--bronze-hi); margin-right: 4px; }
+  .text summary .n { color: #f3e6c4; background: var(--owner); border-radius: 3px; padding: 0 6px; margin-left: 4px; }
+  .text p { margin: 4px 0; }
+  .text p.far { color: var(--dim); }
+  .text mark { background: rgba(125, 29, 20, .18); color: inherit; padding: 0 1px; }
+  /* what the book says it looks like, for the eye to find without reading the section */
+  .text .desc { background: rgba(138, 100, 32, .28); box-shadow: 0 0 0 2px rgba(138, 100, 32, .28); border-radius: 2px; }
+  /* a row the owner has settled: one line and the picture it has, out of the way */
+  .foe.settled { grid-template-columns: 110px minmax(0, 1fr); gap: 14px; align-items: center; opacity: .85; }
+  .foe.settled .pic { height: 120px; display: grid; place-items: center; }
+  .foe.settled canvas { max-width: 100%; max-height: 120px; }
+  .foe.settled h2 { font-size: 18px; }
+  .foe .settle { margin-top: 4px; font-size: 13px; }
+  .foe .settle b { color: var(--owner); }
+  .sheet-top .fin { margin-left: auto; }
+  body.embed .sheet-top h1 { display: none; }
+  body.embed { padding: 0; }
+  body.embed::before, body.embed::after { display: none; }
+  @media (max-width: 900px) { .foe { grid-template-columns: 1fr; } .foe > div:first-child { position: static; } }
+</style>
+</head>
+<body>
+<header class="sheet-top">
+  <h1>Picture proposals</h1>
+  <span class="sum" id="sum"></span>
+  <button class="fin" id="finish" title="End this round: the file moves to plate-proposals.done.json and the dashboard's button goes">Finish</button>
+</header>
+<p class="note">The agent's candidates for the enemies it changed, chose or could not settle (step 7, ruling R23). Each row puts first what the
+  player shows now, then the candidates as they would look in a fight, the agent's pick outlined; beside them what the book says of the
+  enemy (each section folded: open it to read it, the sentences that describe the enemy highlighted). Use this saves it as your picture for that enemy (a web picture is fetched then, with its page as its link); crop it after on
+  the picture sheet. The book's text is read here from book.js and never leaves this machine. None you like? Copy a row's
+  prompt into an image generator (attach the candidates you want it to follow), then point at that row and paste the result
+  (Ctrl+V) or drop it there: it joins the candidates as "from AI". Use this, or Keep as is on the "now" card, settles a row (Reopen
+  undoes it); Finish ends the round, and the agent's next round leaves what you settled.</p>
+<main class="foes" id="foes"></main>
+<div class="toast" id="toast" hidden></div>
+<!-- an in-page question: the desktop app's browser pane ignores window.confirm -->
+<dialog id="ask" style="width:min(520px,90vw)"><form method="dialog"><p id="ask-q"></p>
+  <menu style="display:flex;gap:8px;padding:0;margin:14px 0 0"><span style="flex:1"></span><button value="cancel">Cancel</button><button value="ok">Finish</button></menu></form></dialog>
+
+<script type="module">
+import { inkPlate } from '../../plates.js';
+import { compilePlates, pickPlate, upscaledSrc } from '../../platepick.js';
+import { platePrompt } from './plateprompt.js';
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const params = new URLSearchParams(location.search);
+const code = params.get('book') || '';
+const EMBED = params.get('embed') === '1' && window.parent !== window;
+// like the picture sheet, it opens only inside the dashboard, whose step 7 it belongs to
+if (!EMBED) { document.body.innerHTML = '<p style="padding:24px">This page opens only inside the import dashboard, <a href="/tools/admin/">/tools/admin/</a>.</p>'; throw new Error('not embedded'); }
+document.body.classList.add('embed');
+const LONG = 2000;  // the longest side kept of a fetched picture, as the picture sheet keeps it
+let book, plates = [], ups = null, index = {}, data = { enemies: [] }, stamp = Date.now(), active = null;
+// pictures pasted or dropped on a row this visit, by row: [{dataUrl, webp, text}] (text: made from the prompt alone)
+const made = {};
+
+const json = async (u) => { const r = await fetch(u, { cache: 'no-store' }).catch(() => null); return r && r.ok ? r.json().catch(() => null) : null; };
+const script = (src) => new Promise((ok, bad) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = bad; document.head.append(s); });
+const sharp = (src) => upscaledSrc(src, ups);
+const url = (src) => '/' + sharp(src) + (src.startsWith(`art/plates/${code}/`) ? `?v=${stamp}` : '');
+function image(src, plate, cors) {
+  return new Promise((ok) => {
+    const im = new Image();
+    if (cors) im.crossOrigin = 'anonymous';
+    Object.assign(im, { crop: plate?.crop, levels: plate?.levels, flip: plate?.flip });
+    im.onload = () => ok(im); im.onerror = () => ok(null); im.src = src;
+  });
+}
+// inkPlate() hands back one cached canvas per picture; a second card using it would take it from the first
+function copy(cv) {
+  const c = Object.assign(document.createElement('canvas'), { width: cv.width, height: cv.height });
+  c.getContext('2d').drawImage(cv, 0, 0);
+  return c;
+}
+
+/* The enemy's name as the text uses it: no numbers or notes in brackets ("2 Cryopedeans", "Ukara (chained)"),
+   a plural also found singular; with the agent's words for where the text does not name it. */
+const kindOf = (name) => name.toLowerCase().replace(/\([^)]*\)/g, ' ').replace(/\b\d+\b/g, ' ').replace(/\s+/g, ' ').trim();
+function finder(e) {
+  const k = kindOf(e.name), terms = [k, ...(k.endsWith('s') && k.length > 4 ? [k.slice(0, -1)] : []), ...(e.words || [])];
+  const alt = terms.filter(Boolean).map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).sort((a, b) => b.length - a.length).join('|');
+  return new RegExp(`(${alt})`, 'gi');
+}
+const fightsOf = (name) => Object.entries(book.sections).filter(([, s]) => (s.combat?.enemies || []).some((x) => x.name === name)).map(([id]) => id);
+const about = (name) => {
+  const mine = index.foes?.[code] || {};
+  return mine[name] || Object.entries(mine).find(([n]) => kindOf(n) === kindOf(name))?.[1] || '';
+};
+
+/* What the book says: every section it is fought in, named in (or found by the agent's words), pointed to or described
+   in, in order, each folded to one line to open as needed. Inside, the sentences the agent marked as describing it
+   (`describe`: {section: [phrases]}) are highlighted whole, and its name is marked wherever it appears. */
+function bookText(e) {
+  const re = finder(e), fought = new Set(fightsOf(e.name)), listed = new Set((e.sections || []).map(String));
+  const desc = e.describe || {};
+  const hit = (t) => { re.lastIndex = 0; return re.test(t); };
+  const ids = Object.keys(book.sections).filter((id) => fought.has(id) || listed.has(id) || desc[id] || (book.sections[id].text || []).some(hit))
+    .sort((a, b) => (+a || 0) - (+b || 0));
+  const mark = (t) => esc(t).replace(re, '<mark>$1</mark>');
+  return ids.map((id) => {
+    const ps = book.sections[id].text || [], phrases = desc[id] || [];
+    let found = 0;
+    const body = ps.map((p) => {
+      const spans = sentences(p, phrases);
+      found += spans.length;
+      let out = '', at = 0;
+      for (const [a, b] of spans) out += mark(p.slice(at, a)) + `<span class="desc">${mark(p.slice(a, b))}</span>`, at = b;
+      return `<p>${out + mark(p.slice(at))}</p>`;
+    }).join('');
+    const why = [fought.has(id) && 'fought here', listed.has(id) && 'the agent points here', !fought.has(id) && !listed.has(id) && hit(ps.join(' ')) && 'named here']
+      .filter(Boolean).join(', ') || 'described here';
+    return `<details><summary><b>${esc(id)}</b> ${why}${found ? ` <span class="n">${found} description${found > 1 ? 's' : ''}</span>` : ''}</summary>${body}</details>`;
+  }).join('') || '<p class="far">The book does not name it in any section.</p>';
+}
+/* The [start, end) of each whole sentence of p holding one of the phrases, merged, in order. A sentence ends at
+   . ! or ? (and a closing quote) followed by a space or the end. */
+const END = /[.!?]['’”"]?(?=\s|$)/g;
+function sentences(p, phrases) {
+  const low = p.toLowerCase(), ends = [...p.matchAll(END)].map((m) => m.index + m[0].length), out = [];
+  for (const ph of phrases) {
+    const i = low.indexOf(ph.toLowerCase());
+    if (i < 0) continue;
+    const a = Math.max(0, ...ends.filter((x) => x <= i));
+    const b = ends.find((x) => x >= i + ph.length) ?? p.length;
+    out.push([a, b]);
+  }
+  out.sort((x, y) => x[0] - y[0]);
+  return out.reduce((m, r) => (m.length && r[0] < m[m.length - 1][1] ? (m[m.length - 1][1] = Math.max(m[m.length - 1][1], r[1]), m) : [...m, r]), []);
+}
+
+/* The agent's description of the enemy and the moment it is fought (`prompt`, our own words), else its foe-about
+   entry, in the picture sheet's style, telling the generator to follow any reference pictures attached. */
+const promptOf = (e) => platePrompt(e.name, e.prompt || about(e.name), { refs: true });
+/* A picture made with AI is ours only from the prompt alone (ADR 0042): then it goes to the committed library;
+   made from reference pictures (the books' art), it stays in git-ignored art/plates/ like any borrowed picture. */
+function aiCards(fi) {
+  return (made[fi] || []).map((m, mi) => `<div class="cand ai"><span class="badge ai">from AI</span>
+    <div class="pic" id="a${fi}-${mi}"></div><small class="path">pasted, not saved yet</small>
+    <fieldset><label><input type="radio" name="ai${fi}-${mi}" value="text" ${m.text ? 'checked' : ''}> From the prompt alone: ours, kept in the committed library</label>
+      <label><input type="radio" name="ai${fi}-${mi}" value="refs" ${m.text ? '' : 'checked'}> With reference pictures attached: kept in art/plates/ (not committed)</label></fieldset>
+    <div class="tools"><button data-f="${fi}" data-a="${mi}">Use this</button><button data-drop="${fi}" data-a="${mi}">Discard</button></div></div>`).join('');
+}
+function nowOf(e) {  // what the player shows at its first fight
+  const id = fightsOf(e.name)[0], s = id && book.sections[id];
+  if (!s) return null;
+  const i = s.combat.enemies.findIndex((x) => x.name === e.name);
+  return pickPlate(s.combat.enemies[i], book, plates, null, `${id}/${i}`);
+}
+const ixAbout = (src) => index[src.replace(/^data\/projectaon\//, '')]?.about || index[src]?.about || '';
+
+const openRows = () => data.enemies.filter((e) => !e.decided).length;
+function settledRow(e, fi) {
+  const d = e.decided;
+  return `<section class="foe settled" data-f="${fi}"><div class="pic" id="p${fi}-now"></div><div>
+    <h2>${esc(e.name)}</h2>
+    <div class="settle"><b>${d.how === 'chosen' ? 'Chosen' : 'Kept as it is'}</b> ${esc(d.on || '')}${d.src ? ': <code>' + esc(d.src) + '</code>' : ''}
+      <button data-reopen="${fi}" style="margin-left:8px">Reopen</button></div></div></section>`;
+}
+function render() {
+  const left = openRows();
+  $('#sum').textContent = `${data.enemies.length} enem${data.enemies.length === 1 ? 'y' : 'ies'} proposed${data.made ? ', ' + data.made : ''}; `
+    + (left ? `${left} to settle` : 'all settled: Finish ends the round');
+  $('#finish').hidden = !data.enemies.length;
+  $('#foes').innerHTML = data.enemies.map((e, fi) => {
+    if (e.decided) return settledRow(e, fi);
+    const now = nowOf(e), secs = fightsOf(e.name);
+    const cands = (e.candidates || []).map((c, ci) => {
+      const same = c.src && now?.src === c.src;
+      return `<div class="cand ${e.pick === ci ? 'pick' : ''}">
+        ${e.pick === ci ? '<span class="badge">agent\'s pick</span>' : ''}${same ? '<span class="badge now">shown now</span>' : ''}
+        <div class="pic" id="p${fi}-${ci}"></div>
+        ${c.src ? `<small class="path">${esc(c.src)}</small>${ixAbout(c.src) ? `<small class="about">${esc(ixAbout(c.src))}</small>` : ''}`
+          : `<small class="path">web: ${esc(new URL(c.page || c.web).hostname)}${c.licence ? ', ' + esc(c.licence) : ''}</small>`}
+        ${c.why ? `<small>${esc(c.why)}</small>` : ''}
+        <div class="tools"><button data-f="${fi}" data-c="${ci}">Use this</button>
+          <a href="${esc(c.src ? '/' + c.src : c.page || c.web)}" target="_blank" rel="noopener">${c.src ? 'original' : 'its page'}</a></div></div>`;
+    }).join('');
+    return `<section class="foe${active === fi ? ' active' : ''}" data-f="${fi}"><div>
+      <h2>${esc(e.name)}</h2><div class="meta">fought at ${esc(secs.join(', ') || 'no section: check the name')}</div>
+      <p class="about">${esc(about(e.name) || 'no foe-about entry yet')}</p>
+      ${e.note ? `<div class="why">${esc(e.note)}</div>` : ''}
+      <div class="cands"><div class="cand now"><span class="badge now">now</span><div class="pic" id="p${fi}-now">${now?.src ? '' : '<div class="none">no picture<br><small>the drawn emblem</small></div>'}</div>
+        ${now?.src ? `<small class="path">${esc(now.src)}</small>${ixAbout(now.src) ? `<small class="about">${esc(ixAbout(now.src))}</small>` : ''}` : ''}
+        <div class="tools"><button data-keep="${fi}" title="Settle this row with the picture it has now (or none, for later)">Keep as is</button></div></div>${cands}${aiCards(fi)}</div>
+      <details class="prompt"${(e.candidates || []).length ? '' : ' open'}><summary>Prompt for an image generator</summary>
+        <textarea readonly id="pr${fi}">${esc(promptOf(e))}</textarea>
+        <div class="row"><button data-copy="${fi}">Copy prompt</button><span>attach the references below and any candidates you want followed; paste the result here (Ctrl+V)</span></div>
+        ${(e.refs || []).length ? `<div class="refs">${e.refs.map((r) => `<a href="/${esc(r)}" target="_blank" rel="noopener" title="${esc(ixAbout(r))}"><img src="/${esc(r)}" alt="" loading="lazy">${esc(r.split('/').slice(-2).join('/'))}</a>`).join('')}</div>` : ''}</details>
+      </div><div class="text">${bookText(e)}</div></section>`;
+  }).join('') || '<p class="note">No proposals for this book (data/projectaon/' + esc(code) + '/plate-proposals.json).</p>';
+  ink();
+}
+async function ink() {  // one by one, so the page shows at once
+  for (const [fi, e] of data.enemies.entries()) {
+    const now = nowOf(e);
+    if (now?.src) put(`p${fi}-now`, await image(url(now.src), now));
+    if (e.decided) continue;
+    for (const [ci, c] of (e.candidates || []).entries()) {
+      if (c.src) { put(`p${fi}-${ci}`, await image(url(c.src), c)); continue; }
+      const im = await image(c.web, c, true);  // a site that allows it is inked; else the thumbnail as it is
+      let cv = null;
+      try { cv = im && copy(inkPlate(im)); } catch { cv = null; }
+      const box = $(`#p${fi}-${ci}`);
+      if (box) box.replaceChildren(cv || Object.assign(document.createElement('img'), { className: 'raw', src: c.web, alt: '' }));
+    }
+    for (const [mi, m] of (made[fi] || []).entries()) put(`a${fi}-${mi}`, await image(m.dataUrl));
+  }
+}
+function put(id, im) {
+  const box = $('#' + id);
+  if (box) box.replaceChildren(im ? copy(inkPlate(im)) : Object.assign(document.createElement('div'), { className: 'none', textContent: 'file missing' }));
+}
+
+/* Use this: a picture on disk becomes the owner's entry pointing at it, as the picture sheet's Stand-in... does;
+   a web one is fetched by the server, kept as WebP like a dropped picture, with its page as its link (ADR 0038). */
+$('#foes').addEventListener('change', (ev) => {
+  const r = ev.target.closest('input[type=radio]');
+  if (r) { const [fi, mi] = r.name.slice(2).split('-').map(Number); made[fi][mi].text = r.value === 'text'; }
+});
+$('#foes').addEventListener('click', async (ev) => {
+  const st = ev.target.closest('button[data-keep], button[data-reopen]');
+  if (st) return settle(+(st.dataset.keep ?? st.dataset.reopen), st.dataset.keep != null ? 'kept' : null);
+  const cp = ev.target.closest('button[data-copy]');
+  if (cp) return copyText($('#pr' + cp.dataset.copy).value);
+  const dr = ev.target.closest('button[data-drop]');
+  if (dr) { made[+dr.dataset.drop].splice(+dr.dataset.a, 1); return render(); }
+  const b = ev.target.closest('button[data-f]');
+  if (!b) return;
+  const e = data.enemies[+b.dataset.f], c = b.dataset.a != null ? null : e.candidates[+b.dataset.c];
+  b.disabled = true;
+  try {
+    let body = { book: code, enemy: e.name };
+    if (!c) {  // a picture pasted here: made with AI
+      const m = made[+b.dataset.f][+b.dataset.a];
+      Object.assign(body, m.text ? { image: m.webp, made: 'ai' } : { image: m.webp, link: null });
+    } else if (c.src) Object.assign(body, { src: c.src, crop: c.crop, levels: c.levels, flip: c.flip });
+    else {
+      toast('Fetching the picture...', 20000);
+      const r = await fetch('/api/admin/picture-url', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: c.page || c.web }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) return toast(`Could not fetch it: ${j.error || r.status}`, 7000);
+      const bmp = await createImageBitmap(new Blob([Uint8Array.from(atob(j.data), (ch) => ch.charCodeAt(0))], { type: j.type }));
+      const k = Math.min(1, LONG / Math.max(bmp.width, bmp.height));
+      const cv = Object.assign(document.createElement('canvas'), { width: Math.round(bmp.width * k), height: Math.round(bmp.height * k) });
+      cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
+      const blob = await new Promise((ok) => cv.toBlob(ok, 'image/webp', 0.9));
+      const du = await new Promise((ok) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.readAsDataURL(blob); });
+      Object.assign(body, { image: du.split(',')[1], link: c.page || c.web, crop: c.crop });
+    }
+    const r = await fetch('/api/admin/plate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) return toast(j.error || `Not saved (${r.status})`, 6000);
+    if (!c) made[+b.dataset.f].splice(+b.dataset.a, 1);  // saved: it is the row's picture now
+    await settle(+b.dataset.f, 'chosen', j.entry?.src, true);
+    stamp = Date.now();
+    await loadPlates();
+    render();
+    toast(`${e.name}: saved as your picture. Crop it on the picture sheet if it needs it.`, 4000);
+    window.parent.postMessage({ fightSheet: 'changed', book: code }, location.origin);
+  } finally { b.disabled = false; }
+});
+
+/* A picture pasted (Ctrl+V) or dropped on a row joins its candidates as "from AI", kept as WebP at most LONG px on its
+   long side, as the picture sheet keeps a dropped one; saved only by its Use this. */
+async function webpOf(file) {
+  const bmp = await createImageBitmap(file);
+  const k = Math.min(1, LONG / Math.max(bmp.width, bmp.height));
+  const cv = Object.assign(document.createElement('canvas'), { width: Math.round(bmp.width * k), height: Math.round(bmp.height * k) });
+  cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
+  const blob = await new Promise((ok) => cv.toBlob(ok, 'image/webp', 0.9));
+  return new Promise((ok) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.readAsDataURL(blob); });
+}
+async function addMade(fi, file) {
+  let du;
+  try { du = await webpOf(file); } catch { return toast('That is not a picture this browser can read.', 5000); }
+  (made[fi] = made[fi] || []).push({ dataUrl: du, webp: du.split(',')[1], text: true });
+  render();
+  toast(`${data.enemies[fi].name}: added as a candidate from AI. Use this saves it.`, 4000);
+}
+const rowOf = (el) => el?.closest?.('.foe');
+$('#foes').addEventListener('pointerover', (e) => {
+  const r = rowOf(e.target);
+  if (!r || r.classList.contains('active')) return;
+  document.querySelectorAll('.foe.active').forEach((x) => x.classList.remove('active'));
+  r.classList.add('active'); active = +r.dataset.f;
+});
+document.addEventListener('paste', (e) => {
+  const f = [...(e.clipboardData?.files || [])].find((x) => x.type.startsWith('image/'));
+  if (!f) return;
+  e.preventDefault();
+  if (active == null) return toast('Point at an enemy\'s row first, then paste.', 4000);
+  addMade(active, f);
+});
+$('#foes').addEventListener('dragover', (e) => { const r = rowOf(e.target); if (!r) return; e.preventDefault(); r.classList.add('over'); });
+$('#foes').addEventListener('dragleave', (e) => rowOf(e.target)?.classList.remove('over'));
+$('#foes').addEventListener('drop', (e) => {
+  const r = rowOf(e.target);
+  if (!r) return;
+  e.preventDefault(); r.classList.remove('over');
+  const f = [...(e.dataTransfer.files || [])].find((x) => x.type.startsWith('image/'));
+  if (f) addMade(+r.dataset.f, f); else toast('Drop a picture file.', 4000);
+});
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); }
+  catch {  // no clipboard permission: the old way
+    const t = Object.assign(document.createElement('textarea'), { value: text });
+    document.body.append(t); t.select();
+    const ok = document.execCommand('copy'); t.remove();
+    if (!ok) return toast('Could not copy the prompt.', 4000);
+  }
+  toast('Prompt copied', 2500);
+}
+
+/* The owner's decision on a row, kept in the proposal file (tools/plates_proposals.py decide): 'chosen' after Use
+   this, 'kept' for Keep as is, null to reopen it. */
+async function settle(fi, how, src, quiet) {
+  const e = data.enemies[fi];
+  const r = await fetch('/api/admin/proposals', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ book: code, enemy: e.name, how, src }) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) return toast(j.error || `Not saved (${r.status})`, 6000);
+  if (how) e.decided = j.row.decided; else delete e.decided;
+  render();
+  if (!quiet) toast(how ? `${e.name}: kept as it is` : `${e.name}: open again`, 2500);
+  window.parent.postMessage({ fightSheet: 'changed', book: code }, location.origin);
+}
+$('#finish').onclick = async () => {
+  const left = openRows();
+  $('#ask-q').textContent = (left ? `${left} row${left > 1 ? 's are' : ' is'} not settled yet: finishing leaves ${left > 1 ? 'them' : 'it'} as ${left > 1 ? 'they are' : 'it is'}. ` : '')
+    + 'Finish this round? The proposals move to plate-proposals.done.json, which the agent reads next time, and the dashboard\'s button goes.';
+  $('#ask').returnValue = '';
+  $('#ask').showModal();
+  await new Promise((ok) => $('#ask').addEventListener('close', ok, { once: true }));
+  if ($('#ask').returnValue !== 'ok') return;
+  const r = await fetch('/api/admin/proposals/finish', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ book: code }) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) return toast(j.error || `Not finished (${r.status})`, 6000);
+  data = { enemies: [] };
+  render();
+  $('#foes').innerHTML = '<p class="note">Finished: this round is in plate-proposals.done.json. Close this sheet; the picture sheet has every enemy.</p>';
+  window.parent.postMessage({ fightSheet: 'changed', book: code }, location.origin);
+};
+
+async function loadPlates() {
+  plates = compilePlates((await json('/assets/plates/plates.json'))?.plates);
+  ups = (await json(`/assets/plates/upscaled/${code}.json`))?.srcs || null;
+}
+async function main() {
+  if (!/^[\w-]{1,40}$/.test(code)) return;
+  try { await script(`/data/projectaon/${code}/book.js`); } catch { $('#sum').textContent = 'No book.js for ' + code; return; }
+  book = window.LW.BOOKS[code];
+  document.title = `Picture proposals: ${book.number}. ${book.title}`;
+  [data, index] = await Promise.all([json(`/data/projectaon/${code}/plate-proposals.json`), json('/data/projectaon/ill-index.json')]);
+  data = data || { enemies: [] }; index = index || {};
+  await loadPlates();
+  render();
+}
+
+let toastTimer;
+function toast(t, ms = 3000) {
+  const el = $('#toast'); el.textContent = t; el.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, ms);
+}
+main();
+</script>
+</body>
+</html>

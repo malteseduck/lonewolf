@@ -364,10 +364,31 @@ for two thirds; the rest of the owner's choices were by eye (variety, a better f
 sheet is for. The draft matches names, not creatures: the step's agent then judges every enemy's
 picture, the draft's and the rest, against what the enemy is (a Death Knight under a picture of some
 guard does not match; Book 15's Armoury Guards are Drakkarim), searching by what it is as well as by
-name, and shows the owner a contact sheet of the candidates rather than describing them (the owner's
-request, 2026-10-24; the step 7 prompt). A creature particular to Lone Wolf that no book pictures gets
-no stand-in: the agent names it in its report and the owner generates its picture with the sheet's
-**Prompt** button, from its `foe-about.json` entry (2026-10-24; the agent writes no prompt itself);
+name, and shows the owner the candidates rather than describing them, on the **proposal sheet** (ruling R23):
+it writes `data/projectaon/<code>/plate-proposals.json` (git-ignored; format in `tools/plates_proposals.py`,
+whose `check <code>` names what the sheet could not show), and the owner opens it from step 7's "Open
+proposals". Each enemy there shows what it has now, every candidate inked as in a fight (a web one by its
+thumbnail, fetched only when chosen), the agent's note and pick, its `foe-about.json` entry, and the book's
+text where it is fought, named, pointed to or described (read from `book.js` in the page), each section
+folded, with the sentences the agent marked as describing it (`describe`) highlighted whole; Use this saves the choice
+as the owner's picture, as the picture sheet's Stand-in... or By address... would. Each row also has a
+**prompt** for an image generator: the agent's fullest description of the enemy, gathered from every section
+that describes it (where it is first seen, fought, killed or opened, and what is compared to it) and the wiki,
+and the moment it is fought, with the pictures worth attaching shown beneath (`refs`). No prompt names a colour
+(a fight picture is an ink drawing; the owner, 2026-10-26): `platePrompt()` takes every colour word out of the
+description it is given, foe-about entries included, and the check rejects one in the agent's `prompt`
+(the file's `prompt`, our own words, checked against the book's) in the picture sheet's style, asking it to
+follow any reference pictures attached (`tools/admin/plateprompt.js`, shared with the Prompt button). A
+picture pasted (Ctrl+V) or dropped on a row joins it as "from AI"; Use this saves it, made from the prompt
+alone into the committed library (`made: 'ai'`, the default), or, made from reference pictures, into
+git-ignored `art/plates/` with no link (ADR 0042). The owner settles each row (Use this, or **Keep as is**;
+**Reopen** undoes it), written into the file as `decided`, and **Finish** ends the round: the file is added to
+`plate-proposals.done.json` beside it (every round, each with the date it finished) and goes, so the
+dashboard's button goes too. The next round's agent reads the done file and does not propose again what
+the owner settled. A creature particular to Lone Wolf that no book pictures gets
+no stand-in: the agent names it in its report and lists it on the proposal sheet with no candidates, and the
+owner generates its picture from that sheet's prompt (or the picture sheet's **Prompt** button, from its
+`foe-about.json` entry);
 a stand-in found by searching is for ordinary things (animals, plain humans, a door).
 
 Where a fight's picture comes from, first that applies (ADR 0008):

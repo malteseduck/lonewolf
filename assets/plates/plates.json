@@ -1,11 +1,15 @@
 {
   "_readme": "Pictures for fights whose section has no illustration of its own. The first entry whose match (a regular expression, case ignored) is found in the enemy's name is used, so put the narrower ones first. book, if given, limits an entry to that book (its own characters, or a stand-in that would be wrong elsewhere); book entries go first. src is relative to the project root: files in assets/plates/ are free to redistribute (sources in README.txt); files under data/projectaon/ are Project Aon illustrations on the owner's machine only, from the same book or borrowed from another, and files under art/ are pictures the owner supplied for personal use (git-ignored); a missing one falls back to the drawn emblem. crop, if given, is the part of the picture to use, [x, y, w, h] as fractions. over: true makes the entry win even where the section has an illustration of its own (the owner preferred another picture). levels, if given, is [black, white] (0-255): the tones that become full ink and bare paper, for a painting whose mid-tones would otherwise all turn to solid ink. draft, if given, marks an entry tools/plates_draft.py wrote (where it came from) that the owner has not yet adjusted on the picture sheet. See docs/reference/interface.md, Art pipeline, and docs/reference/items.md, Fight pictures.",
   "plates": [
+    { "match": "^kataka$", "book": "19wb", "src": "assets/plates/19wb/kataka.webp" },
+    { "match": "^caq$", "book": "19wb", "src": "assets/plates/19wb/caq.webp" },
+    { "match": "^ekmakon$", "book": "19wb", "src": "assets/plates/19wb/ekmakon.webp" },
+    { "match": "^temple portal$", "book": "19wb", "src": "assets/plates/19wb/temple-portal.webp" },
+    { "match": "^ukara \\(chained\\)$", "book": "19wb", "src": "data/projectaon/19wb/ill8.png" },
     { "match": "^armoury guard$", "book": "05sots", "src": "assets/plates/05sots/armoury-guard.webp", "crop": [0.1515, 0.0228, 0.6999, 0.9402], "levels": [50, 167] },
     { "match": "^vestibule guard$", "book": "05sots", "src": "assets/plates/05sots/vestibule-guard.webp", "crop": [0.0363, 0.064, 0.9346, 0.9154], "levels": [29, 188] },
     { "match": "^bangrol$", "book": "19wb", "src": "assets/plates/19wb/bangrol.webp", "crop": [0.0171, 0.0503, 0.9685, 0.724] },
     { "match": "^solyx$", "book": "19wb", "src": "assets/plates/19wb/solyx.webp", "crop": [0.046, 0.045, 0.9238, 0.8766] },
-    { "match": "^ekmakon$", "book": "19wb", "src": "data/projectaon/19wb/ill18.png", "draft": "this book, a picture 2 links before the fight" },
     { "match": "^meghanic$", "book": "19wb", "src": "data/projectaon/19wb/ill6.png", "draft": "this book, a picture 1 link before the fight" },
     { "match": "^eldenoran horse-scouts$", "book": "18dotd", "src": "assets/plates/18dotd/eldenoran-horse-scouts.webp", "crop": [0.1518, 0.1819, 0.6163, 0.6692] },
     { "match": "^vaxagore$", "book": "18dotd", "src": "assets/plates/18dotd/vaxagore.webp", "crop": [0.0295, 0.045, 0.9658, 0.8933], "levels": [55, 182] },

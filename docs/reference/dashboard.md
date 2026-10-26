@@ -46,6 +46,19 @@ step left.
   `tools/map-editor.html?book=<code>&embed=1`, which tells the dashboard when its files change, so the
   seals follow. It opens only here (ADR 0021): at its own address it shows only a line pointing to the
   dashboard.
+- **The proposal sheet** ("Open proposals (n)" at step 7, shown while the book has a
+  `plate-proposals.json`; ruling R23): `tools/admin/proposals.html?book=<code>&embed=1`, inside the step like
+  the picture sheet and only there. The agent's candidates for the enemies it changed, chose or could not settle
+  (`tools/plates_proposals.py`), each row with the picture shown now, the candidates inked as in a fight, the
+  agent's note and pick, the enemy's `foe-about.json` entry and the book's text where it is met, fought and
+  described, each section folded to a line, the sentences describing it highlighted;
+  Use this saves one as the owner's picture through `POST plate` (a web one fetched first by `POST picture-url`).
+  Each row's prompt (Copy prompt) is the agent's description in the picture sheet's style (`plateprompt.js`),
+  telling the generator to follow any references attached; a picture pasted or dropped on a row becomes a
+  "from AI" candidate, saved as made from the prompt alone (committed) or from references (`art/plates/`).
+  A row is settled by Use this or Keep as is (`POST proposals`; Reopen undoes it) and folds to one line; the
+  button counts the rows left to settle; Finish (`POST proposals/finish`) moves the round to
+  `plate-proposals.done.json` and the button goes.
 - **The picture sheet** ("Open picture sheet" at step 7), inside the step like the map editor and
   only there (`tools/admin/fights.html` at its own address shows only a line pointing to the dashboard). Every kind of enemy in the book with
   the picture the player would show (the same choice as `nextFoe()` in `main.js`), inked as in a
@@ -61,7 +74,7 @@ step left.
   Remove takes the owner's entry away. A card's buttons are Adjust, Prompt and a Picture menu (Choose file...,
   By address..., Stand-in..., Link...); Prompt copies a prompt for an AI image generator: the enemy's name and
   `about`, asked for as a tall black-and-white pen-and-ink illustration in the style of Gary Chalk's Lone Wolf art,
-  on plain white so it inks as it is (`promptFor()`). It avoids a person's words (portrait, fighting stance) and asks
+  on plain white so it inks as it is (`platePrompt()` in `tools/admin/plateprompt.js`, which the proposal sheet shares; it takes every colour word out of the description, as a fight picture is an ink drawing). It avoids a person's words (portrait, fighting stance) and asks
   that a beast keep its own body, as described, not be made humanoid (2026-10-18: beasts were coming out standing up). Each save redraws the cards and the "with none" count, and the
   dashboard's seals follow. The rules for the entry: `docs/reference/items.md`, "Fight pictures".
 - **The illustration sheet** ("Open illustration sheet" at step 9), inside the step like the
@@ -180,6 +193,7 @@ agent run `show` instead).
 | `POST item-glyph` | `{item, glyph}` or `{item, remote: 'author/name'}` (fetched and credited first): `item_icons.set_glyph()` rewrites the item's glyph where it is named; `{file, glyph, was}` |
 | `POST ui-glyph` | the icon sheet: `{list, key, glyph}` or `{list, key, remote}`: `item_icons.set_ui_glyph()` rewrites that entry of `glyphs.js`'s `DISC_GLYPH`, `UI_GLYPH` or `KIND_GLYPH`; `{file, glyph, was}` |
 | `POST plate` | the picture sheet: `{book, enemy, image?, link?, crop?, levels?, flip?, remove?}` (`image` base64 WebP, up to 25 MB): the owner's picture for one enemy, saved as `art/plates/<book>/<slug of the name>.webp` (never a path from the request) and entered in `plates.json` by `tools/plates_file.py`, which keeps the file's one-entry-per-line layout; `link` (an address, or null for none) recorded in `art/sources.json` with a new picture |
+| `POST proposals` | the proposal sheet: `{book, enemy, how, src?}` (how: chosen, kept, or null to reopen), the owner's decision on one row, written into `plate-proposals.json` (`tools/plates_proposals.py` decide); `POST proposals/finish` `{book}` ends the round, the file added to `plate-proposals.done.json` and removed (ruling R23) |
 
 The stages are a fixed table, `ADMIN_STAGES`: the command is built from it and a code from
 `book_status.CATALOGUE`, never from the request. One job at a time, sharing the map editor's lock,
