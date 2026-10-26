@@ -1,0 +1,710 @@
+[
+ {
+  "text": "Dojkunta",
+  "box": [
+   636,
+   194,
+   735,
+   224
+  ],
+  "slant": -0.8,
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "SOMMERLUND",
+  "box": [
+   1236,
+   203,
+   1505,
+   254
+  ],
+  "slant": 0.6,
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "\u5317\u6c34",
+  "box": [
+   425,
+   310,
+   448,
+   356
+  ],
+  "slant": -78.6,
+  "conf": 0.77,
+  "retype": true
+ },
+ {
+  "text": "& DARKLANDS",
+  "box": [
+   1346,
+   292,
+   1618,
+   361
+  ],
+  "slant": 3.2,
+  "conf": 0.95,
+  "retype": false
+ },
+ {
+  "text": "Gulf of Helenag",
+  "box": [
+   1073,
+   327,
+   1225,
+   503
+  ],
+  "slant": -50.7,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "Orgndtexna",
+  "box": [
+   398,
+   375,
+   540,
+   405
+  ],
+  "slant": 0.5,
+  "conf": 0.95,
+  "retype": true
+ },
+ {
+  "text": "1x",
+  "box": [
+   445,
+   395,
+   478,
+   416
+  ],
+  "slant": 78.4,
+  "conf": 0.93,
+  "retype": true
+ },
+ {
+  "text": "The Kaltorsee",
+  "box": [
+   1356,
+   378,
+   1532,
+   405
+  ],
+  "slant": 2.0,
+  "conf": 0.98,
+  "retype": true
+ },
+ {
+  "text": "Point Vaphna",
+  "box": [
+   1222,
+   424,
+   1380,
+   452
+  ],
+  "slant": 1.3,
+  "conf": 0.98,
+  "retype": true
+ },
+ {
+  "text": "Gcurdanak",
+  "box": [
+   863,
+   486,
+   983,
+   507
+  ],
+  "slant": 0.5,
+  "conf": 0.95,
+  "retype": true
+ },
+ {
+  "text": "Mins",
+  "box": [
+   898,
+   506,
+   957,
+   531
+  ],
+  "slant": 3.0,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "Dajdokritzaga",
+  "box": [
+   277,
+   526,
+   436,
+   558
+  ],
+  "slant": 1.5,
+  "conf": 0.96,
+  "retype": true
+ },
+ {
+  "text": "RUINSOF",
+  "box": [
+   344,
+   593,
+   475,
+   617
+  ],
+  "slant": 0.4,
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "GARGAZAD",
+  "box": [
+   1020,
+   594,
+   1188,
+   640
+  ],
+  "slant": -2.3,
+  "conf": 0.98,
+  "retype": true
+ },
+ {
+  "text": "HELGEDAD",
+  "box": [
+   340,
+   618,
+   479,
+   644
+  ],
+  "slant": 0.8,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "AARNAK",
+  "box": [
+   556,
+   629,
+   678,
+   662
+  ],
+  "slant": 0.2,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "ANSKAVEN",
+  "box": [
+   1609,
+   662,
+   1778,
+   689
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "SAAA",
+  "box": [
+   1540,
+   698,
+   1630,
+   728
+  ],
+  "slant": 2.1,
+  "conf": 0.8,
+  "retype": true
+ },
+ {
+  "text": "Naogiznya",
+  "box": [
+   500,
+   741,
+   628,
+   770
+  ],
+  "slant": 0.9,
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "TORAN",
+  "box": [
+   1494,
+   725,
+   1605,
+   755
+  ],
+  "slant": 1.0,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "SOMMERLUND",
+  "box": [
+   1472,
+   774,
+   1714,
+   812
+  ],
+  "slant": 0.9,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "The Holmgulf",
+  "box": [
+   1594,
+   798,
+   1753,
+   919
+  ],
+  "slant": -33.4,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "THE DARKLANDS",
+  "box": [
+   428,
+   850,
+   705,
+   884
+  ],
+  "slant": 0.6,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "Monastory",
+  "box": [
+   1403,
+   871,
+   1528,
+   905
+  ],
+  "slant": 3.8,
+  "conf": 0.98,
+  "retype": true
+ },
+ {
+  "text": "Ka\u00ed",
+  "box": [
+   1442,
+   856,
+   1488,
+   880
+  ],
+  "slant": 2.9,
+  "conf": 0.96,
+  "retype": true
+ },
+ {
+  "text": "TYSO",
+  "box": [
+   1536,
+   858,
+   1623,
+   887
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "Durnotag Mtns",
+  "box": [
+   1232,
+   915,
+   1423,
+   955
+  ],
+  "slant": 1.3,
+  "conf": 0.98,
+  "retype": true
+ },
+ {
+  "text": "KAAG",
+  "box": [
+   1030,
+   928,
+   1126,
+   959
+  ],
+  "slant": 1.2,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "HOLMGARD",
+  "box": [
+   1481,
+   964,
+   1645,
+   988
+  ],
+  "slant": 0.0,
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "Kagazitzaga",
+  "box": [
+   435,
+   1021,
+   576,
+   1050
+  ],
+  "slant": 0.9,
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "RECLAIMED",
+  "box": [
+   1028,
+   1039,
+   1176,
+   1066
+  ],
+  "slant": 1.2,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "WASTELAND",
+  "box": [
+   1024,
+   1066,
+   1179,
+   1092
+  ],
+  "slant": 0.7,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "THE WILDLANDS",
+  "box": [
+   1512,
+   1156,
+   1779,
+   1191
+  ],
+  "slant": 1.1,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "ESHNAR TEMEL",
+  "box": [
+   1511,
+   1199,
+   1787,
+   1245
+  ],
+  "slant": 1.6,
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "NADGAZAD",
+  "box": [
+   572,
+   1236,
+   754,
+   1264
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "MAGADOR",
+  "box": [
+   783,
+   1212,
+   951,
+   1241
+  ],
+  "slant": 0.7,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "Maakengorgo",
+  "box": [
+   1144,
+   1239,
+   1313,
+   1313
+  ],
+  "slant": 15.5,
+  "conf": 0.97,
+  "retype": true
+ },
+ {
+  "text": "OGIA",
+  "box": [
+   322,
+   1261,
+   420,
+   1302
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "L.Vorndarol",
+  "box": [
+   1026,
+   1279,
+   1165,
+   1302
+  ],
+  "slant": 0.8,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "RUANONY",
+  "box": [
+   1399,
+   1315,
+   1553,
+   1350
+  ],
+  "slant": 0.6,
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "ADAAA",
+  "box": [
+   1428,
+   1294,
+   1525,
+   1323
+  ],
+  "slant": -1.4,
+  "conf": 0.71,
+  "retype": true
+ },
+ {
+  "text": "19",
+  "box": [
+   1674,
+   1287,
+   1695,
+   1301
+  ],
+  "slant": 15.0,
+  "conf": 0.77,
+  "retype": true
+ },
+ {
+  "text": "ib",
+  "box": [
+   1700,
+   1290,
+   1717,
+   1303
+  ],
+  "slant": 1.8,
+  "conf": 0.73,
+  "retype": true
+ },
+ {
+  "text": "PACK ICE",
+  "box": [
+   320,
+   1385,
+   453,
+   1409
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "VOLCANOES",
+  "box": [
+   587,
+   1385,
+   749,
+   1413
+  ],
+  "slant": 1.1,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "MOUNTAINS",
+  "box": [
+   853,
+   1387,
+   1006,
+   1413
+  ],
+  "slant": 0.7,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "LAKE",
+  "box": [
+   1143,
+   1391,
+   1222,
+   1418
+  ],
+  "slant": 1.5,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "SCALE IN MILES",
+  "box": [
+   1386,
+   1372,
+   1600,
+   1397
+  ],
+  "slant": 0.5,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "75",
+  "box": [
+   1480,
+   1415,
+   1507,
+   1435
+  ],
+  "slant": 0.0,
+  "conf": 0.92,
+  "retype": true
+ },
+ {
+  "text": "150",
+  "box": [
+   1609,
+   1417,
+   1641,
+   1437
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "TUNDRA",
+  "box": [
+   320,
+   1453,
+   435,
+   1479
+  ],
+  "slant": 1.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "WASTELAND",
+  "box": [
+   587,
+   1456,
+   750,
+   1479
+  ],
+  "slant": 0.7,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "HILLs",
+  "box": [
+   852,
+   1455,
+   933,
+   1481
+  ],
+  "slant": 0.3,
+  "conf": 0.95,
+  "retype": false
+ },
+ {
+  "text": "Soloonl",
+  "box": [
+   1058,
+   1460,
+   1119,
+   1482
+  ],
+  "slant": -0.6,
+  "conf": 0.7,
+  "retype": false
+ },
+ {
+  "text": "SWAMP",
+  "box": [
+   1144,
+   1460,
+   1246,
+   1487
+  ],
+  "slant": 1.7,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "44A",
+  "box": [
+   1322,
+   1446,
+   1396,
+   1478
+  ],
+  "slant": 1.0,
+  "conf": 0.83,
+  "retype": false
+ },
+ {
+  "text": "A4",
+  "box": [
+   1332,
+   1470,
+   1385,
+   1497
+  ],
+  "slant": 1.5,
+  "conf": 0.77,
+  "retype": true
+ },
+ {
+  "text": "FOREST",
+  "box": [
+   1410,
+   1467,
+   1514,
+   1493
+  ],
+  "slant": 1.1,
+  "conf": 1.0,
+  "retype": true
+ },
+ {
+  "text": "PLAINS",
+  "box": [
+   1675,
+   1469,
+   1775,
+   1497
+  ],
+  "slant": 1.1,
+  "conf": 1.0,
+  "retype": true
+ }
+]
