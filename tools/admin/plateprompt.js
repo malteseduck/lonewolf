@@ -1,6 +1,6 @@
 /* A prompt for an AI image generator: an enemy as the books' own artist might have inked it, tall like the
-   fight panel, on plain paper so inkPlate() can take it as it is. Shared by the picture sheet's Prompt button
-   (what: the enemy's foe-about entry) and the proposal sheet (what: the agent's fuller description, ruling R23).
+   fight panel, on plain paper so inkPlate() can take it as it is. The proposal sheet's (what: the agent's
+   description, else the enemy's foe-about entry; ruling R23).
    No person's words ("portrait", "fighting stance", "three-quarter length"): they stood beasts up as humanoids.
    No colour either: a fight picture is an ink drawing, and a colour named pulls the generator towards paint
    (the owner, 2026-10-26). */

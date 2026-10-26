@@ -102,7 +102,7 @@ def forget(rel):
         save(sources)
 
 
-AI_NOTE = ('  Made with an AI image generator from a text prompt alone (the picture sheet\'s Prompt button);\n'
+AI_NOTE = ('  Made with an AI image generator from a text prompt alone (the proposal sheet\'s prompt);\n'
            '  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here {date}.\n')
 
 

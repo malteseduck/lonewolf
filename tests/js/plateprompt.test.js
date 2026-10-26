@@ -1,4 +1,4 @@
-/* tools/admin/plateprompt.js, the image-generator prompt both picture sheets copy: a fight picture is an ink
+/* tools/admin/plateprompt.js, the image-generator prompt the proposal sheet copies: a fight picture is an ink
    drawing, so the description it carries names no colour (the owner, 2026-10-26). */
 import { describe, it, expect } from 'vitest';
 import { platePrompt, uncolour, COLOURS } from '../../tools/admin/plateprompt.js';

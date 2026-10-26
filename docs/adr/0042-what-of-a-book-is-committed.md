@@ -8,7 +8,7 @@
 The owner wanted as much of the work as possible in git, so a lost drive costs nothing that cannot
 be fetched or rebuilt. Three hand-kept files lived git-ignored beside the books: what each enemy is
 (`foe-about.json`), what each illustration is and shows (`ill-about.json`, `ill-notes.json`).
-Fight pictures the owner made with AI from the picture sheet's Prompt button (text only, no book
+Fight pictures the owner made with AI from a text prompt alone (now the proposal sheet's; no book
 picture given to the generator) were git-ignored in `art/` with the borrowed art, though they are
 ours. The owner also asked whether `book.js` could be split so its fixes and decisions are committed.
 
@@ -40,6 +40,6 @@ run of 8 or more of their book's words (the longest 13); they were reworded.
 
 - An agent writing descriptions writes them in its own words and runs `tools/about_check.py`
   (the step 7 prompt says so). A failure is fixed by rewording, never by raising the run length.
-- The picture-sheet Prompt button names Gary Chalk's style; that imitates no picture, and is fine
-  while the repository is personal. If it is ever published, drop the name from the prompt first.
+- The image-generator prompt (the proposal sheet's, `tools/admin/plateprompt.js`) names Gary Chalk's
+  style; that imitates no picture, and is fine while the repository is personal. If it is ever published, drop the name from the prompt first.
 - Pictures with a link, or none, stay in `art/` (ADR 0038); only AI-made ones move.

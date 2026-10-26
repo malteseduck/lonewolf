@@ -122,7 +122,7 @@
   <div class="src" id="ed-src" hidden>
     <label>Where it came from <input type="url" id="ed-link" placeholder="https://... its page, or the picture's own address"></label>
     <label><input type="checkbox" id="ed-nolink"> No link (a screenshot, your own drawing)</label>
-    <label title="Made from the Prompt button's text alone, no picture given to the AI: it is ours, so it goes into the committed library (ADR 0042)"><input type="checkbox" id="ed-ai"> Made with AI from a text prompt</label>
+    <label title="Made from the proposal sheet's prompt alone, no picture given to the AI: it is ours, so it goes into the committed library (ADR 0042)"><input type="checkbox" id="ed-ai"> Made with AI from a text prompt</label>
   </div>
   <menu>
     <button id="ed-whole">Whole picture</button>
@@ -146,7 +146,7 @@
 <dialog id="ask" style="width:min(600px,90vw);box-sizing:border-box;padding:18px 20px;overflow:hidden">
   <form method="dialog">
     <label><span id="ask-q"></span><input type="text" id="ask-v" style="display:block;width:100%;box-sizing:border-box;margin-top:8px"></label>
-    <div id="ask-ai-l" hidden style="margin-top:8px"><label title="Made from the Prompt button's text alone, no picture given to the AI: it is ours, so it goes into the committed library (ADR 0042)"><input type="checkbox" id="ask-ai"> Made with AI from a text prompt (no link needed)</label></div>
+    <div id="ask-ai-l" hidden style="margin-top:8px"><label title="Made from the proposal sheet's prompt alone, no picture given to the AI: it is ours, so it goes into the committed library (ADR 0042)"><input type="checkbox" id="ask-ai"> Made with AI from a text prompt (no link needed)</label></div>
     <menu style="display:flex;gap:8px;padding:0;margin:14px 0 0"><span style="flex:1"></span><button value="cancel" formnovalidate>Cancel</button><button value="ok" id="ask-ok">OK</button></menu>
   </form>
 </dialog>
@@ -155,7 +155,7 @@
 <script type="module">
 import { inkPlate } from '../../plates.js';
 import { compilePlates, pickPlate, pinState, upscaledSrc } from '../../platepick.js';
-import { platePrompt } from './plateprompt.js';
+import { pictureFor } from './prompts.js';
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -263,7 +263,7 @@ async function render() {
     <div class="pic" id="pic${i}">${f.src ? '' : '<div class="none">no picture<br><small>drop one here</small></div>'}</div>
     <b>${esc(f.name)}</b><small>section${f.secs.length > 1 ? 's' : ''} ${esc(f.secs.join(', '))}</small><small>${esc(f.from)}</small><small id="size${i}"></small>
     <small class="about${about(f.name) ? '' : ' unsaid'}">${esc(about(f.name) || 'not yet said what this enemy is')}</small>
-    <div class="tools">${f.src ? '<button data-do="adjust">Adjust</button>' : ''}<button data-do="prompt" title="Copy a prompt for an AI image generator: this enemy as a Gary Chalk ink portrait">Prompt</button>
+    <div class="tools">${f.src ? '<button data-do="adjust">Adjust</button>' : ''}<button data-do="prompt" title="Copy a prompt for Claude Code: other pictures for this enemy, and what to generate one from, on the proposal sheet">Prompt</button>
       <details class="more"><summary>Picture</summary><div class="menu"><button data-do="choose">Choose file...</button><button data-do="address">By address...</button><button data-do="standin">Stand-in...</button>${ownFile(f) ? '<button data-do="link">Link...</button>' : ''}</div></details></div></div>`).join('');
   // ink them one by one, so the page shows at once
   for (const [i, f] of foes.entries()) {
@@ -361,10 +361,9 @@ document.addEventListener('click', (e) => {
   for (const d of document.querySelectorAll('.card details[open]')) if (!d.contains(e.target)) d.removeAttribute('open');
 });
 
-// the enemy described by the index's `about` (plateprompt.js)
-const promptFor = (foe) => platePrompt(foe.name, about(foe.name));
+// step 7's agent prompt narrowed to this enemy (prompts.js): its proposals, to pick another picture or generate one
 async function copyPrompt(foe) {
-  const text = promptFor(foe);
+  const text = pictureFor({ n: book.number, title: book.title, code, series: book.series || 'kai' }, foe);
   try { await navigator.clipboard.writeText(text); }
   catch {  // no clipboard permission: the old way
     const t = Object.assign(document.createElement('textarea'), { value: text });
@@ -372,7 +371,7 @@ async function copyPrompt(foe) {
     const ok = document.execCommand('copy'); t.remove();
     if (!ok) return toast('Could not copy the prompt.', 4000);
   }
-  toast(about(foe.name) ? 'Prompt copied' : 'Prompt copied (no description yet: only the name)', 3000);
+  toast('Prompt copied: paste it into Claude Code', 3000);
 }
 
 /* The answer typed in the #ask dialog, or null if cancelled (Escape, Cancel). */

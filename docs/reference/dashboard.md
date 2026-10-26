@@ -72,10 +72,10 @@ step left.
   picture, and so does one by its address (dragged from another site, pasted, or By address...: the server fetches it);
   a new picture asks for its link, or No link (ADR 0038), and Link... gives one to a picture already in `art/`; Adjust crops any card's picture, flips it left to right and sets levels, with the fight panel previewed as it will look (and, for a picture shown from its 2x copy, Show original to compare);
   Remove takes the owner's entry away. A card's buttons are Adjust, Prompt and a Picture menu (Choose file...,
-  By address..., Stand-in..., Link...); Prompt copies a prompt for an AI image generator: the enemy's name and
-  `about`, asked for as a tall black-and-white pen-and-ink illustration in the style of Gary Chalk's Lone Wolf art,
-  on plain white so it inks as it is (`platePrompt()` in `tools/admin/plateprompt.js`, which the proposal sheet shares; it takes every colour word out of the description, as a fight picture is an ink drawing). It avoids a person's words (portrait, fighting stance) and asks
-  that a beast keep its own body, as described, not be made humanoid (2026-10-18: beasts were coming out standing up). Each save redraws the cards and the "with none" count, and the
+  By address..., Stand-in..., Link...); Prompt copies the step 7 agent prompt narrowed to that enemy
+  (`pictureFor()` in `tools/admin/prompts.js`; the owner, 2026-10-26): pasted into Claude Code, it proposes other
+  pictures for it and gathers its description on the proposal sheet, keeping any other rows there, where the
+  owner picks one or generates one from the sheet's image-generator prompt. Each save redraws the cards and the "with none" count, and the
   dashboard's seals follow. The rules for the entry: `docs/reference/items.md`, "Fight pictures".
 - **The illustration sheet** ("Open illustration sheet" at step 9), inside the step like the
   others and only there (`tools/admin/ills.html`): every `ill*` and `small*` picture of the book on
@@ -295,7 +295,8 @@ downloads and imports still need the owner's word (AGENTS.md).
 
 `tools/admin/prompts.js`, one per agent step: phrasings (3), rules addendum (4), item table (5, and
 a fix prompt when `check_items` reports errors), test play-through (6), fight pictures (7), the map's
-style and its retype ticks, and a new book the importer does not know. Each is pasted into a fresh
+style and its retype ticks, and a new book the importer does not know; and `pictureFor()`, step 7's
+narrowed to one enemy, which the picture sheet's Prompt button copies. Each is pasted into a fresh
 Claude Code session in the project, which loads AGENTS.md by itself, so a prompt does not repeat its
 rules: it gives the book, the figures the dashboard has (counts only, never the books' words), the
 procedure's file, and the `book_status.py done` line. Where a step has a script (ADR 0036), its prompt
