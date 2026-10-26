@@ -126,6 +126,58 @@ def test_a_row_is_settled_by_a_choice_or_kept_as_it_is_and_can_be_reopened(tree)
         pp.decide(CODE, 'Mire Toad', 'maybe')
 
 
+def _wyrm_book(tree):
+    """A book where the Bog Wyrm is seen from afar (1), fought (3) and found dead (4), and called "the serpent" (5)."""
+    secs = {'1': {'text': ['Far off a wyrm coils in the reeds.'], 'choices': [{'to': '3'}]},
+            '2': {'text': ['A quiet road.'], 'choices': [{'to': '3'}]},
+            '3': {'text': ['It strikes.'], 'combat': {'enemies': [{'name': 'Bog Wyrm', 'art': 'ill2.png'}]}, 'choices': [{'to': '4'}]},
+            '4': {'text': ['Its scaly body sinks.'], 'choices': [{'to': '5'}]},
+            '5': {'text': ['The serpent was huge.'], 'choices': []},
+            '6': {'text': ['Two wyrms.'], 'combat': {'enemies': [{'name': '2 Bog Wyrms'}]}, 'choices': []}}
+    tree.file(f'data/projectaon/{CODE}/book.js', '(window.LW = window.LW || {}).BOOKS = Object.assign(window.LW.BOOKS || {}, '
+              + json.dumps({CODE: {'id': CODE, 'sections': secs}}) + ');')
+    tree.file('about/foe-about.json', json.dumps({CODE: {'Bog Wyrm': 'A wyrm of the bog (3)'},
+                                                   '07yy': {'Bog Wyrms': 'Wyrms again (12)', 'Toad': 'A toad'}}))
+    tree.file('assets/plates/plates.json', json.dumps({'plates': [
+        {'match': '^bog wyrm$', 'book': CODE, 'src': 'assets/plates/05xx/bog-wyrm.webp', 'over': True},
+        {'match': 'wyrm', 'book': '07yy', 'src': 'data/projectaon/07yy/ill4.png'},
+        {'match': 'toad', 'src': 'assets/plates/toad.jpg'}]}))
+    tree.file('data/projectaon/ill-index.json', json.dumps({
+        f'{CODE}/ill2.png': {'book': CODE, 'section': 3, 'fight': ['Bog Wyrm'], 'fought_at': [], 'about': 'The wyrm rearing'},
+        '07yy/ill4.png': {'book': '07yy', 'section': 12, 'fight': ['Bog Wyrms'], 'fought_at': [], 'about': 'Two of them'},
+        '07yy/ill9.png': {'book': '07yy', 'section': 40, 'fight': [], 'fought_at': [], 'shows': 'a coiled wyrm skull', 'about': ''},
+        '07yy/ill5.png': {'book': '07yy', 'section': 50, 'fight': ['Toad'], 'fought_at': [], 'about': 'A toad'}}))
+    tree.file(f'data/projectaon/{CODE}/plate-proposals.done.json', json.dumps({'rounds': [
+        {'made': '2026-10-20', 'finished': '2026-10-21', 'enemies': [{'name': 'Bog Wyrm', 'decided': {'how': 'kept', 'on': '2026-10-21'}}]}]}))
+
+
+def test_gather_collects_what_a_proposal_needs_in_one_go(tree):
+    """`gather` saves the agent rediscovering the files for each enemy: where it is fought, what it shows now,
+    the abouts and pictures of its kind in every book, the sections naming it and those around its fights,
+    and whether the owner settled it before."""
+    _wyrm_book(tree)
+    g = pp.gather(CODE, 'Bog Wyrm', also=['serpent'])
+    assert g['fights'] == ['3'] and g['kin'] == {'2 Bog Wyrms': ['6']}
+    assert g['now'] == 'assets/plates/05xx/bog-wyrm.webp'
+    assert set(g['about']) == {f'{CODE}: Bog Wyrm', '07yy: Bog Wyrms'}
+    pics = [p['src'] for p in g['pictures']]
+    assert pics == [f'data/projectaon/{CODE}/ill2.png', 'data/projectaon/07yy/ill4.png', 'data/projectaon/07yy/ill9.png']  # this book first
+    assert [p['src'] for p in g['plates']] == ['assets/plates/05xx/bog-wyrm.webp', 'data/projectaon/07yy/ill4.png']
+    assert g['named'] == {'1': ['wyrm'], '5': ['serpent'], '6': ['wyrm']}
+    assert g['into'] == ['1', '2'] and g['after'] == ['4']
+    assert g['settled'] == ['2026-10-21 kept']
+
+
+def test_gather_prints_ids_and_our_own_words_unless_asked_for_the_text(tree, capsys):
+    _wyrm_book(tree)
+    assert pp.main(['gather', CODE, 'Bog Wyrm']) == 0
+    out = capsys.readouterr().out
+    assert 'ill2.png' in out and 'A wyrm of the bog' in out and 'coils in the reeds' not in out
+    pp.main(['gather', CODE, 'Bog Wyrm', '--text'])
+    assert 'Far off a wyrm coils in the reeds.' in capsys.readouterr().out
+    assert pp.main(['gather', CODE, 'Mire Frog']) == 1
+
+
 def test_finishing_moves_the_round_to_the_done_file_which_keeps_every_round(tree):
     tree.book()
     tree.proposals([{'name': 'Mire Toad', 'candidates': []}])

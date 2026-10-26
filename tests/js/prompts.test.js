@@ -18,13 +18,13 @@ describe('pictureFor', () => {
     expect(p).toMatch(/every other enemy/);
   });
   it('keeps a round in progress and leaves the pick and the step to the owner', () => {
-    expect(p).toMatch(/keep them/);
+    expect(p).toMatch(/keep any other rows/i);
     expect(p).not.toContain('book_status.py done');
-    expect(p).toMatch(/do not change its picture in plates\.json/i);
+    expect(p).toMatch(/do not change plates\.json/i);
   });
   it('shares the search order and the description with the whole-book prompt', () => {
     const all = PROMPTS.pictures({ ...b, imp: { bare: 2, kinds: 20 } });
-    for (const s of ['Follow docs/reference/items.md, "Fight pictures"', 'Never a colour']) {
+    for (const s of ['Follow docs/reference/items.md, "Fight pictures"', 'Never a colour', 'plates_proposals.py gather 09sb']) {
       expect(p).toContain(s);
       expect(all).toContain(s);
     }

@@ -3,6 +3,11 @@ it changes, chooses or cannot settle, shown with their context on the proposal s
 (tools/admin/proposals.html, the dashboard's "Open proposals" at step 7), where the owner picks one.
 
     python tools/plates_proposals.py check <code>   # what the sheet could not show; exit 1 if any
+    python tools/plates_proposals.py gather <code> "<enemy>" [--also=word,word] [--text]
+        # everything a proposal needs, in one go: its fights, its picture now, the foe-about entries,
+        # pictures and plates.json entries of its kind in every book, the sections naming it (or the
+        # --also words: "stranger", "the serpent") and those around its fights, what was settled before;
+        # --text adds those sections' text, for the agent's own reading
 
 The file is data/projectaon/<code>/plate-proposals.json (git-ignored with the book; the sheet reads the
 book's text from book.js itself, so the file holds names, ids, paths and our own words only):
@@ -43,6 +48,8 @@ import re
 import sys
 
 import about_check
+import plates_draft as pd
+import plates_file as pf
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -174,7 +181,107 @@ def problems(code):
     return out
 
 
+def gather(code, name, also=()):
+    """What a proposal for one enemy needs, from every file, so the agent does not look for it each time:
+    where it is fought (and other enemies of its kind in the book), what it shows now, the foe-about
+    entries, illustration-index pictures and plates.json entries of its kind in every book (this book's
+    first, then the nearest), the sections naming it or `also`'s words, those leading into and out of its
+    fights, and what the owner settled for it before. Ids, paths and our own words only."""
+    book = _book(code)
+    secs = book['sections']
+    if name not in pf.enemy_names(book):
+        raise ValueError(f'{name!r} is not an enemy of {code}')
+    k = pd.kind(name)
+    terms = [t for t in dict.fromkeys([k, pd.head(k)[-1:]] + [pd.words(a) for a in also]) if t]
+    fights = [sid for sid, s in secs.items() if any(e['name'] == name for e in s.get('combat', {}).get('enemies', []))]
+    kin = {}
+    for sid, s in secs.items():
+        for e in s.get('combat', {}).get('enemies', []):
+            if e['name'] != name and pd.same_kind(k, pd.kind(e['name'])):
+                kin.setdefault(e['name'], []).append(sid)
+    with open(os.path.join(ROOT, 'assets', 'plates', 'plates.json'), encoding='utf-8') as f:
+        plates = json.load(f)['plates']
+    try:
+        with open(os.path.join(ROOT, 'about', 'foe-about.json'), encoding='utf-8') as f:
+            foes = json.load(f)
+    except OSError:
+        foes = {}
+    about = {f'{c}: {n}': t for c, rows in foes.items() for n, t in rows.items() if pd.same_kind(k, pd.kind(n))}
+    mine = pd.book_no(code)
+    pictures = []
+    for key, row in pd.load_index().items():
+        if not isinstance(row, dict) or 'about' not in row:
+            continue
+        foes_there = list(row.get('fight') or []) + [n for f in row.get('fought_at') or [] for n in f.get('enemies', [])]
+        seen = pd.words(f"{row.get('shows', '')} {row.get('about', '')}")
+        if not (any(pd.same_kind(k, pd.kind(n)) for n in foes_there) or any(pd.held(t, seen) for t in terms)):
+            continue
+        b = row.get('book')
+        pictures.append({'src': key if key.startswith(('assets/', 'art/', 'data/')) else f'data/projectaon/{key}',
+                         'fight': row.get('fight') or [], 'fought_at': [f['section'] for f in row.get('fought_at') or []],
+                         'small': bool(row.get('small')), 'about': row.get('about') or row.get('shows') or '',
+                         'order': (b != code, abs(pd.book_no(b) - mine) if b else 99)})
+    pictures.sort(key=lambda p: p.pop('order'))
+    words_of = lambda m: pd.words(re.sub(r'[^a-z ]+', ' ', m['match'].lower()))
+    entries = [p for p in plates if re.search(p['match'], name, re.I) or any(pd.held(t, words_of(p)) for t in terms)]
+    named = {}
+    for sid, s in secs.items():
+        if sid in fights:
+            continue
+        ws = pd.words(' '.join(s.get('text', [])))
+        hit = [' '.join(t) for t in terms if pd.held(t, ws)]
+        if hit:
+            named[sid] = hit
+    to = lambda s: [c['to'] for c in s.get('choices', []) if c.get('to')]
+    into = [sid for sid, s in secs.items() if sid not in fights and set(to(s)) & set(fights)]
+    after = list(dict.fromkeys(t for sid in fights for t in to(secs[sid]) if t not in fights))
+    settled = [f"{r['decided']['on']} {r['decided']['how']}" + (f" {r['decided']['src']}" if r['decided'].get('src') else '')
+               for rnd in done(code)['rounds'] for r in rnd.get('enemies', []) if r.get('name') == name and r.get('decided')]
+    return {'fights': fights, 'kin': kin, 'now': pf.current(plates, code, book, name)[0], 'about': about,
+            'pictures': pictures, 'plates': entries, 'named': named, 'into': into, 'after': after, 'settled': settled,
+            'terms': [' '.join(t) for t in terms], 'proposed': os.path.isfile(path(code)) and any(
+                e.get('name') == name for e in load(code).get('enemies', []))}
+
+
+def _print_gather(code, name, g, text):
+    print(f"{name} ({code}): fought at {', '.join(g['fights'])}; now {g['now'] or 'no picture'}"
+          + (f"; already in plate-proposals.json" if g['proposed'] else ''))
+    for n, s in g['kin'].items():
+        print(f"  same kind here: {n} at {', '.join(s)}")
+    print('settled before: ' + ('; '.join(g['settled']) or 'never'))
+    print(f"\nfoe-about ({len(g['about'])}):")
+    for k, t in g['about'].items():
+        print(f'  {k}: {t}')
+    print(f"\npictures of its kind ({len(g['pictures'])}; this book first, then the nearest):")
+    for p in g['pictures']:
+        where = '; '.join(x for x in (f"fight {', '.join(p['fight'])}" if p['fight'] else '',
+                                      f"fought at {', '.join(map(str, p['fought_at']))}" if p['fought_at'] else '',
+                                      'small' if p['small'] else '') if x)
+        print(f"  {p['src']}{f' [{where}]' if where else ''}: {p['about'][:200]}")
+    print(f"\nplates.json entries ({len(g['plates'])}):")
+    for p in g['plates']:
+        extra = ''.join(f' {k}={json.dumps(p[k])}' for k in ('crop', 'levels', 'flip', 'over', 'draft') if k in p)
+        print(f"  {p.get('book', 'any')} {p['match']} -> {p['src']}{extra}")
+    print(f"\nsections naming it ({', '.join(g['terms'])}): "
+          + (', '.join(f"{s} ({'/'.join(t)})" for s, t in g['named'].items()) or 'none'))
+    print(f"leading into its fights: {', '.join(g['into']) or 'none'}; after them: {', '.join(g['after']) or 'none'}")
+    if text:
+        secs = _book(code)['sections']
+        print('\n(for your reading only: never paste it into chat or files)')
+        for sid in dict.fromkeys(g['into'] + g['fights'] + g['after'] + list(g['named'])):
+            print(f'\n#{sid}\n' + '\n'.join(secs[sid].get('text', [])))
+
+
 def main(argv):
+    if len(argv) >= 3 and argv[0] == 'gather':
+        also = next((a.split('=', 1)[1] for a in argv if a.startswith('--also=')), '')
+        try:
+            g = gather(argv[1], argv[2], [w.strip() for w in also.split(',') if w.strip()])
+        except ValueError as e:
+            print(e)
+            return 1
+        _print_gather(argv[1], argv[2], g, '--text' in argv)
+        return 0
     if len(argv) != 2 or argv[0] != 'check':
         print(__doc__)
         return 2

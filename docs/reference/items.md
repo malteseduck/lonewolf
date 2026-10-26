@@ -367,7 +367,11 @@ guard does not match; Book 15's Armoury Guards are Drakkarim), searching by what
 name, and shows the owner the candidates rather than describing them, on the **proposal sheet** (ruling R23):
 it writes `data/projectaon/<code>/plate-proposals.json` (git-ignored; format in `tools/plates_proposals.py`,
 whose `check <code>` names what the sheet could not show), and the owner opens it from step 7's "Open
-proposals". Each enemy there shows what it has now, every candidate inked as in a fight (a web one by its
+proposals". `plates_proposals.py gather <code> "<enemy>" [--also=words] [--text]` gives the agent, in one call,
+what a row needs: the enemy's fights and other enemies of its kind in the book, its picture now, what the owner
+settled before, the `foe-about.json` entries, index pictures and `plates.json` entries of its kind in every book
+(this book first, then the nearest), the sections naming it or the `--also` words and those leading into and out
+of its fights, and with `--text` those sections' text for the agent's reading; the step 7 prompts start from it. Each enemy there shows what it has now, every candidate inked as in a fight (a web one by its
 thumbnail, fetched only when chosen), the agent's note and pick, its `foe-about.json` entry, and the book's
 text where it is fought, named, pointed to or described (read from `book.js` in the page), each section
 folded, with the sentences the agent marked as describing it (`describe`) highlighted whole; Use this saves the choice
