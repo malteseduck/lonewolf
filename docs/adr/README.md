@@ -80,4 +80,4 @@ Changes list names what it took in.
 ### Rulings
 
 [`rulings.md`](rulings.md): game and house rules (R1-R3), book readings (R4-R10, R16-R18), presentation
-(R11-R12), workflow (R13-R15, R21).
+(R11-R12), workflow (R13-R15, R21, R25).

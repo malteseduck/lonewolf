@@ -128,7 +128,7 @@ step left.
   that have a link in `art/sources.json` are fetched again by **Download...**, gated; the rest copied from the old checkout). A missing
   part that a script can install has **Install** (or **Download...**, gated).
 - **Whole-project tools**: check everything (`check_all.py`), the player icons (the icon sheet, below), the
-  release (the offline check, then `release.py`; ruling R15).
+  release (the offline check, then `release.py`, then `git push origin main`; rulings R15, R25).
 - **The job log** at the foot: a job's output line by line while it runs; Shrink keeps its last lines. A job started in another
   tab, or before a reload, is followed too.
 
@@ -217,7 +217,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `fights-up` | `ill_upscale.py --fights <code>` (step 7's Upscale 2x: every picture the book's fights can show, now or approved, sized for the iPad (ADR 0008); about 5-10 s a picture) | |
 | `ills` | `ill_upscale.py <code>` (Real-ESRGAN on this PC; about 3 s a picture) | |
 | `check` | `check_all.py` (re-imports every book, ADR 0022) | |
-| `release` | `offline_check.py`, then `release.py` (the last commit to the iPad, docs/reference/offline.md): a missing file stops it at the check; files the iPad has already make nothing (ruling R15) | yes |
+| `release` | `offline_check.py`, then `release.py` (the last commit to the iPad, docs/reference/offline.md): a missing file stops it at the check; files the iPad has already make nothing (ruling R15); then `git push origin main`, only if both went well (ruling R25) | yes |
 | `setup-venv`, `setup-npm` | `setup.py install venv` (`uv sync --project tools`), `install npm` (`npm ci`); through `uv run --no-project`, so that setup.py reports what is missing rather than uv installing it first | |
 | `setup-realesrgan` | `setup.py install realesrgan`: the v0.2.5.0 Windows zip from GitHub (about 45 MB); only the program, its DLLs and `models/` are written into `tools/realesrgan/` | yes: a download |
 | `setup-art` | `art_sources.py fetch`: every picture in `art/sources.json` with a link and no file here, fetched again and shrunk to 2000 px as the sheet does (through the venv: Pillow) | yes: a download |
@@ -227,8 +227,8 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 for a download), and for an import the dates (when `book.js` was made, the newest source page, when
 the importer last changed, `map-4k.webp`) and whether the import is out of date; then a tick "I
 approve" before the button works. The release dialog shows, from `GET /api/admin/release`
-(`release.py --status`), the commit to release, the one released now, the commits between and how
-many files have uncommitted changes (left out). The server refuses the run without the confirmation. This makes
+(`release.py --status`), the commit to release, the one released now, the commits between, how
+many files have uncommitted changes (left out) and how many commits on `main` GitHub lacks (as of the last fetch or push), which it pushes. The server refuses the run without the confirmation. This makes
 the step deliberate, not secure: **an agent driving the browser never presses a gated button**;
 downloads and imports still need the owner's word (AGENTS.md).
 

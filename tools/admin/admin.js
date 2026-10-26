@@ -495,14 +495,15 @@ function gate(kind, b) {
     const r = b, cur = r.current || {}, same = cur.commit === r.head.commit;
     value = 'all';
     title = 'Release to the iPad?';
-    body = `<p>Copies commit <code>${esc(r.head.commit)}</code>, <i>${esc(r.head.subject)}</i>, with the books and art as they are on disk, into <code>release/</code>. The release server serves it at once; the iPad fetches it at its next sync.</p>
+    body = `<p>Copies commit <code>${esc(r.head.commit)}</code>, <i>${esc(r.head.subject)}</i>, with the books and art as they are on disk, into <code>release/</code>. The release server serves it at once; the iPad fetches it at its next sync. Then it pushes <code>main</code> to GitHub.</p>
       <table class="dates">
         <tr><th>Released now</th><td>${cur.commit ? `<code>${esc(cur.commit)}</code> ${esc(cur.subject || '')}, ${esc(cur.made || '')}` : 'nothing yet'}</td></tr>
         <tr><th>Commits since</th><td>${r.commits_since == null ? '?' : r.commits_since}</td></tr>
+        <tr><th>Not on GitHub</th><td>${r.unpushed == null ? '?' : `${r.unpushed} commit${r.unpushed === 1 ? '' : 's'} on main`}</td></tr>
       </table>
       ${r.dirty ? `<p class="stale">${r.dirty} file${r.dirty === 1 ? ' has' : 's have'} uncommitted changes: left out. Commit first to include them.</p>` : ''}
       ${same ? '<p class="hint">This commit is already released: only changed books or art would go.</p>' : ''}`;
-    ackText = 'I approve releasing this to the iPad.';
+    ackText = 'I approve releasing this to the iPad and pushing main to GitHub.';
     okText = 'Release';
   }
   $('#confirm-title').textContent = title;

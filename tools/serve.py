@@ -479,9 +479,10 @@ ADMIN_STAGES = {
     # the real books through every script, then both unit-test suites (ADR 0022: re-importing here needs no go-ahead)
     'check': {'title': 'Check everything', 'book': False, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/check_all.py']]},
     # the last commit to the iPad (the release server, docs/reference/offline.md); gated: the owner's go-ahead.
-    # The offline check first: its sizes in the log, and nothing released if the page names a missing file
+    # The offline check first: its sizes in the log, and nothing released if the page names a missing file.
+    # Then main goes to GitHub (ruling R25), only once the release has gone well
     'release': {'title': 'Release to the iPad', 'book': False, 'gated': True, 'timeout': 600,
-                'cmds': lambda c: [PY + ['tools/offline_check.py'], PY + ['tools/release.py']]},
+                'cmds': lambda c: [PY + ['tools/offline_check.py'], PY + ['tools/release.py'], ['git', 'push', 'origin', 'main']]},
 }
 # Setup (ADR 0036): tools/setup.py installs a part. Not through PY: tools/.venv may not exist yet.
 # realesrgan and ocr download files, so they are gated.

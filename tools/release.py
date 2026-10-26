@@ -2,9 +2,10 @@
 `python tools/serve.py 8765 --release` serves (docs/reference/offline.md, "Releasing").
 
     python tools/release.py [commit]      (default HEAD)
-    python tools/release.py --status      what is released, and what HEAD would add, as JSON
+    python tools/release.py --status      what is released, what HEAD would add, and what GitHub lacks, as JSON
 
-The dashboard's "Release" button runs it too, after tools/offline_check.py (docs/reference/dashboard.md).
+The dashboard's "Release" button runs it too, after tools/offline_check.py, and then pushes main to GitHub
+(ruling R25; docs/reference/dashboard.md). This script itself pushes nothing.
 
 The code comes from the commit, never the working copy, so uncommitted work stays on the PC. The
 books and art are git-ignored (data/projectaon/, art/), so they come from disk as they are now; a
@@ -54,7 +55,11 @@ def status():
         p = subprocess.run(['git', 'rev-list', '--count', f'{cur["commit"]}..HEAD'], cwd=ROOT, capture_output=True)
         behind = int(p.stdout or 0) if not p.returncode else None
     dirty = git('status', '--porcelain', '--untracked-files=no').decode().splitlines()
-    return {'current': cur, 'head': {'commit': sha, 'subject': subject}, 'commits_since': behind, 'dirty': len(dirty)}
+    # the commits on main that GitHub lacks, as of the last fetch or push: the dashboard's Release pushes them
+    p = subprocess.run(['git', 'rev-list', '--count', 'origin/main..main'], cwd=ROOT, capture_output=True)
+    unpushed = int(p.stdout or 0) if not p.returncode else None
+    return {'current': cur, 'head': {'commit': sha, 'subject': subject}, 'commits_since': behind, 'dirty': len(dirty),
+            'unpushed': unpushed}
 
 
 def main():

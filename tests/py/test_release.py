@@ -25,6 +25,7 @@ class FakeGit:
         self.commits = []
         self.ignored = {'data/projectaon/index.js'}
         self.dirty = []
+        self.pushed = None  # the commit origin/main is at
 
     def commit(self, subject, **changes):
         files = dict(self.commits[-1][2]) if self.commits else {}
@@ -75,6 +76,8 @@ class FakeGit:
         """subprocess.run, which status() uses for rev-list (it must read the return code)."""
         assert argv[:3] == ['git', 'rev-list', '--count']
         old = argv[3].split('..')[0]
+        if argv[3] == 'origin/main..main':  # what GitHub lacks: main is HEAD here
+            old = self.pushed
         shas = [c[0] for c in self.commits]
         if old not in shas:
             return type('P', (), {'returncode': 128, 'stdout': b''})()
@@ -247,6 +250,13 @@ def test_status_counts_commits_since_and_dirty_files(env, monkeypatch):
     assert st['commits_since'] == 1 and st['dirty'] == 1
     assert st['head'] == {'commit': second, 'subject': 'second'}
     assert st['current']['commit'] == env.first
+
+
+def test_status_counts_the_commits_github_lacks(env):
+    assert release.status()['unpushed'] is None  # no origin/main known
+    env.pushed = env.commits[-1][0]
+    env.commit('second', **{'main.js': 'v2'})
+    assert release.status()['unpushed'] == 1
 
 
 
