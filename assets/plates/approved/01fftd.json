@@ -3,8 +3,8 @@
  "approved": "2026-10-11",
  "pins": {
   "17/0": {"name":"oxg3v4","plate":{"src":"data/projectaon/01fftd/ill3.png"}},
-  "29/0": {"name":"8snlys","plate":{"src":"assets/plates/01fftd/vordak.webp","crop":[0.0491,0.055,0.8784,0.6891],"levels":[44,141]}},
-  "34/0": {"name":"8snlys","plate":{"src":"assets/plates/01fftd/vordak.webp","crop":[0.0491,0.055,0.8784,0.6891],"levels":[44,141]}},
+  "29/0": {"name":"8snlys","plate":{"src":"assets/plates/01fftd/vordak.webp"}},
+  "34/0": {"name":"8snlys","plate":{"src":"assets/plates/01fftd/vordak.webp"}},
   "43/0": {"name":"w60do2","plate":{"src":"assets/plates/01fftd/black-bear.webp","crop":[0.0469,0.1415,0.918,0.7607]}},
   "55/0": {"name":"1agpc19","plate":{"src":"assets/plates/01fftd/giak.webp","crop":[0.0547,0.0908,0.8802,0.7843],"levels":[39,142]}},
   "63/0": {"name":"1aifk4n","plate":{"src":"data/projectaon/01fftd/ill6.png"}},
@@ -35,11 +35,11 @@
   "255/0": {"name":"1e5x32y","plate":{"src":"data/projectaon/01fftd/ill7.png"}},
   "260/0": {"name":"15gs6cy","plate":{"src":"assets/plates/01fftd/giak.webp","crop":[0.0547,0.0908,0.8802,0.7843],"levels":[39,142],"flip":true}},
   "260/1": {"name":"156sknz","plate":{"src":"assets/plates/01fftd/giak.webp","crop":[0.0547,0.0908,0.8802,0.7843],"levels":[39,142]}},
-  "283/0": {"name":"8snlys","plate":{"src":"assets/plates/01fftd/vordak.webp","crop":[0.0491,0.055,0.8784,0.6891],"levels":[44,141]}},
+  "283/0": {"name":"8snlys","plate":{"src":"assets/plates/01fftd/vordak.webp"}},
   "336/0": {"name":"15gs6cy","plate":{"src":"assets/plates/01fftd/giak.webp","crop":[0.0547,0.0908,0.8802,0.7843],"levels":[39,142],"flip":true}},
   "336/1": {"name":"156sknz","plate":{"src":"assets/plates/01fftd/giak.webp","crop":[0.0547,0.0908,0.8802,0.7843],"levels":[39,142]}},
   "339/0": {"name":"1sge2ud","plate":{"src":"art/plates/rogue-masked-grey.png","crop":[0.2011,0,0.62,0.62],"levels":[29,213]}},
   "340/0": {"name":"1edknyl","plate":{"src":"data/projectaon/01fftd/ill4.png"}},
-  "342/0": {"name":"8snlys","plate":{"src":"assets/plates/01fftd/vordak.webp","crop":[0.0491,0.055,0.8784,0.6891],"levels":[44,141]}}
+  "342/0": {"name":"8snlys","plate":{"src":"assets/plates/01fftd/vordak.webp"}}
  }
 }

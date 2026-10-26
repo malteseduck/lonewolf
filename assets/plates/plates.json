@@ -101,7 +101,7 @@
     { "match": "^krorn$", "book": "10tdot", "src": "data/projectaon/10tdot/ill8.png", "crop": [0.2043, 0.1188, 0.5955, 0.6166], "flip": true, "over": true },
     { "match": "^élite death knights$", "book": "10tdot", "src": "assets/plates/10tdot/lite-death-knights.webp", "crop": [0.0111, 0.0401, 0.9684, 0.8768], "levels": [75, 154] },
     { "match": "^bhakish$", "book": "10tdot", "src": "assets/plates/10tdot/bhakish.webp", "crop": [0.0841, 0.1196, 0.8732, 0.7431] },
-    { "match": "^vordak$", "book": "01fftd", "src": "assets/plates/01fftd/vordak.webp", "crop": [0.0491, 0.055, 0.8784, 0.6891], "levels": [44, 141], "over": true },
+    { "match": "^vordak$", "book": "01fftd", "src": "assets/plates/01fftd/vordak.webp", "over": true },
     { "match": "^black bear$", "book": "01fftd", "src": "assets/plates/01fftd/black-bear.webp", "crop": [0.0469, 0.1415, 0.918, 0.7607] },
     { "match": "^high priest$", "book": "13tplor", "src": "assets/plates/13tplor/high-priest.webp", "crop": [0.1295, 0.0729, 0.647, 0.8829], "levels": [0, 193] },
     { "match": "brother croumah", "book": "13tplor", "src": "art/plates/08tjoh/kezoor-necromancer-pen.jpg" },

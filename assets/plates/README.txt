@@ -264,3 +264,7 @@ knight-shield-pencil.webp
 19wb/kataka.webp
   Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
   no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-26.
+
+01fftd/vordak.webp
+  Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-26.
