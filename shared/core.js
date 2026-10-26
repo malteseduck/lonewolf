@@ -84,6 +84,9 @@
     mapTentarias: { name: 'Map of the Western Tentarias', kind: 'special', glyph: 'treasure-map' },
     mapMaakengorge: { name: 'Map of the Maakengorge', kind: 'special', glyph: 'treasure-map' },
     mapIxia: { name: 'Map of Ixia and the Hardlands', kind: 'special', glyph: 'treasure-map' },
+    mapNorthMagnamund: { name: 'Map of Northern Magnamund', kind: 'special', glyph: 'treasure-map' },
+    mapSommerlundWildlands: { name: 'Map of Sommerlund and the Wildlands', kind: 'special', glyph: 'treasure-map' },
+    mapPlanes: { name: 'Map of the Planes of Existence', kind: 'special', glyph: 'treasure-map' },
   };
   /* Items typed in by hand are stored as 'pack:Name' or 'spec:Name'. */
   /* Lasting conditions a section puts on him (hero.marks: id -> true, or the book number for one that
@@ -432,6 +435,8 @@
       if (x.cs) { hero.cs += x.cs; events.push(`Your COMBAT SKILL is ${x.cs < 0 ? 'reduced' : 'raised'} by ${Math.abs(x.cs)} for good.`); }
       if (x !== this.section && x.ep === 'full') { if (hero.ep < hero.epMax) { hero.ep = hero.epMax; events.push('Your ENDURANCE is restored in full.'); } }
       else if (x !== this.section && x.ep) this.hurt(x.ep, events);
+      // dead: the end of him, for who meets the entry's condition (Book 20's 297: without the three keys)
+      if (x !== this.section && x.dead) { hero.ep = 0; events.push('It is the end of you.'); }
       if (x.epMax) { hero.epMax += x.epMax; hero.ep = Math.min(hero.ep, hero.epMax); events.push(`Your ENDURANCE is ${x.epMax < 0 ? 'reduced' : 'raised'} by ${Math.abs(x.epMax)} for good.`); }
       if (x.healLost) { const n = Math.min(hero.epMax - hero.ep, Math.floor((hero.lastLoss || 0) * x.healLost)); if (n > 0) { hero.ep += n; events.push(`You regain ${n} of the ENDURANCE the fight cost you.`); } hero.lastLoss = 0; }
       this.lose(x.take, events);
@@ -484,11 +489,12 @@
           else if (offer.length === 1 && this.listed(offer[0]).length <= t.n[offer[0]]) this.listed(offer[0]).forEach((x) => this.drop(x, st, events));
           else { (this.s.picks = this.s.picks || []).push({ from: offer, n: 1, per: t.n, stash: st, label: t.label }); events.push(`${t.label || 'Choose what you lose'}, below.`); }
         }
+        // but: things the text spares (Book 18's 331: any Special Item but the Sun-crystal), neither offered nor counted
         else if (t.pick) {
-          const from = [].concat(t.pick), have = from.flatMap((f) => this.listed(f)), n = t.n || 1;
+          const from = [].concat(t.pick), but = [].concat(t.but || []), have = from.flatMap((f) => this.listed(f)).filter((x) => !but.includes(x)), n = t.n || 1;
           if (!have.length) this.lose(t.else, events);
           else if (have.length <= n) { have.forEach((x) => this.drop(x, st, events)); }
-          else { (this.s.picks = this.s.picks || []).push({ from, n, stash: st }); events.push(`Choose ${n > 1 ? `${n} things` : 'one thing'} to lose, below.`); }
+          else { (this.s.picks = this.s.picks || []).push({ from, n, stash: st, but }); events.push(`Choose ${n > 1 ? `${n} things` : 'one thing'} to lose, below.`); }
         }
         // at: positions in a list (1 = first), as the Action Chart shows it; last: the last one when the list
         // is shorter; min: fewer than that in the list and `else` is lost instead
@@ -585,7 +591,7 @@
     /* what the first pending loss can be chosen from */
     pickable() {
       const p = (this.s.picks || [])[0];
-      return !p ? [] : p.ids ? p.ids.filter((x) => LW.hasItem(this.s.hero, x)) : p.from.flatMap((f) => this.listed(f));
+      return !p ? [] : p.ids ? p.ids.filter((x) => LW.hasItem(this.s.hero, x)) : p.from.flatMap((f) => this.listed(f)).filter((x) => !(p.but || []).includes(x));
     }
     /* A stake or a gift of gold (sec.stake: {key, min, max, coin, spend}): with spend it is paid now,
        otherwise kept in s.stakes until a later section settles it ({settle: {key: by}}: by times the

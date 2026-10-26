@@ -77,6 +77,16 @@ describe('losing items by his choice, or by place in the list', () => {
     g = at2({ take: [{ pick: 'backpack', n: 1, else: [{ weapons: 'one' }] }] }, mkHero({ backpack: [], weapons: ['axe'] }));
     expect(g.hero.weapons).toEqual([]);
   });
+  it('a pick that spares some things: they are neither offered nor counted', () => {
+    let g = at2({ take: [{ pick: ['special'], n: 1, but: ['gem'] }] }, mkHero({ special: ['ring', 'gem', 'map'] }));
+    expect(g.pickable()).toEqual(['ring', 'map']);
+    g.pickLoss('gem');
+    expect(g.hero.special).toEqual(['ring', 'gem', 'map']);
+    g.pickLoss('map');
+    expect([g.hero.special, g.choices()[0].enabled]).toEqual([['ring', 'gem'], true]);
+    g = at2({ take: [{ pick: ['special'], n: 1, but: ['gem'] }] }, mkHero({ special: ['ring', 'gem'] }));
+    expect(g.hero.special).toEqual(['gem']);
+  });
   it('by position, as the Action Chart lists them (Meals first); the last when the list is shorter', () => {
     let g = at2({ take: [{ at: [2, 4] }] }, mkHero({ meals: 1, backpack: ['torch', 'rope2', 'potion'] }));
     expect([g.hero.meals, g.hero.backpack]).toEqual([1, ['rope2']]);
@@ -462,6 +472,13 @@ describe('the item tables\' last cases', () => {
     dice(LW, 5);
     g.setRolled(4);
     expect(open(g)).toEqual(['4']);
+  });
+  it('a puzzle whose death is only for who lacks the things it needs: a when with dead', () => {
+    const sec = { puzzle: true, choices: [], when: [{ unless: { items: ['ring', 'gem'] }, dead: true }] };
+    const g = at2(sec, mkHero({ special: ['ring', 'gem'] }));
+    expect([g.lost, g.hero.ep]).toEqual([false, 20]);
+    const h = at2(sec, mkHero({ special: ['ring'] }));
+    expect([h.lost, h.hero.ep]).toEqual([true, 0]);
   });
   it('a Meal due unless he meets a condition, which Hunting does not stand in for', () => {
     const sec = { meal: true, mealUnless: { disc: ['hunting', 'healing'], every: true } };

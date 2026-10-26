@@ -60,19 +60,22 @@ Heuristics layered on top, all by regular expression:
   of Guardian or higher", mapped to a discipline count), Lore-circles ("completed the (Magnakai) Lore-circle
   of Fire", "possess the Lore-circle of ...") and, for Random Number bonuses, his Endurance ("your current ENDURANCE point total is
   less than 10", "your ENDURANCE score is 20 or higher", "your ENDURANCE is less than 10", "your present ENDURANCE points score is ..."),
-  his rank as "your present Kai rank is Grand Guardian or higher" (the rank's "Kai" may be left off), joined by "and have ...". Anything else in it (an item, a weapon in hand, "or have
+  his rank as "your present Kai rank is Grand Guardian or higher" (the rank's "Kai" may be left off; also "your current level of
+  Kai rank is ...", Book 20) or "have reached / attained / achieved the rank of Y", joined by "and have ...". Anything else in it (an item, a weapon in hand, "or have
   reached") and the rule is not read. Written as in book-format.md, Conditions.
   In a Grand Master book (Book 13 on) a discipline is also read as "the Grand Master Discipline of
   X", "(the) Grand Mastery of X", "Mastery of X" (or "mastery of X"), "the Discipline of X", "the skill of X" or bare ("If you possess
   Kai-screen"); a name that is not a discipline still leaves the rule unread. "Grand Mastery of
   Nexus" is Grand Nexus. "Grand Weaponmastery (with Bow)" is not read: it needs the Bow mastered.
-  The twelve Grand Master ranks are known. "The rank of Y in the Discipline of X" (Book 14's 107) is the discipline
+  The twelve Grand Master ranks are known, with the "Kai" of a name added or left off ("Grand Guardian", "Kai Grand Crown", Book 19). "The rank of Y in the Discipline of X" (Book 14's 107) is the discipline
   and the rank: his rank is his own, the same in every discipline.
 - **Gates** (`gate()`): the choice's condition, up to its first comma or "turn to" (a comma inside a
   list of disciplines, "of A, B, or C", does not end it, nor does one before "or if you ...", as in Book 11's 215,
   "Pathsmanship and the rank of Scion-kai, or if you possess Animal Control"; "and you have reached ..." joins a rank to it). Negative
   phrasings ("if you do not have", "have yet to", "neither") are left open. "X, or have reached the rank of Y" (parts joined by "or (if you) have/possess/reached/attained") is split and each part read as a condition; if all parse, `need: {any: [...]}`, else the choice is left open. A
-  looser reading still gates "If you wish to use the Kai Discipline of X ..." (also "... of X in order to ...").
+  looser reading still gates "If you wish to use the Kai Discipline of X ..." (also "... of X in order to ...") and "If you wish to
+  use your Discipline of X (again)" (Book 19's 179). "If your current level of Kai rank is Y or higher" gates on the rank alone
+  (Book 20's 21); "Y or lower" and "between Y and Z" stay open, as a gate holds no highest rank, and so does any other "If your ...".
 - **Random Number ranges** (`span()`): "0–4", "−2–+3" (the books' minus sign), "5 or more" / "or
   higher", "4 or less", "below 7", "above 6", two neighbouring numbers "0 or 1" (Book 17's 86; any
   other pair is no range), or a single number. Not in a choice about ENDURANCE
@@ -82,7 +85,9 @@ Heuristics layered on top, all by regular expression:
   "add 1 for every Magnakai Discipline you possess (above the first three)", "For every level of (Kai) rank you have attained
   above (that of) Y, add N" (a Discipline of the series more for each rank above Y's count; Book 15's 102; also "every Grand Master rank",
   "level of Kai Mastery", "Kai level" or "level", "above the rank of Y", "add N for every Kai level you are above ..." and the same after
-  "If you possess X," as that discipline's bonus, Book 16), rules joined by semicolons ("add 3; and if you ...") read one by one,
+  "If you possess X," as that discipline's bonus, Book 16; "that you have attained", "you have so far attained", "Add N to the number
+  you have picked for every level ...", Book 19; "..., (you may) add a further N", Book 20), "You may also add N if you possess X"
+  (the "add" first, Book 20's 161), rules joined by semicolons ("add 3; and if you ...") read one by one,
   "If have" (the "you" missing, Book 16's 2), the same after a condition ("If you
   have Huntmastery, add 1 ... for every Magnakai Discipline ... after the first three", Book 11's 189), or "(Pick a number ... and) add N
   to the number you have chosen" with no condition, which always applies. Rules listed after a lead-in
@@ -92,7 +97,8 @@ Heuristics layered on top, all by regular expression:
 (Book 17's 124: an all-of rule for the 2 more); "If you ENDURANCE score is ..." (the "r" missing, Book 17's 36) is his
 Endurance; "If you possess X as well" is not read (it may lean on the rule before it); "(for example ...)" is skipped. "These bonuses are not cumulative" after rank-only bonuses rising with the rank
   (Book 15's 59: Kai Grand Guardian 1, Sun Knight 2) gives each higher rank the difference, so the highest held counts alone. Anything else (an item, a
-  bow's "missile bonuses", a weapon, "0 = 10") leaves the section `free`.
+  bow's "missile bonuses", a weapon, "0 = 10", a cap on the bonus as Book 19's 122) leaves the section `free`. A draw the print
+  forgot to link to the table ("Pick a number from the Random Number", Book 19's 72) is still a draw.
 - **auto or free**: `auto` when the bonuses were all read, every total they can make is covered by
   exactly one choice's range, and every choice without a range is an "If you have / possess ..."
   taken instead of drawing. Otherwise `free`, and the ranges are dropped.
@@ -256,6 +262,32 @@ illustrated 43, dead 16, puzzles 3, Meals 3, fights 6 / evasion 10, enemies 9 / 
 Step 3 taught: "If you ENDURANCE score is" (36, the "r" missing); "0 or 1" as a range (86); "If you possess both of these
 ..., you may add 3" after an either-of (124). Books 1-16 and 20 unchanged by it. Left: 296 ("If you possess Grand Nexus as
 well": it may lean on the rule before it, the owner's to say), 75, 123, 131 (the number counts).
+
+Book 18 as of 2026-10-25, after its step 3: 350 sections, 34 fights, Random 27 (16) / 6, gates 42 / 20 / 0,
+illustrated 34, dead 9, puzzles 0, Meals 13, fights 1 / evasion 3, enemies 4 / 12 / 2 (before it: Random 26 / 7).
+Step 3 taught: a last bonus opening with "And if you possess ..." (343). Books 1-17 and 20 unchanged by it. Left: 219
+("your Kai healing skills": names no discipline, the owner's to say whether it is Deliverance), 163 (an item, Sabito,
+among the bonuses), 143 and 297 (an item, the Bow), 128, 296, 325 (the number counts). Every foe "immune to all forms
+of psychic attack, except Kai-surge and Kai-blast" (9 sections) is already read as `'psi'`.
+
+Book 19 as of 2026-10-26, after its step 3: 350 sections, 32 fights, Random 35 (25) / 11, gates 52 / 34 / 0,
+illustrated 41, dead 9, puzzles 6, Meals 5, fights 1 / evasion 1, enemies 8 / 5 / 4 (before it: Random 30 (20) / 15, gates
+51 / 26). Step 3 taught: rank names with the "Kai" added or left off, "Grand Guardian" (176, 212) and "Kai Grand Crown" (rank
+gates on 40, 51, 68, 90, 128, 131, 225, 334, whose rank had been dropped); "that you have attained" (139), "you have so far
+attained" (120), "Add 1 to the number you have picked for every level ..." (208); "If you wish to use your Discipline of X
+again" (179); a draw with no link to the table (72, free: the number counts). Books 1-18 and 20 unchanged by it. Left: 122
+(the bonus is capped, which a rule cannot hold), 69, 87, 226 (an item, weapon or "0 = 10"), 17, 45, 65, 228, 284, 286 (the
+number counts). Gates with a Bow among the conditions (6, 62, 220, 257, 312, 338) and a bladed weapon (37) keep only the
+discipline or rank part read: the item table's to complete.
+
+Book 20 as of 2026-10-26, after its step 3: 350 sections, 26 fights, Random 29 (28) / 15, gates 54 / 32 / 1,
+illustrated 47, dead 20, puzzles 3, Meals 5, fights 9 / evasion 1, enemies 7 / 3 / 0 (before it: Random 26 (25) / 18, gates
+54 / 29). Step 3 taught: "You may also add 1 if you possess X" (161, the "add" first); "..., add a further 1" and "..., you may
+add a further 1" after "for every level ... above" (57, 335); "If your current level of Kai rank is X or higher" (21, 59);
+"have achieved the rank of" (329, whose rank had been dropped). Books 1-19 unchanged by it. Left: 21 and 59's other two
+choices, "X or lower" and "between X and Y" (a gate holds no highest rank); 42, 51, 62, 149, 205, 271 (an item, weapon or
+"0 = 10"); 15, 48, 83, 129, 144, 151, 229, 281, 303 (the number counts); 254 and 310's "the appropriate bonus" for the
+magical sword and 50's item (the item table's).
 
 Introductions: 7, 7, 9, 4, 10, 7, 10, 10, 8, 9, 8, 8 paragraphs. The free Random Number sections
 left are those where the number counts gold or Endurance, plays a game, or is changed by a bow, a

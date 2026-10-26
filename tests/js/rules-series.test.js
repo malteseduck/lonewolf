@@ -338,6 +338,42 @@ describe('Book 17 kit', () => {
   });
 });
 
+describe('Book 18 kit', () => {
+  it('is the map of Northern Magnamund, 20 + a Random Number in gold, and any 4 of nine with a Quarterstaff and 2 Meals', () => {
+    const k = LW.KITS[18];
+    expect(k.give).toEqual(['mapNorthMagnamund']);
+    expect(k.gold).toBe(20);
+    expect(k.choose).toBe(4);
+    expect(k.from).toEqual(['quarterstaff', 'bow', 'quiver', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe']);
+    expect(k.store && k.storeGold && !k.newOnly).toBe(true);
+    expect(LW.ITEMS.mapNorthMagnamund.kind).toBe('special');
+  });
+});
+
+describe('Book 19 kit', () => {
+  it('is the map of Sommerlund and the Wildlands, 20 + a Random Number in gold, and any 4 of nine with a Broadsword and 2 Meals', () => {
+    const k = LW.KITS[19];
+    expect(k.give).toEqual(['mapSommerlundWildlands']);
+    expect(k.gold).toBe(20);
+    expect(k.choose).toBe(4);
+    expect(k.from).toEqual(['broadsword', 'bow', 'quiver', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe']);
+    expect(k.store && k.storeGold && !k.newOnly).toBe(true);
+    expect(LW.ITEMS.mapSommerlundWildlands.kind).toBe('special');
+  });
+});
+
+describe('Book 20 kit', () => {
+  it('is the map of the Planes of Existence, 20 + a Random Number in gold, and any 4 of ten with a Quarterstaff, a Broadsword and 2 Meals', () => {
+    const k = LW.KITS[20];
+    expect(k.give).toEqual(['mapPlanes']);
+    expect(k.gold).toBe(20);
+    expect(k.choose).toBe(4);
+    expect(k.from).toEqual(['quarterstaff', 'broadsword', 'bow', 'quiver', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe']);
+    expect(k.store && k.storeGold && !k.newOnly).toBe(true);
+    expect(LW.ITEMS.mapPlanes.kind).toBe('special');
+  });
+});
+
 describe('LW.KitSetup', () => {
   const setup = (n, hero, book = {}) => LW.KitSetup(book, LW.KITS[n], hero);
   const empty = (over = {}) => Object.assign({ cs: 15, ep: 20, epMax: 20, weapons: [], backpack: [], special: [], meals: 0, gold: 0, series: 'kai', disciplines: [] }, over);

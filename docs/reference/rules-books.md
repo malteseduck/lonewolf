@@ -270,7 +270,7 @@ Master. *Engine*: `LW.SERIES.grandmaster.ranks`.
 
 ### Improved Disciplines
 
-Promised by rank in later books; Book 13 lists none, Book 14 those of Kai Grand Guardian, Book 15 those of Sun Knight, Book 16 those of Sun Lord, Book 17 those of Sun Thane (their addenda). The Handbook gathers those of Books 14–20 by
+Promised by rank in later books; Book 13 lists none, Book 14 those of Kai Grand Guardian, Book 15 those of Sun Knight, Book 16 those of Sun Lord, Book 17 those of Sun Thane, Book 18 those of Grand Thane, Book 19 those of Grand Crown, Book 20 those of Sun Prince (their addenda). The Handbook gathers those of Books 14–20 by
 rank; the ones with numbers, for when those books come: Grand Weaponmastery at Sun Knight (6)
 wields two-handed weapons one-handed, at Sun Lord (7) sets a non-magical blade alight for +1
 enemy loss a winning round, at Grand Crown (10) +3 bare-handed; Kai-surge at Kai Grand Guardian (5)
@@ -962,3 +962,462 @@ opens when the hero holds it; no effect is applied.
   303 is a suggestion, not applied unless the owner rules otherwise.
 - **Wisdom**: choose the Disciplines with care; Ixia is cruel and treacherous, and its creatures give
   no help at all; completing earlier books is an advantage but not needed for this one.
+
+### Book 18, Dawn of the Dragons (Grand Master)
+
+Read from its own rules pages against Book 17's (tools/rules_diff.py, 2026-10-25): the combat rules,
+levels, combat results summary and table, and Random Number Table are unchanged; the book has no
+Lore-circles page.
+
+- **Scores**: a new character: COMBAT SKILL = **25** + a Random Number (0 counts as zero), ENDURANCE =
+  **30** + a Random Number. ENDURANCE can never rise above its value at the start of the adventure; at
+  zero or below he is dead. One who completed any of Books 1-17 may carry his scores over, including
+  the Weaponmastery, Curing and Psi-surge bonuses earned in the Kai (1-5) and Magnakai (6-12) books;
+  those bonuses help in play only if he completed those books, and do not raise his permanent scores
+  (footnote 1). *Engine*: the scores, yes (25 and 30 for a new character; a carried one keeps his);
+  the earlier Disciplines' help in play, for the Magnakai ones he chose (`LW.chose`).
+- **Carried over**: Weapons (still two at most) and Backpack Items (up to **ten**); Gold Crowns. A
+  character coming from the Kai or Magnakai books keeps only these Special Items: Crystal Star
+  Pendant, Sommerswerd, Silver Helm, Dagger of Vashna, Silver Bracers, Jewelled Mace, Silver Bow of
+  Duadon, Helshezag, Korlinium Scabbard, Kagonite Chainmail; one coming from Books 13-17 keeps all his
+  Special Items. *Engine*: yes (`LW.SERIES.grandmaster.keeps` on entering the series; between Grand
+  Master books everything carries).
+- **Disciplines**: he holds every Kai and Magnakai Discipline and four Grand Master Disciplines. For
+  **each** Grand Master book he completed (13, 14, 15, 16, 17), he chooses one more Grand Master
+  Discipline and adds **+1** to his basic COMBAT SKILL and **+2** to his basic ENDURANCE (footnote 2);
+  in all, each Grand Master Discipline past four adds 1 and 2, kept for later books. Completing this
+  book, the sixth of the series, earns a further Discipline in Book 19. *Engine*: yes (the four, one a
+  book, the bonus past four: `LW.SERIES.grandmaster.first`, `LW.readyHero`).
+
+| Grand Master Discipline | Effect | Engine |
+|---|---|---|
+| Grand Weaponmastery | +5 COMBAT SKILL with a mastered weapon (two to start, one more for each Grand Master book completed); the weapons are the ten of Weaponmastery (Spear, Dagger, Mace, Short Sword, Warhammer, Bow, Quarterstaff, Broadsword, Axe, Sword); with the Bow, +5 to a Random Number picked for a shot. Replaces Weaponmastery's bonus, not added to it; Mentora's +2 on bow shots is not added to the +5 (footnote 3) | yes (`hero.grandMastery`; `weaponParts`, `weaponBonus`) |
+| Animal Mastery | Considerable control over hostile non-sentient creatures; talks with birds and fish and uses them as guides | gates only |
+| Deliverance (Advanced Curing) | In a fight at 8 ENDURANCE or less, restore 20; once every 20 days (owner: once a book, ruling R9) | yes (`LW.cureOf`) |
+| Assimilance (Advanced Invisibility) | Striking changes of appearance lasting a few days; almost undetectable in open country | gates only |
+| Grand Huntmastery | Sees in total darkness, keener touch and taste; no Meal ticked off when told to eat | the Meal (`LW.hunts`); the rest, gates only |
+| Grand Pathsmanship | Resists entrapment by hostile plants; keen awareness of ambush in woods and dense forest | gates only |
+| Kai-surge | Psychic attack: +8 COMBAT SKILL, costing 1 ENDURANCE a round; or Mindblast +4 at no cost. Not together with Psi-surge or Mindblast; not at 6 ENDURANCE or less | yes (`LW.psi`; gets through a foe immune to the other psychic attacks, `immune: 'psi'`) |
+| Kai-screen | Mind fortresses for himself and others in psychic combat, stronger with rank | shields from a foe's mind attack (`LW.shielded`) |
+| Grand Nexus | Withstands flames and acids an hour or more; grows with rank | gates only |
+| Telegnosis (Advanced Divination) | Spirit-walks far longer with fewer ill effects; duration and the body's protection grow with rank | gates only |
+| Magi-magic | Old Kingdom battle-magic of the Vakeros; grows with rank | gates only |
+| Kai-alchemy | Left-handed magic; grows with rank, and crafts new Kai weapons and artefacts | gates only |
+
+"Gates only" means the importer reads a section's check on the Discipline (and on a rank), which
+opens when the hero holds it; no effect is applied.
+
+- **Gold**: 20 + a Random Number, added to any he carries. At most 50 carried; the rest may be left
+  at the Monastery. *Engine*: yes, `gold: 20` in `LW.KITS[18]`; the purse's 50 and the Monastery for
+  the rest.
+- **Money**: the Lune is the coin of central Northern Magnamund, 4 to the Gold Crown, and Gold Crowns
+  are readily taken there. *Engine*: Lune, where the text gives or takes them, counted in their own
+  purse (`hero.coins`) through the item table; Gold Crowns are spent as Gold Crowns.
+- **Kit**: a map of Northern Magnamund. Choose any **4** of: Quarterstaff, Bow, Quiver (Special Item,
+  six Arrows), Dagger, Sword, two Meals (a Backpack space each), Rope, Potion of Laumspur (4 ENDURANCE
+  after a fight, one dose, never just before one), Axe; added to what he carries. The page marks each
+  Weapon, the Quiver as a Special Item, the Meals, and the Rope and Potion as Backpack Items. *Engine*:
+  yes, `LW.KITS[18]` (the map as a Special Item, `mapNorthMagnamund`), with Monastery storage for
+  Special Items. (The page's Dagger line lacks its opening bracket, so rules_diff.py's draft reads only
+  5 of the 9; the kit was written by hand from the page.)
+- **Carrying**: two Weapons, one used at a time; ten Backpack Items, Meals included, one Backpack,
+  exchanged or dropped at any time outside a fight; a found item named with capitals or called a
+  Backpack Item goes in the Backpack unless it is said to be a Special Item; twelve Special Items, each
+  carried as or where the text says (the page does not repeat that the surplus may be left at the
+  Monastery; the series rule stands); fifty Gold Crowns. No food when told to eat: lose 3 ENDURANCE.
+  Any other potion found has its effect given where it is found; all potions are Backpack Items.
+  *Engine*: yes (`LW.backpackMax`, `LW.specialLimit`, the Meal rule, the Monastery at the start).
+- **Bow**: used only when the section allows; needs a Quiver and an Arrow, one Arrow a shot; useless
+  hand to hand, so a close-combat weapon is advised beside it. *Engine*: yes (`ranged`, `hero.arrows`,
+  `bowShot`).
+- **Combat**: COMBAT SKILL with the Grand Master bonuses and Special Items, against the enemy's, on
+  the Combat Results Table; Kai-surge costs 1 ENDURANCE each round it is used. Evasion only where the
+  section allows it: that round is fought, the enemy's losses are ignored and only he loses ENDURANCE.
+  *Engine*: yes.
+- **Ranks**: Kai Grand Master Senior, Superior, Kai Grand Sentinel, Kai Grand Defender, Kai Grand
+  Guardian, Sun Knight, Sun Lord, Sun Thane, Grand Thane, Grand Crown, Sun Prince, Kai Supreme Master,
+  by the number of Grand Master Disciplines. *Engine*: yes (`LW.SERIES.grandmaster.ranks`).
+- **Improved Disciplines, Kai Grand Guardian** (5 Disciplines): Animal Mastery summons a few forest
+  animals as loyal allies, outdoors only; Assimilance raises a fog within 15 yards that blinds normal
+  sight and infravision, lasting longer by rank; Grand Huntmastery moves faster over any ground, on
+  foot or mounted, to outrun pursuit; **Kai-surge attacks up to three enemies at once in psychic
+  combat**; Kai-screen gives Mindblend, hiding his mind from a hostile probe; Magi-magic gives two
+  battle-spells: Splinter (shatters bottles, mirrors, windows and the like; range by rank) and
+  Flameshaft (sets the tip of an Arrow, or anything shot like one, alight with a flame hard to put
+  out). *Engine*: gates only (a section's check on the Discipline and the rank); Kai-surge against
+  several foes at once, no: the engine fights one enemy at a time, so it is left to the player.
+- **Improved Disciplines, Sun Knight** (6 Disciplines): Grand Weaponmastery wields the two-handed
+  weapons (Broadsword, Quarterstaff, Spear) one-handed at full effect; Deliverance heals a serious
+  wound in another creature by the laying on of hands, faster by rank; Grand Pathsmanship repels
+  normal-sized insects within three yards, range and number growing by rank; Grand Nexus feigns death
+  in suspended animation, keeping only his hearing; Telegnosis speaks telepathically over about 100
+  miles, farther by rank; Kai-alchemy gives two Brotherhood Spells: Halt Missile (stops one missile
+  aimed at his life in mid-air for 2-3 seconds; more missiles by rank) and Strength (greater strength
+  for a short time, to move heavy things or raise COMBAT SKILL and ENDURANCE in a fight; the page
+  prints no numbers). *Engine*: gates only (a section's check on the Discipline and the rank); none
+  has a number to apply: a section that gives Strength a number is read in the item table, else it is
+  left to the player.
+- **Improved Disciplines, Sun Lord** (7 Disciplines): **Grand Weaponmastery sets the metal edge of
+  any non-magical weapon alight: the enemy loses 1 ENDURANCE more in every round he wins with it; not
+  with an all-wooden weapon such as a Quarterstaff**; Assimilance blurs his outline, making missiles,
+  magical or not, far likelier to miss; Grand Huntmastery sees heat patterns (infrared) in near or
+  total darkness, and ultraviolet light; **Kai-surge launches a Kai-blast: two Random Numbers added (a
+  0 counts as 1), 2 to 18 ENDURANCE lost by the enemy in one attack, at a cost of 4 ENDURANCE to him;
+  not together with any other psychic attack**; Telegnosis changes his body weight to walk on water,
+  mud, lava or quicksand, longer and on harder ground by rank; Magi-magic gives two battle-spells:
+  Penetrate (an Arrow, or anything shot like one, strikes harder) and Energy Grasp (a strong electric
+  discharge into whatever he touches, like Lightning Hand but easier to control, and needing touch).
+  *Engine*: gates only (a section's check on the Discipline and the rank). The burning edge and the
+  Kai-blast have numbers but are not applied: left to the player, the ENDURANCE changed by hand in the
+  fight.
+- **Improved Disciplines, Sun Thane** (8 Disciplines): Animal Mastery puts an animal to sleep at will
+  (some hostile ones may resist, most are affected somehow; how long, and how many at once, grow by
+  rank); Deliverance performs a Kai Exorcism, driving out an evil supernatural force that has
+  possessed a good creature or object; Grand Huntmastery protects him from natural electric discharges
+  such as lightning; Grand Pathsmanship changes the temperature of water he touches, freezing it to
+  ice or thawing it (volume and duration by rank); Kai-screen raises a Mindfort, which much lessens a
+  psychic shock that would paralyse or weaken another; Kai-alchemy gives two Brotherhood Spells: Slow
+  Fall (a fall slowed to three feet a second, landing unhurt while the spell lasts; longer by rank)
+  and Breathe Water (ten minutes under water, longer by rank). *Engine*: gates only (a section's check
+  on the Discipline and the rank); none has a number to apply.
+- **Improved Disciplines introduced: Grand Thane** (9 Disciplines): Deliverance calls on the god Kai
+  for a sign to guide a choice, never a rescue from bodily danger, at most once a month (more often by
+  rank); Assimilance hides him from creatures that see by infravision (heat) or ultravision; Kai-surge
+  makes a breakable object (bottle, window, pottery, urn, jug and the like) burst violently, its
+  shards a danger to anyone near; Grand Nexus finds Shadow Gates, the portals to other planes beyond
+  Magnamund, and passes through them unharmed (detection range by rank); Telegnosis finds precious
+  gems and gold, platinum or silver, in the ground or in a hidden hoard (range by rank); Magi-magic
+  gives two battle-spells: Power Glyph (a secret symbol written on a door, archway or closed lid that
+  strikes, with deadly effect, whatever opens it) and Hold Enemy (holds one hostile creature within
+  twenty feet still, for a time set by its size and strength; range and time by rank). *Engine*: gates
+  only (a section's check on the Discipline and the rank); none has a number to apply.
+- **Footnotes**: at the armourer's shop (339), a Helmet may add 2 ENDURANCE and a Breastplate, nearest
+  to the Chainmail Waistcoat, 4 ENDURANCE, as the Kai books' rules gave; the footnote calls these
+  bonuses speculative, outside the official rules, since neither item carries into the series. At
+  344 the Sommerswerd may add 4 more COMBAT SKILL on the Plane of Darkness, as section 98 gives for its
+  own fight. *Engine*: the shop is the item table's (step 5); the Helmet's and Breastplate's ENDURANCE
+  and the Sommerswerd's 4 at 344 are suggestions, not applied unless the owner rules otherwise; the 4
+  at 98, which its section states, yes (the item table).
+- **Wisdom**: choose the Disciplines with care; the road home from Vadera to the Monastery crosses
+  wild, dangerous lands where Naar's agents hunt him; keep only what is worth keeping; completing
+  earlier books is an advantage but not needed for this one.
+
+### Book 19, Wolf's Bane (Grand Master)
+
+Read from its own rules pages against Book 18's (tools/rules_diff.py, 2026-10-26): the levels, combat
+results table and Random Number Table are unchanged, the combat rules and summary only in their
+example's numbers and wording; the book has no Lore-circles page.
+
+- **Scores**: a new character: COMBAT SKILL = **25** + a Random Number (0 counts as zero), ENDURANCE =
+  **30** + a Random Number. ENDURANCE can never rise above its value at the start of the adventure; at
+  zero or below he is dead. One who completed any of Books 1-18 may carry his scores over, including
+  the Weaponmastery, Curing and Psi-surge bonuses earned in the Kai (1-5) and Magnakai (6-12) books;
+  those bonuses help in play only if he completed those books, and do not raise his permanent scores
+  (footnote 1). *Engine*: the scores, yes (25 and 30 for a new character; a carried one keeps his);
+  the earlier Disciplines' help in play, for the Magnakai ones he chose (`LW.chose`).
+- **Carried over**: Weapons (still two at most) and Backpack Items (up to **ten**); Gold Crowns. A
+  character coming from the Kai or Magnakai books keeps only these Special Items: Crystal Star
+  Pendant, Sommerswerd, Silver Helm, Dagger of Vashna, Silver Bracers, Jewelled Mace, Silver Bow of
+  Duadon, Helshezag, Korlinium Scabbard, Kagonite Chainmail; one coming from Books 13-18 keeps all his
+  Special Items. *Engine*: yes (`LW.SERIES.grandmaster.keeps` on entering the series; between Grand
+  Master books everything carries).
+- **Disciplines**: he holds every Kai and Magnakai Discipline and four Grand Master Disciplines. For
+  **each** Grand Master book he completed (13, 14, 15, 16, 17, 18), he chooses one more Grand Master
+  Discipline and adds **+1** to his basic COMBAT SKILL and **+2** to his basic ENDURANCE (footnote 2);
+  in all, each Grand Master Discipline past four adds 1 and 2, kept for later books. Completing this
+  book earns a further Discipline in Book 20. *Engine*: yes (the four, one a book, the bonus past
+  four: `LW.SERIES.grandmaster.first`, `LW.readyHero`).
+
+| Grand Master Discipline | Effect | Engine |
+|---|---|---|
+| Grand Weaponmastery | +5 COMBAT SKILL with a mastered weapon (two to start, one more for each Grand Master book completed); the weapons are the ten of Weaponmastery (Spear, Dagger, Mace, Short Sword, Warhammer, Bow, Quarterstaff, Broadsword, Axe, Sword); with the Bow, +5 to a Random Number picked for a shot. Replaces Weaponmastery's bonus, not added to it; Mentora's +2 on bow shots is not added to the +5 (footnote 3). The page's summary of the Discipline adds that he is a master of unarmed combat and loses **no** COMBAT SKILL fighting bare-handed (footnote 18 calls this the Grand Master rule) | the +5, yes (`hero.grandMastery`; `weaponParts`, `weaponBonus`); no loss bare-handed, **no**: the engine still takes the unarmed loss (4, or less for a Tutelary or Scion-kai with Weaponmastery); proposed, for the owner |
+| Animal Mastery | Considerable control over hostile non-sentient creatures; talks with birds and fish and uses them as guides | gates only |
+| Deliverance (Advanced Curing) | In a fight at 8 ENDURANCE or less, restore 20; once every 20 days (owner: once a book, ruling R9) | yes (`LW.cureOf`) |
+| Assimilance (Advanced Invisibility) | Striking changes of appearance lasting a few days; almost undetectable in open country | gates only |
+| Grand Huntmastery | Sees in total darkness, keener touch and taste; no Meal ticked off when told to eat | the Meal (`LW.hunts`); the rest, gates only |
+| Grand Pathsmanship | Resists entrapment by hostile plants; keen awareness of ambush in woods and dense forest | gates only |
+| Kai-surge | Psychic attack: +8 COMBAT SKILL, costing 1 ENDURANCE a round, on top of the round's combat loss; or Mindblast +4 at no cost. Not together with Psi-surge or Mindblast; not at 6 ENDURANCE or less | yes (`LW.psi`; gets through a foe immune to the other psychic attacks, `immune: 'psi'`) |
+| Kai-screen | Mind fortresses for himself and others in psychic combat, stronger with rank | shields from a foe's mind attack (`LW.shielded`) |
+| Grand Nexus | Withstands flames and acids an hour or more; grows with rank | gates only |
+| Telegnosis (Advanced Divination) | Spirit-walks far longer with fewer ill effects; duration and the body's protection grow with rank | gates only |
+| Magi-magic | Old Kingdom battle-magic of the Vakeros; grows with rank | gates only |
+| Kai-alchemy | Left-handed magic (Lightning Hand, Levitation, Mind Charm and the like); grows with rank, in time to craft new Kai weapons and artefacts | gates only |
+
+"Gates only" means the importer reads a section's check on the Discipline (and on a rank), which
+opens when the hero holds it; no effect is applied.
+
+- **Gold**: 20 + a Random Number, added to any he carries. At most 50 carried, always in the Belt
+  Pouch; the rest may be left at the Monastery. No other coin is named on the rules pages. *Engine*:
+  yes, `gold: 20` in `LW.KITS[19]`; the purse's 50 and the Monastery for the rest.
+- **Kit**: a map of Sommerlund and the Wildlands, already in his possession. Choose any **4** of:
+  Broadsword, Bow, Quiver (Special Item, six Arrows), Dagger, Sword, two Meals (a Backpack space each),
+  Rope, Potion of Laumspur (4 ENDURANCE after a fight, one dose, never just before one), Axe; added to
+  what he carries. The page marks each Weapon, the Quiver as a Special Item, the Meals, and the Rope
+  and Potion as Backpack Items. *Engine*: yes, `LW.KITS[19]` (the map as a Special Item,
+  `mapSommerlundWildlands`), with Monastery storage for Special Items. (Checked against the page by
+  hand; rules_diff.py's draft read all nine.)
+- **Carrying**: two Weapons, one used at a time; ten Backpack Items, Meals included, one Backpack,
+  exchanged or dropped at any time outside a fight; a found item named with capitals or called a
+  Backpack Item goes in the Backpack unless it is said to be a Special Item; twelve Special Items, each
+  carried as or where the text says (the page does not repeat that the surplus may be left at the
+  Monastery; the series rule stands); fifty Gold Crowns. No food when told to eat: lose 3 ENDURANCE.
+  Any other potion found has its effect given where it is found; all potions are Backpack Items.
+  *Engine*: yes (`LW.backpackMax`, `LW.specialLimit`, the Meal rule, the Monastery at the start).
+- **Bow**: used only when the section allows; needs a Quiver and an Arrow, one Arrow a shot; useless
+  hand to hand, so a close-combat weapon is advised beside it. *Engine*: yes (`ranged`, `hero.arrows`,
+  `bowShot`).
+- **Combat**: COMBAT SKILL with the Grand Master bonuses and Special Items, against the enemy's, on
+  the Combat Results Table; Kai-surge costs 1 ENDURANCE each round it is used, beyond the round's
+  loss. Evasion only where the section allows it: that round is fought, the enemy's losses are ignored
+  and only he loses ENDURANCE. *Engine*: yes.
+- **Ranks**: Kai Grand Master Senior, Superior, Kai Grand Sentinel, Kai Grand Defender, Kai Grand
+  Guardian, Sun Knight, Sun Lord, Sun Thane, Grand Thane, Grand Crown, Sun Prince, Kai Supreme Master,
+  by the number of Grand Master Disciplines. *Engine*: yes (`LW.SERIES.grandmaster.ranks`).
+- **Improved Disciplines, Kai Grand Guardian** (5 Disciplines): Animal Mastery summons a few forest
+  animals as loyal allies, outdoors only; Assimilance raises a fog within 15 yards that blinds normal
+  sight and infravision, lasting longer by rank; Grand Huntmastery moves faster over any ground, on
+  foot or mounted, to outrun pursuit; **Kai-surge attacks up to three enemies at once in psychic
+  combat**; Kai-screen gives Mindblend, hiding his mind from a hostile probe; Magi-magic gives two
+  battle-spells: Splinter (shatters bottles, mirrors, windows and the like; range by rank) and
+  Flameshaft (sets the tip of an Arrow, or anything shot like one, alight with a flame hard to put
+  out). *Engine*: gates only (a section's check on the Discipline and the rank); Kai-surge against
+  several foes at once, no: the engine fights one enemy at a time, so it is left to the player.
+- **Improved Disciplines, Sun Knight** (6 Disciplines): Grand Weaponmastery wields the two-handed
+  weapons (Broadsword, Quarterstaff, Spear) one-handed at full effect; Deliverance heals a serious
+  wound in another creature by the laying on of hands, faster by rank; Grand Pathsmanship repels
+  normal-sized insects within three yards, range and number growing by rank; Grand Nexus feigns death
+  in suspended animation, keeping only his hearing; Telegnosis speaks telepathically over about 100
+  miles, farther by rank; Kai-alchemy gives two Brotherhood Spells: Halt Missile (stops one missile
+  aimed at his life in mid-air for 2-3 seconds; more missiles by rank) and Strength (greater strength
+  for a short time, to move heavy things or raise COMBAT SKILL and ENDURANCE in a fight; the page
+  prints no numbers). *Engine*: gates only (a section's check on the Discipline and the rank); none
+  has a number to apply: a section that gives Strength a number is read in the item table, else it is
+  left to the player.
+- **Improved Disciplines, Sun Lord** (7 Disciplines): **Grand Weaponmastery sets the metal edge of
+  any non-magical weapon alight: the enemy loses 1 ENDURANCE more in every round he wins with it; not
+  with an all-wooden weapon such as a Quarterstaff**; Assimilance blurs his outline, making missiles,
+  magical or not, far likelier to miss; Grand Huntmastery sees heat patterns (infrared) in near or
+  total darkness, and ultraviolet light; **Kai-surge launches a Kai-blast: two Random Numbers added (a
+  0 counts as 1), 2 to 18 ENDURANCE lost by the enemy in one attack, at a cost of 4 ENDURANCE to him;
+  not together with any other psychic attack**; Telegnosis changes his body weight to walk on water,
+  mud, lava or quicksand, longer and on harder ground by rank; Magi-magic gives two battle-spells:
+  Penetrate (an Arrow, or anything shot like one, strikes harder) and Energy Grasp (a strong electric
+  discharge into whatever he touches, like Lightning Hand but easier to control, and needing touch).
+  *Engine*: gates only (a section's check on the Discipline and the rank). The burning edge and the
+  Kai-blast have numbers but are not applied: left to the player, the ENDURANCE changed by hand in the
+  fight.
+- **Improved Disciplines, Sun Thane** (8 Disciplines): Animal Mastery puts an animal to sleep at will
+  (some hostile ones may resist, most are affected somehow; how long, and how many at once, grow by
+  rank); Deliverance performs a Kai Exorcism, driving out an evil supernatural force that has
+  possessed a good creature or object; Grand Huntmastery protects him from natural electric discharges
+  such as lightning; Grand Pathsmanship changes the temperature of water he touches, freezing it to
+  ice or thawing it (volume and duration by rank); Kai-screen raises a Mindfort, which much lessens a
+  psychic shock that would paralyse or weaken another; Kai-alchemy gives two Brotherhood Spells: Slow
+  Fall (a fall slowed to three feet a second, landing unhurt while the spell lasts; longer by rank)
+  and Breathe Water (ten minutes under water, longer by rank). *Engine*: gates only (a section's check
+  on the Discipline and the rank); none has a number to apply.
+- **Improved Disciplines, Grand Thane** (9 Disciplines): Deliverance calls on the god Kai for a sign
+  to guide a choice, never a rescue from bodily danger, at most once a month (more often by rank);
+  Assimilance hides him from creatures that see by infravision (heat) or ultravision; Kai-surge (the
+  page heads it Grand Kai-surge here) makes a breakable object (bottle, window, pottery, urn, jug and
+  the like) burst violently, its shards a danger to anyone near; Grand Nexus finds Shadow Gates, the
+  portals to other planes beyond Magnamund, and passes through them unharmed (detection range by
+  rank); Telegnosis finds precious gems and gold, platinum or silver, in the ground or in a hidden
+  hoard (range by rank); Magi-magic gives two battle-spells: Power Glyph (a secret symbol written on a
+  door, archway or closed lid that strikes, with deadly effect, whatever opens it) and Hold Enemy
+  (holds one hostile creature within twenty feet still, for a time set by its size and strength;
+  range and time by rank). *Engine*: gates only (a section's check on the Discipline and the rank);
+  none has a number to apply.
+- **Improved Disciplines introduced: Grand Crown** (10 Disciplines): **Grand Weaponmastery adds 3
+  COMBAT SKILL fighting bare-handed, with no weapon at all**; Animal Mastery makes an animal see its
+  most feared predator or foe in his place; Grand Pathsmanship opens a clear way through dense
+  undergrowth, forest or jungle, closing behind him, and works against magical or hostile plants;
+  Kai-screen masks his goodly aura or shows a false one to creatures that sense auras; Grand Nexus
+  speaks a Kai Power Word, hurting one creature within thirty feet in body and mind (the damage and its
+  ENDURANCE cost to him depend on the case; power and range by rank); Kai-alchemy gives two Brotherhood
+  Spells: Teleport (carries him, his equipment and clothes to a place he can see; never another living
+  creature; costs **1 to 5 ENDURANCE** a cast, less by rank) and See Illusion (knows an illusion for
+  what it is). *Engine*: gates only (a section's check on the Discipline and the rank). The +3
+  bare-handed has a number but is not applied (the engine still takes the unarmed loss, above):
+  proposed, for the owner; Teleport's cost, which the page leaves open, is left to the player, the
+  ENDURANCE changed by hand.
+- **Footnotes**: at 3, 162 and 201 (fights on the Plane of Darkness), the Sommerswerd may add 4 more
+  COMBAT SKILL, as Book 18's section 98 gives for its own fight, on top of its other bonuses. At 276
+  the section's 4 COMBAT SKILL loss for fighting unarmed seems to break the Grand Master rule of no
+  loss bare-handed; the footnote cannot say whether it is meant. Five puzzles (the locks at 18 and 320,
+  210, 251 and 252, the time bomb at 177) each have one right answer, marked by a footnote at the
+  section it leads to (23, 10, 64, 60, 130). At 182 he may have passed the Graveyard of the Ancients
+  without meeting any Crypt Spawn. *Engine*: the Sommerswerd's 4 at 3, 162 and 201 are suggestions,
+  not applied unless the owner rules otherwise (as Book 18's at 344); the 276 loss is the section's
+  own, read in the item table (step 5), the question of the rule for the owner; the puzzles and 182
+  need no rule (the sections' choices carry them).
+- **Wisdom**: choose the Disciplines with care; he faces a foe whose skills match his own, cunning
+  and without mercy, so even home in Sommerlund he must stay on guard; keep only what is worth
+  keeping; completing earlier books is an advantage but not needed for this one.
+
+### Book 20, The Curse of Naar (Grand Master)
+
+Read from its own rules pages against Book 19's (tools/rules_diff.py, 2026-10-26): the combat results
+table and Random Number Table are unchanged, the combat rules and summary only in their example's
+numbers and wording, the levels page only in wording; the book has no Lore-circles page. It is the
+last book of the series as published here: its Disciplines page no longer promises a further
+Discipline for completing it.
+
+- **Scores**: a new character: COMBAT SKILL = **25** + a Random Number (0 counts as zero), ENDURANCE =
+  **30** + a Random Number. ENDURANCE can never rise above its value at the start of the adventure; at
+  zero or below he is dead. One who completed any of Books 1-19 may carry his scores over, including
+  the Weaponmastery, Curing and Psi-surge bonuses earned in the Kai (1-5) and Magnakai (6-12) books;
+  those bonuses help in play only if he completed those books, and do not raise his permanent scores
+  (footnote 1). *Engine*: the scores, yes (25 and 30 for a new character; a carried one keeps his);
+  the earlier Disciplines' help in play, for the Magnakai ones he chose (`LW.chose`).
+- **Carried over**: Weapons (still two at most) and Backpack Items (up to **ten**); Gold Crowns. A
+  character coming from the Kai or Magnakai books keeps only these Special Items: Crystal Star
+  Pendant, Sommerswerd, Silver Helm, Dagger of Vashna, Silver Bracers, Jewelled Mace, Silver Bow of
+  Duadon, Helshezag, Korlinium Scabbard, Kagonite Chainmail; one coming from Books 13-19 keeps all his
+  Special Items. *Engine*: yes (`LW.SERIES.grandmaster.keeps` on entering the series; between Grand
+  Master books everything carries).
+- **Disciplines**: he holds every Kai and Magnakai Discipline and four Grand Master Disciplines. For
+  **each** Grand Master book he completed (13 to 19), he chooses one more Grand Master Discipline and
+  adds **+1** to his basic COMBAT SKILL and **+2** to his basic ENDURANCE (footnote 2); in all, each
+  Grand Master Discipline past four adds 1 and 2. Unlike Books 13-19, the page names no further
+  Discipline for completing this book. *Engine*: yes (the four, one a book, the bonus past four:
+  `LW.SERIES.grandmaster.first`, `LW.readyHero`).
+
+| Grand Master Discipline | Effect | Engine |
+|---|---|---|
+| Grand Weaponmastery | +5 COMBAT SKILL with a mastered weapon (two to start, one more for each Grand Master book completed); the weapons are the ten of Weaponmastery (Spear, Dagger, Mace, Short Sword, Warhammer, Bow, Quarterstaff, Broadsword, Axe, Sword); with the Bow, +5 to a Random Number picked for a shot. Replaces Weaponmastery's bonus, not added to it; Mentora's +2 on bow shots is not added to the +5 (footnote 4). The page's summary of the Discipline adds that he is a master of unarmed combat and loses **no** COMBAT SKILL fighting bare-handed | the +5, yes (`hero.grandMastery`; `weaponParts`, `weaponBonus`); no loss bare-handed, **no**: the engine still takes the unarmed loss (4, or less for a Tutelary or Scion-kai with Weaponmastery); proposed, for the owner |
+| Animal Mastery | Considerable control over hostile non-sentient creatures; talks with birds and fish and uses them as guides | gates only |
+| Deliverance (Advanced Curing) | In a fight at 8 ENDURANCE or less, restore 20; once every 20 days (owner: once a book, ruling R9) | yes (`LW.cureOf`) |
+| Assimilance (Advanced Invisibility) | Striking changes of appearance lasting a few days; almost undetectable in open country | gates only |
+| Grand Huntmastery | Sees in total darkness, keener touch and taste; no Meal ticked off when told to eat | the Meal (`LW.hunts`); the rest, gates only |
+| Grand Pathsmanship | Resists entrapment by hostile plants; keen awareness of ambush in woods and dense forest | gates only |
+| Kai-surge | Psychic attack: +8 COMBAT SKILL, costing 1 ENDURANCE a round, on top of the round's combat loss; or Mindblast +4 at no cost. Not together with Psi-surge or Mindblast; not at 6 ENDURANCE or less | yes (`LW.psi`; gets through a foe immune to the other psychic attacks, `immune: 'psi'`) |
+| Kai-screen | Mind fortresses for himself and others in psychic combat, stronger with rank | shields from a foe's mind attack (`LW.shielded`) |
+| Grand Nexus | Withstands flames and acids an hour or more; grows with rank | gates only |
+| Telegnosis (Advanced Divination) | Spirit-walks far longer with fewer ill effects; duration and the body's protection grow with rank | gates only |
+| Magi-magic | Old Kingdom battle-magic of the Vakeros (Shield, Power Word, Invisible Fist among the first); grows with rank | gates only |
+| Kai-alchemy | Left-handed magic (Lightning Hand, Levitation, Mind Charm and the like); grows with rank, in time to craft new Kai weapons and artefacts | gates only |
+
+"Gates only" means the importer reads a section's check on the Discipline (and on a rank), which
+opens when the hero holds it; no effect is applied.
+
+- **Gold**: 20 + a Random Number, added to any he carries. At most 50 carried, always in the Belt
+  Pouch; the rest may be left at the Monastery. No other coin is named on the rules pages. *Engine*:
+  yes, `gold: 20` in `LW.KITS[20]`; the purse's 50 and the Monastery for the rest.
+- **Kit**: a map of the Planes of Existence, taken with him. Choose any **4** of ten: Quarterstaff,
+  Broadsword, Bow, Quiver (Special Item, six Arrows), Dagger, Sword, two Meals (a Backpack space
+  each), Rope, Potion of Laumspur (4 ENDURANCE after a fight, one dose, never just before one), Axe;
+  added to what he carries. The page marks each Weapon, the Quiver as a Special Item, the Meals, and
+  the Rope and Potion as Backpack Items. *Engine*: yes, `LW.KITS[20]` (the map as a Special Item,
+  `mapPlanes`), with Monastery storage for Special Items. (Checked against the page by hand.)
+- **Carrying**: two Weapons, one used at a time; ten Backpack Items, Meals included, one Backpack,
+  exchanged or dropped at any time outside a fight; a found item named with capitals or called a
+  Backpack Item goes in the Backpack unless it is said to be a Special Item; twelve Special Items, each
+  carried as or where the text says (the page does not repeat that the surplus may be left at the
+  Monastery; the series rule stands); fifty Gold Crowns. No food when told to eat: lose 3 ENDURANCE.
+  Any other potion found has its effect given where it is found; all potions are Backpack Items.
+  *Engine*: yes (`LW.backpackMax`, `LW.specialLimit`, the Meal rule, the Monastery at the start).
+- **Bow**: used only when the section allows; needs a Quiver and an Arrow, one Arrow a shot; useless
+  hand to hand, so a close-combat weapon is advised beside it. *Engine*: yes (`ranged`, `hero.arrows`,
+  `bowShot`).
+- **Combat**: COMBAT SKILL with the Grand Master bonuses and Special Items, against the enemy's, on
+  the Combat Results Table; Kai-surge costs 1 ENDURANCE each round it is used, beyond the round's
+  loss. Evasion only where the section allows it: that round is fought, the enemy's losses are ignored
+  and only he loses ENDURANCE. *Engine*: yes.
+- **Ranks**: Kai Grand Master Senior, Superior, Kai Grand Sentinel, Kai Grand Defender, Kai Grand
+  Guardian, Sun Knight, Sun Lord, Sun Thane, Grand Thane, Grand Crown, Sun Prince, Kai Supreme Master,
+  by the number of Grand Master Disciplines. *Engine*: yes (`LW.SERIES.grandmaster.ranks`).
+- **Improved Disciplines, Kai Grand Guardian** (5 Disciplines): Animal Mastery summons a few forest
+  animals as loyal allies, outdoors only; Assimilance raises a fog within 15 yards that blinds normal
+  sight and infravision, lasting longer by rank; Grand Huntmastery moves faster over any ground, on
+  foot or mounted, to outrun pursuit; **Kai-surge attacks up to three enemies at once in psychic
+  combat**; Kai-screen gives Mindblend, hiding his mind from a hostile probe; Magi-magic gives two
+  battle-spells: Splinter (shatters bottles, mirrors, windows and the like; range by rank) and
+  Flameshaft (sets the tip of an Arrow, or anything shot like one, alight with a flame hard to put
+  out). *Engine*: gates only (a section's check on the Discipline and the rank); Kai-surge against
+  several foes at once, no: the engine fights one enemy at a time, so it is left to the player.
+- **Improved Disciplines, Sun Knight** (6 Disciplines): Grand Weaponmastery wields the two-handed
+  weapons (Broadsword, Quarterstaff, Spear) one-handed at full effect; Deliverance heals a serious
+  wound in another creature by the laying on of hands, faster by rank; Grand Pathsmanship repels
+  normal-sized insects within three yards, range and number growing by rank; Grand Nexus feigns death
+  in suspended animation, keeping only his hearing; Telegnosis speaks telepathically over about 100
+  miles, farther by rank; Kai-alchemy gives two Brotherhood Spells: Halt Missile (stops one missile
+  aimed at his life in mid-air for 2-3 seconds; more missiles by rank) and Strength (greater strength
+  for a short time, to move heavy things or raise COMBAT SKILL and ENDURANCE in a fight; the page
+  prints no numbers). *Engine*: gates only (a section's check on the Discipline and the rank); none
+  has a number to apply: a section that gives Strength a number is read in the item table, else it is
+  left to the player.
+- **Improved Disciplines, Sun Lord** (7 Disciplines): **Grand Weaponmastery sets the metal edge of
+  any non-magical weapon alight: the enemy loses 1 ENDURANCE more in every round he wins with it; not
+  with an all-wooden weapon such as a Quarterstaff**; Assimilance blurs his outline, making missiles,
+  magical or not, far likelier to miss; Grand Huntmastery sees heat patterns (infrared) in near or
+  total darkness, and ultraviolet light; **Kai-surge launches a Kai-blast: two Random Numbers added (a
+  0 counts as 1), 2 to 18 ENDURANCE lost by the enemy in one attack, at a cost of 4 ENDURANCE to him;
+  not together with any other psychic attack**; Telegnosis changes his body weight to walk on water,
+  mud, lava or quicksand, longer and on harder ground by rank; Magi-magic gives two battle-spells:
+  Penetrate (an Arrow, or anything shot like one, strikes harder) and Energy Grasp (a strong electric
+  discharge into whatever he touches, like Lightning Hand but easier to control, and needing touch).
+  *Engine*: gates only (a section's check on the Discipline and the rank). The burning edge and the
+  Kai-blast have numbers but are not applied: left to the player, the ENDURANCE changed by hand in the
+  fight.
+- **Improved Disciplines, Sun Thane** (8 Disciplines): Animal Mastery puts an animal to sleep at will
+  (some hostile ones may resist, most are affected somehow; how long, and how many at once, grow by
+  rank); Deliverance performs a Kai Exorcism, driving out an evil supernatural force that has
+  possessed a good creature or object; Grand Huntmastery protects him from natural electric discharges
+  such as lightning; Grand Pathsmanship changes the temperature of water he touches, freezing it to
+  ice or thawing it (volume and duration by rank); Kai-screen raises a Mindfort, which much lessens a
+  psychic shock that would paralyse or weaken another; Kai-alchemy gives two Brotherhood Spells: Slow
+  Fall (a fall slowed to three feet a second, landing unhurt while the spell lasts; longer by rank)
+  and Breathe Water (ten minutes under water, longer by rank). *Engine*: gates only (a section's check
+  on the Discipline and the rank); none has a number to apply.
+- **Improved Disciplines, Grand Thane** (9 Disciplines): Deliverance calls on the god Kai for a sign
+  to guide a choice, never a rescue from bodily danger, at most once a month (more often by rank);
+  Assimilance hides him from creatures that see by infravision (heat) or ultravision; Kai-surge makes
+  a breakable object (bottle, window, pottery, urn, jug and the like) burst violently, its shards a
+  danger to anyone near; Grand Nexus finds Shadow Gates, the portals to other planes beyond Magnamund,
+  and passes through them unharmed (detection range by rank); Telegnosis finds precious gems and gold,
+  platinum or silver, in the ground or in a hidden hoard (range by rank); Magi-magic gives two
+  battle-spells: Power Glyph (a secret symbol written on a door, archway or closed lid that strikes,
+  with deadly effect, whatever opens it) and Hold Enemy (holds one hostile creature within twenty feet
+  still, for a time set by its size and strength; range and time by rank). *Engine*: gates only (a
+  section's check on the Discipline and the rank); none has a number to apply.
+- **Improved Disciplines, Grand Crown** (10 Disciplines): **Grand Weaponmastery adds 3 COMBAT SKILL
+  fighting bare-handed, with no weapon at all**; Animal Mastery makes an animal see its most feared
+  predator or foe in his place; Grand Pathsmanship opens a clear way through dense undergrowth, forest
+  or jungle, closing behind him, and works against magical or hostile plants; Kai-screen masks his
+  goodly aura or shows a false one to creatures that sense auras; Grand Nexus speaks a Kai Power Word,
+  hurting one creature within thirty feet in body and mind (the damage and its ENDURANCE cost to him
+  depend on the case; power and range by rank); Kai-alchemy gives two Brotherhood Spells: Teleport
+  (carries him, his equipment and clothes to a place he can see; never another living creature; costs
+  **1 to 5 ENDURANCE** a cast, less by rank) and See Illusion (knows an illusion for what it is).
+  *Engine*: gates only (a section's check on the Discipline and the rank). The +3 bare-handed has a
+  number but is not applied (the engine still takes the unarmed loss, above): proposed, for the owner;
+  Teleport's cost, which the page leaves open, is left to the player, the ENDURANCE changed by hand.
+- **Improved Disciplines introduced: Sun Prince** (11 Disciplines): Animal Mastery changes his look,
+  clothes and gear included, into any animal he meets, seen so only by that animal; Deliverance
+  regrows lost body parts (hands, feet, limbs, eyes, inner organs) in himself or another, the time set
+  by the part; Assimilance projects an illusory double of himself up to thirty feet away, which he
+  must keep in sight and which no physical, magical or psychic attack can hurt (range much greater at
+  Kai Supreme Master); **Kai-surge fires a Kai-ray once in a fight: the enemy loses 15 ENDURANCE, he
+  loses 4; not at 10 ENDURANCE or less, not together with any other psychic attack**; Kai-screen
+  shelters his mind at once, without thought, whenever he is attacked psychically (stronger at Kai
+  Supreme Master); Grand Huntmastery steers his course and speed in strong currents of air or water
+  and through non-material planes such as Shadow Gates. *Engine*: gates only (a section's check on the
+  Discipline and the rank). The Kai-ray has numbers but is not applied: left to the player, the
+  ENDURANCE changed by hand in the fight; a once-a-fight button is proposed, for the owner.
+- **Footnotes**: the Sommerswerd may add 4 more COMBAT SKILL on the Plane of Darkness, on top of its
+  other bonuses, as Book 18's section 98 suggests: once on the rules page (footnote 3, against the
+  carried Sommerswerd) and once at section 90. At 48, Deliverance may not fit if he has already used
+  its 20 ENDURANCE this adventure. At 330, the loss of the last three Backpack spaces is unclear when
+  some are empty: either the last three items listed go, or empty spaces mean fewer are lost. Puzzles:
+  the combination lock at 239, and the total of the three Special Items' numbers that opens Dazganon
+  (297 and 338), each have one right answer, marked by a footnote at the section it leads to (10;
+  57). At 107 he may have visited the Temple of Maaken without meeting a Daemonak; at 127, Torgar
+  without meeting Sebb Jarel or going with Paido into the Danarg. *Engine*: the Sommerswerd's 4 is a
+  suggestion, not applied unless the owner rules otherwise (as Book 18's at 344 and Book 19's); 48
+  fits the once-a-book Deliverance already applied (ruling R9); 330's reading is for the owner, read
+  in the item table (step 5) as a `todo` meanwhile; the puzzles, 107 and 127 need no rule (the
+  sections' choices carry them).
+- **Wisdom**: the quest for the Moonstone takes him onto the Plane of Darkness, where no creature
+  will help him; stay on guard throughout, this being his most dangerous mission; keep only what is
+  worth keeping, as some finds are useless.

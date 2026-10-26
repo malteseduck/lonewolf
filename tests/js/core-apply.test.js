@@ -69,6 +69,15 @@ describe('the items to add by hand', () => {
   });
 });
 
+describe('an ending the importer read that the table takes back', () => {
+  it('end: null leaves a puzzle open rather than a death', () => {
+    const b = book();
+    b.sections[3].end = 'death'; b.sections[3].puzzle = true;
+    LW.applyItems(b, { ITEMS: {}, SECTIONS: { 3: { end: null } } });
+    expect([b.sections[3].end, b.sections[3].puzzle]).toEqual([null, true]);
+  });
+});
+
 describe('a way on the text gives outside its choices', () => {
   it('is added as a choice, with its gate (a footnote\'s spell at a rank)', () => {
     const b = book();

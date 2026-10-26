@@ -26,6 +26,9 @@ import * as ITEMS_14 from './items/items-14tcok.js';
 import * as ITEMS_15 from './items/items-15tdc.js';
 import * as ITEMS_16 from './items/items-16tlov.js';
 import * as ITEMS_17 from './items/items-17tdoi.js';
+import * as ITEMS_18 from './items/items-18dotd.js';
+import * as ITEMS_19 from './items/items-19wb.js';
+import * as ITEMS_20 from './items/items-20tcon.js';
 
 const LW = window.LW;
 const ROMAN = LW.ROMAN;
@@ -42,6 +45,9 @@ const ITEM_TABLES = {
   '15tdc': ITEMS_15,
   '16tlov': ITEMS_16,
   '17tdoi': ITEMS_17,
+  '18dotd': ITEMS_18,
+  '19wb': ITEMS_19,
+  '20tcon': ITEMS_20,
 };
 /* The made-up demo book (ruling R20) is on the PC alone: its table loads only where its book.js does, and
    a release (which has neither) never shows it. */

@@ -370,6 +370,64 @@ def test_grand_master_draw_book_17_phrasings(grand):
     assert nr('If you possess Grand Pathsmanship, add 1. If you possess Grand Nexus as well, add 1.') is None
 
 
+def test_grand_master_draw_book_18_phrasings(grand):
+    nr = grand['number_rules']
+    # the last of a list of bonuses opening with "And"
+    assert nr('If you possess Grand Nexus, add 2. And if you possess Telegnosis, add 1.') == [
+        {'disc': ['grandNexus'], 'plus': 2}, {'disc': ['telegnosis'], 'plus': 1}]
+    # an item among the conditions is still not read
+    assert nr('If you possess a Lantern, add 2. And if you possess Telegnosis, add 1.') is None
+
+
+def test_grand_master_book_19_phrasings(grand, tmp_path):
+    nr = grand['number_rules']
+    # a rank's name with its "Kai" added or left off: "Kai Grand Crown" is Grand Crown, "Grand Guardian" Kai Grand Guardian
+    assert grand['gate']('If you possess Kai-screen and have attained the rank of Kai Grand Crown, turn to 5.') == {
+        'disc': 'kaiScreen', 'rank': 10}
+    assert nr('For every level of Kai rank you have attained above that of Grand Guardian, add 1 to the number you have '
+              'picked.') == [{'plus': 1, 'each': 'grandmaster', 'over': 5}]
+    # "that you have", "you have so far attained", and the "add" first with "to the number" before "for every"
+    for s in ('For every level of Kai rank that you have attained above the rank of Kai Grand Guardian, add 1 to the number '
+              'you have chosen.',
+              'For every level of Kai rank you have so far attained above the rank of Kai Grand Guardian, add 1.',
+              'Add 1 to the number you have picked for every level of Kai Mastery you have attained above the rank of Kai '
+              'Grand Guardian.'):
+        assert nr(s) == [{'plus': 1, 'each': 'grandmaster', 'over': 5}], s
+    # a cap on the bonus is not something a rule can hold: the draw stays free
+    assert nr('For every level of Kai rank you have attained above the rank of Sun Knight, add 1 to the number you have '
+              'picked. (The most you may add is 4.)') is None
+    # "your Discipline of X" in a wish to use it
+    assert grand['gate']('If you wish to use your Discipline of Magi-magic again, turn to 5.') == {'disc': 'magiMagic'}
+    # a draw the print forgot to link to the table is still a draw, its number counting (no ranges): free
+    s = secs(tmp_path, {1: '<p>Pick a number from the Random Number (0=10). You lose that many ENDURANCE points.</p>'
+                           + choice('Turn to', 2), 2: '<p>A.</p>'}, book='19wb')
+    assert s['1']['rnt'] == 'free'
+
+
+def test_grand_master_draw_book_20_phrasings(grand):
+    nr = grand['number_rules']
+    # an either-of with a comma before its "or"
+    assert nr('If you possess Grand Nexus, or Telegnosis, add 1.') == [{'disc': ['grandNexus', 'telegnosis'], 'plus': 1}]
+    # the "add" first, the condition after it
+    assert nr('You may also add 2 if you possess Telegnosis.') == [{'disc': ['telegnosis'], 'plus': 2}]
+    assert nr('You may also add 2 if you possess a Lantern.') is None
+    # "add a further N", "you may add" after the per-rank lead
+    for s in ('Also, for every level of Kai Mastery you have attained above the rank of Kai Grand Guardian, add a further 1.',
+              'Also, for every level of Kai rank you have attained above the rank of Sun Knight, you may add a further 1.'):
+        got = nr(s)
+        assert got and got[0]['plus'] == 1 and got[0]['each'] == 'grandmaster', s
+    # a rank gate on "your current level of Kai rank": "or higher" read; "or lower" and "between" have no minimum to hold
+    g = grand['gate']
+    assert g('If your current level of Kai rank is Sun Thane or higher, turn to 5.') == {'rank': 8}
+    assert g('If your current level of Kai rank is Sun Thane or lower, turn to 5.') is None
+    assert g('If your current level of Kai rank is between Sun Lord and Sun Thane, turn to 5.') is None
+    assert g('If your ENDURANCE score is 10 or more, turn to 5.') is None  # not a gate the choice can hold
+    # "achieved the rank": the rank kept beside the discipline, not dropped
+    assert g('If you possess the Discipline of Grand Nexus and have achieved the rank of Sun Thane, turn to 5.') == {
+        'disc': 'grandNexus', 'rank': 8}
+    assert g('If you have achieved the Kai rank of Sun Thane, turn to 5.') == {'rank': 8}
+
+
 @pytest.mark.parametrize('text,expect', [
     ('If the number you have picked is 0 or 1, turn to 9.', [0, 1]),
     ('If the number you have picked is 0 or 5, turn to 9.', None),   # not a range

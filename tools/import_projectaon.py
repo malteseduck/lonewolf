@@ -48,6 +48,14 @@ RANKS = {  # rank name: how many disciplines of the series it takes
     'scion-kai': 8, 'archmaster': 9, 'kai grand master': 10,
     'kai grand master senior': 1, 'kai grand master superior': 2, 'kai grand sentinel': 3, 'kai grand defender': 4, 'kai grand guardian': 5,
     'sun knight': 6, 'sun lord': 7, 'sun thane': 8, 'grand thane': 9, 'grand crown': 10, 'sun prince': 11, 'kai supreme master': 12}
+
+
+def rank_of(name):
+    """A rank's count, its name as printed: "Grand Guardian" is Kai Grand Guardian, "Kai Grand Crown" (Book 19's 40) Grand Crown."""
+    name = name.strip().lower()
+    return RANKS.get(name) or RANKS.get('kai ' + name) or (name.startswith('kai ') and RANKS.get(name[4:])) or None
+
+
 CIRCLES = {'fire': 'Circle of Fire', 'light': 'Circle of Light', 'solaris': 'Circle of Solaris', 'spirit': 'Circle of the Spirit'}
 # Plates for enemies pictured in a section other than the one where they are fought. Checked by eye.
 PLATE_FIXES = {'01fftd': {'kraan': 'ill3.png', 'vordak': 'ill3.png', 'giak': 'ill4.png', 'doomwolf': 'ill4.png', 'gourgaz': 'ill7.png'}}
@@ -113,18 +121,20 @@ def condition(text):
         return None  # "Grand Weaponmastery (with Bow)": the Bow must be one of his weapons, which a condition cannot say
     text = re.sub(r'\s*\([^)]*\)?', '', text)  # "(you possess 8 Kai Disciplines)", or one cut short at its comma
     text = re.sub(r'\s+and therefore\b.*$', '', text)
-    for clause in re.split(r',?\s+and\s+(?:if you\s+|you\s+)?(?:also\s+)?(?=have\b|possess\b|completed\b|reached\b|attained\b)', text.strip()):
+    for clause in re.split(r',?\s+and\s+(?:if you\s+|you\s+)?(?:also\s+)?(?=have\b|possess\b|completed\b|reached\b|attained\b|achieved\b)', text.strip()):
         clause = clause.strip()
         d = re.fullmatch(r'(?:have|possess)(?: and wish to use)? (?:either |both )?(?:of )?the (?:Kai |Magnakai )?Disciplines? (?:either |both )?(?:of )?(.+)', clause)
         if not d and series == 'grandmaster':
             d = re.fullmatch(r'(?:have|possess) (?:the )?(?:(?:Grand Master |Magnakai |Kai )?Disciplines? of |(?:Grand )?[Mm]astery of |skill of )?(.+)', gm_names(clause))
         # "the rank of Kai Grand Guardian in the Discipline of Grand Huntmastery" (Book 14's 107): his rank is his own, so the discipline and the rank
-        r = re.fullmatch(r'(?:have )?(?:also )?(?:reached|attained) the (?:Kai |Magnakai )?[Rr]ank of ([A-Za-z -]+?)(?: or (?:higher|above|more))?(?: \([^)]*\))?'
+        # "have achieved the rank of Sun Prince" (Book 20's 329)
+        r = re.fullmatch(r'(?:have )?(?:also )?(?:reached|attained|achieved) the (?:Kai |Magnakai )?[Rr]ank of ([A-Za-z -]+?)(?: or (?:higher|above|more))?(?: \([^)]*\))?'
                          r'(?: in the (?:Grand Master |Magnakai |Kai )?Discipline of ([A-Za-z -]+))?', clause)
         c = re.fullmatch(r'(?:(?:have )?completed|possess) the (?:Magnakai )?Lore-circles? of (.+)', clause)
         # "your present Kai rank is Grand Guardian or higher" (Book 15's 224): the "Kai" of the rank's name may be left off
-        k = re.fullmatch(r'your (?:present |current )?(?:Kai |Magnakai )?rank is ([A-Za-z -]+?)(?: or (?:higher|above|more))?', clause)
-        k = k and (RANKS.get(k.group(1).lower()) or RANKS.get('kai ' + k.group(1).lower()))
+        # "your current level of Kai rank is Grand Crown or higher" (Book 20's 21)
+        k = re.fullmatch(r'your (?:present |current )?(?:level of )?(?:Kai |Magnakai )?rank is ([A-Za-z -]+?)(?: or (?:higher|above|more))?', clause)
+        k = k and rank_of(k.group(1))
         # "If you ENDURANCE score is 24 or higher" (Book 17's 36): the "r" missing from the print, so no "your" once "you " is cut
         e = re.fullmatch(r'(?:your )?(?:current |present )?ENDURANCE(?: points?)?(?: point)?(?: total| score)? is (?:now )?(.+)', clause)
         if e and 'ep' not in out:  # his Endurance as he draws: "less than 10", "20 or more"
@@ -143,8 +153,8 @@ def condition(text):
                 return None
         elif k and 'rank' not in out:
             out['rank'] = k
-        elif r and r.group(1).strip().lower() in RANKS and 'rank' not in out:  # before d: a Grand Master book's bare "have X" takes any words
-            out['rank'] = RANKS[r.group(1).strip().lower()]
+        elif r and rank_of(r.group(1)) and 'rank' not in out:  # before d: a Grand Master book's bare "have X" takes any words
+            out['rank'] = rank_of(r.group(1))
             if r.group(2):
                 got = 'disc' not in out and disc_list(gm_names(r.group(2)))
                 if not got or got[1]:
@@ -179,14 +189,20 @@ def gate(text):
     # the whole condition, when it is only disciplines, a rank and Lore-circles ("... and have reached the rank of Primate")
     whole = re.fullmatch(r'If you (.+)', head.strip())
     got = whole and condition(whole.group(1))
+    # "If your current level of Kai rank is X or higher" (Book 20's 21, 59): a rank alone, never his Endurance;
+    # "or lower" and "between" stay open, a gate holding no highest rank
+    mine = re.fullmatch(r'If (your .+? or (?:higher|above|more))', head.strip())
+    if not got and mine:
+        got = condition(mine.group(1))
+        got = got if got and list(got) == ['rank'] else None
     if got:
         if len(got.get('disc', [])) == 1:
             got['disc'] = got['disc'][0]
         return got
-    if re.search(r'\bor (?:if you )?(?:have|possess|reached|attained)\b', head):
+    if re.search(r'\bor (?:if you )?(?:have|possess|reached|attained|achieved)\b', head):
         # a discipline or a rank: any one will do. Every part must parse, or the choice stays open
         m = re.match(r'If you (.+)', head.strip())
-        parts = re.split(r',?\s+or\s+(?:if you\s+)?(?=(?:have|possess|reached|attained|completed)\b)', m.group(1)) if m else []
+        parts = re.split(r',?\s+or\s+(?:if you\s+)?(?=(?:have|possess|reached|attained|achieved|completed)\b)', m.group(1)) if m else []
         got = [condition(p) for p in parts]
         if len(parts) > 1 and all(got):
             for g in got:
@@ -195,6 +211,8 @@ def gate(text):
             return {'any': got}
         return None
     d = re.search(r'If you (?:have|possess|wish to use|wish to demonstrate)[^.;]*?(?:Kai|Magnakai) Disciplines? (?:either |both )?(?:of )?((?:either |both )?[A-Za-z -]+?(?:\s*\(any weapon\))?)(?:,| to| on| you| turn| in order|\.| \(|$)', head + '.')
+    if not d:  # "If you wish to use your Discipline of Kai-alchemy again" (Book 19's 179)
+        d = re.search(r'If you (?:have|possess|wish to use) your (?:Grand Master |Magnakai |Kai )?Discipline of ([A-Za-z -]+?)(?: again)?(?:,| to| on| you| turn|\.| \(|$)', head + '.')
     if not d and series == 'grandmaster' and not re.search(r'\(with (?:a |the )?Bow\)', head):
         d = re.search(r'If you (?:have|possess) (?:the )?(?:(?:Grand Master |Magnakai |Kai )?Disciplines? of |(?:Grand )?[Mm]astery of )?([A-Za-z -]+?)(?:,| to| on| you| turn|\.| \(|$)', gm_names(head) + '.')
     if d:
@@ -207,9 +225,9 @@ def gate(text):
             if every:
                 need['every'] = True
             return need
-    k = re.search(r'(?:reached|attained) the (?:Kai |Magnakai )?rank of ([A-Za-z -]+?)(?: or (?:higher|above|more))?(?:,|\.| you| \(|$)', head + '.')
-    if k and k.group(1).strip().lower() in RANKS:
-        return {'rank': RANKS[k.group(1).strip().lower()]}
+    k = re.search(r'(?:reached|attained|achieved) the (?:Kai |Magnakai )?rank of ([A-Za-z -]+?)(?: or (?:higher|above|more))?(?:,|\.| you| \(|$)', head + '.')
+    if k and rank_of(k.group(1)):
+        return {'rank': rank_of(k.group(1))}
     c = re.fullmatch(r'If you have completed (the Lore-circles? of .+)', head.strip())
     if c:
         got = condition('completed ' + c.group(1))
@@ -260,11 +278,14 @@ LEVEL = r'(?:level of (?:Kai |Magnakai |Grand Master )?(?:rank|Mastery)|(?:Kai |
 
 def per_rank(s):
     """"For every level of Kai rank you have attained above Y, add N" and its kin: (N, Y's count), or None."""
-    above = r'for every %s you (?:have (?:attained|reached)|are) above (?:that of |the rank of )?(?P<rank>[A-Za-z -]+?)' % LEVEL
+    # "that you have attained", "you have so far attained" (Book 19's 122, 120)
+    above = r'for every %s (?:that )?you (?:have (?:so far )?(?:attained|reached)|are) above (?:that of |the rank of )?(?P<rank>[A-Za-z -]+?)' % LEVEL
     to = r'(?: (?:to|from) the (?:number|total)\b.*)?\.?'
-    p = (re.fullmatch(r'(?:Also, )?[Ff]' + above[1:] + r',? add (?P<n>\d+)' + to, s)
-         or re.fullmatch(r'add (?P<n>\d+) ' + above + to, s))
-    return (int(p['n']), RANKS[p['rank'].lower()]) if p and p['rank'].lower() in RANKS else None
+    # or the "add" first, with "to the number you have picked" before the "for every" (Book 19's 208)
+    # "..., you may add a further 1" (Book 20's 57, 335)
+    p = (re.fullmatch(r'(?:Also, )?[Ff]' + above[1:] + r',? (?:you may )?add (?:a further |another |an additional )?(?P<n>\d+)' + to, s)
+         or re.fullmatch(r'[Aa]dd (?P<n>\d+) (?:to the number you have (?:picked|chosen) )?' + above + to, s))
+    return (int(p['n']), rank_of(p['rank'])) if p and rank_of(p['rank']) else None
 
 
 def number_rules(whole):
@@ -329,8 +350,13 @@ def number_rules(whole):
         both = re.search(r'\s*\(if you (?:have|possess) both\b[^)]*?,? add (\d+)\)', s, re.I)
         if both:
             s = s[:both.start()] + s[both.end():]
+        # "You may also add 1 if you possess X." (Book 20's 161): the "add" first, read as "If you possess X, add 1."
+        inv = re.fullmatch(r'(?:You may (?:also )?)?(add|deduct|subtract) (\d+)(?: (?:to|from) the number you have (?:picked|chosen))? if (you [^,]+?)\.?', s)
+        if inv:
+            s = 'If %s, %s %s.' % (inv.group(3), inv.group(1).lower(), inv.group(2))
         # "If have the ... Discipline of X" (Book 16's 2): the "you" is missing from the print
-        m = re.match(r'(?:However, |Also, )?[Ii]f (you .+?|your .+?|(?:have|possess) .+?),? (?:then )?(?:you may (?:also )?)?(add|deduct|subtract) (?:another |a further |an additional |an extra )?(\d+)(?: points?)?(?: (?:to|from) (?:the|this|your) (?:total |final )?(?:number|total|score|figure)\b.*)?\.?$', s)
+        # "And if you possess X, add 1." (Book 18's 343): the last of a list of bonuses, a sentence of its own
+        m = re.match(r'(?:However, |Also, |And )?[Ii]f (you .+?|your .+?|(?:have|possess) .+?),? (?:then )?(?:you may (?:also )?)?(add|deduct|subtract) (?:another |a further |an additional |an extra )?(\d+)(?: points?)?(?: (?:to|from) (?:the|this|your) (?:total |final )?(?:number|total|score|figure)\b.*)?\.?$', s)
         if not m:
             return None
         cond = condition(re.sub(r'^you ', '', m.group(1)))
@@ -452,7 +478,8 @@ for n in numbers:
         sec['end'] = 'victory'
     if lost and not sec['choices'] and 'end' not in sec and 'puzzle' not in sec:
         sec['end'] = 'failed'
-    if 'random.htm' in main:
+    # a draw the print forgot to link to the table, "Pick a number from the Random Number (0=10)" (Book 19's 72)
+    if 'random.htm' in main or re.search(r'\bPick a number from the Random Number\b', whole, re.I):
         ranged = [c for c in sec['choices'] if 'range' in c]
         # a choice taken before the draw ("If you have Sixth Sense, ...; otherwise pick a number") may stand beside the ranges
         before = all('range' in c or (re.match(r'If\b[^,]{0,30}?\byou (?:have|possess|are carrying|wish to use)\b', c['text'])

@@ -3,8 +3,8 @@
 Two jobs done by hand for each imported book, after importing it and writing its reading copy
 (`tools/reading_copy.py`): the **item table**, so the engine gives, offers, takes and gates what the
 text says (spec 4.5a), and the **fight pictures**, so every fight has a plate (spec 6.5). Book 1
-has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-17 have
-their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 and 14 2026-10-17, 15, 16 and 17 2026-10-25). The field reference is in `book-format.md` ("Section", "Item tables").
+has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-20 have
+their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 and 14 2026-10-17, 15, 16, 17 and 18 2026-10-25, 19 and 20 2026-10-26). The field reference is in `book-format.md` ("Section", "Item tables").
 
 Never put the book's text anywhere but `data/projectaon/`: tools print section numbers and
 counts, the table holds only the book's short item names, and everything else is in our words.
@@ -249,6 +249,31 @@ stopped at 25, 67's and 137's two-handed weapons; 23, 31, 42, 50, 53, 77, 89, 11
 277, 279, 288, 310, 341), 123's number carried to 45 by marks, and 171's seizure given back at 63. Two importer misses were fixed:
 "immune to all forms of psychic attack, except Kai-surge" read as immune to all (25 fights) and "after the third round" read as 0
 (89, 110, 275); the engine's `rolls` took `if` / `unless` (75: the loss doubled unless he has Deliverance).
+Book 18 (from the draft, 2026-10-25): no errors; 16 items, 104 sections; 126 left out. Of the draft's 113 sections, 87 with a todo,
+three readings were wrong (103's and 234's Crowns paid read as found; 188's 40 Lune read as 10 Gold Crowns), 345's loss is 6 with
+Kai-screen, 137's two losses it read as one, and its 6 bow gates lacked the Arrow. Sections it did not touch needed an entry: 30's gate on
+his ENDURANCE (again by hand, as in Books 1, 7, 14, 15 and 16: the importer reads such a clause in a draw, not in a choice), 33's and 303's
+fights (won within three rounds; one round, who lost more), 39's and 253's Jewelled Mace, 98's Sommerswerd, the Sun-crystal given (100)
+and erased (64), the monks' gifts and alms (154), the rope and Sabito draws (143, 163), the bow shots (297, 334) and the Arrows loosed
+(178, 192, 243, 336, 341), the captures (236, 290, 335) and the saddle-bags that replace them (202). 331's toll, any Special Item but
+the Sun-crystal, is a pick's `but`.
+Book 19 (from the draft, 2026-10-26): no errors; 9 items, 122 sections; 135 left out. Of the draft's 127 sections, 99 with a todo,
+about 20 needed nothing (Meals the importer reads, the enemy's arrows read as Arrows, discipline gates the importer reads), 126's
+second loss (Teleport's 4) it missed, and its bow gates lacked the Arrow. Sections it did not touch needed an entry: fights (one round
+against the dragonfly, 75, 116, 340; won within three or two rounds, 217, 241; the first two rounds without loss, 194; 237's loss written
+"five", which the importer reads only in figures; the door at 283 an obstacle), gates the importer read in part (209 and 138: a Bow,
+Magi-magic and a rank; 187: a bladed weapon too), two draws it left free (122's bonus with a cap, 226's "If it is 10 or lower"), the Arrows
+loosed (106, 136, 138, 196, 209) and the weapon destroyed unless a Special Item (154, 328). The duel at 304 (a fixed Combat Ratio,
+the foe's ENDURANCE his own) the engine cannot fight: a todo.
+Book 20 (from the draft, 2026-10-26): no errors; 8 items, 138 sections; 101 left out. Of the draft's 149 sections, 120 with a todo,
+27 needed nothing (Meals the importer reads, Arrows already spent by a bow shot, gates on earlier adventures, coins only
+described), 317's Arrow loosed it read as a bow shot, and its bow gates lacked the Arrow. 16 sections it did not touch needed an entry
+(21, 32, 42, 59, 62, 121, 122, 138, 141, 149, 170, 186, 205, 266, 299, 318), and others more than its todo said: fights (undead foes,
+32, 121, 211; Skarn-Ska's and the magic blades' more against some foes, 64, 185, 193, 211; stopped when the Dragonlord is down to 20;
+the first two rounds without loss, 282; psychic bonuses doubled, 212, 318; 299's burning edge), four draws left free (42, 62, 149, 205:
+by his ENDURANCE), 186's gate on his ENDURANCE, the gates with a top rank or a span of ranks (21, 59, 85, 122, 141, 170, 266, 283),
+138's ENDURANCE in prose, and 271's two Arrows loosed before the shot. 297 and 338, a puzzle whose death holds only without the three
+keys, the importer reads as deaths: the table takes the ending back (`end: null`) and gives the death by a `when` with `dead`.
 `--json` also writes `data/projectaon/<book>/check-items.json`, which `tools/book_status.py` reads
 for checklist step 5 (the dashboard's "Check items" runs it so).
 

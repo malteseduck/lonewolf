@@ -85,7 +85,12 @@ describe('check_items.mjs', () => {
     expect(await errorsOf({ '1': { give: [{ item: 'lamp' }, { item: 'meal' }] } })).toEqual([]);
   });
 
+  it('accepts an ending taken back (end: null) and a when that is the end of him', async () => {
+    expect(await errorsOf({ '1': { end: null, when: [{ unless: { item: 'lamp' }, dead: true }] } })).toEqual([]);
+  });
+
   it.each([
+    ['an end other than null', { '1': { end: 'death' } }, '1: end may only be null (an ending taken back)'],
     ['an item nobody defines in give', { '1': { give: [{ item: 'ghost' }] } }, '1 give: unknown item ghost'],
     ['an item nobody defines in loot', { '1': { loot: [{ item: 'ghost' }] } }, '1 loot: unknown item ghost'],
     ['an item nobody defines in take', { '1': { take: [{ item: 'ghost' }] } }, '1 take: unknown item ghost'],

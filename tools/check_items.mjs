@@ -47,10 +47,10 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
   LW.addItems(T.ITEMS, T.MARKS); // the demo book's table is not in items/
   const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'noHunt', 'todo', 'need', 'fight', 'bowShot', 'grandBow', 'rntMod',
     'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax', 'epCap', 'game',
-    'zeroTen', 'against', 'mealUnless', 'add', 'forfeit']);
+    'zeroTen', 'against', 'mealUnless', 'add', 'forfeit', 'end']);
   const FIGHT = new Set(['csMod', 'csIf', 'csUnless', 'csNote', 'mindforce', 'unless', 'unarmed', 'undead', 'drain', 'with', 'double', 'ambush', 'evade',
     'rounds', 'stop', 'won', 'wounded', 'noEvade', 'noShield', 'noUnarmed', 'weaponCs', 'plain', 'only', 'barred', 'lend', 'mind', 'keep', 'healLost', 'restore', 'noBoost', 'to', 'points', 'lose', 'byHand', 'breath', 'noMind', 'noStrike', 'kind', 'act']);
-  const WHEN = new Set(['if', 'unless', 'ate', 'came', 'ep', 'epMax', 'cs', 'healLost', 'take', 'back', 'mark', 'unmark', 'settle']);
+  const WHEN = new Set(['if', 'unless', 'ate', 'came', 'ep', 'epMax', 'cs', 'healLost', 'take', 'back', 'mark', 'unmark', 'settle', 'dead']);
   // what a choice's need reads (Game.choices and the gold spent on choosing), and what a Condition in its any reads (LW.meets):
   // any other key is silently ignored by the page
   const NEED = new Set(['disc', 'every', 'circle', 'any', 'ep', 'rank', 'item', 'not', 'ever', 'gold', 'spend', 'orAll', 'coin', 'n', 'came', 'instead']);
@@ -81,6 +81,8 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
     const sec = B.sections[id];
     if (!sec) { bad.push(`section ${id} does not exist`); continue; }
     Object.keys(x).filter((f) => !FIELDS.has(f)).forEach((f) => bad.push(`${id}: unknown field ${f}`));
+    // end: null takes back an ending the importer read (Book 20's 297: a death only for who lacks the keys)
+    if ('end' in x && x.end !== null) bad.push(`${id}: end may only be null (an ending taken back)`);
     things(x.give, `${id} give`); things(x.loot, `${id} loot`); losses(x.take, `${id} take`);
     (x.rolls || []).forEach((r, i) => { if (!sec.rnt) bad.push(`${id}: rolls, but the section draws no Random Number`); losses(r.take, `${id} rolls[${i}]`); });
     if (x.fight && !sec.combat) bad.push(`${id}: fight, but the section has no combat`);
