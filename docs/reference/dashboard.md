@@ -32,7 +32,8 @@ step left.
   rail shows them, each with its Open. "All steps" shows every step of the book in one list.
 - **A sheet opens inside its step** (one at a time): the picture sheet in Fights, the item sheet in
   Item table, the illustration sheet in Illustrations, the map editor in Map. The step shrinks to a
-  bar over it, keeping its buttons; Full window (F) hides the bar and the rail as well. Looking at
+  bar over it, keeping its buttons; Full window (F) hides the bar, the rail, the book's head
+  and the step tabs, leaving the sheet under its own thin header. Looking at
   another step or book keeps it open: its tab has a dot, and the book's head says it is open, a click
   away. Close asks first if the map editor has unsaved label edits or a picture is being adjusted.
   The sheets that span the books (Player icons, Picture sources, Lone Wolf's pictures) take the work
