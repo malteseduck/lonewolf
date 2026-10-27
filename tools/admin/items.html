@@ -26,7 +26,9 @@
   .card .chips span { font-size: 11px; background: rgba(51, 35, 26, .1); border: 1px solid var(--line-lo); border-radius: 3px; padding: 0 5px; }
   .card .ln em { font-style: normal; color: var(--ink); }
   .card .ln.warn { color: var(--warn); }
-  .card .tools { margin-top: 6px; }
+  /* at the card's foot, so the buttons line up along a row of cards */
+  .card > div:last-child { display: flex; flex-direction: column; }
+  .card .tools { margin-top: auto; padding-top: 6px; }
   .card .tools button { font-size: 12px; padding: 2px 8px; }
 
 

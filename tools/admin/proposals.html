@@ -21,7 +21,7 @@
   .foe .why { margin: 6px 0; padding: 6px 10px; border-left: 3px solid var(--agent); background: var(--btn); border-radius: 0 3px 3px 0; }
   .cands { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin-top: 10px; }
   /* the book's own tan, plain, as the fight panel's paper, so a picture looks as it will in play */
-  .cand { background: linear-gradient(#e2d3aa, #cfbb89); color: var(--ink); border-radius: 3px; padding: 8px; box-shadow: 0 2px 8px rgba(40, 24, 10, .45); position: relative; outline: 2px solid transparent; }
+  .cand { background: linear-gradient(#e2d3aa, #cfbb89); color: var(--ink); border-radius: 3px; padding: 8px; box-shadow: 0 2px 8px rgba(40, 24, 10, .45); position: relative; outline: 2px solid transparent; display: flex; flex-direction: column; }
   .cand.now { outline: 2px dashed var(--ink-dim); }
   .cand.pick { outline-color: var(--agent); }
   .cand .pic { height: 210px; display: grid; place-items: center; }
@@ -32,7 +32,7 @@
   .cand small { display: block; font-size: 12px; color: #4a3a28; margin-top: 3px; overflow-wrap: anywhere; }
   .cand small.path { color: #6b553c; font-family: Consolas, monospace; font-size: 11px; }
   .cand small.about { font-style: italic; }
-  .cand .tools { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; align-items: center; }
+  .cand .tools { display: flex; gap: 6px; margin-top: auto; padding-top: 6px; flex-wrap: wrap; align-items: center; }
   .cand .tools button { font-size: 12px; padding: 2px 9px; }
   .cand .tools a { font-size: 12px; }
   .text { font-size: 13.5px; line-height: 1.5; }
