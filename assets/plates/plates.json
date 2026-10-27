@@ -1,6 +1,10 @@
 {
   "_readme": "Pictures for fights whose section has no illustration of its own. The first entry whose match (a regular expression, case ignored) is found in the enemy's name is used, so put the narrower ones first. book, if given, limits an entry to that book (its own characters, or a stand-in that would be wrong elsewhere); book entries go first. src is relative to the project root: files in assets/plates/ are free to redistribute (sources in README.txt); files under data/projectaon/ are Project Aon illustrations on the owner's machine only, from the same book or borrowed from another, and files under art/ are pictures the owner supplied for personal use (git-ignored); a missing one falls back to the drawn emblem. crop, if given, is the part of the picture to use, [x, y, w, h] as fractions. over: true makes the entry win even where the section has an illustration of its own (the owner preferred another picture). levels, if given, is [black, white] (0-255): the tones that become full ink and bare paper, for a painting whose mid-tones would otherwise all turn to solid ink. draft, if given, marks an entry tools/plates_draft.py wrote (where it came from) that the owner has not yet adjusted on the picture sheet. See docs/reference/interface.md, Art pipeline, and docs/reference/items.md, Fight pictures.",
   "plates": [
+    { "match": "^doomwolf 3$", "book": "03tcok", "src": "assets/plates/03tcok/doomwolf-1.webp", "flip": true },
+    { "match": "^doomwolf 2$", "book": "03tcok", "src": "assets/plates/03tcok/doomwolf-1.webp" },
+    { "match": "^doomwolf 1$", "book": "03tcok", "src": "assets/plates/03tcok/doomwolf-1.webp" },
+    { "match": "^ice barbarian mutants$", "book": "03tcok", "src": "assets/plates/03tcok/ice-barbarian-mutants.webp", "crop": [0.0842, 0.1467, 0.8347, 0.7718] },
     { "match": "^kataka$", "book": "19wb", "src": "assets/plates/19wb/kataka.webp", "crop": [0.0522, 0.1075, 0.9251, 0.8715], "levels": [48, 142] },
     { "match": "^caq$", "book": "19wb", "src": "assets/plates/19wb/caq.webp" },
     { "match": "^ekmakon$", "book": "19wb", "src": "assets/plates/19wb/ekmakon.webp", "crop": [0.0391, 0.2126, 0.9187, 0.7874], "levels": [47, 162] },
@@ -95,9 +99,9 @@
     { "match": "^hammerlander$", "book": "10tdot", "src": "assets/plates/10tdot/hammerlander.webp", "crop": [0.0911, 0.1319, 0.7696, 0.766], "levels": [39, 171] },
     { "match": "^cener ghosts$", "book": "10tdot", "src": "assets/plates/10tdot/cener-ghosts.webp", "crop": [0.1106, 0.1266, 0.8464, 0.7974] },
     { "match": "^kalkoth$", "book": "03tcok", "src": "assets/plates/03tcok/kalkoth-1.webp", "crop": [0.0351, 0.0192, 0.9206, 0.8585], "levels": [75, 189], "flip": true },
-    { "match": "^kalkoth 3$", "book": "03tcok", "src": "assets/plates/03tcok/kalkoth-1.webp", "crop": [0.0351, 0.0192, 0.9206, 0.8585], "levels": [75, 189] },
-    { "match": "^kalkoth 2$", "book": "03tcok", "src": "assets/plates/03tcok/kalkoth-1.webp", "crop": [0.0351, 0.0192, 0.9206, 0.8585], "levels": [75, 189] },
-    { "match": "^kalkoth 1$", "book": "03tcok", "src": "assets/plates/03tcok/kalkoth-1.webp", "crop": [0.0351, 0.0192, 0.9206, 0.8585], "levels": [75, 189] },
+    { "match": "^kalkoth 3$", "book": "03tcok", "src": "assets/plates/03tcok/kalkoth-1.webp", "crop": [0.0351, 0.0192, 0.9206, 0.8585], "levels": [75, 189], "flip": true },
+    { "match": "^kalkoth 2$", "book": "03tcok", "src": "assets/plates/03tcok/kalkoth-1.webp", "crop": [0.0881, 0.1566, 0.7584, 0.6419], "levels": [75, 189], "flip": true },
+    { "match": "^kalkoth 1$", "book": "03tcok", "src": "assets/plates/03tcok/kalkoth-1.webp" },
     { "match": "^krorn$", "book": "10tdot", "src": "data/projectaon/10tdot/ill8.png", "crop": [0.2043, 0.1188, 0.5955, 0.6166], "flip": true, "over": true },
     { "match": "^élite death knights$", "book": "10tdot", "src": "assets/plates/10tdot/lite-death-knights.webp", "crop": [0.0111, 0.0401, 0.9684, 0.8768], "levels": [75, 154] },
     { "match": "^bhakish$", "book": "10tdot", "src": "assets/plates/10tdot/bhakish.webp", "crop": [0.0841, 0.1196, 0.8732, 0.7431] },

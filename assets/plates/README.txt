@@ -268,3 +268,15 @@ knight-shield-pencil.webp
 01fftd/vordak.webp
   Made with an AI image generator from a text prompt alone (the picture sheet's Prompt button);
   no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-26.
+
+03tcok/ice-barbarian-mutants.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-26.
+
+03tcok/doomwolf-1.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-26.
+
+03tcok/kalkoth-1.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-26.
