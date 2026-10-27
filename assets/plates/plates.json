@@ -1,9 +1,11 @@
 {
   "_readme": "Pictures for fights whose section has no illustration of its own. The first entry whose match (a regular expression, case ignored) is found in the enemy's name is used, so put the narrower ones first. book, if given, limits an entry to that book (its own characters, or a stand-in that would be wrong elsewhere); book entries go first. src is relative to the project root: files in assets/plates/ are free to redistribute (sources in README.txt); files under data/projectaon/ are Project Aon illustrations on the owner's machine only, from the same book or borrowed from another, and files under art/ are pictures the owner supplied for personal use (git-ignored); a missing one falls back to the drawn emblem. crop, if given, is the part of the picture to use, [x, y, w, h] as fractions. over: true makes the entry win even where the section has an illustration of its own (the owner preferred another picture). levels, if given, is [black, white] (0-255): the tones that become full ink and bare paper, for a painting whose mid-tones would otherwise all turn to solid ink. draft, if given, marks an entry tools/plates_draft.py wrote (where it came from) that the owner has not yet adjusted on the picture sheet. See docs/reference/interface.md, Art pipeline, and docs/reference/items.md, Fight pictures.",
   "plates": [
-    { "match": "^vordak 2$", "book": "08tjoh", "src": "assets/plates/14tcok/3-vordaks.webp", "crop": [0.5815, 0.1427, 0.4185, 0.783], "over": true },
-    { "match": "^vordak 1$", "book": "08tjoh", "src": "assets/plates/14tcok/3-vordaks.webp", "crop": [0.2462, 0.1427, 0.484, 0.8266], "over": true },
-    { "match": "^vordaks$", "book": "08tjoh", "src": "assets/plates/14tcok/3-vordaks.webp", "crop": [0.0491, 0.138, 0.9345, 0.8219], "over": true },
+    { "match": "^hunting dogs$", "book": "08tjoh", "src": "assets/plates/08tjoh/hunting-dogs.webp", "crop": [0.0146, 0.0747, 0.9443, 0.8568] },
+    { "match": "^monks \\(on horseback\\)$", "book": "08tjoh", "src": "assets/plates/08tjoh/monks-on-horseback.webp", "crop": [0.008, 0.2598, 0.9576, 0.7011] },
+    { "match": "^vordak 2$", "book": "08tjoh", "src": "assets/plates/08tjoh/vordak-1.webp", "crop": [0.0583, 0.0391, 0.8904, 0.8359], "flip": true, "over": true },
+    { "match": "^vordak 1$", "book": "08tjoh", "src": "assets/plates/08tjoh/vordak-1.webp", "over": true },
+    { "match": "^vordaks$", "book": "08tjoh", "src": "assets/plates/08tjoh/vordaks.webp", "over": true },
     { "match": "^black lakeweed$", "book": "07cd", "src": "assets/plates/07cd/black-lakeweed.webp", "levels": [43, 158] },
     { "match": "^invisible whipmaster$", "book": "07cd", "src": "assets/plates/07cd/invisible-whipmaster.webp", "crop": [0.1458, 0.1584, 0.7952, 0.6472] },
     { "match": "^tunnel door$", "book": "07cd", "src": "data/projectaon/14tcok/ill2.png", "crop": [0.3, 0.29, 0.4, 0.42] },
