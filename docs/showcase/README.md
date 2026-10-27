@@ -40,7 +40,8 @@ Number is drawn on a medallion; a death can be rewound.
 ![The inventory ledger](images/06-inventory.jpg)
 
 **The inventory is a ledger** like the hero's page: weapons either side of a wolf's-head crest, Special
-Items counted against the limit of twelve, an eight-tile Backpack and the gold.
+Items counted against the limit of twelve, an eight-tile Backpack and the gold. Adding an item by hand picks
+from every item the books know, earlier books' Special Items folded away by book; nothing is typed.
 
 ![A fight, as it begins](images/07-fight-start.jpg)
 
@@ -48,7 +49,8 @@ Items counted against the limit of twelve, an eight-tile Backpack and the gold.
 
 **Combat** shows the round log on the left page and the foe on the right, with Strike, Mindblast and
 Evade as bronze medallions. Every foe has a picture of its own, the same creature from another book, or a
-stand-in; the player inks it to sepia live.
+stand-in; the player inks it to sepia live. Not every fight is a foe: a door is fought as an obstacle (no
+Mindblast, and "Leave it" costs no blow), a contest or a fight of the mind is worded and drawn as such.
 
 ![Magnakai setting out](images/09-magnakai-setting-out.jpg)
 
@@ -70,13 +72,15 @@ Each book goes through nine steps: download, import, phrasings, rules addendum, 
 fight pictures, map and illustrations. The import dashboard (`tools/admin/`, this PC only) shows where each
 book stands, runs the script steps, and hands the steps that need judgement to Claude Code as a ready prompt.
 
-![The dashboard](images/20-dashboard-grid.jpg)
+![A book, its steps as tabs, the rail of books](images/21-dashboard-book.jpg)
 
-![A book's panel](images/21-dashboard-book.jpg)
+![All books](images/20-dashboard-grid.jpg)
 
-**The dashboard** reads every step from the files on disk and the owner's hand marks, never from a checklist
-that might be out of date. A cog is a script, a hand is the owner, a quill is Claude Code. Gated buttons
-(download, import, re-import all) wait for the owner's go-ahead.
+**The dashboard** is a rail of books (each with its ten steps as small seals), the open book's steps as tabs,
+and the step's evidence and buttons; a sheet opens inside its step, and Full window gives it the whole
+screen. The grid shows every book against every step. Everything is read from the files on disk and the
+owner's hand marks, never from a checklist that might be out of date. A cog is a script, a hand is the owner,
+a quill is Claude Code. Gated buttons (download, import, re-import all) wait for the owner's go-ahead.
 
 ![The fight picture sheet](images/22-sheet-fights.jpg)
 
@@ -85,6 +89,20 @@ where it came from and what the enemy is. Pictures can be dropped, pasted or fet
 for its source link, or is marked as made with AI from a text prompt, and then kept in the repository), cropped,
 flipped and levelled with the fight panel previewed, and approved with a date.
 A picture the owner supplies wins over every other source.
+
+![Select and one prompt for them all](images/27-sheet-fights-select.jpg)
+
+**Asking Claude Code for better pictures** is a button: a card's Prompt copies step 7's agent prompt
+narrowed to that enemy, and Select ticks several cards for one "Prompt for N selected", cheaper than one each.
+
+![The proposal sheet](images/28-sheet-proposals.jpg)
+
+**The proposal sheet** is where the answer comes back. For each enemy the agent looked at: the picture shown
+now, its candidates inked as in a fight with the agent's pick outlined and why, and beside them the book's own
+sections where the enemy is met, with the sentences that describe it highlighted. Use this or Keep as is
+settles a row; none fits, and the row's prompt goes to an image generator, whose picture is pasted straight
+onto the row as one more candidate. Finish ends the round, and the next round leaves alone what was settled.
+(Shown on the demo book's one foe, with public-domain engravings as candidates.)
 
 ![The illustration sheet](images/23-sheet-illustrations.jpg)
 
@@ -102,11 +120,16 @@ It only looks; nothing on it changes a file.
 need it. *Change icon...* picks another from the icons on this PC or from game-icons.net (saved and credited
 as it is picked).
 
+![Lone Wolf's pictures](images/29-hero-pictures.jpg)
+
+**Lone Wolf's pictures** bakes the title page's and the Kai panel's Lone Wolf from the owner's drawing, at
+the iPad's size, into the two small files the player loads.
+
 Other tools on the dashboard: *Check everything* (re-imports every book against its last report, runs every
 item table's check, the approved fight pictures, the offline copy and a check that no description repeats a
 book's wording, then both test suites, in about ten seconds), *Picture sources* (where each borrowed picture
 came from), *Scan phrasings*, *Diff rules*, *Walk the book* (a play-through in Node), *Draft and compare* an item
-table, *Release to the iPad* (the offline check first) and *Setup* for a fresh checkout.
+table, *Release to the iPad* (the offline check first, then the release, then a push of `main` to GitHub) and *Setup* for a fresh checkout.
 
 ## Maps
 
