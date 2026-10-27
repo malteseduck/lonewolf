@@ -109,16 +109,24 @@ Task: Book ${b.n} is downloaded but the importer does not know it yet (tools/imp
 ${TAIL}`,
 };
 
-/* The picture sheet's Prompt button: step 7's proposals for one enemy, so the owner can pick another picture or
-   generate one. `foe` is the sheet's card: name, secs (where it is fought), from (what it shows now). */
-export const pictureFor = (b, foe) => `${HEAD(b)}
+/* The picture sheet's Prompt buttons: step 7's proposals for one enemy, or for the cards selected (one session
+   reads the procedure once for them all), so the owner can pick another picture or generate one. `foes` is the
+   sheet's card or a list of them: name, secs (where it is fought), from (what it shows now). */
+const secsOf = (f) => `section${f.secs.length > 1 ? 's' : ''} ${f.secs.join(', ')}`;
+export const pictureFor = (b, foes) => {
+  const list = [].concat(foes), one = list.length === 1, foe = list[0];
+  const it = one ? 'it' : 'each', its = one ? 'its' : 'each one\'s';
+  return `${HEAD(b)}
 
-Task: docs/book-checklist.md step 7, for one enemy only: "${foe.name}" (fought in section${foe.secs.length > 1 ? 's' : ''} ${foe.secs.join(', ')}). Its picture now: ${foe.from}. I want other pictures to choose from on the proposal sheet, or what I need to generate my own; leave every other enemy as it is.
+Task: docs/book-checklist.md step 7, ${one
+    ? `for one enemy only: "${foe.name}" (fought in ${secsOf(foe)}). Its picture now: ${foe.from}. `
+    : `for these ${list.length} enemies only:\n${list.map((f) => `  - "${f.name}" (fought in ${secsOf(f)}; its picture now: ${f.from})`).join('\n')}\n`}I want other pictures to choose from on the proposal sheet, or what I need to generate my own; leave every other enemy as it is.
 - ${PIC_ORDER(b)}
 - ${PIC_UNDRAWN}
-- Open only the pictures you might propose (their "about" rules out the rest), and propose the few that show it best, the best first; not the one it shows now (the sheet puts that first). If none fits, say so in the note and leave the candidates empty.
-- Write this enemy's row in data/projectaon/${b.code}/plate-proposals.json (format: tools/plates_proposals.py's docstring; ruling R23): its name as book.js has it, your note, candidates (on disk by path, with a crop where one figure is wanted; on the web by thumbnail and page, downloading nothing) and your pick. Keep any other rows; propose it even if I settled it before, since I ask. Do not change plates.json: my choice on the sheet does.
+- Open only the pictures you might propose (their "about" rules out the rest), and propose the few that show ${it} best, the best first; not the one ${it} shows now (the sheet puts that first). If none fits, say so in the note and leave the candidates empty.
+- Write ${one ? 'this enemy\'s row' : 'a row for each of them'} in data/projectaon/${b.code}/plate-proposals.json (format: tools/plates_proposals.py's docstring; ruling R23): ${its} name as book.js has it, your note, candidates (on disk by path, with a crop where one figure is wanted; on the web by thumbnail and page, downloading nothing) and your pick. Keep any other rows; propose ${one ? 'it' : 'them'} even if I settled ${one ? 'it' : 'them'} before, since I ask. Do not change plates.json: my choice on the sheet does.
 - ${PIC_DESCRIBE}
-- If its foe-about.json entry is missing or thin, write it in our own words (python tools/about_check.py must pass; ADR 0042), and an "about" for any picture you propose that has none (re-run python tools/ill_index.py).
+- If ${its} foe-about.json entry is missing or thin, write it in our own words (python tools/about_check.py must pass; ADR 0042), and an "about" for any picture you propose that has none (re-run python tools/ill_index.py).
 Run python tools/plates_proposals.py check ${b.code} until it is clean, then tell me to open it: the dashboard, Book ${b.n}'s step 7, "Open proposals" (or reload the sheet if it is open). Do not mark step 7.
 ${TAIL}`;
+};

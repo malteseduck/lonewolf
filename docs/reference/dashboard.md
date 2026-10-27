@@ -75,7 +75,9 @@ step left.
   By address..., Stand-in..., Link...); Prompt copies the step 7 agent prompt narrowed to that enemy
   (`pictureFor()` in `tools/admin/prompts.js`; the owner, 2026-10-26): pasted into Claude Code, it proposes other
   pictures for it and gathers its description on the proposal sheet, keeping any other rows there, where the
-  owner picks one or generates one from the sheet's image-generator prompt. Each save redraws the cards and the "with none" count, and the
+  owner picks one or generates one from the sheet's image-generator prompt. A card's Select tick adds it to
+  the top bar's "Prompt for N selected", one prompt for all the ticked enemies (cheaper than one each: the
+  session reads the procedure once; the owner, 2026-10-26); Clear unticks them. Each save redraws the cards and the "with none" count, and the
   dashboard's seals follow. The rules for the entry: `docs/reference/items.md`, "Fight pictures".
 - **The illustration sheet** ("Open illustration sheet" at step 9), inside the step like the
   others and only there (`tools/admin/ills.html`): every `ill*` and `small*` picture of the book on
@@ -296,7 +298,7 @@ downloads and imports still need the owner's word (AGENTS.md).
 `tools/admin/prompts.js`, one per agent step: phrasings (3), rules addendum (4), item table (5, and
 a fix prompt when `check_items` reports errors), test play-through (6), fight pictures (7), the map's
 style and its retype ticks, and a new book the importer does not know; and `pictureFor()`, step 7's
-narrowed to one enemy, which the picture sheet's Prompt button copies. Each is pasted into a fresh
+narrowed to one enemy or to the cards selected, which the picture sheet's Prompt buttons copy. Each is pasted into a fresh
 Claude Code session in the project, which loads AGENTS.md by itself, so a prompt does not repeat its
 rules: it gives the book, the figures the dashboard has (counts only, never the books' words), the
 procedure's file, and the `book_status.py done` line. Where a step has a script (ADR 0036), its prompt

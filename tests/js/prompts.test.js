@@ -22,6 +22,16 @@ describe('pictureFor', () => {
     expect(p).not.toContain('book_status.py done');
     expect(p).toMatch(/do not change plates\.json/i);
   });
+  it('takes several enemies at once, the sheet\'s selection, each with its sections and picture now', () => {
+    const two = pictureFor(b, [foe, { name: 'Gourgaz', secs: ['77'], from: 'none: the drawn emblem' }]);
+    expect(two).toContain('2 enemies only');
+    expect(two).toContain('"Bog Wyrm" (fought in sections 12, 140; its picture now: the book\'s ill3)');
+    expect(two).toContain('"Gourgaz" (fought in section 77; its picture now: none: the drawn emblem)');
+    expect(two).toMatch(/a row for each/i);
+    expect(two).toMatch(/keep any other rows/i);
+    // a list of one reads as the single card's prompt
+    expect(pictureFor(b, [foe])).toBe(p);
+  });
   it('shares the search order and the description with the whole-book prompt', () => {
     const all = PROMPTS.pictures({ ...b, imp: { bare: 2, kinds: 20 } });
     for (const s of ['Follow docs/reference/items.md, "Fight pictures"', 'Never a colour', 'plates_proposals.py gather 09sb']) {

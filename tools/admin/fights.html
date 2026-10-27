@@ -44,6 +44,9 @@
   .card .more summary::after { content: ' \25BE'; }
   .card .more .menu { position: absolute; z-index: 3; top: calc(100% + 3px); left: 0; display: grid; gap: 3px; padding: 5px; background: #e2d3aa; border: 1px solid #6b553c; border-radius: 3px; box-shadow: 0 3px 10px rgba(40, 24, 10, .45); white-space: nowrap; }
   .card .more .menu button { text-align: left; }
+  /* picked for one prompt together: Claude Code reads step 7's procedure once for them all */
+  .card .sel { margin-left: auto; font-size: 11px; display: flex; gap: 3px; align-items: center; cursor: pointer; }
+  .card.picked { outline-color: var(--blood); }
   body.embed .sheet-top h1, body.embed .sheet-top select, body.embed .sheet-top nav { display: none; }
   /* inside the dashboard's frame: plain parchment, the charred rim is the dashboard's */
   body.embed { padding: 0; }
@@ -93,6 +96,7 @@
   <select id="pick" aria-label="Book"></select>
   <span class="sum" id="sum"></span>
   <label class="only" id="only" hidden><input type="checkbox"> Show only these</label>
+  <span id="sel-bar" hidden><button id="sel-prompt" title="Copy one prompt for Claude Code for all the cards ticked: cheaper than one each, as the session reads step 7's procedure once (best kept to about 8)"></button> <button id="sel-clear">Clear</button></span>
   <nav class="links" style="margin-left:auto"><a href="./">Dashboard</a></nav>
 </header>
 <p class="note">Every enemy with the picture the player would show, inked as in a fight (checklist step 7: look, change what you want, then mark it done on the dashboard). Drop a
@@ -169,6 +173,7 @@ if (EMBED) document.body.classList.add('embed');
 const anchored = (name) => '^' + name.toLowerCase().replace(/[.^$*+?()[\]{}|\\/]/g, '\\$&') + '$';
 const LONG = 2000;  // the longest side kept of a dropped picture
 let book, plates = [], sources = {}, pins = null, approvedOn = null, onlyWaiting = false, foes = [], stamp = Date.now(), active = null;
+const picked = new Set();  // enemy names ticked for one prompt; kept by name across redraws
 
 fetch('/api/map/books', { cache: 'no-store' }).then((r) => r.json()).then((list) => {
   $('#pick').innerHTML = list.map((b) => `<option value="${esc(b.code)}" ${b.code === code ? 'selected' : ''}>${esc((b.number ? b.number + '. ' : '') + (b.title || b.code))}</option>`).join('');
@@ -256,7 +261,8 @@ async function render() {
   $('#only').hidden = !waiting;
   if (!waiting) onlyWaiting = false;
   $('#only input').checked = onlyWaiting;
-  $('#cards').innerHTML = foes.map((f, i) => `<div class="card ${f.src ? '' : 'missing'} ${f.waiting ? 'waiting' : ''}" data-i="${i}" ${onlyWaiting && !f.waiting ? 'hidden' : ''}>
+  showPicked();
+  $('#cards').innerHTML = foes.map((f, i) => `<div class="card ${f.src ? '' : 'missing'} ${f.waiting ? 'waiting' : ''} ${picked.has(f.name) ? 'picked' : ''}" data-i="${i}" ${onlyWaiting && !f.waiting ? 'hidden' : ''}>
     ${f.waiting ? `<span class="badge">${f.isNew ? 'New fight: approve?' : 'Changed: approve?'}</span>` : ''}
     ${f.blunt ? '<span class="badge blunt">Not upscaled</span>' : ''}
     ${f.was ? `<div class="was" id="was${i}"><small>was</small></div>` : ''}
@@ -264,7 +270,8 @@ async function render() {
     <b>${esc(f.name)}</b><small>section${f.secs.length > 1 ? 's' : ''} ${esc(f.secs.join(', '))}</small><small>${esc(f.from)}</small><small id="size${i}"></small>
     <small class="about${about(f.name) ? '' : ' unsaid'}">${esc(about(f.name) || 'not yet said what this enemy is')}</small>
     <div class="tools">${f.src ? '<button data-do="adjust">Adjust</button>' : ''}<button data-do="prompt" title="Copy a prompt for Claude Code: other pictures for this enemy, and what to generate one from, on the proposal sheet">Prompt</button>
-      <details class="more"><summary>Picture</summary><div class="menu"><button data-do="choose">Choose file...</button><button data-do="address">By address...</button><button data-do="standin">Stand-in...</button>${ownFile(f) ? '<button data-do="link">Link...</button>' : ''}</div></details></div></div>`).join('');
+      <details class="more"><summary>Picture</summary><div class="menu"><button data-do="choose">Choose file...</button><button data-do="address">By address...</button><button data-do="standin">Stand-in...</button>${ownFile(f) ? '<button data-do="link">Link...</button>' : ''}</div></details>
+      <label class="sel" title="Tick several, then Prompt for them all at the top"><input type="checkbox" data-pick ${picked.has(f.name) ? 'checked' : ''}> Select</label></div></div>`).join('');
   // ink them one by one, so the page shows at once
   for (const [i, f] of foes.entries()) {
     if (!f.src) continue;
@@ -331,6 +338,22 @@ $('#cards').addEventListener('click', (e) => {
     ask(`${foe.name}: the address of a picture, or of a page that shows one`, '', 'https://...').then((a) => { if (a?.trim()) fromAddress(foe, a.trim()); });
   }
   if (b.dataset.do === 'link') linkFor(foes[+c.dataset.i]);});
+$('#cards').addEventListener('change', (e) => {
+  if (!e.target.matches('[data-pick]')) return;
+  const c = cardOf(e.target), f = foes[+c.dataset.i];
+  if (e.target.checked) picked.add(f.name); else picked.delete(f.name);
+  c.classList.toggle('picked', e.target.checked);
+  showPicked();
+});
+function showPicked() {
+  $('#sel-bar').hidden = !picked.size;
+  $('#sel-prompt').textContent = `Prompt for ${picked.size} selected`;
+}
+$('#sel-prompt').onclick = () => copyPrompt(foes.filter((f) => picked.has(f.name)));
+$('#sel-clear').onclick = () => {
+  picked.clear(); showPicked();
+  document.querySelectorAll('.card.picked').forEach((c) => { c.classList.remove('picked'); c.querySelector('[data-pick]').checked = false; });
+};
 $('#file').onchange = () => { const f = $('#file').files[0]; if (f && active != null) take(foes[active], f); };
 $('#cards').addEventListener('dragover', (e) => { const c = cardOf(e.target); if (!c) return; e.preventDefault(); c.classList.add('over'); });
 $('#cards').addEventListener('dragleave', (e) => { cardOf(e.target)?.classList.remove('over'); });
@@ -361,7 +384,8 @@ document.addEventListener('click', (e) => {
   for (const d of document.querySelectorAll('.card details[open]')) if (!d.contains(e.target)) d.removeAttribute('open');
 });
 
-// step 7's agent prompt narrowed to this enemy (prompts.js): its proposals, to pick another picture or generate one
+// step 7's agent prompt narrowed to this enemy, or the selected ones (prompts.js): their proposals, to pick another
+// picture or generate one
 async function copyPrompt(foe) {
   const text = pictureFor({ n: book.number, title: book.title, code, series: book.series || 'kai' }, foe);
   try { await navigator.clipboard.writeText(text); }
@@ -371,7 +395,8 @@ async function copyPrompt(foe) {
     const ok = document.execCommand('copy'); t.remove();
     if (!ok) return toast('Could not copy the prompt.', 4000);
   }
-  toast('Prompt copied: paste it into Claude Code', 3000);
+  const n = [].concat(foe).length;
+  toast(`Prompt${n > 1 ? ` for ${n} enemies` : ''} copied: paste it into Claude Code`, 3000);
 }
 
 /* The answer typed in the #ask dialog, or null if cancelled (Escape, Cancel). */
