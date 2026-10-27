@@ -13,7 +13,7 @@
   "76/0": {"name":"1916e08","plate":{"src":"data/projectaon/07cd/ill12.png"}},
   "78/0": {"name":"r5aruk","plate":{"src":"data/projectaon/07cd/ill5.png"}},
   "81/0": {"name":"1h54tto","plate":{"src":"data/projectaon/07cd/ill7.png","crop":[0.05,0.12,0.9,0.55]}},
-  "93/0": {"name":"dv1su","plate":{"src":"assets/plates/spider-web-woodcut.jpg","crop":[0.0529,0.0297,0.8976,0.9162],"levels":[40,190]}},
+  "93/0": {"name":"dv1su","plate":{"src":"assets/plates/07cd/trap-webs.webp"}},
   "118/0": {"name":"1y1ny3y","plate":{"src":"assets/plates/07cd/lord-zahda.webp"}},
   "126/0": {"name":"1nf4gyx","plate":{"src":"art/plates/07cd/flame-man-wandering-dm.jpg"}},
   "142/0": {"name":"1hd39sc","plate":{"src":"data/projectaon/07cd/ill8.png"}},
@@ -24,7 +24,7 @@
   "206/0": {"name":"1uqux3k","plate":{"src":"data/projectaon/07cd/ill7.png"}},
   "212/0": {"name":"16qx824","plate":{"src":"data/projectaon/07cd/ill8.png"}},
   "212/1": {"name":"17kw151","plate":{"src":"data/projectaon/07cd/ill8.png","crop":[0.15,0.04,0.8315,0.55],"flip":true}},
-  "214/0": {"name":"ebci1l","plate":{"src":"assets/plates/portcullis-carcassonne.png"}},
+  "214/0": {"name":"ebci1l","plate":{"src":"data/projectaon/14tcok/ill2.png","crop":[0.3,0.29,0.4,0.42]}},
   "219/0": {"name":"mt7yhx","plate":{"src":"data/projectaon/07cd/ill9.png"}},
   "221/0": {"name":"1qm2cdv","plate":{"src":"data/projectaon/07cd/ill13.png"}},
   "233/0": {"name":"rki0cr","plate":{"src":"art/plates/07cd/oudagorg-worm.jpg"}},
@@ -32,7 +32,7 @@
   "245/0": {"name":"r5aruk","plate":{"src":"data/projectaon/07cd/ill5.png"}},
   "249/0": {"name":"1fbq6fc","plate":{"src":"data/projectaon/07cd/ill14.png"}},
   "253/0": {"name":"1fbq6fc","plate":{"src":"data/projectaon/07cd/ill14.png"}},
-  "257/0": {"name":"vvzfzo","plate":{"src":"assets/plates/demons-whips-dore.jpg"}},
+  "257/0": {"name":"vvzfzo","plate":{"src":"assets/plates/07cd/invisible-whipmaster.webp","crop":[0.1458,0.1584,0.7952,0.6472]}},
   "280/0": {"name":"1xvm0rs","plate":{"src":"data/projectaon/07cd/ill16.png"}},
   "285/0": {"name":"fjd2p7","plate":{"src":"data/projectaon/07cd/ill1.png"}},
   "290/0": {"name":"1hd39sc","plate":{"src":"data/projectaon/07cd/ill8.png"}},
@@ -41,6 +41,6 @@
   "314/0": {"name":"1fbq6fc","plate":{"src":"data/projectaon/07cd/ill14.png"}},
   "316/0": {"name":"1uqux3k","plate":{"src":"data/projectaon/07cd/ill7.png"}},
   "319/0": {"name":"1uqux3k","plate":{"src":"data/projectaon/07cd/ill7.png"}},
-  "325/0": {"name":"1guuda","plate":{"src":"assets/plates/seaweed-haeckel.jpg"}}
+  "325/0": {"name":"1guuda","plate":{"src":"assets/plates/07cd/black-lakeweed.webp","levels":[43,158]}}
  }
 }

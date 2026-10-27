@@ -1,14 +1,13 @@
 {
- "_readme": "The fight pictures of this book with a Real-ESRGAN 2x copy beside them, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
+ "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
  "srcs": [
   "art/plates/07cd/flame-man-wandering-dm.jpg",
+  "art/plates/07cd/oudagorg-worm.jpg",
+  "assets/plates/07cd/black-lakeweed.webp",
+  "assets/plates/07cd/invisible-whipmaster.webp",
   "assets/plates/07cd/lord-zahda-with-power-staff.webp",
   "assets/plates/07cd/lord-zahda.webp",
-  "art/plates/07cd/oudagorg-worm.jpg",
-  "assets/plates/demons-whips-dore.jpg",
-  "assets/plates/portcullis-carcassonne.png",
-  "assets/plates/seaweed-haeckel.jpg",
-  "assets/plates/spider-web-woodcut.jpg",
+  "assets/plates/07cd/trap-webs.webp",
   "data/projectaon/07cd/ill1.png",
   "data/projectaon/07cd/ill11.png",
   "data/projectaon/07cd/ill12.png",
@@ -21,6 +20,7 @@
   "data/projectaon/07cd/ill5.png",
   "data/projectaon/07cd/ill7.png",
   "data/projectaon/07cd/ill8.png",
-  "data/projectaon/07cd/ill9.png"
+  "data/projectaon/07cd/ill9.png",
+  "data/projectaon/14tcok/ill2.png"
  ]
 }

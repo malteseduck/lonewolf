@@ -320,3 +320,15 @@ knight-shield-pencil.webp
 06tkot/grave-robbers.webp
   Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
   no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-26.
+
+07cd/trap-webs.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-26.
+
+07cd/invisible-whipmaster.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-26.
+
+07cd/black-lakeweed.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-26.
