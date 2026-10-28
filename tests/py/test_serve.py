@@ -329,7 +329,7 @@ def test_admin_stage_table_has_every_stage_with_the_right_gates():
     gated = {k for k, v in serve.ADMIN_STAGES.items() if v.get('gated')}
     # upscaling fetches nothing; setup's downloads of files are gated, its package installs not
     assert gated == {'fetch', 'fetch-rules', 'import', 'approve-pictures', 'release', 'setup-realesrgan', 'setup-ocr', 'setup-art'}
-    # the release runs the offline check first, and stops if it fails; once released, main goes to GitHub (ruling R25)
+    # the release runs the offline check first, and stops if it fails; once released, main goes to GitHub (ADR 0045)
     assert serve.ADMIN_STAGES['release']['cmds']('') == [serve.PY + ['tools/offline_check.py'], serve.PY + ['tools/release.py'],
                                                          ['git', 'push', 'origin', 'main']]
     assert serve.ADMIN_STAGES['setup-art']['cmds']('') == [serve.PY + ['tools/art_sources.py', 'fetch']]  # Pillow converts
@@ -552,7 +552,7 @@ def test_hero_refuses_another_name_or_not_webp(root, name, data):
     assert not (root / 'assets').exists()
 
 
-# ---------------------------------------------------------------- proposal sheet (ruling R27)
+# ---------------------------------------------------------------- proposal sheet (ADR 0008)
 
 def test_proposals_route_records_a_decision_and_finishes_the_round(root, monkeypatch):
     import plates_proposals

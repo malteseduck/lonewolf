@@ -19,7 +19,7 @@ const require = createRequire(import.meta.url);
 let stamp = 0; // a new query per edit, so a table edited between calls is read again
 const loaded = new Map(); // path + text -> module, so an unchanged table is not parsed twice
 
-/* Where a book's table lives: items/items-<book>.js, or demo/<book>/items.js for the made-up demo book (ruling R20). */
+/* Where a book's table lives: items/items-<book>.js, or demo/<book>/items.js for the made-up demo book (ADR 0046). */
 export const tableFile = (root, book) => (fs.existsSync(path.join(root, 'demo', book))
   ? path.join(root, 'demo', book, 'items.js') : path.join(root, 'items', `items-${book}.js`));
 

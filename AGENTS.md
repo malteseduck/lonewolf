@@ -83,7 +83,7 @@ page only spot-checks (ADR 0036).
 - **Mark a finished book step** with `python tools/book_status.py done <book> <step>` and report what
   it prints; it says NOT done, and why, if the files disagree.
 - **No commit, push or release unasked.** Commit only when the owner asks; never push or run
-  `tools/release.py` (rulings R13, R25).
+  `tools/release.py` (ADR 0045).
 - **Look**: no real-time 3D, no pixel art, no bright flat colour, no plain geometric shapes (spec 6.6).
   Images in the repo must be free to redistribute, with their source noted (as
   `assets/icons/README.txt` does); a new asset pack or font needs the owner's go-ahead.
@@ -157,7 +157,7 @@ sides, both suites run again).
   patch script to the scratchpad and run it.
 - Plain `python -m http.server` cuts files over ~510 KB short on Windows; `tools/serve.py` (HTTP/1.1)
   does not.
-- The iPad is served the last *release* (port 8765, ruling R13), not the working copy. Over HTTPS or
+- The iPad is served the last *release* (port 8765, ADR 0045), not the working copy. Over HTTPS or
   with `?offline` the service worker's copy is served (`docs/reference/offline.md`); localhost:8766
   has none.
 - The browser console keeps errors from earlier page loads. Confirm an error is current first.

@@ -59,7 +59,7 @@ body, shown whole.
 - **Gloam-weed**: living pale weed rising from black shallows and reaching for an ankle.
 - **Warden's Shade**: a gaunt shape behind a cell door, one hand through the bars holding a ring of keys.
 
-## The demo book's printed map, made in Book 1's style (becomes `map.png`, ruling R20)
+## The demo book's printed map, made in Book 1's style (becomes `map.png`, ADR 0046)
 
 Attach **A** `data/demo/emberlands-lowres.png` (the layout and the names) and **B** `data/projectaon/01fftd/map.png`
 (the style only; never committed or shown). Save the result as `data/demo/emberlands-gemini.png`; it stands in

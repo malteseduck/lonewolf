@@ -57,7 +57,7 @@ unused icons, untracked files). Never touch `backups/`, `data/`, `art/` or `prot
 8. **The harness doc** (ADR 0044). `docs/reference/harness.md` against the harness as it is:
    `.claude/settings.json` (its hooks), `.claude/launch.json`, `.claude/skills/`, every `AGENTS.md`
    and `CLAUDE.md`, `tools/docs_check.py`'s checks, the dashboard's steps and prompts, and the
-   records it cites (ADRs 0001, 0022, 0036, 0037, 0041, 0042, 0044, the workflow rulings). The script checks
+   records it cites (ADRs 0001, 0022, 0036, 0037, 0041, 0042, 0044, 0045, the workflow rulings). The script checks
    that each part is named; reading checks that what is said of it, and why, is still true. A part
    added this pass (a hook, a check, a skill) gets its paragraph and its row in the closing table.
 9. **Owner's memory.** Where a saved feedback memory and AGENTS.md disagree, the later word wins;

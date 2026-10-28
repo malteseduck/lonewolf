@@ -1,4 +1,4 @@
-"""Install the made-up demo book (ruling R20) from its committed source into the importer's world.
+"""Install the made-up demo book (ADR 0046) from its committed source into the importer's world.
 
     python tools/demo_book.py            copy demo/99ember/ into data/projectaon/99ember/ and import it
     python tools/demo_book.py --quiet    the same, only if something changed (what tools/serve.py runs)

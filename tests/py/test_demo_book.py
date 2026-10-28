@@ -1,4 +1,4 @@
-"""The made-up demo book (ruling R20): its source in demo/99ember/ installs into data/projectaon/ and imports
+"""The made-up demo book (ADR 0046): its source in demo/99ember/ installs into data/projectaon/ and imports
 like a downloaded book, and nothing outside the PC's working copy sees it: not the offline copy, the
 whole-library tools or the checklist. The book is stand-in text written for the showcase."""
 import os

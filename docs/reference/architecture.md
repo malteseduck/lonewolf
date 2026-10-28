@@ -36,9 +36,9 @@ assets/plates/              plates.json: pictures for enemies their book does no
                             section/enemy number -> picture; no book text (ADR 0008)
 CLAUDE.md, README.md
 docs/                       spec, plan, reference
-demo/99ember/               the made-up demo book (ruling R20): pages in Project Aon's layout, pictures, map.png and its finished map-4k.webp, items.js; tools/demo_book.py
+demo/99ember/               the made-up demo book (ADR 0046): pages in Project Aon's layout, pictures, map.png and its finished map-4k.webp, items.js; tools/demo_book.py
                             installs it into data/projectaon/; PC only, never released
-  showcase/                 the public showcase (README with images, Gemini prompts, the stand-in book and map maker); stand-in content only, ruling R19
+  showcase/                 the public showcase (README with images, Gemini prompts, the stand-in book and map maker); stand-in content only, ADR 0046
   book-status.json          the book steps no file can show (checklist 3, 4, 6, 7), with the date each was
                             marked done; written by tools/book_status.py (docs/reference/dashboard.md)
 shared/                     used by the player and the prototypes (classic scripts on a global LW)
@@ -67,7 +67,7 @@ tools/
                             book's fight pictures on a sheet, where the owner drops, crops and removes
                             pictures), proposals.html (the agent's candidate fight pictures with the
                             book's text about each enemy and an image-generator prompt, where the owner picks or pastes an AI picture:
-                            ruling R27; plateprompt.js, that prompt's house style, shared with fights.html), ills.html
+                            ADR 0008; plateprompt.js, that prompt's house style, shared with fights.html), ills.html
                             (one book's illustrations, each original beside its
                             2x upscale), items.html and itemsheet.js (one book's items and their icons, which
                             the owner changes: ADR 0021), icons.html (the player's other icons, for
@@ -82,7 +82,7 @@ tools/
                             the picture it names (og:image); `ai` moves a fight picture made with AI into
                             the committed assets/plates/ (ADR 0042)
   plates_proposals.py       checks data/projectaon/<code>/plate-proposals.json, the agent's step 7 candidates
-                            for the proposal sheet (ruling R27)
+                            for the proposal sheet (ADR 0008)
   ill_index.py              writes git-ignored data/projectaon/ill-index.json: every book's illustrations, the
                             fights near each, and the committed hand notes of what each shows
                             (about/ill-notes.json) and what it is (about/ill-about.json), also for the

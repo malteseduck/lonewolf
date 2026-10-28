@@ -381,7 +381,7 @@ def offline_list(root=ROOT, fill=None):
         if not url or re.match(r'^(?:[a-z][\w+.-]*:|//)', url, re.I) or '${' in url:
             return
         rel = posixpath.normpath(url.lstrip('/') if url.startswith('/') else posixpath.join(base, url))
-        # the made-up demo book is for the PC alone (ruling R20): index.js names it, the iPad never gets it
+        # the made-up demo book is for the PC alone (ADR 0046): index.js names it, the iPad never gets it
         if not rel.startswith('..') and not rel.startswith('api/') and not any(rel.startswith(f'data/projectaon/{c}/') for c in DEMO_BOOKS):
             todo.append(rel)
 
@@ -480,7 +480,7 @@ ADMIN_STAGES = {
     'check': {'title': 'Check everything', 'book': False, 'timeout': 3600, 'cmds': lambda c: [PY + ['tools/check_all.py']]},
     # the last commit to the iPad (the release server, docs/reference/offline.md); gated: the owner's go-ahead.
     # The offline check first: its sizes in the log, and nothing released if the page names a missing file.
-    # Then main goes to GitHub (ruling R25), only once the release has gone well
+    # Then main goes to GitHub (ADR 0045), only once the release has gone well
     'release': {'title': 'Release to the iPad', 'book': False, 'gated': True, 'timeout': 600,
                 'cmds': lambda c: [PY + ['tools/offline_check.py'], PY + ['tools/release.py'], ['git', 'push', 'origin', 'main']]},
 }
@@ -700,7 +700,7 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(200, plates_file.standins())
         if method == 'POST' and parts == ['plate']:
             return self._admin_plate(body)
-        if method == 'POST' and parts in (['proposals'], ['proposals', 'finish']):  # the proposal sheet (ruling R27)
+        if method == 'POST' and parts in (['proposals'], ['proposals', 'finish']):  # the proposal sheet (ADR 0008)
             import plates_proposals
             code = str(body.get('book') or '')
             if not re.fullmatch(r'[\w-]{1,40}', code):
@@ -1008,7 +1008,7 @@ def main():
             print('Nothing released yet: run python tools/release.py', flush=True)
     else:
         handler = partial(Handler, directory=ROOT)
-        try:  # the made-up demo book (ruling R20), from its committed source into data/projectaon/
+        try:  # the made-up demo book (ADR 0046), from its committed source into data/projectaon/
             import demo_book
             demo_book.install()
         except (OSError, SystemExit) as e:

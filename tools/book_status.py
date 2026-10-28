@@ -45,7 +45,7 @@ CATALOGUE = [
     ('19wb', "Wolf's Bane"), ('20tcon', 'The Curse of Naar'),
 ]
 SERIES = lambda n: 'kai' if n <= 5 or n == DEMO_NUMBER else 'magnakai' if n <= 12 else 'grand master'
-# The made-up demo book (ruling R20): its source is committed in demo/99ember/, tools/demo_book.py installs it into
+# The made-up demo book (ADR 0046): its source is committed in demo/99ember/, tools/demo_book.py installs it into
 # data/projectaon/ so the importer, the dashboard and the map editor treat it as any other book. It is no part
 # of the catalogue, the checklist, the whole-library checks, the release or the iPad.
 DEMO_NUMBER = 99
@@ -419,7 +419,7 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
     # 7 fight pictures: every enemy has one and each is upscaled 2x (from the files), then the owner's
     # look at the sheet (a mark, refused until then)
     m7 = hand_mark(7)
-    # the agent's proposals, for the dashboard's "Open proposals" (tools/plates_proposals.py, ruling R27)
+    # the agent's proposals, for the dashboard's "Open proposals" (tools/plates_proposals.py, ADR 0008)
     try:
         rows = json.loads(read(os.path.join(DATA, code, 'plate-proposals.json'))).get('enemies', [])
         b['proposals'] = {'rows': len(rows), 'open': sum('decided' not in e for e in rows)}
@@ -492,7 +492,7 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
         b['demo'] = True
         for sid in ('fetch', 'phrasings', 'rules', 'testplay', 'pictures'):
             if st[sid]['state'] != 'done':
-                st[sid] = {'state': 'na', 'ev': 'Made-up demo book (ruling R20)', 'src': 'disk'}
+                st[sid] = {'state': 'na', 'ev': 'Made-up demo book (ADR 0046)', 'src': 'disk'}
     b['stages'] = st
     return b
 

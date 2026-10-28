@@ -42,19 +42,19 @@ row, not a decision by analogy.
 | R11 | A section's single choice that was only a page reference reads "Continue". | spec 4.6; the importer | 2026-09-30 |
 | R12 | **The iPad (landscape and portrait) and the PC's window** are the layouts to fit and judge. Phones are not a target: no work, checks or tests for them. Narrow-window code already there may stay, but nothing is designed or fixed for it, and it may go when it gets in the way. | spec 1, 9 | 2026-10-12 |
 | R26 | **Lone Wolf's likeness is the owner's own drawing** (`assets/hero/lone-wolf.webp`), on the title page (hood to knee, right of the middle, the burning Kai monastery faint behind him, also the owner's) and the Kai panel (head to belt), not Lone Wolf HD art. | `main.js` `HERO`; `assets/hero/README.txt` | 2026-10-21 |
-| R19 | **The public showcase shows only stand-in content.** `docs/showcase/` and the public deck use a stand-in book written for them, the owner's own art, public-domain engravings and made-up maps, and say "representative screens only, to keep licensed content out"; the real books' text, art and maps appear only in the private deck. | `docs/showcase/README.md` | 2026-10-24 |
-| R20 | **A made-up demo book, `99ember` (*The Ember Road*), is committed in `demo/99ember/` and works like any imported book, but only on the PC.** Its source is Project Aon's page layout in text of our own, public-domain engravings and a made-up map; `tools/demo_book.py` (run by `serve.py`) installs it into `data/projectaon/`, so the importer, dashboard and map editor treat it as any book. It shows as a "Demo" link on the title page only where its `book.js` exists, and is kept out of the release, the offline copy, the iPad, the checklist, `check_all` and `reimport_all`. It changes no engine rule: it uses the engine and item-table fields as they are. | `demo/99ember/`, `tools/demo_book.py`, `docs/showcase/README.md` | 2026-10-24 |
+| R19 | The public showcase shows only stand-in content: now ADR 0046. | ADR 0046 | 2026-10-27 |
+| R20 | The made-up demo book `99ember`: now ADR 0046. | ADR 0046 | 2026-10-27 |
 | R22 | **Adding an item by hand offers every item, and takes no typed name.** Every book's items are in its item table, so the picker lists them all: the weapons, the engine's and the open book's Backpack and Special Items, and earlier books' Special Items folded away with a filter by book. | `main.js` pickerHTML, `LW.pickable` | 2026-10-24 |
 
 ## Workflow
 
 | Id | Ruling | Where | Date |
 |---|---|---|---|
-| R13 | **The iPad is served the last release**, not the working copy: `tools/serve.py --release` on port 8765, always running. A change reaches it only after a commit and `tools/release.py`, the owner's call: agents do not run it or press Release unasked. | `docs/reference/offline.md` | 2026-10-10 |
+| R13 | The iPad is served the last release: now ADR 0045. | ADR 0045 | 2026-10-27 |
 | R14 | **Each book's item table is `items/items-<code>.js`.** The root holds the page, the service worker, the player's modules, and files tools need at the root (configuration, the agents' and readers' notes). | `main.js` imports from `./items/`; the tools look there | 2026-10-11 |
-| R15 | **The dashboard's Release runs the offline check first**, and has no button of its own for it. A release whose files are exactly those released already makes nothing and says so; the check has still run. | `tools/serve.py` ADMIN_STAGES, `tools/release.py` | 2026-10-17 |
-| R25 | **The dashboard's Release also pushes `main` to GitHub** (`git push origin main`), once the release has gone well, "nothing to release" included; a failed check or release pushes nothing. Pressing it is the owner's go-ahead for the push; agents still push nothing otherwise. | `tools/serve.py` ADMIN_STAGES, the release dialog | 2026-10-26 |
-| R27 | **Step 7's candidates are shown on the proposal sheet, never as a contact sheet image or a description in chat.** The owner decides a fight's picture with its context beside it: the pictures as they would look in a fight, what the enemy is (its `foe-about.json` entry) and the book's text where it is met and fought. The agent writes `plate-proposals.json` and the owner picks on the dashboard's proposal sheet. Each enemy there carries the agent's fuller description as an image-generator prompt (references attached by the owner), and a picture pasted on its row becomes a "from AI" candidate (2026-10-26). | `tools/admin/proposals.html`, `tools/plates_proposals.py`, the step 7 prompt | 2026-10-26 |
+| R15 | Release runs the offline check first: now ADR 0045. | ADR 0045 | 2026-10-27 |
+| R25 | Release also pushes `main`: now ADR 0045. | ADR 0045 | 2026-10-27 |
+| R27 | Step 7's candidates on the proposal sheet: now ADR 0008. | ADR 0008 | 2026-10-27 |
 | R21 | `AGENTS.md` holds instructions, never state: now ADR 0044. | ADR 0044 | 2026-10-27 |
 | R28 | Folder `AGENTS.md` files for work inside them: now ADR 0044. | ADR 0044 | 2026-10-27 |
 | R29 | The docs kept in line at commit (the hook) and at release (the pass): now ADR 0044. | ADR 0044 | 2026-10-27 |

@@ -28,7 +28,7 @@ they span the books, so they are not a book step.
   draws the picture on, so the owner sees a picture as it will look in play. The job log stays a dark
   console. The map editor's bars and side panels are parchment too, without the charred rim; its
   canvas and bright label colours stay as they were, so the labels read over any map.
-- **Sheets open inside the dashboard.** The picture sheet, the proposal sheet (ruling R27), the
+- **Sheets open inside the dashboard.** The picture sheet, the proposal sheet (ADR 0008), the
   illustration sheet, the item sheet and the map editor open only inside the dashboard, on plain parchment (the charred rim is the
   dashboard's). At their own addresses they show only a line pointing to the dashboard; there are no
   links to open them on their own, and agents do not open them there.

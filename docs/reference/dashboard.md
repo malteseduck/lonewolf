@@ -47,7 +47,7 @@ step left.
   seals follow. It opens only here (ADR 0021): at its own address it shows only a line pointing to the
   dashboard.
 - **The proposal sheet** ("Open proposals (n)" at step 7, shown while the book has a
-  `plate-proposals.json`; ruling R27): `tools/admin/proposals.html?book=<code>&embed=1`, inside the step like
+  `plate-proposals.json`; ADR 0008): `tools/admin/proposals.html?book=<code>&embed=1`, inside the step like
   the picture sheet and only there. The agent's candidates for the enemies it changed, chose or could not settle
   (`tools/plates_proposals.py`), each row with the picture shown now, the candidates inked as in a fight, the
   agent's note and pick, the enemy's `foe-about.json` entry and the book's text where it is met, fought and
@@ -130,13 +130,13 @@ step left.
   that have a link in `art/sources.json` are fetched again by **Download...**, gated; the rest copied from the old checkout). A missing
   part that a script can install has **Install** (or **Download...**, gated).
 - **Whole-project tools**: check everything (`check_all.py`), the player icons (the icon sheet, below), the
-  release (the offline check, then `release.py`, then `git push origin main`; rulings R15, R25).
+  release (the offline check, then `release.py`, then `git push origin main`; ADR 0045).
 - **The job log** at the foot: a job's output line by line while it runs; Shrink keeps its last lines. A job started in another
   tab, or before a reload, is followed too.
 
 ## Status
 
-The made-up demo book `99ember` (ruling R20) is listed last, as Book 99, once `demo/99ember/` exists. Its steps that need a download, the
+The made-up demo book `99ember` (ADR 0046) is listed last, as Book 99, once `demo/99ember/` exists. Its steps that need a download, the
 rules pages or a play-through show as not applicable, its item table is `demo/99ember/items.js`, it has no download button and is
 left out of the checklist table. `tools/demo_book.py` installs it (the server runs it at start).
 
@@ -195,7 +195,7 @@ agent run `show` instead).
 | `POST item-glyph` | `{item, glyph}` or `{item, remote: 'author/name'}` (fetched and credited first): `item_icons.set_glyph()` rewrites the item's glyph where it is named; `{file, glyph, was}` |
 | `POST ui-glyph` | the icon sheet: `{list, key, glyph}` or `{list, key, remote}`: `item_icons.set_ui_glyph()` rewrites that entry of `glyphs.js`'s `DISC_GLYPH`, `UI_GLYPH` or `KIND_GLYPH`; `{file, glyph, was}` |
 | `POST plate` | the picture sheet: `{book, enemy, image?, link?, crop?, levels?, flip?, remove?}` (`image` base64 WebP, up to 25 MB): the owner's picture for one enemy, saved as `art/plates/<book>/<slug of the name>.webp` (never a path from the request) and entered in `plates.json` by `tools/plates_file.py`, which keeps the file's one-entry-per-line layout; `link` (an address, or null for none) recorded in `art/sources.json` with a new picture |
-| `POST proposals` | the proposal sheet: `{book, enemy, how, src?}` (how: chosen, kept, or null to reopen), the owner's decision on one row, written into `plate-proposals.json` (`tools/plates_proposals.py` decide); `POST proposals/finish` `{book}` ends the round, the file added to `plate-proposals.done.json` and removed (ruling R27) |
+| `POST proposals` | the proposal sheet: `{book, enemy, how, src?}` (how: chosen, kept, or null to reopen), the owner's decision on one row, written into `plate-proposals.json` (`tools/plates_proposals.py` decide); `POST proposals/finish` `{book}` ends the round, the file added to `plate-proposals.done.json` and removed (ADR 0008) |
 
 The stages are a fixed table, `ADMIN_STAGES`: the command is built from it and a code from
 `book_status.CATALOGUE`, never from the request. One job at a time, sharing the map editor's lock,
@@ -219,7 +219,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `fights-up` | `ill_upscale.py --fights <code>` (step 7's Upscale 2x: every picture the book's fights can show, now or approved, sized for the iPad (ADR 0008); about 5-10 s a picture) | |
 | `ills` | `ill_upscale.py <code>` (Real-ESRGAN on this PC; about 3 s a picture) | |
 | `check` | `check_all.py` (re-imports every book, ADR 0022) | |
-| `release` | `offline_check.py`, then `release.py` (the last commit to the iPad, docs/reference/offline.md): a missing file stops it at the check; files the iPad has already make nothing (ruling R15); then `git push origin main`, only if both went well (ruling R25) | yes |
+| `release` | `offline_check.py`, then `release.py` (the last commit to the iPad, docs/reference/offline.md): a missing file stops it at the check; files the iPad has already make nothing; then `git push origin main`, only if both went well (ADR 0045) | yes |
 | `setup-venv`, `setup-npm` | `setup.py install venv` (`uv sync --project tools`), `install npm` (`npm ci`); through `uv run --no-project`, so that setup.py reports what is missing rather than uv installing it first | |
 | `setup-realesrgan` | `setup.py install realesrgan`: the v0.2.5.0 Windows zip from GitHub (about 45 MB); only the program, its DLLs and `models/` are written into `tools/realesrgan/` | yes: a download |
 | `setup-art` | `art_sources.py fetch`: every picture in `art/sources.json` with a link and no file here, fetched again and shrunk to 2000 px as the sheet does (through the venv: Pillow) | yes: a download |

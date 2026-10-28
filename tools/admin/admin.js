@@ -148,7 +148,7 @@ function renderRail() {
       <span class="dots">${STAGES.map((s) => `<i class="${b.stages[s.id].state}"></i>`).join('')}</span></button>`;
   let html = '', heading = null;
   for (const b of books.filter((x) => x.folder)) {
-    const h = b.n >= 99 ? 'Demo' : SERIES[b.series] || b.series;  // the made-up demo book (ruling R20) comes last
+    const h = b.n >= 99 ? 'Demo' : SERIES[b.series] || b.series;  // the made-up demo book (ADR 0046) comes last
     if (h !== heading) { heading = h; html += `<div class="series">${esc(h)}</div>`; }
     html += row(b);
   }
@@ -363,7 +363,7 @@ function openSheet(b) {
   if (!b?.imp) return toast('Import the book first', 3000);
   openInline(b, `/tools/admin/fights.html?book=${encodeURIComponent(b.code)}&embed=1`, `Fight pictures: ${b.n}. ${b.title}`);
 }
-function openProposals(b) {  // the agent's candidates for some enemies, with their context, to pick from (ruling R27)
+function openProposals(b) {  // the agent's candidates for some enemies, with their context, to pick from (ADR 0008)
   openInline(b, `/tools/admin/proposals.html?book=${encodeURIComponent(b.code)}&embed=1`, `Picture proposals: ${b.n}. ${b.title}`);
 }
 function openIlls(b) {  // every illustration, and each one's original beside its upscale (step 9)

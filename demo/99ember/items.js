@@ -1,5 +1,5 @@
 /* The Ember Road's items, in the same format as items/items-<code>.js (docs/reference/items.md). The book
-   is a stand-in written for the showcase (ruling R20); its table lives with it and is loaded by the
+   is a stand-in written for the showcase (ADR 0046); its table lives with it and is loaded by the
    player only where the book is (main.js), so it never reaches the release or the iPad. */
 export const ITEMS = {
   emberLetter: { name: 'Sealed Letter', kind: 'special', glyph: 'wax-seal', about: 'A letter for the warden of Thornwick, to be read by no one else.' },

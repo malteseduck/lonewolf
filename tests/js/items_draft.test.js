@@ -112,7 +112,7 @@ describe('items_draft.mjs', () => {
     expect(r.text).toContain('items-t1.js exists and was left alone');
   });
 
-  it('treats the demo book\'s table, demo/<code>/items.js, as its hand-made table (ruling R20)', async () => {
+  it('treats the demo book\'s table, demo/<code>/items.js, as its hand-made table (ADR 0046)', async () => {
     w('demo/t1/items.js', `export const ITEMS = {};\nexport const SECTIONS = { 2: { give: [{ gold: 6 }] } };\n`);
     const r = await draftItems({ root: tmp, book: 't1' });
     expect(fs.existsSync(path.join(tmp, 'items', 'items-t1.js'))).toBe(false);

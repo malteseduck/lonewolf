@@ -21,7 +21,7 @@ Project Aon web edition beside a separate action chart. It is designed to feel l
 It is a game I have wanted to build since high school.
 The repository is public, with no licensed content in it (section 3, ADR 0042), as an example of
 spec-driven development and of the harness that brings each book in, not as a product for others to
-play. A "release" is the copy served to the owner's iPad (ruling R13). The player runs in a browser,
+play. A "release" is the copy served to the owner's iPad (ADR 0045). The player runs in a browser,
 served from my PC; it is played on my iPad, mainly, with or without a connection
 (section 7), and on the PC. Phones are not supported.
 
@@ -59,7 +59,7 @@ served from my PC; it is played on my iPad, mainly, with or without a connection
 - Pictures made for this project with an AI from a text prompt alone are our own and are committed.
 - The repository itself contains only original work and assets free to redistribute (CC0 or
   similar, each with its source noted): the engine, the interface, drawn art, icons, fonts, and a
-  short demo book written for this project (ruling R20).
+  short demo book written for this project (ADR 0046).
 - Pictures the owner supplies for personal use (screenshots of Lone Wolf HD, drawings, scans) are
   kept in an uncommitted folder. The player uses them when present and falls back to its own
   drawing when not.
@@ -310,8 +310,8 @@ All run by the owner on their own machine.
   dashboard's jobs and the map editor's steps.
 - An **offline check** reports what the offline copy holds: file count, size per book, the largest
   files, and anything named but missing.
-- A **release** tool makes the copy the iPad is served, from the last commit (ruling R13).
-- A made-up **demo book** shows the whole pipeline on the PC without licensed content (ruling R20).
+- A **release** tool makes the copy the iPad is served, from the last commit (ADR 0045).
+- A made-up **demo book** shows the whole pipeline on the PC without licensed content (ADR 0046).
 
 ## 9. Not goals
 

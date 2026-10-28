@@ -49,7 +49,7 @@ const ITEM_TABLES = {
   '19wb': ITEMS_19,
   '20tcon': ITEMS_20,
 };
-/* The made-up demo book (ruling R20) is on the PC alone: its table loads only where its book.js does, and
+/* The made-up demo book (ADR 0046) is on the PC alone: its table loads only where its book.js does, and
    a release (which has neither) never shows it. */
 if (BOOKS['99ember']) {
   try { ITEM_TABLES['99ember'] = await import('./demo/99ember/items.js'); } catch (e) { delete BOOKS['99ember']; }

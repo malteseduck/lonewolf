@@ -1,4 +1,4 @@
-"""tools/plates_proposals.py, step 7's proposal file (ruling R27): what the agent offers the owner for
+"""tools/plates_proposals.py, step 7's proposal file (ADR 0008): what the agent offers the owner for
 each enemy, checked before the proposal sheet shows it. Made-up books and pictures, never Project Aon's."""
 import json
 

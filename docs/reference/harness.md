@@ -117,7 +117,7 @@ controls for every value. An agent is told the same: automate only what is certa
 
 **The owner's actions.** Gated in the instructions and on the dashboard alike: downloading a book
 (the owner names it, with a rough size), importing one, approving a picture change, committing,
-pushing, releasing. The dashboard's Release is the one place a push happens (ruling R25), and only
+pushing, releasing. The dashboard's Release is the one place a push happens (ADR 0045), and only
 when the owner presses it.
 
 ## 4. The commit hook
@@ -217,7 +217,7 @@ Each book goes through nine steps, in order (ADR 0036): 1 downloaded, 2 imported
   the step with `book_status.py done` and saying "do not commit".
 - **The sheets** (pictures, proposals, items, illustrations, icons, the map editor) put what the
   owner judges in front of them, with its context: the agent writes proposals to a file and the owner
-  picks on the sheet, never from a description in chat (ruling R27).
+  picks on the sheet, never from a description in chat (ADR 0008).
 - **Test play is driven in Node** (`tools/walk_book.mjs`), the browser only spot-checking what Node
   cannot show: driving fights through the page cost far more for the same check.
 - **Every book is offered every step whose needs it meets**, whatever its series; what holds a step
@@ -235,7 +235,7 @@ two places.
   the venv and npm packages.
 - **`.claude/launch.json`** names the servers the agent's preview tools start: `lone-wolf` (the
   working copy on 8766, this PC only), `lone-wolf-lan` (the same on the network) and
-  `lone-wolf-release` (the release on 8765, which the iPad is served; ruling R13).
+  `lone-wolf-release` (the release on 8765, which the iPad is served; ADR 0045).
 - **The console hook** (`__lw.game`, `__lw.render()`, `__lw.BOOKS`, `__lw.begin()`) lets an agent
   jump to a section or set a state and look, rather than click through a book.
 - Agents verify in the browser by driving the page and looking at it; layout is judged by eye, not
@@ -270,7 +270,7 @@ by hand from the other's half-done edits; sessions also committed of their own a
 3. The owner asks for a commit; the hook runs `docs_check.py` and blocks it on a problem.
 4. When the owner is about to release, the agent offers the maintenance pass.
 5. The owner presses Release on the dashboard: the offline check, then `tools/release.py` (a copy
-   from the last commit, served on 8765), then `git push origin main` (rulings R13, R15, R25). The
+   from the last commit, served on 8765), then `git push origin main` (ADR 0045). The
    iPad picks it up at its next page load.
 
 ## Every part at a glance

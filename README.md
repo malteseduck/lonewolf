@@ -51,7 +51,7 @@ fight-picture choices and our own descriptions of its pictures and enemies are i
 pictures and anything made from them are not.
 
 A made-up demo book, *The Ember Road* (`demo/99ember/`), is committed and plays like an imported
-one, on the PC only (ruling R20).
+one, on the PC only (ADR 0046).
 
 ## Where things are
 

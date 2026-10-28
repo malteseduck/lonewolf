@@ -198,7 +198,7 @@ One page, the map editor, runs every step. Here it is inside the dashboard on th
 
 ## Try it: the demo book
 
-*The Ember Road* is also a real, playable book in this repository (`demo/99ember/`, ruling R20): eight
+*The Ember Road* is also a real, playable book in this repository (`demo/99ember/`, ADR 0046): eight
 sections in Project Aon's page layout, three public-domain engravings, an item table and a made-up map.
 Start `uv run --project tools python tools/serve.py`; it installs the book into `data/projectaon/` and the title page shows a
 "Demo: The Ember Road" link. The importer, the dashboard (as Book 99) and the map editor work on it like on

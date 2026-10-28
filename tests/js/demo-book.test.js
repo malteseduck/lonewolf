@@ -1,4 +1,4 @@
-/* The demo book's own item table (demo/99ember/items.js, ruling R20) works with the engine as it is: it
+/* The demo book's own item table (demo/99ember/items.js, ADR 0046) works with the engine as it is: it
    registers its items, and what it gives, offers and gates is known to the engine. */
 import { it, expect, beforeAll } from 'vitest';
 import path from 'path';

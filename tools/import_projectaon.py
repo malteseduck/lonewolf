@@ -31,7 +31,7 @@ BOOKS = {  # code: (number, series, title)
     '18dotd': (18, 'grandmaster', 'Dawn of the Dragons'),
     '19wb': (19, 'grandmaster', "Wolf's Bane"),
     '20tcon': (20, 'grandmaster', 'The Curse of Naar'),
-    '99ember': (99, 'kai', 'The Ember Road'),  # the made-up demo book (demo/99ember, ruling R20)
+    '99ember': (99, 'kai', 'The Ember Road'),  # the made-up demo book (demo/99ember, ADR 0046)
 }
 DISC = {'camouflage': 'camouflage', 'hunting': 'hunting', 'sixth sense': 'sixthSense', 'tracking': 'tracking', 'healing': 'healing',
         'weaponskill': 'weaponskill', 'mindshield': 'mindshield', 'mindblast': 'mindblast', 'animal kinship': 'animalKinship',

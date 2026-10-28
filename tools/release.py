@@ -5,7 +5,7 @@
     python tools/release.py --status      what is released, what HEAD would add, and what GitHub lacks, as JSON
 
 The dashboard's "Release" button runs it too, after tools/offline_check.py, and then pushes main to GitHub
-(ruling R25; docs/reference/dashboard.md). This script itself pushes nothing.
+(ADR 0045; docs/reference/dashboard.md). This script itself pushes nothing.
 
 The code comes from the commit, never the working copy, so uncommitted work stays on the PC. The
 books and art are git-ignored (data/projectaon/, art/), so they come from disk as they are now; a

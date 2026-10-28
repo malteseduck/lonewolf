@@ -46,6 +46,7 @@ Changes list names what it took in.
 | [0036](0036-book-steps.md) | The book steps: their order (6 test play, 7-9 pictures), every step offered where it can work, a script for each that drafts leaning to flagging, an agent only refines; test play driven in Node | 2026-10-23 |
 | [0037](0037-tools-are-a-uv-project.md) | The Python tools are a uv project with a lock file; every run is `uv run --project tools` | |
 | [0044](0044-keeping-the-docs-true.md) | Keeping the docs true: AGENTS.md instructions only, folder rules beside their work, `docs_check.py` at every commit, the maintenance pass offered at release, the harness doc checked | 2026-10-27 |
+| [0045](0045-releases.md) | The iPad is served the last release, the owner's call; Release runs the offline check, then releases, then pushes `main` | 2026-10-27 |
 | [0041](0041-sessions-in-worktrees-merged-to-main.md) | Sonnet subagents for mechanical work where that saves tokens; a new session for a new topic; it works in its own worktree, commits only when asked, then merges into `main` | 2026-10-18 |
 
 ### The player's look and layout
@@ -62,9 +63,10 @@ Changes list names what it took in.
 | # | Decision | Amended |
 |---|---|---|
 | [0004](0004-maps.md) | The book's own printed map only, upscaled by a Gemini repaint over names set in type (the map's `font.txt`), shown in sepia | 2026-10-21 |
-| [0008](0008-fight-pictures.md) | A fight's picture: its own, the same creature in this book, then another, then a stand-in; plain humans varied; shown whole; upscaled 2x; pinned once approved | 2026-10-24 |
+| [0008](0008-fight-pictures.md) | A fight's picture: its own, the same creature in this book, then another, then a stand-in; plain humans varied; shown whole; upscaled 2x; pinned once approved; candidates on the proposal sheet | 2026-10-27 |
 | [0038](0038-art-keeps-its-source-links.md) | Pictures added to `art/` keep their source link where there is one, so Setup can fetch them again | 2026-10-24 |
 | [0042](0042-what-of-a-book-is-committed.md) | The repository is public, with no licensed content; our descriptions (`about/`, never 8 of the book's words in a row) and AI-made fight pictures are committed; `book.js` is not, nor split | 2026-10-27 |
+| [0046](0046-stand-in-content-in-public.md) | What the public sees is stand-in content: the showcase, and the made-up demo book `99ember`, played on the PC only | 2026-10-27 |
 
 ### The rules engine
 

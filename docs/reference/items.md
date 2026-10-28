@@ -83,7 +83,7 @@ file's first line (`// DRAFT by tools/items_draft.mjs`) marks it unread: step 5 
 there, and the items-tables test leaves such a file out. The draft writes no book items, fights,
 `bowShot`, marks or stakes: those, and the reading list's other sections, are step 3's.
 
-The made-up demo book's table (ruling R20) is `demo/<code>/items.js`; the draft and `check_items.mjs` read it
+The made-up demo book's table (ADR 0046) is `demo/<code>/items.js`; the draft and `check_items.mjs` read it
 there, so it counts as a table already there.
 
 With a table already there the draft never touches it: it goes to `data/projectaon/<book>/items-draft.js`
@@ -369,7 +369,7 @@ for two thirds; the rest of the owner's choices were by eye (variety, a better f
 sheet is for. The draft matches names, not creatures: the step's agent then judges every enemy's
 picture, the draft's and the rest, against what the enemy is (a Death Knight under a picture of some
 guard does not match; Book 15's Armoury Guards are Drakkarim), searching by what it is as well as by
-name, and shows the owner the candidates rather than describing them, on the **proposal sheet** (ruling R27):
+name, and shows the owner the candidates rather than describing them, on the **proposal sheet** (ADR 0008):
 it writes `data/projectaon/<code>/plate-proposals.json` (git-ignored; format in `tools/plates_proposals.py`,
 whose `check <code>` names what the sheet could not show), and the owner opens it from step 7's "Open
 proposals". `plates_proposals.py gather <code> "<enemy>" [--also=words] [--text]` gives the agent, in one call,

@@ -63,7 +63,7 @@ needs that is neither committed nor ignored stops the release. `release/CURRENT`
 the release server reads it at each request, so no restart is needed, and the iPad fetches the
 difference at its next sync. If the files are exactly those of the current release (a commit of
 docs or tools only), nothing is made and it says so. The last two releases are kept: `release.py <older commit>` puts one
-back. The dashboard's Release button then pushes `main` to GitHub (ruling R25); `release.py` alone pushes nothing.
+back. The dashboard's Release button then pushes `main` to GitHub (ADR 0045); `release.py` alone pushes nothing.
 
 The release server answers the files of the release and the backups API (the same `backups/` as the
 work server), nothing else: no map or admin API, no docs or tools. Backups from the iPad land in

@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-01 (shown whole); varied humans 2026-10-09; pinned 2026-10-11; source order 2026-10-14
-- Amended: 2026-10-24
+- Amended: 2026-10-27
 
 ## Context
 
@@ -60,6 +60,13 @@ the very same creature. The owner set the order.
   and waits for the owner's **Approve picture changes**, a gated button. Agents never press it nor run
   `plates_pin.mjs --approve` on their own. The owner's own change to an enemy on the picture sheet is
   the owner's approval for that enemy. Unmarking step 7 lets the pins go.
+- **Candidates go on the proposal sheet**, never as a contact sheet image or a description in chat.
+  The owner decides a fight's picture with its context beside it: the pictures as they would look in
+  a fight, what the enemy is (its `foe-about.json` entry) and the book's text where it is met and
+  fought. The agent writes the book's `plate-proposals.json` and the owner picks on the dashboard's
+  proposal sheet. Each enemy there carries the agent's fuller description as an image-generator
+  prompt (references attached by the owner), and a picture pasted on its row becomes a "from AI"
+  candidate.
 - The picture sheet says once, at the top, whether the book is approved; only cards waiting for
   approval are marked (showing the new picture), with a filter to show only those.
 - **Every picture and every enemy says what it is.** Each illustration (small ones too) has a short
@@ -85,6 +92,9 @@ the very same creature. The owner set the order.
 - The procedure is `docs/reference/items.md`, "Fight pictures" (Book 4 is the worked example for
   plain humans); the step 7 prompt in `tools/admin/prompts.js` gives the same order.
 - `ill_upscale.py --fights`, `upscaledSrc()` in `platepick.js`.
+- The proposal sheet is `tools/admin/proposals.html`, its file `tools/plates_proposals.py`, its
+  prompt's style `tools/admin/plateprompt.js`; the step 7 prompt tells the agent to use it. Ruling
+  R27 points here.
 - Pins in `assets/plates/approved/<code>.json` (committed; section/enemy keys, file paths and a hash
   of the enemy's name, no book text), written by `tools/plates_pin.mjs`; the rule in `platepick.js`,
   used by the player, the picture sheet and the tool. Books 1-8 were pinned on 2026-10-11 to what the
@@ -111,3 +121,6 @@ the very same creature. The owner set the order.
   name of more than a person's word ("Death Knight") ranks before a stand-in. A creature particular to
   Lone Wolf that no book pictures takes no stand-in: the agent gives a prompt and the owner generates
   the picture; web stand-ins are for ordinary things (animals, plain humans).
+- 2026-10-26: candidates on the proposal sheet, each with an image-generator prompt; a pasted
+  picture becomes a "from AI" candidate (was ruling R27).
+- 2026-10-27: ruling R27 merged into this record (owner).
