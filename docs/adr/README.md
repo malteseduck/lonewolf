@@ -80,4 +80,4 @@ Changes list names what it took in.
 ### Rulings
 
 [`rulings.md`](rulings.md): game and house rules (R1-R3, R23-R24), book readings (R4-R10, R16-R18), presentation
-(R11-R12, R19-R20, R22, R26), workflow (R13-R15, R21, R25, R27-R28). The next free id is R29.
+(R11-R12, R19-R20, R22, R26), workflow (R13-R15, R21, R25, R27-R29). The next free id is R30.

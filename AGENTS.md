@@ -116,6 +116,11 @@ sides, both suites run again).
 - **A decision of the owner's** is recorded in the same piece of work, as `docs/adr/README.md` says
   (amend the topic's ADR, or add a ruling with the next free id), and any sentence of the spec it
   contradicts is brought into line.
+- **Before committing**, search `docs/spec.md` for the subject of every ADR or ruling this work
+  adds or amends, and for each behaviour it changes; bring any sentence it contradicts into line. A
+  hook runs `tools/docs_check.py` on every `git commit` and blocks it on a problem (ruling R29).
+- **When the owner is about to release**, ask whether to run the `repo-maintenance` skill first,
+  saying roughly what changed since the last pass; never run it unasked (ruling R29).
 - **A change to behaviour** updates the matching file in `docs/reference/`, and any README that
   describes it, in the same piece of work. A new asset is credited in its folder's `README.txt`.
   Finished work leaves `docs/plan.md`.

@@ -1,6 +1,6 @@
 ---
 name: repo-maintenance
-description: Periodic pass to find and fix drift between AGENTS.md, docs/spec.md, the ADRs and rulings, docs/plan.md, docs/reference/, every README and the code; keep AGENTS.md to vital instructions; list clean-up for the owner. Use when the owner asks for repo maintenance, a docs pass, a drift check or a clean-up.
+description: Periodic pass to find and fix drift between AGENTS.md, docs/spec.md, the ADRs and rulings, docs/plan.md, docs/reference/, every README and the code; keep AGENTS.md to vital instructions; list clean-up for the owner. Use when the owner asks for repo maintenance, a docs pass, a drift check or a clean-up; offer it (never run it unasked) when the owner is about to release (ruling R29).
 ---
 
 # Repo maintenance

@@ -1,0 +1,27 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git commit*)",
+            "command": "uv run --project tools python tools/docs_check.py 1>&2",
+            "onFailure": "block",
+            "timeout": 60,
+            "statusMessage": "Checking the docs (ruling R29)"
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(git commit*)",
+            "command": "uv run --project tools python tools/docs_check.py 1>&2",
+            "onFailure": "block",
+            "timeout": 60,
+            "statusMessage": "Checking the docs (ruling R29)"
+          }
+        ]
+      }
+    ]
+  }
+}
