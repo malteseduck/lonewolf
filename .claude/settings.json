@@ -10,7 +10,7 @@
             "command": "uv run --project tools python tools/docs_check.py 1>&2",
             "onFailure": "block",
             "timeout": 60,
-            "statusMessage": "Checking the docs (ruling R29)"
+            "statusMessage": "Checking the docs (ADR 0044)"
           },
           {
             "type": "command",
@@ -18,7 +18,7 @@
             "command": "uv run --project tools python tools/docs_check.py 1>&2",
             "onFailure": "block",
             "timeout": 60,
-            "statusMessage": "Checking the docs (ruling R29)"
+            "statusMessage": "Checking the docs (ADR 0044)"
           }
         ]
       }

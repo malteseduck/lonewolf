@@ -1,10 +1,12 @@
 """The docs kept true to each other (spec principle 8): the decision records, their index, the
 citations of them across the repository, the paths the agents' docs and the READMEs name, every
-asset credited in its folder's README.txt, and AGENTS.md's shape (ruling R21), a folder's own
-AGENTS.md included (ruling R28). Lists each problem; the repo-maintenance skill runs it before reading for drift.
+asset credited in its folder's README.txt, and AGENTS.md's shape (ADR 0044), a folder's own
+AGENTS.md included (ADR 0044), and the harness doc naming every part of the harness (ADR 0044).
+Lists each problem; the repo-maintenance skill runs it before reading for drift.
 
     python tools/docs_check.py        exit 1 if anything is wrong
 """
+import json
 import os
 import re
 import sys
@@ -22,6 +24,7 @@ DATE = re.compile(r'\b20\d\d-\d\d-\d\d\b')
 CREDITS = {'assets/icons': set(), 'assets/plates': {'approved', 'upscaled', 'plates.json'},
            'assets/hero': set(), 'assets/app': set(), 'tools/fonts': set()}
 READMES = ['README.md', 'docs/showcase/README.md']  # their named paths are checked like the docs'
+HARNESS = 'docs/reference/harness.md'  # names every part of the agents' harness (ADR 0044)
 
 
 def read(rel):
@@ -130,13 +133,13 @@ def named_paths(text):
 
 
 def folder_agents():
-    """The AGENTS.md files below the root: a folder's own rules (ruling R28)."""
+    """The AGENTS.md files below the root: a folder's own rules (ADR 0044)."""
     return sorted(r for r in repo_texts() if r.endswith('/AGENTS.md'))
 
 
 def check_paths(problems):
     docs = (['AGENTS.md', 'docs/spec.md'] + folder_agents()
-            + [r for r in READMES if os.path.exists(os.path.join(ROOT, r))]
+            + [r for r in READMES + [HARNESS] if os.path.exists(os.path.join(ROOT, r))]
             + [f'{ADR}/{f}'.replace(os.sep, '/') for f in sorted(os.listdir(os.path.join(ROOT, ADR)))])
     for rel in docs:
         text = read(rel)
@@ -180,7 +183,7 @@ def check_credits(problems):
 
 
 def check_agents(problems):
-    """AGENTS.md: the sections every agent needs, and no state (ruling R21)."""
+    """AGENTS.md: the sections every agent needs, and no state (ADR 0044)."""
     text = read('AGENTS.md')
     heads = re.findall(r'^## (.+)$', text, re.M)
     for s in AGENTS_SECTIONS:
@@ -196,6 +199,39 @@ def check_agents(problems):
             problems.append(f'{rel}: no CLAUDE.md beside it importing it (@AGENTS.md)')
 
 
+def harness_parts():
+    """(kind, name) of every part the harness doc must name: the hook's scripts, the servers, the
+    skills, the folders with their own rules. Read from .claude/ and the tree, so a new part is caught."""
+    parts = []
+    claude = os.path.join(ROOT, '.claude')
+    settings = os.path.join(claude, 'settings.json')
+    if os.path.exists(settings):
+        for hooks in json.loads(read('.claude/settings.json')).get('hooks', {}).values():
+            for h in (h for entry in hooks for h in entry.get('hooks', [])):
+                parts += [('the hook script', p) for p in re.findall(r'tools/[\w./-]+\.(?:py|mjs)', h.get('command', ''))]
+    if os.path.exists(os.path.join(claude, 'launch.json')):
+        parts += [('the server', c['name']) for c in json.loads(read('.claude/launch.json')).get('configurations', [])]
+    skills = os.path.join(claude, 'skills')
+    if os.path.isdir(skills):
+        parts += [('the skill', s) for s in sorted(os.listdir(skills))
+                  if os.path.exists(os.path.join(skills, s, 'SKILL.md'))]
+    parts += [('the folder rules', os.path.dirname(r) + '/') for r in folder_agents()]
+    return list(dict.fromkeys(parts))
+
+
+def check_harness(problems):
+    """The harness doc exists wherever there is a harness, and names each of its parts in backticks."""
+    parts = harness_parts()
+    if not os.path.exists(os.path.join(ROOT, HARNESS)):
+        if os.path.isdir(os.path.join(ROOT, '.claude')):
+            problems.append(f'{HARNESS}: missing; it describes the harness (ADR 0044)')
+        return
+    text = read(HARNESS)
+    for kind, name in parts:
+        if f'`{name}`' not in text:
+            problems.append(f'{HARNESS}: does not name {kind} `{name}`')
+
+
 def main(argv):
     problems = []
     rulings = check_rulings(problems)
@@ -204,6 +240,7 @@ def main(argv):
     check_paths(problems)
     check_credits(problems)
     check_agents(problems)
+    check_harness(problems)
     for p in problems:
         print(p)
     print(f'{len(problems)} problem(s)' if problems else 'docs consistent')

@@ -92,8 +92,9 @@ tools/
                             check_all.py runs it
   docs_check.py             the docs agree: ruling ids, the ADR index's dates, citations, named paths (READMEs too),
                             every asset credited in its folder's README.txt, AGENTS.md's
-                            sections (ruling R21), each folder's AGENTS.md imported by its CLAUDE.md
-                            (ruling R28); check_all.py and the repo-maintenance skill run it
+                            sections (ADR 0044), each folder's AGENTS.md imported by its CLAUDE.md
+                            (ADR 0044), docs/reference/harness.md naming every part of the harness
+                            (ADR 0044); the commit hook, check_all.py and the repo-maintenance skill run it
   setup.py                  what the tools need on this PC and installing it (the dashboard's Setup; standard
                             library only, run with --no-project); pyproject.toml and uv.lock: the tools as a uv project, its
                             packages and their exact versions, venv tools/.venv (ADR 0037)

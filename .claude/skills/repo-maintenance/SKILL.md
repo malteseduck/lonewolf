@@ -1,6 +1,6 @@
 ---
 name: repo-maintenance
-description: Periodic pass to find and fix drift between AGENTS.md, docs/spec.md, the ADRs and rulings, docs/plan.md, docs/reference/, every README and the code; keep AGENTS.md to vital instructions; list clean-up for the owner. Use when the owner asks for repo maintenance, a docs pass, a drift check or a clean-up; offer it (never run it unasked) when the owner is about to release (ruling R29).
+description: Periodic pass to find and fix drift between AGENTS.md, docs/spec.md, the ADRs and rulings, docs/plan.md, docs/reference/ (the harness doc included), every README and the code; keep AGENTS.md to vital instructions; list clean-up for the owner. Use when the owner asks for repo maintenance, a docs pass, a drift check or a clean-up; offer it (never run it unasked) when the owner is about to release (ADR 0044).
 ---
 
 # Repo maintenance
@@ -24,18 +24,19 @@ unused icons, untracked files). Never touch `backups/`, `data/`, `art/` or `prot
 
 1. **Script first.** `uv run --project tools python tools/docs_check.py`: duplicate ruling ids, the
    ADR index against each ADR's dates, citations of records that do not exist, paths named in
-   AGENTS.md, the spec, the ADRs' decisions and the READMEs, every asset credited in its folder's
-   README.txt, AGENTS.md's sections and dates. Fix what it reports.
+   AGENTS.md, the spec, the ADRs' decisions, the READMEs and the harness doc, every asset credited in
+   its folder's README.txt, AGENTS.md's sections and dates, every part of the harness named in
+   `docs/reference/harness.md`. Fix what it reports.
    A check that would catch what you find by reading in a later step belongs in this script, with a
    test in `tests/py/test_docs_check.py`.
 2. **What changed since the last pass.** `git log --since=<the last pass's date> --stat` (the last
    pass is a commit whose message starts "Repo maintenance"; with none, take the last month). The
    files changed point to the ADRs, reference docs and plan items to read closely.
-3. **AGENTS.md holds only what every agent needs to work safely** (ruling R21): how to run, how to
+3. **AGENTS.md holds only what every agent needs to work safely** (ADR 0044): how to run, how to
    test, the hard rules, conventions, maintaining the repository, and the traps. Move anything else:
    intent to `docs/spec.md`, a decision to its ADR or `rulings.md`, how the code works to
    `docs/reference/`, state (what is imported, dates, timings) to `docs/plan.md` or the checklist.
-   A rule only for work inside one folder goes to that folder's `AGENTS.md` (ruling R28: `tools/`,
+   A rule only for work inside one folder goes to that folder's `AGENTS.md` (ADR 0044: `tools/`,
    `items/`, `maps/`, `assets/plates/`); read those too, against the root file (no rule in both) and
    the reference doc each points to. Keep a one-line pointer only where an agent would otherwise miss it.
 4. **Spec against the records.** For each ADR and ruling, search the spec for its subject; any
@@ -53,12 +54,18 @@ unused icons, untracked files). Never touch `backups/`, `data/`, `art/` or `prot
    (`assets/*/`, `tools/fonts/`) against what their folder holds and which files use them (a font a
    map's `font.txt` names, an icon an item table names). The script checks that each file is credited;
    reading checks what is said of it.
-8. **Owner's memory.** Where a saved feedback memory and AGENTS.md disagree, the later word wins;
+8. **The harness doc** (ADR 0044). `docs/reference/harness.md` against the harness as it is:
+   `.claude/settings.json` (its hooks), `.claude/launch.json`, `.claude/skills/`, every `AGENTS.md`
+   and `CLAUDE.md`, `tools/docs_check.py`'s checks, the dashboard's steps and prompts, and the
+   records it cites (ADRs 0001, 0022, 0036, 0037, 0041, 0042, 0044, the workflow rulings). The script checks
+   that each part is named; reading checks that what is said of it, and why, is still true. A part
+   added this pass (a hook, a check, a skill) gets its paragraph and its row in the closing table.
+9. **Owner's memory.** Where a saved feedback memory and AGENTS.md disagree, the later word wins;
    say which you followed. A memory that is really a rule for one folder's work moves to that
    folder's `AGENTS.md`, and the memory is deleted.
-9. **Clean-up to list.** `git worktree list` (and `.claude/worktrees/`) for worktrees whose branch is
+10. **Clean-up to list.** `git worktree list` (and `.claude/worktrees/`) for worktrees whose branch is
    merged; `git status --short` for untracked files; `release/` snapshots beyond the last few.
-10. **Check.** `npm test`, `uv run --project tools python -m pytest`, `tools/docs_check.py` again;
+11. **Check.** `npm test`, `uv run --project tools python -m pytest`, `tools/docs_check.py` again;
    `tools/check_all.py` if a tool or anything the books' data goes through changed.
 
 ## Report

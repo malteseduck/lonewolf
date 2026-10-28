@@ -145,6 +145,30 @@ def test_every_asset_is_credited_in_its_folders_readme(tree, capsys):
                            'tools/fonts/README.txt: does not credit Cabin.ttf']
 
 
+def test_the_harness_doc_names_every_part_and_only_real_paths(tree, capsys):
+    tree.write('.claude/settings.json', '{"hooks": {"PreToolUse": [{"matcher": "Bash", "hooks": [{"type": '
+               '"command", "command": "uv run --project tools python tools/docs_check.py 1>&2"}]}]}}')
+    tree.write('tools/docs_check.py', '')
+    tree.write('.claude/launch.json', '{"configurations": [{"name": "lone-wolf"}, {"name": "lone-wolf-lan"}]}')
+    tree.write('.claude/skills/upkeep/SKILL.md', '')
+    tree.write('.claude/skills/tidy/SKILL.md', '')
+    tree.write('items/AGENTS.md', 'Rules.\n')
+    tree.write('items/CLAUDE.md', '@AGENTS.md\n')
+    tree.write('maps/AGENTS.md', 'Rules.\n')
+    tree.write('maps/CLAUDE.md', '@AGENTS.md\n')
+    code, out = problems(capsys, tree)
+    assert out == ['docs/reference/harness.md: missing; it describes the harness (ADR 0044)']
+    tree.write('docs/reference/harness.md', 'The hook runs `tools/docs_check.py`; `lone-wolf` serves; the '
+               '`upkeep` skill; `items/` has rules. Once `tools/gone.py`.\n')
+    code, out = problems(capsys, tree)
+    assert code == 1
+    assert sorted(out) == [
+        'docs/reference/harness.md: does not name the folder rules `maps/`',
+        'docs/reference/harness.md: does not name the server `lone-wolf-lan`',
+        'docs/reference/harness.md: does not name the skill `tidy`',
+        'docs/reference/harness.md: names `tools/gone.py`, which does not exist']
+
+
 def test_a_readmes_links_are_relative_to_it(tree, capsys):
     tree.write('docs/showcase/make/map.py', '')
     tree.write('docs/showcase/README.md', 'See [`make/map.py`](make/map.py) and `make/gone.py`.\n')

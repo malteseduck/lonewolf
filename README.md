@@ -70,4 +70,5 @@ one, on the PC only (ruling R20).
 Start with `docs/spec.md`, `docs/adr/README.md` and `docs/plan.md`. `AGENTS.md` holds the rules for
 working on the code, how to run and test it, and how the docs are kept true; `tools/`, `items/`,
 `maps/` and `assets/plates/` have their own for work inside them
-(`tools/docs_check.py`, the `repo-maintenance` skill in `.claude/skills/`).
+(`tools/docs_check.py`, the `repo-maintenance` skill in `.claude/skills/`). How all of it fits
+together, and why, is in `docs/reference/harness.md`.

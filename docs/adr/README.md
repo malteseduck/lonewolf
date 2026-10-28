@@ -45,6 +45,7 @@ Changes list names what it took in.
 | [0022](0022-unit-tests.md) | Tests guard the main functionality, written first, a couple of seconds a suite; `check_all.py` runs the real books; the engine is modular and tested before its rules change | 2026-10-17 |
 | [0036](0036-book-steps.md) | The book steps: their order (6 test play, 7-9 pictures), every step offered where it can work, a script for each that drafts leaning to flagging, an agent only refines; test play driven in Node | 2026-10-23 |
 | [0037](0037-tools-are-a-uv-project.md) | The Python tools are a uv project with a lock file; every run is `uv run --project tools` | |
+| [0044](0044-keeping-the-docs-true.md) | Keeping the docs true: AGENTS.md instructions only, folder rules beside their work, `docs_check.py` at every commit, the maintenance pass offered at release, the harness doc checked | 2026-10-27 |
 | [0041](0041-sessions-in-worktrees-merged-to-main.md) | Sonnet subagents for mechanical work where that saves tokens; a new session for a new topic; it works in its own worktree, commits only when asked, then merges into `main` | 2026-10-18 |
 
 ### The player's look and layout
@@ -80,4 +81,4 @@ Changes list names what it took in.
 ### Rulings
 
 [`rulings.md`](rulings.md): game and house rules (R1-R3, R23-R24), book readings (R4-R10, R16-R18), presentation
-(R11-R12, R19-R20, R22, R26), workflow (R13-R15, R21, R25, R27-R29). The next free id is R30.
+(R11-R12, R19-R20, R22, R26), workflow (R13-R15, R21, R25, R27-R30). The next free id is R31.

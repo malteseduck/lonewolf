@@ -118,18 +118,18 @@ sides, both suites run again).
   contradicts is brought into line.
 - **Before committing**, search `docs/spec.md` for the subject of every ADR or ruling this work
   adds or amends, and for each behaviour it changes; bring any sentence it contradicts into line. A
-  hook runs `tools/docs_check.py` on every `git commit` and blocks it on a problem (ruling R29).
+  hook runs `tools/docs_check.py` on every `git commit` and blocks it on a problem (ADR 0044).
 - **When the owner is about to release**, ask whether to run the `repo-maintenance` skill first,
-  saying roughly what changed since the last pass; never run it unasked (ruling R29).
+  saying roughly what changed since the last pass; never run it unasked (ADR 0044).
 - **A change to behaviour** updates the matching file in `docs/reference/`, and any README that
   describes it, in the same piece of work. A new asset is credited in its folder's `README.txt`.
   Finished work leaves `docs/plan.md`.
 - **This file holds instructions only**, never state (what is imported, timings, dates) and never
-  intent or decisions: those go in the files below (ruling R21). Add a line here only if every agent
+  intent or decisions: those go in the files below (ADR 0044). Add a line here only if every agent
   needs it to work safely.
 - **A folder's own `AGENTS.md`** (`tools/`, `items/`, `maps/`, `assets/plates/`, each with a
   `CLAUDE.md` importing it) holds the rules for work inside that folder only, under the same rule
-  (ruling R28). A rule needed before any file there is read, such as one for the browser, stays here.
+  (ADR 0044). A rule needed before any file there is read, such as one for the browser, stays here.
 - **Drift**: the `repo-maintenance` skill (`.claude/skills/repo-maintenance/`) checks these docs
   against each other and the code, fixes what is plainly stale, and lists what needs the owner.
 
@@ -149,6 +149,7 @@ sides, both suites run again).
 | `docs/reference/map-upscale.md` | Upscaling the printed maps |
 | `docs/reference/dashboard.md` | The import dashboard, `book_status.py`, the jobs, the prompts |
 | `docs/reference/offline.md` | Playing offline on the iPad |
+| `docs/reference/harness.md` | How the agent harness works: the docs, instructions, hook, skill, checks, steps |
 
 ## Things that will bite you
 
