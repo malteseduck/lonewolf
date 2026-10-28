@@ -47,7 +47,7 @@ def test_a_sound_file_has_no_problems(tree):
         {'name': 'Iron Gate', 'note': 'A door.', 'candidates': [
             {'src': 'assets/plates/gate.jpg', 'why': 'an iron door'},
             {'web': 'https://example.org/thumb.jpg', 'page': 'https://example.org/gate', 'licence': 'CC0'}], 'pick': 1},
-        {'name': 'Mire Toad', 'sections': [1], 'refs': [f'data/projectaon/{CODE}/ill1.png'], 'candidates': [{'src': f'data/projectaon/{CODE}/ill1.png', 'crop': [0, 0, .5, 1]}]},
+        {'name': 'Mire Toad', 'sections': [1], 'describe': {'1': ['a start']}, 'refs': [f'data/projectaon/{CODE}/ill1.png'], 'candidates': [{'src': f'data/projectaon/{CODE}/ill1.png', 'crop': [0, 0, .5, 1]}]},
     ])
     assert pp.problems(CODE) == []
 
@@ -95,6 +95,26 @@ def test_the_sentences_marked_as_describing_it_are_in_their_section(tree):
     tree.book()
     tree.proposals([{'name': 'Mire Toad', 'candidates': [], 'describe': {'2': ['a bog'], '1': ['a bog'], '7': ['x']}}])
     assert pp.problems(CODE) == ["Mire Toad: section 1 has no 'a bog' to highlight", 'Mire Toad: no section 7']
+
+
+def test_a_section_is_shown_only_for_what_describes_it_not_its_bare_name(tree):
+    """The sheet shows a section only where it describes the enemy or its fight (the owner, 2026-10-28): "the
+    burly guard" is context for a picture, "guard" alone is not. A section the agent lists must carry a phrase
+    that describes it, and a phrase that is only the enemy's name (or its `words`) describes nothing."""
+    tree.book()
+    tree.proposals([{'name': 'Mire Toad', 'words': ['frog'], 'candidates': [], 'sections': [1, 3],
+                     'describe': {'2': ['a bog'], '3': ['a gate'], '1': ['a start']}}])
+    assert pp.problems(CODE) == []
+    tree.proposals([{'name': 'Mire Toad', 'words': ['frog'], 'candidates': [], 'sections': [1, 3],
+                     'describe': {'2': ['A bog'], '1': ['A start']}}])
+    assert pp.problems(CODE) == ['Mire Toad: section 3 is listed but nothing there is marked as describing it']
+    secs = {'1': {'text': ['The toad waits.']}, '2': {'text': ['Two frogs and a huge warty toad.'], 'combat': {'enemies': [{'name': 'Mire Toad'}]}}}
+    tree.file(f'data/projectaon/{CODE}/book.js', '(window.LW = window.LW || {}).BOOKS = Object.assign(window.LW.BOOKS || {}, '
+              + json.dumps({CODE: {'id': CODE, 'sections': secs}}) + ');')
+    tree.proposals([{'name': 'Mire Toad', 'words': ['frog'], 'candidates': [],
+                     'describe': {'1': ['the toad'], '2': ['two frogs', 'huge warty toad']}}])
+    assert pp.problems(CODE) == ["Mire Toad: section 1's 'the toad' is only its name: mark the words that describe it",
+                                 "Mire Toad: section 2's 'two frogs' is only its name: mark the words that describe it"]
 
 
 def test_a_prompt_names_no_colour(tree, monkeypatch):

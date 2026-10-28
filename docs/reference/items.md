@@ -378,12 +378,15 @@ settled before, the `foe-about.json` entries, index pictures and `plates.json` e
 (this book first, then the nearest), the sections naming it or the `--also` words and those leading into and out
 of its fights, and with `--text` those sections' text for the agent's reading; the step 7 prompts start from it. Each enemy there shows what it has now, every candidate inked as in a fight (a web one by its
 thumbnail, fetched only when chosen), the agent's note and pick, its `foe-about.json` entry, and the book's
-text where it is fought, named, pointed to or described (read from `book.js` in the page), each section
+text where it is fought or where the agent marked something describing it or its fight (the owner, 2026-10-28: a
+section that only names it, "the guard", is no context; "the burly guard" is; `check` refuses a listed section
+with no `describe` phrase, and a phrase of only its name or `words`) (read from `book.js` in the page), each section
 folded, with the sentences the agent marked as describing it (`describe`) highlighted whole; Use this saves the choice
 as the owner's picture, as the picture sheet's Stand-in... or By address... would. Each row also has a
 **prompt** for an image generator: the agent's fullest description of the enemy, gathered from every section
 that describes it (where it is first seen, fought, killed or opened, and what is compared to it) and the wiki,
-and the moment it is fought, with the pictures worth attaching shown beneath (`refs`). No prompt names a colour
+and the moment it is fought, with the pictures worth attaching shown beneath: the picture it shows now and every candidate on disk,
+then the agent's `refs` (`refsOf()` in `tools/admin/proposals.html`). No prompt names a colour
 (a fight picture is an ink drawing; the owner, 2026-10-26): `platePrompt()` takes every colour word out of the
 description it is given, foe-about entries included, and the check rejects one in the agent's `prompt`
 (the file's `prompt`, our own words, checked against the book's) in the picture sheet's style, asking it to
@@ -396,11 +399,13 @@ git-ignored `art/plates/` with no link (ADR 0042). The owner settles each row (U
 **Reopen** undoes it), written into the file as `decided`, and **Finish** ends the round: the file is added to
 `plate-proposals.done.json` beside it (every round, each with the date it finished) and goes, so the
 dashboard's button goes too. The next round's agent reads the done file and does not propose again what
-the owner settled. A creature particular to Lone Wolf that no book pictures gets
-no stand-in: the agent names it in its report and lists it on the proposal sheet with no candidates, and the
+the owner settled. The agent's candidates are the books' own pictures only (the owner, 2026-10-28): no web
+search, Wikimedia Commons included, and no library stand-in. An enemy that no book's picture shows well gets
+none: the agent names it in its report and lists it on the proposal sheet with no candidates, and the
 owner generates its picture from that sheet's prompt (or the picture sheet's **Prompt** button, from its
-`foe-about.json` entry);
-a stand-in found by searching is for ordinary things (animals, plain humans, a door).
+`foe-about.json` entry). Its `refs` are a good pick of the books' pictures of it or its surroundings, the one it
+shows now first; the sheet adds the candidates after that. The stand-in step below is the owner's own, on the
+picture sheet.
 
 Where a fight's picture comes from, first that applies (ADR 0008):
 

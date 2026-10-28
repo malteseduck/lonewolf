@@ -15,22 +15,26 @@ book's text from book.js itself, so the file holds names, ids, paths and our own
     {"made": "2026-10-26", "enemies": [
       {"name": "Iron Gate",                 the enemy's name exactly as in book.js
        "note": "...",                       why these candidates, in our own words
-       "sections": [251],                   sections to quote beside those it is fought or named in
+       "sections": [251],                   sections that describe it or its fight, beside those it is fought in
+                                            (the sheet shows only these; each needs a "describe" phrase)
        "words": ["portal", "door"],         words that find it in the text where its name is not used
        "describe": {"251": ["lead-lined iron"]},   in each section, phrases (exact, any case) of the sentences
-                                            that describe it: the sheet highlights each whole sentence
+                                            that describe it: the sheet highlights each whole sentence; a phrase
+                                            of its bare name ("the guard", not "the burly guard") is refused
        "candidates": [
          {"src": "assets/plates/x.jpg", "crop": [x, y, w, h], "why": "..."},   a picture on disk
          {"web": "<thumbnail address>", "page": "<its page>", "licence": "CC0", "why": "..."}
-       ],
+       ],                                   (a web candidate is read for older rows only: the agent proposes
+                                            the books' own pictures, never the web or Wikimedia Commons)
        "pick": 0,                           the agent's choice (index into candidates), or none
        "prompt": "...",                     every detail the book (and the wiki) gives of what it looks like,
                                             but no colour (an ink drawing: tone and texture instead),
                                             and the moment it is fought, for the sheet's image-generator prompt
                                             (our own words: it is sent to the generator; never 8 of the book's
                                             in a row)
-       "refs": ["data/projectaon/19wb/small6.png"]}   pictures worth attaching to the generator beside the
-                                            candidates (any that show it or its surroundings, small ones too)
+       "refs": ["data/projectaon/19wb/small6.png"]}   a good pick of the books' pictures to attach to the
+                                            generator, the one it shows now first (any that show it or its
+                                            surroundings, small ones too); the sheet adds the candidates
     ]}
 
 The owner settles each row on the sheet, which writes it here: "decided": {"how": "chosen", "src": ...,
@@ -128,6 +132,19 @@ def _book(code):
     return json.loads(js[js.index('|| {}, ') + 7:js.rindex(');')])[code]
 
 
+# words that say nothing of what an enemy looks like: "the guard", "two guards" are its name, not a description
+_FILLER = set('a an the his her its their this that these those some one two three four five six seven eight nine ten of and'.split())
+
+
+def _words(text):
+    return {w[:-1] if len(w) > 3 and w.endswith('s') else w for w in re.findall(r"[a-z]+", text.lower())} - _FILLER
+
+
+def _name_words(name, words):
+    """The enemy's name and the agent's `words` for it, as single words, so a phrase made of nothing else is caught."""
+    return _words(' '.join([name, *words]))
+
+
 def problems(code):
     """What would leave a card wrong or empty on the sheet, one line each; [] if none."""
     if not os.path.isfile(path(code)):
@@ -142,9 +159,14 @@ def problems(code):
         n = e.get('name', '')
         if n not in names:
             out.append(f'{n!r}: not an enemy of {code} (use the name exactly as book.js has it)')
+        fought = {sid for sid, x in book['sections'].items() if any(f['name'] == n for f in x.get('combat', {}).get('enemies', []))}
+        marked = {sid for sid, ph in (e.get('describe') or {}).items() if ph}
         for s in e.get('sections', []):
             if str(s) not in book['sections']:
                 out.append(f'{n}: no section {s}')
+            elif str(s) not in fought and str(s) not in marked:  # the sheet shows only what describes it (the owner)
+                out.append(f'{n}: section {s} is listed but nothing there is marked as describing it')
+        bare = _name_words(n, e.get('words', []))
         cands = e.get('candidates', [])
         for i, c in enumerate(cands):
             if 'src' in c:
@@ -163,6 +185,8 @@ def problems(code):
                 continue
             text = ' '.join(book['sections'][sid].get('text', [])).lower()
             out += [f'{n}: section {sid} has no {ph!r} to highlight' for ph in phrases if ph.lower() not in text]
+            out += [f"{n}: section {sid}'s {ph!r} is only its name: mark the words that describe it"
+                    for ph in phrases if ph.lower() in text and not _words(ph) - bare]
         for r in e.get('refs', []):
             if not os.path.isfile(os.path.join(ROOT, *str(r).split('/'))):
                 out.append(f'{n}: reference {r} is not on disk')

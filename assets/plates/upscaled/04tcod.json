@@ -3,15 +3,18 @@
  "srcs": [
   "assets/plates/04tcod/bandit-leader.webp",
   "assets/plates/04tcod/drunken-guard.webp",
+  "assets/plates/04tcod/guard-1.webp",
+  "assets/plates/04tcod/guard-2.webp",
   "assets/plates/04tcod/guard-3.webp",
+  "assets/plates/04tcod/guard-4.webp",
   "assets/plates/04tcod/guard-5.webp",
   "assets/plates/04tcod/guard-6.webp",
+  "assets/plates/04tcod/tunnel-guard-1.webp",
   "assets/plates/04tcod/tunnel-guard-3.webp",
   "assets/plates/demons-schongauer.jpg",
   "data/projectaon/04tcod/ill1.png",
   "data/projectaon/04tcod/ill11.png",
   "data/projectaon/04tcod/ill12.png",
-  "data/projectaon/04tcod/ill14.png",
   "data/projectaon/04tcod/ill15.png",
   "data/projectaon/04tcod/ill17.png",
   "data/projectaon/04tcod/ill18.png",
@@ -23,7 +26,6 @@
   "data/projectaon/04tcod/ill9.png",
   "data/projectaon/05sots/ill2.png",
   "data/projectaon/05sots/ill22.png",
-  "data/projectaon/06tkot/ill1.png",
   "data/projectaon/06tkot/ill7.png",
   "data/projectaon/08tjoh/ill11.png"
  ]

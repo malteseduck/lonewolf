@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-01 (shown whole); varied humans 2026-10-09; pinned 2026-10-11; source order 2026-10-14
-- Amended: 2026-10-27
+- Amended: 2026-10-28
 
 ## Context
 
@@ -33,6 +33,14 @@ the very same creature. The owner set the order.
   4. A stand-in: the owner's `art/plates/` pictures, the library in `assets/plates/`, or a picture
      found by searching, for ordinary things (animals, plain humans, a door). A creature particular to
      Lone Wolf that no book pictures takes none: the owner generates its picture from a prompt.
+
+  **The agent's proposals** (step 7's proposal sheet) take candidates from the books' own pictures
+  only: no web search, Wikimedia Commons included, and no library stand-in (2026-10-28). An enemy no
+  book's picture shows well is proposed with no candidates, for the owner to generate from the
+  prompt. The prompt's reference pictures are the picture the enemy shows now, every candidate, then
+  a good pick of the books' pictures of it or its surroundings. The sheet quotes only the sections
+  where the enemy is fought or something describes it or its fight; one that only names it ("the
+  guard", not "the burly guard") is no context and is left out.
 
   A picture matches only if it shows that creature or that kind of foe (a Death Knight is not some
   guard). A picture the owner sets on the picture sheet is the owner's choice and stands whatever the order.
@@ -65,7 +73,8 @@ the very same creature. The owner set the order.
   a fight, what the enemy is (its `foe-about.json` entry) and the book's text where it is met and
   fought. The agent writes the book's `plate-proposals.json` and the owner picks on the dashboard's
   proposal sheet. Each enemy there carries the agent's fuller description as an image-generator
-  prompt (references attached by the owner), and a picture pasted on its row becomes a "from AI"
+  prompt (references attached by the owner: the picture it shows now and every candidate on disk,
+  then the agent's own `refs`), and a picture pasted on its row becomes a "from AI"
   candidate.
 - The picture sheet says once, at the top, whether the book is approved; only cards waiting for
   approval are marked (showing the new picture), with a filter to show only those.
@@ -124,3 +133,6 @@ the very same creature. The owner set the order.
 - 2026-10-26: candidates on the proposal sheet, each with an image-generator prompt; a pasted
   picture becomes a "from AI" candidate (was ruling R27).
 - 2026-10-27: ruling R27 merged into this record (owner).
+- 2026-10-28: the prompt's reference pictures include the picture now and every candidate; the
+  agent's proposals take the books' own pictures only, never the web or Wikimedia Commons; the sheet quotes only sections that describe the enemy or
+  its fight (owner).
