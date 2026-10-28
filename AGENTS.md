@@ -31,8 +31,6 @@ package with `uv add --project tools <name>`, never `uv pip install`.
 - The import dashboard is http://localhost:8766/tools/admin/ (`docs/reference/dashboard.md`). Never
   press its gated buttons (download, import, re-import all, approve picture changes, release): those
   are the owner's go-ahead.
-- Re-run `python tools/import_projectaon.py <book>` after changing the importer: the page loads the
-  generated `book.js`, not the HTML.
 - Run `python tools/offline_check.py` after adding or moving a file the page loads.
 
 ## How to test
@@ -79,8 +77,7 @@ page only spot-checks (ADR 0036).
 - **Downloading a book needs the owner's go-ahead for that download**, naming the books and rough
   size; importing one is a separate ask. Which books stand where is in `docs/book-checklist.md`.
 - **Automate only what is certain.** A rule that cannot be read reliably from the text stays text,
-  with the by-hand controls (spec principles 2 and 3). In an item table, a choice the text leaves to
-  the player is a `todo`, never a guess.
+  with the by-hand controls (spec principles 2 and 3).
 - **The books' rules** are in `docs/reference/rules-books.md`. Check a rule there before implementing
   it, and keep its Engine column true when the engine changes.
 - **Mark a finished book step** with `python tools/book_status.py done <book> <step>` and report what
@@ -96,10 +93,9 @@ page only spot-checks (ADR 0036).
 - Code in `shared/` is classic scripts hanging functions on a global `LW` (except `ink.js`); the
   player's code at the root is ES modules. No bundler, no framework.
 - Everything inside `.book` is sized in `em` off `--bw`, never px. All colour comes from the CSS
-  custom properties at the top of `index.html` (the dashboard's: the top of `tools/admin/admin.css`).
+  custom properties at the top of `index.html`.
 - HTML is built as template strings. Pass every piece of book or user text through `esc()`.
 - Comments say why, briefly. Match the density of the file you are in.
-- Item tables follow `docs/reference/items.md`, which also says where to find a fight's picture.
 
 ## Subagents and sessions (ADR 0041)
 
@@ -126,6 +122,9 @@ sides, both suites run again).
 - **This file holds instructions only**, never state (what is imported, timings, dates) and never
   intent or decisions: those go in the files below (ruling R21). Add a line here only if every agent
   needs it to work safely.
+- **A folder's own `AGENTS.md`** (`tools/`, `items/`, `maps/`, `assets/plates/`, each with a
+  `CLAUDE.md` importing it) holds the rules for work inside that folder only, under the same rule
+  (ruling R28). A rule needed before any file there is read, such as one for the browser, stays here.
 - **Drift**: the `repo-maintenance` skill (`.claude/skills/repo-maintenance/`) checks these docs
   against each other and the code, fixes what is plainly stale, and lists what needs the owner.
 

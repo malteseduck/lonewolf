@@ -119,6 +119,18 @@ def test_agents_md_needs_its_sections_and_holds_no_dates(tree, capsys):
     assert 'AGENTS.md: holds a date (2026-10-10); state belongs in the docs it points to' in out
 
 
+def test_a_folders_agents_md_is_imported_names_real_paths_and_holds_no_dates(tree, capsys):
+    tree.write('items/AGENTS.md', 'Run `tools/serve.py`, then `check.mjs` and `tools/gone.py`.\n')
+    tree.write('items/check.mjs', '')
+    tree.write('maps/AGENTS.md', 'Labels fixed on 2026-10-07.\n')
+    tree.write('maps/CLAUDE.md', '@AGENTS.md\n')
+    code, out = problems(capsys, tree)
+    assert sorted(out) == [
+        'items/AGENTS.md: names `tools/gone.py`, which does not exist',
+        'items/AGENTS.md: no CLAUDE.md beside it importing it (@AGENTS.md)',
+        'maps/AGENTS.md: holds a date (2026-10-07); state belongs in the docs it points to']
+
+
 def test_every_asset_is_credited_in_its_folders_readme(tree, capsys):
     tree.write('tools/fonts/README.txt', 'Darkland Hand (DarklandHand-Thin, -Regular): ours.\n')
     for f in ('DarklandHand-Thin.ttf', 'DarklandHand-Regular.ttf', 'OFL-DarklandHand.txt', 'Cabin.ttf'):
@@ -126,6 +138,8 @@ def test_every_asset_is_credited_in_its_folders_readme(tree, capsys):
     tree.write('assets/plates/README.txt', 'wolf.jpg\n  An engraving.\n\n01xx/toad.webp\n  Made with AI.\n')
     for f in ('wolf.jpg', 'wolf-2x.webp', '01xx/toad.webp', 'plates.json', 'approved/01xx.json', 'bear.png'):
         tree.write(f'assets/plates/{f}', '')
+    tree.write('assets/plates/AGENTS.md', 'Rules.\n')
+    tree.write('assets/plates/CLAUDE.md', '@AGENTS.md\n')
     code, out = problems(capsys, tree)
     assert sorted(out) == ['assets/plates/README.txt: does not credit bear.png',
                            'tools/fonts/README.txt: does not credit Cabin.ttf']

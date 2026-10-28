@@ -35,7 +35,9 @@ unused icons, untracked files). Never touch `backups/`, `data/`, `art/` or `prot
    test, the hard rules, conventions, maintaining the repository, and the traps. Move anything else:
    intent to `docs/spec.md`, a decision to its ADR or `rulings.md`, how the code works to
    `docs/reference/`, state (what is imported, dates, timings) to `docs/plan.md` or the checklist.
-   Keep a one-line pointer only where an agent would otherwise miss it.
+   A rule only for work inside one folder goes to that folder's `AGENTS.md` (ruling R28: `tools/`,
+   `items/`, `maps/`, `assets/plates/`); read those too, against the root file (no rule in both) and
+   the reference doc each points to. Keep a one-line pointer only where an agent would otherwise miss it.
 4. **Spec against the records.** For each ADR and ruling, search the spec for its subject; any
    sentence that contradicts it is brought into line. The spec states intent, not state: no "partly
    done", no counts of books.
@@ -52,7 +54,8 @@ unused icons, untracked files). Never touch `backups/`, `data/`, `art/` or `prot
    map's `font.txt` names, an icon an item table names). The script checks that each file is credited;
    reading checks what is said of it.
 8. **Owner's memory.** Where a saved feedback memory and AGENTS.md disagree, the later word wins;
-   say which you followed.
+   say which you followed. A memory that is really a rule for one folder's work moves to that
+   folder's `AGENTS.md`, and the memory is deleted.
 9. **Clean-up to list.** `git worktree list` (and `.claude/worktrees/`) for worktrees whose branch is
    merged; `git status --short` for untracked files; `release/` snapshots beyond the last few.
 10. **Check.** `npm test`, `uv run --project tools python -m pytest`, `tools/docs_check.py` again;

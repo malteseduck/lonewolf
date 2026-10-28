@@ -1,6 +1,7 @@
 """The docs kept true to each other (spec principle 8): the decision records, their index, the
 citations of them across the repository, the paths the agents' docs and the READMEs name, every
-asset credited in its folder's README.txt, and AGENTS.md's shape (ruling R21). Lists each problem; the repo-maintenance skill runs it before reading for drift.
+asset credited in its folder's README.txt, and AGENTS.md's shape (ruling R21), a folder's own
+AGENTS.md included (ruling R28). Lists each problem; the repo-maintenance skill runs it before reading for drift.
 
     python tools/docs_check.py        exit 1 if anything is wrong
 """
@@ -128,8 +129,14 @@ def named_paths(text):
             yield p
 
 
+def folder_agents():
+    """The AGENTS.md files below the root: a folder's own rules (ruling R28)."""
+    return sorted(r for r in repo_texts() if r.endswith('/AGENTS.md'))
+
+
 def check_paths(problems):
-    docs = (['AGENTS.md', 'docs/spec.md'] + [r for r in READMES if os.path.exists(os.path.join(ROOT, r))]
+    docs = (['AGENTS.md', 'docs/spec.md'] + folder_agents()
+            + [r for r in READMES if os.path.exists(os.path.join(ROOT, r))]
             + [f'{ADR}/{f}'.replace(os.sep, '/') for f in sorted(os.listdir(os.path.join(ROOT, ADR)))])
     for rel in docs:
         text = read(rel)
@@ -166,7 +173,7 @@ def check_credits(problems):
             dirs[:] = [d for d in dirs if d not in skip]
             for n in names:
                 rel = os.path.relpath(os.path.join(dirpath, n), os.path.join(ROOT, folder)).replace(os.sep, '/')
-                if n in skip or n == 'README.txt' or n.startswith('OFL-'):
+                if n in skip or n in ('README.txt', 'AGENTS.md', 'CLAUDE.md') or n.startswith('OFL-'):
                     continue
                 if not credited(rel, text):
                     problems.append(f'{readme}: does not credit {rel}')
@@ -179,8 +186,14 @@ def check_agents(problems):
     for s in AGENTS_SECTIONS:
         if not any(h.startswith(s) for h in heads):
             problems.append(f'AGENTS.md: no "## {s}" section')
-    for d in sorted(set(DATE.findall(text))):
-        problems.append(f'AGENTS.md: holds a date ({d}); state belongs in the docs it points to')
+    for rel in ['AGENTS.md'] + folder_agents():
+        for d in sorted(set(DATE.findall(read(rel)))):
+            problems.append(f'{rel}: holds a date ({d}); state belongs in the docs it points to')
+    # Claude Code reads CLAUDE.md only, and below the root only when a file in that folder is read
+    for rel in folder_agents():
+        claude = os.path.join(ROOT, os.path.dirname(rel), 'CLAUDE.md')
+        if not (os.path.exists(claude) and '@AGENTS.md' in read(os.path.relpath(claude, ROOT))):
+            problems.append(f'{rel}: no CLAUDE.md beside it importing it (@AGENTS.md)')
 
 
 def main(argv):
