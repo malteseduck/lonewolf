@@ -23,7 +23,7 @@
 
   /* combat.kind: what the fight is, for its words and the page's drawing only; the numbers are the same.
      An obstacle (a door broken down, Book 6's 156, Book 7's 214) is fought by the normal rules, his losses
-     the effort; leaving it costs no blow and Mindblast does not touch it (rulings R23, R24). A contest
+     the effort; leaving it costs no blow and Mindblast does not touch it (ruling R23). A contest
      (arm-wrestling, an archery final) and a fight of the mind are named as such. `line` words a round:
      what he did to it, what it cost him; Infinity is the table's outright result. combat.act: the
      Strike medallion's {label, note} for this fight (Batter, Heave). */
@@ -79,7 +79,7 @@
       this.noStrike = !!(c.noStrike && LW.meets(hero, c.noStrike));
       // keep: the foes' wounds are kept under this name, and a later fight with the same foes starts from them
       const kept = c.keep && (game.s.kept || {})[c.keep];
-      // an obstacle has no mind: Mindblast cannot touch it, Psi-surge (which shakes things apart) can (ruling R24)
+      // an obstacle has no mind: Mindblast cannot touch it, Psi-surge (which shakes things apart) can (ruling R23)
       const mindless = this.kind === 'obstacle' && { immune: 'mindblast' };
       this.foes = c.enemies.map((e, i) => Object.assign({}, mindless, e, { max: e.ep, at: i }, kept && kept[i] != null ? { ep: kept[i] } : {})).filter((e, i) => !kept || (i < kept.length && e.ep > 0));
       this.bring();

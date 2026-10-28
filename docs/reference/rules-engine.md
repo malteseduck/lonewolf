@@ -243,7 +243,7 @@ fought and, with `evade.within`, fewer than that (`evadeLate` once past it).
 (from `LW.FIGHT_KINDS`, with `combat.act` over it) words the rounds, the end and the medallions, and
 says whether the page draws wounds and the lunge. An obstacle is a door: every evasion it offers is
 free and named "Leave it" (ruling R23), and its foes are `immune: 'mindblast'` unless the book says
-otherwise (ruling R24).
+otherwise (the same ruling).
 
 What holds for some rounds only, or under a condition, is `combat.rounds` (book-format.md): `phases(r)`
 are the entries in force in round `r` (conditions tested with the weapon in hand; `ambush` spared by

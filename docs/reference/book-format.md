@@ -177,7 +177,7 @@ Enemies are fought in order, one at a time. An item table's `fight` may also giv
 | `byHand` | why, in our words: the text ends this fight some way the engine cannot see, so the player's by-hand stop counts as its end and opens the choices. Without it the stop wins nothing (ADR 0027) |
 | `noBoost` | no draught (`boost` items) may be swallowed before it |
 | `points` | `{n, lose}`: a contest scored in target points, `n` on his side in place of his Endurance (which is untouched); spent, it leads to `lose` |
-| `kind` | what the fight is: `'fight'` (a duel, the default), `'obstacle'` (a door broken down: imported from "RESISTANCE points"; leaving it is free, ruling R23, and Mindblast does not touch it, R24), `'contest'` (the default with `points`), `'mind'` (the default with `mind`). Otherwise only the words and the drawing change: `LW.FIGHT_KINDS` |
+| `kind` | what the fight is: `'fight'` (a duel, the default), `'obstacle'` (a door broken down: imported from "RESISTANCE points"; leaving it is free and Mindblast does not touch it, ruling R23), `'contest'` (the default with `points`), `'mind'` (the default with `mind`). Otherwise only the words and the drawing change: `LW.FIGHT_KINDS` |
 | `act` | `{label, note}`: the Strike medallion's name and note in this fight (Batter, Heave, Wrestle, Shoot) |
 
 ## Conditions
