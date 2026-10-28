@@ -5,7 +5,7 @@
 The unit tests (tests/, ADR 0022) use stand-in data, so they cannot show that the real books still
 import and pass their checks. This runs, at once where nothing depends on another:
 
-  - npm test (Vitest) and pytest, which never touch the books, beside
+  - npm test (Vitest), pytest and docs_check.py, which never touch the books, beside
   - reimport_all.py: every imported book re-imported, its report against the last (rewrites a
     book.js only where the importer's output changed; that is what an importer change is for),
     and once it is done, together, the checks that read the books:
@@ -94,6 +94,7 @@ def step_pins():
 TESTS = [
     ('JavaScript tests', lambda: run([NPX, 'vitest', 'run'], summary=r'^\s*Tests\s+.*$')),
     ('Python tests', lambda: run(PY + ['-m', 'pytest', '-p', 'no:cacheprovider'], summary=r'^\d+ (?:passed|failed).*$')),
+    ('Docs consistent', lambda: run(PY + ['tools/docs_check.py'])),
 ]
 REIMPORT = ('Re-import every book', lambda: run(PY + ['tools/reimport_all.py']))
 AFTER_REIMPORT = [

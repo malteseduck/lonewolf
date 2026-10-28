@@ -32,7 +32,6 @@ leave `art/` for the committed library (ADR 0042).
 - Links break; recovery is likely, not certain.
 - The dashboard's Picture sources sheet lists every picture in `art/` with its link, none, or a
   Made with AI button (ADR 0042), those not yet said first.
-- The work is D9 in `docs/plan.md`.
 
 ## Changes
 

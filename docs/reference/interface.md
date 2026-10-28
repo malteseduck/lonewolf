@@ -119,7 +119,7 @@ on the same medallion again, or Escape closes it; touching another medallion mov
   - `.likeness`: Lone Wolf's portrait (`assets/hero/likeness.webp`, baked by `portraitFromArt` from the owner's
     drawing `assets/hero/lone-wolf.webp`, cropped head to belt, restyled after the HD sheet: paper keyed out, ink dense,
     a wash pooled in the shadows, an ink smudge and dry-brush strokes behind him (`inkSmudge`, kept out of the
-    filled outline `silhouette`), edges broken up as a dry brush leaves them; ruling R16) with the name and a wolf medallion under it. Until it loads, just the name.
+    filled outline `silhouette`), edges broken up as a dry brush leaves them; ruling R26) with the name and a wolf medallion under it. Until it loads, just the name.
     It and the title page's frontispiece are baked once on the dashboard's hero sheet
     (`tools/admin/hero.html`, which holds the crops), no larger than they show at 2x on the largest
     iPad (`size`: 460 and 920 px on the longer side), and the player loads the files.

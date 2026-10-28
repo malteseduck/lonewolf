@@ -28,8 +28,8 @@ they span the books, so they are not a book step.
   draws the picture on, so the owner sees a picture as it will look in play. The job log stays a dark
   console. The map editor's bars and side panels are parchment too, without the charred rim; its
   canvas and bright label colours stay as they were, so the labels read over any map.
-- **Sheets open inside the dashboard.** The picture sheet, the illustration sheet, the item sheet and
-  the map editor open only inside the dashboard, on plain parchment (the charred rim is the
+- **Sheets open inside the dashboard.** The picture sheet, the proposal sheet (ruling R27), the
+  illustration sheet, the item sheet and the map editor open only inside the dashboard, on plain parchment (the charred rim is the
   dashboard's). At their own addresses they show only a line pointing to the dashboard; there are no
   links to open them on their own, and agents do not open them there.
 - **The dashboard's layout.** The window holds a bar, a rail of books and the work area, and only the
@@ -37,7 +37,7 @@ they span the books, so they are not a book step.
   Picture sources, Lone Wolf, Setup as a popover, Release). The rail lists the downloaded books under
   their series, each with its steps as small seals; the books not downloaded are folded under it. The
   picked book's steps are a row of tabs under the checklist's groups, one step shown at a time ("All
-  steps" shows the list). Each sheet opens inside the step it belongs to (the picture sheet in Fights,
+  steps" shows the list). Each sheet opens inside the step it belongs to (the picture and proposal sheets in Fights,
   the item sheet in Item table, the illustration sheet in Illustrations, the map editor in Map), the
   step shrunk to a bar over it and the rail to the books' numbers; one that spans the books (the icon
   sheet, picture sources, Lone Wolf's pictures) takes the work area alone. A sheet stays open while

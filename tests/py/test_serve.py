@@ -552,7 +552,7 @@ def test_hero_refuses_another_name_or_not_webp(root, name, data):
     assert not (root / 'assets').exists()
 
 
-# ---------------------------------------------------------------- proposal sheet (ruling R23)
+# ---------------------------------------------------------------- proposal sheet (ruling R27)
 
 def test_proposals_route_records_a_decision_and_finishes_the_round(root, monkeypatch):
     import plates_proposals

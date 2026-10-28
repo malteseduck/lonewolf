@@ -363,7 +363,7 @@ function openSheet(b) {
   if (!b?.imp) return toast('Import the book first', 3000);
   openInline(b, `/tools/admin/fights.html?book=${encodeURIComponent(b.code)}&embed=1`, `Fight pictures: ${b.n}. ${b.title}`);
 }
-function openProposals(b) {  // the agent's candidates for some enemies, with their context, to pick from (ruling R23)
+function openProposals(b) {  // the agent's candidates for some enemies, with their context, to pick from (ruling R27)
   openInline(b, `/tools/admin/proposals.html?book=${encodeURIComponent(b.code)}&embed=1`, `Picture proposals: ${b.n}. ${b.title}`);
 }
 function openIlls(b) {  // every illustration, and each one's original beside its upscale (step 9)

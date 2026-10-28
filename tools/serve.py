@@ -700,7 +700,7 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(200, plates_file.standins())
         if method == 'POST' and parts == ['plate']:
             return self._admin_plate(body)
-        if method == 'POST' and parts in (['proposals'], ['proposals', 'finish']):  # the proposal sheet (ruling R23)
+        if method == 'POST' and parts in (['proposals'], ['proposals', 'finish']):  # the proposal sheet (ruling R27)
             import plates_proposals
             code = str(body.get('book') or '')
             if not re.fullmatch(r'[\w-]{1,40}', code):

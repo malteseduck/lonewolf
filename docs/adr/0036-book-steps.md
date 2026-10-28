@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-13 (order); offered steps 2026-10-14; scripts first 2026-10-14
-- Amended: 2026-10-17, 2026-10-23
+- Amended: 2026-10-23
 
 ## Context
 
@@ -81,7 +81,7 @@ everything; but a draft that flags every section is just as pointless (2026-10-1
 - 2026-10-15: "Send to agent" (a new Claude Desktop session per prompt) tried and dropped as clunky;
   Copy prompt is back.
 - 2026-10-17: drafts lean to flagging, on general signs only, for every drafter and scanner (owner).
-- 2026-10-23: test play driven in Node, the browser for spot checks only (owner, after Book 7's
-  play-through spent most of its effort clicking through the page).
 - 2026-10-17: merged 0034 (the order), 0039 (every step offered where it can work) and 0036 (scripts
   first) into this one record.
+- 2026-10-23: test play driven in Node, the browser for spot checks only (owner, after Book 7's
+  play-through spent most of its effort clicking through the page).

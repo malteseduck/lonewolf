@@ -1,9 +1,9 @@
 /* A prompt for an AI image generator: an enemy as the books' own artist might have inked it, tall like the
    fight panel, on plain paper so inkPlate() can take it as it is. The proposal sheet's (what: the agent's
-   description, else the enemy's foe-about entry; ruling R23).
+   description, else the enemy's foe-about entry; ruling R27).
    No person's words ("portrait", "fighting stance", "three-quarter length"): they stood beasts up as humanoids.
    No colour either: a fight picture is an ink drawing, and a colour named pulls the generator towards paint
-   (the owner, 2026-10-26). */
+   (the owner, 2026-10-26). The style is described, never an artist named: the repository is public (ADR 0042). */
 
 // colour words, lower case so a name ("Black Hawk") is kept; tools/plates_proposals.py reads this list too
 export const COLOURS = ['red', 'green', 'blue', 'bluish', 'yellow', 'orange', 'purple', 'violet', 'pink', 'brown', 'black', 'white', 'whitish',
@@ -26,9 +26,9 @@ export function platePrompt(name, what, { refs = false } = {}) {
   return `An illustration of ${name}${said ? `: ${said.replace(/\.\s*$/, '')}` : ''}. `
     + (refs ? 'Use the attached reference images, if any, for what the subject looks like (its shape, features and gear), '
       + 'but draw it anew in the style below: do not copy their composition, framing or linework. ' : '')
-    + 'Black-and-white pen-and-ink illustration in the style of Gary Chalk\'s artwork for the Lone Wolf gamebooks: '
-    + 'confident linework, dense cross-hatching and stippling for shade, detailed textures of hide, scales, fur, cloth and armour, '
-    + 'the look of a 1980s fantasy gamebook plate. A single subject, seen whole, menacing and about to attack, true to the description: '
+    + 'Black-and-white pen-and-ink illustration with the look of a 1980s fantasy gamebook plate: '
+    + 'confident, slightly rough linework, dense cross-hatching and stippling for shade, '
+    + 'detailed textures of hide, scales, fur, cloth and armour. A single subject, seen whole, menacing and about to attack, true to the description: '
     + 'a beast keeps its own body and posture (on all fours, coiled, or in flight, as described), never made humanoid '
     + 'or standing upright unless the description says so. Filling a tall frame (2:3). Plain white background, no scenery, '
     + 'no colour, no grey wash, no text, no border.';

@@ -44,7 +44,7 @@ for it to work exactly as before: it is known to play well from playing it (2026
 ## Consequences
 
 - `package.json` holds the dev dependencies (Vitest, jsdom); `node_modules/` stays git-ignored.
-  pytest is installed in `tools/.venv`.
+  pytest is in the tools' uv project (ADR 0037).
 - Tests live in `tests/js/` (`*.test.js`, `npm test`) and `tests/py/` (`test_*.py`,
   `uv run --project tools python -m pytest`). Both pass before a commit; `check_all.py` after a change
   to the importer or the books' data.

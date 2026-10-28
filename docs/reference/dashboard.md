@@ -47,7 +47,7 @@ step left.
   seals follow. It opens only here (ADR 0021): at its own address it shows only a line pointing to the
   dashboard.
 - **The proposal sheet** ("Open proposals (n)" at step 7, shown while the book has a
-  `plate-proposals.json`; ruling R23): `tools/admin/proposals.html?book=<code>&embed=1`, inside the step like
+  `plate-proposals.json`; ruling R27): `tools/admin/proposals.html?book=<code>&embed=1`, inside the step like
   the picture sheet and only there. The agent's candidates for the enemies it changed, chose or could not settle
   (`tools/plates_proposals.py`), each row with the picture shown now, the candidates inked as in a fight, the
   agent's note and pick, the enemy's `foe-about.json` entry and the book's text where it is met, fought and
@@ -195,7 +195,7 @@ agent run `show` instead).
 | `POST item-glyph` | `{item, glyph}` or `{item, remote: 'author/name'}` (fetched and credited first): `item_icons.set_glyph()` rewrites the item's glyph where it is named; `{file, glyph, was}` |
 | `POST ui-glyph` | the icon sheet: `{list, key, glyph}` or `{list, key, remote}`: `item_icons.set_ui_glyph()` rewrites that entry of `glyphs.js`'s `DISC_GLYPH`, `UI_GLYPH` or `KIND_GLYPH`; `{file, glyph, was}` |
 | `POST plate` | the picture sheet: `{book, enemy, image?, link?, crop?, levels?, flip?, remove?}` (`image` base64 WebP, up to 25 MB): the owner's picture for one enemy, saved as `art/plates/<book>/<slug of the name>.webp` (never a path from the request) and entered in `plates.json` by `tools/plates_file.py`, which keeps the file's one-entry-per-line layout; `link` (an address, or null for none) recorded in `art/sources.json` with a new picture |
-| `POST proposals` | the proposal sheet: `{book, enemy, how, src?}` (how: chosen, kept, or null to reopen), the owner's decision on one row, written into `plate-proposals.json` (`tools/plates_proposals.py` decide); `POST proposals/finish` `{book}` ends the round, the file added to `plate-proposals.done.json` and removed (ruling R23) |
+| `POST proposals` | the proposal sheet: `{book, enemy, how, src?}` (how: chosen, kept, or null to reopen), the owner's decision on one row, written into `plate-proposals.json` (`tools/plates_proposals.py` decide); `POST proposals/finish` `{book}` ends the round, the file added to `plate-proposals.done.json` and removed (ruling R27) |
 
 The stages are a fixed table, `ADMIN_STAGES`: the command is built from it and a code from
 `book_status.CATALOGUE`, never from the request. One job at a time, sharing the map editor's lock,
@@ -287,7 +287,8 @@ downloads and imports still need the owner's word (AGENTS.md).
   Label numbers and reasons only on the console.
 - `node tools/check_items.mjs <code> --json` also writes `check-items.json` beside the book.
 - `python tools/offline_check.py --json` prints its figures as one JSON object.
-- `tools/check_all.py`: `npm test` and pytest beside `reimport_all.py`; once the re-import is done,
+- `tools/check_all.py`: `npm test`, pytest and `docs_check.py` (the docs' records, citations and
+  paths agree) beside `reimport_all.py`; once the re-import is done,
   together, `check_items.mjs --json` for every book with an item table, `plates_pin.mjs --all --json`
   (pictures waiting for approval are a note, not a failure), `offline_check.py` and `about_check.py`. A line as each
   step ends, the tail of a failed one's output; exits 1 on any failure. About 11 s. The syntax check

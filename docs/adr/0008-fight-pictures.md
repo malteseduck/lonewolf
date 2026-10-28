@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-01 (shown whole); varied humans 2026-10-09; pinned 2026-10-11; source order 2026-10-14
-- Amended: 2026-10-17
+- Amended: 2026-10-24
 
 ## Context
 
@@ -59,7 +59,7 @@ the very same creature. The owner set the order.
   now show another picture is listed on the dashboard (step 7 becomes a warning, naming the sections)
   and waits for the owner's **Approve picture changes**, a gated button. Agents never press it nor run
   `plates_pin.mjs --approve` on their own. The owner's own change to an enemy on the picture sheet is
-  his approval for that enemy. Unmarking step 7 lets the pins go.
+  the owner's approval for that enemy. Unmarking step 7 lets the pins go.
 - The picture sheet says once, at the top, whether the book is approved; only cards waiting for
   approval are marked (showing the new picture), with a filter to show only those.
 - **Every picture and every enemy says what it is.** Each illustration (small ones too) has a short
@@ -70,8 +70,7 @@ the very same creature. The owner set the order.
   for it, so the owner knows the creature when looking for another
   picture: the picture sheet shows the enemy's, the illustration sheet the picture's. Both are kept in
   the illustration index, written by hand (no editing on the sheets: the owner wants the book's
-  description, not to write one). In our own words, kept with the books (git-ignored), never in the
-  repository. Book 13 first (2026-10-17), as the pattern.
+  description, not to write one). In our own words, committed in `about/` (ADR 0042). Book 13 first (2026-10-17), as the pattern.
 
 ## Consequences
 

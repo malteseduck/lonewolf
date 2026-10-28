@@ -1,4 +1,4 @@
-"""Step 7's proposals (ruling R23): the pictures the agent offers the owner for each enemy whose picture
+"""Step 7's proposals (ruling R27): the pictures the agent offers the owner for each enemy whose picture
 it changes, chooses or cannot settle, shown with their context on the proposal sheet
 (tools/admin/proposals.html, the dashboard's "Open proposals" at step 7), where the owner picks one.
 

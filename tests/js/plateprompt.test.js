@@ -14,6 +14,11 @@ describe('platePrompt', () => {
     expect(p).toMatch(/^An illustration of Black Hawk: a Kai master in a cloak\./);
     expect(p).toContain('Black-and-white pen-and-ink illustration');
   });
+  it('describes the style without naming an artist (ADR 0042)', () => {
+    const p = platePrompt('X', 'a beast');
+    expect(p).not.toMatch(/Chalk|in the style of [A-Z]/);
+    expect(p).toContain('dense cross-hatching');
+  });
   it('asks the generator to follow the attached references only when told to', () => {
     expect(platePrompt('X', 'a beast', { refs: true })).toContain('attached reference images');
     expect(platePrompt('X', 'a beast')).not.toContain('attached reference images');

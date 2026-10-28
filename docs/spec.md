@@ -15,11 +15,14 @@ intent changes; a decision within the intent gets an ADR or a ruling instead.
 A personal-use player for Joe Dever's Lone Wolf gamebooks: the Kai series (books 1-5), the
 Magnakai series (books 6-12) and the Grand Master series (books 13-20), with room for the New Order
 series after them. It replaces reading the
-Project Aon web edition beside a separate action chart. It should feel like the 2013 game
+Project Aon web edition beside a separate action chart. It is designed to feel like the 2013 game
 *Joe Dever's Lone Wolf HD Remastered*: a dark, aged book that is itself the interface.
 
-The owner is the only user. Nothing here is published or released. The player runs in a browser,
-served from the owner's PC; it is played on the owner's iPad, mainly, with or without a connection
+It is a game I have wanted to build since high school.
+The repository is public, with no licensed content in it (section 3, ADR 0042), as an example of
+spec-driven development and of the harness that brings each book in, not as a product for others to
+play. A "release" is the copy served to the owner's iPad (ruling R13). The player runs in a browser,
+served from my PC; it is played on my iPad, mainly, with or without a connection
 (section 7), and on the PC. Phones are not supported.
 
 ## 2. Principles
@@ -110,7 +113,7 @@ apply.
   effects as Magnakai ones: Weaponmastery for weapons, Huntmastery for Meals). Only a character
   who completed Books 1–5 also keeps Healing's +1 (never added to Curing's) and Hunting's spared
   Meals, as the Lone Wolf Club newsletters rule (ADR 0011).
-- **Grand Master series** (Book 13 on; partly in the engine): twelve Grand Master Disciplines, four
+- **Grand Master series** (Book 13 on): twelve Grand Master Disciplines, four
   to begin with. The earlier disciplines are held for the text's gates; their numbers count only
   for a carried character, for the Magnakai Disciplines he chose, each replaced by its Grand Master
   counterpart (ADR 0011). The rules are in rules-books.md, the readings in ADR 0011 and ruling R9.
@@ -136,12 +139,14 @@ apply.
 - Combat in a section must be resolved before the section's onward choices open.
 - House rule: a Laumspur potion may be drunk during combat without costing a round. The books
   allow it only after a fight.
+- House rule: the combat ratio counts for +10 at most (ruling R1).
 - The books' other combat rules (a Shield, the Bow and its shots, the improved disciplines'
   numbers, Huntmastery against an ambush) are applied as docs/reference/rules-books.md lists them.
 
 ### 4.4 Random Number
 
-- A uniform draw from 0 to 9, shown by spinning a numbered medallion that the player triggers.
+- A uniform draw from 0 to 9, shown by spinning a numbered medallion that the player triggers. In
+  a fight the rounds draw at once, out of sight, the record still giving the number (ruling R3).
 - When a section's choices are a complete set of number ranges, with or without bonuses the text
   states, the draw (with its bonuses added) opens exactly the matching choice and cannot be redrawn.
 - Otherwise the draw is shown and the player picks the choice themselves.
@@ -233,8 +238,8 @@ Touching a discipline explains it.
 Everything he carries, readable at a glance without touching each item: weapons, Special Items and
 Backpack, each against its limit, and his gold. It must hold the most a book allows (section 4.1)
 without running off the page. Every item has its own icon. Touching an item explains it and offers what
-can be done with it. Anything can be added or removed by hand, and the list to add from offers the
-open book's own items.
+can be done with it. Anything can be added or removed by hand, from a list of every item, the earlier books' own
+folded away (ruling R22).
 
 ### 6.4 Map
 
@@ -305,10 +310,13 @@ All run by the owner on their own machine.
   dashboard's jobs and the map editor's steps.
 - An **offline check** reports what the offline copy holds: file count, size per book, the largest
   files, and anything named but missing.
+- A **release** tool makes the copy the iPad is served, from the last commit (ruling R13).
+- A made-up **demo book** shows the whole pipeline on the PC without licensed content (ruling R20).
 
 ## 9. Not goals
 
-- Multiplayer, accounts, publishing, or any server beyond the owner's own PC.
+- Other players: no multiplayer, accounts, support for anyone else's setup, or any server beyond the
+  owner's own PC.
 - Free-roaming exploration beyond the books' choices, and maps made for the books.
 - Real-time or 3D combat, or 3D anywhere.
 - Sound.

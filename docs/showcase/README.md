@@ -17,7 +17,7 @@ printed map. Plain HTML, CSS and JavaScript; no build step; plays offline on an 
 ![The title page](images/01-title.jpg)
 
 **The title page** is built round the owner's own drawing of Lone Wolf and the burning Kai monastery
-behind him (ruling R16), with a band of numerals for each series.
+behind him (ruling R26), with a band of numerals for each series.
 
 ![The shelf](images/02-shelf.jpg)
 

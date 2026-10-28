@@ -28,7 +28,7 @@ art/manifest.json           optional pictures in art/: enemy sprites
 assets/icons/               discipline glyphs from game-icons.net (CC BY 3.0, credited in README.txt)
 assets/fonts/               the page's three fonts and fonts.css, from Google Fonts (SIL OFL, licences beside them)
 assets/app/                 the Home Screen icon (README.txt says how it was made)
-assets/hero/                the owner's own pictures: Lone Wolf, the burning monastery, and the two baked from them that the player shows (title page, Kai panel); ruling R16
+assets/hero/                the owner's own pictures: Lone Wolf, the burning monastery, and the two baked from them that the player shows (title page, Kai panel); ruling R26
 assets/plates/              plates.json: pictures for enemies their book does not picture; free pictures,
                             mostly engravings from Wikimedia Commons (credited in README.txt)
   upscaled/<code>.json      the book's fight pictures with a 2x copy beside them (ill_upscale.py --fights), shown from it
@@ -67,7 +67,7 @@ tools/
                             book's fight pictures on a sheet, where the owner drops, crops and removes
                             pictures), proposals.html (the agent's candidate fight pictures with the
                             book's text about each enemy and an image-generator prompt, where the owner picks or pastes an AI picture:
-                            ruling R23; plateprompt.js, that prompt's house style, shared with fights.html), ills.html
+                            ruling R27; plateprompt.js, that prompt's house style, shared with fights.html), ills.html
                             (one book's illustrations, each original beside its
                             2x upscale), items.html and itemsheet.js (one book's items and their icons, which
                             the owner changes: ADR 0021), icons.html (the player's other icons, for
@@ -82,7 +82,7 @@ tools/
                             the picture it names (og:image); `ai` moves a fight picture made with AI into
                             the committed assets/plates/ (ADR 0042)
   plates_proposals.py       checks data/projectaon/<code>/plate-proposals.json, the agent's step 7 candidates
-                            for the proposal sheet (ruling R23)
+                            for the proposal sheet (ruling R27)
   ill_index.py              writes git-ignored data/projectaon/ill-index.json: every book's illustrations, the
                             fights near each, and the committed hand notes of what each shows
                             (about/ill-notes.json) and what it is (about/ill-about.json), also for the
@@ -90,6 +90,8 @@ tools/
                             (docs/reference/items.md, Fight pictures)
   about_check.py            no description in about/ shares a run of 8 words with its book (ADR 0042);
                             check_all.py runs it
+  docs_check.py             the docs agree: ruling ids, the ADR index's dates, citations, named paths, AGENTS.md's
+                            sections (ruling R21); check_all.py and the repo-maintenance skill run it
   setup.py                  what the tools need on this PC and installing it (the dashboard's Setup; standard
                             library only, run with --no-project); pyproject.toml and uv.lock: the tools as a uv project, its
                             packages and their exact versions, venv tools/.venv (ADR 0037)
@@ -138,6 +140,7 @@ art/reference/map-symbols/  git-ignored. Map symbols kept from the dropped custo
                             the Widman sheet and Hogenburg symbols the game used, with their READMEs
 .claude/launch.json         local servers: lone-wolf (tools/serve.py on 8766), lone-wolf-lan (the same on the
                             network), lone-wolf-release (serve.py --release on 8765)
+.claude/skills/repo-maintenance/  the periodic docs pass: drift between AGENTS.md, the spec, the records and the code
 release/                    git-ignored. The releases the iPad is served (tools/release.py): the last two
                             folders, CURRENT naming the one in use, server.log
 ```
@@ -241,5 +244,5 @@ has its own: a game on the iPad is not the one on the PC.
 
 ## Console hook
 
-`window.__lw = { game, render(), BOOKS, begin(id, fresh, anew) }`, defined at the end of
+`window.__lw = { game, render(), BOOKS, begin(id, fresh, anew), plates }`, defined at the end of
 `main.js`, for driving the page while testing.

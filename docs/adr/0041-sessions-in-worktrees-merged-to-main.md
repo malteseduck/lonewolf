@@ -35,8 +35,7 @@ or session starts cold, so handing off a small step can cost more than doing it.
 
 ## Consequences
 
-- AGENTS.md tells every agent: "Saving tokens" (subagents), "Separate sessions: when to start one"
-  and "Separate sessions work in a worktree". A session that starts another gives it a worktree
+- AGENTS.md ("Subagents and sessions") tells every agent when to use each. A session that starts another gives it a worktree
   (`use_worktree: true`) and says in the brief to commit nothing until asked, then to merge into `main`.
 - The worktree's session does the merge itself. In the desktop app, `sync_with_base_branch` brings
   `main` in first, so conflicts are resolved on the branch before it lands.

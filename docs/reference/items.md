@@ -297,6 +297,11 @@ carried character).
 
 ## Fight pictures
 
+**Lore.** The Lone Wolf fandom wiki, https://lonewolf.fandom.com/wiki/ (e.g. `/wiki/Zahda`), is good
+for what things look like and who they are, when searching for a fight picture or reading an unclear
+passage. It is fan-written (CC BY-SA): the book wins where they differ, rules come from
+`rules-books.md`, and its text is not copied into the repository.
+
 Once the owner marks step 7 done, each fight's picture is pinned (ADR 0008): an entry added to
 `plates.json` later, or a re-import, changes nothing in the player until the owner approves it on the
 dashboard. `node tools/plates_pin.mjs <code>` lists what would change. Do not run `--approve` yourself.
@@ -364,7 +369,7 @@ for two thirds; the rest of the owner's choices were by eye (variety, a better f
 sheet is for. The draft matches names, not creatures: the step's agent then judges every enemy's
 picture, the draft's and the rest, against what the enemy is (a Death Knight under a picture of some
 guard does not match; Book 15's Armoury Guards are Drakkarim), searching by what it is as well as by
-name, and shows the owner the candidates rather than describing them, on the **proposal sheet** (ruling R23):
+name, and shows the owner the candidates rather than describing them, on the **proposal sheet** (ruling R27):
 it writes `data/projectaon/<code>/plate-proposals.json` (git-ignored; format in `tools/plates_proposals.py`,
 whose `check <code>` names what the sheet could not show), and the owner opens it from step 7's "Open
 proposals". `plates_proposals.py gather <code> "<enemy>" [--also=words] [--text]` gives the agent, in one call,

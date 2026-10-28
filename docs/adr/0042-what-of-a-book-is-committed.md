@@ -1,7 +1,8 @@
-# 0042. Our descriptions and AI-made fight pictures are committed; nothing that rebuilds a book is
+# 0042. The repository is public: our descriptions and AI-made fight pictures are committed; nothing that rebuilds a book is
 
 - Status: Accepted
 - Date: 2026-10-24
+- Amended: 2026-10-27
 
 ## Context
 
@@ -18,8 +19,15 @@ is to keep readers from poor unofficial versions and from paying for the books. 
 that both its letter and its spirit be honoured. At the time 57 of 1,216 descriptions repeated a
 run of 8 or more of their book's words (the longest 13); they were reworded.
 
+On 2026-10-27 the owner settled that the repository is published, public, as an example of
+spec-driven development and of its harness, not as a player for others: what keeps it within the
+licence is that no licensed content is in it, not that it is private.
+
 ## Decision
 
+- **The repository is public.** It holds the code, the docs, our own work about the books and assets
+  free to redistribute; no Project Aon text or images, nor anything made from them (spec 3). Everything
+  committed is written as if anyone will read it.
 - **Descriptions are committed**, in `about/` (`foe-about.json`, `ill-about.json`, `ill-notes.json`),
   in our own words. None may share a run of 8 words with its book's sections:
   `tools/about_check.py` checks it, and `check_all.py` runs it. A description says what a picture
@@ -40,6 +48,11 @@ run of 8 or more of their book's words (the longest 13); they were reworded.
 
 - An agent writing descriptions writes them in its own words and runs `tools/about_check.py`
   (the step 7 prompt says so). A failure is fixed by rewording, never by raising the run length.
-- The image-generator prompt (the proposal sheet's, `tools/admin/plateprompt.js`) names Gary Chalk's
-  style; that imitates no picture, and is fine while the repository is personal. If it is ever published, drop the name from the prompt first.
+- The image-generator prompt (the proposal sheet's, `tools/admin/plateprompt.js`) describes the
+  style (ink linework, cross-hatching, a 1980s gamebook plate) and names no artist; its test says so.
 - Pictures with a link, or none, stay in `art/` (ADR 0038); only AI-made ones move.
+
+## Changes
+
+- 2026-10-27: the repository is public, with no licensed content in it (owner); the image prompt
+  describes the style instead of naming the artist.
