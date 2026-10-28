@@ -5,7 +5,7 @@ A personal-use player for the Lone Wolf gamebooks (Kai, Magnakai and Grand Maste
 hero, inventory, map or fight on the right. Plain HTML, CSS and JavaScript, no build step. It is
 played mainly on an iPad, offline, and on the PC.
 
-It is a game I have wanted to build since high school, and I am its only player. The repository is
+It is a game I have wanted to build since high school, and I really just made it for me. The repository is
 public as an example of spec-driven development (`docs/spec.md`, the decisions in `docs/adr/`) and of
 the harness that brings each book in; it holds no licensed content.
 
