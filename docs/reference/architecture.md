@@ -90,7 +90,8 @@ tools/
                             (docs/reference/items.md, Fight pictures)
   about_check.py            no description in about/ shares a run of 8 words with its book (ADR 0042);
                             check_all.py runs it
-  docs_check.py             the docs agree: ruling ids, the ADR index's dates, citations, named paths, AGENTS.md's
+  docs_check.py             the docs agree: ruling ids, the ADR index's dates, citations, named paths (READMEs too),
+                            every asset credited in its folder's README.txt, AGENTS.md's
                             sections (ruling R21); check_all.py and the repo-maintenance skill run it
   setup.py                  what the tools need on this PC and installing it (the dashboard's Setup; standard
                             library only, run with --no-project); pyproject.toml and uv.lock: the tools as a uv project, its

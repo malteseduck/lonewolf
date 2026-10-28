@@ -2,7 +2,9 @@
 
 A personal-use player for the Lone Wolf gamebooks (Kai, Magnakai and Grand Master), styled after
 *Lone Wolf HD Remastered*, with a harness that brings each book in and a pipeline that repaints its
-printed map. Plain HTML, CSS and JavaScript; no build step; plays offline on an iPad.
+printed map. Plain HTML, CSS and JavaScript; no build step; plays offline on an iPad. Built as an
+example of spec-driven development: intent in a spec, every choice a recorded decision, scripts
+checking what can be checked.
 
 **Full deck (public): <https://claude.ai/artifact/DD9UiF2WCQtGyZ7HRHFsCj>**
 (a slideshow of everything below, with speaker notes; it opens for anyone once shared from its Share menu).
@@ -76,7 +78,7 @@ book stands, runs the script steps, and hands the steps that need judgement to C
 
 ![All books](images/20-dashboard-grid.jpg)
 
-**The dashboard** is a rail of books (each with its ten steps as small seals), the open book's steps as tabs,
+**The dashboard** is a rail of books (each with its nine steps as small seals), the open book's steps as tabs,
 and the step's evidence and buttons; a sheet opens inside its step, and Full window gives it the whole
 screen. The grid shows every book against every step. Everything is read from the files on disk and the
 owner's hand marks, never from a checklist that might be out of date. A cog is a script, a hand is the owner,
@@ -127,7 +129,7 @@ the iPad's size, into the two small files the player loads.
 
 Other tools on the dashboard: *Check everything* (re-imports every book against its last report, runs every
 item table's check, the approved fight pictures, the offline copy and a check that no description repeats a
-book's wording, then both test suites, in about ten seconds), *Picture sources* (where each borrowed picture
+book's wording and a check that the docs agree, then both test suites, in about fifteen seconds), *Picture sources* (where each borrowed picture
 came from), *Scan phrasings*, *Diff rules*, *Walk the book* (a play-through in Node), *Draft and compare* an item
 table, *Release to the iPad* (the offline check first, then the release, then a push of `main` to GitHub) and *Setup* for a fresh checkout.
 
@@ -190,12 +192,14 @@ One page, the map editor, runs every step. Here it is inside the dashboard on th
 - Engravings (public domain, Wikimedia Commons): Brehm, Knobel, Rosomak, Schongauer, Doré, Piranesi, Haeckel,
   the Beast of Gévaudan print and others; see `assets/plates/README.txt`.
 - Icons: game-icons.net by Lorc, Delapouite and Skoll, CC BY 3.0 (`assets/icons/README.txt`). Fonts:
-  Metamorphous, EB Garamond, Cabin, Charm, Darkland and Almendra, SIL Open Font License.
+  Metamorphous, Charm and Almendra Display (`assets/fonts/`), and for the maps Cabin, IM Fell English,
+  Architects Daughter, Almendra and our own Darkland Hand and Darkland Serif (`tools/fonts/README.txt`),
+  SIL Open Font License.
 
 ## Try it: the demo book
 
 *The Ember Road* is also a real, playable book in this repository (`demo/99ember/`, ruling R20): eight
 sections in Project Aon's page layout, three public-domain engravings, an item table and a made-up map.
-Start `python tools/serve.py`; it installs the book into `data/projectaon/` and the title page shows a
+Start `uv run --project tools python tools/serve.py`; it installs the book into `data/projectaon/` and the title page shows a
 "Demo: The Ember Road" link. The importer, the dashboard (as Book 99) and the map editor work on it like on
 any book. It is never released: not in the offline copy, not on the iPad, not in the checklist.

@@ -117,3 +117,22 @@ def test_agents_md_needs_its_sections_and_holds_no_dates(tree, capsys):
     code, out = problems(capsys, tree)
     assert 'AGENTS.md: no "## How to test" section' in out
     assert 'AGENTS.md: holds a date (2026-10-10); state belongs in the docs it points to' in out
+
+
+def test_every_asset_is_credited_in_its_folders_readme(tree, capsys):
+    tree.write('tools/fonts/README.txt', 'Darkland Hand (DarklandHand-Thin, -Regular): ours.\n')
+    for f in ('DarklandHand-Thin.ttf', 'DarklandHand-Regular.ttf', 'OFL-DarklandHand.txt', 'Cabin.ttf'):
+        tree.write(f'tools/fonts/{f}', '')
+    tree.write('assets/plates/README.txt', 'wolf.jpg\n  An engraving.\n\n01xx/toad.webp\n  Made with AI.\n')
+    for f in ('wolf.jpg', 'wolf-2x.webp', '01xx/toad.webp', 'plates.json', 'approved/01xx.json', 'bear.png'):
+        tree.write(f'assets/plates/{f}', '')
+    code, out = problems(capsys, tree)
+    assert sorted(out) == ['assets/plates/README.txt: does not credit bear.png',
+                           'tools/fonts/README.txt: does not credit Cabin.ttf']
+
+
+def test_a_readmes_links_are_relative_to_it(tree, capsys):
+    tree.write('docs/showcase/make/map.py', '')
+    tree.write('docs/showcase/README.md', 'See [`make/map.py`](make/map.py) and `make/gone.py`.\n')
+    code, out = problems(capsys, tree)
+    assert out == ['docs/showcase/README.md: names `make/gone.py`, which does not exist']

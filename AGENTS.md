@@ -120,7 +120,8 @@ sides, both suites run again).
 - **A decision of the owner's** is recorded in the same piece of work, as `docs/adr/README.md` says
   (amend the topic's ADR, or add a ruling with the next free id), and any sentence of the spec it
   contradicts is brought into line.
-- **A change to behaviour** updates the matching file in `docs/reference/` in the same piece of work.
+- **A change to behaviour** updates the matching file in `docs/reference/`, and any README that
+  describes it, in the same piece of work. A new asset is credited in its folder's `README.txt`.
   Finished work leaves `docs/plan.md`.
 - **This file holds instructions only**, never state (what is imported, timings, dates) and never
   intent or decisions: those go in the files below (ruling R21). Add a line here only if every agent

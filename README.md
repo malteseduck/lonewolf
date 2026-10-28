@@ -5,6 +5,10 @@ A personal-use player for the Lone Wolf gamebooks (Kai, Magnakai and Grand Maste
 hero, inventory, map or fight on the right. Plain HTML, CSS and JavaScript, no build step. It is
 played mainly on an iPad, offline, and on the PC.
 
+It is a game I have wanted to build since high school, and I am its only player. The repository is
+public as an example of spec-driven development (`docs/spec.md`, the decisions in `docs/adr/`) and of
+the harness that brings each book in; it holds no licensed content.
+
 **See it:** the [showcase](docs/showcase/README.md) walks through the player, the import dashboard
 and the map pipeline in screenshots (all from a made-up demo book, no licensed content), and the
 [slide deck](https://claude.ai/artifact/DD9UiF2WCQtGyZ7HRHFsCj) tells the same story.
@@ -64,4 +68,5 @@ one, on the PC only (ruling R20).
 | `docs/` | The spec, the decisions (`adr/`), the reference, the plan and the showcase |
 
 Start with `docs/spec.md`, `docs/adr/README.md` and `docs/plan.md`. `AGENTS.md` holds the rules for
-working on the code.
+working on the code, how to run and test it, and how the docs are kept true
+(`tools/docs_check.py`, the `repo-maintenance` skill in `.claude/skills/`).

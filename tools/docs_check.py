@@ -1,6 +1,6 @@
 """The docs kept true to each other (spec principle 8): the decision records, their index, the
-citations of them across the repository, the paths the agents' docs name, and AGENTS.md's shape
-(ruling R21). Lists each problem; the repo-maintenance skill runs it before reading for drift.
+citations of them across the repository, the paths the agents' docs and the READMEs name, every
+asset credited in its folder's README.txt, and AGENTS.md's shape (ruling R21). Lists each problem; the repo-maintenance skill runs it before reading for drift.
 
     python tools/docs_check.py        exit 1 if anything is wrong
 """
@@ -17,6 +17,10 @@ TEXT = ('.md', '.js', '.mjs', '.py', '.html', '.css', '.txt', '.json')
 IGNORED = ('data/', 'art/', 'backups/', 'node_modules/', 'release/')  # may be absent: not checked
 AGENTS_SECTIONS = ('How to run', 'How to test', 'Hard rules', 'Maintaining the repository')
 DATE = re.compile(r'\b20\d\d-\d\d-\d\d\b')
+# Asset folders whose README.txt credits each file, and what in them is not an asset
+CREDITS = {'assets/icons': set(), 'assets/plates': {'approved', 'upscaled', 'plates.json'},
+           'assets/hero': set(), 'assets/app': set(), 'tools/fonts': set()}
+READMES = ['README.md', 'docs/showcase/README.md']  # their named paths are checked like the docs'
 
 
 def read(rel):
@@ -125,8 +129,8 @@ def named_paths(text):
 
 
 def check_paths(problems):
-    docs = ['AGENTS.md', 'docs/spec.md'] + [f'{ADR}/{f}'.replace(os.sep, '/')
-                                             for f in sorted(os.listdir(os.path.join(ROOT, ADR)))]
+    docs = (['AGENTS.md', 'docs/spec.md'] + [r for r in READMES if os.path.exists(os.path.join(ROOT, r))]
+            + [f'{ADR}/{f}'.replace(os.sep, '/') for f in sorted(os.listdir(os.path.join(ROOT, ADR)))])
     for rel in docs:
         text = read(rel)
         if re.search(r'/\d{4}-[^/]+\.md$', rel):  # Context and Changes are history: what was, not what is
@@ -134,8 +138,38 @@ def check_paths(problems):
         for p in set(named_paths(text)):
             if p.startswith(IGNORED):
                 continue
-            if not os.path.exists(os.path.join(ROOT, p)):
+            here = os.path.join(ROOT, os.path.dirname(rel), p)  # a README's links are relative to it
+            if not os.path.exists(os.path.join(ROOT, p)) and not os.path.exists(here):
                 problems.append(f'{rel}: names `{p}`, which does not exist')
+
+
+def credited(rel, text):
+    """A file is credited when its README names it: by path, name or stem; a -2x copy by its original;
+    a font of a family by the family and its weight ("DarklandHand-Thin, -Light")."""
+    name = rel.rsplit('/', 1)[-1]
+    stem = re.sub(r'-2x$', '', name.rsplit('.', 1)[0])
+    if rel in text or name in text or re.search(rf'(?<![\w-]){re.escape(stem)}(?![\w])', text):
+        return True
+    family, _, weight = stem.partition('-')
+    return bool(weight) and family in text and f'-{weight}' in text
+
+
+def check_credits(problems):
+    """Every asset in a folder with a README is credited there (AGENTS.md: free to redistribute, the
+    source noted)."""
+    for folder, skip in CREDITS.items():
+        readme = f'{folder}/README.txt'
+        if not os.path.exists(os.path.join(ROOT, readme)):
+            continue
+        text = read(readme)
+        for dirpath, dirs, names in os.walk(os.path.join(ROOT, folder)):
+            dirs[:] = [d for d in dirs if d not in skip]
+            for n in names:
+                rel = os.path.relpath(os.path.join(dirpath, n), os.path.join(ROOT, folder)).replace(os.sep, '/')
+                if n in skip or n == 'README.txt' or n.startswith('OFL-'):
+                    continue
+                if not credited(rel, text):
+                    problems.append(f'{readme}: does not credit {rel}')
 
 
 def check_agents(problems):
@@ -155,6 +189,7 @@ def main(argv):
     adrs = check_adrs(problems)
     check_citations(problems, rulings, adrs)
     check_paths(problems)
+    check_credits(problems)
     check_agents(problems)
     for p in problems:
         print(p)

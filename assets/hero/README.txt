@@ -1,4 +1,4 @@
-Lone Wolf himself, for the title page and the Kai panel (ruling R16)
+Lone Wolf himself, for the title page and the Kai panel (ruling R26)
 
 lone-wolf.webp
   The owner's own drawing of Lone Wolf (signed "Chalk"), given 2026-10-21. Ours to use and share.

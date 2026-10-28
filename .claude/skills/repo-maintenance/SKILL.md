@@ -1,6 +1,6 @@
 ---
 name: repo-maintenance
-description: Periodic pass to find and fix drift between AGENTS.md, docs/spec.md, the ADRs and rulings, docs/plan.md, docs/reference/ and the code; keep AGENTS.md to vital instructions; list clean-up for the owner. Use when the owner asks for repo maintenance, a docs pass, a drift check or a clean-up.
+description: Periodic pass to find and fix drift between AGENTS.md, docs/spec.md, the ADRs and rulings, docs/plan.md, docs/reference/, every README and the code; keep AGENTS.md to vital instructions; list clean-up for the owner. Use when the owner asks for repo maintenance, a docs pass, a drift check or a clean-up.
 ---
 
 # Repo maintenance
@@ -24,7 +24,8 @@ unused icons, untracked files). Never touch `backups/`, `data/`, `art/` or `prot
 
 1. **Script first.** `uv run --project tools python tools/docs_check.py`: duplicate ruling ids, the
    ADR index against each ADR's dates, citations of records that do not exist, paths named in
-   AGENTS.md, the spec and the ADRs' decisions, AGENTS.md's sections and dates. Fix what it reports.
+   AGENTS.md, the spec, the ADRs' decisions and the READMEs, every asset credited in its folder's
+   README.txt, AGENTS.md's sections and dates. Fix what it reports.
    A check that would catch what you find by reading in a later step belongs in this script, with a
    test in `tests/py/test_docs_check.py`.
 2. **What changed since the last pass.** `git log --since=<the last pass's date> --stat` (the last
@@ -44,11 +45,17 @@ unused icons, untracked files). Never touch `backups/`, `data/`, `art/` or `prot
    for and "report each as found or missing, with file:line", never file dumps.
 6. **Plan and reference.** `docs/plan.md`: finished items leave it (their facts go to the reference
    docs). Each reference file touched by step 2's changes is read against its code.
-7. **Owner's memory.** Where a saved feedback memory and AGENTS.md disagree, the later word wins;
+7. **READMEs.** Every tracked README (`git ls-files | grep -i readme`, `prototypes/` left out): the
+   root `README.md` and `docs/showcase/README.md` read against the code and the spec (what the
+   player, the dashboard and the steps do; commands in their uv form; credits), the asset READMEs
+   (`assets/*/`, `tools/fonts/`) against what their folder holds and which files use them (a font a
+   map's `font.txt` names, an icon an item table names). The script checks that each file is credited;
+   reading checks what is said of it.
+8. **Owner's memory.** Where a saved feedback memory and AGENTS.md disagree, the later word wins;
    say which you followed.
-8. **Clean-up to list.** `git worktree list` (and `.claude/worktrees/`) for worktrees whose branch is
+9. **Clean-up to list.** `git worktree list` (and `.claude/worktrees/`) for worktrees whose branch is
    merged; `git status --short` for untracked files; `release/` snapshots beyond the last few.
-9. **Check.** `npm test`, `uv run --project tools python -m pytest`, `tools/docs_check.py` again;
+10. **Check.** `npm test`, `uv run --project tools python -m pytest`, `tools/docs_check.py` again;
    `tools/check_all.py` if a tool or anything the books' data goes through changed.
 
 ## Report
