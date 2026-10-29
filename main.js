@@ -288,7 +288,7 @@ function makeDial(onIdleClick) {
 
 /* ---------- left page ---------- */
 function storyText(sec) {
-  const pic = sec.img ? (sec.img.full ? `<img class="vignette full" src="${asset(sec.img.file)}" alt="">` : `<img class="vignette small" data-trim src="${asset(sec.img.file)}" alt="">`)
+  const pic = sec.img ? (sec.img.full ? `<img class="vignette full" data-paper src="${asset(sec.img.file)}" alt="">` : `<img class="vignette small" data-paper src="${asset(sec.img.file)}" alt="">`)
     : sec.scene ? `<img class="vignette" src="${vignette(sec.scene)}" alt="">` : '';
   const at = sec.img ? Math.min(sec.img.at, sec.text.length) : 1;
   // list lines (wares, a sign, a price board) run together in one smaller block
@@ -495,7 +495,7 @@ function mountRnt() {
 const leftKey = () => [mode, intro, game && game.s ? `${game.s.trail.length}:${game.s.at}` : ''].join('|');
 function renderLeft() {
   const was = $('#scroll'), key = leftKey(), top = was && was.dataset.key === key ? was.scrollTop : 0;
-  pl.innerHTML = leftHTML(); mountRnt(); mountSetup(); trimSmall(); widenPlates();
+  pl.innerHTML = leftHTML(); mountRnt(); mountSetup(); clearPictures(); widenPlates();
   const sc = $('#scroll');
   if (sc) { sc.dataset.key = key; if (top) sc.scrollTop = top; }
 }
@@ -507,28 +507,35 @@ function widenPlates() {
     if (img.complete) fit(); else img.addEventListener('load', fit, { once: true });
   });
 }
-/* The books' small pictures sit in a wide strip of blank paper, some filling less than half of it,
-   which drawn at the column's width left the drawing tiny. Each is cut to its drawing (with a little
-   paper round it) and shown at one height (CSS .vignette.small). Hidden until cut, so it does not jump. */
-const trimmed = new Map();
-function trimSmall() {
-  pl.querySelectorAll('img[data-trim]').forEach((img) => {
-    const src = img.getAttribute('src'), done = (url) => { img.src = url; img.removeAttribute('data-trim'); };
-    if (trimmed.has(src)) return void trimmed.get(src).then(done);
+/* The books' pictures are drawn on white, which is made clear so the page's paper shows through
+   (Ink.clearPaper). The small ones also sit in a wide strip of blank paper, some filling less than
+   half of it, which drawn at the column's width left the drawing tiny: each is cut to its drawing
+   (with a little paper round it) and shown at one height (CSS .vignette.small). Hidden until done,
+   so it neither jumps nor flashes white. */
+const cleared = new Map();
+function clearPictures() {
+  pl.querySelectorAll('img[data-paper]').forEach((img) => {
+    const src = img.getAttribute('src'), trim = img.classList.contains('small');
+    const done = (url) => { img.src = url; img.removeAttribute('data-paper'); };
+    if (cleared.has(src)) return void cleared.get(src).then(done);
     const p = new Promise((resolve) => {
       const im = new Image();
       im.onload = () => {
         try {
           const w = im.naturalWidth, h = im.naturalHeight, c = Ink.canvas(w, h), x = c.getContext('2d');
           x.drawImage(im, 0, 0);
-          const d = x.getImageData(0, 0, w, h).data;
-          let l = w, t = h, r = -1, b = -1;
+          const px = x.getImageData(0, 0, w, h), d = px.data;
+          let l = 0, t = 0, r = w - 1, b = h - 1;
+          if (trim) {
+          l = w; t = h; r = -1; b = -1;
           for (let y = 0; y < h; y++) for (let i = 0; i < w; i++) {
             const k = (y * w + i) * 4;
             if (d[k + 3] > 40 && d[k] * 0.3 + d[k + 1] * 0.59 + d[k + 2] * 0.11 < 200) { if (i < l) l = i; if (i > r) r = i; if (y < t) t = y; if (y > b) b = y; }
           }
           if (r < 0) return resolve(src);
           const m = Math.round(h * 0.03); l = Math.max(0, l - m); t = Math.max(0, t - m); r = Math.min(w - 1, r + m); b = Math.min(h - 1, b + m);
+          }
+          Ink.clearPaper(d); x.putImageData(px, 0, 0);
           const o = Ink.canvas(r - l + 1, b - t + 1); o.getContext('2d').drawImage(c, l, t, r - l + 1, b - t + 1, 0, 0, r - l + 1, b - t + 1);
           resolve(o.toDataURL());
         } catch (e) { resolve(src); }
@@ -536,7 +543,7 @@ function trimSmall() {
       im.onerror = () => resolve(src);
       im.src = src;
     });
-    trimmed.set(src, p); p.then(done);
+    cleared.set(src, p); p.then(done);
   });
 }
 

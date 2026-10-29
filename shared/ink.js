@@ -16,6 +16,18 @@ export function canvas(w, h) {
 }
 const INK = '38,28,18', RED = '132,30,20';
 
+/* A picture on white paper (RGBA bytes, changed in place) turned to ink on clear: each pixel as
+   clear as it is light, so on the page's paper grey ink looks as mix-blend-mode: multiply showed it.
+   iPad browsers (WebKit) do not blend inside the scrolling text, which left the white showing. */
+export function clearPaper(d) {
+  for (let k = 0; k < d.length; k += 4) {
+    const a = 1 - Math.min(d[k], d[k + 1], d[k + 2]) / 255;
+    if (a === 0) { d[k + 3] = 0; continue; }
+    for (let i = 0; i < 3; i++) d[k + i] = (d[k + i] - (1 - a) * 255) / a;
+    d[k + 3] *= a;
+  }
+}
+
 /* plain = a loose sheet (burnt on all four sides) instead of a bound page with a gutter */
 export function parchment(w, h, mirror, plain) {
   const c = canvas(w, h), x = c.getContext('2d'), r = seeded(3);

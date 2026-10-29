@@ -85,9 +85,9 @@ body { background: var(--void) var(--wood, none) center / 820px; color: var(--bo
 .vignette.full { width: auto; height: 21em; max-width: 100%; opacity: 0.9; -webkit-mask-image: radial-gradient(ellipse 74% 72% at 50% 50%, #000 76%, transparent 100%); mask-image: radial-gradient(ellipse 74% 72% at 50% 50%, #000 76%, transparent 100%); }
 .vignette { display: block; width: 72%; margin: 0.1em auto; mix-blend-mode: multiply; }
 .vignette.full.wide { width: 100%; height: auto; }
-/* the books' small pictures, cut to the drawing (trimSmall): one height, never wider than the column */
+/* the books' small pictures, cut to the drawing (clearPictures): one height, never wider than the column */
 .vignette.small { width: auto; max-width: 100%; height: 7.5em; object-fit: contain; }
-.vignette.small[data-trim] { visibility: hidden; }
+.vignette[data-paper] { visibility: hidden; }
 .events { list-style: none; margin: 0; padding: 0; font-size: 1.15em; color: #31503a; }
 .block { border-top: 1px solid var(--ink-faint); padding-top: 0.4em; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.1em 1.2em; font-size: 1.15em; }
 .finds { align-items: center; gap: 0.45em 1.1em; }

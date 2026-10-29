@@ -65,7 +65,7 @@ ember on hover and focus; disabled it is greyed.
   (Project Aon's double-width plates, 772 px) gets `.wide` from `widenPlates()` once loaded and
   spans the column (ADR 0031). The books' small
   pictures (`small*`) come as 386x150 strips with the drawing often filling half of it or less, so
-  `trimSmall()` (after each `renderLeft`) cuts each to its drawing plus a 3% margin (cached as a data
+  `clearPictures()` (after each `renderLeft`) cuts each to its drawing plus a 3% margin (cached as a data
   URL) and `.vignette.small` shows it 7.5em high, never wider than the column. Hidden until cut.
   Checked on every illustrated section of Book 1 (2026-10-01): small ones 195px high, in a 1274x914
   window. A portrait plate is 308x548 in a 1463x914 window (2026-10-12).
@@ -287,8 +287,12 @@ story on.
   with swept leaves top and bottom. `{ vine: false }` gives the plain beaded band for small boxes.
 - `drawBanner` / `drawCrest`: the place's ribbon with scrolled ends (a border-image, so only its
   middle stretches) and the pointed arch of flourish above it (its own background, unstretched).
-- Story illustrations are plain `<img>` with `mix-blend-mode: multiply`; full plates also get a
-  soft radial mask.
+- Story illustrations are plain `<img>`; full plates also get a soft radial mask. The books' pictures
+  are drawn on white: `clearPictures()` turns each (full and small, `[data-paper]`, hidden until
+  done) to ink on clear with `Ink.clearPaper`, so the page's paper shows through. The CSS
+  `mix-blend-mode: multiply` on `.vignette` did this on the PC, but WebKit (every iPad browser) does
+  not blend inside the scrolling `.scroll`, which left the white showing; it stays for the demo's
+  drawn vignettes.
 
 ## Page turn (`turn(update)`)
 
