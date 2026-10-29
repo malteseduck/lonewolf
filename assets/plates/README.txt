@@ -380,3 +380,55 @@ knight-shield-pencil.webp
 04tcod/tunnel-guard-3.webp
   Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
   no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-28.
+
+02fotw/zombie-crew.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-28.
+
+02fotw/giaks.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-28.
+
+02fotw/villager-1.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-28.
+
+02fotw/villager-2.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-28.
+
+02fotw/villager-3.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-28.
+
+02fotw/sailor.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-28.
+
+02fotw/town-guard-corporal.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-28.
+
+02fotw/town-guard-2.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-28.
+
+02fotw/town-guard-3.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-28.
+
+02fotw/town-guard-4.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-28.
+
+02fotw/border-guard.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-28.
+
+02fotw/town-guard-1.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-28.
+
+02fotw/town-guard-sergeant.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-28.

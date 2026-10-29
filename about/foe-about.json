@@ -57,7 +57,7 @@
     "Halvorc": "Halvorc the merchant, one of the coach travellers, beaten and robbed by Lachlan of Ragadorn; with a dagger if he survives the surprise attack (section 60)",
     "Zombie Captain": "Captain Kelman of the Green Sceptre, sunk in the storm and raised to join the death-hulk fleet as a walking corpse with a dagger, immune to Mindblast (section 66). Zombies are corpses animated by magic, usually weak foes, and are used as ship crews (wiki)",
     "Viveka": "Viveka, a mercenary adventuress travelling in the coach, with a short sword and fast reactions (section 85)",
-    "Villager": "An angry villager of the cove, among the mob that chases Lone Wolf up the stairs with the Szalls (section 90)",
+    "Villager": "An angry villager of Gorn Cove, a poor sea village of outcasts, thieves and Szalls; the mob takes Lone Wolf for a mad killer, axes in the shop door and, with two Szalls, rushes up the stairs at him, one at a time (sections 71, 235, 90); outside another swings a cudgel (132)",
     "Szall": "A Szall, one of the small creatures that serve the Darklords, met jumping about a dying man in the forest clearing (section 95), and fighting with the villagers on the stairs (section 90). Szalls are a weak, cowardly but cunning breed of Giak, a failed Helgedad experiment that fled to the Wildlands, a few tolerated by humans in places like Gorn Cove (wiki)",
     "Watchtower Guard": "A Durenese sentry of the wooden watchtower at the Durenor Forest edge who does not believe Lone Wolf and attacks him with a sword (sections 110 and 157)",
     "Street Thief": "A street thief of Ragadorn with a long curved dagger, one of three who attack Lone Wolf (sections 131 and 298), fought bare-handed one at a time",
@@ -67,12 +67,12 @@
     "Drakkar": "A Drakkar, a black-clad Drakkarim warrior of the Darklords with a broadsword; fought on the Green Sceptre at 326 and 345, and two attack on the death-hulk at 185",
     "Trickster": "A cheat accused in a tavern who draws a curved dagger and fights to the death in a ring of onlookers (section 241)",
     "Harbour Thugs": "Three scimitar-armed harbour thugs sent by the false sailor in the tavern, fought as one enemy (sections 268 and 348)",
-    "Sailor": "A grim, brutal sailor who arm-wrestles all comers in the tavern and breaks or kills those who beat him; the contest is fought like combat (section 276)",
+    "Sailor": "A grim, brutal sailor in a Ragadorn tavern who arm-wrestles all comers at the centre table for 5 Gold Crowns, breaking the arms of losers and murdering any who beat him; the contest is fought like combat while the drunken crowd bets (sections 177, 276)",
     "Bridge Guard": "A spear-armed soldier guarding a bridge who tries to force Lone Wolf off it; two attack at once (section 282)",
-    "Town Guard": "A town guard of Ragadorn, one of six who attack in the tavern (section 296)",
-    "Town Guard Sergeant": "The sergeant of the six town guards who attack in the tavern, the strongest of them (section 296)",
-    "Town Guard Corporal": "The corporal of the six town guards who attack in the tavern (section 296)",
-    "Border Guard": "A border guard with a spear whom Lone Wolf tries to knock unconscious rather than kill (section 306)"
+    "Town Guard": "One of the six armoured soldiers of the Gorn Cove town guard who rush into the Forlorn Hope tavern, called by the screaming one-eyed innkeeper, and fight Lone Wolf one at a time as the people flee (sections 33, 296)",
+    "Town Guard Sergeant": "The sergeant leading the six armoured soldiers of the Gorn Cove town guard whom the one-eyed innkeeper brings into the Forlorn Hope tavern to arrest Lone Wolf; the strongest of them (sections 33, 296)",
+    "Town Guard Corporal": "The corporal among the six armoured soldiers of the Gorn Cove town guard who burst into the Forlorn Hope tavern behind the one-eyed innkeeper (sections 33, 296)",
+    "Border Guard": "A Durenese man-at-arms in the coat of his kingdom, on guard at the wooden tower where the road enters the Durenor Forest; insulted by an offered bribe, he lunges with his spear, and Lone Wolf tries to knock him senseless rather than kill him (sections 138, 232, 68, 306)"
   },
   "03tcok": {
     "Ice Barbarian": "A fur-clad warrior of the ice, tall, with slanted eyes and bone weapons, in Vonotar's service; some are possessed with pupil-less white eyes. Met in Ikaya and the ice, fought at 14, 68, 108, 161, 208, 241, 260, 270 and 343 (immune to Mindblast where stated)",
