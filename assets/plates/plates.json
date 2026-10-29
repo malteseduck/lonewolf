@@ -1,6 +1,7 @@
 {
   "_readme": "Pictures for fights whose section has no illustration of its own. The first entry whose match (a regular expression, case ignored) is found in the enemy's name is used, so put the narrower ones first. book, if given, limits an entry to that book (its own characters, or a stand-in that would be wrong elsewhere); book entries go first. src is relative to the project root: files in assets/plates/ are free to redistribute (sources in README.txt); files under data/projectaon/ are Project Aon illustrations on the owner's machine only, from the same book or borrowed from another, and files under art/ are pictures the owner supplied for personal use (git-ignored); a missing one falls back to the drawn emblem. crop, if given, is the part of the picture to use, [x, y, w, h] as fractions. over: true makes the entry win even where the section has an illustration of its own (the owner preferred another picture). levels, if given, is [black, white] (0-255): the tones that become full ink and bare paper, for a painting whose mid-tones would otherwise all turn to solid ink. draft, if given, marks an entry tools/plates_draft.py wrote (where it came from) that the owner has not yet adjusted on the picture sheet. See docs/reference/interface.md, Art pipeline, and docs/reference/items.md, Fight pictures.",
   "plates": [
+    { "match": "^castle guardsmen \\(impostors\\)$", "book": "18dotd", "src": "assets/plates/05sots/armoury-guard.webp", "crop": [0.1515, 0.0228, 0.6999, 0.9402] },
     { "match": "^street thief 2$", "book": "02fotw", "src": "art/plates/rogue-masked-blades.webp", "crop": [0.2533, 0.03, 0.6267, 0.587], "levels": [92, 175] },
     { "match": "^town guard 1$", "book": "02fotw", "src": "assets/plates/02fotw/town-guard-1.webp", "crop": [0.0703, 0.0605, 0.8594, 0.895], "flip": true },
     { "match": "^border guard$", "book": "02fotw", "src": "assets/plates/02fotw/border-guard.webp" },
@@ -50,9 +51,12 @@
     { "match": "^meghanic$", "book": "19wb", "src": "data/projectaon/19wb/ill6.png", "draft": "this book, a picture 1 link before the fight" },
     { "match": "^eldenoran horse-scouts$", "book": "18dotd", "src": "assets/plates/18dotd/eldenoran-horse-scouts.webp", "crop": [0.1518, 0.1819, 0.6163, 0.6692] },
     { "match": "^vaxagore$", "book": "18dotd", "src": "assets/plates/18dotd/vaxagore.webp", "crop": [0.0295, 0.045, 0.9658, 0.8933], "levels": [55, 182] },
-    { "match": "^castle guardsmen \\(impostors\\)$", "book": "18dotd", "src": "data/projectaon/18dotd/ill13.png", "draft": "this book, a picture 1 link before the fight" },
-    { "match": "^eldenoran war-dogs \\(in blood-frenzy\\)$", "book": "18dotd", "src": "assets/plates/hounds-stag-wellcome.jpg", "draft": "stand-in" },
-    { "match": "^eldenoran war-dogs \\(in blood-frenzy\\)$", "book": "18dotd", "src": "assets/plates/hounds-stag-wellcome.jpg", "draft": "stand-in" },
+    { "match": "castle guardsmen \\(impostors", "book": "18dotd", "src": "assets/plates/05sots/armoury-guard.webp", "crop": [0.1515, 0.0228, 0.6999, 0.9402], "levels": [50, 167] },
+    { "match": "eldenoran war-dogs", "book": "18dotd", "src": "data/projectaon/10tdot/ill4.png", "crop": [0.55, 0.0, 0.45, 0.5] },
+    { "match": "eldenoran ambusher", "book": "18dotd", "src": "data/projectaon/16tlov/ill14.png", "crop": [0.0, 0.22, 1.0, 0.6] },
+    { "match": "eldenoran assault troop", "book": "18dotd", "src": "data/projectaon/18dotd/ill3.png" },
+    { "match": "eldenoran brigands$", "book": "18dotd", "src": "data/projectaon/04tcod/ill12.png" },
+    { "match": "eldenoran thug", "book": "18dotd", "src": "assets/plates/04tcod/drunken-guard.webp" },
     { "match": "^ghost of roark$", "book": "18dotd", "src": "data/projectaon/18dotd/ill14.png", "draft": "this book" },
     { "match": "^lavas$", "book": "18dotd", "src": "data/projectaon/18dotd/ill12.png", "draft": "this book" },
     { "match": "^lavas sky patrol$", "book": "18dotd", "src": "data/projectaon/18dotd/ill12.png", "draft": "this book" },
