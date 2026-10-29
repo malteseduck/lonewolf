@@ -1,0 +1,122 @@
+[
+ {
+  "text": "THE KNAWN PLANES OF EXISTENCE",
+  "box": [
+   722,
+   10,
+   1340,
+   106
+  ],
+  "slant": -90,
+  "conf": 0.97,
+  "retype": false
+ },
+ {
+  "text": "I PLANE OF DARKNESS",
+  "box": [
+   354,
+   1391,
+   659,
+   1446
+  ],
+  "slant": -90,
+  "conf": 0.97,
+  "retype": false
+ },
+ {
+  "text": "9 PLANE \u0394F LIGHT",
+  "box": [
+   1408,
+   1391,
+   1681,
+   1443
+  ],
+  "slant": -0.3,
+  "conf": 0.94,
+  "retype": false
+ },
+ {
+  "text": "CANFLUENCE",
+  "box": [
+   411,
+   1446,
+   639,
+   1495
+  ],
+  "slant": -90,
+  "conf": 0.93,
+  "retype": false
+ },
+ {
+  "text": "4 DAZIARN",
+  "box": [
+   1421,
+   1443,
+   1606,
+   1495
+  ],
+  "slant": -90,
+  "conf": 0.89,
+  "retype": false
+ },
+ {
+  "text": "3 EARTH",
+  "box": [
+   463,
+   1491,
+   628,
+   1556
+  ],
+  "slant": 1.2,
+  "conf": 0.99,
+  "retype": false
+ },
+ {
+  "text": "4 AIR",
+  "box": [
+   692,
+   1496,
+   807,
+   1547
+  ],
+  "slant": -0.4,
+  "conf": 0.96,
+  "retype": false
+ },
+ {
+  "text": "5 FIRE",
+  "box": [
+   880,
+   1495,
+   1012,
+   1550
+  ],
+  "slant": -0.1,
+  "conf": 0.95,
+  "retype": false
+ },
+ {
+  "text": "G WATER",
+  "box": [
+   1188,
+   1497,
+   1336,
+   1551
+  ],
+  "slant": 88.9,
+  "conf": 1,
+  "retype": false
+ },
+ {
+  "text": "I AaN",
+  "box": [
+   1408,
+   1497,
+   1521,
+   1549
+  ],
+  "slant": 88.8,
+  "conf": 0.77,
+  "retype": false
+ }
+]
