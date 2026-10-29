@@ -265,7 +265,8 @@ anywhere else: `game.breakOff()`, the fight unwon and no choice open; ADR 0027).
 records `hero.lastLoss` and `hero.lastWeapon`. `way()` is where it leads: `wounded` once he has lost
 Endurance, `won` by the rounds a win took, `combat.to`, `evade.to`, a stop's `to`. `finish()`: a win
 or a stop marks the fight won (`game.wonCombat`, so the choices open) and goes to `way()` if there is
-one; an evasion goes there; a death only saves. Evasion also needs `evade.if`, waits for the foe to fall to `evade.foeAt` or for the foe `evade.fromFoe` of the list, costs nothing with
+one; a win with none takes `game.onlyWay()`, the section's one open choice when nothing else waits there
+(ruling R31); an evasion goes there; a death only saves. Evasion also needs `evade.if`, waits for the foe to fall to `evade.foeAt` or for the foe `evade.fromFoe` of the list, costs nothing with
 `evade.free` (the number drawn with `evade.lose: 'drawn'`), and is shut by `noEvade`. `combat.noStrike`, a Condition, shuts Strike (`round()` refuses it). `combat.breath` (Book 4's underwater fights): the number drawn in
 the section (0 as 10, its `rntMod` added; drawn by the fight if not yet) is the rounds he lasts, and every
 round after costs `breath.each` more, as a `rounds` entry added when the fight begins. The page draws each round's number out of sight (ruling R3).

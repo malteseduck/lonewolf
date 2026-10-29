@@ -357,10 +357,16 @@
       if (this.over === 'stop') return this.stopTo;
       return null;
     }
-    /* The fight is over: the way on. A fight broken off opens the section's choices as a win does. */
+    /* The fight is over: the way on. A fight broken off opens the section's choices as a win does;
+       a win with no way of its own takes the section's one open choice (ruling R31). */
     finish() {
       const g = this.game, to = this.way();
-      if (this.over === 'win' || this.over === 'stop') { g.wonCombat(); if (to) g.go(to, this.over === 'win' ? this.words.won : 'The fight is broken off'); }
+      if (this.over === 'win' || this.over === 'stop') {
+        g.wonCombat();
+        const only = !to && this.over === 'win' && g.onlyWay();
+        if (to) g.go(to, this.over === 'win' ? this.words.won : 'The fight is broken off');
+        else if (only) g.choose(only);
+      }
       else if (this.over === 'evade') g.go(to, this.words.left);
       else if (this.over === 'broken') g.breakOff();
       else g.save();

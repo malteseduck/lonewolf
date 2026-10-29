@@ -16,6 +16,7 @@ Cite a ruling by its id: "ruling R1".
 | R3 | **A fight draws its Random Numbers out of sight**: Strike and Evade draw at once (`LW.rand10()`), no medallion, the log still saying the number. A section's own Random Number is still spun on the page. | `battleAct` (main.js) | 2026-10-12 |
 | R23 | **An obstacle is fought as a foe with no mind, and leaving it costs no blow.** A door fought as an enemy (combat `kind: 'obstacle'`, Book 6's 156, Book 7's 214) cannot strike him as he goes: the way out the text gives is free, named "Leave it". Mindblast does not touch it, but Psi-surge and Kai-surge do, since the Magnakai books' Psi-surge shakes objects apart: it is fought as immune to Mindblast only (`immune: 'mindblast'`). | `Fight#evades`, the `Fight` constructor (shared/fight.js) | 2026-10-27 |
 | R24 | Mindblast and an obstacle: now ruling R23. | ruling R23 | 2026-10-27 |
+| R31 | **A won fight with no way on of its own goes straight to the section's one open choice.** "Turn the page" takes it when exactly one choice is open and it needs no draw, and the section has no Random Number, puzzle, trade, stake, game, loss to choose or find left to take; otherwise the choices open as before. Wins only, not a stop or an evasion. | `Game#onlyWay` (shared/core.js), `Fight#finish` (shared/fight.js) | 2026-10-28 |
 
 ## Book readings
 

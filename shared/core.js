@@ -738,6 +738,15 @@
        by-hand turn box); fighting it after all clears it */
     breakOff() { (this.s.broken = this.s.broken || {})[this.s.at] = true; this.save(); }
     get brokenOff() { return !!(this.s.broken && this.s.broken[this.s.at]); }
+    /* after a fight won with no way on of its own: the one choice open, to take at once (ruling R31);
+       null when there is a draw, a puzzle, a trade, a stake, a game, or something left here to take */
+    onlyWay() {
+      const sec = this.section;
+      if (sec.rnt || sec.puzzle || sec.game || sec.stake || sec.sell || (this.s.picks || []).length) return null;
+      if (this.loot().some((l) => !l.taken && !l.closed)) return null;
+      const open = this.choices().filter((c) => c.enabled);
+      return open.length === 1 && !open[0].random ? open[0] : null;
+    }
 
     choices() {
       const sec = this.section;

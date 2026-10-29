@@ -136,7 +136,8 @@ apply.
   round is drawn as usual but only the character's loss applies; then the story moves to the
   section given for evading.
 - An enemy may be immune to mind attacks.
-- Combat in a section must be resolved before the section's onward choices open.
+- Combat in a section must be resolved before the section's onward choices open. After a win, when
+  only one choice is open and nothing else waits on the page, the story goes straight on (ruling R31).
 - House rule: a Laumspur potion may be drunk during combat without costing a round. The books
   allow it only after a fight.
 - House rule: the combat ratio counts for +10 at most (ruling R1).

@@ -43,13 +43,35 @@ describe('a fight to the end', () => {
     expect(g.s.fought['1']).toBe(true);
     expect(g.s.at).toBe('3');
   });
-  it('without a way on of its own, leaves him in the section with its choices open', () => {
+  it('without a way on of its own, takes the one way open after a win', () => {
     const { g, f } = fightAt({ enemies: [foe({ ep: 1 })] });
     f.round(drawWhere(5, (r) => r.enemy > 0));
     f.finish();
+    expect(g.s.fought['1']).toBe(true);
+    expect(g.s.at).toBe('2');
+  });
+  /* won at once in section 1, its choices and the section's other fields as given */
+  const wonWith = (choices, more = {}) => {
+    const { g, f } = fightAt({ enemies: [foe({ ep: 1 })] });
+    Object.assign(g.book.sections['1'], { choices }, more);
+    f.round(drawWhere(5, (r) => r.enemy > 0));
+    f.finish();
+    return g;
+  };
+  it('stays with the choices open when more than one way is open', () => {
+    const g = wonWith([{ text: 'on', to: '2' }, { text: 'off', to: '3' }]);
     expect(g.s.at).toBe('1');
     expect(g.combatPending).toBe(false);
-    expect(g.choices().map((c) => c.enabled)).toEqual([true]);
+    expect(g.choices().map((c) => c.enabled)).toEqual([true, true]);
+  });
+  it('takes the one open way when the others are shut to him', () => {
+    expect(wonWith([{ text: 'on', to: '2' }, { text: 'off', to: '3', need: { disc: 'tracking' } }]).s.at).toBe('2');
+  });
+  it('stays when the one way needs a draw, or something is left to take or do here', () => {
+    expect(wonWith([{ text: 'on', random: { table: [[4, '2'], [9, '3']] } }]).s.at).toBe('1');
+    expect(wonWith([{ text: 'on', to: '2' }], { loot: [{ gold: 5 }] }).s.at).toBe('1');
+    expect(wonWith([{ text: 'on', to: '2' }], { rnt: 'auto' }).s.at).toBe('1');
+    expect(wonWith([{ text: 'on', to: '2' }], { puzzle: true }).s.at).toBe('1');
   });
   it('ends his adventure when his Endurance runs out, never below 0', () => {
     const { g, f } = fightAt({ enemies: [foe({ cs: 40 })] }, mkHero({ ep: 1 }));

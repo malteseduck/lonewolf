@@ -235,7 +235,8 @@ one blow" (or "untouched" with `evade.free`) when `B.evadeOpen`, "too late" when
 shown at all with `noEvade`. The log names each change for some rounds as it begins
 and ends. When `B.over` is set the left page
 shows the outcome and a "Turn the page" button, which calls `endBattle` (`B.finish()`) to move the
-story on.
+story on: to the fight's own way on, or after a win to the section's one open choice (ruling R31),
+else back to the section with its choices open.
 
 ## Art pipeline (`plates.js`, `shared/ink.js`)
 
