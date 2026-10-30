@@ -66,6 +66,8 @@ export const SECTIONS = {
   1: { give: [{ item: 'scroll16' }] },
   4: { ep: -2, take: [{ pick: ['backpack'], n: 3 }] },
   5: { need: { 330: bowArrows } },
+  // won within five rounds, or broken off before the sixth as his men come
+  14: { fight: { stop: { after: 5, to: '145' }, to: '25' } },
   18: { take: [{ at: [2], last: true }] },
   19: { ep: -3 },
   // the second ale: a Crown, or with none an item of like worth or nothing (footnote 6)
