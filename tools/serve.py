@@ -468,6 +468,8 @@ ADMIN_STAGES = {
     'rules-diff': {'title': 'Diff rules', 'folder': True, 'timeout': 120, 'cmds': lambda c: [PY + ['tools/rules_diff.py', c, '--json']]},
     # the map's style draft (D8, ADR 0036): title and key from the label list, into maps/<code>/style.txt, never over the book's own
     'map-style': {'title': 'Draft map style', 'folder': True, 'timeout': 60, 'cmds': lambda c: [PY + ['tools/map_labels.py', 'style', f'maps/{c}/labels.json']]},
+    # the labels' first pass, its scripted half (ADR 0004); a list already there is not drafted or cleaned again
+    'map-review': {'title': 'Prepare first pass', 'folder': True, 'timeout': 1500, 'cmds': lambda c: [PY + ['tools/map_review.py', 'prepare', c]]},
     # step 3's scan (ADR 0036): reads book.js, writes only phrasings.json beside it
     'phrasings-scan': {'title': 'Scan phrasings', 'folder': True, 'timeout': 120, 'cmds': lambda c: [PY + ['tools/phrasings_scan.py', c, '--json']]},
     # Real-ESRGAN on the PC: fetches nothing, writes only <name>-2x.webp beside each original (ADR 0031)

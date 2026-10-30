@@ -23,6 +23,13 @@ letter; see "How Book 1 got here" below.
 
 ## The chain, per book
 
+**The first pass** (ADR 0004; its steps in `maps/AGENTS.md`): the dashboard's Map step has "Prepare
+first pass", which runs `map_review.py prepare <book>`: upscale and draft and clean where they are not
+done (a list already there is neither drafted nor cleaned again), then measure, erase, letter, the
+review sheets and `work/map-review-fonts.jpg`, the map's names beside each font held. The prompt
+beside it hands the rest to a fresh Claude Code session: the font, the corrections, the check and the
+style. The owner then finishes in the editor from the short list it leaves.
+
 The map editor, opened only inside the import dashboard (`http://localhost:8766/tools/admin/`, a book's Map step: "Open map editor" or a map step's Open) (served by `python tools/serve.py`, on this PC
 only; inside the dashboard's Map step, which picks the book and follows the files the editor changes: `docs/reference/dashboard.md`), walks through every step below in one page: a rail of the ten stages (upscale, draft, labels,
 measure, lettering, erase and letter, Gemini, check, finish, import), each marked done, not done or
@@ -82,14 +89,21 @@ Commands run from the project root as
    where that pass gave 45 (2026-10-19). Reads of one letter repeated (a pair of trees as "TT") and
    short reads on end within 80 px of the edge (the frame's ornament) are dropped: 6 on Book 7, none
    of the owner's labels on Books 3-6 and 12. What it misses is hand lettering slanted over mountains or
-   trees. Each read keeps OCR's `slant` (degrees), which the measure below takes where the ink's own
+   trees. **Cleaning the draft**: `map_review.py clean <book>`, run by the agent before it reads the
+   list (ADR 0004, "first pass"), drops reads no one could want as a name (a number away from the
+   scale, another script's symbols, a letter three times over, two letters or three in lower case that
+   are no word of the books), strips a symbol read onto a name, mends a word one letter off a name the
+   books hold (marked `mended`: the word as read, and flagged on the sheet), and joins two lines the
+   books hold as one name. On the five drafts of Books 14 and 16-19 it dropped 57 reads and none the
+   lists kept, and 37 mends had 2 wrong; on the owner's checked lists with their marks taken off it
+   drops nothing, joins 3 and mends 11 right names, which is why a mend is flagged. It
+   leaves a label alone once it has `named` or a hand `set`. Each read keeps OCR's `slant` (degrees), which the measure below takes where the ink's own
    axis is 3 to 20 degrees off it (a road or tree in the box skews the ink; further off, OCR misread
    a short word): on Books 3-6 and 12 that halved the names set more than 3 degrees from the
    owner's hand angle. Without the venv, EasyOCR (on Book 1 most came back as a stray digit). **The owner** corrects every
-   wording and box by eye in the map editor, and adds what it missed (owner's call, 2026-10-07: the
-   agent does not review the draft, which costs tokens on every map image it looks at; it helps
-   only with names the owner asks about; since 2026-10-19 the owner may also press Find missed
-   labels, below, which spends Sonnet tokens on the map, never the session's). Each entry: `text` (exact, as printed), `box` [x0, y0, x1, y1],
+   wording and box by eye in the map editor, and adds what it missed, after the agent's first pass
+   (ADR 0004; `maps/AGENTS.md` has its budget); the owner may also press Find missed
+   labels, below, which spends Sonnet tokens on the map, never the session's. Each entry: `text` (exact, as printed), `box` [x0, y0, x1, y1],
    `where` (its place in words), `small` (hand-lettered), and `retype: true` on every *place name* (erased from the scan and set again in clean type;
    the draft ticks it on every label except those `captions()` finds are surely not a place name
    (D8, 2026-10-15): worded like a label two other maps keep as drawn and none has as a place;
@@ -190,6 +204,16 @@ Commands run from the project root as
    it and fix by hand what the measuring got wrong: `angle` (degrees), `nudge` [dx, dy], `height`
    (px), `lines` (a name stacked over lines, set level), `leading` (their line spacing, 1 = the font's own), `spread` (the scale's numbers). Book 1
    needed about 15 such fixes. Since Book 3 the editor's frame does the same by dragging, as `set`.
+   **The review sheets**: `map_review.py sheet <book>` writes `work/map-review-<n>.jpg`, each set name's
+   scan crop beside its lettered crop, flagged names first and framed in red, and
+   `work/map-review-overview.jpg`, the whole map with every box. `--flagged` leaves out the rest, for
+   the check after a correction pass. It prints the flagged indexes:
+   `overlap` (touches another name's type), `over` (on what the map kept), `left` (ink stays in its box
+   after the erase), `size` (far from the printed name's length, or 1.3 times the map's usual height),
+   `off` (away from the printed name), `none` (could not be set), `mended`. It uses the Letter step's
+   own placement (`map_letter.masks`). With the fixes on Books 15, 18 and 19 taken off it flagged 9 of the
+   11 names fixed by eye; the other two show on the full sheet unflagged. It flags 4 to 18 names a map on
+   Books 14-19, and 24 of 48 on Book 7, lettered as boldly as it is.
 5. **Prompt**: `map_labels.py prompt $L $W/map-prompt-<n>.txt --lettered`. It opens
    with `maps/<code>/style.txt` when the book has one: the default asks for forests and water, and on Book 3
    Gemini painted the snowfields as green woodland and the white sea deep teal (Book 5: the desert
@@ -258,6 +282,8 @@ Commands run from the project root as
 - `tools/map_erase.py`: erases the `retype` labels; its `LabelInk` (which of the scan's pixels belong
   to a label, only along its line of letters) is shared with `map_letter.py`, which measures labels
   with it.
+- `tools/map_review.py`: the agent's first pass: `prepare` and `fonts` (above, "The first pass"), `clean` (step 2) and `sheet` (step 4). Prints
+  counts and label indexes, never wordings.
 - `tools/map_check.py`: SIFT homography of the repaint onto `map-2k.png` (edge error 1-4 px), saved
   as `H.json`; then a 48 px grid, red where the hue moved (Lab a*b* distance over 25), blue where
   outlines were added or lost. On Book 4 the blue cells found exactly Gemini's added forest.
@@ -277,7 +303,7 @@ Commands run from the project root as
   in angular chisel strokes, so it has `DarklandHand-Regular.ttf` (Thin from 2026-10-16, Regular the same day: Thin looked faint beside the repaint), drawn for it after no
   free font matched (Architects Daughter before it, tried against Patrick Hand, Kalam, Neucha and
   Comic Neue on 2026-10-10; Norse and runic fonts on 2026-10-16). Its names' hand-set sizes were
-  scaled then so each spans the printed name's length. Book 9's map has `DarklandSerif-Regular.ttf` (2026-10-20), drawn for it: Darkland Hand with the serifs of its broad-pen hand.
+  scaled then so each spans the printed name's length. Book 9's map has `DarklandSerif-Regular.ttf` (2026-10-20), drawn for it: Darkland Hand with the serifs of its broad-pen hand. Books 14-17 have Darkland Hand Regular, Book 18 its Bold and Book 19 `Almendra-Regular.ttf` (2026-10-30; ADR 0004).
 - The comparison page, `work/compare.html` in a book's folder (git-ignored): two panes, synced pan and
   zoom, any version in each, file sizes in the menu. Copy Book 1's and edit its file list (the scan
   and the finished map are `../map.png` and `../map-4k.webp` from there).

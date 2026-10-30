@@ -121,7 +121,8 @@ tools/
   map_upscale.py            Real-ESRGAN upscale of a printed map to a set width, saved as WebP or PNG
   ill_upscale.py            Real-ESRGAN upscale of a book's illustrations to 2x, each saved as <name>-2x.webp beside it
   map_check.py              aligns a repainted map to the faithful one, flags colour and shape changes
-                            (both: docs/reference/map-upscale.md; Python in tools/.venv)
+  map_review.py             cleans a map's OCR draft and makes the sheets the agent reads the labels from
+                            (the three: docs/reference/map-upscale.md; Python in tools/.venv)
   realesrgan/               git-ignored. Real-ESRGAN's Windows build, used by map_upscale.py and ill_upscale.py
                             (setup.py install realesrgan fetches it)
 about/                      committed: what each picture and enemy is, in our own words (foe-about.json,

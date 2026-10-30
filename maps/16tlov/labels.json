@@ -1,0 +1,1056 @@
+[
+ {
+  "text": "THE DARKLANDS",
+  "box": [
+   266,
+   311,
+   474,
+   335
+  ],
+  "slant": -0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    370.0,
+    324.0
+   ],
+   "angle": 0.17,
+   "length": 200.0,
+   "thick": 16.6,
+   "box": [
+    266,
+    311,
+    474,
+    335
+   ]
+  }
+ },
+ {
+  "text": "Kai Monastery",
+  "box": [
+   1486,
+   315,
+   1648,
+   343
+  ],
+  "slant": 1.0,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1567.9,
+    331.0
+   ],
+   "angle": 1.05,
+   "length": 153.9,
+   "thick": 17.4,
+   "box": [
+    1486,
+    315,
+    1648,
+    343
+   ]
+  }
+ },
+ {
+  "text": "TYSO",
+  "box": [
+   1678,
+   308,
+   1739,
+   330
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1708.9,
+    320.7
+   ],
+   "angle": 1.79,
+   "length": 56.2,
+   "thick": 14.7,
+   "box": [
+    1678,
+    308,
+    1739,
+    330
+   ]
+  }
+ },
+ {
+  "text": "Durncrag Mtns",
+  "box": [
+   1269,
+   360,
+   1437,
+   389
+  ],
+  "slant": -0.4,
+  "conf": 0.97,
+  "retype": true,
+  "ink": {
+   "at": [
+    1354.0,
+    377.8
+   ],
+   "angle": 0.44,
+   "length": 154.0,
+   "thick": 20.4,
+   "box": [
+    1269,
+    360,
+    1437,
+    389
+   ]
+  }
+ },
+ {
+  "text": "KAAG",
+  "box": [
+   907,
+   431,
+   974,
+   452
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    941.5,
+    442.0
+   ],
+   "angle": 0.41,
+   "length": 59.0,
+   "thick": 14.3,
+   "box": [
+    907,
+    431,
+    974,
+    452
+   ]
+  }
+ },
+ {
+  "text": "HOLMGARD",
+  "box": [
+   1642,
+   502,
+   1765,
+   519
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1703.9,
+    508.6
+   ],
+   "angle": -1.7,
+   "length": 118.2,
+   "thick": 19.5,
+   "box": [
+    1642,
+    502,
+    1765,
+    519
+   ]
+  }
+ },
+ {
+  "text": "SOMMERLUND",
+  "box": [
+   1588,
+   565,
+   1770,
+   586
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1679.5,
+    576.5
+   ],
+   "angle": 0.52,
+   "length": 175.0,
+   "thick": 16.5,
+   "box": [
+    1588,
+    565,
+    1770,
+    586
+   ]
+  }
+ },
+ {
+  "text": "Reclaimed Wasteland",
+  "box": [
+   1080,
+   787,
+   1195,
+   826
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": true,
+  "lines": [
+   "Reclaimed",
+   "Wasteland"
+  ],
+  "ink": {
+   "at": [
+    1137.5,
+    806.3
+   ],
+   "angle": 1.09,
+   "length": 110.8,
+   "thick": 34.6,
+   "box": [
+    1080,
+    787,
+    1195,
+    826
+   ]
+  }
+ },
+ {
+  "text": "NADGAZAD",
+  "box": [
+   270,
+   851,
+   401,
+   871
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    336.5,
+    857.8
+   ],
+   "angle": 0.66,
+   "length": 123.1,
+   "thick": 21.1,
+   "box": [
+    270,
+    851,
+    401,
+    871
+   ]
+  }
+ },
+ {
+  "text": "ESHNAR",
+  "box": [
+   1679,
+   894,
+   1765,
+   911
+  ],
+  "slant": 0.0,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1723.0,
+    902.5
+   ],
+   "angle": 0.37,
+   "length": 82.1,
+   "thick": 13.5,
+   "box": [
+    1679,
+    894,
+    1765,
+    911
+   ]
+  }
+ },
+ {
+  "text": "Helgor Trail",
+  "box": [
+   346,
+   926,
+   427,
+   1060
+  ],
+  "slant": -25.0,
+  "conf": 0.97,
+  "retype": true,
+  "ink": {
+   "at": [
+    390.1,
+    993.6
+   ],
+   "angle": 64.88,
+   "length": 122.6,
+   "thick": 17.2,
+   "box": [
+    346,
+    926,
+    427,
+    1060
+   ]
+  }
+ },
+ {
+  "text": "R.Xane",
+  "box": [
+   1384,
+   942,
+   1464,
+   966
+  ],
+  "slant": 2.2,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1424.9,
+    954.5
+   ],
+   "angle": 4.67,
+   "length": 70.7,
+   "thick": 12.4,
+   "box": [
+    1384,
+    942,
+    1464,
+    966
+   ]
+  }
+ },
+ {
+  "text": "Ruanon Forest",
+  "box": [
+   1488,
+   934,
+   1650,
+   956
+  ],
+  "slant": 0.0,
+  "conf": 0.93,
+  "retype": true,
+  "ink": {
+   "at": [
+    1567.0,
+    943.5
+   ],
+   "angle": 0.15,
+   "length": 148.0,
+   "thick": 15.2,
+   "box": [
+    1488,
+    934,
+    1650,
+    956
+   ]
+  }
+ },
+ {
+  "text": "Lake Kazonara",
+  "box": [
+   496,
+   983,
+   613,
+   1032
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": false,
+  "lines": [
+   "Lake",
+   "Kazonara"
+  ]
+ },
+ {
+  "text": "Lake Vorndarol",
+  "box": [
+   728,
+   979,
+   841,
+   1023
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": false,
+  "lines": [
+   "Lake",
+   "Vorndarol"
+  ]
+ },
+ {
+  "text": "Falls of Lamenta",
+  "box": [
+   1056,
+   1009,
+   1156,
+   1049
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": true,
+  "lines": [
+   "Falls of",
+   "Lamenta"
+  ],
+  "ink": {
+   "at": [
+    1109.0,
+    1027.5
+   ],
+   "angle": 0.0,
+   "length": 90.0,
+   "thick": 35.0,
+   "box": [
+    1056,
+    1009,
+    1156,
+    1049
+   ]
+  }
+ },
+ {
+  "text": "RUANON",
+  "box": [
+   1444,
+   1033,
+   1534,
+   1058
+  ],
+  "slant": 0,
+  "conf": 0.87,
+  "retype": true,
+  "ink": {
+   "at": [
+    1490.5,
+    1050.0
+   ],
+   "angle": 0.0,
+   "length": 93.0,
+   "thick": 22.0,
+   "box": [
+    1444,
+    1033,
+    1534,
+    1058
+   ]
+  }
+ },
+ {
+  "text": "Maakengorge",
+  "box": [
+   1176,
+   1069,
+   1337,
+   1128
+  ],
+  "slant": 11.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1260.7,
+    1104.8
+   ],
+   "angle": 11.65,
+   "length": 157.3,
+   "thick": 24.2,
+   "box": [
+    1176,
+    1069,
+    1337,
+    1128
+   ]
+  }
+ },
+ {
+  "text": "Maaken Mines",
+  "box": [
+   1590,
+   1083,
+   1675,
+   1121
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": true,
+  "lines": [
+   "Maaken",
+   "Mines"
+  ],
+  "ink": {
+   "at": [
+    1632.5,
+    1103.0
+   ],
+   "angle": 0.0,
+   "length": 77.0,
+   "thick": 32.0,
+   "box": [
+    1590,
+    1083,
+    1675,
+    1121
+   ]
+  }
+ },
+ {
+  "text": "KARKASTE",
+  "box": [
+   890,
+   1157,
+   1000,
+   1184
+  ],
+  "slant": 0.6,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    940.0,
+    1172.6
+   ],
+   "angle": -0.52,
+   "length": 108.1,
+   "thick": 13.7,
+   "box": [
+    890,
+    1157,
+    1000,
+    1184
+   ]
+  }
+ },
+ {
+  "text": "The Zaut",
+  "box": [
+   1081,
+   1132,
+   1185,
+   1158
+  ],
+  "slant": 0.3,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1132.5,
+    1148.5
+   ],
+   "angle": 0.3,
+   "length": 111.1,
+   "thick": 24.6,
+   "box": [
+    1081,
+    1132,
+    1185,
+    1158
+   ]
+  }
+ },
+ {
+  "text": "Doom Falls",
+  "box": [
+   1315,
+   1134,
+   1381,
+   1174
+  ],
+  "slant": 0,
+  "conf": 0.87,
+  "retype": true,
+  "lines": [
+   "Doom",
+   "Falls"
+  ],
+  "ink": {
+   "at": [
+    1351.5,
+    1152.5
+   ],
+   "angle": 0.0,
+   "length": 65.0,
+   "thick": 35.0,
+   "box": [
+    1315,
+    1134,
+    1381,
+    1174
+   ]
+  }
+ },
+ {
+  "text": "Ruins of Maaken",
+  "box": [
+   1510,
+   1120,
+   1604,
+   1169
+  ],
+  "slant": 0,
+  "conf": 0.87,
+  "retype": true,
+  "lines": [
+   "Ruins of",
+   "Maaken"
+  ],
+  "ink": {
+   "at": [
+    1553.0,
+    1145.0
+   ],
+   "angle": 0.0,
+   "length": 78.0,
+   "thick": 42.0,
+   "box": [
+    1510,
+    1120,
+    1604,
+    1169
+   ]
+  }
+ },
+ {
+  "text": "HELGOR",
+  "box": [
+   527,
+   1183,
+   627,
+   1204
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    577.5,
+    1192.0
+   ],
+   "angle": 0.0,
+   "length": 91.0,
+   "thick": 18.0,
+   "box": [
+    527,
+    1183,
+    627,
+    1204
+   ]
+  }
+ },
+ {
+  "text": "HELIN",
+  "box": [
+   1148,
+   1194,
+   1219,
+   1212
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1183.0,
+    1203.0
+   ],
+   "angle": 0.17,
+   "length": 64.0,
+   "thick": 14.1,
+   "box": [
+    1148,
+    1194,
+    1219,
+    1212
+   ]
+  }
+ },
+ {
+  "text": "Quarlen Range",
+  "box": [
+   1321,
+   1234,
+   1505,
+   1309
+  ],
+  "slant": 14.8,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1411.6,
+    1273.8
+   ],
+   "angle": 14.61,
+   "length": 172.0,
+   "thick": 22.9,
+   "box": [
+    1321,
+    1234,
+    1505,
+    1309
+   ]
+  }
+ },
+ {
+  "text": "MAGADOR",
+  "box": [
+   491,
+   1270,
+   620,
+   1291
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    556.0,
+    1277.5
+   ],
+   "angle": 0.1,
+   "length": 122.0,
+   "thick": 21.1,
+   "box": [
+    491,
+    1270,
+    620,
+    1291
+   ]
+  }
+ },
+ {
+  "text": "Varettian Hills",
+  "box": [
+   1173,
+   1264,
+   1336,
+   1290
+  ],
+  "slant": 0.7,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1254.5,
+    1277.2
+   ],
+   "angle": -0.78,
+   "length": 153.0,
+   "thick": 17.2,
+   "box": [
+    1173,
+    1264,
+    1336,
+    1290
+   ]
+  }
+ },
+ {
+  "text": "R.Quarl",
+  "box": [
+   1474,
+   1271,
+   1559,
+   1331
+  ],
+  "slant": -28.0,
+  "conf": 0.97,
+  "retype": true,
+  "ink": {
+   "at": [
+    1519.7,
+    1309.9
+   ],
+   "angle": -28.0,
+   "length": 95.3,
+   "thick": 31.6,
+   "box": [
+    1474,
+    1271,
+    1559,
+    1331
+   ]
+  }
+ },
+ {
+  "text": "SCHAAN",
+  "box": [
+   335,
+   1301,
+   424,
+   1319
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    379.5,
+    1309.5
+   ],
+   "angle": 0.01,
+   "length": 83.0,
+   "thick": 15.0,
+   "box": [
+    335,
+    1301,
+    424,
+    1319
+   ]
+  }
+ },
+ {
+  "text": "VAKOVAR",
+  "box": [
+   735,
+   1286,
+   837,
+   1309
+  ],
+  "slant": 1.1,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    786.5,
+    1298.6
+   ],
+   "angle": 1.02,
+   "length": 95.2,
+   "thick": 13.6,
+   "box": [
+    735,
+    1286,
+    837,
+    1309
+   ]
+  }
+ },
+ {
+  "text": "R.Storn",
+  "box": [
+   872,
+   1299,
+   924,
+   1395
+  ],
+  "slant": 70.8,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    899.6,
+    1352.3
+   ],
+   "angle": 68.64,
+   "length": 95.8,
+   "thick": 21.4,
+   "box": [
+    872,
+    1299,
+    924,
+    1395
+   ]
+  }
+ },
+ {
+  "text": "LYRIS",
+  "box": [
+   1043,
+   1290,
+   1119,
+   1315
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1081.0,
+    1303.0
+   ],
+   "angle": 0.01,
+   "length": 66.0,
+   "thick": 16.0,
+   "box": [
+    1043,
+    1290,
+    1119,
+    1315
+   ]
+  }
+ },
+ {
+  "text": "TELT",
+  "box": [
+   580,
+   1353,
+   635,
+   1376
+  ],
+  "slant": 0,
+  "conf": 0.94,
+  "retype": true,
+  "ink": {
+   "at": [
+    609.0,
+    1363.9
+   ],
+   "angle": 1.3,
+   "length": 56.2,
+   "thick": 12.7,
+   "box": [
+    580,
+    1353,
+    635,
+    1376
+   ]
+  }
+ },
+ {
+  "text": "VARETTA",
+  "box": [
+   1100,
+   1354,
+   1205,
+   1383
+  ],
+  "slant": 1.2,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1152.0,
+    1369.5
+   ],
+   "angle": -0.19,
+   "length": 94.0,
+   "thick": 13.3,
+   "box": [
+    1100,
+    1354,
+    1205,
+    1383
+   ]
+  }
+ },
+ {
+  "text": "QUARLEN",
+  "box": [
+   1325,
+   1320,
+   1432,
+   1343
+  ],
+  "slant": 1.1,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1379.0,
+    1332.1
+   ],
+   "angle": 0.26,
+   "length": 100.0,
+   "thick": 13.7,
+   "box": [
+    1325,
+    1320,
+    1432,
+    1343
+   ]
+  }
+ },
+ {
+  "text": "SCALE IN MILES",
+  "box": [
+   1577,
+   1364,
+   1747,
+   1388
+  ],
+  "slant": -0.3,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "The MAAKENGORGE",
+  "box": [
+   300,
+   1425,
+   690,
+   1456
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "& Surrounding Territories",
+  "box": [
+   256,
+   1456,
+   737,
+   1496
+  ],
+  "slant": 0.2,
+  "conf": 0.96,
+  "retype": false
+ },
+ {
+  "text": "MOUNTAINS",
+  "box": [
+   856,
+   1444,
+   996,
+   1467
+  ],
+  "slant": 0.8,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "HILLS",
+  "box": [
+   1139,
+   1445,
+   1216,
+   1472
+  ],
+  "slant": -1.5,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "ROADS",
+  "box": [
+   1412,
+   1449,
+   1494,
+   1470
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "TRACKS",
+  "box": [
+   1682,
+   1449,
+   1774,
+   1470
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ }
+]

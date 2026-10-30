@@ -244,6 +244,9 @@ def place(base, mask, lh, centre, ang):
     mask = mask.rotate(deg, resample=Image.BICUBIC, expand=True)
     x = int(round(centre[0] - mask.width / 2))
     y = int(round(centre[1] - mask.height / 2))
+    if PHASE == 'mask':  # masks(): where the type goes, nothing painted
+        PLACED.append((x, y, np.asarray(mask) > 40))
+        return
     region = np.asarray(base.crop((x, y, x + mask.width, y + mask.height)))
     if PHASE == 'wipe':  # every wipe before any drawing, or one name's wipe eats the last one's type
         base.paste(Image.fromarray(wipe(region, np.asarray(mask), lh)), (x, y))
@@ -256,6 +259,35 @@ def place(base, mask, lh, centre, ang):
 
 WIPE = False  # set in main: on a repaint, clear Gemini's own try at a name before setting it
 PHASE = 'draw'
+PLACED = []  # masks(): each piece of type as (x, y, mask)
+
+
+def masks(scan, labels, hand, caps):
+    """{label index: the pixels its type covers on the scan's frame}, for each name the Letter step
+    sets (map_review.py). The same placement as letter(), at map-2k size."""
+    global K, WIPE, COMMON, PHASE
+    was = K, WIPE, COMMON, PHASE
+    h, w = scan.shape[:2]
+    out = {}
+    try:
+        scan_ink = LabelInk(scan, labels)
+        K, WIPE, PHASE = 1, False, 'mask'
+        COMMON = common_size(labels, scan_ink, hand, caps)
+        for i, lab in enumerate(labels):
+            if not (lab.get('retype') or lab.get('fix')):
+                continue
+            PLACED.clear()
+            letter(None, lab, scan_ink, hand, caps, 1)
+            if PLACED:
+                m = np.zeros((h, w), bool)
+                for x, y, part in PLACED:
+                    x0, y0, x1, y1 = max(x, 0), max(y, 0), min(x + part.shape[1], w), min(y + part.shape[0], h)
+                    if x0 < x1 and y0 < y1:
+                        m[y0:y1, x0:x1] |= part[y0 - y:y1 - y, x0 - x:x1 - x]
+                out[i] = m
+    finally:
+        K, WIPE, COMMON, PHASE = was
+    return out
 
 
 def wipe(region, mask, lh):

@@ -209,6 +209,7 @@ so a map step and a dashboard job never run together (409 while busy; each side 
 | `import` | `import_projectaon.py <code>` (books the importer knows) | yes, every time: it rewrites `book.js` |
 | `reading` | `reading_copy.py <code>`, then `item_sections.py <code>` | |
 | `map-style` | `map_labels.py style maps/<code>/labels.json`: a first `style.txt` from the label list's title and key (map-upscale.md, step 5), never over the book's own ("Draft style" in the map's steps, once the labels are checked) | |
+| `map-review` | `map_review.py prepare <code>`: the labels' first pass, its scripted half (map-upscale.md, "The first pass"): upscale, draft and clean where not done, then measure, erase, letter, the review sheets and the font trial ("Prepare first pass" in the map's steps, until `map-4k.webp` exists; "First pass over the labels" beside it copies the prompt for the rest) | |
 | `phrasings-scan` | `phrasings_scan.py <code> --json`: step 3's leftover scan (importer.md, "The leftover scan"), written to `phrasings.json` beside the book ("Scan phrasings", once imported) | |
 | `rules-diff` | `rules_diff.py <code> --json`: step 4's diff (below, Scripts), written to `rules-diff.json`, `rules-diff.txt` and `rules-draft.md` beside the book ("Diff rules", once the rules pages are on disk) | |
 | `walk` | `node walk_book.mjs <code> --json`: step 6's walk (rules-engine.md, "The walk"), written to `walk.json` beside the book ("Walk the book", once imported) | |
@@ -298,7 +299,7 @@ downloads and imports still need the owner's word (AGENTS.md).
 
 `tools/admin/prompts.js`, one per agent step: phrasings (3), rules addendum (4), item table (5, and
 a fix prompt when `check_items` reports errors), test play-through (6), fight pictures (7), the map's
-style and its retype ticks, and a new book the importer does not know; and `pictureFor()`, step 7's
+first pass, style and retype ticks, and a new book the importer does not know; and `pictureFor()`, step 7's
 narrowed to one enemy or to the cards selected, which the picture sheet's Prompt buttons copy. Each is pasted into a fresh
 Claude Code session in the project, which loads AGENTS.md by itself, so a prompt does not repeat its
 rules: it gives the book, the figures the dashboard has (counts only, never the books' words), the

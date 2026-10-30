@@ -1,6 +1,6 @@
 [
  {
-  "text": "Dojkunta",
+  "text": "Dejkunta",
   "box": [
    636,
    194,
@@ -9,7 +9,22 @@
   ],
   "slant": -0.8,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    684.0,
+    211.7
+   ],
+   "angle": 0.68,
+   "length": 88.1,
+   "thick": 19.1,
+   "box": [
+    636,
+    194,
+    735,
+    224
+   ]
+  }
  },
  {
   "text": "SOMMERLUND",
@@ -21,25 +36,13 @@
   ],
   "slant": 0.6,
   "conf": 0.99,
-  "retype": true
+  "retype": false
  },
  {
-  "text": "\u5317\u6c34",
-  "box": [
-   425,
-   310,
-   448,
-   356
-  ],
-  "slant": -78.6,
-  "conf": 0.77,
-  "retype": true
- },
- {
-  "text": "& DARKLANDS",
+  "text": "THE & DARKLANDS",
   "box": [
    1346,
-   292,
+   262,
    1618,
    361
   ],
@@ -57,10 +60,25 @@
   ],
   "slant": -50.7,
   "conf": 1.0,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1149.9,
+    417.2
+   ],
+   "angle": -51.15,
+   "length": 190.1,
+   "thick": 21.4,
+   "box": [
+    1073,
+    327,
+    1225,
+    503
+   ]
+  }
  },
  {
-  "text": "Orgndtexna",
+  "text": "Orgadtezna",
   "box": [
    398,
    375,
@@ -69,22 +87,25 @@
   ],
   "slant": 0.5,
   "conf": 0.95,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    467.5,
+    390.7
+   ],
+   "angle": 0.3,
+   "length": 129.0,
+   "thick": 22.9,
+   "box": [
+    398,
+    375,
+    540,
+    405
+   ]
+  }
  },
  {
-  "text": "1x",
-  "box": [
-   445,
-   395,
-   478,
-   416
-  ],
-  "slant": 78.4,
-  "conf": 0.93,
-  "retype": true
- },
- {
-  "text": "The Kaltorsee",
+  "text": "The Kaltersee",
   "box": [
    1356,
    378,
@@ -93,10 +114,25 @@
   ],
   "slant": 2.0,
   "conf": 0.98,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1443.9,
+    392.6
+   ],
+   "angle": 2.11,
+   "length": 168.4,
+   "thick": 15.9,
+   "box": [
+    1356,
+    378,
+    1532,
+    405
+   ]
+  }
  },
  {
-  "text": "Point Vaphna",
+  "text": "Point Vashna",
   "box": [
    1222,
    424,
@@ -105,31 +141,53 @@
   ],
   "slant": 1.3,
   "conf": 0.98,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1301.0,
+    439.2
+   ],
+   "angle": 2.1,
+   "length": 150.4,
+   "thick": 15.8,
+   "box": [
+    1222,
+    424,
+    1380,
+    452
+   ]
+  }
  },
  {
-  "text": "Gcurdanak",
+  "text": "Gourdanak Mtns",
   "box": [
    863,
    486,
    983,
-   507
-  ],
-  "slant": 0.5,
-  "conf": 0.95,
-  "retype": true
- },
- {
-  "text": "Mins",
-  "box": [
-   898,
-   506,
-   957,
    531
   ],
-  "slant": 3.0,
-  "conf": 1.0,
-  "retype": true
+  "slant": 0,
+  "conf": 0.95,
+  "retype": true,
+  "lines": [
+   "Gourdanak",
+   "Mtns"
+  ],
+  "ink": {
+   "at": [
+    922.7,
+    508.6
+   ],
+   "angle": 1.95,
+   "length": 114.2,
+   "thick": 36.5,
+   "box": [
+    863,
+    486,
+    983,
+    531
+   ]
+  }
  },
  {
   "text": "Dajdokritzaga",
@@ -141,43 +199,80 @@
   ],
   "slant": 1.5,
   "conf": 0.96,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    352.9,
+    542.3
+   ],
+   "angle": 2.72,
+   "length": 156.4,
+   "thick": 19.9,
+   "box": [
+    277,
+    526,
+    436,
+    558
+   ]
+  }
  },
  {
-  "text": "RUINSOF",
+  "text": "RUINS OF HELGEDAD",
   "box": [
-   344,
+   340,
    593,
-   475,
-   617
+   479,
+   644
   ],
-  "slant": 0.4,
+  "slant": 0,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "lines": [
+   "RUINS OF",
+   "HELGEDAD"
+  ],
+  "ink": {
+   "at": [
+    411.6,
+    619.0
+   ],
+   "angle": 2.14,
+   "length": 131.7,
+   "thick": 45.0,
+   "box": [
+    340,
+    593,
+    479,
+    644
+   ]
+  }
  },
  {
-  "text": "GARGAZAD",
+  "text": "ARGAZAD",
   "box": [
-   1020,
-   594,
+   1046,
+   598,
    1188,
    640
   ],
   "slant": -2.3,
   "conf": 0.98,
-  "retype": true
- },
- {
-  "text": "HELGEDAD",
-  "box": [
-   340,
-   618,
-   479,
-   644
-  ],
-  "slant": 0.8,
-  "conf": 1.0,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1112.5,
+    619.1
+   ],
+   "angle": 0.31,
+   "length": 141.0,
+   "thick": 28.5,
+   "box": [
+    1046,
+    598,
+    1188,
+    640
+   ]
+  }
  },
  {
   "text": "AARNAK",
@@ -189,7 +284,22 @@
   ],
   "slant": 0.2,
   "conf": 1.0,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    617.0,
+    646.9
+   ],
+   "angle": 0.07,
+   "length": 116.0,
+   "thick": 20.0,
+   "box": [
+    556,
+    629,
+    678,
+    662
+   ]
+  }
  },
  {
   "text": "ANSKAVEN",
@@ -201,22 +311,25 @@
   ],
   "slant": 0.0,
   "conf": 1.0,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1689.5,
+    676.0
+   ],
+   "angle": 0.54,
+   "length": 169.1,
+   "thick": 19.1,
+   "box": [
+    1609,
+    662,
+    1778,
+    689
+   ]
+  }
  },
  {
-  "text": "SAAA",
-  "box": [
-   1540,
-   698,
-   1630,
-   728
-  ],
-  "slant": 2.1,
-  "conf": 0.8,
-  "retype": true
- },
- {
-  "text": "Naogiznya",
+  "text": "Naogizaga",
   "box": [
    500,
    741,
@@ -225,7 +338,22 @@
   ],
   "slant": 0.9,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    565.4,
+    757.1
+   ],
+   "angle": 1.58,
+   "length": 119.3,
+   "thick": 20.4,
+   "box": [
+    500,
+    741,
+    628,
+    770
+   ]
+  }
  },
  {
   "text": "TORAN",
@@ -237,7 +365,22 @@
   ],
   "slant": 1.0,
   "conf": 1.0,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1545.3,
+    740.8
+   ],
+   "angle": 2.12,
+   "length": 109.9,
+   "thick": 20.4,
+   "box": [
+    1494,
+    725,
+    1605,
+    755
+   ]
+  }
  },
  {
   "text": "SOMMERLUND",
@@ -249,7 +392,22 @@
   ],
   "slant": 0.9,
   "conf": 1.0,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1596.1,
+    794.3
+   ],
+   "angle": 1.3,
+   "length": 231.8,
+   "thick": 31.4,
+   "box": [
+    1472,
+    774,
+    1714,
+    812
+   ]
+  }
  },
  {
   "text": "The Holmgulf",
@@ -261,7 +419,22 @@
   ],
   "slant": -33.4,
   "conf": 1.0,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1666.5,
+    867.4
+   ],
+   "angle": -34.21,
+   "length": 180.1,
+   "thick": 24.6,
+   "box": [
+    1594,
+    798,
+    1753,
+    919
+   ]
+  }
  },
  {
   "text": "THE DARKLANDS",
@@ -273,31 +446,53 @@
   ],
   "slant": 0.6,
   "conf": 1.0,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    566.4,
+    871.1
+   ],
+   "angle": 1.02,
+   "length": 269.2,
+   "thick": 31.0,
+   "box": [
+    428,
+    850,
+    705,
+    884
+   ]
+  }
  },
  {
-  "text": "Monastory",
+  "text": "Kai Monastery",
   "box": [
    1403,
-   871,
+   856,
    1528,
    905
   ],
-  "slant": 3.8,
-  "conf": 0.98,
-  "retype": true
- },
- {
-  "text": "Ka\u00ed",
-  "box": [
-   1442,
-   856,
-   1488,
-   880
-  ],
-  "slant": 2.9,
+  "slant": 0,
   "conf": 0.96,
-  "retype": true
+  "retype": true,
+  "lines": [
+   "Kai",
+   "Monastery"
+  ],
+  "ink": {
+   "at": [
+    1463.5,
+    879.5
+   ],
+   "angle": 0.0,
+   "length": 129.0,
+   "thick": 47.0,
+   "box": [
+    1403,
+    856,
+    1528,
+    905
+   ]
+  }
  },
  {
   "text": "TYSO",
@@ -309,10 +504,25 @@
   ],
   "slant": 0.0,
   "conf": 1.0,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1579.0,
+    875.5
+   ],
+   "angle": 0.0,
+   "length": 80.0,
+   "thick": 23.0,
+   "box": [
+    1536,
+    858,
+    1623,
+    887
+   ]
+  }
  },
  {
-  "text": "Durnotag Mtns",
+  "text": "Durncrag Mtns",
   "box": [
    1232,
    915,
@@ -321,7 +531,22 @@
   ],
   "slant": 1.3,
   "conf": 0.98,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1331.9,
+    940.2
+   ],
+   "angle": 1.26,
+   "length": 162.2,
+   "thick": 30.6,
+   "box": [
+    1232,
+    915,
+    1423,
+    955
+   ]
+  }
  },
  {
   "text": "KAAG",
@@ -333,7 +558,22 @@
   ],
   "slant": 1.2,
   "conf": 1.0,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1075.1,
+    941.5
+   ],
+   "angle": 1.91,
+   "length": 98.1,
+   "thick": 26.6,
+   "box": [
+    1030,
+    928,
+    1126,
+    959
+   ]
+  }
  },
  {
   "text": "HOLMGARD",
@@ -345,7 +585,22 @@
   ],
   "slant": 0.0,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1562.4,
+    977.6
+   ],
+   "angle": 0.79,
+   "length": 165.1,
+   "thick": 22.6,
+   "box": [
+    1481,
+    964,
+    1645,
+    988
+   ]
+  }
  },
  {
   "text": "Kagazitzaga",
@@ -357,31 +612,53 @@
   ],
   "slant": 0.9,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    507.5,
+    1034.8
+   ],
+   "angle": 0.42,
+   "length": 131.0,
+   "thick": 19.7,
+   "box": [
+    435,
+    1021,
+    576,
+    1050
+   ]
+  }
  },
  {
-  "text": "RECLAIMED",
-  "box": [
-   1028,
-   1039,
-   1176,
-   1066
-  ],
-  "slant": 1.2,
-  "conf": 1.0,
-  "retype": true
- },
- {
-  "text": "WASTELAND",
+  "text": "RECLAIMED WASTELAND",
   "box": [
    1024,
-   1066,
+   1039,
    1179,
    1092
   ],
-  "slant": 0.7,
+  "slant": 0,
   "conf": 1.0,
-  "retype": false
+  "retype": true,
+  "lines": [
+   "RECLAIMED",
+   "WASTELAND"
+  ],
+  "ink": {
+   "at": [
+    1104.5,
+    1066.1
+   ],
+   "angle": 2.57,
+   "length": 150.3,
+   "thick": 45.4,
+   "box": [
+    1024,
+    1039,
+    1179,
+    1092
+   ]
+  }
  },
  {
   "text": "THE WILDLANDS",
@@ -393,19 +670,22 @@
   ],
   "slant": 1.1,
   "conf": 1.0,
-  "retype": true
- },
- {
-  "text": "ESHNAR TEMEL",
-  "box": [
-   1511,
-   1199,
-   1787,
-   1245
-  ],
-  "slant": 1.6,
-  "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1644.9,
+    1174.5
+   ],
+   "angle": 1.5,
+   "length": 260.4,
+   "thick": 24.1,
+   "box": [
+    1512,
+    1156,
+    1779,
+    1191
+   ]
+  }
  },
  {
   "text": "NADGAZAD",
@@ -417,7 +697,22 @@
   ],
   "slant": 0.0,
   "conf": 1.0,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    664.0,
+    1246.4
+   ],
+   "angle": 0.33,
+   "length": 174.0,
+   "thick": 26.4,
+   "box": [
+    572,
+    1236,
+    754,
+    1264
+   ]
+  }
  },
  {
   "text": "MAGADOR",
@@ -429,10 +724,25 @@
   ],
   "slant": 0.7,
   "conf": 1.0,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    864.0,
+    1230.0
+   ],
+   "angle": 0.0,
+   "length": 170.0,
+   "thick": 28.0,
+   "box": [
+    783,
+    1212,
+    951,
+    1241
+   ]
+  }
  },
  {
-  "text": "Maakengorgo",
+  "text": "Maakengorge",
   "box": [
    1144,
    1239,
@@ -441,7 +751,22 @@
   ],
   "slant": 15.5,
   "conf": 0.97,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1228.9,
+    1278.1
+   ],
+   "angle": 16.34,
+   "length": 156.8,
+   "thick": 17.9,
+   "box": [
+    1144,
+    1239,
+    1313,
+    1313
+   ]
+  }
  },
  {
   "text": "OGIA",
@@ -453,7 +778,22 @@
   ],
   "slant": 0.0,
   "conf": 1.0,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    370.1,
+    1284.1
+   ],
+   "angle": 1.6,
+   "length": 90.2,
+   "thick": 20.2,
+   "box": [
+    322,
+    1261,
+    420,
+    1302
+   ]
+  }
  },
  {
   "text": "L.Vorndarol",
@@ -465,55 +805,49 @@
   ],
   "slant": 0.8,
   "conf": 1.0,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1097.0,
+    1291.1
+   ],
+   "angle": 1.36,
+   "length": 132.3,
+   "thick": 15.1,
+   "box": [
+    1026,
+    1279,
+    1165,
+    1302
+   ]
+  }
  },
  {
-  "text": "RUANONY",
+  "text": "RUANON",
   "box": [
-   1399,
-   1315,
-   1553,
+   1402,
+   1318,
+   1536,
    1350
   ],
   "slant": 0.6,
   "conf": 0.99,
-  "retype": true
- },
- {
-  "text": "ADAAA",
-  "box": [
-   1428,
-   1294,
-   1525,
-   1323
-  ],
-  "slant": -1.4,
-  "conf": 0.71,
-  "retype": true
- },
- {
-  "text": "19",
-  "box": [
-   1674,
-   1287,
-   1695,
-   1301
-  ],
-  "slant": 15.0,
-  "conf": 0.77,
-  "retype": true
- },
- {
-  "text": "ib",
-  "box": [
-   1700,
-   1290,
-   1717,
-   1303
-  ],
-  "slant": 1.8,
-  "conf": 0.73,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1472.0,
+    1335.1
+   ],
+   "angle": 0.68,
+   "length": 131.9,
+   "thick": 22.8,
+   "box": [
+    1402,
+    1318,
+    1536,
+    1350
+   ]
+  }
  },
  {
   "text": "PACK ICE",
@@ -585,7 +919,7 @@
   ],
   "slant": 0.0,
   "conf": 0.92,
-  "retype": true
+  "retype": false
  },
  {
   "text": "150",
@@ -597,7 +931,7 @@
   ],
   "slant": 0.0,
   "conf": 1.0,
-  "retype": true
+  "retype": false
  },
  {
   "text": "TUNDRA",
@@ -624,7 +958,7 @@
   "retype": false
  },
  {
-  "text": "HILLs",
+  "text": "HILLS",
   "box": [
    852,
    1455,
@@ -633,18 +967,6 @@
   ],
   "slant": 0.3,
   "conf": 0.95,
-  "retype": false
- },
- {
-  "text": "Soloonl",
-  "box": [
-   1058,
-   1460,
-   1119,
-   1482
-  ],
-  "slant": -0.6,
-  "conf": 0.7,
   "retype": false
  },
  {
@@ -660,30 +982,6 @@
   "retype": false
  },
  {
-  "text": "44A",
-  "box": [
-   1322,
-   1446,
-   1396,
-   1478
-  ],
-  "slant": 1.0,
-  "conf": 0.83,
-  "retype": false
- },
- {
-  "text": "A4",
-  "box": [
-   1332,
-   1470,
-   1385,
-   1497
-  ],
-  "slant": 1.5,
-  "conf": 0.77,
-  "retype": true
- },
- {
   "text": "FOREST",
   "box": [
    1410,
@@ -693,7 +991,7 @@
   ],
   "slant": 1.1,
   "conf": 1.0,
-  "retype": true
+  "retype": false
  },
  {
   "text": "PLAINS",
@@ -705,6 +1003,60 @@
   ],
   "slant": 1.1,
   "conf": 1.0,
-  "retype": true
+  "retype": false
+ },
+ {
+  "text": "ESHNAR",
+  "box": [
+   1519,
+   1206,
+   1640,
+   1236
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1579.0,
+    1219.5
+   ],
+   "angle": 1.67,
+   "length": 116.5,
+   "thick": 20.8,
+   "box": [
+    1519,
+    1206,
+    1640,
+    1236
+   ]
+  }
+ },
+ {
+  "text": "TEMEL",
+  "box": [
+   1684,
+   1210,
+   1788,
+   1240
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1734.9,
+    1228.7
+   ],
+   "angle": 2.51,
+   "length": 109.3,
+   "thick": 32.1,
+   "box": [
+    1684,
+    1210,
+    1788,
+    1240
+   ]
+  }
  }
 ]

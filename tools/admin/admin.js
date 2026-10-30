@@ -256,6 +256,8 @@ function renderMap(b, state) {
   const rows = [
     ['Upscale the scan to 2K', 'script', has('map-2k.png'), 'map-2k.png', ed(1)],
     ['OCR draft of the labels', 'script', has('labels.json'), `maps/${b.code}/labels.json`, ed(2)],
+    ['Prepare the first pass', 'script', has('map-review-1.jpg'), 'upscale, draft and clean if not done, then letter, review sheets, font trial', has('map-4k.webp') ? null : run('Prepare first pass', 'map-review')],
+    ['First pass over the labels', 'agent', has('labels-checked.txt'), 'font, wordings, places, style; ends in a short list for you', has('map-review-1.jpg') && !has('map-4k.webp') ? prompt('mapReview') : null],
     ['Correct every label by eye', 'owner', has('labels-checked.txt'), 'in the editor', ed(3)],
     ['Untick retype on captions', 'agent', has('labels-checked.txt'), 'the editor\'s Untick captions, then the prompt for what it missed', has('labels.json') ? prompt('mapRetype') : null],
     ['Labels checked', 'owner', has('labels-checked.txt'), 'labels-checked.txt', ed(3)],

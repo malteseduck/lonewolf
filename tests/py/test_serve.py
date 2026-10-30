@@ -322,8 +322,14 @@ def stage(monkeypatch, name, cmds=(('run',),), timeout=30, **spec):
                                                    'cmds': lambda c: [list(a) for a in cmds], **spec})
 
 
+def test_map_review_stage_runs_the_first_pass_for_the_book_named():
+    stage = serve.ADMIN_STAGES['map-review']
+    assert stage['folder'] and not stage.get('gated')
+    assert stage['cmds']('14tcok')[-1][-2:] == ['prepare', '14tcok']
+
+
 def test_admin_stage_table_has_every_stage_with_the_right_gates():
-    assert set(serve.ADMIN_STAGES) == {'fetch', 'fetch-rules', 'import', 'reading', 'items-draft', 'check-items', 'approve-pictures', 'pictures-draft', 'phrasings-scan', 'rules-diff', 'walk', 'add-book', 'map-style',
+    assert set(serve.ADMIN_STAGES) == {'fetch', 'fetch-rules', 'import', 'reading', 'items-draft', 'check-items', 'approve-pictures', 'pictures-draft', 'phrasings-scan', 'rules-diff', 'walk', 'add-book', 'map-style', 'map-review',
                                        'ills', 'fights-up', 'check', 'release',
                                        'setup-venv', 'setup-npm', 'setup-realesrgan', 'setup-ocr', 'setup-art'}
     gated = {k for k, v in serve.ADMIN_STAGES.items() if v.get('gated')}

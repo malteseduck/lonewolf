@@ -1,0 +1,2832 @@
+[
+ {
+  "text": "+ NORTH +",
+  "box": [
+   846,
+   79,
+   1124,
+   115
+  ],
+  "slant": 0,
+  "conf": 0.97,
+  "retype": false
+ },
+ {
+  "text": "SOMMERLUND & THE WILDLANDS",
+  "box": [
+   124,
+   130,
+   926,
+   207
+  ],
+  "slant": -0.1,
+  "conf": 0.89,
+  "retype": false
+ },
+ {
+  "text": "Broka",
+  "box": [
+   1165,
+   127,
+   1257,
+   164
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1213.5,
+    148.0
+   ],
+   "angle": 0.0,
+   "length": 89.0,
+   "thick": 32.0,
+   "box": [
+    1165,
+    127,
+    1257,
+    164
+   ]
+  }
+ },
+ {
+  "text": "Egen",
+  "box": [
+   1140,
+   169,
+   1213,
+   214
+  ],
+  "slant": -2.4,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1175.5,
+    194.6
+   ],
+   "angle": -1.91,
+   "length": 58.8,
+   "thick": 30.5,
+   "box": [
+    1140,
+    169,
+    1213,
+    214
+   ]
+  }
+ },
+ {
+  "text": "Key to Villages",
+  "box": [
+   1578,
+   168,
+   1806,
+   205
+  ],
+  "slant": -0.3,
+  "conf": 0.98,
+  "retype": false
+ },
+ {
+  "text": "The Kaltersee",
+  "box": [
+   295,
+   225,
+   509,
+   268
+  ],
+  "slant": 0.1,
+  "conf": 0.95,
+  "retype": true,
+  "ink": {
+   "at": [
+    402.5,
+    246.3
+   ],
+   "angle": 0.42,
+   "length": 201.1,
+   "thick": 30.6,
+   "box": [
+    295,
+    225,
+    509,
+    268
+   ]
+  }
+ },
+ {
+  "text": "Thet",
+  "box": [
+   1049,
+   235,
+   1129,
+   281
+  ],
+  "slant": 0,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    1091.0,
+    259.0
+   ],
+   "angle": 2.31,
+   "length": 70.4,
+   "thick": 28.8,
+   "box": [
+    1049,
+    235,
+    1129,
+    281
+   ]
+  }
+ },
+ {
+  "text": "& Settlements",
+  "box": [
+   1579,
+   200,
+   1806,
+   235
+  ],
+  "slant": 0.6,
+  "conf": 0.97,
+  "retype": false
+ },
+ {
+  "text": "The Kirlundin Straits",
+  "box": [
+   835,
+   278,
+   1013,
+   572
+  ],
+  "slant": -63.7,
+  "conf": 0.94,
+  "retype": true,
+  "ink": {
+   "at": [
+    923.6,
+    426.5
+   ],
+   "angle": -63.01,
+   "length": 285.9,
+   "thick": 32.2,
+   "box": [
+    835,
+    278,
+    1013,
+    572
+   ]
+  }
+ },
+ {
+  "text": "The Kirlundin Isles",
+  "box": [
+   1130,
+   245,
+   1345,
+   494
+  ],
+  "slant": -51.0,
+  "conf": 0.96,
+  "retype": true,
+  "ink": {
+   "at": [
+    1237.2,
+    369.7
+   ],
+   "angle": -49.89,
+   "length": 261.3,
+   "thick": 33.2,
+   "box": [
+    1130,
+    245,
+    1345,
+    494
+   ]
+  }
+ },
+ {
+  "text": "Barbeach",
+  "box": [
+   1660,
+   270,
+   1780,
+   293
+  ],
+  "slant": 0,
+  "conf": 0.9,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1704.5,
+    281.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1720.5,
+    281.8
+   ],
+   "angle": -0.35,
+   "length": 111.0,
+   "thick": 15.1,
+   "box": [
+    1660,
+    270,
+    1780,
+    293
+   ]
+  }
+ },
+ {
+  "text": "Amber Bay",
+  "box": [
+   1661,
+   250,
+   1798,
+   271
+  ],
+  "slant": 0,
+  "conf": 0.87,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1711.0,
+    260.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1730.5,
+    263.3
+   ],
+   "angle": 0.23,
+   "length": 133.0,
+   "thick": 16.9,
+   "box": [
+    1661,
+    250,
+    1798,
+    271
+   ]
+  }
+ },
+ {
+  "text": "Mateston",
+  "box": [
+   1662,
+   294,
+   1783,
+   317
+  ],
+  "slant": 0,
+  "conf": 0.93,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1705.5,
+    305.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1721.5,
+    306.5
+   ],
+   "angle": -0.04,
+   "length": 113.0,
+   "thick": 11.1,
+   "box": [
+    1662,
+    294,
+    1783,
+    317
+   ]
+  }
+ },
+ {
+  "text": "Farsell",
+  "box": [
+   1662,
+   315,
+   1755,
+   342
+  ],
+  "slant": 0,
+  "conf": 0.99,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1694.5,
+    328.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1704.7,
+    329.3
+   ],
+   "angle": -2.58,
+   "length": 82.1,
+   "thick": 15.9,
+   "box": [
+    1662,
+    315,
+    1755,
+    342
+   ]
+  }
+ },
+ {
+  "text": "ANSKAVEN",
+  "box": [
+   737,
+   340,
+   881,
+   373
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    810.5,
+    357.5
+   ],
+   "angle": -0.02,
+   "length": 139.0,
+   "thick": 29.0,
+   "box": [
+    737,
+    340,
+    881,
+    373
+   ]
+  }
+ },
+ {
+  "text": "Doven",
+  "box": [
+   1659,
+   338,
+   1740,
+   363
+  ],
+  "slant": 0,
+  "conf": 0.91,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1690.0,
+    350.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1700.6,
+    351.4
+   ],
+   "angle": 2.55,
+   "length": 71.1,
+   "thick": 14.2,
+   "box": [
+    1659,
+    338,
+    1740,
+    363
+   ]
+  }
+ },
+ {
+  "text": "Hemd",
+  "box": [
+   1059,
+   387,
+   1143,
+   433
+  ],
+  "slant": -2.1,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1103.4,
+    415.1
+   ],
+   "angle": -2.68,
+   "length": 69.3,
+   "thick": 39.4,
+   "box": [
+    1059,
+    387,
+    1143,
+    433
+   ]
+  }
+ },
+ {
+  "text": "Crowoode",
+  "box": [
+   1661,
+   363,
+   1790,
+   385
+  ],
+  "slant": 0,
+  "conf": 0.86,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1705.5,
+    374.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1726.0,
+    374.5
+   ],
+   "angle": -0.63,
+   "length": 124.0,
+   "thick": 14.2,
+   "box": [
+    1661,
+    363,
+    1790,
+    385
+   ]
+  }
+ },
+ {
+  "text": "Drumfield",
+  "box": [
+   1662,
+   386,
+   1790,
+   408
+  ],
+  "slant": 0,
+  "conf": 0.92,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1708.0,
+    397.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1726.0,
+    397.5
+   ],
+   "angle": -0.08,
+   "length": 124.0,
+   "thick": 19.1,
+   "box": [
+    1662,
+    386,
+    1790,
+    408
+   ]
+  }
+ },
+ {
+  "text": "Jadin Cove",
+  "box": [
+   1660,
+   433,
+   1776,
+   454
+  ],
+  "slant": 0,
+  "conf": 0.96,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1709.0,
+    443.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1718.5,
+    444.1
+   ],
+   "angle": -0.56,
+   "length": 111.1,
+   "thick": 16.8,
+   "box": [
+    1660,
+    433,
+    1776,
+    454
+   ]
+  }
+ },
+ {
+  "text": "Pinestar",
+  "box": [
+   1661,
+   408,
+   1768,
+   432
+  ],
+  "slant": 0,
+  "conf": 0.92,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1700.5,
+    420.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1713.0,
+    422.9
+   ],
+   "angle": -0.38,
+   "length": 98.0,
+   "thick": 15.6,
+   "box": [
+    1661,
+    408,
+    1768,
+    432
+   ]
+  }
+ },
+ {
+  "text": "Icy Point",
+  "box": [
+   1657,
+   453,
+   1769,
+   480
+  ],
+  "slant": 0,
+  "conf": 0.93,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1702.0,
+    466.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1713.5,
+    468.9
+   ],
+   "angle": -0.99,
+   "length": 99.2,
+   "thick": 17.2,
+   "box": [
+    1657,
+    453,
+    1769,
+    480
+   ]
+  }
+ },
+ {
+  "text": "Lancelar",
+  "box": [
+   1659,
+   478,
+   1772,
+   499
+  ],
+  "slant": 0,
+  "conf": 0.84,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1702.5,
+    488.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1716.5,
+    488.2
+   ],
+   "angle": 0.48,
+   "length": 107.1,
+   "thick": 14.6,
+   "box": [
+    1659,
+    478,
+    1772,
+    499
+   ]
+  }
+ },
+ {
+  "text": "TORAN",
+  "box": [
+   392,
+   492,
+   478,
+   527
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    431.0,
+    508.9
+   ],
+   "angle": 1.69,
+   "length": 84.4,
+   "thick": 24.7,
+   "box": [
+    392,
+    492,
+    478,
+    527
+   ]
+  }
+ },
+ {
+  "text": "Monksey",
+  "box": [
+   1660,
+   498,
+   1775,
+   524
+  ],
+  "slant": 0,
+  "conf": 0.92,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1703.0,
+    511.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1718.5,
+    513.3
+   ],
+   "angle": 0.4,
+   "length": 109.0,
+   "thick": 18.7,
+   "box": [
+    1660,
+    498,
+    1775,
+    524
+   ]
+  }
+ },
+ {
+  "text": "Combay",
+  "box": [
+   1660,
+   519,
+   1762,
+   550
+  ],
+  "slant": 0,
+  "conf": 0.87,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1698.5,
+    534.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1709.4,
+    538.1
+   ],
+   "angle": 0.92,
+   "length": 91.0,
+   "thick": 16.7,
+   "box": [
+    1660,
+    519,
+    1762,
+    550
+   ]
+  }
+ },
+ {
+  "text": "R.Tor",
+  "box": [
+   286,
+   522,
+   372,
+   556
+  ],
+  "slant": 1.9,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    331.3,
+    539.4
+   ],
+   "angle": 2.1,
+   "length": 75.3,
+   "thick": 21.4,
+   "box": [
+    286,
+    522,
+    372,
+    556
+   ]
+  }
+ },
+ {
+  "text": "Kirlu",
+  "box": [
+   1072,
+   540,
+   1144,
+   579
+  ],
+  "slant": 0.0,
+  "conf": 0.94,
+  "retype": true,
+  "ink": {
+   "at": [
+    1109.0,
+    559.5
+   ],
+   "angle": 0.0,
+   "length": 60.0,
+   "thick": 27.0,
+   "box": [
+    1072,
+    540,
+    1144,
+    579
+   ]
+  }
+ },
+ {
+  "text": "Skorn",
+  "box": [
+   1662,
+   546,
+   1740,
+   568
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1688.5,
+    557.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1700.5,
+    557.0
+   ],
+   "angle": 1.06,
+   "length": 71.1,
+   "thick": 15.3,
+   "box": [
+    1662,
+    546,
+    1740,
+    568
+   ]
+  }
+ },
+ {
+  "text": "Durncrag Mtns",
+  "box": [
+   97,
+   562,
+   336,
+   614
+  ],
+  "slant": -0.8,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    210.5,
+    592.9
+   ],
+   "angle": 0.57,
+   "length": 232.8,
+   "thick": 33.9,
+   "box": [
+    97,
+    562,
+    336,
+    614
+   ]
+  },
+  "set": {
+   "at": [
+    218,
+    586
+   ],
+   "size": 30.6,
+   "angle": 0
+  }
+ },
+ {
+  "text": "The Holmgulf",
+  "box": [
+   657,
+   587,
+   857,
+   763
+  ],
+  "slant": -39.2,
+  "conf": 0.96,
+  "retype": true,
+  "ink": {
+   "at": [
+    760.1,
+    675.1
+   ],
+   "angle": -39.82,
+   "length": 198.5,
+   "thick": 36.7,
+   "box": [
+    657,
+    587,
+    857,
+    763
+   ]
+  }
+ },
+ {
+  "text": "Rustor",
+  "box": [
+   1660,
+   593,
+   1747,
+   612
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1694.0,
+    602.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1704.0,
+    603.6
+   ],
+   "angle": -0.88,
+   "length": 81.9,
+   "thick": 12.0,
+   "box": [
+    1660,
+    593,
+    1747,
+    612
+   ]
+  }
+ },
+ {
+  "text": "Talla",
+  "box": [
+   1662,
+   569,
+   1725,
+   590
+  ],
+  "slant": 0,
+  "conf": 0.99,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1687.5,
+    579.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1693.0,
+    578.2
+   ],
+   "angle": 1.02,
+   "length": 58.2,
+   "thick": 16.5,
+   "box": [
+    1662,
+    569,
+    1725,
+    590
+   ]
+  }
+ },
+ {
+  "text": "TYSO",
+  "box": [
+   673,
+   647,
+   738,
+   682
+  ],
+  "slant": -3.4,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    703.9,
+    664.2
+   ],
+   "angle": -3.4,
+   "length": 72.1,
+   "thick": 46.0,
+   "box": [
+    673,
+    647,
+    738,
+    682
+   ]
+  },
+  "clip": true,
+  "set": {
+   "at": [
+    706,
+    664
+   ],
+   "size": 32.1,
+   "angle": -3
+  }
+ },
+ {
+  "text": "GULF OF DURENOR",
+  "box": [
+   1159,
+   603,
+   1420,
+   654
+  ],
+  "slant": 0.5,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    1290.5,
+    627.4
+   ],
+   "angle": -0.1,
+   "length": 245.0,
+   "thick": 37.1,
+   "box": [
+    1159,
+    603,
+    1420,
+    654
+   ]
+  }
+ },
+ {
+  "text": "Lennis",
+  "box": [
+   1660,
+   613,
+   1745,
+   638
+  ],
+  "slant": 0,
+  "conf": 0.96,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1692.0,
+    625.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1699.9,
+    625.5
+   ],
+   "angle": -0.95,
+   "length": 72.1,
+   "thick": 16.1,
+   "box": [
+    1660,
+    613,
+    1745,
+    638
+   ]
+  }
+ },
+ {
+  "text": "+ WEST +",
+  "box": [
+   60,
+   648,
+   91,
+   947
+  ],
+  "slant": -90.0,
+  "conf": 0.83,
+  "retype": false
+ },
+ {
+  "text": "Kai Monastery",
+  "box": [
+   252,
+   661,
+   459,
+   698
+  ],
+  "slant": -0.8,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    356.6,
+    681.5
+   ],
+   "angle": -0.53,
+   "length": 197.0,
+   "thick": 32.8,
+   "box": [
+    252,
+    661,
+    459,
+    698
+   ]
+  }
+ },
+ {
+  "text": "Mannon",
+  "box": [
+   1035,
+   650,
+   1148,
+   679
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1092.0,
+    665.2
+   ],
+   "angle": 0.35,
+   "length": 106.1,
+   "thick": 21.0,
+   "box": [
+    1035,
+    650,
+    1148,
+    679
+   ]
+  }
+ },
+ {
+  "text": "Silvershore",
+  "box": [
+   1662,
+   660,
+   1800,
+   680
+  ],
+  "slant": 0,
+  "conf": 0.84,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1712.0,
+    670.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1732.1,
+    670.2
+   ],
+   "angle": 0.81,
+   "length": 136.0,
+   "thick": 17.5,
+   "box": [
+    1662,
+    660,
+    1800,
+    680
+   ]
+  }
+ },
+ {
+  "text": "Carnor",
+  "box": [
+   1662,
+   640,
+   1753,
+   658
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1693.5,
+    649.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1707.9,
+    648.4
+   ],
+   "angle": -1.68,
+   "length": 87.9,
+   "thick": 15.8,
+   "box": [
+    1662,
+    640,
+    1753,
+    658
+   ]
+  }
+ },
+ {
+  "text": "R.Unoram",
+  "box": [
+   325,
+   715,
+   458,
+   757
+  ],
+  "slant": -8.2,
+  "conf": 0.96,
+  "retype": true,
+  "ink": {
+   "at": [
+    386.4,
+    734.6
+   ],
+   "angle": -8.04,
+   "length": 133.1,
+   "thick": 22.3,
+   "box": [
+    325,
+    715,
+    458,
+    757
+   ]
+  }
+ },
+ {
+  "text": "Wreck Pt.",
+  "box": [
+   1038,
+   698,
+   1170,
+   740
+  ],
+  "slant": -0.1,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1105.0,
+    720.3
+   ],
+   "angle": 0.59,
+   "length": 122.2,
+   "thick": 32.8,
+   "box": [
+    1038,
+    698,
+    1170,
+    740
+   ]
+  }
+ },
+ {
+  "text": "Hulst",
+  "box": [
+   1660,
+   683,
+   1727,
+   705
+  ],
+  "slant": 0,
+  "conf": 0.94,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1689.0,
+    694.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1694.4,
+    693.8
+   ],
+   "angle": 0.66,
+   "length": 61.1,
+   "thick": 15.0,
+   "box": [
+    1660,
+    683,
+    1727,
+    705
+   ]
+  }
+ },
+ {
+  "text": "Slate Cove",
+  "box": [
+   1661,
+   708,
+   1778,
+   728
+  ],
+  "slant": 0,
+  "conf": 0.97,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1708.0,
+    718.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1720.0,
+    718.0
+   ],
+   "angle": -0.02,
+   "length": 112.0,
+   "thick": 14.0,
+   "box": [
+    1661,
+    708,
+    1778,
+    728
+   ]
+  }
+ },
+ {
+  "text": "EAST +",
+  "box": [
+   1951,
+   712,
+   1992,
+   907
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "Emerton",
+  "box": [
+   1658,
+   731,
+   1772,
+   753
+  ],
+  "slant": 0,
+  "conf": 0.84,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1700.0,
+    742.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1715.5,
+    741.5
+   ],
+   "angle": 0.06,
+   "length": 105.0,
+   "thick": 11.1,
+   "box": [
+    1658,
+    731,
+    1772,
+    753
+   ]
+  }
+ },
+ {
+  "text": "Raditch",
+  "box": [
+   1658,
+   752,
+   1752,
+   776
+  ],
+  "slant": 0,
+  "conf": 0.93,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1698.0,
+    764.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1705.5,
+    763.5
+   ],
+   "angle": -1.87,
+   "length": 87.0,
+   "thick": 15.7,
+   "box": [
+    1658,
+    752,
+    1752,
+    776
+   ]
+  }
+ },
+ {
+  "text": "Shipser",
+  "box": [
+   1660,
+   774,
+   1751,
+   798
+  ],
+  "slant": 0,
+  "conf": 0.97,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1696.0,
+    786.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1705.1,
+    787.3
+   ],
+   "angle": 0.95,
+   "length": 84.0,
+   "thick": 19.7,
+   "box": [
+    1660,
+    774,
+    1751,
+    798
+   ]
+  }
+ },
+ {
+  "text": "HOLMGARD",
+  "box": [
+   398,
+   816,
+   550,
+   857
+  ],
+  "slant": 0,
+  "conf": 0.96,
+  "retype": true,
+  "ink": {
+   "at": [
+    473.5,
+    836.6
+   ],
+   "angle": -0.32,
+   "length": 146.9,
+   "thick": 32.9,
+   "box": [
+    398,
+    816,
+    550,
+    857
+   ]
+  }
+ },
+ {
+  "text": "Firton",
+  "box": [
+   1659,
+   823,
+   1736,
+   844
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1690.5,
+    833.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1697.0,
+    835.2
+   ],
+   "angle": -1.35,
+   "length": 70.4,
+   "thick": 16.0,
+   "box": [
+    1659,
+    823,
+    1736,
+    844
+   ]
+  }
+ },
+ {
+  "text": "Crovan",
+  "box": [
+   1660,
+   800,
+   1748,
+   818
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1694.0,
+    809.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1704.5,
+    810.4
+   ],
+   "angle": 0.79,
+   "length": 83.0,
+   "thick": 12.0,
+   "box": [
+    1660,
+    800,
+    1748,
+    818
+   ]
+  }
+ },
+ {
+  "text": "Cherrison",
+  "box": [
+   1659,
+   867,
+   1785,
+   892
+  ],
+  "slant": 0,
+  "conf": 0.96,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1705.0,
+    879.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1722.5,
+    877.6
+   ],
+   "angle": 0.67,
+   "length": 119.0,
+   "thick": 16.1,
+   "box": [
+    1659,
+    867,
+    1785,
+    892
+   ]
+  }
+ },
+ {
+  "text": "Chamtree",
+  "box": [
+   1660,
+   842,
+   1784,
+   868
+  ],
+  "slant": 0,
+  "conf": 0.87,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1705.0,
+    855.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1720.5,
+    854.6
+   ],
+   "angle": 0.09,
+   "length": 115.0,
+   "thick": 17.0,
+   "box": [
+    1660,
+    842,
+    1784,
+    868
+   ]
+  }
+ },
+ {
+  "text": "R.Eledil",
+  "box": [
+   253,
+   884,
+   376,
+   949
+  ],
+  "slant": -10.7,
+  "conf": 0.94,
+  "retype": true,
+  "ink": {
+   "at": [
+    310.4,
+    917.7
+   ],
+   "angle": -11.85,
+   "length": 108.8,
+   "thick": 26.6,
+   "box": [
+    253,
+    884,
+    376,
+    949
+   ]
+  }
+ },
+ {
+  "text": "Hitchford",
+  "box": [
+   1658,
+   909,
+   1777,
+   935
+  ],
+  "slant": 0,
+  "conf": 0.86,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1706.0,
+    922.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1718.0,
+    924.0
+   ],
+   "angle": 0.34,
+   "length": 110.1,
+   "thick": 19.9,
+   "box": [
+    1658,
+    909,
+    1777,
+    935
+   ]
+  }
+ },
+ {
+  "text": "Meadowood",
+  "box": [
+   1660,
+   889,
+   1812,
+   910
+  ],
+  "slant": 0,
+  "conf": 0.95,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1716.0,
+    899.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1736.5,
+    899.7
+   ],
+   "angle": -0.54,
+   "length": 147.1,
+   "thick": 15.8,
+   "box": [
+    1660,
+    889,
+    1812,
+    910
+   ]
+  }
+ },
+ {
+  "text": "Southlund Marches",
+  "box": [
+   339,
+   931,
+   640,
+   982
+  ],
+  "slant": -0.5,
+  "conf": 0.92,
+  "retype": true,
+  "ink": {
+   "at": [
+    490.5,
+    956.5
+   ],
+   "angle": -0.12,
+   "length": 281.0,
+   "thick": 31.3,
+   "box": [
+    339,
+    931,
+    640,
+    982
+   ]
+  }
+ },
+ {
+  "text": "Shadow Pass",
+  "box": [
+   1659,
+   932,
+   1816,
+   959
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1719.0,
+    945.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1737.5,
+    947.0
+   ],
+   "angle": 0.73,
+   "length": 147.0,
+   "thick": 19.3,
+   "box": [
+    1659,
+    932,
+    1816,
+    959
+   ]
+  }
+ },
+ {
+  "text": "Oak Hill",
+  "box": [
+   1660,
+   954,
+   1755,
+   979
+  ],
+  "slant": 0,
+  "conf": 0.99,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1700.0,
+    966.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1705.4,
+    967.3
+   ],
+   "angle": -0.85,
+   "length": 84.9,
+   "thick": 16.5,
+   "box": [
+    1660,
+    954,
+    1755,
+    979
+   ]
+  }
+ },
+ {
+  "text": "RAGADORN",
+  "box": [
+   1218,
+   962,
+   1374,
+   998
+  ],
+  "slant": 0.3,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1296.0,
+    980.5
+   ],
+   "angle": -0.0,
+   "length": 146.0,
+   "thick": 31.0,
+   "box": [
+    1218,
+    962,
+    1374,
+    998
+   ]
+  }
+ },
+ {
+  "text": "Searsby",
+  "box": [
+   1660,
+   981,
+   1758,
+   1003
+  ],
+  "slant": 0,
+  "conf": 0.88,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1698.0,
+    992.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1710.0,
+    994.4
+   ],
+   "angle": 0.24,
+   "length": 92.0,
+   "thick": 17.0,
+   "box": [
+    1660,
+    981,
+    1758,
+    1003
+   ]
+  }
+ },
+ {
+  "text": "Deerley",
+  "box": [
+   1659,
+   1022,
+   1756,
+   1052
+  ],
+  "slant": 0,
+  "conf": 0.97,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1696.5,
+    1037.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1706.9,
+    1038.8
+   ],
+   "angle": 1.81,
+   "length": 87.8,
+   "thick": 20.3,
+   "box": [
+    1659,
+    1022,
+    1756,
+    1052
+   ]
+  }
+ },
+ {
+  "text": "Durnfallow",
+  "box": [
+   1660,
+   1002,
+   1805,
+   1026
+  ],
+  "slant": 0,
+  "conf": 0.88,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1714.5,
+    1014.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1733.0,
+    1016.0
+   ],
+   "angle": 0.11,
+   "length": 140.0,
+   "thick": 20.1,
+   "box": [
+    1660,
+    1002,
+    1805,
+    1026
+   ]
+  }
+ },
+ {
+  "text": "Boonwold",
+  "box": [
+   1660,
+   1073,
+   1783,
+   1094
+  ],
+  "slant": 0,
+  "conf": 0.89,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1706.5,
+    1083.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1722.0,
+    1083.6
+   ],
+   "angle": -0.74,
+   "length": 118.1,
+   "thick": 15.9,
+   "box": [
+    1660,
+    1073,
+    1783,
+    1094
+   ]
+  }
+ },
+ {
+  "text": "Stonefurrow",
+  "box": [
+   1661,
+   1051,
+   1823,
+   1073
+  ],
+  "slant": 0,
+  "conf": 0.99,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1718.0,
+    1062.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1742.5,
+    1064.0
+   ],
+   "angle": 0.12,
+   "length": 157.0,
+   "thick": 16.2,
+   "box": [
+    1661,
+    1051,
+    1823,
+    1073
+   ]
+  }
+ },
+ {
+  "text": "Fort Durnspa",
+  "box": [
+   1658,
+   1116,
+   1819,
+   1142
+  ],
+  "slant": 0,
+  "conf": 0.98,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1720.5,
+    1129.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1740.0,
+    1129.9
+   ],
+   "angle": 0.43,
+   "length": 154.1,
+   "thick": 19.4,
+   "box": [
+    1658,
+    1116,
+    1819,
+    1142
+   ]
+  }
+ },
+ {
+  "text": "Worlan",
+  "box": [
+   1660,
+   1094,
+   1758,
+   1115
+  ],
+  "slant": 0,
+  "conf": 0.81,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1696.5,
+    1104.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1709.0,
+    1105.5
+   ],
+   "angle": 0.69,
+   "length": 90.1,
+   "thick": 15.3,
+   "box": [
+    1660,
+    1094,
+    1758,
+    1115
+   ]
+  }
+ },
+ {
+  "text": "Pass of Moytura",
+  "box": [
+   311,
+   1140,
+   467,
+   1380
+  ],
+  "slant": -62.1,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    392.3,
+    1260.5
+   ],
+   "angle": -61.03,
+   "length": 236.6,
+   "thick": 39.1,
+   "box": [
+    311,
+    1140,
+    467,
+    1380
+   ]
+  }
+ },
+ {
+  "text": "The Wildlands",
+  "box": [
+   1058,
+   1136,
+   1272,
+   1184
+  ],
+  "slant": 1.0,
+  "conf": 0.89,
+  "retype": true,
+  "ink": {
+   "at": [
+    1165.9,
+    1159.9
+   ],
+   "angle": 0.88,
+   "length": 200.0,
+   "thick": 30.6,
+   "box": [
+    1058,
+    1136,
+    1272,
+    1184
+   ]
+  }
+ },
+ {
+  "text": "Searsheld",
+  "box": [
+   1661,
+   1138,
+   1783,
+   1165
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1706.0,
+    1151.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1720.5,
+    1151.3
+   ],
+   "angle": -0.6,
+   "length": 113.1,
+   "thick": 16.4,
+   "box": [
+    1661,
+    1138,
+    1783,
+    1165
+   ]
+  }
+ },
+ {
+  "text": "Pickberry",
+  "box": [
+   1660,
+   1162,
+   1782,
+   1188
+  ],
+  "slant": 0,
+  "conf": 0.92,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1705.5,
+    1175.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1720.0,
+    1176.5
+   ],
+   "angle": -0.05,
+   "length": 114.0,
+   "thick": 21.1,
+   "box": [
+    1660,
+    1162,
+    1782,
+    1188
+   ]
+  }
+ },
+ {
+  "text": "Fort Clanor",
+  "box": [
+   1661,
+   1187,
+   1802,
+   1208
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1713.5,
+    1197.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1730.5,
+    1198.8
+   ],
+   "angle": -0.27,
+   "length": 135.0,
+   "thick": 19.7,
+   "box": [
+    1661,
+    1187,
+    1802,
+    1208
+   ]
+  }
+ },
+ {
+  "text": "R.Dorn",
+  "box": [
+   1320,
+   1205,
+   1410,
+   1321
+  ],
+  "slant": 59.8,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    1367.1,
+    1264.6
+   ],
+   "angle": 57.89,
+   "length": 94.8,
+   "thick": 26.2,
+   "box": [
+    1320,
+    1205,
+    1410,
+    1321
+   ]
+  }
+ },
+ {
+  "text": "Fairam",
+  "box": [
+   1658,
+   1230,
+   1751,
+   1256
+  ],
+  "slant": 0,
+  "conf": 0.99,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1695.0,
+    1243.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1704.0,
+    1245.7
+   ],
+   "angle": -1.24,
+   "length": 84.3,
+   "thick": 16.9,
+   "box": [
+    1658,
+    1230,
+    1751,
+    1256
+   ]
+  }
+ },
+ {
+  "text": "Swansord",
+  "box": [
+   1660,
+   1209,
+   1786,
+   1230
+  ],
+  "slant": 0,
+  "conf": 0.86,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1706.0,
+    1219.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1723.5,
+    1220.2
+   ],
+   "angle": -0.79,
+   "length": 121.1,
+   "thick": 15.0,
+   "box": [
+    1660,
+    1209,
+    1786,
+    1230
+   ]
+  }
+ },
+ {
+  "text": "Wheaton",
+  "box": [
+   1660,
+   1254,
+   1771,
+   1279
+  ],
+  "slant": 0,
+  "conf": 0.88,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1703.0,
+    1266.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1714.0,
+    1265.2
+   ],
+   "angle": 0.52,
+   "length": 102.1,
+   "thick": 16.0,
+   "box": [
+    1660,
+    1254,
+    1771,
+    1279
+   ]
+  }
+ },
+ {
+  "text": "Eastgate",
+  "box": [
+   1659,
+   1302,
+   1760,
+   1322
+  ],
+  "slant": 0,
+  "conf": 0.96,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1702.5,
+    1312.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1709.5,
+    1314.0
+   ],
+   "angle": -0.47,
+   "length": 95.1,
+   "thick": 14.2,
+   "box": [
+    1659,
+    1302,
+    1760,
+    1322
+   ]
+  }
+ },
+ {
+  "text": "Moytura",
+  "box": [
+   1660,
+   1280,
+   1776,
+   1301
+  ],
+  "slant": 0,
+  "conf": 0.89,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1702.5,
+    1290.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1717.5,
+    1292.5
+   ],
+   "angle": 0.44,
+   "length": 111.0,
+   "thick": 17.2,
+   "box": [
+    1660,
+    1280,
+    1776,
+    1301
+   ]
+  }
+ },
+ {
+  "text": "SCALE",
+  "box": [
+   419,
+   1335,
+   495,
+   1356
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "IN",
+  "box": [
+   562,
+   1334,
+   593,
+   1355
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "MILES",
+  "box": [
+   663,
+   1336,
+   731,
+   1354
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "PLAINS",
+  "box": [
+   884,
+   1339,
+   996,
+   1388
+  ],
+  "slant": -1.2,
+  "conf": 0.96,
+  "retype": false
+ },
+ {
+  "text": "ROADS",
+  "box": [
+   1116,
+   1340,
+   1222,
+   1385
+  ],
+  "slant": -1.7,
+  "conf": 0.98,
+  "retype": false
+ },
+ {
+  "text": "Sabre Bay",
+  "box": [
+   1657,
+   1347,
+   1777,
+   1374
+  ],
+  "slant": 0,
+  "conf": 0.93,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1706.5,
+    1360.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1719.5,
+    1361.2
+   ],
+   "angle": 0.34,
+   "length": 111.0,
+   "thick": 17.0,
+   "box": [
+    1657,
+    1347,
+    1777,
+    1374
+   ]
+  }
+ },
+ {
+  "text": "Torsea",
+  "box": [
+   1660,
+   1328,
+   1744,
+   1344
+  ],
+  "slant": 0,
+  "conf": 0.9,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1693.0,
+    1336.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1702.0,
+    1336.7
+   ],
+   "angle": 1.22,
+   "length": 80.2,
+   "thick": 11.9,
+   "box": [
+    1660,
+    1328,
+    1744,
+    1344
+   ]
+  }
+ },
+ {
+  "text": "25",
+  "box": [
+   487,
+   1369,
+   511,
+   1386
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "MOUN~ TAINS",
+  "box": [
+   488,
+   1389,
+   617,
+   1450
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": false,
+  "lines": [
+   "MOUN~",
+   "TAINS"
+  ]
+ },
+ {
+  "text": "50",
+  "box": [
+   565,
+   1367,
+   593,
+   1387
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "75",
+  "box": [
+   643,
+   1368,
+   667,
+   1387
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "WASTE~ LAND",
+  "box": [
+   689,
+   1386,
+   823,
+   1451
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": false,
+  "lines": [
+   "WASTE~",
+   "LAND"
+  ]
+ },
+ {
+  "text": "100",
+  "box": [
+   712,
+   1367,
+   747,
+   1386
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "FOREST",
+  "box": [
+   886,
+   1397,
+   1009,
+   1444
+  ],
+  "slant": -0.9,
+  "conf": 0.99,
+  "retype": false
+ },
+ {
+  "text": "TRACKS",
+  "box": [
+   1119,
+   1399,
+   1238,
+   1438
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "Duncrick",
+  "box": [
+   1659,
+   1393,
+   1773,
+   1414
+  ],
+  "slant": 0,
+  "conf": 0.96,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1703.0,
+    1403.5
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1716.5,
+    1403.5
+   ],
+   "angle": 0.03,
+   "length": 109.0,
+   "thick": 15.1,
+   "box": [
+    1659,
+    1393,
+    1773,
+    1414
+   ]
+  }
+ },
+ {
+  "text": "Vanosa",
+  "box": [
+   1660,
+   1369,
+   1754,
+   1393
+  ],
+  "slant": 0,
+  "conf": 0.96,
+  "retype": true,
+  "where": "in the key",
+  "set": {
+   "at": [
+    1696.5,
+    1381.0
+   ],
+   "size": 19,
+   "angle": 0
+  },
+  "ink": {
+   "at": [
+    1704.5,
+    1381.8
+   ],
+   "angle": 0.46,
+   "length": 85.1,
+   "thick": 12.1,
+   "box": [
+    1660,
+    1369,
+    1754,
+    1393
+   ]
+  }
+ },
+ {
+  "text": "To Ruanon",
+  "box": [
+   146,
+   1454,
+   298,
+   1482
+  ],
+  "slant": 0.0,
+  "conf": 0.94,
+  "retype": true,
+  "ink": {
+   "at": [
+    222.5,
+    1465.0
+   ],
+   "angle": -0.27,
+   "length": 144.9,
+   "thick": 29.8,
+   "box": [
+    146,
+    1454,
+    298,
+    1482
+   ]
+  }
+ },
+ {
+  "text": "+ SOUTH +",
+  "box": [
+   852,
+   1489,
+   1136,
+   1527
+  ],
+  "slant": 0,
+  "conf": 0.85,
+  "retype": false
+ }
+]

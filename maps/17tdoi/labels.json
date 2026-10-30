@@ -1,0 +1,799 @@
+[
+ {
+  "text": "IXIA + THE HARDLANDS",
+  "box": [
+   1054,
+   159,
+   1652,
+   239
+  ],
+  "slant": -0.1,
+  "conf": 0.91,
+  "retype": false
+ },
+ {
+  "text": "Aztaregina",
+  "box": [
+   138,
+   174,
+   373,
+   213
+  ],
+  "slant": 0.5,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    256.6,
+    195.4
+   ],
+   "angle": 0.67,
+   "length": 223.0,
+   "thick": 30.4,
+   "box": [
+    138,
+    174,
+    373,
+    213
+   ]
+  }
+ },
+ {
+  "text": "Gourizaga",
+  "box": [
+   1077,
+   276,
+   1289,
+   320
+  ],
+  "slant": 0.8,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1184.0,
+    298.4
+   ],
+   "angle": 1.25,
+   "length": 202.2,
+   "thick": 30.9,
+   "box": [
+    1077,
+    276,
+    1289,
+    320
+   ]
+  }
+ },
+ {
+  "text": "Gourstaz Is",
+  "box": [
+   122,
+   364,
+   262,
+   385
+  ],
+  "slant": 0.3,
+  "conf": 0.96,
+  "retype": true,
+  "ink": {
+   "at": [
+    190.5,
+    374.4
+   ],
+   "angle": 0.33,
+   "length": 131.0,
+   "thick": 13.4,
+   "box": [
+    122,
+    364,
+    262,
+    385
+   ]
+  }
+ },
+ {
+  "text": "XAAGON",
+  "box": [
+   520,
+   371,
+   631,
+   396
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    577.4,
+    379.6
+   ],
+   "angle": -0.96,
+   "length": 111.1,
+   "thick": 25.0,
+   "box": [
+    520,
+    371,
+    631,
+    396
+   ]
+  }
+ },
+ {
+  "text": "IXIA",
+  "box": [
+   682,
+   422,
+   788,
+   458
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    736.5,
+    440.2
+   ],
+   "angle": 1.94,
+   "length": 97.8,
+   "thick": 26.8,
+   "box": [
+    682,
+    422,
+    788,
+    458
+   ]
+  }
+ },
+ {
+  "text": "R.Ak",
+  "box": [
+   1053,
+   454,
+   1114,
+   482
+  ],
+  "slant": 0.5,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1084.0,
+    468.5
+   ],
+   "angle": 2.48,
+   "length": 48.5,
+   "thick": 15.4,
+   "box": [
+    1053,
+    454,
+    1114,
+    482
+   ]
+  }
+ },
+ {
+  "text": "Shegtar Peaks",
+  "box": [
+   1474,
+   457,
+   1633,
+   477
+  ],
+  "slant": 0.0,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    1552.5,
+    468.0
+   ],
+   "angle": 0.08,
+   "length": 153.0,
+   "thick": 18.1,
+   "box": [
+    1474,
+    457,
+    1633,
+    477
+   ]
+  }
+ },
+ {
+  "text": "R.Nenadgaj",
+  "box": [
+   1049,
+   590,
+   1197,
+   666
+  ],
+  "slant": -19.5,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1123.8,
+    627.3
+   ],
+   "angle": -19.5,
+   "length": 134.4,
+   "thick": 18.7,
+   "box": [
+    1049,
+    590,
+    1197,
+    666
+   ]
+  }
+ },
+ {
+  "text": "Tozaz Sea",
+  "box": [
+   213,
+   612,
+   426,
+   647
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    319.5,
+    625.7
+   ],
+   "angle": 0.29,
+   "length": 205.1,
+   "thick": 31.6,
+   "box": [
+    213,
+    612,
+    426,
+    647
+   ]
+  }
+ },
+ {
+  "text": "Shakoz Bight",
+  "box": [
+   618,
+   680,
+   769,
+   706
+  ],
+  "slant": 0.2,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    693.5,
+    694.1
+   ],
+   "angle": 0.31,
+   "length": 141.0,
+   "thick": 15.5,
+   "box": [
+    618,
+    680,
+    769,
+    706
+   ]
+  }
+ },
+ {
+  "text": "Tadatizaga",
+  "box": [
+   1339,
+   723,
+   1564,
+   770
+  ],
+  "slant": 1.6,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1449.9,
+    748.0
+   ],
+   "angle": 1.49,
+   "length": 216.5,
+   "thick": 30.6,
+   "box": [
+    1339,
+    723,
+    1564,
+    770
+   ]
+  }
+ },
+ {
+  "text": "(The Hardlands)",
+  "box": [
+   1354,
+   762,
+   1551,
+   791
+  ],
+  "slant": 0.4,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1452.0,
+    778.6
+   ],
+   "angle": 0.37,
+   "length": 188.0,
+   "thick": 20.0,
+   "box": [
+    1354,
+    762,
+    1551,
+    791
+   ]
+  }
+ },
+ {
+  "text": "Azgad Is.",
+  "box": [
+   112,
+   842,
+   235,
+   872
+  ],
+  "slant": -0.6,
+  "conf": 0.95,
+  "retype": true,
+  "ink": {
+   "at": [
+    171.0,
+    857.7
+   ],
+   "angle": -1.15,
+   "length": 106.0,
+   "thick": 18.0,
+   "box": [
+    112,
+    842,
+    235,
+    872
+   ]
+  }
+ },
+ {
+  "text": "Ezar Mtns",
+  "box": [
+   431,
+   901,
+   551,
+   988
+  ],
+  "slant": 32.7,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    492.3,
+    943.5
+   ],
+   "angle": 32.8,
+   "length": 120.9,
+   "thick": 19.0,
+   "box": [
+    431,
+    901,
+    551,
+    988
+   ]
+  }
+ },
+ {
+  "text": "The Adar Steppe",
+  "box": [
+   1125,
+   990,
+   1323,
+   1015
+  ],
+  "slant": 0.6,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1224.0,
+    1004.3
+   ],
+   "angle": 0.57,
+   "length": 192.1,
+   "thick": 19.2,
+   "box": [
+    1125,
+    990,
+    1323,
+    1015
+   ]
+  }
+ },
+ {
+  "text": "Gulf of Konkor",
+  "box": [
+   191,
+   1004,
+   399,
+   1035
+  ],
+  "slant": 0.8,
+  "conf": 0.97,
+  "retype": true,
+  "ink": {
+   "at": [
+    294.5,
+    1019.8
+   ],
+   "angle": -0.26,
+   "length": 195.0,
+   "thick": 14.3,
+   "box": [
+    191,
+    1004,
+    399,
+    1035
+   ]
+  }
+ },
+ {
+  "text": "R.Zegar",
+  "box": [
+   866,
+   1005,
+   978,
+   1067
+  ],
+  "slant": -18.9,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    917.6,
+    1028.3
+   ],
+   "angle": -18.86,
+   "length": 100.2,
+   "thick": 37.9,
+   "box": [
+    866,
+    1005,
+    978,
+    1067
+   ]
+  }
+ },
+ {
+  "text": "R.Ezog",
+  "box": [
+   549,
+   1049,
+   648,
+   1094
+  ],
+  "slant": -13.2,
+  "conf": 0.97,
+  "retype": true,
+  "ink": {
+   "at": [
+    596.5,
+    1066.0
+   ],
+   "angle": -13.2,
+   "length": 87.7,
+   "thick": 28.6,
+   "box": [
+    549,
+    1049,
+    648,
+    1094
+   ]
+  }
+ },
+ {
+  "text": "Lake Ghargon",
+  "box": [
+   1439,
+   1116,
+   1607,
+   1143
+  ],
+  "slant": 0.4,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1524.4,
+    1128.8
+   ],
+   "angle": -0.58,
+   "length": 171.0,
+   "thick": 21.3,
+   "box": [
+    1439,
+    1116,
+    1607,
+    1143
+   ]
+  }
+ },
+ {
+  "text": "Konatadat Forest",
+  "box": [
+   1041,
+   1134,
+   1248,
+   1158
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1142.5,
+    1146.7
+   ],
+   "angle": -0.37,
+   "length": 205.0,
+   "thick": 14.5,
+   "box": [
+    1041,
+    1134,
+    1248,
+    1158
+   ]
+  }
+ },
+ {
+  "text": "R.Lenag",
+  "box": [
+   488,
+   1204,
+   596,
+   1234
+  ],
+  "slant": 3.4,
+  "conf": 0.92,
+  "retype": true,
+  "ink": {
+   "at": [
+    546.3,
+    1214.0
+   ],
+   "angle": 3.4,
+   "length": 104.5,
+   "thick": 27.1,
+   "box": [
+    488,
+    1204,
+    596,
+    1234
+   ]
+  }
+ },
+ {
+  "text": "KONANEN",
+  "box": [
+   1209,
+   1219,
+   1348,
+   1243
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1275.0,
+    1234.9
+   ],
+   "angle": 0.59,
+   "length": 140.1,
+   "thick": 19.1,
+   "box": [
+    1209,
+    1219,
+    1348,
+    1243
+   ]
+  }
+ },
+ {
+  "text": "ZEGKOT",
+  "box": [
+   293,
+   1298,
+   393,
+   1324
+  ],
+  "slant": -1.1,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    346.1,
+    1312.2
+   ],
+   "angle": -1.29,
+   "length": 96.0,
+   "thick": 15.0,
+   "box": [
+    293,
+    1298,
+    393,
+    1324
+   ]
+  }
+ },
+ {
+  "text": "Ghargon Forest",
+  "box": [
+   1389,
+   1280,
+   1582,
+   1315
+  ],
+  "slant": 0.1,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1485.0,
+    1299.0
+   ],
+   "angle": 0.14,
+   "length": 182.0,
+   "thick": 18.2,
+   "box": [
+    1389,
+    1280,
+    1582,
+    1315
+   ]
+  }
+ },
+ {
+  "text": "MOUNTAINS + HILLS",
+  "box": [
+   819,
+   1353,
+   980,
+   1404
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": false,
+  "lines": [
+   "MOUNTAINS",
+   "+ HILLS"
+  ]
+ },
+ {
+  "text": "50",
+  "box": [
+   1188,
+   1344,
+   1219,
+   1365
+  ],
+  "slant": 0.0,
+  "conf": 0.99,
+  "retype": false
+ },
+ {
+  "text": "100",
+  "box": [
+   1317,
+   1342,
+   1353,
+   1362
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "PACK ICE",
+  "box": [
+   271,
+   1364,
+   392,
+   1394
+  ],
+  "slant": -0.7,
+  "conf": 0.99,
+  "retype": false
+ },
+ {
+  "text": "SCHIST",
+  "box": [
+   548,
+   1367,
+   645,
+   1391
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "SCALE IN MILES",
+  "box": [
+   1069,
+   1384,
+   1338,
+   1405
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "LIMIT OF WINTER PACK ICE",
+  "box": [
+   276,
+   1418,
+   401,
+   1490
+  ],
+  "slant": 0,
+  "conf": 0.99,
+  "retype": false,
+  "lines": [
+   "LIMIT OF",
+   "WINTER",
+   "PACK ICE"
+  ]
+ },
+ {
+  "text": "CONIFEROUS FOREST",
+  "box": [
+   818,
+   1429,
+   980,
+   1474
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": false,
+  "lines": [
+   "CONIFEROUS",
+   "FOREST"
+  ]
+ },
+ {
+  "text": "REMOTE SETTLEMENT",
+  "box": [
+   1164,
+   1430,
+   1340,
+   1476
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": false,
+  "lines": [
+   "REMOTE",
+   "SETTLEMENT"
+  ]
+ },
+ {
+  "text": "WASTELAND",
+  "box": [
+   550,
+   1443,
+   698,
+   1463
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ }
+]

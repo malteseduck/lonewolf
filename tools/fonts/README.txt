@@ -6,7 +6,7 @@ humanist sans after Gill Sans. The default for every map. From github.com/impall
 2026-10-07, under the SIL Open Font License 1.1 (OFL-Cabin.txt).
 
 IM Fell English (IMFeENrm28P, IMFeENit28P, IMFeENsc28P): Igino Marini's revival of the Fell types.
-Almendra (Almendra-Regular): Ana Sanfelippo. Not used yet; an alternative hand for the small names.
+Almendra (Almendra-Regular): Ana Sanfelippo. Book 19's map.
 Both from github.com/google/fonts (ofl/imfellenglish, ofl/imfellenglishsc, ofl/almendra),
 2026-10-06, under the SIL Open Font License 1.1 (OFL-IMFell.txt, OFL-Almendra.txt).
 
