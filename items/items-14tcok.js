@@ -88,12 +88,14 @@ export const SECTIONS = {
   58: { fight: { undead: true } },
   62: { take: [{ arrows: 1 }], fight: xaghash },
   68: rubble,
-  69: { mark: 'sphereAlchemy14' },
+  // the sphere's spells work at 15 ENDURANCE or more
+  69: { mark: 'sphereAlchemy14', need: { 320: { ep: [-999, 14] }, 120: { ep: [15, 999] } } },
   73: { bowShot: { 251: [0, 8], 231: [9, 99] } },
+  // 0 counts as 10, and a Kai Grand Guardian adds 1
+  74: { zeroTen: true, rntMod: [{ rank: 5, plus: 1 }], ranges: { 178: [-99, 2], 28: [3, 5], 344: [6, 99] } },
   76: { loot: [{ item: 'tinderbox' }, { item: 'laumspur14' }, { item: 'goldDust14' }, { item: 'conchShell14' }, { item: 'silverFlask14' },
     { item: 'greenKey14' }, { item: 'brassKey14' }, { item: 'copperKey14' }, { item: 'rope' }, { item: 'comb14' }] },
   83: { ep: 6 },
-  // the heat: only Grand Huntmastery and Grand Nexus together spare this Meal
   // the heat: a Meal unless he has both Grand Huntmastery and Grand Nexus
   86: { meal: true, mealUnless: { disc: ['grandHuntmastery', 'grandNexus'], every: true } },
   94: { need: { 223: light, 14: noLight } },
@@ -101,7 +103,7 @@ export const SECTIONS = {
   102: { take: [{ item: 'bow' }] },
   103: { ep: -8 },
   106: { need: { 62: bowArrows } },
-  108: { mark: 'sphereMagi14' },
+  108: { mark: 'sphereMagi14', need: { 23: { ep: [-999, 14] }, 296: { ep: [15, 999] } } },
   110: { ep: -3, loot: [statZ] },
   111: { need: { 159: bowArrows } },
   112: { take: [{ at: [3] }] },
@@ -116,11 +118,13 @@ export const SECTIONS = {
   // the fight is broken off if his ENDURANCE falls below 12
   128: { fight: { byHand: 'The text stops the fight once your ENDURANCE falls below 12' }, need: { 105: { ep: [-99, 11] }, 248: { ep: [12, 999] } } },
   130: { need: { 306: { item: ['oedeHerb', 'oedeJar13'] }, 49: { item: ['oedeHerb', 'oedeJar13'], not: true } } },
-  131: { need: { 108: { any: [{ disc: 'magiMagic', rank: 5, not: { mark: 'sphereMagi14' } }] } } },
+  131: { need: { 69: { any: [{ disc: 'kaiAlchemy', rank: 5, not: { mark: 'sphereAlchemy14' } }] },
+    108: { any: [{ disc: 'magiMagic', rank: 5, not: { mark: 'sphereMagi14' } }] } } },
   135: { take: [{ arrows: 1 }], fight: akataz },
   139: { need: { 243: bowArrows } },
   140: { loot: [{ item: 'spear' }] },
   146: { need: { 335: bowArrows } },
+  150: { need: { 30: { ep: [-999, 12] }, 77: { ep: [13, 999] } } },
   154: { ep: -5 },
   157: { need: { 336: statZ, 87: { item: 'statuetteZagarna', not: true } } },
   159: { take: [{ arrows: 1 }], loot: guardKeys },

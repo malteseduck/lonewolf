@@ -76,7 +76,8 @@ What a book's play-through left to the player that the engine could take over:
   the owner's reading; flags set on Book 8's way through each would gate them. Book 13's 285 asks
   for the town of Quarlen or the ruins of Maaken in an earlier book: Maaken is Book 4's
   `visitedMaakenTemple`, Quarlen would be a flag set at Book 6's 332 (the town reached), which the
-  backfill would also need.
+  backfill would also need. Book 14's 186 asks for Mogaruith, reached in Book 13: a flag set where
+  Book 13 enters it would gate it.
 - **The weapon he fights with, chosen in the fight.** The engine fights with the weapon that adds
   most, so a choice the text leaves to him is not his: Book 12's Helshezag, which costs 1 ENDURANCE
   for good a round, is taken up only where a fight names it (133, 230, 88), so "if you wish to use
@@ -87,6 +88,8 @@ What a book's play-through left to the player that the engine could take over:
 - **Things kept from one place** (Book 9's 154: "if you kept any of the items you found in the hut",
   190 or 265). The hut's Rope and Lantern are found elsewhere too, so holding them proves nothing; a
   mark set when a loot entry is taken (`loot: [{ item, mark }]`) would do it.
+- **A draw that asks whether the number is even or odd** (Book 14's 177 and 232). `ranges` takes
+  intervals only, so both ways stay open after the draw; an `even` / `odd` range would gate them.
 
 ### Book notes outside the steps
 
