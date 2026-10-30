@@ -79,7 +79,10 @@ What a book's play-through left to the player that the engine could take over:
   backfill would also need. Book 14's 186 asks for Mogaruith, reached in Book 13: a flag set where
   Book 13 enters it would gate it. Book 16 asks the same three times: Varetta, Tahou or the
   Ruanon Pike hut (12, 279), Aarnak (105), and Kaag or Mogaruith (250). Book 17 asks for the Battle of
-  Cetza or Darke (22), the Isle of Ghosts (149, 160, 349) and the Plane of Darkness (150).
+  Cetza or Darke (22), the Isle of Ghosts (149, 160, 349) and the Plane of Darkness (150). Book 18
+  asks for Varetta (56), a hut on Raider's Road, Tahou or Lake Vorndarol (90, 112, 194, 308),
+  Stonewatch (121), Garthen or Torgar (175), Quarlen or the Isle of Ghosts (240), and Ixia or Lake
+  Vorndarol (280).
 - **The weapon he fights with, chosen in the fight.** The engine fights with the weapon that adds
   most, so a choice the text leaves to him is not his: Book 12's Helshezag, which costs 1 ENDURANCE
   for good a round, is taken up only where a fight names it (133, 230, 88), so "if you wish to use
@@ -98,7 +101,11 @@ What a book's play-through left to the player that the engine could take over:
   range would gate them.
 - **A gate on a rank not yet reached** (Book 17's 254 and 300: "if you have Kai-surge (Kai-screen) but
   have yet to reach" Sun Lord (Sun Thane)). A Condition has a lowest rank only, so 216 and 131 stay
-  open beside 123 and 223 for one who has the rank; a `below` rank would shut them.
+  open beside 123 and 223 for one who has the rank; a `below` rank would shut them. Book 18's 301
+  (52, Kai-alchemy below Sun Thane, beside 273 and 137) is the same.
+- **A share of the Backpack, his choice** (Book 18's 317: short of 20 Gold Crowns, half the Backpack
+  Items as well as a Special Item). `pick` takes a count only; `n: 'half'` (rounded as the owner
+  rules) would take it. It is the table's todo there.
 
 ### Book notes outside the steps
 

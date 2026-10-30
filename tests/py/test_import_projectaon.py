@@ -270,6 +270,10 @@ def test_grand_master_draw_with_both_disciplines_adding_more(grand):
 @pytest.mark.parametrize('text,expect', [
     ('If you possess mastery of Magi-magic and wish to use it, turn to 5.', {'disc': 'magiMagic'}),
     ('If you wish to use your Magnakai Discipline of Divination in order to detect it, turn to 5.', {'disc': 'divination'}),
+    # "the discipline of" in lower case, with a rank (Book 18's 230): the rank alone was read
+    ('If you possess the discipline of Magi-magic and have reached the Kai rank of Grand Thane, turn to 5.', {'disc': 'magiMagic', 'rank': 9}),
+    # "still alive" goes without saying (Book 18's 345): the rank alone was read
+    ('If you are still alive and you possess Grand Nexus and have reached the rank of Sun Knight or higher, turn to 5.', {'disc': 'grandNexus', 'rank': 6}),
 ])
 def test_grand_master_gate_phrasings(grand, text, expect):
     assert grand['gate'](text) == expect

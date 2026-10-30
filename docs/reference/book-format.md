@@ -64,7 +64,7 @@ shows the book's printed map. Only the prototypes travel on a map.
 | | `stash: key` on any entry | what is lost is kept under that name (`hero.stash`), to be given back by `back` |
 | `back` | `[key \| {stash, only: [weapon, backpack, special, gold]}]` | what was taken into that stash is given back (or the kinds listed); what does not fit is said so, stays in the stash and is offered there as loot, his to take once he has made room |
 | `forfeit` | key \| [keys] | what was taken into that stash is lost for good (a stake of items not won back) |
-| `add` | `[{text, to, need}]` | item table: a way on the text gives outside its choices (a footnote's), added to them with its gate; `text` in our words |
+| `add` | `[{text, to, need}]` | item table: a way on the text gives outside its choices (a footnote's), added to them with its own gate (the table's `need` for the same section is set on the text's choices only, so a second way to it keeps its own, as Book 18's 75 paying in Lune); `text` in our words |
 | `mark`, `unmark` | id \| [ids] | a lasting condition set or ended (`hero.marks`), defined in the table's `MARKS` (below), or a bare flag a later book can test ("fought an Elix") |
 | `note` | string | a note put on the Action Chart (a number to remember), our words |
 | `stake` | `{key, min, max, coin, spend}` | the page asks for an amount before the way on opens (again on every visit). `spend`: given now (alms, a fee "as much as you like"). Otherwise kept as a stake under `key` (default the section) |

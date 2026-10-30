@@ -66,12 +66,12 @@ Heuristics layered on top, all by regular expression:
   In a Grand Master book (Book 13 on) a discipline is also read as "the Grand Master Discipline of
   X", "(the) Grand Mastery of X", "Mastery of X" (or "mastery of X"), "the Discipline of X", "the skill of X" or bare ("If you possess
   Kai-screen"); a name that is not a discipline still leaves the rule unread. "Grand Mastery of
-  Nexus" is Grand Nexus. "Grand Weaponmastery (with Bow)" is not read: it needs the Bow mastered.
+  Nexus" is Grand Nexus; "the discipline of X" may be in lower case (Book 18's 230). "Grand Weaponmastery (with Bow)" is not read: it needs the Bow mastered.
   The twelve Grand Master ranks are known, with the "Kai" of a name added or left off ("Grand Guardian", "Kai Grand Crown", Book 19). "The rank of Y in the Discipline of X" (Book 14's 107) is the discipline
   and the rank: his rank is his own, the same in every discipline.
 - **Gates** (`gate()`): the choice's condition, up to its first comma or "turn to" (a comma inside a
   list of disciplines, "of A, B, or C", does not end it, nor does one before "or if you ...", as in Book 11's 215,
-  "Pathsmanship and the rank of Scion-kai, or if you possess Animal Control"; "and you have reached ..." joins a rank to it). Negative
+  "Pathsmanship and the rank of Scion-kai, or if you possess Animal Control"; "and you have reached ..." joins a rank to it; a leading "are still alive and (you)", as in Book 18's 345, is passed over). Negative
   phrasings ("if you do not have", "have yet to", "neither") are left open. "X, or have reached the rank of Y" (parts joined by "or (if you) have/possess/reached/attained") is split and each part read as a condition; if all parse, `need: {any: [...]}`, else the choice is left open. A
   looser reading still gates "If you wish to use the Kai Discipline of X ..." (also "... of X in order to ...") and "If you wish to
   use your Discipline of X (again)" (Book 19's 179). "If your current level of Kai rank is Y or higher" gates on the rank alone
