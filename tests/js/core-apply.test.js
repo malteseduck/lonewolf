@@ -86,4 +86,11 @@ describe('a way on the text gives outside its choices', () => {
     expect(b.sections[3].choices[3].need).toEqual({ disc: 'tracking', rank: 5 });
     expect(b.sections[3].add).toBeUndefined();
   });
+  it('keeps its own gate when the text\'s choice to the same section is gated (pay in Crowns, or in Lune)', () => {
+    const b = book();
+    LW.applyItems(b, { ITEMS: {}, SECTIONS: { 3: { need: { 5: { gold: 5, spend: true } },
+      add: [{ text: 'pay in Lune', to: '5', need: { coin: 'lune', n: 20, spend: true } }] } } });
+    expect(b.sections[3].choices[0].need).toEqual({ gold: 5, spend: true });
+    expect(b.sections[3].choices[3].need).toEqual({ coin: 'lune', n: 20, spend: true });
+  });
 });

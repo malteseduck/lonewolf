@@ -123,9 +123,10 @@ def condition(text):
     text = re.sub(r'\s+and therefore\b.*$', '', text)
     for clause in re.split(r',?\s+and\s+(?:if you\s+|you\s+)?(?:also\s+)?(?=have\b|possess\b|completed\b|reached\b|attained\b|achieved\b)', text.strip()):
         clause = clause.strip()
-        d = re.fullmatch(r'(?:have|possess)(?: and wish to use)? (?:either |both )?(?:of )?the (?:Kai |Magnakai )?Disciplines? (?:either |both )?(?:of )?(.+)', clause)
+        # "the discipline of Magi-magic" in lower case (Book 18's 230)
+        d = re.fullmatch(r'(?:have|possess)(?: and wish to use)? (?:either |both )?(?:of )?the (?:Kai |Magnakai )?[Dd]isciplines? (?:either |both )?(?:of )?(.+)', clause)
         if not d and series == 'grandmaster':
-            d = re.fullmatch(r'(?:have|possess) (?:the )?(?:(?:Grand Master |Magnakai |Kai )?Disciplines? of |(?:Grand )?[Mm]astery of |skill of )?(.+)', gm_names(clause))
+            d = re.fullmatch(r'(?:have|possess) (?:the )?(?:(?:Grand Master |Magnakai |Kai )?[Dd]isciplines? of |(?:Grand )?[Mm]astery of |skill of )?(.+)', gm_names(clause))
         # "the rank of Kai Grand Guardian in the Discipline of Grand Huntmastery" (Book 14's 107): his rank is his own, so the discipline and the rank
         # "have achieved the rank of Sun Prince" (Book 20's 329)
         r = re.fullmatch(r'(?:have )?(?:also )?(?:reached|attained|achieved) the (?:Kai |Magnakai )?[Rr]ank of ([A-Za-z -]+?)(?: or (?:higher|above|more))?(?: \([^)]*\))?'
@@ -187,7 +188,8 @@ def gate(text):
     if re.search(r"\b(?:not|neither|nor|yet to)\b|n't\b", head, re.I):
         return None
     # the whole condition, when it is only disciplines, a rank and Lore-circles ("... and have reached the rank of Primate")
-    whole = re.fullmatch(r'If you (.+)', head.strip())
+    # "If you are still alive and you possess ..." (Book 18's 345): being alive goes without saying
+    whole = re.fullmatch(r'If you (?:are still alive and (?:you )?)?(.+)', head.strip())
     got = whole and condition(whole.group(1))
     # "If your current level of Kai rank is X or higher" (Book 20's 21, 59): a rank alone, never his Endurance;
     # "or lower" and "between" stay open, a gate holding no highest rank

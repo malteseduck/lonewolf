@@ -150,7 +150,9 @@
       if (!sec) continue;
       const { need, fight, bowShot, ranges, add, ...rest } = x;
       Object.assign(sec, rest);
-      // add: a way on the text gives outside its choices (a footnote's), with its gate
+      // a gate the importer set wrongly is cleared with null; an any-of gate replaces the importer's, which read one alternative as the whole
+      for (const [to, n] of Object.entries(need || {})) sec.choices.filter((c) => c.to === to).forEach((c) => { if (n === null) delete c.need; else c.need = n.any ? n : Object.assign({}, c.need, n); });
+      // add: a way on the text gives outside its choices (a footnote's), with its own gate (after the text's gates, so one to the same section keeps its own)
       if (add) sec.choices = [...(sec.choices || []), ...add.map((c) => Object.assign({}, c))];
       // a bow shot: the ranges are for the total, so the importer could not read them; given here per choice.
       // ranges: the same for a draw the importer misread (a total with something added the page now adds)
@@ -161,8 +163,6 @@
         Object.assign(sec.combat, f);
         sec.combat.enemies.forEach((e) => Object.assign(e, mindforce && { mindforce }, undead && { undead }, drain && { drain }));
       }
-      // a gate the importer set wrongly is cleared with null; an any-of gate replaces the importer's, which read one alternative as the whole
-      for (const [to, n] of Object.entries(need || {})) sec.choices.filter((c) => c.to === to).forEach((c) => { if (n === null) delete c.need; else c.need = n.any ? n : Object.assign({}, c.need, n); });
     }
   };
   /* What adding by hand offers in the open book (tables: every book's item table, by book id, whose code
