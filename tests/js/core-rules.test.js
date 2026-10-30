@@ -223,6 +223,13 @@ describe('gates that need more than one of anything', () => {
     const sword = (w) => at2({ choices: [{ text: 'x', to: '3', need: { any: [{ weapon: ['sword', 'shortSword', 'broadsword'] }] } }] }, mkHero({ weapons: w })).choices()[0].enabled;
     expect([sword(['broadsword']), sword(['axe'])]).toEqual([true, false]);
   });
+  it('a Discipline held below a rank ("but have yet to reach"), beside the way for the rank', () => {
+    const ways = [{ text: 'r', to: '3', need: { disc: 'tracking', rank: 3 } }, { text: 'b', to: '4', need: { any: [{ disc: 'tracking', not: { rank: 3 } }] } }];
+    const g = (ds) => at2({ choices: ways }, mkHero({ disciplines: ds })).choices().map((c) => c.enabled);
+    expect(g(['tracking', 'hunting'])).toEqual([false, true]);
+    expect(g(['tracking', 'hunting', 'healing'])).toEqual([true, false]);
+    expect(g(['hunting', 'healing'])).toEqual([false, false]);
+  });
 });
 
 describe('Random Number changes', () => {
