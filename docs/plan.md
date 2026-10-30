@@ -100,9 +100,16 @@ What a book's play-through left to the player that the engine could take over:
   285). `ranges` takes intervals only, so both ways stay open after the draw; an `even` / `odd`
   range would gate them.
 - **A gate on a rank not yet reached** (Book 17's 254 and 300: "if you have Kai-surge (Kai-screen) but
-  have yet to reach" Sun Lord (Sun Thane)). A Condition has a lowest rank only, so 216 and 131 stay
-  open beside 123 and 223 for one who has the rank; a `below` rank would shut them. Book 18's 301
-  (52, Kai-alchemy below Sun Thane, beside 273 and 137) is the same.
+  have yet to reach" Sun Lord (Sun Thane)). The engine can gate it already, `any: [{ disc, not: { rank } }]`,
+  as Book 19's table does (270 from 36, 47, 108 and 317; 208 from 128; 146 from 334) and Book 20's; the
+  importer leaves "have yet to" open, so Book 17's 216 and 131 stay open beside 123 and 223 for one who
+  has the rank, and Book 18's 301 (52, Kai-alchemy below Sun Thane, beside 273 and 137) the same. The
+  importer reading it, or those tables writing it, would shut them. The walk's two stand-ins never
+  hold such a Discipline below its rank, so it lists these ways as never opened (Book 19's 36 -> 270
+  and 128 -> 208).
+- **A duel at a fixed Combat Ratio** (Book 19's 304: -4 whatever his bonuses, the foe's ENDURANCE his
+  own at the start, 4 less with the Bronze Disc, stopped when the foe's falls to 10). A fight field for
+  a set ratio and a foe's ENDURANCE taken from his would do it; it is the table's todo there.
 - **A share of the Backpack, his choice** (Book 18's 317: short of 20 Gold Crowns, half the Backpack
   Items as well as a Special Item). `pick` takes a count only; `n: 'half'` (rounded as the owner
   rules) would take it. It is the table's todo there.

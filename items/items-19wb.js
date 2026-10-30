@@ -12,6 +12,8 @@
      - Bow shots: 87. Arrows loosed with no number drawn (106, 136, 138, 196, 209) are taken there. No fight's
        COMBAT SKILL loss is a surprise attack's: no ambushes.
      - Teleport's cost is the section's own each time (54, 126, 198, 245, 293, 329).
+     - The ways for a Discipline held below a rank (270 from 36, 47, 108 and 317; 208 from 128; 146 from 334) are
+       written here: the importer leaves "have yet to" open.
      - Gates on earlier adventures (35, 78, 151, 160, 298) are the player's to answer.
    Item names are the book's own labels for them; everything else is in our words. */
 export const ITEMS = {
@@ -37,6 +39,8 @@ const flameshaft = (rank) => ({ any: [{ weapon: ['bow'], arrows: 1, disc: 'magiM
 const drawnPlus = (k) => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => ({ range: [n, n], ep: -((n || 10) + k) }));
 const potions = [{ item: 'potion' }, { item: 'potion' }, { item: 'potion' }];
 // one round against the dragonfly: who lost more decides the way on
+// a Discipline held below a rank: the text's "if you possess X but have yet to reach" ways
+const below = (d, rank, label) => ({ any: [{ disc: d, not: { rank }, label }] });
 const swoop = (hurt, held) => ({ stop: { after: 1, by: { hero: hurt, foe: held, even: held } } });
 // the weapon in hand destroyed, unless it is a Special Item
 const weaponLost = { when: [{ unless: { wield: ['special'] }, take: [{ weapons: 'used' }] }] };
@@ -60,9 +64,10 @@ export const SECTIONS = {
   30: { ep: 'full' },
   33: { ep: -1 },
   34: { ep: -4 },
-  36: { ep: -3 },
+  36: { ep: -3, need: { 270: below('kaiAlchemy', 6, 'Kai-alchemy, below Sun Knight') } },
   37: { need: { 118: sommerswerd, 187: { any: [{ disc: 'grandWeaponmastery', rank: 7, weapon: blades }] } } },
   45: { rolls: drawnPlus(5) },
+  47: { need: { 270: below('kaiAlchemy', 6, 'Kai-alchemy, below Sun Knight') } },
   51: { need: { 196: bowArrows } },
   53: { ep: -2 },
   54: { ep: -4 },
@@ -89,10 +94,12 @@ export const SECTIONS = {
   104: { ep: 4 },
   106: { take: [{ arrows: 1 }] },
   107: { loot: [{ item: 'goldCup19' }] },
+  108: { need: { 270: below('kaiAlchemy', 6, 'Kai-alchemy, below Sun Knight') } },
   116: { fight: swoop('192', '38') },
   // for every rank above Kai Grand Guardian, 1 (the text's cap of 5 is the most a rank can give in this book)
   122: { rntMod: [{ plus: 1, each: 'grandmaster', over: 5 }], ranges: { 16: [-99, 3], 96: [4, 9], 315: [10, 99] } },
   126: { ep: -6 },
+  128: { need: { 208: below('animalMastery', 10, 'Animal Mastery, below Grand Crown') } },
   129: { loot: [{ item: 'ironDisc19' }, { item: 'dagger' }, { item: 'sword' }, { item: 'blackPotion19' }] },
   134: { need: { 87: bowArrows } },
   136: { take: [{ arrows: 2 }] },
@@ -162,6 +169,7 @@ export const SECTIONS = {
   309: { need: { 136: bowArrows } },
   312: { ep: -5, need: { 209: flameshaft(7) } },
   315: { ep: -1 },
+  317: { need: { 270: below('kaiAlchemy', 6, 'Kai-alchemy, below Sun Knight') } },
   318: { need: { 28: sommerswerd, 167: noSommerswerd } },
   321: { ep: -8, take: [{ pick: ['special'], n: 1 }, { pick: ['backpack'], n: 1 }] },
   327: { ep: -1 },
@@ -169,6 +177,7 @@ export const SECTIONS = {
   329: { ep: -4 },
   332: { ep: -2 },
   333: { loot: [{ item: 'ironDisc19' }] },
+  334: { need: { 146: below('kaiAlchemy', 10, 'Kai-alchemy, below Grand Crown') } },
   338: { loot: [{ item: 'sword' }], need: { 138: flameshaft(5) } },
   340: { fight: swoop('221', '163') },
   341: { ep: 3 },
