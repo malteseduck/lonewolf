@@ -77,19 +77,22 @@ What a book's play-through left to the player that the engine could take over:
   for the town of Quarlen or the ruins of Maaken in an earlier book: Maaken is Book 4's
   `visitedMaakenTemple`, Quarlen would be a flag set at Book 6's 332 (the town reached), which the
   backfill would also need. Book 14's 186 asks for Mogaruith, reached in Book 13: a flag set where
-  Book 13 enters it would gate it.
+  Book 13 enters it would gate it. Book 16 asks the same three times: Varetta, Tahou or the
+  Ruanon Pike hut (12, 279), Aarnak (105), and Kaag or Mogaruith (250).
 - **The weapon he fights with, chosen in the fight.** The engine fights with the weapon that adds
   most, so a choice the text leaves to him is not his: Book 12's Helshezag, which costs 1 ENDURANCE
   for good a round, is taken up only where a fight names it (133, 230, 88), so "if you wish to use
   it" at 104 and 342 (and in later books) cannot be taken; and the best weapon is picked before a
   fight's penalty on its kind is counted (Book 12's 68: -2 with any weapon but a broadsword, spear or
-  quarterstaff, so a mastered spear can lose to a sword it ties with). A weapon picker on the fight's
-  panel would do both.
+  quarterstaff, so a mastered spear can lose to a sword it ties with). Book 16's 345 leads on by
+  whether the Deathstaff was used, and the page takes it only when it adds most. A weapon picker on
+  the fight's panel would do all three.
 - **Things kept from one place** (Book 9's 154: "if you kept any of the items you found in the hut",
   190 or 265). The hut's Rope and Lantern are found elsewhere too, so holding them proves nothing; a
   mark set when a loot entry is taken (`loot: [{ item, mark }]`) would do it.
-- **A draw that asks whether the number is even or odd** (Book 14's 177 and 232, Book 15's 105). `ranges` takes
-  intervals only, so both ways stay open after the draw; an `even` / `odd` range would gate them.
+- **A draw that asks whether the number is even or odd** (Book 14's 177 and 232, Book 15's 105, Book 16's
+  285). `ranges` takes intervals only, so both ways stay open after the draw; an `even` / `odd`
+  range would gate them.
 
 ### Book notes outside the steps
 
