@@ -78,21 +78,27 @@ What a book's play-through left to the player that the engine could take over:
   `visitedMaakenTemple`, Quarlen would be a flag set at Book 6's 332 (the town reached), which the
   backfill would also need. Book 14's 186 asks for Mogaruith, reached in Book 13: a flag set where
   Book 13 enters it would gate it. Book 16 asks the same three times: Varetta, Tahou or the
-  Ruanon Pike hut (12, 279), Aarnak (105), and Kaag or Mogaruith (250).
+  Ruanon Pike hut (12, 279), Aarnak (105), and Kaag or Mogaruith (250). Book 17 asks for the Battle of
+  Cetza or Darke (22), the Isle of Ghosts (149, 160, 349) and the Plane of Darkness (150).
 - **The weapon he fights with, chosen in the fight.** The engine fights with the weapon that adds
   most, so a choice the text leaves to him is not his: Book 12's Helshezag, which costs 1 ENDURANCE
   for good a round, is taken up only where a fight names it (133, 230, 88), so "if you wish to use
   it" at 104 and 342 (and in later books) cannot be taken; and the best weapon is picked before a
   fight's penalty on its kind is counted (Book 12's 68: -2 with any weapon but a broadsword, spear or
   quarterstaff, so a mastered spear can lose to a sword it ties with). Book 16's 345 leads on by
-  whether the Deathstaff was used, and the page takes it only when it adds most. A weapon picker on
-  the fight's panel would do all three.
+  whether the Deathstaff was used, and the page takes it only when it adds most; Book 17's 35 and 281
+  (173 or 293) and 96 and 287 (238, else by the rounds) by whether the Sommerswerd was. Book 17's 220
+  sets the Dessi Stone in the weapon he hands over, which then doubles an undead foe's losses: a mark
+  on the weapon chosen would carry it. A weapon picker on the fight's panel would do all of these.
 - **Things kept from one place** (Book 9's 154: "if you kept any of the items you found in the hut",
   190 or 265). The hut's Rope and Lantern are found elsewhere too, so holding them proves nothing; a
   mark set when a loot entry is taken (`loot: [{ item, mark }]`) would do it.
 - **A draw that asks whether the number is even or odd** (Book 14's 177 and 232, Book 15's 105, Book 16's
   285). `ranges` takes intervals only, so both ways stay open after the draw; an `even` / `odd`
   range would gate them.
+- **A gate on a rank not yet reached** (Book 17's 254 and 300: "if you have Kai-surge (Kai-screen) but
+  have yet to reach" Sun Lord (Sun Thane)). A Condition has a lowest rank only, so 216 and 131 stay
+  open beside 123 and 223 for one who has the rank; a `below` rank would shut them.
 
 ### Book notes outside the steps
 
