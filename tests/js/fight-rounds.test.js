@@ -185,6 +185,14 @@ describe('whole-fight conditions', () => {
     const { f } = fightAt({ enemies: [foe()], noShield: true, barred: ['broadsword', 'spear', 'quarterstaff'] }, hero());
     expect([f.weapon, f.cs()]).toEqual(['dagger', 15]);
   });
+  it('a kind barred bars what a weapon is (its first kind), not the kinds it only counts as for mastery', () => {
+    LW.addItems({ sunBlade: { name: 'Sun Blade', kind: 'special', weapon: ['sword', 'broadsword'], cs: 8 },
+      greatBlade: { name: 'Great Blade', kind: 'special', weapon: ['broadsword'], cs: 3 } });
+    const hero = mkHero({ weapons: ['dagger'], special: ['sunBlade'] });
+    expect(fightAt({ enemies: [foe()], barred: ['broadsword'] }, hero).f.weapon).toBe('sunBlade');
+    expect(fightAt({ enemies: [foe()], barred: ['broadsword'] }, mkHero({ weapons: ['dagger'], special: ['greatBlade'] })).f.weapon).toBe('dagger');
+    expect(fightAt({ enemies: [foe()], barred: ['sunBlade'] }, hero).f.weapon).toBe('dagger');
+  });
   it('bare-handed, but a discipline spares the penalty', () => {
     expect(fightAt({ enemies: [foe()], with: 'none' }).f.cs()).toBe(11);
     expect(fightAt({ enemies: [foe()], with: 'none', noUnarmed: { disc: 'nexus' } }, mkHero({ series: 'magnakai', magnakai: ['nexus'] })).f.cs()).toBe(15);

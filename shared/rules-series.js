@@ -112,10 +112,12 @@
   /* The weapon he fights with: whichever gives most. ctx.with: 'none' when the text has him fight
      bare-handed, or an item id when only that weapon can harm the enemy. Null: unarmed. */
   /* ctx.lend: a weapon he fights with that is not (yet) his; ctx.only / ctx.barred: the weapon kinds
-     that may (may not) be used here, 'special' standing for any weapon-like Special Item */
+     that may (may not) be used here, 'special' standing for any weapon-like Special Item. A kind barred
+     bars what the weapon is, its first kind: the Sommerswerd counts as a broadsword for mastery only,
+     so a fight barring two-handed weapons (Book 17's 67) leaves it */
   const allowed = (w, ctx) => {
-    const it = LW.ITEMS[w] || {}, kinds = [w, ...(it.weapon || []), ...(it.kind === 'special' ? ['special'] : [])];
-    return (!ctx.only || kinds.some((k) => ctx.only.includes(k))) && !(ctx.barred && kinds.some((k) => ctx.barred.includes(k)));
+    const it = LW.ITEMS[w] || {}, sp = it.kind === 'special' ? ['special'] : [], kinds = [w, ...(it.weapon || []), ...sp];
+    return (!ctx.only || kinds.some((k) => ctx.only.includes(k))) && !(ctx.barred && [w, ...(it.weapon || []).slice(0, 1), ...sp].some((k) => ctx.barred.includes(k)));
   };
   LW.armedWith = (hero, ctx = {}) => {
     if (ctx.with === 'none') return null;
