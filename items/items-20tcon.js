@@ -14,6 +14,8 @@
      - Bow shots: 51 and 271 (two Arrows loosed before the shot). Arrows loosed with no number drawn (244, 317,
        336) are taken there, 291 empties the Quiver. No fight's COMBAT SKILL loss is a surprise attack's: no
        ambushes.
+     - Edged and non-edged weapons (255, 261): the text names Sword and Axe, Quarterstaff and Mace; a Spear may
+       take either way at 261 and cut the path at 255. 261 has no way for one with no weapon but a Bow, or none.
      - Gates on earlier adventures (47, 48, 63, 86, 112, 155, 191, 210, 218, 236, 243, 248, 269, 275, 281, 285,
        303, 343, 348) are the player's to answer.
    Item names are the book's own labels for them; everything else is in our words. */
@@ -29,7 +31,8 @@ export const ITEMS = {
 };
 
 const blades = ['sword', 'shortSword', 'broadsword', 'axe', 'dagger'];
-const edged = { any: [{ weapon: blades, label: 'an edged weapon' }] };
+// whether a Spear is edged the text does not say: both ways stay open to it at 255 and 261
+const edgedOrSpear = { any: [{ weapon: [...blades, 'spear'], label: 'an edged weapon (a Spear: your call)' }] };
 const magicBlades = ['sommerswerd', 'skarnSka'];
 const blade = { item: magicBlades }, noBlade = { item: magicBlades, not: true };
 const bowArrows = { any: [{ weapon: ['bow'], arrows: 1, label: 'a Bow and an Arrow' }] };
@@ -156,14 +159,14 @@ export const SECTIONS = {
   245: { ep: -2 },
   246: { ep: -1 },
   253: { ep: -1, loot: [{ item: 'shamathsPotion' }] },
-  255: { need: { 304: edged, 24: { any: [{ not: { weapon: blades }, label: 'no edged weapon' }] } } },
+  255: { need: { 304: edgedOrSpear, 24: { any: [{ not: { weapon: blades }, label: 'no edged weapon' }] } } },
   256: { take: [{ item: 'shamathsPotion' }] },
   // the coin lost at 214
   257: { take: [{ gold: 1 }] },
   258: { need: { 53: amulet, 296: noAmulet } },
   // the armoury: as many Arrows as the Quiver holds
   260: { loot: [{ item: 'sword' }, { item: 'spear' }, { item: 'axe' }, { item: 'broadsword' }, { arrows: 6 }, { item: 'bow' }] },
-  261: { need: { 61: edged, 345: { any: [{ weapon: ['quarterstaff', 'mace', 'warhammer'], label: 'a non-edged weapon' }] } } },
+  261: { need: { 61: edgedOrSpear, 345: { any: [{ weapon: ['quarterstaff', 'mace', 'warhammer', 'spear'], label: 'a non-edged weapon (a Spear: your call)' }] } } },
   266: { need: { 251: below(10, { disc: 'kaiAlchemy' }, 'Kai-alchemy below Grand Crown') } },
   265: { need: { 109: { gold: 1 }, 65: { any: [{ not: { gold: 1 } }] } } },
   268: { need: { 159: { item: 'muntaagHoney' }, 321: { item: 'muntaagHoney', not: true } } },

@@ -113,6 +113,9 @@ What a book's play-through left to the player that the engine could take over:
 - **A share of the Backpack, his choice** (Book 18's 317: short of 20 Gold Crowns, half the Backpack
   Items as well as a Special Item). `pick` takes a count only; `n: 'half'` (rounded as the owner
   rules) would take it. It is the table's todo there.
+- **The last places of the Backpack** (Book 20's 330: the items in the last three places lost; 8 takes
+  the first three, `at: [1, 2, 3]`). `at` counts from the front only; places counted from the end
+  (with how empty places count left to the owner) would take it. It is the table's todo there.
 
 ### Book notes outside the steps
 
