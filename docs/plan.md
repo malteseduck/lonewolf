@@ -88,7 +88,7 @@ What a book's play-through left to the player that the engine could take over:
 - **Things kept from one place** (Book 9's 154: "if you kept any of the items you found in the hut",
   190 or 265). The hut's Rope and Lantern are found elsewhere too, so holding them proves nothing; a
   mark set when a loot entry is taken (`loot: [{ item, mark }]`) would do it.
-- **A draw that asks whether the number is even or odd** (Book 14's 177 and 232). `ranges` takes
+- **A draw that asks whether the number is even or odd** (Book 14's 177 and 232, Book 15's 105). `ranges` takes
   intervals only, so both ways stay open after the draw; an `even` / `odd` range would gate them.
 
 ### Book notes outside the steps

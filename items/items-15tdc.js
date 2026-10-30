@@ -83,6 +83,8 @@ export const SECTIONS = {
   153: { ep: -3 },
   // sixteen days digging: down to 15 ENDURANCE, and no Meals or potions left
   156: { epCap: 15, take: [{ meals: 'all' }, ...Array(10).fill({ item: potions })] },
+  // the middle way is for Kai-alchemy short of Sun Knight
+  158: { need: { 86: { disc: 'kaiAlchemy' } } },
   160: { ep: -3 },
   167: { ep: -4 },
   173: { ep: 3 },
