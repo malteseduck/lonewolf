@@ -71,6 +71,8 @@ GRAND = ('grandmaster', 'neworder')  # the series whose text names a Discipline 
 CIRCLES = {'fire': 'Circle of Fire', 'light': 'Circle of Light', 'solaris': 'Circle of Solaris', 'spirit': 'Circle of the Spirit'}
 # Plates for enemies pictured in a section other than the one where they are fought. Checked by eye.
 PLATE_FIXES = {'01fftd': {'kraan': 'ill3.png', 'vordak': 'ill3.png', 'giak': 'ill4.png', 'doomwolf': 'ill4.png', 'gourgaz': 'ill7.png'}}
+# Deaths in plain paragraphs, without the print's "deadend" mark. Read one by one, as no wording tells them apart.
+UNMARKED_DEATHS = {'29tsoc': {253}}
 WORDS = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10, 'first': 1,
          'second': 2, 'third': 3, 'fourth': 4, 'fifth': 5, 'sixth': 6}  # "after the third round": after three
 OPEN = 99  # the far end of "5 or more" / "4 or less"
@@ -494,6 +496,8 @@ for n in numbers:
         sec['end'] = 'victory'
     if lost and not sec['choices'] and 'end' not in sec and 'puzzle' not in sec:
         sec['end'] = 'failed'
+    if n in UNMARKED_DEATHS.get(book, ()):
+        sec['end'] = 'death'
     # a draw the print forgot to link to the table, "Pick a number from the Random Number (0=10)" (Book 19's 72)
     if 'random.htm' in main or re.search(r'\bPick a number from the Random Number\b', whole, re.I):
         ranged = [c for c in sec['choices'] if 'range' in c]

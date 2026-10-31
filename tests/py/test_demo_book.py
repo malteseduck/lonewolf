@@ -33,6 +33,8 @@ def test_install_copies_the_pages_and_art_but_not_the_item_table_and_is_idempote
 
 def test_the_importer_reads_it_as_a_whole_book(root, monkeypatch):
     demo_book.install(str(root), importer=False)
+    # baking the real 4K map takes seconds; test_import_projectaon.py tests the bake on a small one
+    (root / 'data' / 'projectaon' / '99ember' / 'map-4k.webp').unlink(missing_ok=True)
     (root / 'tools').mkdir()
     script = root / 'tools' / 'import_projectaon.py'
     shutil.copyfile(os.path.join(REPO, 'tools', 'import_projectaon.py'), script)

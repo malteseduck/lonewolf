@@ -45,6 +45,7 @@ def test_the_importer_reads_a_new_order_book(tmp_path, monkeypatch):
     demo_book.install(str(tmp_path), importer=False)
     d = tmp_path / 'data' / 'projectaon'
     shutil.move(str(d / '99ember'), str(d / '21votm'))
+    (d / '21votm' / 'map-4k.webp').unlink(missing_ok=True)  # baking the real 4K map takes seconds
     page = d / '21votm' / 'sect1.htm'
     page.write_text(page.read_text('utf-8').replace('Sixth Sense', 'Astrology'), 'utf-8')
     (tmp_path / 'tools').mkdir()

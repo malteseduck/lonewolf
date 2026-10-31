@@ -90,6 +90,12 @@ def grand(tmp_path_factory):
 
 
 # plain / lines / sentences
+def test_a_death_the_print_left_unmarked_is_an_ending(tmp_path):
+    s = secs(tmp_path, {253: '<p>A stand-in ending.</p>', 254: '<p>A stand-in stop.</p>'}, book='29tsoc')
+    assert s['253']['end'] == 'death'
+    assert 'end' not in s['254']  # only the section listed; the report still names any other
+
+
 def test_plain_strips_tags_entities_and_footnote_marks(kai):
     p = kai['plain']
     assert p('<i>Hello</i>&nbsp;  &amp; <b>bye</b>\n now') == 'Hello & bye now'

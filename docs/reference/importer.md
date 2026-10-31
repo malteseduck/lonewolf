@@ -50,7 +50,7 @@ It works on the contents of `<div class="maintext">`, in document order:
 | `<div class="signpost">` | a paragraph per line (`<br>`): a sign or price board the story shows (Book 6's 98). List lines |
 | `<table>`, alone or in a signpost | a paragraph per row, its cells joined by " — " (Book 16's 226, Book 18's 339). List lines |
 | `<blockquote>` with no `<p>` inside | verse: a paragraph per line (Book 4) |
-| `<p class="deadend">` | a paragraph, and `end: 'death'` |
+| `<p class="deadend">` | a paragraph, and `end: 'death'`; so too a section listed in `UNMARKED_DEATHS`, a death the print left unmarked (Book 29's 253) |
 | `<p class="choice">` with `<a href="sectN.htm">` | a choice to N with the paragraph as its text |
 | `<p class="choice">` with no section link | a paragraph; if the section has no other way on, `end: 'failed'` (Book 3's 61, a mission given up) |
 | `<p class="puzzle">` | a paragraph, and `puzzle: true`: the answer is a section number (Books 5, 7-9) |
