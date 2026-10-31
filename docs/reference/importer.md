@@ -76,6 +76,7 @@ Heuristics layered on top, all by regular expression:
   looser reading still gates "If you wish to use the Kai Discipline of X ..." (also "... of X in order to ...") and "If you wish to
   use your Discipline of X (again)" (Book 19's 179). "If your current level of Kai rank is Y or higher" gates on the rank alone
   (Book 20's 21); "Y or lower" and "between Y and Z" stay open, as a gate holds no highest rank, and so does any other "If your ...".
+  "The Discipline of X and you possess <an item>" (Book 21's 37) keeps only the discipline read: the item is the item table's.
 - **Random Number ranges** (`span()`): "0–4", "−2–+3" (the books' minus sign), "5 or more" / "or
   higher", "4 or less", "below 7", "above 6", two neighbouring numbers "0 or 1" (Book 17's 86; any
   other pair is no range), or a single number. Not in a choice about ENDURANCE
@@ -88,7 +89,7 @@ Heuristics layered on top, all by regular expression:
   "If you possess X," as that discipline's bonus, Book 16; "that you have attained", "you have so far attained", "Add N to the number
   you have picked for every level ...", Book 19; "..., (you may) add a further N", Book 20), "You may also add N if you possess X"
   (the "add" first, Book 20's 161), rules joined by semicolons ("add 3; and if you ...") read one by one,
-  "If have" (the "you" missing, Book 16's 2), the same after a condition ("If you
+  "If have" (the "you" missing, Book 16's 2), "..., you must deduct N" (Book 21's 98), the same after a condition ("If you
   have Huntmastery, add 1 ... for every Magnakai Discipline ... after the first three", Book 11's 189), or "(Pick a number ... and) add N
   to the number you have chosen" with no condition, which always applies. Rules listed after a lead-in
   ending in a colon are read one by one. A parenthesis "if you have both, add only N" is taken as read;
@@ -109,7 +110,7 @@ Endurance; "If you possess X as well" is not read (it may lean on the rule befor
   and "until the beginning of the third round" set the wait; "in the first
   round of combat only" sets `within: 1`.
 - **Mind immunity**: "immune to Mindblast / Psi-surge / all (forms of) psychic attack(s)" in the section; "immune to Mindblast (but
-  not Psi-surge)" makes it `'mindblast'`; "immune to Mindblast and Psi-surge (but not Kai-surge)", "..., but he is vulnerable to Kai-surge" (Book 16's Cadak),
+  not Psi-surge)" or "(but not Kai-surge)" (Book 21) makes it `'mindblast'`; "immune to Mindblast and Psi-surge (but not Kai-surge)", "..., but he is vulnerable to Kai-surge" (Book 16's Cadak),
   "...; only (the Grand Mastery of) Kai-surge" or "..., and suffers only half-damage ... Kai-surge" or "... . If you (choose to) use Kai-surge, add only N" or "immune to all forms of psychic attack, except Kai-surge" (Book 17, 2026-10-25) makes it `'psi'`;
   "immune to the effects of ..." is read the same
   (the halving is the item table's).
@@ -288,6 +289,14 @@ add a further 1" after "for every level ... above" (57, 335); "If your current l
 choices, "X or lower" and "between X and Y" (a gate holds no highest rank); 42, 51, 62, 149, 205, 271 (an item, weapon or
 "0 = 10"); 15, 48, 83, 129, 144, 151, 229, 281, 303 (the number counts); 254 and 310's "the appropriate bonus" for the
 magical sword and 50's item (the item table's).
+
+Book 21 as of 2026-10-31, after its step 3: 350 sections, 23 fights, Random 23 (13) / 7, gates 46 / 0 / 0, illustrated 20, dead 4,
+puzzles 2, Meals 12, fights 1 / 13 (9) / 0 / 2, enemies 3 / 1 / 8 (before it: Random 22 (12) / 8, gates 45 / 0 / 0, fights
+1 / 13 (0) / 0 / 2). Step 3 taught: "you must deduct 2" (98); "the Discipline of X and you possess <an item>" (37, the discipline
+read, the item the item table's); "immune to Mindblast (but not Kai-surge)" as `'mindblast'` (43, 60, 94, 120, 204, 248, 266, 279,
+300, which had been read as immune to all, shutting out Kai-surge: found by reading, the scan has no kind for an immunity read too
+wide). Books 1-20 unchanged by it. Left: 51, 197 (he chooses how many ENDURANCE points to spend on the number); 136, 170, 244, 322,
+345 (Grand Weaponmastery with Bow: the item table's).
 
 Introductions: 7, 7, 9, 4, 10, 7, 10, 10, 8, 9, 8, 8 paragraphs. The free Random Number sections
 left are those where the number counts gold or Endurance, plays a game, or is changed by a bow, a

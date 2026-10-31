@@ -291,6 +291,8 @@ def test_grand_master_draw_with_both_disciplines_adding_more(grand):
     ('If you possess the discipline of Magi-magic and have reached the Kai rank of Grand Thane, turn to 5.', {'disc': 'magiMagic', 'rank': 9}),
     # "still alive" goes without saying (Book 18's 345): the rank alone was read
     ('If you are still alive and you possess Grand Nexus and have reached the rank of Sun Knight or higher, turn to 5.', {'disc': 'grandNexus', 'rank': 6}),
+    # with an item too (Book 21's 37): the discipline is read, the item is the item table's
+    ('If you possess the Grand Master Discipline of Bardsmanship and you possess a lute, turn to 5.', {'disc': 'bardsmanship'}),
 ])
 def test_grand_master_gate_phrasings(grand, text, expect):
     assert grand['gate'](text) == expect
@@ -330,6 +332,17 @@ def test_immune_to_all_psychic_attack_except_kai_surge(tmp_path):
     s = secs(tmp_path, {1: '<p>These beings are immune to all forms of psychic attack, except Kai-surge and '
                            'Kai-blast.</p>' + foe('Rat', 1, 1)}, book='17tdoi')
     assert s['1']['combat']['enemies'][0]['immune'] == 'psi'   # Book 17's undead: Kai-surge still works
+
+
+def test_immune_to_mindblast_but_not_kai_surge(tmp_path):
+    s = secs(tmp_path, {1: '<p>This creature is immune to Mindblast (but not Kai-surge).</p>' + foe('Rat', 1, 1)}, book='21votm')
+    assert s['1']['combat']['enemies'][0]['immune'] == 'mindblast'   # Book 21: was read as immune to all, shutting out Kai-surge
+
+
+def test_number_rules_reads_a_penalty_he_must_take(grand):
+    assert grand['number_rules']('If your current ENDURANCE score is 20 or higher, you may add 2. '
+                                 'If your current ENDURANCE score is 10 or lower, you must deduct 2.') == [
+        {'ep': [20, 99], 'plus': 2}, {'ep': [-99, 10], 'plus': -2}]   # Book 21's 98
 
 
 def test_immune_to_the_effects_of_mindblast_and_psi_surge_with_kai_surge_lessened(tmp_path):

@@ -31,6 +31,7 @@ BOOKS = {  # code: (number, series, title)
     '18dotd': (18, 'grandmaster', 'Dawn of the Dragons'),
     '19wb': (19, 'grandmaster', "Wolf's Bane"),
     '20tcon': (20, 'grandmaster', 'The Curse of Naar'),
+    '21votm': (21, 'neworder', 'Voyage of the Moonstone'),
     '99ember': (99, 'kai', 'The Ember Road'),  # the made-up demo book (demo/99ember, ADR 0046)
 }
 DISC = {'camouflage': 'camouflage', 'hunting': 'hunting', 'sixth sense': 'sixthSense', 'tracking': 'tracking', 'healing': 'healing',
@@ -223,7 +224,8 @@ def gate(text):
     if d:
         got = disc_list(d.group(1))
         if not got:  # "of Hunting and wish to ...": the list stops at the first word that is not a discipline
-            got = disc_list(re.split(r'\s+(?:and|or)\s+(?!(?:of\s+)?(?:%s)\b)' % '|'.join(re.escape(k) for k in DISC), d.group(1), maxsplit=1, flags=re.I)[0])
+            # or at an "and" the match ended on: "of Bardsmanship and you possess a ..." (Book 21's 37), the item the item table's
+            got = disc_list(re.split(r'\s+(?:and|or)(?:\s+(?!(?:of\s+)?(?:%s)\b)|$)' % '|'.join(re.escape(k) for k in DISC), d.group(1), maxsplit=1, flags=re.I)[0])
         if got:
             ids, every = got
             need = {'disc': ids[0] if len(ids) == 1 else ids}
@@ -361,7 +363,8 @@ def number_rules(whole):
             s = 'If %s, %s %s.' % (inv.group(3), inv.group(1).lower(), inv.group(2))
         # "If have the ... Discipline of X" (Book 16's 2): the "you" is missing from the print
         # "And if you possess X, add 1." (Book 18's 343): the last of a list of bonuses, a sentence of its own
-        m = re.match(r'(?:However, |Also, |And )?[Ii]f (you .+?|your .+?|(?:have|possess) .+?),? (?:then )?(?:you may (?:also )?)?(add|deduct|subtract) (?:another |a further |an additional |an extra )?(\d+)(?: points?)?(?: (?:to|from) (?:the|this|your) (?:total |final )?(?:number|total|score|figure)\b.*)?\.?$', s)
+        # "..., you must deduct 2." (Book 21's 98)
+        m = re.match(r'(?:However, |Also, |And )?[Ii]f (you .+?|your .+?|(?:have|possess) .+?),? (?:then )?(?:you (?:may|must) (?:also )?)?(add|deduct|subtract) (?:another |a further |an additional |an extra )?(\d+)(?: points?)?(?: (?:to|from) (?:the|this|your) (?:total |final )?(?:number|total|score|figure)\b.*)?\.?$', s)
         if not m:
             return None
         cond = condition(re.sub(r'^you ', '', m.group(1)))
@@ -515,7 +518,8 @@ for n in numbers:
         for e in enemies:
             if named and e not in named:
                 continue
-            if re.search(r'immune to (?:the effects of )?Mindblast[\s,(]*but not (?:to )?Psi-surge', whole):
+            # "(but not Kai-surge)" (Book 21's Deathstalker)
+            if re.search(r'immune to (?:the effects of )?Mindblast[\s,(]*but not (?:to )?(?:Psi|Kai)-surge', whole):
                 e['immune'] = 'mindblast'  # Psi-surge still works
             elif re.search(r'immune to (?:the effects of )?Mindblast and Psi-surge(?:[\s,(]*but not (?:to )?|[\s,]*but (?:he|she|it|they) (?:is|are) vulnerable to |; only (?:the Grand Mastery of )?|, and suffers only half-damage [^.]*?'
                            r'|\. If you (?:choose to )?use )Kai-surge'
