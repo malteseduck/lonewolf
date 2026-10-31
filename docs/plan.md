@@ -14,6 +14,11 @@ every book can become a step or a check there.
 In order of importance. The owner picks what is done, and when. Books 1-16 and 20 are imported;
 importing Books 17-19 (downloaded) is the owner's go-ahead.
 
+### Classify the AI fight pictures
+
+Every AI-made picture is in git-ignored `art/plates/` (ADR 0042). The owner goes through them on the
+Picture sources sheet and marks "Made with AI" each one made from the prompt alone, which commits it.
+
 ### The New Order series (Books 21 on)
 
 A fourth series, with a hero of the player's own instead of Lone Wolf. Book 21 (`21votm`, 350

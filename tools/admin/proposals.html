@@ -332,7 +332,8 @@ async function webpOf(file) {
 async function addMade(fi, file) {
   let du;
   try { du = await webpOf(file); } catch { return toast('That is not a picture this browser can read.', 5000); }
-  (made[fi] = made[fi] || []).push({ dataUrl: du, webp: du.split(',')[1], text: true });
+  // the prompt asks for references to be attached, so committing is the owner's to choose, never the default
+  (made[fi] = made[fi] || []).push({ dataUrl: du, webp: du.split(',')[1], text: false });
   render();
   toast(`${data.enemies[fi].name}: added as a candidate from AI. Use this saves it.`, 4000);
 }

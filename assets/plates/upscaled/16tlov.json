@@ -1,8 +1,8 @@
 {
  "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
  "srcs": [
-  "assets/plates/16tlov/demoness-shamath-in-the-guise-of-gnekasha-the-worm-thrall.webp",
-  "assets/plates/16tlov/vortexi.webp",
+  "art/plates/16tlov/demoness-shamath-in-the-guise-of-gnekasha-the-worm-thrall.webp",
+  "art/plates/16tlov/vortexi.webp",
   "data/projectaon/05sots/ill14.png",
   "data/projectaon/13tplor/ill14.png",
   "data/projectaon/15tdc/ill14.png",

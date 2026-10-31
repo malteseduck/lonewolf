@@ -1,9 +1,9 @@
 {
  "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
  "srcs": [
-  "assets/plates/03tcok/doomwolf-1.webp",
-  "assets/plates/03tcok/ice-barbarian-mutants.webp",
-  "assets/plates/03tcok/kalkoth-1.webp",
+  "art/plates/03tcok/doomwolf-1.webp",
+  "art/plates/03tcok/ice-barbarian-mutants.webp",
+  "art/plates/03tcok/kalkoth-1.webp",
   "data/projectaon/02fotw/ill8.png",
   "data/projectaon/03tcok/ill1.png",
   "data/projectaon/03tcok/ill11.png",

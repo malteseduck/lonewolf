@@ -397,8 +397,9 @@ follow any reference pictures attached (`tools/admin/plateprompt.js`). The pictu
 one enemy (`pictureFor()` in `tools/admin/prompts.js`), to have its row proposed on this sheet; its top
 bar's "Prompt for N selected" copies one prompt for every card ticked Select, a row for each. A
 picture pasted (Ctrl+V) or dropped on a row joins it as "from AI"; Use this saves it, made from the prompt
-alone into the committed library (`made: 'ai'`, the default), or, made from reference pictures, into
-git-ignored `art/plates/` with no link (ADR 0042). The owner settles each row (Use this, or **Keep as is**;
+alone into the committed library (`made: 'ai'`), or, made from reference pictures (the default), into
+git-ignored `art/plates/` with no link (ADR 0042). `tools/art_sources.py ai-back` takes every credited AI
+picture back to `art/plates/`, for the owner to classify again on the Picture sources sheet. The owner settles each row (Use this, or **Keep as is**;
 **Reopen** undoes it), written into the file as `decided`, and **Finish** ends the round: the file is added to
 `plate-proposals.done.json` beside it (every round, each with the date it finished) and goes, so the
 dashboard's button goes too. The next round's agent reads the done file and does not propose again what

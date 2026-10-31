@@ -56,7 +56,8 @@ served from my PC; it is played on my iPad, mainly, with or without a connection
 - Our own work about a book is committed: its item table, its map's label list and repaint style,
   and our descriptions of its pictures and enemies. These record readings and decisions in our own
   words, not the book's text; nothing committed may rebuild a book, its text or its structure.
-- Pictures made for this project with an AI from a text prompt alone are our own and are committed.
+- Pictures made for this project with an AI from a text prompt alone are our own and are committed,
+  once the owner has marked them so; any made with book pictures attached stay in `art/`.
 - The repository itself contains only original work and assets free to redistribute (CC0 or
   similar, each with its source noted): the engine, the interface, drawn art, icons, fonts, and a
   short demo book written for this project (ADR 0046).

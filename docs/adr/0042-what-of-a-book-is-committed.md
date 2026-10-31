@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-24
-- Amended: 2026-10-27
+- Amended: 2026-10-31
 
 ## Context
 
@@ -38,7 +38,8 @@ licence is that no licensed content is in it, not that it is private.
   its path wherever it is named (plates.json, the approved pins, the upscaled lists,
   `about/ill-about.json`), drops its link entry and adds it to `assets/plates/README.txt`. A
   picture made from a book picture, a screenshot or other art given to the generator is not ours
-  and stays in `art/`.
+  and stays in `art/`. The owner marks which is which: nothing is committed until then, so the sheet
+  asks for it and assumes references were attached.
 - **`book.js` stays git-ignored and is not split.** Every fix and decision behind it is already
   committed (the importer, the item tables, plates.json and the pins, the rulings) and it is rebuilt
   from the downloaded books. A committed copy of every section's choices, gates and fights would be
@@ -56,3 +57,6 @@ licence is that no licensed content is in it, not that it is private.
 
 - 2026-10-27: the repository is public, with no licensed content in it (owner); the image prompt
   describes the style instead of naming the artist.
+- 2026-10-31: the owner had not marked reliably which AI pictures used references, so every AI-made
+  picture went back to `art/plates/` for the owner to classify again; one made from the prompt alone
+  is then committed as before (owner).

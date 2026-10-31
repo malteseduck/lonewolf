@@ -7,6 +7,8 @@ that a fresh checkout can fetch its pictures again.
     python tools/art_sources.py nolink <art/...>     mark a picture as having none (a screenshot, your own drawing)
     python tools/art_sources.py ai <art/plates/...>  made with an AI from a text prompt: moved to the committed
                                                     assets/plates/ (ADR 0042)
+    python tools/art_sources.py ai-back             every picture credited to an AI back to art/plates/, to be
+                                                    classified again
     python tools/art_sources.py fetch               fetch every missing picture from its link (a download: the
                                                     dashboard's Setup gates it)
 
@@ -119,13 +121,26 @@ def make_ai(rel, today=None, replace=False):
         raise ValueError(f'{new} is already there')
     stem = lambda r: r.rsplit('.', 1)[0] + '-2x.webp'
     moves = [(rel, new)] + ([(stem(rel), stem(new))] if os.path.isfile(path(stem(rel))) else [])
+    _move_mentioned(moves)
+    forget(rel)
+    with open(path('assets/plates/README.txt'), 'a', encoding='utf-8', newline='\n') as f:
+        f.write(f'\n{new[len("assets/plates/"):]}\n' + AI_NOTE.format(date=today or datetime.date.today().isoformat()))
+    return new
+
+
+def _move_mentioned(moves):
+    """Each (old, new) picture moved, and its path followed wherever it is named."""
+    path = lambda r: os.path.join(ROOT, *r.split('/'))
     for old, to in moves:
         os.makedirs(os.path.dirname(path(to)), exist_ok=True)
         os.replace(path(old), path(to))
-    mentions = ['assets/plates/plates.json', 'about/ill-about.json']
+    mentions = ['assets/plates/plates.json', 'about/ill-about.json', 'data/projectaon/ill-index.json']
     for sub in ('approved', 'upscaled'):
         d = path(f'assets/plates/{sub}')
         mentions += [f'assets/plates/{sub}/{n}' for n in sorted(os.listdir(d))] if os.path.isdir(d) else []
+    books = path('data/projectaon')
+    for code in sorted(os.listdir(books)) if os.path.isdir(books) else []:
+        mentions += [f'data/projectaon/{code}/{n}' for n in ('plate-proposals.json', 'plate-proposals.done.json')]
     for m in mentions:
         if not os.path.isfile(path(m)):
             continue
@@ -138,10 +153,36 @@ def make_ai(rel, today=None, replace=False):
             with open(path(m) + '.part', 'w', encoding='utf-8', newline='') as f:
                 f.write(changed)
             os.replace(path(m) + '.part', path(m))
-    forget(rel)
-    with open(path('assets/plates/README.txt'), 'a', encoding='utf-8', newline='\n') as f:
-        f.write(f'\n{new[len("assets/plates/"):]}\n' + AI_NOTE.format(date=today or datetime.date.today().isoformat()))
-    return new
+
+
+def unmake_all_ai():
+    """Every picture assets/plates/README.txt credits to an AI generator back to git-ignored art/plates/, -2x
+    copies and mentions with it, marked as having no link, its credit gone (ADR 0042: the owner re-classifies
+    them with "Made with AI"). Nothing is moved if any would overwrite a picture in art/. Returns the new paths
+    and the credits whose picture was no longer there."""
+    path = lambda r: os.path.join(ROOT, *r.split('/'))
+    stem = lambda r: r.rsplit('.', 1)[0] + '-2x.webp'
+    with open(path('assets/plates/README.txt'), encoding='utf-8', newline='') as f:
+        readme = f.read()
+    block = re.compile(r'^(\S[^\r\n]*)\r?\n((?:[ \t]+\S[^\r\n]*(?:\r?\n|$))+)(?:\r?\n)?', re.M)
+    named = list(dict.fromkeys(m.group(1) for m in block.finditer(readme) if 'AI image generator' in m.group(2)))
+    here = [n for n in named if os.path.isfile(path('assets/plates/' + n))]
+    gone = [n for n in named if n not in here]
+    moves = []
+    for n in here:
+        for old, to in ((f'assets/plates/{n}', f'art/plates/{n}'), (stem(f'assets/plates/{n}'), stem(f'art/plates/{n}'))):
+            if os.path.isfile(path(old)):
+                if os.path.exists(path(to)):
+                    raise ValueError(f'{to} is already there')
+                moves.append((old, to))
+    _move_mentioned(moves)
+    for n in here:
+        record(f'art/plates/{n}', None)
+    readme = block.sub(lambda m: '' if m.group(1) in named else m.group(0), readme)
+    with open(path('assets/plates/README.txt') + '.part', 'w', encoding='utf-8', newline='') as f:
+        f.write(readme.rstrip() + '\n')
+    os.replace(path('assets/plates/README.txt') + '.part', path('assets/plates/README.txt'))
+    return [f'art/plates/{n}' for n in here], gone
 
 
 def listing():
@@ -261,6 +302,10 @@ def main(argv):
         return 0
     if len(argv) == 2 and argv[0] == 'ai':
         print(make_ai(argv[1]))
+        return 0
+    if argv == ['ai-back']:
+        back, gone = unmake_all_ai()
+        print(f'{len(back)} pictures back in art/plates/; {len(gone)} credits had no picture')
         return 0
     if len(argv) == 2 and argv[0] == 'nolink':
         print(record(argv[1], None))

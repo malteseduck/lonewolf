@@ -65,7 +65,7 @@ Changes list names what it took in.
 | [0004](0004-maps.md) | The book's own printed map only, upscaled by a Gemini repaint over names set in type (the map's `font.txt`), shown in sepia; the agent's first pass over the labels, on a budget | 2026-10-30 |
 | [0008](0008-fight-pictures.md) | A fight's picture: its own, the same creature in this book, then another, then a stand-in; plain humans varied; shown whole; upscaled 2x; pinned once approved; candidates on the proposal sheet | 2026-10-30 |
 | [0038](0038-art-keeps-its-source-links.md) | Pictures added to `art/` keep their source link where there is one, so Setup can fetch them again | 2026-10-24 |
-| [0042](0042-what-of-a-book-is-committed.md) | The repository is public, with no licensed content; our descriptions (`about/`, never 8 of the book's words in a row) and AI-made fight pictures are committed; `book.js` is not, nor split | 2026-10-27 |
+| [0042](0042-what-of-a-book-is-committed.md) | The repository is public, with no licensed content; our descriptions (`about/`, never 8 of the book's words in a row) and AI-made fight pictures are committed; `book.js` is not, nor split | 2026-10-31 |
 | [0046](0046-stand-in-content-in-public.md) | What the public sees is stand-in content: the showcase, and the made-up demo book `99ember`, played on the PC only | 2026-10-27 |
 
 ### The rules engine

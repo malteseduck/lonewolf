@@ -111,6 +111,49 @@ def test_fetch_missing_writes_each_picture_back_converted_as_before(root):
     assert asrc.summary()['missing'] == ['art/broken.png']
 
 
+def test_a_committed_ai_picture_goes_back_to_art_and_every_mention_follows(root):
+    # ADR 0042: until the owner has said which were made from the prompt alone, none is committed
+    root.file('assets/plates/10xx/orc.webp', b'pic')
+    root.file('assets/plates/10xx/orc-2x.webp', b'pic2')
+    root.file('assets/plates/wolf.jpg', b'free')
+    root.file('assets/plates/plates.json', b'{"plates": [{"src": "assets/plates/10xx/orc.webp"}, {"src": "assets/plates/wolf.jpg"}]}')
+    root.file('assets/plates/approved/10xx.json', b'{"pins": {"1/0": {"plate": {"src": "assets/plates/10xx/orc.webp"}}}}')
+    root.file('assets/plates/upscaled/10xx.json', b'{"srcs": ["assets/plates/10xx/orc.webp", "assets/plates/10xx/orcish.webp"]}')
+    root.file('about/ill-about.json', b'{"assets/plates/10xx/orc.webp": "an orc"}')
+    root.file('data/projectaon/10xx/plate-proposals.json', b'{"enemies": [{"refs": ["assets/plates/10xx/orc.webp"]}]}')
+    root.file('assets/plates/README.txt', b'Fight plates.\n\nwolf.jpg\n  An engraving.\n\n10xx/orc.webp\n  Made with an AI image generator.\n  Moved here 2026-10-24.\n\n10xx/gone.webp\n  Made with an AI image generator.\n')
+    assert asrc.unmake_all_ai() == (['art/plates/10xx/orc.webp'], ['10xx/gone.webp'])
+    assert root.exists('art/plates/10xx/orc.webp') and root.exists('art/plates/10xx/orc-2x.webp')
+    assert not root.exists('assets/plates/10xx/orc.webp') and not root.exists('assets/plates/10xx/orc-2x.webp')
+    assert root.exists('assets/plates/wolf.jpg')
+    for rel in ('assets/plates/plates.json', 'assets/plates/approved/10xx.json', 'about/ill-about.json', 'data/projectaon/10xx/plate-proposals.json'):
+        text = open(root.path(rel), encoding='utf-8').read()
+        assert 'art/plates/10xx/orc.webp' in text and 'assets/plates/10xx/orc.webp' not in text
+    assert 'assets/plates/wolf.jpg' in open(root.path('assets/plates/plates.json'), encoding='utf-8').read()
+    assert 'assets/plates/10xx/orcish.webp' in open(root.path('assets/plates/upscaled/10xx.json'), encoding='utf-8').read()
+    assert asrc.load()['art/plates/10xx/orc.webp'] == {'url': None}
+    readme = open(root.path('assets/plates/README.txt'), encoding='utf-8').read()
+    assert 'wolf.jpg' in readme and 'orc.webp' not in readme and 'gone.webp' not in readme and 'AI' not in readme
+
+
+def test_credits_with_windows_line_endings_still_name_their_pictures(root):
+    root.file('assets/plates/10xx/orc.webp', b'pic')
+    root.file('assets/plates/README.txt', b'Fight plates.\r\n\r\n10xx/orc.webp\r\n  Made with an AI image generator.\r\n  Moved here.\r\n')
+    assert asrc.unmake_all_ai() == (['art/plates/10xx/orc.webp'], [])
+    assert root.exists('art/plates/10xx/orc.webp')
+    assert 'orc.webp' not in open(root.path('assets/plates/README.txt'), encoding='utf-8').read()
+
+
+def test_a_committed_ai_picture_never_overwrites_one_in_art(root):
+    root.file('assets/plates/10xx/orc.webp', b'new')
+    root.file('art/plates/10xx/orc.webp', b'old')
+    root.file('assets/plates/README.txt', b'10xx/orc.webp\n  Made with an AI image generator.\n')
+    with pytest.raises(ValueError):
+        asrc.unmake_all_ai()
+    assert open(root.path('art/plates/10xx/orc.webp'), 'rb').read() == b'old'
+    assert root.exists('assets/plates/10xx/orc.webp')
+
+
 def test_a_picture_made_with_ai_moves_to_the_committed_library_and_every_mention_follows(root):
     # ADR 0042: made from a text prompt alone, it is ours, so it is committed rather than fetched again
     root.file('art/plates/10xx/orc.webp', b'pic')
