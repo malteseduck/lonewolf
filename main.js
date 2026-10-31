@@ -304,27 +304,16 @@ const SERIES_TITLES = ['Flight from the Dark', 'Fire on the Water', 'The Caverns
   'Castle Death', 'The Jungle of Horrors', 'The Cauldron of Fear', 'The Dungeons of Torgar', 'The Prisoners of Time', 'The Masters of Darkness',
   'The Plague Lords of Ruel', 'The Captives of Kaag', 'The Darke Crusade', 'The Legacy of Vashna', 'The Deathlord of Ixia', 'Dawn of the Dragons', "Wolf's Bane", 'The Curse of Naar',
   'Voyage of the Moonstone', 'The Buccaneers of Shadaki', "Mydnight's Hero", 'Rune War', 'Trail of the Wolf', 'The Fall of Blood Mountain', 'Vampirium', 'The Hunger of Sejanoz'];
-/* the series by book number: a band of numerals each on the left page, a shelf each on the right */
-const SHELVES = Object.entries(LW.SERIES).map(([key, s]) => ({ key, ...s.shelf }));
+/* the series by book number: a shelf each, behind a tab on the right page */
+const SHELVES = Object.entries(LW.SERIES).map(([key, s]) => ({ key, name: s.name, ...s.shelf }));
 const shelfOf = (n) => SHELVES.find((s) => n >= s.from && n <= s.to) || SHELVES[0];
 const bookIds = () => Object.keys(BOOKS).sort((a, b) => (BOOKS[a].number || 0) - (BOOKS[b].number || 0));
 const savedAt = (id) => (hasSave(id) ? saved(id).s.at : null);
-/* engraved scrollwork either side of a row of medallions: a hairline that curls at each end, with leaves */
-const SCROLL = `<svg class="scrollwork" viewBox="0 0 120 24" preserveAspectRatio="none" aria-hidden="true"><path d="M2 12.6C14 12.4 30 9.200 46 9.600 64 10 78 15 96 14.400 104 14.100 110 12.400 112 10.200 113.400 8.600 112.600 6.600 110.800 6.700 109 6.800 108.600 8.900 110 9.600 108.200 9 108.400 7.600 109.800 7.400 111.400 7.200 112.200 9 111.200 10.600 109 13.600 103 15.600 96 15.800 78 16.400 64 11.400 46 11 30 10.600 14 13.800 2 13.400Z"/><path d="M40 9.800C37 6.400 32 5.600 29.400 7.400 32.600 7.200 36 8 40 9.800ZM58 11.600C61.600 15 66.400 16 69.400 14.600 66 14.400 62.400 13.400 58 11.600ZM76 14.400C79 11.600 83.600 10.800 86.600 12 83.400 12.400 80 13.200 76 14.400Z"/></svg>`;
 function titleLeftHTML() {
-  const ids = bookIds(), byNum = {};
-  ids.forEach((id) => { byNum[BOOKS[id].number] = id; });
-  const numeral = (n) => {
-    const id = byNum[n], name = `${n}. ${SERIES_TITLES[n - 1]}`;
-    return id ? `<button type="button" class="med numeral ${hasSave(id) ? 'lit' : ''}" data-book="${id}" title="${esc(name)}" aria-label="${esc(name)}">${roman(n)}</button>`
-      : `<span class="med numeral off" title="${esc(name)}, not downloaded">${roman(n)}</span>`;
-  };
-  const band = (label, from, to) => `<div class="band"><em>${label}</em><div>${SCROLL}${Array.from({ length: to - from + 1 }, (_, i) => numeral(from + i)).join('')}${SCROLL}</div></div>`;
   return `<div class="titlepage">
     <div class="maker">A solo adventure in Magnamund</div>
     <h1 class="mark"><span>Lone</span><span class="wolfmark">${glyph(UG.titleMark)}</span><span>Wolf</span></h1>
     <div class="frontis">${frontisURL ? `<img src="${frontisURL}" alt="">` : ''}</div>
-    <div class="bands">${SHELVES.map((s) => band(s.name, s.from, s.to)).join('')}${BOOKS['99ember'] ? `<div class="band demoband"><button type="button" class="inkbtn" data-book="99ember" title="A made-up book for showing the player; this PC only">Demo: ${esc(BOOKS['99ember'].title)}</button></div>` : ''}</div>
   </div>`;
 }
 /* the right page of the title spread: every adventure, or the books of the one chosen (shelf) */
@@ -365,7 +354,8 @@ function adventuresHTML() {
   return `<div class="shelfpage">${ruled('Your adventures')}
     <div class="plaqs">${adv.list.map(plaque).join('')}
       <div class="plaq"><button type="button" class="plaqmain" data-advnew><span class="med">${glyph(UG.newAdventure)}</span><span class="plaqtext"><b>A new adventure</b><i>Another game, with a Lone Wolf of its own</i></span></button>
-        <span class="plaqmore">${restoring && !restoring.id && (restoring.files || restoring.chosen) ? restoreRow('') : '<button type="button" class="inkbtn" data-restore>restore</button>'}</span></div></div></div>`;
+        <span class="plaqmore">${restoring && !restoring.id && (restoring.files || restoring.chosen) ? restoreRow('') : '<button type="button" class="inkbtn" data-restore>restore</button>'}</span></div></div>
+    ${BOOKS['99ember'] ? `<div class="demolink"><button type="button" class="inkbtn" data-book="99ember" title="A made-up book for showing the player; this PC only">Demo: ${esc(BOOKS['99ember'].title)}</button></div>` : ''}</div>`;
 }
 function shelfHTML() {
   const kept = LW.Character.load(), can = (id) => LW.Character.carries(kept, id);
@@ -383,9 +373,11 @@ function shelfHTML() {
   const cur = BOOKS[adventure().book], done = kept ? Math.max(0, ...kept.completed.map((id) => (BOOKS[id] ? BOOKS[id].number : 0))) : 0;
   const s = SHELVES.find((x) => x.key === shelfSeries) || shelfOf(cur ? cur.number : done + 1);
   const nums = Array.from({ length: s.to - s.from + 1 }, (_, i) => s.from + i);
+  // a tab glows while a book of its series is in progress, as that book's plaque does
+  const going = (x) => bookIds().some((id) => BOOKS[id].number >= x.from && BOOKS[id].number <= x.to && hasSave(id));
   return `<div class="shelfpage">${ruled(`${advName(adv.at)} <button type="button" class="inkbtn" data-shelf="">all adventures</button>`)}
     ${kept ? `<p class="kept">${esc(yourHero(kept.hero))}, ${esc(LW.rankOf(kept.hero) || 'Kai Lord')}, waits after <i>${esc(kept.fromTitle)}</i>. A book not yet finished begins with ${LW.heroPronoun(kept.hero).obj}.</p>` : ''}
-    <div class="shelftabs" role="tablist">${SHELVES.map((x) => `<button type="button" class="inkbtn ${x === s ? 'on' : ''}" role="tab" aria-selected="${x === s}" data-series="${x.key}">${x.name}</button>`).join('')}</div>
+    <div class="shelftabs" role="tablist">${SHELVES.map((x) => `<button type="button" class="inkbtn ${x === s ? 'on' : ''} ${going(x) ? 'going' : ''}" role="tab" aria-selected="${x === s}" data-series="${x.key}">${x.name}</button>`).join('')}</div>
     <div class="plaqs shelfrow">${nums.map((n) => (byNum[n] ? plaque(byNum[n]) : missing(n))).join('')}</div></div>`;
 }
 function leftHTML() {

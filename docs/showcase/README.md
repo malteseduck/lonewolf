@@ -19,7 +19,7 @@ checking what can be checked.
 ![The title page](images/01-title.jpg)
 
 **The title page** is built round the owner's own drawing of Lone Wolf and the burning Kai monastery
-behind him (ruling R26), with a band of numerals for each series.
+behind him (ruling R26).
 
 ![The shelf](images/02-shelf.jpg)
 

@@ -25,7 +25,7 @@ describe('the series', () => {
     expect(S.list).toEqual(expect.arrayContaining(['astrology', 'herbmastery', 'elementalism', 'bardsmanship', 'kaiSurge']));
     expect(S.first).toBe(5);
     expect(S.base).toEqual({ cs: 25, ep: 30 });
-    expect(S.shelf).toEqual({ name: 'The New Order', from: 21, to: 28 });
+    expect(S.shelf).toEqual({ from: 21, to: 28 });
     expect(LW.rankOf(noHero())).toBe('Kai Grand Master Senior');
     expect(LW.rankOf(noHero(LW.SERIES.neworder.list))).toBe('Kai Supreme Master');
   });

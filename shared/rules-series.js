@@ -66,7 +66,7 @@
 
   const ids = (series) => Object.keys(LW.DISCIPLINES).filter((d) => LW.DISCIPLINES[d].series === series);
   /* A series' rules, read by the tests below so a series is added here alone.
-     shelf: its place on the title page and the shelf. base: a new character's scores before the Random
+     shelf: its books on the title page's shelf. base: a new character's scores before the Random
      Number. arms: the discipline that masters weapons, how many at first (then one a book) and the hero's
      list of them. past: the Magnakai numbers he chose count. grand: the series' own Disciplines give their
      Grand Master numbers. holds: the earlier series whose Disciplines he holds for the text's gates.
@@ -79,18 +79,18 @@
      is taken at setting out. bareHanded: no loss for fighting unarmed. healCap: the most heals gives in a book. */
   const KAI_BASE = { cs: 10, ep: 20 };
   LW.SERIES = {
-    kai: { name: 'Kai', list: ids('kai'), first: 5, field: 'disciplines', base: KAI_BASE, shelf: { name: 'The Kai', from: 1, to: 5 },
+    kai: { name: 'Kai', list: ids('kai'), first: 5, field: 'disciplines', base: KAI_BASE, shelf: { from: 1, to: 5 },
       heals: [{ by: 'has', d: 'healing', name: 'Healing' }],
       hunts: [{ by: 'has', d: 'hunting', name: 'Hunting' }],
       shield: [{ by: 'has', d: 'mindshield' }],
       ranks: ['', 'Novice', 'Intuite', 'Doan', 'Acolyte', 'Initiate', 'Aspirant', 'Guardian', 'Warmarn', 'Savant', 'Master'] },
-    magnakai: { name: 'Magnakai', list: ids('magnakai'), first: 3, field: 'magnakai', base: KAI_BASE, shelf: { name: 'The Magnakai', from: 6, to: 12 },
+    magnakai: { name: 'Magnakai', list: ids('magnakai'), first: 3, field: 'magnakai', base: KAI_BASE, shelf: { from: 6, to: 12 },
       arms: { disc: 'weaponmastery', first: 3, field: 'mastery' }, past: true, circles: true, huntFails: true,
       heals: [{ by: 'has', d: 'curing', name: 'Curing' }, { by: 'veteran', d: 'healing', name: 'Healing' }],
       hunts: [{ by: 'has', d: 'huntmastery', name: 'Huntmastery' }, { by: 'veteran', d: 'hunting', name: 'Hunting' }],
       shield: [{ by: 'has', d: 'psiScreen' }],
       ranks: ['', 'Kai Master', 'Kai Master Senior', 'Kai Master Superior', 'Primate', 'Tutelary', 'Principalin', 'Mentora', 'Scion-kai', 'Archmaster', 'Kai Grand Master'] },
-    grandmaster: { name: 'Grand Master', list: ids('grandmaster'), first: 4, field: 'grandmaster', base: { cs: 25, ep: 30 }, shelf: { name: 'The Grand Master', from: 13, to: 20 },
+    grandmaster: { name: 'Grand Master', list: ids('grandmaster'), first: 4, field: 'grandmaster', base: { cs: 25, ep: 30 }, shelf: { from: 13, to: 20 },
       arms: { disc: 'grandWeaponmastery', first: 2, field: 'grandMastery' }, past: true, grand: true, holds: ['kai', 'magnakai'],
       keepCircles: true, earn: 4, backpack: 10, keepPack: true,
       heals: [{ by: 'chose', d: 'curing', name: 'Curing' }],
@@ -100,7 +100,7 @@
       keeps: ['crystalStar', 'sommerswerd', 'silverHelm', 'daggerVashna', 'silverBracers', 'jewelledMace', 'silverBow', 'helshezag', 'kagoniteMail', 'korliniumScabbard'],
       ranks: ['', 'Kai Grand Master Senior', 'Kai Grand Master Superior', 'Kai Grand Sentinel', 'Kai Grand Defender', 'Kai Grand Guardian', 'Sun Knight', 'Sun Lord', 'Sun Thane', 'Grand Thane', 'Grand Crown', 'Sun Prince', 'Kai Supreme Master'] },
     // Book 21's rules; the owner's readings are ADR 0047
-    neworder: { name: 'New Order', list: [...ids('grandmaster'), ...ids('neworder')], first: 5, field: 'newOrder', base: { cs: 25, ep: 30 }, shelf: { name: 'The New Order', from: 21, to: 28 },
+    neworder: { name: 'New Order', list: [...ids('grandmaster'), ...ids('neworder')], first: 5, field: 'newOrder', base: { cs: 25, ep: 30 }, shelf: { from: 21, to: 28 },
       arms: { disc: 'grandWeaponmastery', first: 1, field: 'grandMastery' }, past: true, grand: true, holds: ['kai', 'magnakai'],
       earn: 5, backpack: 10, keepPack: true, fresh: true, named: true, kaiWeapon: true, bareHanded: true, healCap: 10,
       heals: [{ by: 'has', d: 'curing', name: 'Curing' }],
