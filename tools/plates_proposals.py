@@ -29,9 +29,12 @@ book's text from book.js itself, so the file holds names, ids, paths and our own
        "pick": 0,                           the agent's choice (index into candidates), or none
        "prompt": "...",                     every detail the book (and the wiki) gives of what it looks like,
                                             but no colour (an ink drawing: tone and texture instead),
-                                            and the moment it is fought, for the sheet's image-generator prompt
+                                            and what it does in the moment it is fought, naming no place or other
+                                            figure, for the sheet's image-generator prompt
                                             (our own words: it is sent to the generator; never 8 of the book's
                                             in a row)
+       "beyond": ["shaggy hide: ill9"],     each detail of the prompt the book's text does not give, and where it
+                                            comes from, shown to the owner under the prompt
        "refs": ["data/projectaon/19wb/small6.png"]}   a good pick of the books' pictures to attach to the
                                             generator, the one it shows now first (any that show it or its
                                             surroundings, small ones too); the sheet adds the candidates
@@ -199,6 +202,9 @@ def problems(code):
             hue = hue or re.compile(r'(?<![A-Za-z])((?:%s)(?:dish|ish|y)?)(?![a-z])' % '|'.join(colours()))
             if hue.findall(prompt):
                 out.append(f"{n}: its prompt names a colour ({', '.join(hue.findall(prompt))}): an ink drawing has none, describe it in tone and texture")
+        beyond = e.get('beyond', [])
+        if not (isinstance(beyond, list) and all(isinstance(b, str) for b in beyond)):
+            out.append(f'{n}: its beyond must be a list of text')
         pick = e.get('pick')
         if pick is not None and not (isinstance(pick, int) and 0 <= pick < len(cands)):
             out.append(f'{n}: pick {pick} is not one of its {len(cands)} candidates')

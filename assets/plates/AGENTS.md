@@ -11,7 +11,10 @@ Rules for work on fight pictures (step 7). The root `AGENTS.md` applies as well;
 - **Image-generator prompts go in that file's `prompt` field**, never in a chat report: a fuller
   description in our own words of what the enemy looks like and the moment it is fought. An enemy no
   book pictures goes in with no candidates. Keep its `foe-about.json` entry descriptive too, since the
-  picture sheet's Prompt button reads it.
+  picture sheet's Prompt button reads it. A man-beast is said outright to stand upright on two legs,
+  with what is man and what is beast part by part: the word "beast" alone puts it on all fours. Name
+  no place, hero or victim: what is named gets drawn. The enemy goes at the viewer. Every detail the
+  book's text does not give goes in the row's `beyond`, with where it comes from.
 - **A prompt names no colour**, even where the book does: the pictures are ink drawings and a colour
   word pulls the generator towards paint. Say it in tone and texture (dark, pale, glossy, glowing,
   banded). `tools/admin/plateprompt.js` strips colour words from descriptions, and

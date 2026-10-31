@@ -385,8 +385,11 @@ folded, with the sentences the agent marked as describing it (`describe`) highli
 as the owner's picture, as the picture sheet's Stand-in... or By address... would. Each row also has a
 **prompt** for an image generator: the agent's fullest description of the enemy, gathered from every section
 that describes it (where it is first seen, fought, killed or opened, and what is compared to it) and the wiki,
-and the moment it is fought, with the pictures worth attaching shown beneath: the picture it shows now and every candidate on disk,
-then the agent's `refs` (`refsOf()` in `tools/admin/proposals.html`). No prompt names a colour
+and what it does in the moment it is fought, with the pictures worth attaching shown beneath: the picture it shows now and every candidate on disk,
+then the agent's `refs` (`refsOf()` in `tools/admin/proposals.html`). Under the prompt the row shows the agent's `beyond`, each
+detail the book's text does not give and where it comes from (a picture, or its guess). The template draws the enemy alone,
+any place or other figure named being left out, keeps a beast's own posture and stands a part-man creature on two legs
+(the owner, 2026-10-30). No prompt names a colour
 (a fight picture is an ink drawing; the owner, 2026-10-26): `platePrompt()` takes every colour word out of the
 description it is given, foe-about entries included, and the check rejects one in the agent's `prompt`
 (the file's `prompt`, our own words, checked against the book's) in the picture sheet's style, asking it to

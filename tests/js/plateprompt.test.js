@@ -19,6 +19,16 @@ describe('platePrompt', () => {
     expect(p).not.toMatch(/Chalk|in the style of [A-Z]/);
     expect(p).toContain('dense cross-hatching');
   });
+  it('keeps a beast\'s own posture and stands a man-beast on two legs', () => {
+    const p = platePrompt('X', 'a man-beast');
+    expect(p).toMatch(/a beast stays on all fours, coiled or in flight as described, never made humanoid/);
+    expect(p).toMatch(/part man or humanoid stands on two legs/);
+  });
+  it('draws the subject alone, whatever place or figure its description names', () => {
+    const p = platePrompt('X', 'it slams the hero into the mud at the bridge');
+    expect(p).toMatch(/Draw the subject alone: any place or other figure named above is not drawn/);
+    expect(p).toContain('Plain white background');
+  });
   it('asks the generator to follow the attached references only when told to', () => {
     expect(platePrompt('X', 'a beast', { refs: true })).toContain('attached reference images');
     expect(platePrompt('X', 'a beast')).not.toContain('attached reference images');

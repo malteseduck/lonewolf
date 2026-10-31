@@ -243,6 +243,7 @@ function render() {
       <details class="prompt"${(e.candidates || []).length ? '' : ' open'}><summary>Prompt for an image generator</summary>
         <textarea readonly id="pr${fi}">${esc(promptOf(e))}</textarea>
         <div class="row"><button data-copy="${fi}">Copy prompt</button><span>attach the references below (the picture now and the candidates first, then the agent's); paste the result here (Ctrl+V)</span></div>
+        ${e.prompt ? `<div class="why">${e.beyond ? (e.beyond.length ? `Not in the book's text: ${esc(e.beyond.join('; '))}` : 'All from the book\'s text.') : 'The agent has not said what here is beyond the book\'s text.'}</div>` : ''}
         ${refsOf(e, now).length ? `<div class="refs">${refsOf(e, now).map((r) => `<a href="/${esc(r)}" target="_blank" rel="noopener" title="${esc(ixAbout(r))}"><img src="/${esc(r)}" alt="" loading="lazy">${esc(r.split('/').slice(-2).join('/'))}</a>`).join('')}</div>` : ''}</details>
       </div><div class="text">${bookText(e)}</div></section>`;
   }).join('') || '<p class="note">No proposals for this book (data/projectaon/' + esc(code) + '/plate-proposals.json).</p>';

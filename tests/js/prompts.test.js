@@ -32,6 +32,13 @@ describe('pictureFor', () => {
     // a list of one reads as the single card's prompt
     expect(pictureFor(b, [foe])).toBe(p);
   });
+  it('asks for the enemy alone, and for what the prompt says beyond the book\'s text', () => {
+    expect(p).toContain('"beyond"');
+    expect(p).toMatch(/Name no place, hero or victim/);
+    expect(p).not.toMatch(/marks, setting\)/);
+    expect(p).toMatch(/stands on two legs/);
+    expect(p).toMatch(/every gathered section/);
+  });
   it('shares the search order and the description with the whole-book prompt', () => {
     const all = PROMPTS.pictures({ ...b, imp: { bare: 2, kinds: 20 } });
     for (const s of ['Follow docs/reference/items.md, "Fight pictures"', 'Never a colour', 'plates_proposals.py gather 09sb']) {

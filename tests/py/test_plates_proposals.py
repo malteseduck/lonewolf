@@ -129,6 +129,16 @@ def test_a_prompt_names_no_colour(tree, monkeypatch):
     assert pp.problems(CODE) == ['Mire Toad: its prompt names a colour (reddish, red, black, grey): an ink drawing has none, describe it in tone and texture']
 
 
+def test_what_a_prompt_says_beyond_the_book_is_a_list_of_text(tree):
+    """`beyond` tells the owner which details of the prompt the book's text does not give (the owner, 2026-10-30)."""
+    tree.book()
+    tree.proposals([
+        {'name': 'Mire Toad', 'candidates': [], 'prompt': 'a squat toad', 'beyond': ['warty hide: ill3', 'squat build: my guess']},
+        {'name': 'Iron Gate', 'candidates': [], 'prompt': 'a gate', 'beyond': 'its studs'},
+    ])
+    assert pp.problems(CODE) == ['Iron Gate: its beyond must be a list of text']
+
+
 def test_a_row_is_settled_by_a_choice_or_kept_as_it_is_and_can_be_reopened(tree):
     tree.book()
     tree.proposals([{'name': 'Mire Toad', 'candidates': []}, {'name': 'Iron Gate', 'candidates': []}])

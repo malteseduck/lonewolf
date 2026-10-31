@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-01 (shown whole); varied humans 2026-10-09; pinned 2026-10-11; source order 2026-10-14
-- Amended: 2026-10-28
+- Amended: 2026-10-30
 
 ## Context
 
@@ -136,3 +136,6 @@ the very same creature. The owner set the order.
 - 2026-10-28: the prompt's reference pictures include the picture now and every candidate; the
   agent's proposals take the books' own pictures only, never the web or Wikimedia Commons; the sheet quotes only sections that describe the enemy or
   its fight (owner).
+- 2026-10-30: a prompt keeps to what the book and its pictures give; the agent lists any other detail,
+  and where it comes from, for the owner to judge. The picture is the enemy alone, with no setting or
+  other figure, and a creature that is part man stands on two legs (owner).
