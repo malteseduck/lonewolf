@@ -37,6 +37,11 @@ export const DISC_GLYPH = {
   telegnosis: 'crystal-ball',
   magiMagic: 'magic-palm',
   kaiAlchemy: 'round-bottom-flask',
+  // the New Order's own four
+  astrology: 'sun-radiations',
+  herbmastery: 'herbs-bundle',
+  elementalism: 'flint-spark',
+  bardsmanship: 'mighty-horn',
 };
 
 /* everything else drawn from the set */

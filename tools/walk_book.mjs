@@ -106,6 +106,8 @@ function standIn(LW, B, who, tables) {
     h.rolls = { cs: 9, ep: 9 };
     h.picked = new Set(S.list);
     if (series !== 'kai') h.weapons = new Set(LW.WEAPONS);
+    if (h.needsName()) h.setName('Stand-in', 'he');
+    if (h.needsKaiWeapon()) h.setKaiWeapon(LW.KAI_WEAPONS[0].id);
   } else h.auto();
   const hero = h.build();
   if (who === 'master') {

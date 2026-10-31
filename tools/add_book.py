@@ -3,7 +3,7 @@
     python tools/add_book.py <book>      <book> is a code (14tcok) or a number (14)
 
 The number, series and title come from book_status.CATALOGUE and SERIES, which is all the entry
-holds: the importer's discipline and rank names already cover the three series. It writes
+holds: the importer's discipline and rank names already cover the four series. It writes
 tools/import_projectaon.py only, and imports nothing (that is the owner's go-ahead, as ever).
 Refuses a book already there or not in the catalogue. Exits 1 on a refusal.
 """

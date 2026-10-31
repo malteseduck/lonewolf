@@ -23,6 +23,59 @@ const NINE = ['weaponmastery', 'animalControl', 'curing', 'invisibility', 'huntm
 const EIGHT = ['weaponmastery', 'animalControl', 'curing', 'invisibility', 'pathsmanship', 'psiScreen', 'nexus', 'divination']; // no Lore-circle that adds COMBAT SKILL
 const names = (cs) => cs.parts.map((p) => p.label);
 
+describe('a series is added in one place', () => {
+  const standIn = () => {
+    LW.DISCIPLINES.mend = { series: 'standin', name: 'Mend' };
+    LW.DISCIPLINES.forage = { series: 'standin', name: 'Forage' };
+    LW.DISCIPLINES.ward = { series: 'standin', name: 'Ward' };
+    LW.SERIES.standin = {
+      name: 'Stand-in', list: ['mend', 'forage', 'ward', 'kaiSurge'], first: 2, field: 'standin', base: { cs: 25, ep: 30 },
+      past: true, grand: true, holds: ['kai', 'magnakai'], keepPack: true, keepCircles: true, backpack: 10, earn: 2,
+      heals: [{ by: 'grand', d: 'mend', name: 'Mend' }], hunts: [{ by: 'grand', d: 'forage', name: 'Forage' }], shield: [{ by: 'has', d: 'ward' }],
+      ranks: ['', 'One', 'Two', 'Three', 'Four'],
+    };
+  };
+  const hero = (standin, over = {}) => Object.assign({ cs: 25, ep: 30, epMax: 30, series: 'standin', disciplines: [], standin, weapons: [], backpack: [], special: [], meals: 0, gold: 0 }, over);
+
+  it('reads its discipline rules from its row', () => {
+    standIn();
+    const h = hero(['mend', 'ward']);
+    expect(LW.heals(h)).toBe('Mend');
+    expect(LW.hunts(h)).toBe(false);
+    expect(LW.hunts(hero(['forage']))).toBe('Forage');
+    expect(LW.shielded(h)).toBe(true);
+    expect(LW.shielded(hero(['mend']))).toBe(false);
+    expect(LW.rankOf(h)).toBe('Two');
+  });
+  it('holds the earlier series it names, and its own only as chosen', () => {
+    standIn();
+    const h = hero(['mend']);
+    expect(LW.has(h, 'hunting')).toBe(true);
+    expect(LW.has(h, 'curing')).toBe(true);
+    expect(LW.has(h, 'mend')).toBe(true);
+    expect(LW.has(h, 'ward')).toBe(false);
+    expect(LW.has(h, 'kaiSurge')).toBe(false);
+  });
+  it('takes its numbers from what he chose: the surge, the Backpack, the disciplines past its first', () => {
+    standIn();
+    expect(LW.psi(hero(['kaiSurge'])).surge).toBe(8);
+    expect(LW.backpackMax(hero([]))).toBe(10);
+    const h = LW.readyHero(hero(['mend', 'ward', 'forage', 'kaiSurge']));
+    expect([h.cs, h.epMax, h.ep]).toEqual([27, 34, 34]);
+  });
+  it('keeps the Backpack of a character carried from book to book', () => {
+    standIn();
+    const book = { id: '98next', number: 98, series: 'standin' };
+    const carry = { hero: hero(['mend', 'ward'], { backpack: ['rope'], meals: 3 }), completed: ['97first'] };
+    const su = LW.HeroSetup(book, carry);
+    su.toggle('forage');
+    const out = su.build();
+    expect(out.backpack).toEqual(['rope']);
+    expect(out.meals).toBe(0);
+    expect(out.standin).toEqual(['mend', 'ward', 'forage']);
+  });
+});
+
 describe('the series tables', () => {
   it('starts a new Kai character with five disciplines and a Magnakai one with three', () => {
     expect(LW.SERIES.kai.first).toBe(5);

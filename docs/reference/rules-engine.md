@@ -14,7 +14,10 @@ has its tests in `tests/js/` (`core-*`, `rules-series`, `fight`).
   disciplines: [...],        // Kai discipline ids
   magnakai: [...],           // Magnakai discipline ids (absent until the character enters that series)
   grandmaster: [...],        // Grand Master discipline ids (likewise)
-  series: 'kai'|'magnakai'|'grandmaster', // the ruleset of the book being played; set when a book is started
+  newOrder: [...],           // New Order discipline ids (a New Order hero only)
+  pronoun: 'he'|'she'|'they', // a New Order hero's, with `name` the one chosen at setting out (LW.heroPronoun, LW.heroName)
+  healed: {book, n},         // what Curing has given in that book, where the series caps it (healCap)
+  series: 'kai'|'magnakai'|'grandmaster'|'neworder', // the ruleset of the book being played; set when a book is started
   weaponskill: 'sword'|null, // Kai Weaponskill weapon, drawn from LW.WEAPONSKILL_TABLE (the books' table)
   had: [ids],               // every item he has ever been given (LW.putItem), for "if you have ever been given"
   mastery: [...],            // Magnakai Weaponmastery weapons
@@ -145,9 +148,9 @@ Adds `bow` and `quiver` to `LW.ITEMS`.
 
 | What | Where |
 |---|---|
-| Series table | `LW.SERIES.kai` / `.magnakai` / `.grandmaster`: `list`, `first` (disciplines for a new character), `field` (hero property), `ranks` |
+| Series table | `LW.SERIES.kai` / `.magnakai` / `.grandmaster`: `list`, `first` (disciplines for a new character), `field` (hero property), `ranks`, and the rules that differ, read from here alone (each named in the comment above the table): `shelf`, `base`, `arms`, `past`, `grand`, `holds`, `heals`, `hunts`, `shield`, `huntFails`, `circles`, `keepCircles`, `earn`, `backpack`, `keepPack`, `keeps` |
 | Lore-circles | `LW.CIRCLES`; `LW.circlesOf(hero)`; `settleCircles(hero)` adds circle Endurance once |
-| Discipline tests | `LW.has(hero, id)` checks the three lists; in a Grand Master book every Kai and Magnakai Discipline counts as held (the text's gates, ADR 0011). `LW.chose(hero, id)`: a Magnakai Discipline in `hero.magnakai`, in a Magnakai or Grand Master book (`LW.pastKai`), whose numbers apply. `LW.owned(hero, series)`, `LW.rankOf`, `LW.rankCount` |
+| Discipline tests | `LW.has(hero, id)` checks every series' list; in a Grand Master book every Kai and Magnakai Discipline counts as held (the series' `holds`: the text's gates, ADR 0011). `LW.chose(hero, id)`: a Magnakai Discipline in `hero.magnakai`, in a Magnakai or Grand Master book (`LW.pastKai`), whose numbers apply. `LW.owned(hero, series)`, `LW.rankOf`, `LW.rankCount` |
 | Series-dependent effects | `LW.heals`, `LW.hunts` (in a Magnakai book, Healing and Hunting too for one who completed Books 1-5: `LW.completedAll(hero, 1, 5)`, ADR 0011; `LW.huntNote` then reminds that Hunting fails in desert and wasteland), `LW.shielded`, `LW.mindPower` (0 none, 1 Mindblast, 2 Psi-surge or Kai-surge), `LW.psi(hero)` (the surge's `name`, `surge`, `cost`, `floor`, Mindblast's `blast`: a Grand Master's Kai-surge +8, 1, 6, +4, `kai`; an Archmaster's Psi-surge +6, 1, 4, +3; else +4, 2, 6, +2) |
 | Improved disciplines | `LW.mkRank(hero)`: the number of Magnakai Disciplines. Weaponmastery +4 at Scion-kai (8); unarmed with Weaponmastery −2 at Tutelary (5), −1 at Scion-kai; Psi-surge as above; `LW.cureOf(hero)` (`{name, at}`: Deliverance at 8, else an Archmaster's Curing at 6) and `LW.canCure(hero, book)`: its 20 back, once a book |
 | Bow | `bow` is `ranged`: never the weapon in hand unless the fight names it (`ctx.with`). `LW.bowShot(hero)`: `{why}` with no Bow or Arrow, else `{bow, parts, plus}`: Weaponmastery with the Bow +3, and from Mentora (7) +2 more, both only with the Bow mastered, a book bow's own `shot` (these parts are `LW.weaponBonus(hero, bow)`, which gives any other weapon's COMBAT SKILL parts too, for the inventory) |
@@ -156,6 +159,15 @@ Adds `bow` and `quiver` to `LW.ITEMS`.
 | Weapon in hand | `LW.armedWith(hero, ctx)`: of his weapons and the Special Items that are weapons (`item.weapon`: the kinds it counts as), the one that adds most: its own `item.cs` (the Sommerswerd's 8) plus Weaponskill or Weaponmastery in any of its kinds. `ctx.with`: `'none'` (bare-handed, -4) or the one item that can harm this foe. Null: unarmed, -4. A weapon with `wieldCost` is left aside unless the fight names it (`lend`, `with`, `weaponCs`, `only`) or it is his only one; the fight (`LW.Fight.inHand(round)`, the weapon of that round) takes its cost from the round given, off his maximum too |
 | Carried character | `LW.Character.load()`, `.save(hero, book)`, `.clear()`, `.carries(kept, bookId)` (not into a book he has completed), all on the storage key in `LW.Character.key` (the player points it at the open adventure's) |
 | Setting out | `LW.HeroSetup(book, carry)`: the scores, disciplines and Weaponmastery weapons chosen (`roll`, `toggle`, `toggleWeapon`, `auto`, `ready`), `build()` makes the hero (a new one at the series' `base` scores + the rolls); `.kit` is the book's kit or null. `LW.KitSetup(book, kit, hero)`: the kit's choices (`rollGold`, `choose`, `flip`, `problems`, `auto`, `ready`), `finish()` applies them. `LW.readyHero(hero)` settles Lore-circles and the Grand Master Disciplines past four, and fills Endurance. `carry` null = roll a new one. The player draws them on its pages (interface.md, Setting out) |
+
+The New Order (`LW.SERIES.neworder`, ADR 0047): `fresh` keeps a character from another series out, and
+one of its own in (`LW.Character.apart`; the page opens a new adventure for such a book). The series'
+first setting out adds `needsName`, `setName`, `needsKaiWeapon`, `setKaiWeapon`, `whoReady` to
+`LW.HeroSetup`, and `LW.kaiName(a, b)` draws from the two tables. A Kai Weapon (`LW.KAI_WEAPONS`) is a
+Special Item with `weapon`, `cs: 5`, `vs`, `more`, so `weaponParts` adds it and Grand Weaponmastery
+with no new code; `Fight#kaiWeaponNow`, `#claimKaiWeapon` put `more` in `ctx.weaponCs` where the
+fight's `kaiWeapon` names its `vs`, or the player claims it. `LW.healLeft`, `LW.healSpent`: Curing's
+10 a book. `bareHanded`: no loss fighting unarmed.
 
 Setting-out rules: a new character picks `first` disciplines of the book's series; a
 carried one picks one more (or `first` if it has none in this series yet). The series' `arms` names

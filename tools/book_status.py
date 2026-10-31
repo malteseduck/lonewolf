@@ -42,9 +42,9 @@ CATALOGUE = [
     ('10tdot', 'The Dungeons of Torgar'), ('11tpot', 'The Prisoners of Time'), ('12tmod', 'The Masters of Darkness'),
     ('13tplor', 'The Plague Lords of Ruel'), ('14tcok', 'The Captives of Kaag'), ('15tdc', 'The Darke Crusade'),
     ('16tlov', 'The Legacy of Vashna'), ('17tdoi', 'The Deathlord of Ixia'), ('18dotd', 'Dawn of the Dragons'),
-    ('19wb', "Wolf's Bane"), ('20tcon', 'The Curse of Naar'),
+    ('19wb', "Wolf's Bane"), ('20tcon', 'The Curse of Naar'), ('21votm', 'Voyage of the Moonstone'),
 ]
-SERIES = lambda n: 'kai' if n <= 5 or n == DEMO_NUMBER else 'magnakai' if n <= 12 else 'grand master'
+SERIES = lambda n: 'kai' if n <= 5 or n == DEMO_NUMBER else 'magnakai' if n <= 12 else 'grand master' if n <= 20 else 'new order'
 # The made-up demo book (ADR 0046): its source is committed in demo/99ember/, tools/demo_book.py installs it into
 # data/projectaon/ so the importer, the dashboard and the map editor treat it as any other book. It is no part
 # of the catalogue, the checklist, the whole-library checks, the release or the iPad.

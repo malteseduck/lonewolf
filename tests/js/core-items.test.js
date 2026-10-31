@@ -77,6 +77,7 @@ describe('LW.putItem', () => {
     }
   });
   it('a Backpack of 8, and of 10 in the Grand Master series', () => {
+    LW = loadShared('core.js', 'rules-series.js');
     const fill = (series) => { const h = bare({ series }); let n = 0; while (!LW.putItem(h, 'meal')) n++; return n; };
     expect(fill('kai')).toBe(8);
     expect(fill('magnakai')).toBe(8);

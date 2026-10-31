@@ -126,7 +126,7 @@ on the same medallion again, or Escape closes it; touching another medallion mov
   - `.ledgers`: "Attributes" (CS, EP with -/+ steppers, Meals, rank, Lore-circles in Magnakai
     books) beside "Combat Skill" (`heroCS` parts) and "Endurance" (base, plus Special Items' and
     Lore-circles' bonuses). Headings are ruled with a swash (`ruled()`).
-  - `.discs`: every discipline of the book's series in two rows (five to a row; the Grand Master's
+  - `.discs`: every discipline of the book's series in two rows (five to a row; the New Order's eight, smaller still; the Grand Master's
     twelve six to a row, `.six`, on smaller medallions so the bars still show), as `.disc`
     medallions joined by bars, in a box framed by `drawFrame(1000, 470)` (`--grid-frame`). Learned
     ones are `.lit`. Glyphs are game-icons.net SVGs in `assets/icons/` (`DISC_GLYPH`, `glyphs.js`), used as CSS

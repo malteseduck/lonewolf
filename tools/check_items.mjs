@@ -49,7 +49,7 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
     'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax', 'epCap', 'game',
     'zeroTen', 'against', 'mealUnless', 'add', 'forfeit', 'end']);
   const FIGHT = new Set(['csMod', 'csIf', 'csUnless', 'csNote', 'mindforce', 'unless', 'unarmed', 'undead', 'drain', 'with', 'double', 'ambush', 'evade',
-    'rounds', 'stop', 'won', 'wounded', 'noEvade', 'noShield', 'noUnarmed', 'weaponCs', 'plain', 'only', 'barred', 'lend', 'mind', 'keep', 'healLost', 'restore', 'noBoost', 'to', 'points', 'lose', 'byHand', 'breath', 'noMind', 'noStrike', 'kind', 'act']);
+    'rounds', 'stop', 'won', 'wounded', 'noEvade', 'noShield', 'noUnarmed', 'weaponCs', 'kaiWeapon', 'plain', 'only', 'barred', 'lend', 'mind', 'keep', 'healLost', 'restore', 'noBoost', 'to', 'points', 'lose', 'byHand', 'breath', 'noMind', 'noStrike', 'kind', 'act']);
   const WHEN = new Set(['if', 'unless', 'ate', 'came', 'ep', 'epMax', 'cs', 'healLost', 'take', 'back', 'mark', 'unmark', 'settle', 'dead']);
   // what a choice's need reads (Game.choices and the gold spent on choosing), and what a Condition in its any reads (LW.meets):
   // any other key is silently ignored by the page

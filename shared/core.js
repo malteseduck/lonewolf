@@ -81,6 +81,8 @@
     mapGhatan: { name: 'Map of Ghatan', kind: 'special', glyph: 'treasure-map' },
     mapDarklands: { name: 'Map of the Darklands', kind: 'special', glyph: 'treasure-map' },
     mapRuel: { name: 'Map of Ruel', kind: 'special', glyph: 'treasure-map' },
+    mapSeaRoute: { name: 'Map of the Sea Route', kind: 'special', glyph: 'treasure-map' },
+    flute: { name: 'Flute', kind: 'backpack', glyph: 'straight-pipe' },
     mapTentarias: { name: 'Map of the Western Tentarias', kind: 'special', glyph: 'treasure-map' },
     mapMaakengorge: { name: 'Map of the Maakengorge', kind: 'special', glyph: 'treasure-map' },
     mapIxia: { name: 'Map of Ixia and the Hardlands', kind: 'special', glyph: 'treasure-map' },
@@ -128,7 +130,7 @@
   LW.MAX_WEAPONS = 2;
   LW.MAX_BACKPACK = 8;
   /* 8 Backpack Items, Meals included; 10 in the Grand Master series (the books' rules) */
-  LW.backpackMax = (hero) => (hero && hero.series === 'grandmaster' ? 10 : LW.MAX_BACKPACK);
+  LW.backpackMax = (hero) => (hero && LW.SERIES && LW.SERIES[hero.series] && LW.SERIES[hero.series].backpack) || LW.MAX_BACKPACK;
   LW.MAX_ARROWS = 6; // a Quiver's load
   /* the book being played (main.js sets it): the Special Item limit depends on it */
   LW.bookNumber = 0;
@@ -265,6 +267,8 @@
   LW.has = (hero, disc) => hero.disciplines.includes(disc);
   /* Series rules (rules-series.js) replace these; each returns the discipline's name, or false. */
   LW.heals = (hero) => LW.has(hero, 'healing') && 'Healing';
+  LW.healLeft = () => true;
+  LW.healSpent = () => {};
   LW.hunts = (hero) => LW.has(hero, 'hunting') && 'Hunting';
   LW.huntNote = () => ''; // a caveat said after the Meal is spared
   LW.rankCount = (hero) => hero.disciplines.length;
@@ -399,8 +403,9 @@
       }
       // a lasting condition that costs Endurance in every section he passes (LW.MARKS[id].ep)
       for (const m of LW.marksOf(hero).filter((x) => had.includes(x))) if (LW.MARKS[m].ep && hero.ep > 0) { hero.ep = Math.max(0, hero.ep + LW.MARKS[m].ep); events.push(`${LW.MARKS[m].name}: you lose ${-LW.MARKS[m].ep} ENDURANCE.`); }
-      if (!sec.combat && LW.heals(hero) && hero.ep > 0 && hero.ep < hero.epMax) {
+      if (!sec.combat && LW.heals(hero) && LW.healLeft(hero, this.book.id) && hero.ep > 0 && hero.ep < hero.epMax) {
         hero.ep += 1;
+        LW.healSpent(hero, this.book.id);
         events.push(`${LW.heals(hero)}: you regain 1 ENDURANCE.`);
       }
       this.s.events = events;

@@ -41,7 +41,8 @@ DISC = {'camouflage': 'camouflage', 'hunting': 'hunting', 'sixth sense': 'sixthS
         'nexus': 'nexus', 'divination': 'divination',
         'grand weaponmastery': 'grandWeaponmastery', 'animal mastery': 'animalMastery', 'deliverance': 'deliverance', 'assimilance': 'assimilance',
         'grand huntmastery': 'grandHuntmastery', 'grand pathsmanship': 'grandPathsmanship', 'kai-surge': 'kaiSurge', 'kai-screen': 'kaiScreen',
-        'grand nexus': 'grandNexus', 'telegnosis': 'telegnosis', 'magi-magic': 'magiMagic', 'kai-alchemy': 'kaiAlchemy'}
+        'grand nexus': 'grandNexus', 'telegnosis': 'telegnosis', 'magi-magic': 'magiMagic', 'kai-alchemy': 'kaiAlchemy',
+        'astrology': 'astrology', 'herbmastery': 'herbmastery', 'elementalism': 'elementalism', 'bardsmanship': 'bardsmanship'}
 RANKS = {  # rank name: how many disciplines of the series it takes
     'novice': 1, 'intuite': 2, 'doan': 3, 'acolyte': 4, 'initiate': 5, 'aspirant': 6, 'guardian': 7, 'warmarn': 8, 'savant': 9, 'master': 10,
     'kai master': 1, 'kai master senior': 2, 'kai master superior': 3, 'primate': 4, 'tutelary': 5, 'principalin': 6, 'mentora': 7,
@@ -53,9 +54,11 @@ RANKS = {  # rank name: how many disciplines of the series it takes
 def rank_of(name):
     """A rank's count, its name as printed: "Grand Guardian" is Kai Grand Guardian, "Kai Grand Crown" (Book 19's 40) Grand Crown."""
     name = name.strip().lower()
-    return RANKS.get(name) or RANKS.get('kai ' + name) or (name.startswith('kai ') and RANKS.get(name[4:])) or None
+    n = RANKS.get(name) or RANKS.get('kai ' + name) or (name.startswith('kai ') and RANKS.get(name[4:])) or None
+    return n + 4 if n and series == 'neworder' else n  # the same names, from five Disciplines to sixteen (ADR 0047)
 
 
+GRAND = ('grandmaster', 'neworder')  # the series whose text names a Discipline bare ("if you have Kai-surge")
 CIRCLES = {'fire': 'Circle of Fire', 'light': 'Circle of Light', 'solaris': 'Circle of Solaris', 'spirit': 'Circle of the Spirit'}
 # Plates for enemies pictured in a section other than the one where they are fought. Checked by eye.
 PLATE_FIXES = {'01fftd': {'kraan': 'ill3.png', 'vordak': 'ill3.png', 'giak': 'ill4.png', 'doomwolf': 'ill4.png', 'gourgaz': 'ill7.png'}}
@@ -117,7 +120,7 @@ def condition(text):
     """The condition of an "If you ..." rule, when it is only disciplines, a rank and Lore-circles:
     {disc: [ids], every, rank, circle: [names]}. Anything else (items, Endurance, a weapon in hand) -> None."""
     out = {}
-    if series == 'grandmaster' and re.search(r'\(with (?:a |the )?Bow\)', text):
+    if series in GRAND and re.search(r'\(with (?:a |the )?Bow\)', text):
         return None  # "Grand Weaponmastery (with Bow)": the Bow must be one of his weapons, which a condition cannot say
     text = re.sub(r'\s*\([^)]*\)?', '', text)  # "(you possess 8 Kai Disciplines)", or one cut short at its comma
     text = re.sub(r'\s+and therefore\b.*$', '', text)
@@ -125,7 +128,7 @@ def condition(text):
         clause = clause.strip()
         # "the discipline of Magi-magic" in lower case (Book 18's 230)
         d = re.fullmatch(r'(?:have|possess)(?: and wish to use)? (?:either |both )?(?:of )?the (?:Kai |Magnakai )?[Dd]isciplines? (?:either |both )?(?:of )?(.+)', clause)
-        if not d and series == 'grandmaster':
+        if not d and series in GRAND:
             d = re.fullmatch(r'(?:have|possess) (?:the )?(?:(?:Grand Master |Magnakai |Kai )?[Dd]isciplines? of |(?:Grand )?[Mm]astery of |skill of )?(.+)', gm_names(clause))
         # "the rank of Kai Grand Guardian in the Discipline of Grand Huntmastery" (Book 14's 107): his rank is his own, so the discipline and the rank
         # "have achieved the rank of Sun Prince" (Book 20's 329)
@@ -215,7 +218,7 @@ def gate(text):
     d = re.search(r'If you (?:have|possess|wish to use|wish to demonstrate)[^.;]*?(?:Kai|Magnakai) Disciplines? (?:either |both )?(?:of )?((?:either |both )?[A-Za-z -]+?(?:\s*\(any weapon\))?)(?:,| to| on| you| turn| in order|\.| \(|$)', head + '.')
     if not d:  # "If you wish to use your Discipline of Kai-alchemy again" (Book 19's 179)
         d = re.search(r'If you (?:have|possess|wish to use) your (?:Grand Master |Magnakai |Kai )?Discipline of ([A-Za-z -]+?)(?: again)?(?:,| to| on| you| turn|\.| \(|$)', head + '.')
-    if not d and series == 'grandmaster' and not re.search(r'\(with (?:a |the )?Bow\)', head):
+    if not d and series in GRAND and not re.search(r'\(with (?:a |the )?Bow\)', head):
         d = re.search(r'If you (?:have|possess) (?:the )?(?:(?:Grand Master |Magnakai |Kai )?Disciplines? of |(?:Grand )?[Mm]astery of )?([A-Za-z -]+?)(?:,| to| on| you| turn|\.| \(|$)', gm_names(head) + '.')
     if d:
         got = disc_list(d.group(1))
@@ -378,7 +381,7 @@ def number_rules(whole):
 def reach(mods):
     """The lowest and highest totals the bonuses can make of a number 0-9."""
     def most(m, sign):
-        n = m['plus'] * ((12 if m['each'] == 'grandmaster' else 10) - m['over'] if 'each' in m else 1)
+        n = m['plus'] * ({'grandmaster': 12, 'neworder': 16}.get(m['each'], 10) - m['over'] if 'each' in m else 1)
         if list(m) == ['plus']:
             return n  # no condition: it always applies
         return n if n * sign > 0 else 0
@@ -529,7 +532,7 @@ for n in numbers:
             if unless_:
                 combat['csUnless'] = unless_
         # a mind attack that costs Endurance every round unless he is shielded (Mindshield; Psi-screen in a Magnakai book, Kai-screen in a Grand Master one)
-        shield = {'magnakai': 'Psi-screen', 'grandmaster': 'Kai-screen'}.get(series, 'Mindshield')
+        shield = {'magnakai': 'Psi-screen', 'grandmaster': 'Kai-screen', 'neworder': 'Kai-screen'}.get(series, 'Mindshield')
         dr = re.search(r'[Uu]nless you (?:have|possess) the (?:Kai |Magnakai )?Discipline of ' + shield + r', (?:you must )?(?:deduct|lose) (\d+) ENDURANCE points? (?:at the (?:beginning|start|end) of |for |in )?(?:every|each) round', whole)
         if dr:
             for e in enemies:

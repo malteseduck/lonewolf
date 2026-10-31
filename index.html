@@ -290,6 +290,8 @@ h4.ruled small { font-size: 0.7em; color: var(--ink-dim); margin-left: 0.3em; }
 .drow { display: flex; align-items: center; }
 /* the Grand Master's twelve, six a row: smaller medallions so the links between them still show */
 .discs.six .disc { --s: 2.75em; }
+/* the New Order's sixteen, eight a row */
+.discs.eight .disc { --s: 2.1em; }
 .linkwrap { position: relative; flex: 1; min-width: 0.6em; height: 1em; margin: 0 -0.15em; z-index: 0; }
 .linkwrap .link { position: absolute; inset: 0; width: 100%; height: 100%; }
 .link .band { fill: var(--enamel); }
@@ -430,6 +432,13 @@ button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background:
 .su-h { margin: 0; font: 400 2.3em/1.05 var(--cap); text-align: center; }
 .su-note { margin: 0; font-size: 1.15em; line-height: 1.3; color: var(--ink-dim); text-align: center; text-wrap: balance; }
 .su-val { --s: 2.45em; font: 400 1.35em/1 var(--title); color: #fff3d6; text-shadow: 0 0 0.3em var(--ember); } /* bronze, as the section number */
+.su-name { display: flex; justify-content: center; align-items: baseline; flex-wrap: wrap; gap: 0.2em 0.7em; font-size: 1.1em; }
+.su-name input { width: 9em; padding: 0 0.1em; border: 0; border-bottom: 0.06em solid var(--ink); background: none; color: var(--ink); font: 700 1em var(--script); color-scheme: light; }
+.su-name input:focus { outline: none; border-bottom-color: var(--blood); }
+.su-name input::placeholder { color: var(--ink-dim); font-weight: 400; }
+.su-name span { display: inline-flex; gap: 0.5em; }
+.su-name .inkbtn { color: var(--ink-dim); }
+.su-name .inkbtn.on { font-weight: 700; color: var(--ink); }
 .su-scores { display: flex; justify-content: center; gap: 3.5em; padding: 0.2em 0; }
 .su-score { display: flex; flex-direction: column; align-items: center; gap: 0.25em; }
 .su-score b, .su-gold b { font: 400 0.82em var(--title); letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap; }

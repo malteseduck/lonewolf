@@ -5,7 +5,7 @@
 (function () {
   const LW = window.LW;
 
-  LW.ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX'];
+  LW.ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XXI', 'XXII', 'XXIII', 'XXIV', 'XXV', 'XXVI', 'XXVII', 'XXVIII'];
   // the most the Combat Ratio counts for: the owner's house rule, so the Sommerswerd does not make
   // the early books' fights a walk (ruling R1). The table's "+11 or more" column is never reached.
   LW.RATIO_CAP = 10;
@@ -74,6 +74,9 @@
       if (c.points) { this.saved = hero.ep; hero.ep = c.points.n; }
       this.ctx = { with: c.with, noShield: c.noShield, noUnarmed: c.noUnarmed && (c.noUnarmed === true || LW.meets(hero, c.noUnarmed)),
         weaponCs: c.weaponCs, plain: c.plain, only: c.only, barred: c.barred, lend: c.lend };
+      // a Kai Weapon's higher bonus: where the fight marks it (c.kaiWeapon), or claimed by hand (ADR 0047)
+      this.kaiClaim = false;
+      this.setKaiBonus();
       this.weapon = c.mind ? null : LW.armedWith(hero, this.ctx);
       // noStrike: under this Condition he cannot fight it (Book 5's 162, a dead arm): only a way out is left
       this.noStrike = !!(c.noStrike && LW.meets(hero, c.noStrike));
@@ -156,6 +159,26 @@
         psiTimes: psi, enemy: this.foe, csMod: this.csMod, csNote: this.note, more }));
     }
     cs(round) { return this.parts(round).total; }
+    /* his Kai Weapon in this fight: {id, more, marked, on}; null with none, or if he would not fight with it */
+    kaiWeaponNow() {
+      const c = this.c, wc = c.weaponCs || {}, id = this.hero.special.find((s) => (LW.ITEMS[s] || {}).more);
+      if (!id || c.mind || id in wc || '*' in wc) return null;
+      const it = LW.ITEMS[id], ctx = Object.assign({}, this.ctx, { weaponCs: Object.assign({}, wc, { [id]: it.more }) });
+      if (LW.armedWith(this.hero, ctx) !== id) return null;
+      const marked = (c.kaiWeapon || []).includes(it.vs);
+      return { id, more: it.more, when: it.when, marked, on: marked || this.kaiClaim };
+    }
+    setKaiBonus() {
+      const k = this.kaiWeaponNow();
+      this.ctx.weaponCs = k && k.on ? Object.assign({}, this.c.weaponCs, { [k.id]: k.more }) : this.c.weaponCs;
+    }
+    claimKaiWeapon() {
+      const k = this.kaiWeaponNow();
+      if (!k || k.marked) return;
+      this.kaiClaim = !this.kaiClaim;
+      this.setKaiBonus();
+      this.log.push(this.kaiClaim ? `${LW.itemName(k.id)} ${k.when}: Combat Skill plus ${k.more} with it.` : `${LW.itemName(k.id)}: Combat Skill plus 5 with it.`);
+    }
     /* the weapon he fights with in this round: none in a fight of the mind or a bare-handed round */
     inHand(round = this.rounds + 1) {
       const ph = this.phases(round), barred = ph.flatMap((p) => p.barred || []);

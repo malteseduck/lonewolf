@@ -13,8 +13,8 @@ intent changes; a decision within the intent gets an ADR or a ruling instead.
 ## 1. Purpose
 
 A personal-use player for Joe Dever's Lone Wolf gamebooks: the Kai series (books 1-5), the
-Magnakai series (books 6-12) and the Grand Master series (books 13-20), with room for the New Order
-series after them. It replaces reading the
+Magnakai series (books 6-12) and the Grand Master series (books 13-20), and the New Order series
+after them (books 21 on), whose hero is of the player's own. It replaces reading the
 Project Aon web edition beside a separate action chart. It is designed to feel like the 2013 game
 *Joe Dever's Lone Wolf HD Remastered*: a dark, aged book that is itself the interface.
 

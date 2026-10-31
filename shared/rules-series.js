@@ -28,27 +28,88 @@
     telegnosis: { series: 'grandmaster', name: 'Telegnosis', blurb: 'Walk in spirit, further and more safely.' },
     magiMagic: { series: 'grandmaster', name: 'Magi-magic', blurb: 'The battle-spells of the Old Kingdoms.' },
     kaiAlchemy: { series: 'grandmaster', name: 'Kai-alchemy', blurb: 'The spells of left-handed magic.' },
+    astrology: { series: 'neworder', name: 'Astrology', blurb: 'Read what the stars foretell, and shape it.' },
+    herbmastery: { series: 'neworder', name: 'Herbmastery', blurb: 'Know anything that grows, and draw out its virtues.' },
+    elementalism: { series: 'neworder', name: 'Elementalism', blurb: 'Bend earth, air, fire and water to your will.' },
+    bardsmanship: { series: 'neworder', name: 'Bardsmanship', blurb: 'Play, sing and mimic; stir the hearts of those who hear.' },
   });
   // the Bow shoots only where the text allows; hand to hand it is no weapon at all (ranged)
   Object.assign(LW.ITEMS, { bow: { name: 'Bow', kind: 'weapon', ranged: true }, quiver: { name: 'Quiver', kind: 'special', about: 'Holds six Arrows.' } });
   LW.WEAPONS = Object.keys(LW.ITEMS).filter((k) => LW.ITEMS[k].kind === 'weapon');
+  /* The Kai Weapons, in the order of the Random Number that draws one (Book 21's table). A Special Item
+     beside the two Weapons, +5 in a fight; `more` in place of it where `vs` holds: a fight's kaiWeapon
+     names what holds there, or the player claims it (ADR 0047) */
+  const KAI_GLYPH = { axe: 'battle-axe', sword: 'pointy-sword', broadsword: 'broadsword' };
+  LW.KAI_WEAPONS = [
+    { id: 'spawnsmite', name: 'Spawnsmite', kind: 'axe', vs: 'reptile', more: 6, when: 'against reptiles' },
+    { id: 'alema', name: 'Alema', kind: 'axe', vs: 'undead', more: 7, when: 'against the undead' },
+    { id: 'magnara', name: 'Magnara', kind: 'axe', vs: 'stone', more: 8, when: 'against rock or stone' },
+    { id: 'sunstrike', name: 'Sunstrike', kind: 'sword', vs: 'day', more: 6, when: 'by daylight' },
+    { id: 'kaistar', name: 'Kaistar', kind: 'sword', vs: 'night', more: 7, when: 'at night' },
+    { id: 'valiance', name: 'Valiance', kind: 'sword', vs: 'magic', more: 8, when: 'against magicians and what magic made' },
+    { id: 'ulnarias', name: 'Ulnarias', kind: 'sword', vs: 'water', more: 9, when: 'under water' },
+    { id: 'raumas', name: 'Raumas', kind: 'broadsword', vs: 'winged', more: 6, when: 'against winged foes' },
+    { id: 'illuminatus', name: 'Illuminatus', kind: 'broadsword', vs: 'underground', more: 7, when: 'underground' },
+    { id: 'firefall', name: 'Firefall', kind: 'broadsword', vs: 'fire', more: 8, when: 'against foes that breathe or throw fire' },
+  ];
+  for (const k of LW.KAI_WEAPONS) {
+    LW.ITEMS[k.id] = { name: k.name, kind: 'special', glyph: KAI_GLYPH[k.kind], weapon: [k.kind], cs: 5, vs: k.vs, more: k.more, when: k.when,
+      about: `Your Kai Weapon: fights as ${k.kind === 'axe' ? 'an Axe' : `a ${k.kind === 'sword' ? 'Sword' : 'Broadsword'}`}, +5, or +${k.more} ${k.when}.` };
+  }
+  /* A Kai name: a Random Number on each table (Book 21's), or typed */
+  const NAME_A = ['Swift', 'Sun', 'True', 'Bold', 'Moon', 'Sword', 'Wise', 'Storm', 'Rune', 'Brave'];
+  const NAME_B = ['blade', 'fire', 'hawk', 'heart', 'friend', 'star', 'dancer', 'helm', 'strider', 'shield'];
+  LW.kaiName = (a = LW.rand10(), b = LW.rand10()) => NAME_A[a] + NAME_B[b];
+  LW.PRONOUNS = { he: { sub: 'he', obj: 'him', pos: 'his' }, she: { sub: 'she', obj: 'her', pos: 'her' }, they: { sub: 'they', obj: 'them', pos: 'their' } };
+  LW.heroName = (hero) => hero.name || 'Lone Wolf';
+  LW.heroPronoun = (hero) => LW.PRONOUNS[hero.pronoun] || LW.PRONOUNS.he;
 
   const ids = (series) => Object.keys(LW.DISCIPLINES).filter((d) => LW.DISCIPLINES[d].series === series);
-  /* base: a new character's scores before the Random Number; arms: the discipline that masters weapons,
-     how many at first (then one a book) and the hero's list of them */
+  /* A series' rules, read by the tests below so a series is added here alone.
+     shelf: its place on the title page and the shelf. base: a new character's scores before the Random
+     Number. arms: the discipline that masters weapons, how many at first (then one a book) and the hero's
+     list of them. past: the Magnakai numbers he chose count. grand: the series' own Disciplines give their
+     Grand Master numbers. holds: the earlier series whose Disciplines he holds for the text's gates.
+     heals, hunts, shield: what gives each, the first that holds, by has, chose, grand or veteran (below).
+     huntFails: the text does not mark where Hunting fails. circles: Lore-circles count; keepCircles: their
+     ENDURANCE stays in his scores. earn: each Discipline past this many adds to his scores. backpack: a
+     Backpack larger than the usual; keepPack: Backpack Items carry on. keeps: entering the series, the
+     only Special Items of the earlier books that come in. fresh: no character from another series comes
+     in or goes out. named: the hero is of the player's own, named at setting out. kaiWeapon: a Kai Weapon
+     is taken at setting out. bareHanded: no loss for fighting unarmed. healCap: the most heals gives in a book. */
   const KAI_BASE = { cs: 10, ep: 20 };
   LW.SERIES = {
-    kai: { name: 'Kai', list: ids('kai'), first: 5, field: 'disciplines', base: KAI_BASE,
+    kai: { name: 'Kai', list: ids('kai'), first: 5, field: 'disciplines', base: KAI_BASE, shelf: { name: 'The Kai', from: 1, to: 5 },
+      heals: [{ by: 'has', d: 'healing', name: 'Healing' }],
+      hunts: [{ by: 'has', d: 'hunting', name: 'Hunting' }],
+      shield: [{ by: 'has', d: 'mindshield' }],
       ranks: ['', 'Novice', 'Intuite', 'Doan', 'Acolyte', 'Initiate', 'Aspirant', 'Guardian', 'Warmarn', 'Savant', 'Master'] },
-    magnakai: { name: 'Magnakai', list: ids('magnakai'), first: 3, field: 'magnakai', base: KAI_BASE,
-      arms: { disc: 'weaponmastery', first: 3, field: 'mastery' },
+    magnakai: { name: 'Magnakai', list: ids('magnakai'), first: 3, field: 'magnakai', base: KAI_BASE, shelf: { name: 'The Magnakai', from: 6, to: 12 },
+      arms: { disc: 'weaponmastery', first: 3, field: 'mastery' }, past: true, circles: true, huntFails: true,
+      heals: [{ by: 'has', d: 'curing', name: 'Curing' }, { by: 'veteran', d: 'healing', name: 'Healing' }],
+      hunts: [{ by: 'has', d: 'huntmastery', name: 'Huntmastery' }, { by: 'veteran', d: 'hunting', name: 'Hunting' }],
+      shield: [{ by: 'has', d: 'psiScreen' }],
       ranks: ['', 'Kai Master', 'Kai Master Senior', 'Kai Master Superior', 'Primate', 'Tutelary', 'Principalin', 'Mentora', 'Scion-kai', 'Archmaster', 'Kai Grand Master'] },
-    grandmaster: { name: 'Grand Master', list: ids('grandmaster'), first: 4, field: 'grandmaster', base: { cs: 25, ep: 30 },
-      arms: { disc: 'grandWeaponmastery', first: 2, field: 'grandMastery' },
-      // the only Special Items of the earlier books that come into the series (Book 13's rules; ADR 0011)
+    grandmaster: { name: 'Grand Master', list: ids('grandmaster'), first: 4, field: 'grandmaster', base: { cs: 25, ep: 30 }, shelf: { name: 'The Grand Master', from: 13, to: 20 },
+      arms: { disc: 'grandWeaponmastery', first: 2, field: 'grandMastery' }, past: true, grand: true, holds: ['kai', 'magnakai'],
+      keepCircles: true, earn: 4, backpack: 10, keepPack: true,
+      heals: [{ by: 'chose', d: 'curing', name: 'Curing' }],
+      hunts: [{ by: 'grand', d: 'grandHuntmastery', name: 'Grand Huntmastery' }, { by: 'chose', d: 'huntmastery', name: 'Huntmastery' }],
+      shield: [{ by: 'has', d: 'kaiScreen' }, { by: 'chose', d: 'psiScreen' }],
+      // Book 13's rules; ADR 0011
       keeps: ['crystalStar', 'sommerswerd', 'silverHelm', 'daggerVashna', 'silverBracers', 'jewelledMace', 'silverBow', 'helshezag', 'kagoniteMail', 'korliniumScabbard'],
       ranks: ['', 'Kai Grand Master Senior', 'Kai Grand Master Superior', 'Kai Grand Sentinel', 'Kai Grand Defender', 'Kai Grand Guardian', 'Sun Knight', 'Sun Lord', 'Sun Thane', 'Grand Thane', 'Grand Crown', 'Sun Prince', 'Kai Supreme Master'] },
+    // Book 21's rules; the owner's readings are ADR 0047
+    neworder: { name: 'New Order', list: [...ids('grandmaster'), ...ids('neworder')], first: 5, field: 'newOrder', base: { cs: 25, ep: 30 }, shelf: { name: 'The New Order', from: 21, to: 28 },
+      arms: { disc: 'grandWeaponmastery', first: 1, field: 'grandMastery' }, past: true, grand: true, holds: ['kai', 'magnakai'],
+      earn: 5, backpack: 10, keepPack: true, fresh: true, named: true, kaiWeapon: true, bareHanded: true, healCap: 10,
+      heals: [{ by: 'has', d: 'curing', name: 'Curing' }],
+      hunts: [{ by: 'grand', d: 'grandHuntmastery', name: 'Grand Huntmastery' }],
+      shield: [{ by: 'has', d: 'kaiScreen' }],
+      ranks: ['', '', '', '', '', 'Kai Grand Master Senior', 'Kai Grand Master Superior', 'Kai Grand Sentinel', 'Kai Grand Defender', 'Kai Grand Guardian', 'Sun Knight', 'Sun Lord', 'Sun Thane', 'Grand Thane', 'Grand Crown', 'Sun Prince', 'Kai Supreme Master'] },
   };
+  /* the series a book's id falls in by its number, or undefined (the demo book) */
+  LW.seriesOfBook = (id) => { const n = parseInt(id, 10); return Object.keys(LW.SERIES).find((k) => n >= LW.SERIES[k].shelf.from && n <= LW.SERIES[k].shelf.to); };
   LW.CIRCLES = [
     { name: 'Circle of Fire', needs: ['weaponmastery', 'huntmastery'], cs: 1, ep: 2 },
     { name: 'Circle of Light', needs: ['animalControl', 'curing'], cs: 0, ep: 3 },
@@ -59,18 +120,17 @@
   const seriesOf = (hero) => LW.SERIES[hero.series] || LW.SERIES.kai;
   LW.owned = (hero, series) => hero[LW.SERIES[series || hero.series || 'kai'].field] || [];
   /* In a Grand Master book he holds every Kai and Magnakai Discipline for the text's gates (ADR 0011) */
-  const GM = 'grandmaster';
-  LW.has = (hero, d) => hero.disciplines.includes(d) || (hero.magnakai || []).includes(d) || (hero.grandmaster || []).includes(d)
-    || (hero.series === GM && !!LW.DISCIPLINES[d] && LW.DISCIPLINES[d].series !== GM);
+  LW.has = (hero, d) => Object.values(LW.SERIES).some((s) => (hero[s.field] || []).includes(d))
+    || (seriesOf(hero).holds || []).includes((LW.DISCIPLINES[d] || {}).series);
   /* A Magnakai Discipline's numbers: in a Magnakai book, those he holds; in a Grand Master book, only
      those a carried character chose (ADR 0011); none in a Kai book he goes back to */
-  LW.pastKai = (hero) => hero.series === 'magnakai' || hero.series === GM;
+  LW.pastKai = (hero) => !!seriesOf(hero).past;
   LW.chose = (hero, d) => LW.pastKai(hero) && (hero.magnakai || []).includes(d);
   /* a Grand Master Discipline's numbers, in a Grand Master book; each replaces its Magnakai counterpart's */
-  LW.grand = (hero, d) => hero.series === GM && (hero.grandmaster || []).includes(d);
+  LW.grand = (hero, d) => !!seriesOf(hero).grand && LW.owned(hero).includes(d);
   LW.rankOf = (hero) => seriesOf(hero).ranks[LW.owned(hero).length] || '';
   LW.rankCount = (hero) => LW.owned(hero).length;
-  LW.circlesOf = (hero) => (hero.series === 'magnakai' ? LW.CIRCLES.filter((c) => c.needs.every((d) => LW.has(hero, d))) : []);
+  LW.circlesOf = (hero) => (seriesOf(hero).circles ? LW.CIRCLES.filter((c) => c.needs.every((d) => LW.has(hero, d))) : []);
   /* hero.completed: the books (ids) he had completed when he set out on this one */
   LW.completedAll = (hero, from, to) => {
     const done = new Set((hero.completed || []).map((id) => parseInt(id, 10)));
@@ -81,10 +141,28 @@
      that one who played Books 1-5 keeps Healing's +1 (never added to Curing's) and Hunting's Meals
      (ADR 0011). The Magnakai books do not mark where Hunting fails, so it says so. */
   const kaiVeteran = (hero) => LW.completedAll(hero, 1, 5);
-  LW.heals = (hero) => (hero.series === GM ? LW.chose(hero, 'curing') && 'Curing' : hero.series === 'magnakai' ? (LW.has(hero, 'curing') && 'Curing') || (kaiVeteran(hero) && LW.has(hero, 'healing') && 'Healing') : LW.has(hero, 'healing') && 'Healing');
-  LW.hunts = (hero) => (hero.series === GM ? (LW.grand(hero, 'grandHuntmastery') && 'Grand Huntmastery') || (LW.chose(hero, 'huntmastery') && 'Huntmastery') : hero.series === 'magnakai' ? (LW.has(hero, 'huntmastery') && 'Huntmastery') || (kaiVeteran(hero) && LW.has(hero, 'hunting') && 'Hunting') : LW.has(hero, 'hunting') && 'Hunting');
-  LW.huntNote = (hero) => (LW.hunts(hero) === 'Hunting' && hero.series === 'magnakai' ? ' Hunting fails in desert and wasteland: if this is such a place, eat a Meal by hand.' : '');
-  LW.shielded = (hero) => (hero.series === GM ? LW.has(hero, 'kaiScreen') || LW.chose(hero, 'psiScreen') : hero.series === 'magnakai' ? LW.has(hero, 'psiScreen') : LW.has(hero, 'mindshield'));
+  const BY = {
+    has: (hero, d) => LW.has(hero, d),
+    chose: (hero, d) => LW.chose(hero, d),
+    grand: (hero, d) => LW.grand(hero, d),
+    veteran: (hero, d) => kaiVeteran(hero) && LW.has(hero, d),
+  };
+  /* the name of the first of the series' rules that holds (true if it has none), or false */
+  const firstOf = (hero, key) => {
+    const r = seriesOf(hero)[key].find((x) => BY[x.by](hero, x.d));
+    return !!r && (r.name || true);
+  };
+  LW.heals = (hero) => firstOf(hero, 'heals');
+  LW.hunts = (hero) => firstOf(hero, 'hunts');
+  LW.huntNote = (hero) => (LW.hunts(hero) === 'Hunting' && seriesOf(hero).huntFails ? ' Hunting fails in desert and wasteland: if this is such a place, eat a Meal by hand.' : '');
+  LW.shielded = (hero) => firstOf(hero, 'shield');
+  /* a series' cap on what heals gives in a book; hero.healed: how much, in which book */
+  LW.healLeft = (hero, bookId) => { const cap = seriesOf(hero).healCap; return cap == null || !hero.healed || hero.healed.book !== bookId || hero.healed.n < cap; };
+  LW.healSpent = (hero, bookId) => {
+    if (seriesOf(hero).healCap == null) return;
+    if (!hero.healed || hero.healed.book !== bookId) hero.healed = { book: bookId, n: 0 };
+    hero.healed.n += 1;
+  };
   /* The surge's numbers: an Archmaster's Psi-surge is stronger and cheaper (Book 12); a Grand Master's
      Kai-surge stronger still, and it gets through a foe deaf to Mindblast and Psi-surge (kai) */
   LW.psi = (hero) => (LW.grand(hero, 'kaiSurge') ? { name: 'Kai-surge', surge: 8, cost: 1, floor: 6, blast: 4, kai: true }
@@ -135,7 +213,7 @@
     const parts = [{ label: 'Base', n: hero.cs }], w = LW.armedWith(hero, ctx), marks = LW.marksOf(hero).map((m) => LW.MARKS[m]);
     if (w) parts.push(...weaponParts(hero, w, ctx));
     // unarmed: -4; with Weaponmastery a Tutelary loses 2, a Scion-kai 1; ctx.noUnarmed: the text spares it
-    else if (!ctx.noUnarmed) parts.push({ label: ctx.with === 'none' ? 'Bare-handed' : 'Unarmed', n: !mastered(hero) ? -4 : LW.mkRank(hero) >= 8 ? -1 : LW.mkRank(hero) >= 5 ? -2 : -4 });
+    else if (!ctx.noUnarmed && !seriesOf(hero).bareHanded) parts.push({ label: ctx.with === 'none' ? 'Bare-handed' : 'Unarmed', n: !mastered(hero) ? -4 : LW.mkRank(hero) >= 8 ? -1 : LW.mkRank(hero) >= 5 ? -2 : -4 });
     // a Shield (and a helm that adds to the fight), carried, in any fight it can be used in; a lasting
     // condition (a dead arm) or the text (ctx.noShield) can bar the Shield
     const noShield = ctx.noShield || marks.some((m) => m.noShield);
@@ -186,15 +264,16 @@
   /* Lore-circle ENDURANCE is added once, when a circle is completed; in the Grand Master series it
      stays in his scores, and no circle counts any more */
   function settleCircles(hero) {
-    if (hero.series === GM) return;
+    if (seriesOf(hero).keepCircles) return;
     const ep = LW.circlesOf(hero).reduce((t, c) => t + c.ep, 0), by = ep - (hero.circleEp || 0);
     hero.epMax += by; hero.ep += by; hero.circleEp = ep;
   }
   /* Each Grand Master Discipline past four adds 1 COMBAT SKILL and 2 ENDURANCE to his scores, for good
      (from Book 14; Book 13 gives four). hero.grandEarned: how many were counted already. */
   function settleGrand(hero) {
-    if (hero.series !== GM) return;
-    const n = Math.max(0, (hero.grandmaster || []).length - 4), by = n - (hero.grandEarned || 0);
+    const earn = seriesOf(hero).earn;
+    if (earn == null) return;
+    const n = Math.max(0, LW.owned(hero).length - earn), by = n - (hero.grandEarned || 0);
     hero.cs += by; hero.epMax += 2 * by; hero.grandEarned = n;
   }
 
@@ -207,8 +286,14 @@
       try { localStorage.setItem(this.key, JSON.stringify({ hero, from: book.id, fromTitle: book.title, completed: [...done] })); } catch (e) { /* not kept */ }
     },
     clear() { try { localStorage.removeItem(this.key); } catch (e) { /* nothing kept */ } },
+    /* A record from another series, where either series keeps to itself (the New Order, ADR 0047) */
+    apart(kept, bookId) {
+      if (!kept) return false;
+      const from = (kept.hero && kept.hero.series) || 'kai', to = LW.seriesOfBook(bookId);
+      return to !== from && !!to && (!!LW.SERIES[from].fresh || !!LW.SERIES[to].fresh);
+    },
     /* the record kept (load()) carries into a book he has not completed yet (ADR 0011) */
-    carries: (kept, bookId) => !!kept && !kept.completed.includes(bookId),
+    carries(kept, bookId) { return !!kept && !kept.completed.includes(bookId) && !this.apart(kept, bookId); },
   };
 
   /* ---------- a new character, or a returning one: the choices made before the book begins ----------
@@ -226,6 +311,13 @@
       pick: Math.min(S.list.length - owned.length, owned.length ? 1 : S.first),
       picked: new Set(), weapons: new Set(),
       rolls: { cs: hero ? 0 : null, ep: hero ? 0 : null },
+      name: '', pronoun: null, kaiWeapon: null,
+      /* the hero of the player's own: named, and given a Kai Weapon, once, at the series' first setting out */
+      needsName() { return !!S.named && !hero; },
+      needsKaiWeapon() { return !!S.kaiWeapon && !hero; },
+      setName(name, pronoun) { if (name != null) this.name = String(name).trim().slice(0, 40); if (pronoun) this.pronoun = pronoun; },
+      setKaiWeapon(id) { this.kaiWeapon = this.kaiWeapon === id ? null : id; },
+      whoReady() { return (!this.needsName() || (!!this.name && !!this.pronoun)) && (!this.needsKaiWeapon() || !!this.kaiWeapon); },
       kit: kit && !(hero && kit.newOnly) ? kit : null, // Book 11: a carried character sets out with what he has
       /* how many weapons (Grand) Weaponmastery asks him to master now */
       need() { return Math.min(arms && this.picked.has(arms.disc) ? arms.first : hadMastery ? 1 : 0, LW.WEAPONS.length - oldMastery.length); },
@@ -240,7 +332,7 @@
       /* a carried character's scores as he will set out with them (entering the Grand Master series changes them) */
       carried() {
         const c = JSON.parse(JSON.stringify(hero));
-        if (series === GM && c.series !== GM) enterGrand(c, S);
+        if (S.keeps && c.series !== series) enterGrand(c, S);
         return { cs: c.cs, ep: c.epMax };
       },
       roll(key, n = LW.rand10()) { if (this.rolls[key] == null) this.rolls[key] = n; return this.rolls[key]; },
@@ -248,8 +340,16 @@
         this.roll('cs'); this.roll('ep');
         anyOf(this.picked, S.list.filter((id) => !owned.includes(id)), this.pick);
         anyOf(this.weapons, LW.WEAPONS.filter((x) => !oldMastery.includes(x)), this.need());
+        if (this.needsName()) {
+          if (!this.name) this.name = LW.kaiName();
+          if (!this.pronoun) this.pronoun = Object.keys(LW.PRONOUNS)[Math.floor(Math.random() * 2)]; // he or she
+        }
+        if (this.needsKaiWeapon() && !this.kaiWeapon) this.kaiWeapon = LW.KAI_WEAPONS[LW.rand10()].id;
       },
-      ready() { return this.picked.size === this.pick && this.weapons.size === this.need() && this.rolls.cs != null && this.rolls.ep != null; },
+      ready() {
+        return this.picked.size === this.pick && this.weapons.size === this.need() && this.rolls.cs != null && this.rolls.ep != null
+          && this.whoReady();
+      },
       /* the hero these choices make, before the book's kit (KitSetup) and LW.readyHero */
       build() {
         let out = hero;
@@ -259,11 +359,13 @@
           if (series !== 'kai') out.weaponskill = null;
           // makeHero gives Book 1's kit; a later book's own kit is all a new character has
           if (kit) Object.assign(out, { weapons: [], special: [], backpack: [], meals: 0, gold: 0 });
+          if (this.needsName()) Object.assign(out, { name: this.name, pronoun: this.pronoun });
+          if (this.needsKaiWeapon()) out.special.push(this.kaiWeapon);
         }
         // the books carry over Weapons, Special Items and gold, not what was in the Backpack; into a
         // Grand Master book the Backpack Items come too, Meals still not (ADR 0011)
-        if (hero) { if (series !== GM) out.backpack = []; out.meals = 0; out.noPack = false; }
-        if (hero && series === GM && hero.series !== GM) enterGrand(out, S);
+        if (hero) { if (!S.keepPack) out.backpack = []; out.meals = 0; out.noPack = false; }
+        if (hero && S.keeps && hero.series !== series) enterGrand(out, S);
         if (hero) LW.assumeMarks(out, book.number);
         out.series = series;
         out[S.field] = [...owned, ...this.picked];
@@ -315,6 +417,7 @@
     18: { give: ['mapNorthMagnamund'], gold: 20, choose: 4, from: ['quarterstaff', 'bow', 'quiver', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe'], store: true, storeGold: true },
     19: { give: ['mapSommerlundWildlands'], gold: 20, choose: 4, from: ['broadsword', 'bow', 'quiver', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe'], store: true, storeGold: true },
     20: { give: ['mapPlanes'], gold: 20, choose: 4, from: ['quarterstaff', 'broadsword', 'bow', 'quiver', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe'], store: true, storeGold: true },
+    21: { give: ['mapSeaRoute'], gold: 20, choose: 5, from: ['quarterstaff', 'bow', 'quiver', 'flute', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe'] },
   };
   const entry = (x) => (typeof x === 'string' ? { item: x, n: 1 } : Object.assign({ n: 1 }, x));
   const entryName = (x) => (x.meal ? x.name || (x.meal > 1 ? `${x.meal} Meals` : 'a Meal') : x.n > 1 ? `${x.n} × ${LW.itemName(x.item)}` : LW.itemName(x.item));

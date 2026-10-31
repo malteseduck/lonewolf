@@ -73,6 +73,7 @@ Changes list names what it took in.
 | # | Decision | Amended |
 |---|---|---|
 | [0011](0011-carry-the-character-on.md) | Carrying the character: what carries (Backpack only into Grand Master), which earlier disciplines still count, flags assumed once | 2026-10-21 |
+| [0047](0047-new-order-readings.md) | The New Order: always a new Kai, 5 disciplines at first, Bow +5, Deliverance once a book, the Kai Weapon's bonus marked with a by-hand control, all but Meals carried on | |
 
 ### The dashboard
 

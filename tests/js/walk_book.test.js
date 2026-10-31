@@ -35,7 +35,7 @@ beforeAll(() => {
   for (const f of ['core.js', 'rules-series.js', 'fight.js']) w(`shared/${f}`, fs.readFileSync(path.join(ROOT, 'shared', f), 'utf8'));
   w('items/items-01tt.js', `export const ITEMS = { lamp: { name: 'Lamp', kind: 'backpack' } }; export const SECTIONS = { 13: { give: [{ item: 'lamp' }], mark: 'met' } };`);
   w('data/projectaon/01tt/book.js', book('01tt'));
-  w('data/projectaon/21no/book.js', book('21no', { number: 21, series: 'neworder' }));
+  w('data/projectaon/21no/book.js', book('21no', { number: 21, series: 'madeup' }));
 });
 afterAll(() => fs.rmSync(tmp, { recursive: true, force: true }));
 

@@ -278,6 +278,84 @@ attacks up to three foes at once, at Sun Lord (7) a Kai-blast (two Random Number
 4 ENDURANCE), at Sun Prince (11) a Kai-ray once a fight (15 more damage at 4 ENDURANCE, not at 10 or
 less).
 
+## New Order series (Books 21 on)
+
+Read from Book 21's rules pages and the Readers' Handbook's New Order pages (2026-10-31). Where they
+differ the book's are followed. **The engine applies it** (`LW.SERIES.neworder`); the owner's readings
+are ADR 0047.
+
+### The hero and what carries
+
+| Rule | Engine |
+|---|---|
+| A hero of the player's own, a Kai Grand Master taught by Lone Wolf. A Kai name, typed or drawn from two tables | yes (`LW.kaiName`, `HeroSetup.setName`, with pronouns) |
+| A new character: COMBAT SKILL = **25** + a Random Number, ENDURANCE = **30** + a Random Number | yes (`base`) |
+| Books 1-20 are not needed. The Handbook's page lets an earlier character carry in. *Owner*: always a new Kai (ADR 0047) | yes (`fresh`, `LW.Character.apart`) |
+| On to the next New Order book: Disciplines and their bonuses, the Kai Weapon, Special Items and Backpack Items (Book 21); Weapons and gold, added to the new pouch, 50 at most (the Handbook). Meals are left open. *Owner*: all but Meals (ADR 0047) | yes (`keepPack`) |
+| At most 2 Weapons, **10** Backpack Items with Meals, 12 Special Items, 50 Gold Crowns | yes (`backpack`, `LW.specialLimit`, the purse) |
+| Laumspur: 4 ENDURANCE after a fight, never just before one | as in the other series |
+
+### What the Kai and Magnakai Disciplines still do
+
+Every hero holds all of them. Only two carry numbers:
+
+| Rule | Engine |
+|---|---|
+| Curing: +1 ENDURANCE for each section without a fight, **10 at most in a book** | yes (`healCap`, `LW.healLeft`) |
+| Weaponmastery: no COMBAT SKILL lost fighting bare-handed | yes (`bareHanded`) |
+| The others name no number here: gates only. Huntmastery does not spare Meals (only Grand Huntmastery does), Psi-screen does not shield (Kai-screen does), Psi-surge gives no attack | yes (`holds`, `hunts`, `shield`, `LW.mindPower`) |
+
+### New Order Disciplines
+
+A hero begins with **five** of the sixteen; each book completed adds **one**. Each past five adds **+1
+COMBAT SKILL and +2 ENDURANCE** to the basic scores. *Engine*: yes (`first`, `earn`, `LW.readyHero`).
+
+| Discipline | Effect | Engine |
+|---|---|---|
+| Grand Weaponmastery | +5 COMBAT SKILL with a mastered weapon; **one** of the ten at the start, one more a book; with the Bow, +5 to a shot's Random Number (the Handbook says +3, and that sections may give their own). *Owner*: +5, a section's own number in its place (ADR 0047) | yes (`arms`, `grandBow`) |
+| Animal Mastery | Controls hostile non-sentient creatures; speaks with birds and fish | gates only |
+| Deliverance (Advanced Curing) | Once every 20 days, at 8 ENDURANCE or less in a fight, restore 20. *Owner*: once a book (ADR 0047) | yes (`LW.cureOf`) |
+| Assimilance | Changes of appearance for days; near undetectable in open land | gates only |
+| Grand Huntmastery | No Meal needed when told to eat; sees in total darkness | the Meal (`LW.hunts`); the darkness, gates only |
+| Grand Pathsmanship | Resists hostile plants; senses ambush in woods | gates only |
+| Kai-surge | +8 COMBAT SKILL at 1 ENDURANCE a round, or Mindblast +4 at no cost; not at 6 ENDURANCE or less | yes (`LW.psi`) |
+| Kai-screen | Mind fortresses, stronger by rank | shields from a foe's mind attack (`LW.shielded`) |
+| Grand Nexus | Withstands flame and acid | gates only |
+| Telegnosis | Longer, safer spirit-walking | gates only |
+| Magi-magic | Old Kingdom battle-spells | gates only |
+| Kai-alchemy | Brotherhood spells | gates only |
+| Astrology | Predicts and shapes what is to come from the heavens | gates only |
+| Herbmastery | Knows anything organic and draws out its properties | gates only |
+| Elementalism | Works earth, air, fire and water | gates only |
+| Bardsmanship | Plays any instrument, sings, mimics, stirs feelings | gates only |
+
+### The Kai Weapon
+
+A Special Item, beside the two Weapons, kept for the whole series; chosen, or drawn by a Random Number.
++5 in a fight; the higher bonus in its place where its property holds, not added; Grand Weaponmastery's
++5 besides, when its kind is mastered. *Owner*: the item table marks the fights where the text says so,
+and the player may claim it elsewhere (ADR 0047). *Engine*: yes (`LW.KAI_WEAPONS`, `kaiWeapon`).
+
+| No. | Kind | Name | Higher bonus |
+|---|---|---|---|
+| 0 | Axe | Spawnsmite | +6 against reptiles |
+| 1 | Axe | Alema | +7 against the undead |
+| 2 | Axe | Magnara | +8 against rock or stone |
+| 3 | Sword | Sunstrike | +6 by daylight |
+| 4 | Sword | Kaistar | +7 at night |
+| 5 | Sword | Valiance | +8 against magicians and what magic made |
+| 6 | Sword | Ulnarias | +9 under water |
+| 7 | Broadsword | Raumas | +6 against winged foes |
+| 8 | Broadsword | Illuminatus | +7 underground |
+| 9 | Broadsword | Firefall | +8 against foes that give off fire |
+
+### Ranks
+
+By the number of Disciplines: 5 Kai Grand Master Senior (where the series begins), 6 Kai Grand Master
+Superior, 7 Kai Grand Sentinel, 8 Kai Grand Defender, 9 Kai Grand Guardian, 10 Sun Knight, 11 Sun Lord,
+12 Sun Thane, 13 Grand Thane, 14 Grand Crown, 15 Sun Prince, 16 Kai Supreme Master. The Handbook counts
+from 4. *Owner*: from 5 (ADR 0047). *Engine*: `LW.SERIES.neworder.ranks`.
+
 ## Book addenda
 
 What each book adds to the common and series rules above: its starting kit, its own rules, the
@@ -1421,3 +1499,30 @@ opens when the hero holds it; no effect is applied.
 - **Wisdom**: the quest for the Moonstone takes him onto the Plane of Darkness, where no creature
   will help him; stay on guard throughout, this being his most dangerous mission; keep only what is
   worth keeping, as some finds are useless.
+
+### Book 21, Voyage of the Moonstone (New Order)
+
+Not yet imported. Read from its rules pages (2026-10-31).
+
+- **Scores**: a new character: COMBAT SKILL = **25** + a Random Number (0 counts as zero), ENDURANCE =
+  **30** + a Random Number. ENDURANCE can never rise above its value at the start. *Engine*: yes.
+- **Disciplines**: every Kai and Magnakai Discipline, and **five** of the sixteen New Order Disciplines
+  as Kai Grand Master Senior, chosen. Curing gives +1 ENDURANCE a section without a fight, 10 at most
+  in this book; no COMBAT SKILL is lost bare-handed. *Engine*: yes.
+- **Grand Weaponmastery**: +5 with **one** weapon of the ten (Spear, Dagger, Mace, Short Sword,
+  Warhammer, Bow, Quarterstaff, Broadsword, Axe, Sword); with the Bow, +5 to a shot's Random Number, as
+  all five of this book's shots that name a number say (136, 170, 244, 322, 345). *Engine*: yes.
+- **Deliverance**: at 8 ENDURANCE or less in a fight, restore 20; once a book (ADR 0047). *Engine*: yes.
+- **Gold**: 20 + a Random Number; at most 50 in the Belt Pouch, with no Monastery for the rest.
+  *Engine*: yes, `LW.KITS[21]`.
+- **Kit**: a map of the sea route (Special Item). Choose any **5** of: Quarterstaff, Bow, Quiver (Special
+  Item, six Arrows), Flute (Backpack Item), Dagger, Sword, two Meals, Rope, Potion of Laumspur, Axe, at
+  most two of them Weapons. *Engine*: yes, `LW.KITS[21]`.
+- **The Kai Weapon**: chosen or drawn, as the series section lists. Five sections name it in passing
+  (33, 82, 118, 143, 302); none gates on it or on one by name. *Engine*: yes; the fights' `kaiWeapon`
+  marks are for the item table.
+- **Other coins**: the rules page offers Ren for Gold Crowns at 10 to 1, with a table of other coins;
+  no section uses any. *Owner*: not tracked (ADR 0047).
+- **Carrying**: 2 Weapons, 10 Backpack Items with Meals, 12 Special Items. Completing it earns a
+  Discipline in Book 22; see the series section for what carries.
+- **Improved Disciplines**: none yet.

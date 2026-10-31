@@ -302,9 +302,10 @@ function storyText(sec) {
 /* the series as tools/import_projectaon.py knows it, so books not yet downloaded can show on the shelf */
 const SERIES_TITLES = ['Flight from the Dark', 'Fire on the Water', 'The Caverns of Kalte', 'The Chasm of Doom', 'Shadow on the Sand', 'The Kingdoms of Terror',
   'Castle Death', 'The Jungle of Horrors', 'The Cauldron of Fear', 'The Dungeons of Torgar', 'The Prisoners of Time', 'The Masters of Darkness',
-  'The Plague Lords of Ruel', 'The Captives of Kaag', 'The Darke Crusade', 'The Legacy of Vashna', 'The Deathlord of Ixia', 'Dawn of the Dragons', "Wolf's Bane", 'The Curse of Naar'];
+  'The Plague Lords of Ruel', 'The Captives of Kaag', 'The Darke Crusade', 'The Legacy of Vashna', 'The Deathlord of Ixia', 'Dawn of the Dragons', "Wolf's Bane", 'The Curse of Naar',
+  'Voyage of the Moonstone', 'The Buccaneers of Shadaki', "Mydnight's Hero", 'Rune War', 'Trail of the Wolf', 'The Fall of Blood Mountain', 'Vampirium', 'The Hunger of Sejanoz'];
 /* the series by book number: a band of numerals each on the left page, a shelf each on the right */
-const SHELVES = [{ key: 'kai', name: 'The Kai', from: 1, to: 5 }, { key: 'magnakai', name: 'The Magnakai', from: 6, to: 12 }, { key: 'grandmaster', name: 'The Grand Master', from: 13, to: 20 }];
+const SHELVES = Object.entries(LW.SERIES).map(([key, s]) => ({ key, ...s.shelf }));
 const shelfOf = (n) => SHELVES.find((s) => n >= s.from && n <= s.to) || SHELVES[0];
 const bookIds = () => Object.keys(BOOKS).sort((a, b) => (BOOKS[a].number || 0) - (BOOKS[b].number || 0));
 const savedAt = (id) => (hasSave(id) ? saved(id).s.at : null);
@@ -358,7 +359,7 @@ function adventuresHTML() {
       ? `<input id="advname" class="advname" maxlength="40" value="${esc(a.name || '')}" placeholder="Name it, then press Enter" aria-label="Adventure name" data-for="${a.id}">`
       : `<button type="button" class="inkbtn" data-shelf="${a.id}">books</button><button type="button" class="inkbtn" data-rename="${a.id}">rename</button><button type="button" class="inkbtn" data-backup="${a.id}">backup</button><button type="button" class="inkbtn" data-restore="${a.id}">restore</button><button type="button" class="inkbtn" data-forget="${a.id}">forget</button>`;
     return `<div class="plaq ${at ? 'going' : ''}"><button type="button" class="plaqmain" data-adv="${a.id}">
-        <span class="med">${roman(+a.id)}</span><span class="plaqtext"><b>${esc(a.name || (b ? b.title : advName(a.id)))}</b><i>${esc((a.name && b ? b.title + '. ' : '') + (rank ? rank + '. ' : '') + where)}</i></span></button>
+        <span class="med">${roman(+a.id)}</span><span class="plaqtext"><b>${esc(a.name || (b ? b.title : advName(a.id)))}</b><i>${esc((a.name && b ? b.title + '. ' : '') + (hero && ownHero(hero) ? LW.heroName(hero) + ', ' : '') + (rank ? rank + '. ' : '') + where)}</i></span></button>
       <span class="plaqmore">${more}</span></div>`;
   };
   return `<div class="shelfpage">${ruled('Your adventures')}
@@ -383,7 +384,7 @@ function shelfHTML() {
   const s = SHELVES.find((x) => x.key === shelfSeries) || shelfOf(cur ? cur.number : done + 1);
   const nums = Array.from({ length: s.to - s.from + 1 }, (_, i) => s.from + i);
   return `<div class="shelfpage">${ruled(`${advName(adv.at)} <button type="button" class="inkbtn" data-shelf="">all adventures</button>`)}
-    ${kept ? `<p class="kept">Your Lone Wolf, ${esc(LW.rankOf(kept.hero) || 'Kai Lord')}, waits after <i>${esc(kept.fromTitle)}</i>. A book not yet finished begins with him.</p>` : ''}
+    ${kept ? `<p class="kept">${esc(yourHero(kept.hero))}, ${esc(LW.rankOf(kept.hero) || 'Kai Lord')}, waits after <i>${esc(kept.fromTitle)}</i>. A book not yet finished begins with ${LW.heroPronoun(kept.hero).obj}.</p>` : ''}
     <div class="shelftabs" role="tablist">${SHELVES.map((x) => `<button type="button" class="inkbtn ${x === s ? 'on' : ''}" role="tab" aria-selected="${x === s}" data-series="${x.key}">${x.name}</button>`).join('')}</div>
     <div class="plaqs shelfrow">${nums.map((n) => (byNum[n] ? plaque(byNum[n]) : missing(n))).join('')}</div></div>`;
 }
@@ -451,7 +452,7 @@ function leftHTML() {
   else if (game.combatPending) h += `<div class="compass"><div class="orn"><button type="button" class="med" data-fight aria-label="Begin the fight">${glyph(UG.beginFight)}</button></div><span>Draw your weapon.</span></div>`;
   else if (sec.end) {
     const next = Object.keys(BOOKS).find((k) => BOOKS[k].number === book.number + 1);
-    h += `<div class="finis"><h2>Your quest is fulfilled</h2><p>You came through in ${game.s.trail.length} sections. Your Lone Wolf is kept for the next book.</p>${
+    h += `<div class="finis"><h2>Your quest is fulfilled</h2><p>You came through in ${game.s.trail.length} sections. ${esc(yourHero(game.hero))} is kept for the next book.</p>${
       next ? `<button type="button" class="seal" data-book="${next}" data-fresh>On to ${esc(BOOKS[next].title)}</button>` : '<button type="button" class="seal" data-new>Back to the title page</button>'}</div>`;
   }
   else {
@@ -598,15 +599,15 @@ function kaiHTML() {
   if (h.circleEp) epParts.push({ label: 'Lore-circles', n: h.circleEp });
   const disc = (d) => `<button type="button" class="disc ${LW.has(h, d) ? 'lit' : ''} ${sel && sel.id === d ? 'sel' : ''}" data-sel="disc|${d}" aria-label="${esc(LW.DISCIPLINES[d].name)}${LW.has(h, d) ? '' : ', not learned'}">${glyph(DISC_GLYPH[d])}</button>`;
   const bar = '<svg class="link" viewBox="0 0 40 14" preserveAspectRatio="none" aria-hidden="true"><path class="band" d="M0 3.4h40v7.2H0z"/><path class="edge" d="M0 4h40M0 10h40M15 7c2.5-3.2 5-3.2 6.2 0s3.700 3.200 6.200 0" vector-effect="non-scaling-stroke"/></svg><span class="chev" aria-hidden="true"></span>';
-  const list = LW.SERIES[series].list, rows = [], across = Math.ceil(list.length / 2); // two rows: five, or the Grand Master's six
+  const list = LW.SERIES[series].list, rows = [], across = Math.ceil(list.length / 2); // two rows: five, the Grand Master's six, or the New Order's eight
   for (let i = 0; i < list.length; i += across) rows.push(list.slice(i, i + across));
-  return `<div class="likeness">${portraitURL ? `<img src="${portraitURL}" alt="">` : ''}
-      <div class="who"><span class="disc lit">${glyph(UG.kaiSheet)}</span><h3>Lone Wolf</h3></div></div>
+  return `<div class="likeness">${portraitURL && !ownHero(h) ? `<img src="${portraitURL}" alt="">` : ''}
+      <div class="who"><span class="disc lit">${glyph(UG.kaiSheet)}</span><h3>${esc(LW.heroName(h))}</h3></div></div>
     <div class="ledgers"><section>${ruled('Attributes')}${row('Combat Skill', `${stepper('cs')} ${cs.total}`)}${row('Endurance', `${stepper('ep')} ${Math.max(0, h.ep)}/${h.epMax}`)}${row('Meals', h.meals)}${row('Rank', esc(LW.rankOf(h) || 'Kai Lord'), true)}${
-      series === 'magnakai' ? row('Lore-circles', circles.length ? esc(circles.map((c) => c.name.replace('Circle of ', '').replace('the ', '')).join(', ')) : 'none', true) : ''}</section>
+      LW.SERIES[series].circles ? row('Lore-circles', circles.length ? esc(circles.map((c) => c.name.replace('Circle of ', '').replace('the ', '')).join(', ')) : 'none', true) : ''}</section>
       <section>${ruled('Combat Skill')}${cs.parts.map((p, i) => row(esc(p.label), i ? signed(p.n) : p.n)).join('')}
       ${ruled('Endurance')}${row('Base', h.epMax - epParts.reduce((t, p) => t + p.n, 0))}${epParts.map((p) => row(p.label, signed(p.n))).join('')}</section></div>
-    <div class="discs ${across > 5 ? 'six' : ''}">${rows.map((r) => `<div class="drow">${r.map(disc).join(`<span class="linkwrap">${bar}</span>`)}</div>`).join('')}</div>`;
+    <div class="discs ${across > 6 ? 'eight' : across > 5 ? 'six' : ''}">${rows.map((r) => `<div class="drow">${r.map(disc).join(`<span class="linkwrap">${bar}</span>`)}</div>`).join('')}</div>`;
 }
 /* Inventory, a ledger like the Kai panel (ADR 0028): the two weapons named either side of the faint
    Kai crest, the Special Items as a named list (it scrolls within its place past what fits, so the
@@ -830,7 +831,10 @@ function render() {
    discipline of the series, with what it does); then the book's kit (left: gold, what is given, and
    a slot for each thing to take; right: what may be taken, kept or left). LW.HeroSetup and
    LW.KitSetup (shared/rules-series.js) hold the rules. */
-let SU = null; // { step: 'hero', h } or { step: 'kit', k }
+let SU = null; // { step: 'who', h } first for a hero of the player's own, { step: 'hero', h } or { step: 'kit', k }
+/* a hero of the player's own goes by name; the likeness is Lone Wolf's (ruling R26), so not theirs */
+const ownHero = (h) => !!(LW.SERIES[h.series] || {}).named;
+const yourHero = (h) => (ownHero(h) ? LW.heroName(h) : 'Your Lone Wolf');
 const kitName = (x) => { const s = LW.kitEntryName(x); return s.charAt(0).toUpperCase() + s.slice(1); };
 const KIND_WORD = { weapon: 'A Weapon', backpack: 'A Backpack Item', special: 'A Special Item' };
 const kitArt = (x) => itemGlyph(x.meal ? 'meal' : x.item) + (x.meal > 1 || x.n > 1 ? `<span class="n">${x.meal || x.n}</span>` : '');
@@ -865,8 +869,19 @@ const suSlots = (label, filled, n) => {
   while (out.length < n) out.push(SOCKET);
   return `<div class="su-slots">${ruled(label)}<div class="su-rail">${RAIL_END}${out.join(RAIL_LINK)}${RAIL_END}</div></div>`;
 };
+/* the name of a hero of the player's own: typed, or drawn from the two tables; and how the page speaks of them */
+const nameHTML = (h) => `<div class="su-name"><input id="suname" maxlength="40" value="${esc(h.name)}" placeholder="Your Kai name" aria-label="Your Kai name">
+    <button type="button" class="inkbtn" data-suname>draw one</button>
+    <span role="group" aria-label="How you are called">${Object.keys(LW.PRONOUNS).map((p) => `<button type="button" class="inkbtn ${h.pronoun === p ? 'on' : ''}" data-supro="${p}" aria-pressed="${h.pronoun === p}">${p}</button>`).join('')}</span></div>`;
 function setupLeftHTML() {
   const head = (title) => `<span class="eyebrow lead">${esc(book.title)}</span><h2 class="su-h">${title}</h2>`;
+  if (SU.step === 'who') {
+    const h = SU.h, say = !h.name ? 'Choose your Kai name.' : !h.pronoun ? 'Choose how you are called.' : !h.kaiWeapon ? 'Choose your Kai Weapon.' : 'On to your Action Chart.';
+    const held = h.kaiWeapon ? [`<button type="button" class="disc item lit" data-sukai="${h.kaiWeapon}" title="${esc(LW.itemName(h.kaiWeapon))}" aria-label="Let ${esc(LW.itemName(h.kaiWeapon))} go">${itemGlyph(h.kaiWeapon)}</button>`] : [];
+    return `<div class="setup">${head('A new Kai')}<p class="su-note">Name yourself, or draw a name from the Kai tables.</p>
+      ${nameHTML(h)}${suSlots('Your Kai Weapon', held, 1)}
+      ${suFoot(say, h.whoReady(), 'On')}</div>`;
+  }
   if (SU.step === 'hero') {
     const h = SU.h, carried = !!h.hero, need = h.need(), kept = carried && h.carried();
     const score = (key, label, base) => {
@@ -875,7 +890,7 @@ function setupLeftHTML() {
         carried ? 'carried on' : n == null ? `${base} + the number drawn` : `${base} + ${n} = <em>${base + n}</em>`}</i></div>`;
     };
     // into the Grand Master series the Backpack Items come too, and only the listed Special Items (rules-series.js, enterGrand)
-    const gm = h.series === 'grandmaster', entering = gm && carried && h.hero.series !== 'grandmaster';
+    const gm = !!h.S.keepPack, entering = !!h.S.keeps && carried && h.hero.series !== h.series;
     const from = `Carried on from ${esc(h.carry ? h.carry.fromTitle || 'the last book' : '')}: your scores, disciplines, weapons`;
     const note = !carried ? 'Touch each medallion to draw your two scores.' : entering
       ? `${from}, Backpack Items and gold, but no Meals; only the ten Special Items the series allows. The Lore-circles’ Combat Skill is now in your score.`
@@ -885,7 +900,7 @@ function setupLeftHTML() {
       : h.weapons.size < need ? `Choose ${need - h.weapons.size} more weapon${need - h.weapons.size === 1 ? '' : 's'} to master.` : 'Your Action Chart is ready.';
     const chosen = [...h.picked].map((id) => `<button type="button" class="disc lit" data-supick="${id}" title="${esc(LW.DISCIPLINES[id].name)}" aria-label="Let ${esc(LW.DISCIPLINES[id].name)} go">${glyph(DISC_GLYPH[id])}</button>`);
     const mastered = [...h.weapons].map((w) => `<button type="button" class="disc item lit" data-suw="${w}" title="${esc(LW.itemName(w))}" aria-label="Let ${esc(LW.itemName(w))} go">${itemGlyph(w)}</button>`);
-    return `<div class="setup">${head(carried ? 'Your Lone Wolf returns' : 'Your Action Chart')}<p class="su-note">${note}</p>
+    return `<div class="setup">${head(carried ? `${esc(yourHero(h.hero))} returns` : 'Your Action Chart')}<p class="su-note">${note}</p>
       <div class="su-scores">${score('cs', 'Combat Skill', h.S.base.cs)}${score('ep', 'Endurance', h.S.base.ep)}</div>
       ${h.pick ? suSlots(`${h.pick === 1 ? 'A new' : h.pick} ${h.S.name} Discipline${h.pick === 1 ? '' : 's'}`, chosen, h.pick) : `<p class="su-note">You have mastered every ${h.S.name} Discipline.</p>`}
       ${need ? suSlots(`${need} weapon${need === 1 ? '' : 's'} to master`, mastered, need) : ''}
@@ -918,6 +933,11 @@ function fadeEdges(box) {
 /* the facing page: every choice a row, its medallion, name and what it does, touched to take it or let it go */
 const suItem = (data, art, name, about, on, note, off) => `<button type="button" class="suitem ${off ? 'off' : ''}" ${data} aria-pressed="${!!on}"><span class="disc ${on ? 'lit' : ''}">${art}</span><span><b>${esc(name)}${note ? ` <small>${note}</small>` : ''}</b>${about ? `<i>${esc(about)}</i>` : ''}</span></button>`;
 function setupRightHTML() {
+  if (SU.step === 'who') {
+    const h = SU.h;
+    return `<div class="headrow"><div class="place">The Kai Weapons</div></div>
+      <div class="supage"><div class="sulist">${LW.KAI_WEAPONS.map((x) => suItem(`data-sukai="${x.id}"`, itemGlyph(x.id), x.name, `${x.kind === 'axe' ? 'An Axe' : x.kind === 'sword' ? 'A Sword' : 'A Broadsword'}: +5, or +${x.more} ${x.when}.`, h.kaiWeapon === x.id, '', false)).join('')}</div></div>`;
+  }
   if (SU.step === 'hero') {
     const h = SU.h, need = h.need();
     const disc = (id) => {
@@ -966,6 +986,9 @@ function setupClick(d, t) {
   if (d.su === 'auto') (h || k).auto();
   else if (d.supick) h.toggle(d.supick);
   else if (d.suw) h.toggleWeapon(d.suw);
+  else if (d.sukai) h.setKaiWeapon(d.sukai);
+  else if ('suname' in d) h.setName(LW.kaiName());
+  else if (d.supro) h.setName(null, d.supro);
   else if (d.sukit != null) k.choose(+d.sukit);
   else if (d.sudrop != null) k.flip(k.dropW, +d.sudrop);
   else if (d.suleave != null) k.flip(k.leave, +d.suleave);
@@ -976,6 +999,7 @@ function setupClick(d, t) {
 }
 /* the Action Chart is done: on to the book's kit, or into the book */
 async function setOut() {
+  if (SU.step === 'who') { SU = { step: 'hero', h: SU.h }; return turn(render); }
   if (SU.step === 'hero' && SU.h.kit) {
     SU = { step: 'kit', k: LW.KitSetup(book, SU.h.kit, SU.h.build()) };
     return turn(render);
@@ -1110,9 +1134,10 @@ function updateBattle() {
   q('stats').textContent = `CS ${foe.cs} · ${B.words.ep} ${Math.max(0, foe.ep)} · Ratio ${r > 0 ? '+' : ''}${r}`;
   const locked = B.lock || B.over;
   const med = (id, ic, label, note, off, extra = '') => `<div class="medcap"><button type="button" class="med ${extra}" data-cmd="${id}" ${locked || off ? 'disabled' : ''} aria-label="${label}">${ic}</button>${label}<small>${note}</small></div>`;
-  const n = hero.backpack.filter((b) => b === 'potion').length, psi = LW.psi(hero), cure = LW.cureOf(hero);
+  const n = hero.backpack.filter((b) => b === 'potion').length, psi = LW.psi(hero), cure = LW.cureOf(hero), kw = B.kaiWeaponNow();
   const left = med('fight', B.weapon ? itemGlyph(B.weapon) : glyph(UG.strike), esc(B.words.act), B.noStrike ? 'you cannot fight' : esc(B.words.note), B.noStrike)
-    + (B.power ? med('mind', glyph(B.power === 2 ? UG.psiSurge : UG.mindblast), B.power === 2 ? psi.name : 'Mindblast', B.deaf() ? 'no effect' : foe.immune && B.mind === 1 ? 'as Mindblast: no effect' : ['at rest', B.power === 2 ? `as Mindblast, +${psi.blast}` : 'focused, +2', `+${psi.surge}, costs ${psi.cost} a round`][B.mind], false, B.blasting() ? 'lit' : '') : '');
+    + (B.power ? med('mind', glyph(B.power === 2 ? UG.psiSurge : UG.mindblast), B.power === 2 ? psi.name : 'Mindblast', B.deaf() ? 'no effect' : foe.immune && B.mind === 1 ? 'as Mindblast: no effect' : ['at rest', B.power === 2 ? `as Mindblast, +${psi.blast}` : 'focused, +2', `+${psi.surge}, costs ${psi.cost} a round`][B.mind], false, B.blasting() ? 'lit' : '') : '')
+    + (kw ? med('kaiw', itemGlyph(kw.id), esc(LW.itemName(kw.id)), kw.marked ? `+${kw.more} here` : kw.on ? `+${kw.more}, by hand` : `+5, or +${kw.more} ${esc(kw.when)}`, kw.marked, kw.on ? 'lit' : '') : '');
   const right = (n ? med('item', itemGlyph('potion'), 'Laumspur', `${n} left`, hero.ep >= hero.epMax) : '')
     + (LW.canCure(hero, book.id) ? med('cure', glyph(UG.cure), cure.name, hero.ep <= cure.at ? '20 back, once a book' : `at ${cure.at} or less`, hero.ep > cure.at) : '')
     + B.boosts().map((id) => med('boost:' + id, itemGlyph(id), esc(LW.itemName(id)), 'before you strike')).join('')
@@ -1136,6 +1161,7 @@ async function battleAct(id) {
   if (!B || B.lock || B.over) return;
   B.lock = true; updateBattle();
   if (id === 'mind') B.focus();
+  else if (id === 'kaiw') B.claimKaiWeapon();
   else if (id === 'cure') B.cure();
   else if (id === 'item') B.drink();
   else if (id === 'stop') B.stopHere();
@@ -1239,6 +1265,12 @@ bookEl.addEventListener('keydown', (e) => {
   if (a && e.key === 'Enter') { const name = e.target.value.trim(); if (name) a.name = name; else delete a.name; keepAdventures(); }
   renaming = null; renderRight();
 });
+// a Kai name as it is typed: no redraw, so the box keeps the cursor
+bookEl.addEventListener('input', (e) => {
+  if (e.target.id !== 'suname' || !SU || !SU.h) return;
+  SU.h.setName(e.target.value);
+  const go = pl.querySelector('.su-foot .seal'); if (go) go.disabled = !SU.h.whoReady();
+});
 function addItem(id) { const err = game.addItem(id); if (err) LW.UI.toast(err); render(); }
 // the earlier books' Special Items: which book, and whether folded (kept across the redraw each add makes)
 pr.addEventListener('change', (e) => { if (e.target.id === 'pastbook') { pastBook = e.target.value; renderRight(); } });
@@ -1253,11 +1285,13 @@ function toTitle(toShelf) { B = null; mode = 'title'; intro = false; shelf = !!t
 /* fresh = ignore this book's save. anew = roll a new character even though one is being carried.
    reread = open a saved game on the introduction. */
 async function begin(id, fresh, anew, reread) {
+  if (!hasSave(id) && LW.Character.apart(LW.Character.load(), id)) newAdventure();
   useBook(id);
   intro = false;
   if (!fresh && !anew && game.load()) { if (backfillFlags(game.hero)) game.save(); mode = 'story'; panel = 'kai'; sel = null; if (reread && book.intro && book.intro.length) intro = 'again'; return turn(render); }
   const kept = LW.Character.load(), carry = !anew && LW.Character.carries(kept, id) ? kept : null;
-  SU = { step: 'hero', h: LW.HeroSetup(book, carry) }; // the save is cleared only when he sets out
+  const su = LW.HeroSetup(book, carry);
+  SU = { step: su.needsName() ? 'who' : 'hero', h: su }; // the save is cleared only when he sets out
   mode = 'setup'; sel = null;
   await turn(render);
 }
