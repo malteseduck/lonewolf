@@ -73,6 +73,7 @@ button.primary { background: rgba(111, 106, 46, .3); border-color: #6f6a2e; font
 #ask .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
 input[type=text], textarea { width: 100%; }
 #filter { flex: 1; }
+#retypeallrow { display: flex; gap: 6px; align-items: center; cursor: pointer; }
 #list { overflow-y: auto; flex: 1; }
 .item { padding: 3px 10px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   border-left: 3px solid transparent; }
@@ -123,6 +124,9 @@ kbd { background: rgba(255, 248, 226, .5); border: 1px solid var(--line); border
     </div>
     <div class="bar">
       <input id="filter" type="text" placeholder="Filter (text, where, number)">
+    </div>
+    <div class="bar">
+      <label id="retypeallrow" title="Tick or untick retype on every label, filtered out or not. A dash: some are ticked, some not"><input type="checkbox" id="retypeall"> Retype all</label>
     </div>
     <div id="list"></div>
   </aside>
@@ -624,7 +628,20 @@ function drawDivider() {  // in screen space: the line, a grip, and which pictur
 const onDivider = sx => img2 && !peek && Math.abs(sx - split * cv.getBoundingClientRect().width) <= 7;
 
 // ---------- list and form ----------
+function syncRetypeAll() {  // ticked: all; unticked: none; the dash: some
+  const c = $('retypeall'), n = labels.filter(l => l.retype).length;
+  c.disabled = !labels.length;
+  c.checked = !!labels.length && n === labels.length;
+  c.indeterminate = n > 0 && n < labels.length;
+}
+$('retypeall').onchange = () => {
+  push();
+  const on = $('retypeall').checked;
+  labels.forEach(l => { l.retype = on; });
+  refresh();
+};
 function renderList() {
+  syncRetypeAll();
   const el = $('list');
   el.innerHTML = '';
   labels.forEach((l, i) => {
@@ -829,6 +846,7 @@ function renderForm() {
 // after a form edit: redraw and refresh list text, without rebuilding the form under the cursor
 function afterEdit() { renderListKeep(); draw(); dirty(); }
 function renderListKeep() {
+  syncRetypeAll();
   const it = $('list').querySelector(`.item[data-i="${sel}"]`);
   if (it) { const l = labels[sel]; const nm = it.querySelector('.nm'); if (nm && !flagged(l)) nm.remove();
     it.lastChild.textContent = (l.lines && l.lines.length ? l.lines.join(' / ') : l.text) || '(empty)'; it.classList.toggle('place', !!l.retype); it.firstChild.style.color = ''; }

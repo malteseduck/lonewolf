@@ -116,7 +116,8 @@ Commands run from the project root as
    name; what it misses is a title with none of those words (Kalte, the Stornlands) and a key entry
    in a column with fewer than two recurring ones (measured again 2026-10-17, the same: its silence
    leaves a label ticked, the safe side under ADR 0036, so no signs were added). Untick the rest, and tick any place name it
-   caught by mistake. **Untick captions** in step 3 saves the list and runs the same judgement on it
+   caught by mistake. **Retype all** above the label list ticks or unticks every label at once, filter
+   or no filter, and shows a dash while only some are ticked. **Untick captions** in step 3 saves the list and runs the same judgement on it
    (`map_labels.py retype`), once OCR's wording is corrected: it unticks only, never ticks.
    **Find missed labels** in step 3 saves the list and runs `map_missed.py`: the map in six
    overlapping tiles, every listed box outlined in red and a 100 px grid ruled, goes to Claude Sonnet
