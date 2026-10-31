@@ -25,6 +25,7 @@ its white fill were removed, so the page can use the shape as a mask.
     and for Book 18 (fetched 2026-10-25): ankh, breastplate, potion-ball, sun-radiations
     and for Book 19 (fetched 2026-10-26): cog, corked-tube, sun
     and for Book 20 (fetched 2026-10-26): book-cover, emerald, relic-blade, scarab-beetle
+    and for Book 21 (fetched 2026-10-31): crown, lyre, perfume-bottle, skull-crack, sprout, stone-sphere
     and picked on the item sheet (tools/admin/items.html): moebius-triangle, circle-cage, elderberry, crystal-shine, jeweled-chalice, crystal-cluster, shiny-purse, battle-gear, spinning-sword
   by Delapouite (https://delapouite.com):
     healing, health-potion, herbs-bundle, invisible, meal, quiver, two-coins,
@@ -39,6 +40,7 @@ its white fill were removed, so the page can use the shape as a mask.
     and for Book 17 (fetched 2026-10-25): tiara
     and for Book 19 (fetched 2026-10-26): trophy-cup
     and for Book 20 (fetched 2026-10-26): honey-jar, primitive-necklace
+    and for Book 21 (fetched 2026-10-31): candles, slippers
     and picked on the item sheet (tools/admin/items.html): mighty-horn, power-ring, rusty-sword, holy-water, straight-pipe, dart, flanged-mace, black-belt, bow-string, globe-ring, crescent-staff, switch-weapon, fish-monster, boulder-dash, sword-brandish
   by Skoll:
     footsteps, gladius

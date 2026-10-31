@@ -85,6 +85,10 @@ describe('check_items.mjs', () => {
     expect(await errorsOf({ '1': { give: [{ item: 'lamp' }, { item: 'meal' }] } })).toEqual([]);
   });
 
+  it('knows the New Order\'s Kai Weapons, which a trader may buy like any Special Item', async () => {
+    expect(await errorsOf({ '1': { sell: { sunstrike: 10 } } })).toEqual([]);
+  });
+
   it('accepts an ending taken back (end: null) and a when that is the end of him', async () => {
     expect(await errorsOf({ '1': { end: null, when: [{ unless: { item: 'lamp' }, dead: true }] } })).toEqual([]);
   });

@@ -1,0 +1,205 @@
+/* Book 21's items and the other bookkeeping its text asks of the player, read section by section and
+   written down by hand from the script's draft (see items-01fftd.js for the fields, docs/reference/book-format.md
+   for the later ones, and docs/reference/items.md for how). Notes on this book:
+     - The Kai Weapon's higher bonus is marked where the text says the time or the foe (ADR 0047): daylight on the
+       ship and at Kilij, and in the arena's fading sunlight; night at Hikas and in the jungle; the Otokh throws
+       fire. Whether the Deathstalkers count as made by magic the text does not say, nor whether 135's dusk is
+       daylight: those are the panel's control.
+     - Bow shots: 136, 170, 244, 322, 345. Arrows loosed with no number drawn (10, 326) are taken there; the
+       sections a shot leads to take none. Every Bow gate wants an Arrow too.
+     - 7's wares cost 3, and 2 after walking off (79), which sells them itself at the lower price: the page
+       cannot change a price by the section come from.
+     - 51 and 197: each ENDURANCE point given up adds 1 to the number: left as a free draw, by hand.
+     - The offerings (103, 182, 277) and 143's substitute Special Items are the player's count, so by hand.
+     - 37's musical instrument is the Lyre or the kit's Flute.
+   Item names are the book's own labels for them; everything else is in our words. */
+export const ITEMS = {
+  moonstone: { name: 'Moonstone', kind: 'special', glyph: 'stone-sphere', about: 'The Shianti’s stone of power, in its korlinium-lined satchel: what this whole journey is for.' },
+  ironSkull: { name: 'Iron Skull', kind: 'special', glyph: 'skull-crack', about: 'A fist-sized ball of iron shaped like a head, dug out of the sand at a burned pirate camp. Kept in a pocket.' },
+  siyenCrown: { name: 'Siyen Crown', kind: 'special', glyph: 'crown', about: 'A golden crown from a wreck’s hold, worked with country scenes. A collector might pay for it.' },
+  temujunsRing: { name: 'Temujun’s Ring', kind: 'special', glyph: 'ring', about: 'A plain ring of petrified wood, the old sage’s gift for the road. Kept in a pocket.' },
+  kutyanEmerald: { name: 'Kutyan Emerald', kind: 'special', glyph: 'emerald', about: 'A flawless fist-sized gem from an idol’s chest, its curse lifted. Kept in a pocket.' },
+  cowana: { name: 'Cowana', kind: 'backpack', glyph: 'sprout', heal: 4, about: 'A sea-shore cousin of Laumspur with pink leaves. One dose: 4 ENDURANCE after a fight. It also draws out a spider’s venom.' },
+  mustow: { name: 'Potion of Mustow', kind: 'backpack', glyph: 'round-bottom-flask', about: 'Let into the air, it makes a foul gas that chokes.' },
+  sebaris: { name: 'Potion of Sebaris', kind: 'backpack', glyph: 'round-bottom-flask', about: 'Makes foul water fit to drink. One use.' },
+  blanket21: { name: 'Blanket', kind: 'backpack', glyph: 'blanket' },
+  hourglass21: { name: 'Hourglass', kind: 'backpack', glyph: 'hourglass' },
+  spyglass21: { name: 'Spyglass', kind: 'backpack', glyph: 'spyglass' },
+  scentedOil21: { name: 'Scented Oil', kind: 'backpack', glyph: 'perfume-bottle' },
+  candles21: { name: '3 Candles', kind: 'backpack', glyph: 'candles', about: 'Three, taking the room of one.' },
+  slippers21: { name: 'Slippers', kind: 'backpack', glyph: 'slippers' },
+  copperCup21: { name: 'Copper Cup', kind: 'backpack', glyph: 'trophy-cup' },
+  lyre: { name: 'Lyre', kind: 'backpack', glyph: 'lyre', about: 'A musical instrument.' },
+  chalk21: { name: 'Ball of Chalk', kind: 'backpack', glyph: 'rock' },
+};
+
+const bowArrow = { any: [{ weapon: ['bow'], arrows: 1, label: 'a Bow and an Arrow' }] };
+const noBowArrow = { any: [{ not: { weapon: ['bow'], arrows: 1 }, label: 'no Bow or no Arrow' }] };
+const instrument = ['lyre', 'flute'];
+const potions = (cost) => ['potion', 'alether', 'mustow', 'sebaris'].map((item) => ({ item, cost }));
+const shop = (list) => list.map(([item, cost]) => ({ item, cost }));
+// a Standard room: 2 Crowns, or short of them one thing the player chooses
+const rooms = { 216: { gold: 2, spend: true, instead: { pick: ['weapons', 'backpack', 'special'], short: true } }, 138: { gold: 4, spend: true } };
+// Rhous's prices at 201, 134 and 298
+const rhous = { ironSkull: 10, siyenCrown: 20, kutyanEmerald: 30 };
+const rhousBut = (id) => { const { [id]: sold, ...rest } = rhous; return rest; };
+const flomi = { loot: [{ meal: 2 }] };
+// the young man's prices at 155: any Special Item but the Moonstone 10, any Weapon 3, any Backpack Item 1
+const each = (ids, price) => Object.fromEntries(ids.map((id) => [id, price]));
+const buyer = {
+  ...each(['mapSeaRoute', 'quiver', 'spawnsmite', 'alema', 'magnara', 'sunstrike', 'kaistar', 'valiance', 'ulnarias', 'raumas', 'illuminatus', 'firefall',
+    'ironSkull', 'siyenCrown', 'temujunsRing', 'kutyanEmerald'], 10),
+  ...each(['sword', 'dagger', 'axe', 'quarterstaff', 'bow', 'broadsword', 'warhammer', 'shortSword'], 3),
+  ...each(['meal', 'rope', 'potion', 'flute', 'alether', 'mustow', 'sebaris', 'gallowbrush', 'cowana', 'tinderbox', 'lantern', 'blanket21', 'hourglass21', 'spyglass21',
+    'scentedOil21', 'candles21', 'slippers21', 'copperCup21', 'lyre', 'chalk21'], 1),
+};
+const day = ['day'], night = ['night'], otokh = { kaiWeapon: ['day', 'fire'] };
+const emptyHanded = { kaiWeapon: day, rounds: [{ upTo: 1, unarmed: true, note: 'Empty-handed' }] };
+const momentum = { kaiWeapon: day, rounds: [{ upTo: 1, csMod: 2, note: 'Your momentum' }] };
+
+export const SECTIONS = {
+  1: { give: [{ item: 'moonstone' }] },
+  5: { fight: emptyHanded },
+  6: { need: { 166: { gold: 3 } } },
+  7: { loot: potions(3) },
+  8: { ep: 3, need: { 346: { gold: 1, spend: true } } },
+  9: { ep: -1 },
+  10: { take: [{ arrows: 1 }] },
+  12: { ep: -2 },
+  15: { ep: -6 },
+  17: { take: [{ gold: 3 }] },
+  21: { fight: { kaiWeapon: day } },
+  22: { ep: -2 },
+  23: { give: [{ gold: 10 }] },
+  24: { need: { 219: { gold: 1, spend: true } } },
+  26: { ep: -8 },
+  27: { ep: -1 },
+  28: { ep: 3 },
+  29: { ep: -3 },
+  30: { loot: [{ gold: 1 }], take: [{ at: [1] }] },
+  31: { fight: { kaiWeapon: day, won: { within: 4, to: '289', else: '195' } } },
+  33: { take: [{ weapons: 'all' }] },
+  34: { need: rooms },
+  36: { ep: -3 },
+  37: { need: {
+    272: { any: [{ disc: 'bardsmanship', item: instrument, label: 'Bardsmanship and a musical instrument' }] },
+    8: { any: [{ not: { disc: 'bardsmanship', item: instrument }, label: 'no Bardsmanship, or no musical instrument' }] } } },
+  43: { ep: -2, fight: { kaiWeapon: night } },
+  44: { fight: { kaiWeapon: day, rounds: [{ upTo: 2, csMod: -3, note: 'The arrow in your shoulder' }] } },
+  50: { fight: { kaiWeapon: day } },
+  51: { rntMod: [{ disc: 'grandHuntmastery', plus: 3 }], todo: 'Add 1 to the number for each ENDURANCE point you choose to give up, and take those points off yourself.' },
+  52: { ep: 3 },
+  54: { need: { 201: { item: 'ironSkull' }, 134: { item: 'siyenCrown' }, 298: { item: 'kutyanEmerald' } } },
+  56: { take: [{ at: [1] }] },
+  57: { ep: -5 },
+  58: { need: { 333: { any: [{ packItems: 2, label: 'two Backpack Items, not Meals' }] } } },
+  60: { fight: { kaiWeapon: night } },
+  62: { loot: shop([['rope', 3], ['blanket21', 2], ['hourglass21', 3], ['tinderbox', 2], ['spyglass21', 2]]) },
+  68: { need: { 326: bowArrow } },
+  70: { ep: -10 },
+  72: { need: { 345: bowArrow } },
+  75: { need: { 101: bowArrow } },
+  77: { need: { 253: { gold: 7, spend: true }, 164: { any: [{ not: { gold: 7 } }] } } },
+  79: { loot: potions(2) },
+  80: { need: { 243: { item: 'cowana' }, 225: { item: 'cowana', not: true } } },
+  82: { take: [{ item: 'bow', stash: 'arena' }] },
+  84: { ep: -2 },
+  89: { need: { 237: { item: 'ironSkull' }, 332: { item: 'ironSkull', not: true } } },
+  94: { fight: { kaiWeapon: night, rounds: [{ upTo: 1, heroLoss: 0, note: 'It lies stunned' }] } },
+  95: { need: { 69: { gold: 1, spend: true } } },
+  96: { need: { 183: { gold: 3, spend: true } } },
+  102: { give: [{ item: 'temujunsRing' }] },
+  103: { todo: 'Each Special Item you lay down, but not the Moonstone or the Iron Skull, gives back 6 ENDURANCE: drop them and add the points yourself.' },
+  108: { loot: [{ item: 'ironSkull' }] },
+  109: { ep: -3 },
+  112: { ep: -3 },
+  117: { loot: [{ item: 'siyenCrown' }] },
+  120: { ep: -4, fight: { kaiWeapon: night } },
+  122: { ep: -2 },
+  127: { take: [{ gold: 2 }] },
+  132: { ep: 3, loot: [{ item: 'sword' }, { item: 'dagger' }, { gold: 20 }, { meal: 2 }] },
+  134: { take: [{ item: 'siyenCrown' }], give: [{ gold: 20 }], sell: rhousBut('siyenCrown') },
+  136: { rntMod: [{ ep: [-99, 15], plus: -1 }], bowShot: { 320: [-99, 4], 296: [5, 99] } },
+  142: { loot: [...shop([['dagger', 1], ['scentedOil21', 1], ['candles21', 1], ['slippers21', 1], ['copperCup21', 1], ['rope', 1], ['lantern', 1], ['lyre', 1], ['chalk21', 1]]), { arrows: 3, cost: 1 }] },
+  143: { take: [{ pick: ['backpack', 'weapons'], n: { backpack: 2, weapons: 1 } }],
+    todo: 'Short of a normal Weapon or two Backpack Items, Special Items may stand in, as many as you judge fair: drop them yourself.' },
+  149: { give: [{ gold: 2 }] },
+  151: { loot: [...shop([['broadsword', 8], ['warhammer', 7], ['dagger', 3], ['axe', 8], ['shortSword', 4]]), { arrows: 1, cost: 1 }] },
+  152: { need: { 37: { gold: 20, spend: true } } },
+  153: { ep: -2 },
+  155: { sell: buyer, need: { 291: { gold: 3, spend: true }, 214: { any: [{ not: { gold: 3 } }] } } },
+  159: { ep: 2 },
+  161: { need: { 191: { gold: 2 } } },
+  162: { fight: otokh },
+  163: { ep: -8 },
+  164: { take: [{ pick: ['weapons', 'backpack'], n: { weapons: 1, backpack: 2 } }] },
+  166: { stake: { min: 3, spend: true } },
+  170: { bowShot: { 348: [-99, 7], 59: [8, 99] } },
+  172: { need: { 95: { gold: 6, spend: true } } },
+  182: { stake: { min: 1, spend: true }, todo: 'Each Gold Crown you lay down gives back 1 ENDURANCE: add the points yourself.' },
+  184: { loot: [{ gold: 9 }, { item: 'dagger' }] },
+  189: { ep: -2 },
+  190: { ep: -3, take: [{ pick: ['backpack'], n: 2 }] },
+  192: { fight: momentum },
+  197: { todo: 'Add 1 to the number for each ENDURANCE point you choose to give up, and take those points off yourself.' },
+  200: { need: { 10: bowArrow } },
+  201: { take: [{ item: 'ironSkull' }], give: [{ gold: 10 }], sell: rhousBut('ironSkull') },
+  204: { ep: -2, fight: { kaiWeapon: night } },
+  208: { take: [{ pick: ['backpack'], n: 1, else: [{ pick: ['weapons'], n: 1 }] }] },
+  209: { ep: -2 },
+  210: { fight: otokh },
+  214: { give: [{ gold: 7 }] },
+  215: { loot: [{ item: 'kutyanEmerald' }] },
+  220: { need: { 326: bowArrow } },
+  225: { ep: -6 },
+  227: { ep: -2 },
+  230: { fight: emptyHanded },
+  231: { ep: -2 },
+  232: { take: [{ gold: 10 }] },
+  233: { take: [{ at: [10], last: true }] },
+  238: { ep: -5, need: { 136: bowArrow, 187: noBowArrow } },
+  239: { ep: -3 },
+  242: flomi,
+  243: { ep: -3, take: [{ item: 'cowana' }] },
+  244: { bowShot: { 71: [-99, 5], 49: [6, 99] } },
+  246: { ep: -4 },
+  248: { ep: -2, fight: { kaiWeapon: night } },
+  249: flomi,
+  251: { need: { 182: { gold: 1 }, 277: { any: [{ packItems: 1 }, { meals: 1 }] } },
+    add: [{ text: 'You have nothing to offer: leave the festival', to: '321' }] },
+  253: { loot: [{ meal: 1, cost: 2 }] },
+  257: { fight: momentum },
+  261: { fight: momentum },
+  264: { take: [{ item: 'ironSkull' }] },
+  266: { ep: -2, fight: { kaiWeapon: night } },
+  268: { give: [{ gold: 20 }], back: ['arena'] },
+  272: { give: [{ gold: 7 }] },
+  276: { ep: -5 },
+  277: { todo: 'Each Backpack Item you lay down gives back 3 ENDURANCE: drop them and add the points yourself.' },
+  279: { ep: -2, fight: { kaiWeapon: night } },
+  282: { need: { 140: { gold: 2, spend: true } } },
+  296: { ep: -1 },
+  298: { take: [{ item: 'kutyanEmerald' }], give: [{ gold: 30 }], sell: rhousBut('kutyanEmerald') },
+  300: { fight: { kaiWeapon: night } },
+  302: { need: { 118: { item: 'temujunsRing' }, 143: { item: 'temujunsRing', not: true } } },
+  303: { fight: otokh },
+  310: { need: { 54: { item: ['ironSkull', 'siyenCrown', 'kutyanEmerald'] } } },
+  315: { need: { 244: bowArrow } },
+  317: { loot: [{ item: 'cowana' }, { item: 'cowana' }, { item: 'cowana' }] },
+  318: { take: [{ at: [1] }] },
+  319: { ep: -4 },
+  321: { need: rooms },
+  322: { bowShot: { 81: [-99, 3], 154: [4, 6], 222: [7, 99] } },
+  324: { loot: shop([['potion', 3], ['gallowbrush', 3], ['alether', 3]]) },
+  326: { take: [{ arrows: 1 }] },
+  328: { take: [{ gold: 10 }] },
+  330: flomi,
+  331: { fight: { kaiWeapon: day } },
+  332: { ep: -2 },
+  333: { take: [{ pick: ['packItems'], n: 2 }], need: { 69: { gold: 1, spend: true } } },
+  338: { ep: -3, when: [{ unless: { gold: 1 }, take: [{ pick: ['backpack'], n: 1 }] }, { if: { gold: 1 }, take: [{ gold: 1 }] }] },
+  341: { ep: -4 },
+  342: { ep: -15 },
+  345: { rntMod: [{ ep: [-99, 10], plus: -2 }], bowShot: { 266: [-99, 4], 279: [5, 99] } },
+  347: { ep: 3, loot: [{ meal: 1 }] },
+};

@@ -22,12 +22,9 @@ Picture sources sheet and marks "Made with AI" each one made from the prompt alo
 ### The New Order series (Books 21 on)
 
 The series is in the engine, the importer and the page (ADR 0047; `docs/reference/rules-books.md`).
-Book 21 (`21votm`, 350 sections, 23 fights) was downloaded on 2026-10-22, not imported. What is left:
+Book 21 (`21votm`) goes through its steps as usual (`docs/book-checklist.md`). What is left:
 
-1. Importing Book 21 (the owner's go-ahead; `tools/add_book.py 21` first), then its steps as usual.
-   Its item table marks the fights a Kai Weapon's higher bonus holds in (`kaiWeapon`), and its kit
-   needs checking against the table's item ids.
-2. Downloading Books 22 on, and importing any of them, is the owner's go-ahead. Each adds its title's
+1. Downloading Books 22 on, and importing any of them, is the owner's go-ahead. Each adds its title's
    code to `book_status.CATALOGUE`, its kit to `LW.KITS`. A later book that gates on a Kai Weapon by
    name would need a Condition for it (Book 21 has none).
 

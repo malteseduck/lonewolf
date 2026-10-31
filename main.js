@@ -29,6 +29,7 @@ import * as ITEMS_17 from './items/items-17tdoi.js';
 import * as ITEMS_18 from './items/items-18dotd.js';
 import * as ITEMS_19 from './items/items-19wb.js';
 import * as ITEMS_20 from './items/items-20tcon.js';
+import * as ITEMS_21 from './items/items-21votm.js';
 
 const LW = window.LW;
 const ROMAN = LW.ROMAN;
@@ -48,6 +49,7 @@ const ITEM_TABLES = {
   '18dotd': ITEMS_18,
   '19wb': ITEMS_19,
   '20tcon': ITEMS_20,
+  '21votm': ITEMS_21,
 };
 /* The made-up demo book (ADR 0046) is on the PC alone: its table loads only where its book.js does, and
    a release (which has neither) never shows it. */

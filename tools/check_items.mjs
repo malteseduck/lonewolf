@@ -35,6 +35,8 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
   globalThis.window = globalThis; globalThis.LW = { BOOKS: {} }; globalThis.document = { write() {} };
   load('shared/core.js');
   Object.assign(LW.ITEMS, { bow: { name: 'Bow', kind: 'weapon', ranged: true }, quiver: { name: 'Quiver', kind: 'special' } }); // rules-series.js
+  // so are the New Order's Kai Weapons, which a table may name (Book 21's 155 buys any Special Item)
+  for (const id of ['spawnsmite', 'alema', 'magnara', 'sunstrike', 'kaistar', 'valiance', 'ulnarias', 'raumas', 'illuminatus', 'firefall']) LW.ITEMS[id] = { name: id, kind: 'special' };
   load(`data/projectaon/${book}/book.js`);
   const imp = (f) => {
     const key = JSON.stringify([f, fs.readFileSync(f, 'utf8')]);

@@ -1526,8 +1526,7 @@ ranks.
 - **Grand Weaponmastery**: +5 with **one** weapon of the ten (Spear, Dagger, Mace, Short Sword,
   Warhammer, Bow, Quarterstaff, Broadsword, Axe, Sword); with the Bow, +5 to a shot's Random Number, as
   all five of this book's shots that name a number say (136, 170, 244, 322, 345). *Engine*: the +5 in a
-  fight, yes (`arms`); on a shot, yes (`LW.bowShot`) once the item table gives those five `bowShot`:
-  until step 5 they are free draws with no bonus.
+  fight, yes (`arms`); on a shot, yes (`LW.bowShot`; the item table gives those five `bowShot`).
 - **Deliverance**: at 8 ENDURANCE or less in a fight, restore 20; the page says once every 20 days.
   *Owner*: once a book (ADR 0047). *Engine*: yes (`LW.cureOf`).
 - **Gold**: 20 + a Random Number; at most 50 in the Belt Pouch, with no Monastery for the rest.
@@ -1543,7 +1542,7 @@ ranks.
   kind is mastered. It is a Special Item, one of the twelve, beside the two Weapons. Five sections name
   it (33, 82, 118, 143, 302): 33 takes only the normal Weapons, 143 sets a price for bringing it in;
   none gates on it or on one by name. *Engine*: yes (`LW.KAI_WEAPONS`, `kaiWeaponNow`, the control on
-  the fight's panel); no fight has a `kaiWeapon` mark until the item table (step 5).
+  the fight's panel); the item table marks each fight's `kaiWeapon` where the text says the time or the foe.
 - **Other coins**: smaller coins fill the pouch less. Ren may be taken for Gold Crowns before setting
   out at 10 to 1; to the Gold Crown: 4 Silver Lune, 10 Kika, 1 Noble, 10 Ren, 4 Sheasu Torq, 2 Orla,
   1 Ain. No section names any of them. *Owner*: not tracked (ADR 0047). *Engine*: Gold Crowns only.
@@ -1566,8 +1565,8 @@ ranks.
   answer, marked by a footnote at the section it leads to (23; 125). At 251, with nothing to offer,
   leave the festival by 321, which the section's own choices do not list. Footnote 2 only points to the
   Kai Weapon's rules; footnote 1 is the dedication's. *Engine*: the puzzles need no rule (the importer
-  drops the marks, and the sections' choices carry them); 251's way to 321 needs an `add` in the item
-  table (step 5): until then the page offers only the three ways on, none of them gated.
+  drops the marks, and the sections' choices carry them); 251's way to 321 is an `add` in the item table,
+  left open, as the player judges what there is to offer.
 - **Wisdom**: this is the first stage of carrying the Moonstone back to the Shianti who made it; some
   finds are useless, so keep only what is worth keeping; a wise choice of the five Disciplines matters
   more than high scores.
