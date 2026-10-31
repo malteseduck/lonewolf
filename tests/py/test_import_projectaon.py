@@ -187,6 +187,7 @@ def test_gate_treats_a_contraction_as_negative(kai):
 @pytest.mark.parametrize('text,expect', [
     ('If the number you have picked is 0–4, turn to 9.', [0, 4]),
     ('If the number you have picked is 0-4, turn to 9.', [0, 4]),
+    ('If the number you have picked is 0—4, turn to 9.', [0, 4]),  # an em dash
     ('If your total is −2–+3, turn to 9.', [-2, 3]),
     ('If your total is 5 or more, turn to 9.', [5, 99]),
     ('If the score is 7 or higher, turn to 9.', [7, 99]),

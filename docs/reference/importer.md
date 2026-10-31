@@ -82,7 +82,7 @@ Heuristics layered on top, all by regular expression:
   use your Discipline of X (again)" (Book 19's 179). "If your current level of Kai rank is Y or higher" gates on the rank alone
   (Book 20's 21); "Y or lower" and "between Y and Z" stay open, as a gate holds no highest rank, and so does any other "If your ...".
   "The Discipline of X and you possess <an item>" (Book 21's 37) keeps only the discipline read: the item is the item table's.
-- **Random Number ranges** (`span()`): "0–4", "−2–+3" (the books' minus sign), "5 or more" / "or
+- **Random Number ranges** (`span()`): "0–4", "0—4" (an em dash, Book 22's 124), "−2–+3" (the books' minus sign), "5 or more" / "or
   higher", "4 or less", "below 7", "above 6", two neighbouring numbers "0 or 1" (Book 17's 86; any
   other pair is no range), or a single number. Not in a choice about ENDURANCE
   or COMBAT SKILL.
@@ -302,6 +302,12 @@ read, the item the item table's); "immune to Mindblast (but not Kai-surge)" as `
 300, which had been read as immune to all, shutting out Kai-surge: found by reading, the scan has no kind for an immunity read too
 wide). Books 1-20 unchanged by it. Left: 51, 197 (he chooses how many ENDURANCE points to spend on the number); 136, 170, 244, 322,
 345 (Grand Weaponmastery with Bow: the item table's).
+
+Book 22 as of 2026-10-31, after its step 3: 350 sections, 25 fights, Random 30 (17) / 8, gates 39 / 3 / 0, illustrated 44, dead 9,
+puzzles 2, Meals 8, fights 1 / 7 (5) / 0 / 0, enemies 3 / 1 / 6 (before it: Random 29 (17) / 9). Step 3 taught: a range with an em
+dash, "0—4" (124). No other book has one, so Books 1-21 and 23-29 are unchanged by it. Left: 20's "none of these Disciplines" (the
+way on with none of them, rightly open); 277's "psychic Kai skills" (names no discipline, the owner's to say which); 55 (a Rope among
+the bonuses), 274 (Grand Weaponmastery with Bow), 8, 12, 37, 128, 202, 311 (odd or even, the number counting his ENDURANCE or a game).
 
 Introductions: 7, 7, 9, 4, 10, 7, 10, 10, 8, 9, 8, 8 paragraphs. The free Random Number sections
 left are those where the number counts gold or Endurance, plays a game, or is changed by a bow, a

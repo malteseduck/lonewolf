@@ -262,7 +262,7 @@ def span(text):
     """The Random Number total a choice is for: "0–4", "−2–+3", "5 or more", "below 7", "is 0"."""
     if re.search(r'ENDURANCE|COMBAT SKILL', text) or not re.search(r'\b(?:number|total|score|figure|pick(?:ed)?|is)\b', text):
         return None
-    r = re.search(r'(?<!\d)' + NUM + r'\s*[–-]\s*' + NUM + r'(?!\d)', text)
+    r = re.search(r'(?<!\d)' + NUM + r'\s*[–—-]\s*' + NUM + r'(?!\d)', text)  # an em dash in Book 22's 124
     if r:
         return [as_int(r.group(1)), as_int(r.group(2))]
     # "0 or 1" (Book 17's 86): two neighbouring numbers are a range; any other pair is not one
