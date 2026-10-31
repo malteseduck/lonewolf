@@ -120,7 +120,8 @@
    "7": "2026-10-24"
   },
   "21votm": {
-   "3": "2026-10-31"
+   "3": "2026-10-31",
+   "4": "2026-10-31"
   }
  },
  "note": "The book steps no file can show (3, 4, 6, 7; 6 is the owner's look at the picture sheet, once every enemy has a picture), each with the date it was marked done. Written by tools/book_status.py (done/undo) and the dashboard. Marks dated 2026-10-08 were carried over from the checklist's ticks that day."
