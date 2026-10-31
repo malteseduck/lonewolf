@@ -100,7 +100,7 @@
       keeps: ['crystalStar', 'sommerswerd', 'silverHelm', 'daggerVashna', 'silverBracers', 'jewelledMace', 'silverBow', 'helshezag', 'kagoniteMail', 'korliniumScabbard'],
       ranks: ['', 'Kai Grand Master Senior', 'Kai Grand Master Superior', 'Kai Grand Sentinel', 'Kai Grand Defender', 'Kai Grand Guardian', 'Sun Knight', 'Sun Lord', 'Sun Thane', 'Grand Thane', 'Grand Crown', 'Sun Prince', 'Kai Supreme Master'] },
     // Book 21's rules; the owner's readings are ADR 0047
-    neworder: { name: 'New Order', list: [...ids('grandmaster'), ...ids('neworder')], first: 5, field: 'newOrder', base: { cs: 25, ep: 30 }, shelf: { from: 21, to: 28 },
+    neworder: { name: 'New Order', list: [...ids('grandmaster'), ...ids('neworder')], first: 5, field: 'newOrder', base: { cs: 25, ep: 30 }, shelf: { from: 21, to: 29 },
       arms: { disc: 'grandWeaponmastery', first: 1, field: 'grandMastery' }, past: true, grand: true, holds: ['kai', 'magnakai'],
       earn: 5, backpack: 10, keepPack: true, fresh: true, named: true, kaiWeapon: true, bareHanded: true, healCap: 10,
       heals: [{ by: 'has', d: 'curing', name: 'Curing' }],

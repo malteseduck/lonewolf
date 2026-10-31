@@ -305,7 +305,7 @@ function storyText(sec) {
 const SERIES_TITLES = ['Flight from the Dark', 'Fire on the Water', 'The Caverns of Kalte', 'The Chasm of Doom', 'Shadow on the Sand', 'The Kingdoms of Terror',
   'Castle Death', 'The Jungle of Horrors', 'The Cauldron of Fear', 'The Dungeons of Torgar', 'The Prisoners of Time', 'The Masters of Darkness',
   'The Plague Lords of Ruel', 'The Captives of Kaag', 'The Darke Crusade', 'The Legacy of Vashna', 'The Deathlord of Ixia', 'Dawn of the Dragons', "Wolf's Bane", 'The Curse of Naar',
-  'Voyage of the Moonstone', 'The Buccaneers of Shadaki', "Mydnight's Hero", 'Rune War', 'Trail of the Wolf', 'The Fall of Blood Mountain', 'Vampirium', 'The Hunger of Sejanoz'];
+  'Voyage of the Moonstone', 'The Buccaneers of Shadaki', "Mydnight's Hero", 'Rune War', 'Trail of the Wolf', 'The Fall of Blood Mountain', 'Vampirium', 'The Hunger of Sejanoz', 'The Storms of Chai'];
 /* the series by book number: a shelf each, behind a tab on the right page */
 const SHELVES = Object.entries(LW.SERIES).map(([key, s]) => ({ key, name: s.name, ...s.shelf }));
 const shelfOf = (n) => SHELVES.find((s) => n >= s.from && n <= s.to) || SHELVES[0];
@@ -380,7 +380,7 @@ function shelfHTML() {
   return `<div class="shelfpage">${ruled(`${advName(adv.at)} <button type="button" class="inkbtn" data-shelf="">all adventures</button>`)}
     ${kept ? `<p class="kept">${esc(yourHero(kept.hero))}, ${esc(LW.rankOf(kept.hero) || 'Kai Lord')}, waits after <i>${esc(kept.fromTitle)}</i>. A book not yet finished begins with ${LW.heroPronoun(kept.hero).obj}.</p>` : ''}
     <div class="shelftabs" role="tablist">${SHELVES.map((x) => `<button type="button" class="inkbtn ${x === s ? 'on' : ''} ${going(x) ? 'going' : ''}" role="tab" aria-selected="${x === s}" data-series="${x.key}">${x.name}</button>`).join('')}</div>
-    <div class="plaqs shelfrow">${nums.map((n) => (byNum[n] ? plaque(byNum[n]) : missing(n))).join('')}</div></div>`;
+    <div class="plaqs shelfrow ${nums.length > 8 ? 'nine' : ''}">${nums.map((n) => (byNum[n] ? plaque(byNum[n]) : missing(n))).join('')}</div></div>`;
 }
 function leftHTML() {
   if (mode === 'title') return titleLeftHTML();

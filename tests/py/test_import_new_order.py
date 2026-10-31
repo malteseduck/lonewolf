@@ -2,6 +2,7 @@
 no book text is needed. Ranks are read within the series, the new disciplines are gates."""
 import json
 import os
+import re
 import runpy
 import shutil
 import sys
@@ -22,6 +23,21 @@ def test_the_catalogue_knows_the_series(tmp_path, monkeypatch):
     monkeypatch.setattr(book_status, 'IMPORTER', str(f))
     assert add_book.add('21')[0]
     assert "(21, 'neworder', 'Voyage of the Moonstone')" in f.read_text(encoding='utf-8')
+
+
+def test_every_new_order_book_can_be_downloaded_and_imported():
+    new = [(c, n) for n, (c, _) in enumerate(book_status.CATALOGUE, 1) if n > 20]
+    assert [c for c, _ in new] == ['21votm', '22tbos', '23mh', '24rw', '25totw', '26tfobm', '27v', '28thos', '29tsoc']
+    assert all(book_status.SERIES(n) == 'new order' for _, n in new)
+    assert {c for c, _ in new} <= book_status.importer_books()
+    assert book_status.find('29') == ('29tsoc', 'The Storms of Chai', 29)
+
+
+def test_the_shelf_names_every_book_of_the_catalogue():
+    with open(os.path.join(REPO, 'main.js'), encoding='utf-8') as f:
+        block = re.search(r'const SERIES_TITLES = \[(.*?)\];', f.read(), re.S).group(1)
+    titles = [a or b for a, b in re.findall(r"'([^']+)'|\"([^\"]+)\"", block)]
+    assert titles == [t for _, t in book_status.CATALOGUE]
 
 
 def test_the_importer_reads_a_new_order_book(tmp_path, monkeypatch):

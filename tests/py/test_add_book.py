@@ -50,7 +50,7 @@ def test_the_entry_goes_in_number_order(tmp_path, monkeypatch):
 
 def test_a_known_book_or_one_not_in_the_catalogue_is_refused_and_nothing_written(tmp_path, monkeypatch):
     f = setup(tmp_path, monkeypatch)
-    for book in ('13', '01fftd', '29', 'xyz'):
+    for book in ('13', '01fftd', '30', 'xyz'):
         ok, msg = add_book.add(book)
         assert not ok and msg
     assert f.read_text(encoding='utf-8') == IMPORTER

@@ -44,7 +44,7 @@ def test_fresh_checkout_lacks_every_installable_part(root):
         assert st[k]['state'] == 'missing' and st[k]['install'], k
     assert st['uv']['state'] == 'ok' and not st['uv']['install']  # found on PATH; never installed by us
     assert {k for k, r in st.items() if r['gated']} == {'realesrgan', 'ocr'}  # the downloads of files
-    assert st['books']['state'] == 'info' and '0 of 21' in st['books']['detail']
+    assert st['books']['state'] == 'info' and '0 of 29' in st['books']['detail']
     assert st['art']['state'] == 'missing' and 'copy' in st['art']['detail']  # git-ignored: cannot be made
 
 
@@ -75,7 +75,7 @@ def test_everything_present(root):
     write(root / 'art' / 'plates' / '01fftd' / 'x.webp')
     st = by_id(setup.status())
     assert all(r['state'] in ('ok', 'info') for r in st.values()), st
-    assert '1 of 21 downloaded, 1 imported' in st['books']['detail']
+    assert '1 of 29 downloaded, 1 imported' in st['books']['detail']
 
 
 def esrgan_zip(extra=()):

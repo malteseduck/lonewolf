@@ -32,6 +32,14 @@ BOOKS = {  # code: (number, series, title)
     '19wb': (19, 'grandmaster', "Wolf's Bane"),
     '20tcon': (20, 'grandmaster', 'The Curse of Naar'),
     '21votm': (21, 'neworder', 'Voyage of the Moonstone'),
+    '22tbos': (22, 'neworder', 'The Buccaneers of Shadaki'),
+    '23mh': (23, 'neworder', "Mydnight's Hero"),
+    '24rw': (24, 'neworder', 'Rune War'),
+    '25totw': (25, 'neworder', 'Trail of the Wolf'),
+    '26tfobm': (26, 'neworder', 'The Fall of Blood Mountain'),
+    '27v': (27, 'neworder', 'Vampirium'),
+    '28thos': (28, 'neworder', 'The Hunger of Sejanoz'),
+    '29tsoc': (29, 'neworder', 'The Storms of Chai'),
     '99ember': (99, 'kai', 'The Ember Road'),  # the made-up demo book (demo/99ember, ADR 0046)
 }
 DISC = {'camouflage': 'camouflage', 'hunting': 'hunting', 'sixth sense': 'sixthSense', 'tracking': 'tracking', 'healing': 'healing',

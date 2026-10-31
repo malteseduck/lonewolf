@@ -11,8 +11,8 @@ every book can become a step or a check there.
 
 ## Next steps
 
-In order of importance. The owner picks what is done, and when. Books 1-16 and 20 are imported;
-importing Books 17-19 (downloaded) is the owner's go-ahead.
+In order of importance. The owner picks what is done, and when. Books 1-21 are imported;
+downloading and importing Books 22-29 is the owner's go-ahead.
 
 ### Classify the AI fight pictures
 
@@ -24,8 +24,9 @@ Picture sources sheet and marks "Made with AI" each one made from the prompt alo
 The series is in the engine, the importer and the page (ADR 0047; `docs/reference/rules-books.md`).
 Book 21 (`21votm`) goes through its steps as usual (`docs/book-checklist.md`). What is left:
 
-1. Downloading Books 22 on, and importing any of them, is the owner's go-ahead. Each adds its title's
-   code to `book_status.CATALOGUE`, its kit to `LW.KITS`. A later book that gates on a Kai Weapon by
+1. Books 22-29, the last on Project Aon, are in `book_status.CATALOGUE`, the importer and the shelf;
+   downloading and importing each is the owner's go-ahead. Each adds its kit to `LW.KITS` at its
+   step 4, and until then a hero begins it without one. A later book that gates on a Kai Weapon by
    name would need a Condition for it (Book 21 has none).
 
 ### Engine work found in play

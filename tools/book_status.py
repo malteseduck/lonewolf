@@ -34,7 +34,7 @@ CHECKLIST = os.path.join(ROOT, 'docs', 'book-checklist.md')
 IMPORTER = os.path.join(ROOT, 'tools', 'import_projectaon.py')
 PINS = os.path.join(ROOT, 'assets', 'plates', 'approved')  # the fight pictures approved at step 7 (tools/plates_pin.mjs)
 
-# Codes as Project Aon's /en/xhtml/lw/ listing names the folders (read 2026-10-08)
+# Codes as Project Aon's /en/xhtml/lw/ listing names the folders (read 2026-10-31: Book 29 is its last)
 CATALOGUE = [
     ('01fftd', 'Flight from the Dark'), ('02fotw', 'Fire on the Water'), ('03tcok', 'The Caverns of Kalte'),
     ('04tcod', 'The Chasm of Doom'), ('05sots', 'Shadow on the Sand'), ('06tkot', 'The Kingdoms of Terror'),
@@ -43,6 +43,9 @@ CATALOGUE = [
     ('13tplor', 'The Plague Lords of Ruel'), ('14tcok', 'The Captives of Kaag'), ('15tdc', 'The Darke Crusade'),
     ('16tlov', 'The Legacy of Vashna'), ('17tdoi', 'The Deathlord of Ixia'), ('18dotd', 'Dawn of the Dragons'),
     ('19wb', "Wolf's Bane"), ('20tcon', 'The Curse of Naar'), ('21votm', 'Voyage of the Moonstone'),
+    ('22tbos', 'The Buccaneers of Shadaki'), ('23mh', "Mydnight's Hero"), ('24rw', 'Rune War'),
+    ('25totw', 'Trail of the Wolf'), ('26tfobm', 'The Fall of Blood Mountain'), ('27v', 'Vampirium'),
+    ('28thos', 'The Hunger of Sejanoz'), ('29tsoc', 'The Storms of Chai'),
 ]
 SERIES = lambda n: 'kai' if n <= 5 or n == DEMO_NUMBER else 'magnakai' if n <= 12 else 'grand master' if n <= 20 else 'new order'
 # The made-up demo book (ADR 0046): its source is committed in demo/99ember/, tools/demo_book.py installs it into
