@@ -229,8 +229,9 @@ Commands run from the project root as
    regions' own ground and what must not appear are the agent's to add (the map's Copy prompt). It asks
    for a richly painted repaint (shaded mountains, dense forests, textured water), every label as
    listed, the place names kept in clean sans-serif on clear ground (or as `font.txt`'s second line
-   describes them), every object already drawn kept in place, and nothing added (no fruit,
-   foliage or ornaments, no new trees, ships or buildings). It names no ship or compass rose: Book
+   describes them), every object already drawn kept in place, the woods free to be filled out, and no
+   feature added (no fruit, foliage or ornaments, no new castles, towers, towns, buildings, ruins,
+   creatures or ships). It names no ship or compass rose: Book
    12 has neither, and naming them got it two ships in round 1.
    A map drawn as rows of small identical mountain symbols comes back as those symbols recoloured
    (Book 12, round 1): its `style.txt` asks for continuous sculpted ranges over the same ground
@@ -303,7 +304,7 @@ Commands run from the project root as
   in angular chisel strokes, so it has `DarklandHand-Regular.ttf` (Thin from 2026-10-16, Regular the same day: Thin looked faint beside the repaint), drawn for it after no
   free font matched (Architects Daughter before it, tried against Patrick Hand, Kalam, Neucha and
   Comic Neue on 2026-10-10; Norse and runic fonts on 2026-10-16). Its names' hand-set sizes were
-  scaled then so each spans the printed name's length. Book 9's map has `DarklandSerif-Regular.ttf` (2026-10-20), drawn for it: Darkland Hand with the serifs of its broad-pen hand. Books 14-17 have Darkland Hand Regular, Book 18 its Bold and Book 19 `Almendra-Regular.ttf` (2026-10-30; ADR 0004).
+  scaled then so each spans the printed name's length. Book 9's map has `DarklandSerif-Regular.ttf` (2026-10-20), drawn for it: Darkland Hand with the serifs of its broad-pen hand. Books 14 and 15 have Darkland Hand Regular; Books 16-19 have none, so Cabin (2026-10-30; ADR 0004).
 - The comparison page, `work/compare.html` in a book's folder (git-ignored): two panes, synced pan and
   zoom, any version in each, file sizes in the menu. Copy Book 1's and edit its file list (the scan
   and the finished map are `../map.png` and `../map-4k.webp` from there).

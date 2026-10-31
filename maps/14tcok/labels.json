@@ -42,7 +42,7 @@
   "text": "THE & DARKLANDS",
   "box": [
    1346,
-   262,
+   285,
    1618,
    361
   ],
@@ -59,7 +59,7 @@
    503
   ],
   "slant": -50.7,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -112,7 +112,7 @@
    1532,
    405
   ],
-  "slant": 2.0,
+  "slant": 2,
   "conf": 0.98,
   "retype": true,
   "ink": {
@@ -283,7 +283,7 @@
    662
   ],
   "slant": 0.2,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -309,8 +309,8 @@
    1778,
    689
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -363,8 +363,8 @@
    1605,
    755
   ],
-  "slant": 1.0,
-  "conf": 1.0,
+  "slant": 1,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -391,7 +391,7 @@
    812
   ],
   "slant": 0.9,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -418,7 +418,7 @@
    919
   ],
   "slant": -33.4,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -445,7 +445,7 @@
    884
   ],
   "slant": 0.6,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -502,8 +502,8 @@
    1623,
    887
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -557,7 +557,7 @@
    959
   ],
   "slant": 1.2,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -583,7 +583,7 @@
    1645,
    988
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.99,
   "retype": true,
   "ink": {
@@ -638,7 +638,7 @@
    1092
   ],
   "slant": 0,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "lines": [
    "RECLAIMED",
@@ -669,7 +669,7 @@
    1191
   ],
   "slant": 1.1,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -695,8 +695,8 @@
    754,
    1264
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -723,7 +723,7 @@
    1241
   ],
   "slant": 0.7,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -776,8 +776,8 @@
    420,
    1302
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -804,7 +804,7 @@
    1302
   ],
   "slant": 0.8,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -857,8 +857,8 @@
    453,
    1409
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -870,7 +870,7 @@
    1413
   ],
   "slant": 1.1,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -882,7 +882,7 @@
    1413
   ],
   "slant": 0.7,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -894,7 +894,7 @@
    1418
   ],
   "slant": 1.5,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -906,7 +906,7 @@
    1397
   ],
   "slant": 0.5,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -917,7 +917,7 @@
    1507,
    1435
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.92,
   "retype": false
  },
@@ -929,8 +929,8 @@
    1641,
    1437
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -941,8 +941,8 @@
    435,
    1479
   ],
-  "slant": 1.0,
-  "conf": 1.0,
+  "slant": 1,
+  "conf": 1,
   "retype": false
  },
  {
@@ -954,7 +954,7 @@
    1479
   ],
   "slant": 0.7,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -978,7 +978,7 @@
    1487
   ],
   "slant": 1.7,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -990,7 +990,7 @@
    1493
   ],
   "slant": 1.1,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -1002,7 +1002,7 @@
    1497
   ],
   "slant": 1.1,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {

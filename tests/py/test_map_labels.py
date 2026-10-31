@@ -105,6 +105,14 @@ def test_prompt_unlettered_lists_only_the_kept_labels_and_forbids_the_erased_one
     assert 'have no name or numbers written beside them' in p
 
 
+def test_prompt_lets_woods_be_filled_out_but_adds_no_new_feature():
+    p = map_labels.prompt([PLACE, CAPTION])
+    assert 'new trees' not in p
+    assert 'woods already drawn may be filled out' in p
+    assert 'add no feature that is not on the original' in p
+    assert 'no new castles, towers, towns, buildings, ruins, creatures or ships' in p
+
+
 
 
 

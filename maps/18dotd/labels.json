@@ -24,8 +24,8 @@
   "retype": true,
   "ink": {
    "at": [
-    1499.0,
-    78.0
+    1499,
+    78
    ],
    "angle": 1.43,
    "length": 86.4,
@@ -59,12 +59,12 @@
    121
   ],
   "slant": 0.6,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
     1544.5,
-    107.0
+    107
    ],
    "angle": 0.62,
    "length": 197.1,
@@ -94,12 +94,12 @@
   ],
   "ink": {
    "at": [
-    1441.0,
+    1441,
     155.5
    ],
-   "angle": 0.0,
-   "length": 128.0,
-   "thick": 45.0,
+   "angle": 0,
+   "length": 128,
+   "thick": 45,
    "box": [
     1381,
     135,
@@ -128,7 +128,7 @@
    495,
    195
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.98,
   "retype": false
  },
@@ -140,8 +140,8 @@
    649,
    195
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -152,8 +152,8 @@
    803,
    195
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -164,8 +164,8 @@
    1624,
    204
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -191,7 +191,7 @@
    380,
    251
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.92,
   "retype": false
  },
@@ -203,8 +203,8 @@
    573,
    253
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -239,17 +239,17 @@
    1590,
    284
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
     1524.5,
-    276.0
+    276
    ],
    "angle": 0.05,
-   "length": 129.0,
-   "thick": 22.0,
+   "length": 129,
+   "thick": 22,
    "box": [
     1457,
     263,
@@ -283,7 +283,7 @@
    403
   ],
   "slant": 1.4,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -341,7 +341,7 @@
    496
   ],
   "slant": 1.3,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -368,7 +368,7 @@
    507
   ],
   "slant": 0,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -376,7 +376,7 @@
     487.8
    ],
    "angle": 0.53,
-   "length": 217.0,
+   "length": 217,
    "thick": 21.6,
    "box": [
     1458,
@@ -395,7 +395,7 @@
    551
   ],
   "slant": 1.3,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -403,7 +403,7 @@
     534.6
    ],
    "angle": 0.25,
-   "length": 81.0,
+   "length": 81,
    "thick": 23.2,
    "box": [
     493,
@@ -426,7 +426,7 @@
   "retype": true,
   "ink": {
    "at": [
-    780.0,
+    780,
     538.1
    ],
    "angle": 0.7,
@@ -452,12 +452,12 @@
    1535,
    553
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
-    1488.0,
+    1488,
     541.5
    ],
    "angle": 0.66,
@@ -479,8 +479,8 @@
    1400,
    600
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -488,7 +488,7 @@
     585.9
    ],
    "angle": -0.52,
-   "length": 98.0,
+   "length": 98,
    "thick": 27.5,
    "box": [
     1301,
@@ -506,8 +506,8 @@
    1693,
    618
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -550,12 +550,12 @@
    636
   ],
   "slant": -2.4,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
     403.4,
-    620.0
+    620
    ],
    "angle": -1.74,
    "length": 85.1,
@@ -576,7 +576,7 @@
    591,
    632
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.99,
   "retype": true,
   "ink": {
@@ -585,8 +585,8 @@
     622.9
    ],
    "angle": -0.13,
-   "length": 89.0,
-   "thick": 24.0,
+   "length": 89,
+   "thick": 24,
    "box": [
     497,
     608,
@@ -639,7 +639,7 @@
    664
   ],
   "slant": 1.4,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -670,10 +670,10 @@
   "retype": true,
   "ink": {
    "at": [
-    1090.0,
-    623.0
+    1090,
+    623
    ],
-   "angle": 1.0,
+   "angle": 1,
    "length": 62.2,
    "thick": 15.1,
    "box": [
@@ -693,15 +693,15 @@
    677
   ],
   "slant": 1.6,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
     582.5,
-    664.0
+    664
    ],
    "angle": -0.08,
-   "length": 61.0,
+   "length": 61,
    "thick": 14.1,
    "box": [
     546,
@@ -728,7 +728,7 @@
     671.9
    ],
    "angle": -0.5,
-   "length": 55.0,
+   "length": 55,
    "thick": 14.1,
    "box": [
     752,
@@ -746,8 +746,8 @@
    1159,
    699
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -787,7 +787,7 @@
    ],
    "angle": 2.74,
    "length": 138.4,
-   "thick": 44.0,
+   "thick": 44,
    "box": [
     1489,
     676,
@@ -832,7 +832,7 @@
    736
   ],
   "slant": -0.6,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -840,7 +840,7 @@
     721.5
    ],
    "angle": -0.17,
-   "length": 95.0,
+   "length": 95,
    "thick": 19.2,
    "box": [
     539,
@@ -858,8 +858,8 @@
    356,
    756
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -912,16 +912,16 @@
    1300,
    750
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.99,
   "retype": true,
   "ink": {
    "at": [
-    1249.0,
+    1249,
     738.6
    ],
    "angle": 0.2,
-   "length": 94.0,
+   "length": 94,
    "thick": 15.1,
    "box": [
     1200,
@@ -940,7 +940,7 @@
    825
   ],
   "slant": 1.3,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -966,8 +966,8 @@
    787,
    808
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -993,17 +993,17 @@
    892,
    798
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
     855.5,
-    781.0
+    781
    ],
-   "angle": 0.0,
-   "length": 73.0,
-   "thick": 24.0,
+   "angle": 0,
+   "length": 73,
+   "thick": 24,
    "box": [
     815,
     773,
@@ -1020,8 +1020,8 @@
    1009,
    802
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1047,8 +1047,8 @@
    1588,
    823
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1074,17 +1074,17 @@
    557,
    857
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
     516.5,
     840.5
    ],
-   "angle": 0.0,
-   "length": 73.0,
-   "thick": 25.0,
+   "angle": 0,
+   "length": 73,
+   "thick": 25,
    "box": [
     479,
     832,
@@ -1101,8 +1101,8 @@
    674,
    841
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1128,8 +1128,8 @@
    988,
    835
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1161,7 +1161,7 @@
   "ink": {
    "at": [
     1239.1,
-    875.0
+    875
    ],
    "angle": 45.3,
    "length": 120.1,
@@ -1192,7 +1192,7 @@
    895
   ],
   "slant": -1.7,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1218,12 +1218,12 @@
    676,
    900
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
-    630.0,
+    630,
     888.1
    ],
    "angle": 0.93,
@@ -1273,7 +1273,7 @@
    911
   ],
   "slant": -0.9,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1300,16 +1300,16 @@
    874
   ],
   "slant": -2.5,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
-    977.0,
+    977,
     862.9
    ],
    "angle": -0.78,
-   "length": 58.0,
-   "thick": 14.0,
+   "length": 58,
+   "thick": 14,
    "box": [
     942,
     849,
@@ -1331,12 +1331,12 @@
   "retype": true,
   "ink": {
    "at": [
-    1112.0,
+    1112,
     873.2
    ],
    "angle": -1.5,
    "length": 69.9,
-   "thick": 17.0,
+   "thick": 17,
    "box": [
     1077,
     858,
@@ -1377,7 +1377,7 @@
     1214,
     912
    ],
-   "size": 15.0,
+   "size": 15,
    "angle": 45
   }
  },
@@ -1399,7 +1399,7 @@
     926.5
    ],
    "angle": 89.87,
-   "length": 109.0,
+   "length": 109,
    "thick": 17.1,
    "box": [
     1369,
@@ -1407,7 +1407,8 @@
     1396,
     978
    ]
-  }
+  },
+  "reset": true
  },
  {
   "text": "ELDENORA",
@@ -1429,16 +1430,16 @@
    631,
    943
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
-    557.0,
-    929.0
+    557,
+    929
    ],
    "angle": 0.25,
-   "length": 142.0,
+   "length": 142,
    "thick": 18.5,
    "box": [
     484,
@@ -1456,8 +1457,8 @@
    805,
    928
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1489,11 +1490,11 @@
   "ink": {
    "at": [
     897.1,
-    929.0
+    929
    ],
    "angle": 1.48,
    "length": 56.2,
-   "thick": 15.0,
+   "thick": 15,
    "box": [
     868,
     915,
@@ -1538,7 +1539,7 @@
    955
   ],
   "slant": 3.3,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1547,7 +1548,7 @@
    ],
    "angle": 1.97,
    "length": 64.5,
-   "thick": 18.0,
+   "thick": 18,
    "box": [
     330,
     930,
@@ -1577,7 +1578,7 @@
   "retype": true,
   "ink": {
    "at": [
-    1591.0,
+    1591,
     944.6
    ],
    "angle": 0.83,
@@ -1599,8 +1600,8 @@
    378,
    993
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1608,8 +1609,8 @@
     979.6
    ],
    "angle": -0.06,
-   "length": 141.0,
-   "thick": 19.0,
+   "length": 141,
+   "thick": 19,
    "box": [
     232,
     966,
@@ -1626,8 +1627,8 @@
    1019,
    1009
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1653,16 +1654,16 @@
    699,
    1025
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
-    658.0,
+    658,
     1013.4
    ],
    "angle": 0.5,
-   "length": 78.0,
+   "length": 78,
    "thick": 17.2,
    "box": [
     618,
@@ -1681,15 +1682,15 @@
    1048
   ],
   "slant": 1.7,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
-    827.0,
-    1038.0
+    827,
+    1038
    ],
    "angle": 0.51,
-   "length": 68.0,
+   "length": 68,
    "thick": 14.4,
    "box": [
     796,
@@ -1708,7 +1709,7 @@
    1039
   ],
   "slant": 2.7,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1734,8 +1735,8 @@
    1279,
    1059
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1743,7 +1744,7 @@
     1047.5
    ],
    "angle": 0.08,
-   "length": 123.0,
+   "length": 123,
    "thick": 17.2,
    "box": [
     1151,
@@ -1761,16 +1762,16 @@
    1483,
    1028
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
     1438.5,
-    1018.0
+    1018
    ],
    "angle": 0.29,
-   "length": 81.0,
+   "length": 81,
    "thick": 18.1,
    "box": [
     1394,
@@ -1805,7 +1806,8 @@
     383,
     1153
    ]
-  }
+  },
+  "reset": true
  },
  {
   "text": "LUDROM",
@@ -1815,13 +1817,13 @@
    623,
    1078
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
     576.5,
-    1068.0
+    1068
    ],
    "angle": -0.52,
    "length": 85.1,
@@ -1847,11 +1849,11 @@
   "retype": true,
   "ink": {
    "at": [
-    736.0,
+    736,
     1127.9
    ],
    "angle": 77.3,
-   "length": 112.0,
+   "length": 112,
    "thick": 18.2,
    "box": [
     715,
@@ -1897,11 +1899,11 @@
    1141
   ],
   "slant": -2.2,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
-    264.0,
+    264,
     1126.3
    ],
    "angle": -2.2,
@@ -1923,8 +1925,8 @@
    505,
    1126
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1932,7 +1934,7 @@
     1114.2
    ],
    "angle": -0.57,
-   "length": 99.0,
+   "length": 99,
    "thick": 15.8,
    "box": [
     398,
@@ -1977,8 +1979,8 @@
    1317,
    1114
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2014,14 +2016,15 @@
    ],
    "angle": -13.53,
    "length": 108.9,
-   "thick": 15.0,
+   "thick": 15,
    "box": [
     1548,
     1108,
     1668,
     1159
    ]
-  }
+  },
+  "reset": true
  },
  {
   "text": "SLOVIA",
@@ -2031,17 +2034,17 @@
    1311,
    1178
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
     1259.5,
-    1164.0
+    1164
    ],
    "angle": -0.06,
-   "length": 97.0,
-   "thick": 18.0,
+   "length": 97,
+   "thick": 18,
    "box": [
     1207,
     1150,
@@ -2064,10 +2067,10 @@
   "ink": {
    "at": [
     1454.3,
-    1155.0
+    1155
    ],
    "angle": -2.5,
-   "length": 53.0,
+   "length": 53,
    "thick": 16.3,
    "box": [
     1426,
@@ -2085,12 +2088,12 @@
    393,
    1209
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
-    354.0,
+    354,
     1197.5
    ],
    "angle": 0.57,
@@ -2113,12 +2116,12 @@
    1211
   ],
   "slant": 1.5,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
     599.9,
-    1199.0
+    1199
    ],
    "angle": 1.09,
    "length": 88.1,
@@ -2139,16 +2142,16 @@
    1142,
    1200
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
     1095.5,
-    1189.0
+    1189
    ],
    "angle": 0.55,
-   "length": 87.0,
+   "length": 87,
    "thick": 14.6,
    "box": [
     1047,
@@ -2166,7 +2169,7 @@
    1869,
    1212
   ],
-  "slant": -90.0,
+  "slant": -90,
   "conf": 0.95,
   "retype": false
  },
@@ -2178,13 +2181,13 @@
    303,
    1244
   ],
-  "slant": -1.0,
-  "conf": 1.0,
+  "slant": -1,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
-    241.0,
-    1230.0
+    241,
+    1230
    ],
    "angle": -0.76,
    "length": 118.1,
@@ -2210,11 +2213,11 @@
   "retype": true,
   "ink": {
    "at": [
-    704.0,
+    704,
     1229.4
    ],
    "angle": 0.47,
-   "length": 100.0,
+   "length": 100,
    "thick": 19.5,
    "box": [
     650,
@@ -2232,8 +2235,8 @@
    856,
    1226
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2286,16 +2289,16 @@
    1682,
    1262
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
-    1650.0,
+    1650,
     1251.5
    ],
    "angle": 0.45,
-   "length": 56.0,
+   "length": 56,
    "thick": 13.3,
    "box": [
     1625,
@@ -2311,7 +2314,8 @@
    ],
    "size": 15.9,
    "angle": 0
-  }
+  },
+  "reset": true
  },
  {
   "text": "The",
@@ -2322,7 +2326,7 @@
    1308
   ],
   "slant": 39.4,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2338,7 +2342,8 @@
     168,
     1308
    ]
-  }
+  },
+  "reset": true
  },
  {
   "text": "VANAMOR",
@@ -2348,8 +2353,8 @@
    688,
    1265
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2357,7 +2362,7 @@
     1252.7
    ],
    "angle": 0.85,
-   "length": 127.0,
+   "length": 127,
    "thick": 18.1,
    "box": [
     562,
@@ -2375,13 +2380,13 @@
    943,
    1278
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
-    897.0,
-    1268.0
+    897,
+    1268
    ],
    "angle": 1.3,
    "length": 88.3,
@@ -2407,7 +2412,7 @@
   "retype": true,
   "ink": {
    "at": [
-    1107.0,
+    1107,
     1289.5
    ],
    "angle": 1.64,
@@ -2434,7 +2439,7 @@
   "retype": true,
   "ink": {
    "at": [
-    161.0,
+    161,
     1323.2
    ],
    "angle": 39.34,
@@ -2446,7 +2451,8 @@
     216,
     1371
    ]
-  }
+  },
+  "reset": true
  },
  {
   "text": "SCADE",
@@ -2457,11 +2463,11 @@
    1314
   ],
   "slant": 0.1,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
-    348.0,
+    348,
     1302.1
    ],
    "angle": -0.45,
@@ -2484,15 +2490,15 @@
    1311
   ],
   "slant": 0.7,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
     569.4,
-    1296.0
+    1296
    ],
    "angle": 0.41,
-   "length": 161.0,
+   "length": 161,
    "thick": 23.1,
    "box": [
     484,
@@ -2511,7 +2517,7 @@
    1327
   ],
   "slant": 0.9,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2519,7 +2525,7 @@
     1318.6
    ],
    "angle": 0.16,
-   "length": 123.0,
+   "length": 123,
    "thick": 22.9,
    "box": [
     1202,
@@ -2537,7 +2543,7 @@
    1440,
    1344
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.98,
   "retype": true,
   "ink": {
@@ -2564,15 +2570,15 @@
    1587,
    1312
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
-    1543.0,
+    1543,
     1298.5
    ],
-   "angle": 1.0,
+   "angle": 1,
    "length": 80.1,
    "thick": 16.3,
    "box": [
@@ -2591,7 +2597,7 @@
    1655,
    1372
   ],
-  "slant": -35.0,
+  "slant": -35,
   "conf": 0.92,
   "retype": true,
   "ink": {
@@ -2599,7 +2605,7 @@
     1619.6,
     1346.4
    ],
-   "angle": -35.0,
+   "angle": -35,
    "length": 82.9,
    "thick": 33.4,
    "box": [
@@ -2646,7 +2652,8 @@
     1372,
     -10
    ]
-  ]
+  ],
+  "reset": true
  },
  {
   "text": "LUNA",
@@ -2656,8 +2663,8 @@
    388,
    1366
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2684,7 +2691,7 @@
    1349
   ],
   "slant": -0.8,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2692,7 +2699,7 @@
     1337.5
    ],
    "angle": 0.08,
-   "length": 135.0,
+   "length": 135,
    "thick": 15.2,
    "box": [
     516,
@@ -2710,12 +2717,12 @@
    757,
    1378
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
-    684.0,
+    684,
     1369.4
    ],
    "angle": 0.6,
@@ -2737,8 +2744,8 @@
    942,
    1365
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2746,7 +2753,7 @@
     1353.5
    ],
    "angle": -0.54,
-   "length": 72.0,
+   "length": 72,
    "thick": 15.7,
    "box": [
     862,
@@ -2765,7 +2772,7 @@
    1490
   ],
   "slant": 0,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false,
   "lines": [
    "MOUN~",
@@ -2804,7 +2811,7 @@
    1310,
    1473
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.99,
   "retype": false
  },
@@ -2829,7 +2836,7 @@
    1507
   ],
   "slant": 1.6,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -2872,8 +2879,8 @@
   "retype": true,
   "ink": {
    "at": [
-    776.0,
-    566.0
+    776,
+    566
    ],
    "angle": 0.68,
    "length": 136.2,
@@ -2900,10 +2907,10 @@
   "ink": {
    "at": [
     845.5,
-    606.0
+    606
    ],
    "angle": 0.12,
-   "length": 103.0,
+   "length": 103,
    "thick": 16.1,
    "box": [
     794,
@@ -2926,12 +2933,12 @@
   "retype": true,
   "ink": {
    "at": [
-    963.0,
+    963,
     597.6
    ],
    "angle": -0.68,
    "length": 104.1,
-   "thick": 16.0,
+   "thick": 16,
    "box": [
     910,
     586,
@@ -3007,7 +3014,7 @@
   "retype": true,
   "ink": {
    "at": [
-    333.0,
+    333,
     1019.4
    ],
    "angle": 1.31,
@@ -3034,11 +3041,11 @@
   "retype": true,
   "ink": {
    "at": [
-    479.0,
+    479,
     1020.5
    ],
    "angle": -0.46,
-   "length": 76.0,
+   "length": 76,
    "thick": 13.5,
    "box": [
     438,
@@ -3065,7 +3072,7 @@
     527.5
    ],
    "angle": 31.88,
-   "length": 147.0,
+   "length": 147,
    "thick": 23.9,
    "box": [
     1107,
@@ -3073,6 +3080,7 @@
     1232,
     565
    ]
-  }
+  },
+  "reset": true
  }
 ]

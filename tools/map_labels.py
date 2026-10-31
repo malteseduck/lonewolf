@@ -325,9 +325,11 @@ def prompt(labels, lettered=False, style=None, lettering=None):
     if erased:  # erased from the picture by map_erase.py: asking Gemini to leave them out failed
         p += (' Some towns, rivers, roads, islands and the scale bar have no name or numbers written beside them: '
               'leave them that way, with no lettering of any kind there.')
-    return p + (' Do not add, remove or rename any other label. Add nothing that is not on the original: no fruit, '
-                'foliage, vines, scrolls or extra ornaments along the edges or in the corners, no new trees, creatures, '
-                'ships or buildings. Keep the burnt, torn parchment edge as it is. Every line stays clean and steady: '
+    # woods may be fleshed out, new features may not (owner, ADR 0004)
+    return p + (' Do not add, remove or rename any other label. The woods already drawn may be filled out, but add no '
+                'feature that is not on the original: no fruit, foliage, vines, scrolls or extra ornaments along the '
+                'edges or in the corners, no new castles, towers, towns, buildings, ruins, creatures or ships. '
+                'Keep the burnt, torn parchment edge as it is. Every line stays clean and steady: '
                 'straight roads, frame lines and lettering, no warping or melting.\n')
 
 

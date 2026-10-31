@@ -7,8 +7,8 @@
    474,
    335
   ],
-  "slant": -0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -34,7 +34,7 @@
    1648,
    343
   ],
-  "slant": 1.0,
+  "slant": 1,
   "conf": 0.99,
   "retype": true,
   "ink": {
@@ -61,8 +61,8 @@
    1739,
    330
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -115,8 +115,8 @@
    974,
    452
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -142,8 +142,8 @@
    1765,
    519
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -169,8 +169,8 @@
    1770,
    586
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -197,7 +197,7 @@
    826
   ],
   "slant": 0,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "lines": [
    "Reclaimed",
@@ -227,8 +227,8 @@
    401,
    871
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -254,7 +254,7 @@
    1765,
    911
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.99,
   "retype": true,
   "ink": {
@@ -281,7 +281,7 @@
    427,
    1060
   ],
-  "slant": -25.0,
+  "slant": -25,
   "conf": 0.97,
   "retype": true,
   "ink": {
@@ -335,7 +335,7 @@
    1650,
    956
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.93,
   "retype": true,
   "ink": {
@@ -363,12 +363,27 @@
    1032
   ],
   "slant": 0,
-  "conf": 1.0,
-  "retype": false,
+  "conf": 1,
+  "retype": true,
   "lines": [
    "Lake",
    "Kazonara"
-  ]
+  ],
+  "ink": {
+   "at": [
+    553.4,
+    1005.5
+   ],
+   "angle": 1.2,
+   "length": 122.9,
+   "thick": 41.4,
+   "box": [
+    496,
+    983,
+    613,
+    1032
+   ]
+  }
  },
  {
   "text": "Lake Vorndarol",
@@ -379,12 +394,27 @@
    1023
   ],
   "slant": 0,
-  "conf": 1.0,
-  "retype": false,
+  "conf": 1,
+  "retype": true,
   "lines": [
    "Lake",
    "Vorndarol"
-  ]
+  ],
+  "ink": {
+   "at": [
+    785.4,
+    998.7
+   ],
+   "angle": 1.43,
+   "length": 105.1,
+   "thick": 32.3,
+   "box": [
+    728,
+    979,
+    841,
+    1023
+   ]
+  }
  },
  {
   "text": "Falls of Lamenta",
@@ -395,7 +425,7 @@
    1049
   ],
   "slant": 0,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "lines": [
    "Falls of",
@@ -452,8 +482,8 @@
    1337,
    1128
   ],
-  "slant": 11.0,
-  "conf": 1.0,
+  "slant": 11,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -480,7 +510,7 @@
    1121
   ],
   "slant": 0,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "lines": [
    "Maaken",
@@ -511,7 +541,7 @@
    1184
   ],
   "slant": 0.6,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -626,8 +656,8 @@
    627,
    1204
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -653,8 +683,8 @@
    1219,
    1212
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -681,7 +711,7 @@
    1309
   ],
   "slant": 14.8,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -707,8 +737,8 @@
    620,
    1291
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -735,7 +765,7 @@
    1290
   ],
   "slant": 0.7,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -761,7 +791,7 @@
    1559,
    1331
   ],
-  "slant": -28.0,
+  "slant": -28,
   "conf": 0.97,
   "retype": true,
   "ink": {
@@ -788,8 +818,8 @@
    424,
    1319
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -816,7 +846,7 @@
    1309
   ],
   "slant": 1.1,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -843,7 +873,7 @@
    1395
   ],
   "slant": 70.8,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -869,8 +899,8 @@
    1119,
    1315
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -951,7 +981,7 @@
    1343
   ],
   "slant": 1.1,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -978,7 +1008,7 @@
    1388
   ],
   "slant": -0.3,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -989,8 +1019,8 @@
    690,
    1456
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -1014,7 +1044,7 @@
    1467
   ],
   "slant": 0.8,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -1026,7 +1056,7 @@
    1472
   ],
   "slant": -1.5,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -1037,8 +1067,8 @@
    1494,
    1470
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -1049,8 +1079,8 @@
    1774,
    1470
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  }
 ]
