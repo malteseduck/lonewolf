@@ -1505,12 +1505,15 @@ opens when the hero holds it; no effect is applied.
 Read from its own rules pages against Book 20's (tools/rules_diff.py, 2026-10-31): the Random Number
 Table and the combat results table are unchanged, the combat rules and summary only where noted below.
 The first book of the series: the series section above holds its Disciplines, its Kai Weapons and its
-ranks. Its Kai name page (`kainame.htm`) is not on disk; the two name tables are the Handbook's.
+ranks.
 
 - **Scores**: a new character: COMBAT SKILL = **25** + a Random Number (0 counts as zero), ENDURANCE =
   **30** + a Random Number. ENDURANCE cannot rise above its value at the start; at zero or below the
   hero is dead. A ten-sided die may stand in for the table. Books 1-20 are not needed. *Engine*: yes
   (`base`, `fresh`); the page draws its own numbers.
+- **Kai name**: the player's own, or drawn: a Random Number on each of two tables, the prefix (0-9:
+  Swift, Sun, True, Bold, Moon, Sword, Wise, Storm, Rune, Brave) and the suffix (0-9: Blade, Fire, Hawk,
+  Heart, Friend, Star, Dancer, Helm, Strider, Shield). *Engine*: yes (`LW.kaiName`, `HeroSetup.setName`).
 - **Disciplines**: every Kai and Magnakai Discipline, and **five** of the sixteen New Order Disciplines
   as Kai Grand Master Senior, chosen. Curing gives +1 ENDURANCE for each section with no further fight,
   **10** at most in this book; no COMBAT SKILL is lost bare-handed. The summary gives the other earlier

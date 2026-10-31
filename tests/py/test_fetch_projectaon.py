@@ -94,7 +94,7 @@ def test_asks_for_every_rules_page_and_ignores_the_ones_a_book_lacks(tmp_path, o
     site = offline({'sect1.htm': art(''), 'gamerulz.htm': art(''), 'random.htm': art('')})
     ns = run_script(tmp_path, '01fftd')
     assert set(ns['RULES']) <= set(site.names())
-    assert len(ns['RULES']) == 13 and 'cmbtrulz.htm' in ns['RULES']
+    assert len(ns['RULES']) == 14 and 'cmbtrulz.htm' in ns['RULES'] and 'kainame.htm' in ns['RULES']
     out = capsys.readouterr().out
     assert 'FAILED gamerulz' not in out and 'FAILED lorecrcl' not in out   # rules pages are fetched quietly
 

@@ -11,7 +11,7 @@ import os, re, sys, time, urllib.request
 book = next((a for a in sys.argv[1:] if not a.startswith('-')), '01fftd')
 # the book's own rules, read for docs/reference/rules-books.md: those of its pages that a book has
 RULES = ['gamerulz.htm', 'discplnz.htm', 'equipmnt.htm', 'cmbtrulz.htm', 'levels.htm', 'lorecrcl.htm', 'imprvdsc.htm',
-         'kaiwisdm.htm', 'crsumary.htm', 'crtable.htm', 'random.htm', 'errata.htm', 'footnotz.htm']
+         'kaiwisdm.htm', 'crsumary.htm', 'crtable.htm', 'random.htm', 'errata.htm', 'footnotz.htm', 'kainame.htm']
 base = f'https://www.projectaon.org/en/xhtml/lw/{book}/'
 out = os.path.join(os.path.dirname(__file__), '..', 'data', 'projectaon', book)
 os.makedirs(out, exist_ok=True)
