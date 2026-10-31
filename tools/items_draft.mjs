@@ -4,15 +4,16 @@
 
    Step 5's script (ADR 0036, docs/reference/items.md). It reads the imported sections (book.js) a
    sentence at a time and fills in only the plain readings: Gold Crowns, Meals and items with a known
-   id found or offered, items lost, Endurance lost or restored on arrival, and the choices gated on a
-   known item or on paying Gold Crowns. A sentence that says any of these under a condition, or names
+   id found or offered, items and Gold Crowns lost, Endurance lost or restored on arrival, the choices gated on a
+   known item, on Gold Crowns or on his Endurance, a shot's ranges, and a fight's plain rules (undead, a first
+   round's change, a win within so many rounds). A sentence that says any of these under a condition, or names
    an item no table knows, is not guessed: its section gets a `todo` naming what to read there, as does
    any sentence left silent that shows a general sign of an item, a loss or a gain. The agent's prompt (and the owner) refine the draft from there.
 
    With no items-<book>.js yet, the draft is written there. With one, it is never touched: the draft
    goes to data/projectaon/<book>/items-draft.js instead, and is compared with the table section by
    section (how many of its readings the hand-made table agrees with), which is how the rules here
-   were tuned on Books 1-12. Prints counts and section ids only, never text. */
+   were tuned on Books 1-21. Prints counts and section ids only, never text. */
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
@@ -36,12 +37,16 @@ const OFFER_IF = /\b(?:if|should) you (?:wish|want|decide|choose|would like|wish
 const OFFER = /\b(may|wish|want|choose|decide|would like|are free to|can take|can keep)\b/i;
 const GIVE = /\b(pocket|you find|you discover|you are given|you receive|hands? you|gives? you|presents? you|you collect|you now (?:have|possess)|you take|you pick up|you put|you place|you slip|you tuck)\b/i;
 const CHART = /\b(Action Chart|Special Items?|Backpack Items?|Weapons? List|Belt Pouch|record|mark (?:it|this|them|these)|note (?:it|this)|add (?:it|this|them|these))\b/i;
-const LOSE_ITEM = /\b(erase|you lose|is lost|are lost|is stolen|are stolen|has been stolen|have been stolen|confiscate[sd]?|is destroyed|shatters?|snaps?)\b/i;
-const PAY = /\b(pay|paid|payment|give|hand over|offer|spend|cost|costs|price|charge|charges|fee|bet|wager|stake|bribe|buy|purchase|sell|sold|worth|lose|lost|stolen|take your|takes your)\b/i;
+const LOSE_ITEM = /\b(erase|delete|you lose|is lost|are lost|is stolen|are stolen|has been stolen|have been stolen|confiscate[sd]?|is destroyed|shatters?|snaps?)\b/i;
+const PAY = /\b(pay|paid|payment|erase|deduct|delete|donat\w*|toss\w*|lieu|exchange|give|hand over|offer|spend|cost|costs|price|charge|charges|fee|bet|wager|stake|bribe|buy|purchase|sell|sold|worth|lose|lost|stolen|take your|takes your)\b/i;
 
-const EP_LOSE = new RegExp(`\\b(?:(?:lose|loses|deduct|subtract|take away|takes away|costs? you)\\s+${COUNT}\\s+ENDURANCE|reduce your ENDURANCE(?: score| total| points)? by (?:a further |another )?${COUNT}\\b)`, 'i');
-const EP_GAIN = new RegExp(`\\b(?:restore|restores|regain|gain|add|recover|heals?)\\s+${COUNT}\\s+ENDURANCE`, 'i');
-const EP_FULL = /\b(?:restore|restores|restored|regain|recover)\b.*\b(?:all (?:of )?(?:your |the )?(?:lost )?ENDURANCE|ENDURANCE[^.]*\b(?:original|maximum|initial|full)\b)/i;
+const EP_LOSE = new RegExp(`\\b(?:(?:lose|loses|deduct|subtract|take away|takes away|costs? you)\\s+${COUNT}\\s+ENDURANCE|reduces? your (?:current )?ENDURANCE(?: points)?(?: score| total)? by (?:a further |another )?${COUNT}\\b)`, 'i');
+const EP_GAIN = new RegExp(`\\b(?:(?:restore|restores|regain|gain|add|recover|heals?)\\s+${COUNT}\\s+ENDURANCE|increases? your (?:current )?ENDURANCE(?: points)?(?: score| total)? by ${COUNT}\\b)`, 'i');
+// what a thing would do, not what happens here: "this potion restores 3", "enough to restore 5"
+const EP_DESCRIBED = /\b(?:restores|to restore|to regain|will restore|can restore|would restore)\b/i;
+// a restoration in brackets told as an event: "(restore 3 ENDURANCE points)", "(you may restore 3...)"
+const EP_EVENT = /^\s*(?:you may (?:now )?)?(?:restore|regain|recover|increase)\b/i;
+const EP_FULL = /\b(?:restore|restores|restored|regain|recover)\b.*\b(?:all (?:of )?(?:your |the )?(?:lost )?ENDURANCE|any (?:of your )?(?:lost )?ENDURANCE|ENDURANCE[^.]*\b(?:original|maximum|initial|full)\b)/i;
 const GOLD = new RegExp(`\\b${NUM}\\s+Gold Crowns?\\b`, 'g');
 // a section that sells, or lists wares with prices: what is bought there is a judgement
 const SHOP = /\b(buy|buys|purchase|sell|sells|price|prices|for sale|wares)\b|\(\s*\d+ Gold Crowns?\s*\)/i;
@@ -57,7 +62,20 @@ const SIGN_CHART = /\b(Action Chart|Special Items?|Backpack Items?|Weapons? List
 // an Arrow, the item, is capitalised (the tables spend one in some sections that only tell it striking);
 // a number drawn for a bow-skill or missile bonus is a shot
 const SIGN_ARROW = /\bArrows?\b|\byour shaft\b/;
-const SIGN_SHOT = /\b(?:Bow|bow-skill|missile)\b|\bArrows?\b/;
+const SIGN_SHOT = /\b(?:Bow|bow-skill)\b|\bArrows?\b/;
+// a Random Number that is the hero's own shot: the text adds a bow skill to it
+const SHOT_DRAW = /\b(?:Weaponmastery|Grand Weaponmastery|Weaponskill)\s+(?:with|in)\s+(?:the\s+)?Bow\b/;
+// a choice's own words for a range of the total: "4 or lower", "5 or higher", "3-6"
+function totalRange(t) {
+  let m = /\b(\d+)\s+or\s+(?:lower|less|under)\b/i.exec(t);
+  if (m) return [-99, +m[1]];
+  m = /\b(\d+)\s+or\s+(?:higher|more|over|above)\b/i.exec(t);
+  if (m) return [+m[1], 99];
+  m = /\b(\d+)\s*[–—-]\s*(\d+)\b/.exec(t);
+  return m ? [+m[1], +m[2]] : null;
+}
+// his Endurance as a gate: "If your current ENDURANCE score is 10 or less", then "If it is 11 or more"
+const EP_GATE = /\bif (?:your (?:current )?(?:ENDURANCE(?: points)?(?: score| total)?|score|total)|it) is (?:now )?\d+ or\b/i;
 // an offer of something no table knows ("You may keep this Weapon"), or a thing he takes out to use
 const SIGN_OFFER = /\b(?:may|can) (?:take|keep|pick up|carry)\s+(?:it|them|this|these|one|any|either|both|what)\b/i;
 const SIGN_USE = /\bfrom your (?:Backpack|pocket|Belt Pouch|pack|Quiver)\b/;
@@ -68,13 +86,22 @@ const GOLD_VERB = /\b(pay|paid|pocket|pouch|give|gives|hand|hands|spend|throw|wi
 const SIGN_KIT = /\byour (?:Backpack|Weapons?|Special Items|Backpack Items|Quiver|equipment|possessions|belongings|pack)\b|\b(?:Weapons|Backpack Items|Special Items)\b/;
 // a choice open only to who holds something: "If you (still) have a...", "If you possess no..."
 const HOLDS = /\bif you (?:still |already |now )?(?:do not |don't )?(?:have|possess|carry|are carrying|hold|are holding|are wearing|own)\b\s+(?:a|an|the|some|any|no|it|them|this|these|that|those|one|both|either|neither|only|enough|more)\b/i;
-const NOT_ITEM = /Discipline|Kai\b|Magnakai|Lore-circle|skill|mastery|rank|level|picked|chosen/i;
+const NOT_ITEM = /Discipline|Kai\b|Magnakai|Lore-circle|skill|mastery|rank|level|picked|chosen|ability|ever|visited|been to|been in|encountered|previous|survived|winnings|lost all/i;
+// a choice that hands something over or uses it, with no number or item the gates could read
+const CHOICE_USE = /\b[Ii]f you (?:wish|want|decide|choose)\b[^.]*\b(?:(?:give|offer|sell|exchange|trade|show|use|pay|buy|purchase|barter|bribe)(?:\s+(?:him|her|them|the\s+\w+|these\s+\w+))?\s+(?:your|some|any|money|gold|one|[A-Z])|make an? (?:offering|purchase)|pay for|pay\s+him)/;
+// a gate on a rank the importer did not read ("have yet to reach", "your level of Kai rank"), or by the weapon in hand
+const CHOICE_RANK = /\b(?:yet to|not yet)\b[^.]*\b(?:rank|level|Mastery)\b|\blevel of Kai rank\b|\breached the (?:Kai )?rank\b/i;
+const CHOICE_WEAPON = /\b(?:your|the) weapon(?: you are (?:wielding|using))? is\b/i;
+// a fight's rule for some rounds, or what the importer leaves to the table
+const FIGHT_SIGN = /\brounds?\b|\bdoubl\w+|\bhalve\w*|\bENDURANCE (?:loss|losses|point loss)\b/i;
+const ORDINAL = { first: 1, second: 2, third: 3, fourth: 4, fifth: 5 };
 
 function sign(s, sec, names, prev, prevRead) {
+  if (sec.combat && FIGHT_SIGN.test(s)) return 'a fight';
   if (sec.rnt && SIGN_SHOT.test(s)) return 'a bow shot';
   if (SIGN_ARROW.test(s)) return 'Arrows';
   // not "If your ENDURANCE score is 20 or more, add 2" (to the number drawn), nor an enemy's
-  if (/\bENDURANCE\b/.test(s) && !/\bmeal|\bif your (?:current )?ENDURANCE\b|\benem(?:y|ies)\b/i.test(s) && (LOSS.test(s) || GAIN.test(s) || sec.rnt)) return 'Endurance';
+  if (/\bENDURANCE\b/.test(s) && !EP_DESCRIBED.test(s) && !/\bmeal|\bif your (?:current )?ENDURANCE\b|\benem(?:y|ies)\b/i.test(s) && (LOSS.test(s) || GAIN.test(s) || sec.rnt)) return 'Endurance';
   if (SIGN_GOLD.test(s) && (LOSS.test(s) || GOLD_VERB.test(s) || sec.rnt)) return 'Gold Crowns';
   if (/\bMeals\b/.test(s) || (/\bMeal\b/.test(s) && !/\b(eat|eaten|eating)\b/i.test(s))) return 'Meals';
   if (SIGN_KIT.test(s) && LOSS.test(s)) return 'items lost';
@@ -89,11 +116,19 @@ function sign(s, sec, names, prev, prevRead) {
   return null;
 }
 // a choice line the gates above did not read, open only to who holds something or can pay
-function holds(t, names) {
+function holds(c, names, sec) {
+  const t = c.text || '';
+  // read by the importer or not, these want the table: a rank it did not read, several Disciplines read as one
+  // ("or have yet to reach it" beside a choice with the rank read is only that choice's other side)
+  if (CHOICE_RANK.test(t) && (/\bbut (?:have|has)\b/i.test(t) || !(sec.choices || []).some((x) => x.need && x.need.rank))) return true;
+  if (c.need && !Array.isArray(c.need.disc) && /\bDiscipline of [A-Z][\w-]*(?: [A-Z][\w-]*)*(?:, [A-Z]| or [A-Z])/.test(t)) return true;
+  if (c.need) return false;
+  if (CHOICE_WEAPON.test(t) || (names.weapons && [...names.weapons].some((w) => new RegExp(`\\b(?:with|throw|hurl) your ${w}\\b`, 'i').test(t)))) return true;
+  if (CHOICE_USE.test(t) && !NOT_ITEM.test(t)) return true;
   const h = HOLDS.exec(t);
   if (h && !NOT_ITEM.test(h[0] + t.slice(h.index + h[0].length).split(/,|\b(?:and|or|turn)\b/)[0])) return true;
   if (/\b(?:can|cannot|can't|unable to) (?:pay|afford)\b|\bno (?:money|gold)\b/i.test(t)) return true;
-  return /\bif you\b/i.test(t) && /\b(have|possess|carry|use|show|give|offer|wear|hold)\b/i.test(t) && named(t, names).length > 0;
+  return /\bif you\b/i.test(t) && !/\bprevious\b|\bvisited\b|\bbeen to\b|\bencountered\b/i.test(t) && /\b(have|possess|carry|use|show|give|offer|wear|hold)\b/i.test(t) && named(t, names).length > 0;
 }
 const sentences = (paras) => (paras || []).flatMap((p) => p.split(/(?<=[.!?:;])\s+(?=[A-Z‘“"'(])/));
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -159,15 +194,32 @@ export function draftSection(sec, names) {
   // a wound is the exception ("(lose 2 ENDURANCE points)"). A restoration in brackets may be either
   // ("(restore 3 ENDURANCE points)" after a night's sleep), so it is read by hand. A paragraph that
   // names a Discipline is conditional throughout ("unless you have Mind Over Matter")
-  if ((sec.text || []).some((p) => [...p.matchAll(/\(([^)]*)\)/g)].some(([, x]) => EP_GAIN.test(x) || EP_FULL.test(x)))) todo.add('Endurance');
+  if ((sec.text || []).some((p) => !/^\s*[–—-]\s/.test(p) && [...p.matchAll(/\(([^)]*)\)/g)].some(([, x]) => (EP_GAIN.test(x) || EP_FULL.test(x)) && !EP_EVENT.test(x) && !EP_DESCRIBED.test(x)))) todo.add('Endurance');
   // an Action Chart instruction in brackets ("(record it as a Backpack Item)") is read as its own sentence too
-  const paras = (sec.text || []).map((p) => p.replace(/\(([^)]*)\)/g, (m, x) => (/\b(lose|deduct|erase|remember)\b/i.test(x) || SIGN_CHART.test(x) ? ` ${x.replace(/!/g, '')}. ` : ' ')));
+  const paras = (sec.text || []).map((p) => p.replace(/\(([^)]*)\)/g, (m, x) => (/\b(lose|deduct|erase|delete|reduce|costs?|remember)\b/i.test(x) || EP_EVENT.test(x) || SIGN_CHART.test(x) ? ` ${x.replace(/!/g, '')}. ` : ' ')));
   const ss = paras.flatMap((p, k) => sentences([p]).map((s) => ({ s, k })));
   const shop = paras.some((p) => SHOP.test(p));
   // a list of wares or finds ("– Sword"): which of them he takes, and at what price, is read by hand
   const LIST = /^\s*[–—-]\s/, list = paras.some((p) => LIST.test(p));
   let ep = 0, epFull = false, spent = 0;
   const state = () => JSON.stringify([e, [...todo], ep, epFull, spent]);
+  // a fight's rule for its first rounds, said outright; false when it is left to the table
+  const fight = {};
+  function readFightRule(s) {
+    if (/\b(if|unless|instead|except)\b/i.test(s)) return false;
+    const first = /\bfirst(?:\s+(\w+))?\s+rounds?\b/i.exec(s);
+    if (!first) return false;
+    const upTo = first[1] && !/^(?:of|in)$/i.test(first[1]) ? num(first[1]) : 1;
+    if (!upTo) return false;
+    const round = (x) => { (fight.rounds = fight.rounds || []).push({ upTo, ...x, note: 'As the text says' }); return true; };
+    if (/\b(?:unarmed|empty-handed|bare-handed|without a weapon|with no weapon)\b/i.test(s)) return round({ unarmed: true });
+    // the enemy's losses ignored ("it loses none") is another rule
+    if (/\b(?:ignore|not (?:lose|deduct))\b[^.]*\bENDURANCE\b/i.test(s)) return /\b(?:enem\w+|foe|opponent|creature|lost by)\b/i.test(s) ? false : round({ heroLoss: 0 });
+    const down = new RegExp(`\\b(?:reduce|deduct|subtract)\\b[^.]*?(?:COMBAT SKILL by ${NUM}|${NUM}(?: points?)? from your COMBAT SKILL)`, 'i').exec(s);
+    if (down) return round({ csMod: -num(down[1] || down[2]) });
+    const up = new RegExp(`\\badd ${NUM}(?: points?)? to your COMBAT SKILL`, 'i').exec(s);
+    return up ? round({ csMod: num(up[1]) }) : false;
+  }
   let read = false;
   ss.forEach(({ s: raw, k }, i) => {
     const was = state();
@@ -182,19 +234,28 @@ export function draftSection(sec, names) {
     const near = s + ' ' + next;
     if (LIST.test(raw)) { if (named(s, names).length || /Gold Crown|Meal/.test(s)) todo.add('items'); return; }
     // what someone says ("Ale is one Gold Crown") is no event
+    // the Meal rule with what spares it taken away is the table's (noHunt)
+    if (sec.meal && /\b(?:Hunting|Huntmastery)\b/.test(s) && /\b(?:not|cannot|unable)\b/i.test(s)) todo.add('Meals');
     const cond = COND.test(s) || /[‘“"]/.test(s) || /Discipline/.test(paras[k]) || (/[:;,]$/.test(prev.trim()) && COND.test(prev));
     // an offer in the next sentence that names its own things offers those, not these
     const offer = OFFER.test(s) || (OFFER.test(next) && !COND.test(next.replace(OFFER_IF, 'may')) && !named(next, names).length);
     // Endurance on arrival; the Meal rule's "or lose 3" is the importer's
     const lose = s.match(EP_LOSE), gain = s.match(EP_GAIN), full = EP_FULL.test(s);
-    if (lose || gain || full) {
-      if (cond || /\bmeal/i.test(s) || sec.rnt || offer || (lose && gain)) todo.add('Endurance');
+    const twice = (s.match(new RegExp(EP_LOSE.source, 'gi')) || []).length > 1;
+    if (sec.combat && FIGHT_SIGN.test(s)) { if (!readFightRule(s)) todo.add('a fight'); }
+    else if (/\beat\b[^.]*\bMeal\b/i.test(s) && /\bor lose\b/i.test(s)) { if (!sec.meal) todo.add('Meals'); } // the Meal rule, the importer's
+    else if (EP_DESCRIBED.test(s)) { if (!LIST.test(raw) && /\bENDURANCE\b/.test(s) && !shop) todo.add('items'); } // told about a thing he may have here
+    else if (lose || gain || full) {
+      // "you may restore 3" is what happens here, not an offer to take or leave
+      if (cond || /\bmeal/i.test(s) || sec.rnt || twice || (offer && !/\bmay (?:now )?restore\b/i.test(s)) || (lose && gain)) todo.add('Endurance');
       else if (full) epFull = true;
-      else ep += lose ? -num(lose[1] || lose[2]) : num(gain[1]);
+      else ep += lose ? -num(lose[1] || lose[2]) : num(gain[1] || gain[2]);
     } else if (new RegExp(`${COUNT}\\s+ENDURANCE`, 'i').test(s) && !/\bmeal/i.test(s)) todo.add('Endurance');
     // Gold Crowns found or offered
     const golds = [...s.matchAll(GOLD)];
-    if (golds.length) {
+    if (golds.length === 1 && /\b(?:erase|deduct|delete)\b/i.test(s) && !cond && !offer && !shop) { add('take', { gold: num(golds[0][1]) }); return; }
+    else if (golds.length === 1 && /^an?$/i.test(golds[0][1]) && !PAY.test(s) && !GIVE.test(s) && !cond) { /* the size of a coin, no event */ }
+    else if (golds.length) {
       if (golds.length > 1 || cond || shop || list || PAY.test(s) || /\bfor\s+$/i.test(s.slice(0, golds[0].index)) || named(s, names).length) todo.add('Gold Crowns');
       else if (offer) add('loot', { gold: num(golds[0][1]) });
       else if (GIVE.test(s) || /\b(pocket|Belt Pouch)\b/.test(near)) add('give', { gold: num(golds[0][1]) });
@@ -226,13 +287,21 @@ export function draftSection(sec, names) {
     // whole kinds of things lost
     const all = /\ball (?:of )?your (Weapons|weapons|Backpack Items|Special Items)\b/.exec(s);
     if (all && LOSE_ITEM.test(s)) {
-      if (cond || offer) todo.add('items lost');
+      if (cond || offer || /\b(?:but|except|excluding|apart from|other than)\b/i.test(near)) todo.add('items lost');
       else add('take', all[1].toLowerCase() === 'weapons' ? { weapons: 'all' } : all[1] === 'Backpack Items' ? { backpack: 'items' } : { special: 'all' });
       return;
     }
+    // what is lost by its place on the list, or of his choice
+    if (/\b(?:erase|delete|remove)\b/i.test(s) && !cond && /\bBackpack\b/.test(s)) {
+      const place = /\b(first|second|third|fourth|fifth)\b[^.]*\bitem\b|\bitem\b[^.]*\b(first|second|third|fourth|fifth)\b/i.exec(s), last = /\bitem\b[^.]*\blast\b|\blast\b[^.]*\bitem\b/i.test(s);
+      if (place) { add('take', { at: [ORDINAL[(place[1] || place[2]).toLowerCase()]] }); return; }
+      if (last) { add('take', { at: [99], last: true }); return; }
+    }
+    const chosen = new RegExp(`\\b(?:erase|delete|lose)\\b[^.]*?\\b${NUM}\\s+(?:(Backpack|Special) )?[Ii]tems?\\b[^.]*\\bof your (?:choice|choosing)\\b[^.]*`, 'i').exec(s);
+    if (chosen && !cond && (chosen[2] || /\bBackpack\b/.test(s))) { add('take', { pick: [(chosen[2] || 'Backpack').toLowerCase()], n: num(chosen[1]) }); return; }
     // items with a known id
     const ids = named(s, names);
-    if (unknownItem(s, names)) todo.add('an item no table knows yet');
+    if (unknownItem(s, names)) todo.add(LOSE_ITEM.test(s) ? 'items lost' : 'an item no table knows yet');
     if (!ids.length) { if (LOSE_ITEM.test(s) && CHART.test(s)) todo.add('items lost'); return; }
     if (LOSE_ITEM.test(s)) {
       // "erase this Sword": one particular sword, which may be another id (a Dval Sword)
@@ -251,7 +320,7 @@ export function draftSection(sec, names) {
   for (const c of sec.choices || []) {
     const was = state();
     readChoice(c);
-    if (state() === was && holds(c.text || '', names)) todo.add('a gate');
+    if (state() === was && holds(c, names, sec)) todo.add('a gate');
   }
   function readChoice(c) {
     const t = c.text || '';
@@ -268,14 +337,24 @@ export function draftSection(sec, names) {
       else onChoice.push({ to: c.to, ep: n });
     }
     if (c.need ||/Discipline|Magnakai|Kai\b|Lore-circle/.test(t)) return;
+    const range = !sec.rnt && !sec.combat && EP_GATE.test(t) && totalRange(t);
+    if (range && (/ENDURANCE/.test(t) || (sec.choices || []).some((x) => /\bENDURANCE\b/.test(x.text || '') && EP_GATE.test(x.text)))) {
+      (e.need = e.need || {})[c.to] = { ep: [range[0] === -99 ? -999 : range[0], range[1] === 99 ? 999 : range[1]] };
+      return;
+    }
     const gold = [...t.matchAll(GOLD)];
     if (gold.length) {
+      // holding the sum, as a gate; lacking it, its other side
+      if (gold.length === 1 && /\bdo not (?:have|possess)\b/i.test(t) && !/\bwish\b/i.test(t)) { (e.need = e.need || {})[c.to] = { any: [{ not: { gold: num(gold[0][1]) } }] }; return; }
+      if (gold.length === 1 && /\bif you (?:have|possess)\b/i.test(t) && !/\b(pay|give|offer|spend|hand over|bribe|buy|purchase|afford)\b/i.test(t)) { (e.need = e.need || {})[c.to] = { gold: num(gold[0][1]) }; return; }
       // paying the fee is a gate; not paying it ("if you cannot pay") is the way left open
       if (/\b(not|cannot|can't|unable|refuse|no)\b/i.test(t)) return;
       if (gold.length === 1 && /\b(pay|give|offer|spend|hand over|bribe|buy|purchase|afford)\b/i.test(t)) (e.need = e.need || {})[c.to] = { gold: num(gold[0][1]), spend: true };
       else todo.add('a gate');
       return;
     }
+    // what he did in an earlier adventure is the player's to answer
+    if (/\b(?:previous|earlier)\b[^.]*\badventure\b|\bhave (?:ever|never)\b/i.test(t)) return;
     const m = /\bIf you (do not have|do not possess|have no|possess no|have|possess|are carrying|carry|still have|still possess|are wearing|wear|hold)\b(.*?)(?:\bturn to\b|$)/.exec(t);
     if (!m) return;
     const clause = m[2].replace(/,?\s*(?:and )?(?:you )?(?:wish|want|decide) to\b.*$/, '');
@@ -292,16 +371,40 @@ export function draftSection(sec, names) {
     // a weapon is asked for by its kind, which a weapon-like item counts as (the Silver Bow is a Bow)
     const list = [...new Set(ids.flat())], kinds = list.filter((id) => names.weapons && names.weapons.has(id)), rest = list.filter((id) => !kinds.includes(id));
     const one = (x) => (x.length > 1 ? x : x[0]);
-    let need = !kinds.length ? { item: one(rest) } : { any: [{ weapon: kinds }, ...(rest.length ? [{ item: one(rest) }] : [])] };
+    // a Bow is no use without an Arrow (the rules of every book that has one)
+    const others = kinds.filter((k) => k !== 'bow');
+    const armed = [...(kinds.includes('bow') ? [{ weapon: ['bow'], arrows: 1, label: 'a Bow and an Arrow' }] : []), ...(others.length ? [{ weapon: others }] : [])];
+    let need = !kinds.length ? { item: one(rest) } : { any: [...armed, ...(rest.length ? [{ item: one(rest) }] : [])] };
     if (not) need = kinds.length ? { any: [{ not: { any: need.any } }] } : { ...need, not: true };
     (e.need = e.need || {})[c.to] = need;
   }
   if (epFull) e.ep = 'full'; else if (ep) e.ep = ep;
   if (spent) add('take', { arrows: spent });
-  return { entry: e, todo: [...todo], onChoice };
+  // a shot: the choices' own ranges of the total; the bonus it gives is still the table's to check
+  const text = (sec.text || []).join(' ');
+  const skilled = !!sec.rnt && SHOT_DRAW.test(text), shoots = !!sec.rnt && SIGN_SHOT.test(text);
+  if (skilled) {
+    const ranges = (sec.choices || []).map((c) => [c.to, totalRange(c.text || '')]).filter(([, r]) => r);
+    if (ranges.length > 1) e.bowShot = Object.fromEntries(ranges);
+  }
+  // a whole fight's marks and its ways on by how long it took
+  if (sec.combat) {
+    if (/\bundead\b/i.test(text) && !/\bnot undead\b/i.test(text)) fight.undead = true;
+    const quick = (sec.choices || []).find((c) => new RegExp(`\\bwin\\b[^.]*\\b${NUM}\\s+rounds?\\s+or\\s+(?:less|fewer)\\b`, 'i').test(c.text || ''));
+    if (quick) {
+      const slow = (sec.choices || []).find((c) => c !== quick && /\bwin\b[^.]*\brounds?\b/i.test(c.text || ''));
+      const n = new RegExp(`\\b${NUM}\\s+rounds?\\s+or\\s+(?:less|fewer)\\b`, 'i').exec(quick.text);
+      if (slow) fight.won = { within: num(n[1]), to: quick.to, else: slow.to };
+      else todo.add('a fight');
+    }
+    if (Object.keys(fight).length) e.fight = fight;
+    // COMBAT SKILL changed in words the importer did not take up
+    if (!sec.combat.csMod && ss.some(({ s }) => /\bCOMBAT SKILL\b/.test(s) && !/\b(?:your COMBAT SKILL (?:is|score))\b/i.test(s)) && !(fight.rounds || []).length) todo.add('a fight');
+  }
+  return { entry: e, todo: [...todo], onChoice, shoots };
 }
 
-const TODO_ORDER = ['items', 'items lost', 'Arrows', 'a bow shot', 'an item no table knows yet', 'Gold Crowns', 'Meals', 'Endurance', 'a gate'];
+const TODO_ORDER = ['items', 'items lost', 'Arrows', 'a bow shot', 'a fight', 'an item no table knows yet', 'Gold Crowns', 'Meals', 'Endurance', 'a gate', 'a draw'];
 const todoText = (list) => {
   const l = TODO_ORDER.filter((x) => list.includes(x));
   return (l.length > 1 ? l.slice(0, -1).join(', ') + ' and ' + l[l.length - 1] : l[0]) + ': as the text says';
@@ -323,6 +426,29 @@ export function draftBook(book, names) {
     else if (typeof ep === 'number' && typeof t.entry.ep === 'number') t.entry.ep += ep;
     else t.todo.push('Endurance');
   }
+  const waysIn = (id) => [...(from[id] || [])];
+  const payHere = (sec, n) => new RegExp(`\\b(?:pay|paid|erase|deduct|delete|hand(?:ing)? over|give)\\b[^.]*\\b(?:${n}\\s+Gold Crowns?|these|them)\\b|\\b${n}\\s+Gold Crowns?\\b[^.]*\\b(?:erase|deduct|delete)\\b`, 'i').test((sec.text || []).join(' '));
+  for (const [id, d] of Object.entries(drafts)) {
+    // a sum held at the gate and handed over at once on the far side is paid by choosing that way
+    for (const [to, n] of Object.entries(d.entry.need || {})) if (n.gold && !n.spend && book.sections[to] && payHere(book.sections[to], n.gold)) n.spend = true;
+    const sec = book.sections[id];
+    // a free draw the importer could not settle, and no shot, is the table's
+    if (sec.rnt === 'free' && !SHOT_DRAW.test((sec.text || []).join(' '))) d.todo.push('a draw');
+    // the series' Kai Weapon: every fight is read for what the text says of its time and foe (ADR 0047)
+    if (sec.combat && book.series === 'neworder') d.todo.push('a fight');
+  }
+  for (const [id, d] of Object.entries(drafts)) {
+    const ins = waysIn(id);
+    // paid at the gate that leads here: told again here, not charged again
+    if (ins.length && ins.every((i) => { const n = drafts[i] && drafts[i].entry.need && drafts[i].entry.need[id]; return n && n.gold && n.spend; })) {
+      d.todo = d.todo.filter((t) => t !== 'Gold Crowns');
+      if (d.entry.take) { d.entry.take = d.entry.take.filter((t) => t.gold == null); if (!d.entry.take.length) delete d.entry.take; }
+    }
+    // where every way in is a shot, the Arrow told here was spent there; where every way on is one, it is spent there
+    const ons = (book.sections[id].choices || []).map((c) => c.to).filter((to) => drafts[to]);
+    const shot = (x) => drafts[x] && drafts[x].shoots;
+    if (((ins.length && ins.every(shot)) || (ons.length && ons.every(shot))) && !(d.entry.take || []).some((t) => t.arrows)) d.todo = d.todo.filter((t) => t !== 'Arrows');
+  }
   const out = {};
   for (const [id, { entry, todo }] of Object.entries(drafts)) {
     if (todo.length) entry.todo = todoText([...new Set(todo)]);
@@ -340,7 +466,7 @@ export function render(code, sections) {
   const todos = ids.filter((id) => sections[id].todo).length;
   return `${HEADER} (${new Date().toLocaleDateString('sv')}): ${ids.length} sections, ${todos} with a todo.
 /* Book ${code}'s items, drafted by script (ADR 0036): only the plain readings are filled in (Gold Crowns,
-   Meals and known items found, offered or lost; Endurance on arrival; gates on a known item or a fee).
+   Meals and known items found, offered or lost; Endurance on arrival; gates; a shot's ranges; a fight's plain rules).
    Each todo names what the draft left to read in that section. Refine it by docs/reference/items.md:
    read every todo's section and the reading list (items-reading.txt), add the book's own items, the
    rolls, fights and the rest, then take out this header's first line. */
@@ -385,6 +511,12 @@ export function compare(draft, hand) {
       const x = g && gate(g), y = gate(n);
       tally('need', !!g && x.gold === y.gold && x.neg === y.neg && (within(x.ids, y.ids) || within(y.ids, x.ids)), id);
     }
+    // a range's foot agrees at or below 0: the number drawn starts there
+    const shots = (x) => x && JSON.stringify(Object.entries(x).map(([to, [lo, hi]]) => [to, Math.max(lo, 0), hi]).sort());
+    if (d.bowShot) tally('bowShot', shots(h.bowShot) === shots(d.bowShot), id);
+    if (d.fight && d.fight.undead) tally('undead', !!(h.fight && h.fight.undead), id);
+    if (d.fight && d.fight.won) tally('won', !!(h.fight && h.fight.won) && h.fight.won.within === d.fight.won.within && h.fight.won.to === d.fight.won.to, id);
+    for (const r of (d.fight && d.fight.rounds) || []) tally('rounds', ((h.fight && h.fight.rounds) || []).some((x) => x.upTo === r.upTo && (x.csMod || 0) === (r.csMod || 0) && x.heroLoss === r.heroLoss), id);
     if (d.todo) tally('todo', Object.keys(h).length > 0, id);
   }
   // what the table has that the draft neither filled in nor flagged

@@ -48,6 +48,38 @@ const SECTIONS = {
   '20': sec('A guard bars the gate.', [turn('13', 'If you still have the Brass Bell, turn to 13.'), turn('12')]),
   // ...but no sign, no todo: a thing named as scenery
   '21': sec('The guard leans on his Sword and yawns.', [turn('13')]),
+  // a fight's plain rules
+  '22': sec(['This creature is undead.', 'Reduce your COMBAT SKILL by 3 for the first two rounds of this fight.'],
+    [turn('13', 'If you win this combat in four rounds or less, turn to 13.'), turn('12', 'If you win the combat in five rounds or more, turn to 12.')], { combat: { enemies: [{ name: 'Ghoul', cs: 20, ep: 20 }] } }),
+  // a rule of a fight it cannot read is a todo too
+  '23': sec('Its venom is such that you lose 1 ENDURANCE point for every round you fight it.', [turn('13')], { combat: { enemies: [{ name: 'Snake', cs: 20, ep: 20 }] } }),
+  // a Bow wants an Arrow
+  '24': sec('A bird wheels overhead.', [turn('25', 'If you possess a Bow and wish to use it, turn to 25.'), turn('13', 'If you do not possess a Bow, turn to 13.')]),
+  // a shot: its ranges read from its choices; the bonus is checked by hand
+  '25': sec('Pick a number from the Random Number Table. If you possess Grand Weaponmastery with Bow, add 5 to the number you have picked.',
+    [turn('26', 'If your total is now 4 or lower, turn to 26.'), turn('13', 'If it is 5 or higher, turn to 13.')], { rnt: 'free' }),
+  // the Arrow told here was spent at the shot, the only way in
+  '26': sec('Your Arrow flies wide.', [turn('13')]),
+  // a sum held at the gate and paid on the far side is charged once, by choosing that way
+  '27': sec('A toll bar.', [turn('28', 'If you possess 7 Gold Crowns, turn to 28.'), turn('13', 'If you do not possess 7 Gold Crowns, turn to 13.')]),
+  '28': sec('You pay the man (erase 7 Gold Crowns from your Action Chart).', [turn('13')]),
+  // his Endurance as a gate
+  '29': sec('The climb is hard.', [turn('12', 'If your current ENDURANCE score is 10 or less, turn to 12.'), turn('13', 'If it is 11 or more, turn to 13.')]),
+  // lost by place, by choice, or a sum outright
+  '30': sec('The thief runs off (erase the first item on your Backpack Items list).', [turn('13')]),
+  '31': sec('A shell bursts. Erase two Backpack Items of your choice from your Action Chart.', [turn('13')]),
+  '32': sec('You pay the toll: erase 2 Gold Crowns from your Action Chart.', [turn('13')]),
+  // the Meal rule is the importer's, where it read it
+  '33': sec('You must now eat a Meal or lose 3 ENDURANCE points.', [turn('13')], { meal: true }),
+  // a rank the importer did not read
+  '34': sec('A gate.', [{ text: 'If you possess Kai-surge but have yet to reach this rank, turn to 13.', to: '13', need: { disc: 'kaiSurge' } }, turn('12')]),
+  // a free draw the importer could not settle
+  '35': sec('Pick a number from the Random Number Table.', [turn('13', 'If it is high, turn to 13.'), turn('12', 'If it is low, turn to 12.')], { rnt: 'free' }),
+  // a wound in brackets, in its other wording; a thing's description is no event
+  '36': sec('The blast stuns you (reduce your ENDURANCE score by 2 points).', [turn('13')]),
+  '37': sec('– Potion of Sage (restores 3 ENDURANCE points)', [turn('13')]),
+  // an adventure gone by is the player's to answer, whatever it names
+  '38': sec('An old friend.', [turn('13', 'If you have ever visited the Lamp in a previous adventure, turn to 13.'), turn('12', 'If you have not, turn to 12.')]),
 };
 const BOOK = `(window.LW = window.LW || {}).BOOKS = Object.assign(window.LW.BOOKS || {}, { t1: ${JSON.stringify({ id: 't1', sections: SECTIONS })} });`;
 
@@ -84,7 +116,7 @@ describe('items_draft.mjs', () => {
     expect(S['9']).toEqual({ take: [{ item: 'lamp' }] });
     expect(S['10']).toEqual({ todo: 'Gold Crowns: as the text says' });
     expect(S['11']).toEqual({ rolls: [{ range: [0, 4], ep: -3 }] });
-    expect(S['14']).toEqual({ todo: 'Endurance: as the text says' });
+    expect(S['14']).toEqual({ ep: 3 });
     expect(S['15']).toEqual({ todo: 'an item no table knows yet: as the text says' });
     expect(S['16']).toEqual({ todo: 'Arrows: as the text says' });
     expect(S['17']).toEqual({ todo: 'items lost: as the text says' });
@@ -93,10 +125,35 @@ describe('items_draft.mjs', () => {
     expect(S['20']).toEqual({ todo: 'a gate: as the text says' });
     expect(S['1']).toBeUndefined();
     expect(S['21']).toBeUndefined();
-    expect(r.text).toMatch(/^\d+ sections: give 1, loot 2, take 1, ep 2, need 1, todo 10\nwrote items\/items-t1\.js$/);
+    expect(S['22'].fight).toEqual({ rounds: [{ upTo: 2, csMod: -3, note: 'As the text says' }], undead: true, won: { within: 4, to: '13', else: '12' } });
+    expect(S['23']).toEqual({ todo: 'a fight: as the text says' });
+    const bow = { weapon: ['bow'], arrows: 1, label: 'a Bow and an Arrow' };
+    expect(S['24'].need).toEqual({ '25': { any: [bow] }, '13': { any: [{ not: { any: [bow] } }] } });
+    expect(S['25']).toEqual({ bowShot: { '26': [-99, 4], '13': [5, 99] }, todo: 'a bow shot: as the text says' });
+    expect(S['26']).toBeUndefined();
+    expect(S['27'].need).toEqual({ '28': { gold: 7, spend: true }, '13': { any: [{ not: { gold: 7 } }] } });
+    expect(S['28']).toBeUndefined();
+    expect(S['29'].need).toEqual({ '12': { ep: [-999, 10] }, '13': { ep: [11, 999] } });
+    expect(S['30']).toEqual({ take: [{ at: [1] }] });
+    expect(S['31']).toEqual({ take: [{ pick: ['backpack'], n: 2 }] });
+    expect(S['32']).toEqual({ take: [{ gold: 2 }] });
+    expect(S['33']).toBeUndefined();
+    expect(S['34']).toEqual({ todo: 'a gate: as the text says' });
+    expect(S['35']).toEqual({ todo: 'a draw: as the text says' });
+    expect(S['36']).toEqual({ ep: -2 });
+    expect(S['37']).toBeUndefined();
+    expect(S['38']).toBeUndefined();
+    expect(r.text).toMatch(/^\d+ sections: give 1, loot 2, take \d+, ep \d+, need \d+, todo \d+\nwrote items\/items-t1\.js$/);
 
     const check = await checkItems({ root: tmp, book: 't1' });
     expect(check.errors).toEqual([]);
+  });
+
+  it('flags every fight of a series with a Kai Weapon, for the time and foe the table marks (ADR 0047)', async () => {
+    const book = { id: 't1', series: 'neworder', sections: { '1': sec('A plain fight.', [], { combat: { enemies: [{ name: 'Guard', cs: 20, ep: 20 }] } }) } };
+    w('data/projectaon/t1/book.js', `(window.LW = window.LW || {}).BOOKS = Object.assign(window.LW.BOOKS || {}, { t1: ${JSON.stringify(book)} });`);
+    const r = await draftItems({ root: tmp, book: 't1' });
+    expect(r.sections['1']).toEqual({ todo: 'a fight: as the text says' });
   });
 
   it('leaves a hand-made table alone, drafts beside the book and compares the two', async () => {

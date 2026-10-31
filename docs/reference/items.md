@@ -3,8 +3,8 @@
 Two jobs done by hand for each imported book, after importing it and writing its reading copy
 (`tools/reading_copy.py`): the **item table**, so the engine gives, offers, takes and gates what the
 text says (spec 4.5a), and the **fight pictures**, so every fight has a plate (spec 6.5). Book 1
-has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-20 have
-their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 and 14 2026-10-17, 15, 16, 17 and 18 2026-10-25, 19 and 20 2026-10-26). The field reference is in `book-format.md` ("Section", "Item tables").
+has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-21 have
+their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 and 14 2026-10-17, 15, 16, 17 and 18 2026-10-25, 19 and 20 2026-10-26, 21 2026-10-31). The field reference is in `book-format.md` ("Section", "Item tables").
 
 Never put the book's text anywhere but `data/projectaon/`: tools print section numbers and
 counts, the table holds only the book's short item names, and everything else is in our words.
@@ -49,12 +49,16 @@ fights whose correction the text gives no sign of, and a few marks: the agent's 
 imported sections a sentence at a time and writes `items/items-<book>.js` with only what a sentence says
 outright, in no condition: Gold Crowns and Meals found (`give` when pocketed or handed over, `loot` when
 offered; Meals found are `loot`), known items found, offered or erased, `{arrows: n}` where the text says
-to deduct them, `{weapons: 'all'}` and the like, Endurance lost or restored on arrival (a wound in
-brackets counts; a restoration in brackets, which may be a potion's "restores 3" or a night's rest, is a
-`todo`: on 2026-10-17 all 29 in Books 1-13 were sections the tables have an entry for), and the gates on a choice: a known item
+to deduct them, `{weapons: 'all'}` and the like, Gold Crowns erased (`{gold}`, unless every way in paid them
+at its gate), a thing lost by its place on the list (`{at}`) or of the player's choice (`{pick, n}`), Endurance
+lost or restored on arrival (a wound in brackets counts, and a restoration told as an event, "(restore 3
+ENDURANCE points)"; one that describes a thing, "restores 3", happens nowhere), and the gates on a choice: a known item
 (`{item}`, `not` for "if you do not have"; one of a list, `item: [...]`), a weapon by its kind
-(`{any: [{weapon: ['sword']}]}`, so a weapon-like item such as the Sommerswerd or the Silver Bow counts),
-or a fee (`{gold, spend: true}`). Endurance written on a choice goes where the tables put it: a Random
+(`{any: [{weapon: ['sword']}]}`, so a weapon-like item such as the Sommerswerd or the Silver Bow counts; a Bow
+with its Arrow, `arrows: 1`), a fee (`{gold, spend: true}`), a sum held (`{gold}`, or its other side with `not`; `spend`
+when the section it leads to hands it over), or his Endurance (`{ep}`). It also reads a shot's ranges from its
+choices (`bowShot`, where the text adds a bow skill; the bonus stays a todo), and a fight's plain rules (`undead`,
+a first round's change, a win within so many rounds). Endurance written on a choice goes where the tables put it: a Random
 Number's range is a `rolls` entry, a lone way on is taken here, otherwise on the section it leads to (on
 arrival when nothing else leads there, else `when: [{came}]`).
 
@@ -62,8 +66,8 @@ A known item is one id with that name in `LW.ITEMS` or another book's table. Lef
 share, an id with a book's number (`skeletonKey7`: another book's key is another key), a name inside a
 longer one ("Magic Spear", "Jar of Laumspur"), and a place a thing is kept ("in your Quiver"). What a
 sentence says under a condition (if, unless, a Discipline named in the paragraph, a Random Number, what
-someone says), a shop or a list of wares, an Arrow shot (it may have been spent a section earlier), or an
-item no table knows yet, becomes a `todo` naming it ("Gold Crowns and Endurance: as the text says").
+someone says), a shop or a list of wares, an Arrow shot (none where every way in or every way on is itself a
+shot, which spends it), or an item no table knows yet, becomes a `todo` naming it ("Gold Crowns and Endurance: as the text says").
 
 A sentence those readings leave silent still gets a todo when it shows a sign (ADR 0036: a todo over
 a miss, from general wording only, never one book's phrase): Action Chart, Special or Backpack Item
@@ -75,13 +79,15 @@ Weapons / equipment" or a known item with a loss word (`items lost`); a known it
 "you may take it", or a thing taken "from your Backpack" or pocket; and in a Random Number section, an
 item or the weapon in use changing the number. A choice line it cannot read gets `a gate` when it is
 open only to who holds something ("If you still have the...", not a Discipline or rank), can pay, or
-names a known item. Fights get no todo: the importer reads each one, and its picture and any
-Combat Skill fix are their own steps.
+names a known item, or hands over or uses something ("If you wish to show him your Pass"), or goes by the weapon in hand, or a rank
+the importer did not read ("but have yet to reach"), or several Disciplines it read as one (what an earlier adventure did is the player's: no todo). A
+free draw the importer could not settle gets `a draw`. A fight gets `a fight` where a sentence names rounds, doubled or halved losses, or a COMBAT
+SKILL change the importer did not take up; in a series with a Kai Weapon, every fight (ADR 0047).
 
 The
 file's first line (`// DRAFT by tools/items_draft.mjs`) marks it unread: step 5 is not done while it is
-there, and the items-tables test leaves such a file out. The draft writes no book items, fights,
-`bowShot`, marks or stakes: those, and the reading list's other sections, are step 3's.
+there, and the items-tables test leaves such a file out. The draft writes no book items, marks or stakes: those,
+and the reading list's other sections, are step 3's.
 
 The made-up demo book's table (ADR 0046) is `demo/<code>/items.js`; the draft and `check_items.mjs` read it
 there, so it counts as a table already there.
@@ -95,6 +101,11 @@ before). It leaves 187 of the tables' 1,397 sections untouched (384 before): 114
 chiefly Discipline gates, marks, a book's own item named in lower case, forced Meals (the importer's)
 and number changes by a Discipline. Books 1-12 alone: 1,070 todos, 231 false alarms, 177 untouched
 (104 fights, 73 others).
+
+On Books 1-21, each book's own table left out of the names it may use (2026-10-31): sections with a todo 1,950 to 1,921; false
+alarms, a todo where the table has nothing, 416 to 241; table sections neither filled nor flagged 371 to 166 (fights alone 221 to 53). Of the readings
+it newly fills, the tables agree with 26 of 29 shots, 55 of 57 first rounds, 33 of 35 wins within, 45 of 46 undead. What is left unflagged is chiefly marks,
+Hunting barred by a ruling, things used with no item wording and `when`s: the agent's reading finds them.
 
 How far each reading can be trusted (2026-10-17, Books 1-13, against the tables' 73 untouched
 sections other than fights):
@@ -274,6 +285,12 @@ the first two rounds without loss, 282; psychic bonuses doubled, 212, 318; 299's
 by his ENDURANCE), 186's gate on his ENDURANCE, the gates with a top rank or a span of ranks (21, 59, 85, 122, 141, 170, 266, 283),
 138's ENDURANCE in prose, and 271's two Arrows loosed before the shot. 297 and 338, a puzzle whose death holds only without the three
 keys, the importer reads as deaths: the table takes the ending back (`end: null`) and gives the death by a `when` with `dead`.
+Book 21 (from the draft, 2026-10-31): no errors; 17 items, 140 sections; 135 left out. Of the draft's 164 sections, 140 with a todo,
+about 40 needed nothing (Meals the importer reads, Arrows already spent by a bow shot, coins only described), three readings were wrong (166's
+gift and 219's fee read as found, 208's Crown in a sentence about a Crown not paid), and its bow gates lacked the Arrow. 19 sections it did
+not touch needed an entry: every fight the Kai Weapon's mark (ADR 0047; 21, 50, 60, 162, 210, 300, 303, 331), rounds-only changes (5, 44,
+94, 192, 230, 257, 261), won within four rounds (31), the gates on a fee and on the three things sold (6, 54), and 251's footnote way on.
+The check itself did not know the Kai Weapons, which 155's buyer takes as Special Items: fixed. No importer miss came back.
 `--json` also writes `data/projectaon/<book>/check-items.json`, which `tools/book_status.py` reads
 for checklist step 5 (the dashboard's "Check items" runs it so).
 
