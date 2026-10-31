@@ -225,6 +225,12 @@ def fights_not_upscaled(code, imp):
     return [s for s in srcs if not sharp(s)], srcs
 
 
+def sepia_shown(d, imp):
+    """book.js names the baked map, and it is as new as the finished map it was baked from."""
+    sepia = mtime(os.path.join(d, 'map-sepia.webp'))
+    return imp.get('map') == 'map-sepia.webp' and sepia and sepia >= mtime(os.path.join(d, 'map-4k.webp'))
+
+
 def map_stage(code, d, imp):
     w = os.path.join(d, 'work')
     own = os.path.join(ROOT, 'maps', code)
@@ -288,8 +294,8 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
             stale.append('the importer changed since')
         if t['sources'] and t['sources'] > t['imported']:
             stale.append('a source page is newer')
-        if t['map4k'] and imp.get('map') != 'map-4k.webp':
-            stale.append('map-4k.webp is not named yet')
+        if t['map4k'] and not sepia_shown(d, imp):
+            stale.append('map-4k.webp is not baked and named yet')
         if unnamed:
             stale.append('upscaled illustrations not named yet')
     b['stale'] = stale
@@ -470,7 +476,7 @@ def book_status(code, title, n, hand=None, main_js=None, rules_md=None, known=No
     elif ms == 'no map':
         st['map'] = {'state': 'na', 'ev': 'No printed map', 'src': 'disk'}
     elif ms == 'done':
-        shown = imp and imp.get('map') == 'map-4k.webp'
+        shown = imp and sepia_shown(d, imp)
         st['map'] = {'state': 'done' if shown else 'warn', 'src': 'disk',
                      'ev': 'map-4k.webp made and shown in the player' if shown else 'map-4k.webp made; re-import to show it'}
     else:

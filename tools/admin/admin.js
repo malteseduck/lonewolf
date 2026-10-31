@@ -268,7 +268,7 @@ function renderMap(b, state) {
     ['Gemini repaint', 'owner', rounds.length > 0, rounds.length ? `${rounds.length} round(s), last ${last}` : 'in the Gemini app, outside', ed(7)],
     ['Check the round', 'script', last != null && Object.keys(f).some((k) => k.startsWith(`map-check-${last}/`)), last != null ? `map-check-${last}/` : '', ed(8)],
     ['Finish at 4K', 'script', has('map-4k.webp'), 'map-4k.webp', ed(9)],
-    ['Re-import; shown in the player', 'script', b.imp?.map === 'map-4k.webp', 'book.js names map-4k.webp', ed(10)],
+    ['Re-import; shown in the player', 'script', b.imp?.map === 'map-sepia.webp', 'book.js names map-sepia.webp', ed(10)],
   ];
   $('#mapsteps').innerHTML = rows.map(([label, kind, ok, ev, act]) =>
     `<div class="step sub"><span class="st ${ok ? 'done' : 'todo'}"></span><span class="kind" data-kind="${kind}"></span>

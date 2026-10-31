@@ -179,4 +179,4 @@ without them; the importer marks the highest section `victory` even when it is a
 
 - Magnakai rules in play: Books 6-12 played through with the engine in Node from 2026-10-21 to
   2026-10-23; not yet on the iPad.
-- The 4K map's fit, zoom and 4096 px canvas cap on the iPad.
+- The baked 4K map on the iPad: its load time, fit, pinch zoom and long-press.

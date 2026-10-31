@@ -2,7 +2,7 @@
 
 How each book's printed map becomes the 4K WebP the player shows: the place names are erased and
 set again in clean type, Gemini repaints the map around them, and local tools check the result,
-set again any name Gemini garbled, and upscale it. The player still repaints it in sepia
+set again any name Gemini garbled, and upscale it. The importer then bakes it in sepia
 (`docs/reference/interface.md`). The checklist step is 8 in `docs/book-checklist.md`.
 
 ## Why this chain
@@ -69,7 +69,8 @@ player loads (the map editor and `serve.py` make `work/` when a step first needs
 | `work/map-gemini-<n>.jpg` | Gemini's output, round n, saved by the owner |
 | `work/map-check-<n>/` | Round n's checks: `aligned.png`, `H.json`, `flags.png`, `labels.png` |
 | `work/map-gemini-<n>-x4.png` | Real-ESRGAN 4x of the round kept |
-| `map-4k.webp` | The result, 3840 wide; its sheet is `work/map-4k-sheet.png` |
+| `map-4k.webp` | The result, 3840 wide, in colour; its sheet is `work/map-4k-sheet.png` |
+| `map-sepia.webp` | The same in the player's sepia, baked by the importer (`tools/map_sepia.py`); the file `book.js` names and the player shows |
 | `work/map-names.json` | Check names' finding for each label (step 3), by wording |
 | `work/map-labels-lettered.json` | The label list step 4 last lettered from, so the editor can tell which later edits matter |
 | `work/compare.html` | The comparison page (below) |
@@ -257,8 +258,8 @@ Commands run from the project root as
    drawing), sets them again, and removes Gemini's sparkle watermark. Look at
    `map-4k-sheet.png`. A correct name next to a re-set one can lose strokes to the wipe: add it to
    `--only`. Book 1: 12 names re-set.
-9. **Re-import** the book (`tools/import_projectaon.py <code>`): it points `map` at
-   `map-4k.webp` when that exists.
+9. **Re-import** the book (`tools/import_projectaon.py <code>`): when `map-4k.webp` exists it bakes
+   `map-sepia.webp` from it, if that is missing or older (about 7 s), and points `map` at it.
 
 ## Tools
 
@@ -285,6 +286,7 @@ Commands run from the project root as
   with it.
 - `tools/map_review.py`: the agent's first pass: `prepare` and `fonts` (above, "The first pass"), `clean` (step 2) and `sheet` (step 4). Prints
   counts and label indexes, never wordings.
+- `tools/map_sepia.py`: bakes `map-4k.webp` into `map-sepia.webp`, the ink and parchment of `maps.js` and `shared/ink.js` with the repaint's lighter settings; run by the importer.
 - `tools/map_check.py`: SIFT homography of the repaint onto `map-2k.png` (edge error 1-4 px), saved
   as `H.json`; then a 48 px grid, red where the hue moved (Lab a*b* distance over 25), blue where
   outlines were added or lost. On Book 4 the blue cells found exactly Gemini's added forest.

@@ -368,9 +368,20 @@ def test_map_stage_in_the_book_status(env):
     env.touch(f'data/projectaon/{CODE}/map-4k.webp')
     m = env.status()['stages']['map']
     assert m['state'] == 'warn' and m['ev'] == 'map-4k.webp made; re-import to show it'
-    env.book(map_name='map-4k.webp')
+    env.book(map_name='map-sepia.webp')
+    env.touch(f'data/projectaon/{CODE}/map-sepia.webp')
     m = env.status()['stages']['map']
     assert m['state'] == 'done' and m['ev'] == 'map-4k.webp made and shown in the player'
+
+
+def test_a_map_finished_again_wants_its_sepia_baked_again(env):
+    env.downloaded()
+    env.touch(f'data/projectaon/{CODE}/map.png')
+    env.book(map_name='map-sepia.webp')
+    env.touch(f'data/projectaon/{CODE}/map-sepia.webp', 100)
+    env.touch(f'data/projectaon/{CODE}/map-4k.webp', 200)
+    m = env.status()['stages']['map']
+    assert m['state'] == 'warn' and m['ev'] == 'map-4k.webp made; re-import to show it'
 
 
 def test_ills_stage_upscaled_beside_the_originals_then_shown(env):

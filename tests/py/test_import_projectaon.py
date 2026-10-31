@@ -27,6 +27,23 @@ def foe(name, cs, ep):
             f'<span class="ep">ENDURANCE</span> {ep}</p>')
 
 
+def test_a_finished_map_is_baked_and_named(tmp_path):
+    from PIL import Image
+    d = tmp_path / 'data' / 'projectaon' / '02fotw'
+    d.mkdir(parents=True)
+    Image.new('RGB', (64, 48), (150, 140, 120)).save(d / 'map-4k.webp')
+    run_importer(tmp_path, sections={1: '<p>Go.</p>' + choice('Go on', 999)})
+    assert (d / 'map-sepia.webp').exists()
+    assert 'map-sepia.webp' in (d / 'book.js').read_text(encoding='utf-8')
+
+
+def test_a_book_with_only_the_scan_names_the_scan(tmp_path):
+    run_importer(tmp_path, sections={1: '<p>Go.</p>' + choice('Go on', 999)})
+    d = tmp_path / 'data' / 'projectaon' / '02fotw'
+    assert not (d / 'map-sepia.webp').exists()
+    assert 'map.png' in (d / 'book.js').read_text(encoding='utf-8')
+
+
 def run_importer(root, book='02fotw', sections=None, extra=None, plates=None, fin=True):
     """Run a copy of the importer inside root; returns its namespace. Writes only under root."""
     tools = root / 'tools'

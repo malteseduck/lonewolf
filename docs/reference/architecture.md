@@ -9,7 +9,7 @@ index.html                  the player: markup, all CSS, script tags
 main.js                     ES module: state, rendering, input, combat on the page, title page (no rules: ADR 0022)
 adventures.js               ES module: adventures and backups in storage (load, migrate, back up, restore, pending)
 plates.js                   ES module: ink creatures, inkPlate (restyles an illustration), figure, frame, gear
-maps.js                     ES module: printedCanvas, the book's printed map repainted in sepia
+maps.js                     ES module: printedCanvas, a book's scanned map repainted in sepia (a finished map is baked: tools/map_sepia.py)
 platepick.js                ES module: which picture a fight shows (pins, plates.json, the book's own); also used
                             by the picture sheet and tools/plates_pin.mjs
 itemglyphs.js               ES module: ITEM_GLYPH, the engine's items' icons, and glyphName (an item's icon);
@@ -120,6 +120,7 @@ tools/
                             (the four above: docs/reference/items.md)
   map_upscale.py            Real-ESRGAN upscale of a printed map to a set width, saved as WebP or PNG
   ill_upscale.py            Real-ESRGAN upscale of a book's illustrations to 2x, each saved as <name>-2x.webp beside it
+  map_sepia.py              bakes a book's map-4k.webp into map-sepia.webp, the sepia the player shows; run by the importer
   map_check.py              aligns a repainted map to the faithful one, flags colour and shape changes
   map_review.py             cleans a map's OCR draft and makes the sheets the agent reads the labels from
                             (the three: docs/reference/map-upscale.md; Python in tools/.venv)
@@ -133,7 +134,7 @@ maps/<code>/                the owner's work on each book's printed map, committ
 data/projectaon/            git-ignored. Downloaded pages and images, generated book.js files, index.js;
                             maps/: sheets 1-2 of Project Aon's Maps of Magnamund (reference only)
   <code>/                   one book: the pages the importer reads, book.js, the images it names (map.png,
-                            the scan; map-4k.webp once made), reading copies (reading.txt, items-reading.txt),
+                            the scan; map-4k.webp in colour and map-sepia.webp, the one shown, once made), reading copies (reading.txt, items-reading.txt),
                             import-report.json and check-items.json (figures and ids, for book_status.py)
   <code>/work/              the map steps' files (map-2k*, map-gemini-*, map-check-<n>/, sheets, prompts;
                             docs/reference/map-upscale.md). Never in the offline copy

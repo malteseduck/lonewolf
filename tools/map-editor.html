@@ -1162,7 +1162,7 @@ const STEPS = [
   { n: 9, short: 'Finish', name: 'Finish', run: 'finish', bg: () => ['map-4k.webp', 'map-2k.png'],
     text: 'Upscales the round 4x, warps it onto the 4K frame, wipes Gemini\'s lettering round each label ticked reset (and fix) and sets those again in the map font, removes the sparkle mark and writes map-4k.webp. With none ticked reset, Gemini\'s names stand, unless "Set every place name again" is ticked. Look at map-4k-sheet.png.' },
   { n: 10, short: 'Import', name: 'Import and view', run: 'import', bg: () => ['map-4k.webp', 'map-2k.png'],
-    text: 'Imports the book again so the player\'s map points at map-4k.webp, then open the player and look at the map there.' },
+    text: 'Imports the book again which bakes map-4k.webp into map-sepia.webp, the file the player shows, then open the player and look at the map there.' },
 ];
 
 function renderRail() {

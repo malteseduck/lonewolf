@@ -595,8 +595,11 @@ for sec in sections.values():
     if 'img' in sec and os.path.exists(os.path.join(src, big)):
         sec['img']['file'] = big
 
-# the upscaled map once it is done (docs/reference/map-upscale.md), else the scan as served
-map_file = 'map-4k.webp' if os.path.exists(os.path.join(src, 'map-4k.webp')) else 'map.png'
+# the upscaled map once it is done, baked into its sepia (ADR 0004), else the scan as served
+map_file = 'map.png'
+if os.path.exists(os.path.join(src, 'map-4k.webp')):
+    from map_sepia import bake_book  # only here: most of the importer needs no image packages
+    map_file = bake_book(src)
 out = {'id': book, 'number': number, 'series': series, 'title': title, 'subtitle': 'A stand-in book written for the showcase' if book == '99ember' else 'Project Aon edition, imported for personal use',
        'start': '1', 'assets': f'data/projectaon/{book}/', 'map': map_file, 'bonusItem': book == '01fftd', 'intro': intro, 'sections': sections}
 def write_if_changed(path, text):

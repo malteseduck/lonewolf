@@ -177,7 +177,7 @@ it (`drawFrame`, drawn for the frame's own size so its band is never stretched, 
 vignette) and the close and +/- controls are the bronze medallions (`.med`). Escape, a click on the
 backdrop, or the close medallion close it; `+` and `-` also zoom.
 
-The map is `scanOf`'s canvas (painted once per image, not repainted for the modal), laid out in image
+The map is what `scanOf` gives (the baked image itself, or a scan's canvas painted once), laid out in image
 pixels and moved by one CSS transform `translate(tx, ty) scale(s)`. `s0` is the scale at which the whole
 map fits the view: it opens there, with the leather ground round it, and it is the least allowed. The
 most is 3 x `s0` (`MAP_ZOOM`, owner 2026-10-06: enough for the smallest labels of a 4K map). The pan is
@@ -189,14 +189,15 @@ it arrives.
 
 ## The printed map (`maps.js`)
 
-`printedCanvas(img, crop, w, h, repaint)` repaints a book's printed map as sepia ink: lightness becomes ink
-depth, water is pushed darker, strong red survives faintly, then parchment grain is multiplied
-over it and the edges darkened. With `repaint` (main.js passes it for `map-4k.webp`) it uses the
-lighter `REPAINT` settings: Gemini's repaint is already aged parchment with burnt edges, so it keeps
-more of its own colour, is lifted a little, and gets half the grain and edge (ADR 0004). `scanOf` (main.js) keeps one painting per image, at twice the image's size for sharp ink
-but no wider than 4096 px (`SCAN_MAX`): a 4K map doubled is past the iPad's canvas limit. The image
-is `map-4k.webp` once a book's map is upscaled (`docs/reference/map-upscale.md`), else `map.png`;
-the sepia repaint applies to both (owner, 2026-10-07).
+The sepia: lightness becomes ink depth, water is pushed darker, strong red survives faintly, then
+parchment grain is multiplied over it and the edges darkened; it applies to both kinds of map (owner,
+2026-10-07). A finished map (`map-4k.webp`, `docs/reference/map-upscale.md`) is baked once by
+`tools/map_sepia.py` into `map-sepia.webp`, which `book.js` names and `scanOf` (main.js) shows as it
+is: the same size, and only the image's decode to wait for. It has the lighter settings: Gemini's
+repaint is already aged parchment with burnt edges, so it keeps more of its own colour, is lifted a
+little, and gets about half the grain and edge (ADR 0004). A book still on its scan (`map.png`) is
+repainted in the page by `printedCanvas(img, crop, w, h)`; `scanOf` keeps one painting per image, at
+twice the image's size for sharp ink.
 
 The player once drew its own maps (replicas of the printed maps stamped with engraved symbols,
 made-up places per section, town plans, travel on the map). The owner dropped them on 2026-10-05;

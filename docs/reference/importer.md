@@ -18,7 +18,7 @@ Fetches `license.htm`, `tssf.htm`, `map.htm`, the rules pages (`RULES`: game rul
 equipment, combat, levels, Lore-circles, improved disciplines, Kai wisdom, the combat summary, the
 two tables, errata, footnotes; a Kai book has no Lore-circle or improved-discipline page), then
 `sect1.htm`, `sect2.htm`, ... until a section is missing, then every image referenced inside those
-pages' `<article>`, plus `map.png`. The importer writes `map: 'map-4k.webp'` when that file
+pages' `<article>`, plus `map.png`. The importer bakes `map-4k.webp` into `map-sepia.webp` and writes `map: 'map-sepia.webp'` when the first
 exists (made by hand, `docs/reference/map-upscale.md`), else `map.png`. `--rules` fetches only the rules pages, for a book already
 downloaded (all twelve were, 2026-10-02, for docs/reference/rules-books.md).
 Skips files already on disk, waits 0.15 s between requests, retries three times.

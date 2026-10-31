@@ -689,12 +689,11 @@ function printedMap() {
   return printed[url].complete && printed[url].naturalWidth ? printed[url] : null;
 }
 const scans = {};
-// repainted at twice the scan's size for sharp ink, but no wider than SCAN_MAX: a 4K map doubled is
-// 7680 px, past the iPad's canvas limit (about 16.7 million pixels)
-const SCAN_MAX = 4096;
+// a finished map comes already in sepia and is shown as it is; a scan is repainted here, at twice its
+// size for sharp ink
 const scanOf = (img) => {
-  const k = Math.min(2, SCAN_MAX / img.naturalWidth);
-  return (scans[img.src] = scans[img.src] || printedCanvas(img, [0, 0, img.naturalWidth, img.naturalHeight], Math.round(img.naturalWidth * k), Math.round(img.naturalHeight * k), /map-4k\.webp$/.test(img.src)));
+  if (/map-sepia\.webp$/.test(img.src)) return img;
+  return (scans[img.src] = scans[img.src] || printedCanvas(img, [0, 0, img.naturalWidth, img.naturalHeight], img.naturalWidth * 2, img.naturalHeight * 2));
 };
 
 /* ---------- the map modal ----------
@@ -738,7 +737,8 @@ function openMap() {
   M.ready = () => { // the image is here: show it whole
     const im = M.img = printedMap(); if (!im || M.cv) return;
     const cv = M.cv = scanOf(im);
-    cv.style.cssText = `position:absolute;left:0;top:0;width:${im.naturalWidth}px;height:${im.naturalHeight}px;transform-origin:0 0;`;
+    cv.draggable = false; // as an image: no drag or the iPad's long-press menu
+    cv.style.cssText = `position:absolute;left:0;top:0;width:${im.naturalWidth}px;height:${im.naturalHeight}px;transform-origin:0 0;-webkit-touch-callout:none;`;
     view.replaceChildren(cv);
     M.s0 = M.s = Math.min(M.vw / im.naturalWidth, M.vh / im.naturalHeight); M.tx = M.ty = 0; apply();
   };
