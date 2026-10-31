@@ -22,7 +22,11 @@ and only a New Order book has a Kai name page), then
 pages' `<article>`, plus `map.png`. The importer bakes `map-4k.webp` into `map-sepia.webp` and writes `map: 'map-sepia.webp'` when the first
 exists (made by hand, `docs/reference/map-upscale.md`), else `map.png`. `--rules` fetches only the rules pages, for a book already
 downloaded (all twelve were, 2026-10-02, for docs/reference/rules-books.md).
-Skips files already on disk, waits 0.15 s between requests, retries three times.
+Skips files already on disk. The files come from the book's own zip beside its pages (`<code>.zip`), one
+request in place of some 400, keeping only the files named above and never the zip itself; what the
+zip lacks is settled by it where the book may simply not have the page (a section past the last, a
+rules page), and asked for alone where it is needed. A book with no zip, or a zip that does not hold it,
+is fetched page by page: 0.15 s between requests, three tries each.
 Prints section count, image count and total size.
 
 Book codes: `01fftd 02fotw 03tcok 04tcod 05sots` (Kai),

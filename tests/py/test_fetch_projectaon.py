@@ -1,12 +1,14 @@
 """tools/fetch_projectaon.py downloads books. These tests never touch the network: urllib.request.urlopen is
 replaced by a fake site (a dict of page name -> bytes) and the socket layer is blocked as a second guard.
 The script is run as a copy inside a temporary tree so what it saves lands under tmp_path."""
+import io
 import os
 import runpy
 import shutil
 import socket
 import sys
 import urllib.request
+import zipfile
 
 import pytest
 
@@ -108,6 +110,57 @@ def test_a_missing_ordinary_page_is_reported_failed_with_three_attempts(tmp_path
     assert 'FAILED map.png' in out
     assert site.names().count('license.htm') == 3
     assert not (book_dir(tmp_path, '02fotw') / 'license.htm').exists()   # nothing saved for a failure
+
+
+def book_zip(book, files, prefix=None):
+    """The zip Project Aon keeps beside a book's pages, its files under the site's own path."""
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, 'w') as z:
+        for name, data in files.items():
+            z.writestr((prefix if prefix is not None else f'en/xhtml/lw/{book}/') + name, data)
+    return buf.getvalue()
+
+
+def test_a_book_comes_from_its_zip_in_one_request_keeping_only_what_the_pages_need(tmp_path, offline, capsys):
+    files = {'license.htm': b'license', 'tssf.htm': art(''), 'map.htm': art('<img src="map.png"/>'), 'gamerulz.htm': art(''),
+             'sect1.htm': art('<img src="ill1.png"/>'), 'sect2.htm': art(''), 'ill1.png': b'1' * 20, 'map.png': b'M' * 40,
+             'main.css': b'unused', 'title.htm': b'unused', 'small1.png': b'unused'}
+    site = offline({'22x.zip': book_zip('22x', files)})
+    run_script(tmp_path, '22x')
+    d = book_dir(tmp_path, '22x')
+    assert sorted(os.listdir(d)) == ['gamerulz.htm', 'ill1.png', 'license.htm', 'map.htm', 'map.png', 'sect1.htm', 'sect2.htm', 'tssf.htm']
+    assert (d / 'ill1.png').read_bytes() == b'1' * 20
+    assert site.names() == ['22x.zip']     # no probing past the last section, no asking for pages a book lacks
+    assert not (d / '22x.zip').exists()
+    assert '2 sections, 2 images' in capsys.readouterr().out
+
+
+def test_a_required_file_the_zip_lacks_is_asked_for_on_its_own(tmp_path, offline):
+    files = {'license.htm': b'l', 'tssf.htm': art(''), 'map.png': b'M', 'sect1.htm': art('')}
+    site = offline({'22x.zip': book_zip('22x', files), 'map.htm': art('')})
+    run_script(tmp_path, '22x')
+    assert (book_dir(tmp_path, '22x') / 'map.htm').exists()
+    assert site.names() == ['22x.zip', 'map.htm']
+
+
+@pytest.mark.parametrize('data', [b'not a zip', book_zip('22x', {'title.htm': b'x'}), book_zip('22x', {'sect1.htm': b'x'}, prefix='elsewhere/')])
+def test_a_bad_zip_or_one_without_the_book_falls_back_to_the_pages(tmp_path, offline, data):
+    site = offline({'22x.zip': data, 'sect1.htm': art(''), 'map.png': b'M'})
+    run_script(tmp_path, '22x')
+    d = book_dir(tmp_path, '22x')
+    assert (d / 'sect1.htm').read_bytes() == art('') and 'sect2.htm' in site.names()
+    assert not (d / 'title.htm').exists()
+
+
+def test_a_zip_writes_nothing_outside_the_books_folder(tmp_path, offline):
+    files = {'sect1.htm': art('<img src="../evil.png"/>'), 'license.htm': b'l', 'tssf.htm': art(''), 'map.htm': art(''), 'map.png': b'M'}
+    data = book_zip('22x', files)
+    buf = io.BytesIO(data)
+    with zipfile.ZipFile(buf, 'a') as z:
+        z.writestr('en/xhtml/lw/22x/../evil.png', b'evil')
+    offline({'22x.zip': buf.getvalue()})
+    run_script(tmp_path, '22x')
+    assert not (book_dir(tmp_path, '22x').parent / 'evil.png').exists()
 
 
 def test_files_already_on_disk_are_not_fetched_again(tmp_path, offline):
