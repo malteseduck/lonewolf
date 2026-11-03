@@ -67,7 +67,7 @@ player loads (the map editor and `serve.py` make `work/` when a step first needs
 | `work/map-2k-lettered.jpg` | The same with the place names set again in Cabin: the picture Gemini gets, and `map-2k-lettered-sheet.png` beside it |
 | `work/map-prompt-<n>.txt` | The prompt for round n |
 | `work/map-gemini-<n>.jpg` | Gemini's output, round n, saved by the owner |
-| `work/map-check-<n>/` | Round n's checks: `aligned.png`, `H.json`, `flags.png`, `labels.png` |
+| `work/map-check-<n>/` | Round n's checks: `aligned.png`, `H.json`, `flags.png`, `labels.png`, `check.json` (the OCR diff, for the editor) |
 | `work/map-gemini-<n>-x4.png` | Real-ESRGAN 4x of the round kept |
 | `map-4k.webp` | The result, 3840 wide, in colour; its sheet is `work/map-4k-sheet.png` |
 | `map-sepia.webp` | The same in the player's sepia, baked by the importer (`tools/map_sepia.py`); the file `book.js` names and the player shows |
@@ -252,7 +252,9 @@ Commands run from the project root as
    colour and shape flags), then
    `map_labels.py check $L $W/map-check-<n>/aligned.png $W/map-2k-lettered.jpg`,
    whose `labels.png` puts every label of the input beside the repaint's; read it by eye (the OCR
-   diff it prints is a hint only). The owner judges the painting; a new round starts again from 5
+   diff it prints is a hint only). It also writes that diff as `check.json` (label index, kind, what the
+   OCR read), which the map editor's step 8 lists: a row selects its label, and its button ticks
+   `reset` on a place name or `fix` on a kept label. The owner judges the painting; a new round starts again from 5
    in a new chat. Do not use edit prompts: each edit repaints the whole picture and broke labels
    that were right (Book 1, round 4).
 8. **Finish**: `map_upscale.py $W/map-gemini-<n>.jpg $W/map-gemini-<n>-x4.png --width <4x its width>`, then

@@ -233,6 +233,9 @@ def norm(s):
 
 
 def check(labels, reads):
+    """Prints the OCR diff and returns it as a list for the map editor's step 8 (check.json): each
+    label that differs, by index and kind (missing, reads, eye), then each unlisted read (added)."""
+    found = []
     used = set()
     bad = 0
     for i, lab in enumerate(labels):
@@ -243,19 +246,24 @@ def check(labels, reads):
         ratio = difflib.SequenceMatcher(None, norm(lab['text']), norm(got)).ratio()
         if lab.get('small'):
             print(f'{i:3d} by eye      {lab["text"]!r} (OCR read {got!r})')
+            found.append({'i': i, 'kind': 'eye', 'got': got})
             continue
         if not hits:
             print(f'{i:3d} missing      {lab["text"]}')
+            found.append({'i': i, 'kind': 'missing'})
         elif norm(got) != norm(lab['text']):
             print(f'{i:3d} reads {ratio:.2f}  {lab["text"]!r} as {got!r}')
+            found.append({'i': i, 'kind': 'reads', 'ratio': round(ratio, 2), 'got': got})
         else:
             continue
         bad += 1
     extra = [r for j, r in enumerate(reads) if j not in used and len(norm(r['text'])) > 1]
     for r in extra:
         print(f'    added       {r["text"]!r} at {r["box"]}')
+        found.append({'kind': 'added', 'got': r['text'], 'box': r['box']})
     n = sum(not lab.get('small') for lab in labels)
     print(f'labels {n} (+{len(labels) - n} by eye): {n - bad} read the same, {bad} differ or missing; {len(extra)} unlisted reads')
+    return found
 
 
 def sheet(labels, faithful, aligned, out):
@@ -357,7 +365,8 @@ def main():
         print(f'{len(why)} unticked; {sum(bool(lab.get("retype")) for lab in labels)} of {len(labels)} labels left as place names')
     elif cmd == 'check':
         labels = json.loads(Path(a).read_text(encoding='utf-8'))
-        check(labels, ocr(b))
+        found = check(labels, ocr(b))  # beside <aligned.png>, for the editor's list of labels to look at
+        (Path(b).parent / 'check.json').write_text(json.dumps(found, indent=1), encoding='utf-8')
         if len(sys.argv) > 4:  # the faithful map: also write the eye-check sheet beside <aligned.png>
             sheet(labels, sys.argv[4], b, Path(b).parent / 'labels.png')
     elif cmd == 'style':  # a first style.txt beside the list; never over the book's own

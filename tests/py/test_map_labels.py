@@ -77,6 +77,31 @@ def test_check_counts_matches_differences_missing_and_added(capsys):
     assert 'HOLMGARD' not in out                      # the matching label is not reported
 
 
+def test_check_returns_what_it_prints_for_the_editor(capsys):
+    labels = [lab('HOLMGARD', (0, 0, 100, 20)),
+              lab('RIVER', (0, 50, 100, 70)),
+              lab('LAKE', (0, 100, 100, 120)),
+              lab('TOWER', (0, 150, 100, 170), small=True)]
+    reads = [read('Holm-gard', (2, 2, 98, 18)), read('RIVAR', (2, 52, 98, 68)),
+             read('TOWN', (2, 152, 98, 168)), read('STRAY', (300, 300, 380, 320))]
+    got = map_labels.check(labels, reads)
+    assert [(f.get('i'), f['kind']) for f in got] == [(1, 'reads'), (2, 'missing'), (3, 'eye'), (None, 'added')]
+    assert got[0]['got'] == 'RIVAR' and 0 < got[0]['ratio'] < 1
+    assert got[3]['box'] == [300, 300, 380, 320]
+
+
+def test_check_main_writes_check_json_beside_aligned(tmp_path, monkeypatch, capsys):
+    labels = tmp_path / 'labels.json'
+    labels.write_text(json.dumps([lab('RIVER', (0, 50, 100, 70))]), encoding='utf-8')
+    (tmp_path / 'map-check-2').mkdir()
+    aligned = tmp_path / 'map-check-2' / 'aligned.png'
+    monkeypatch.setattr(map_labels, 'ocr', lambda p: [read('RIVAR', (2, 52, 98, 68))])
+    monkeypatch.setattr(sys, 'argv', ['map_labels.py', 'check', str(labels), str(aligned)])
+    map_labels.main()
+    got = json.loads((tmp_path / 'map-check-2' / 'check.json').read_text(encoding='utf-8'))
+    assert [(f['i'], f['kind']) for f in got] == [(0, 'reads')]
+
+
 
 
 

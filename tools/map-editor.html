@@ -50,6 +50,12 @@ body { display: flex; flex-direction: column; }
 #panel .thumb { height: 90px; border: 1px solid var(--line); border-radius: 4px; cursor: grab; }
 #panel input[type=number] { width: 64px; }
 #panel details { margin-top: 6px; }
+#panel .checks { max-height: 170px; overflow-y: auto; border: 1px solid var(--line); border-radius: 4px; margin: 6px 0; max-width: 80ch; }
+#panel .ck { display: flex; gap: 8px; align-items: center; padding: 2px 8px; cursor: pointer; }
+#panel .ck:hover { background: rgba(120, 88, 48, .13); }
+#panel .ck.sel { background: var(--on); }
+#panel .ck .n { color: var(--dim); width: 28px; flex-shrink: 0; }
+#panel .ck button { margin-left: auto; }
 #panel pre { max-height: 200px; overflow: auto; background: rgba(255, 248, 226, .4); border: 1px solid var(--line); padding: 6px; margin: 4px 0 0; font-size: 12px; white-space: pre-wrap; }
 .bad { color: var(--sel-ink); }
 .spin::after { content: ''; display: inline-block; width: 11px; height: 11px; margin-left: 6px; vertical-align: -2px;
@@ -844,7 +850,7 @@ function renderForm() {
   if (others.length) { const k = document.createElement('div'); k.style.color = 'var(--dim)'; k.textContent = others.join(', ') + ' (kept as is)'; row('other', k); }
 }
 // after a form edit: redraw and refresh list text, without rebuilding the form under the cursor
-function afterEdit() { renderListKeep(); draw(); dirty(); }
+function afterEdit() { renderListKeep(); draw(); dirty(); if (curStep === 8) renderPanel(); }
 function renderListKeep() {
   syncRetypeAll();
   const it = $('list').querySelector(`.item[data-i="${sel}"]`);
@@ -1176,7 +1182,7 @@ const STEPS = [
   { n: 7, short: 'Gemini', name: 'Gemini', bg: () => ['map-2k-lettered.jpg', 'map-2k.png'],
     text: 'Start a new Gemini chat, attach the lettered picture and give it the prompt, then bring the result back here. Do not use edit prompts: each repaints the whole picture.' },
   { n: 8, short: 'Check', name: 'Check', run: 'check', bg: () => [`map-check-${activeRound()}/aligned.png`, `map-gemini-${activeRound()}.jpg`, 'map-2k.png'],
-    text: 'Lines Gemini\'s picture up with the scan and flags colour and shape changes, then reads its labels against the list. Open labels.png and compare every label by eye; the OCR diff in the log is only a hint. Tick reset on place names Gemini garbled, and fix on kept labels it garbled (title, captions, key), then Save.' },
+    text: 'Lines Gemini\'s picture up with the scan and flags colour and shape changes, then reads its labels against the list. Open labels.png and compare every label by eye; the OCR diff, listed under the buttons, is only a hint (click a row to go to its label; its button ticks reset or fix). Tick reset on place names Gemini garbled, and fix on kept labels it garbled (title, captions, key), then Save.' },
   { n: 9, short: 'Finish', name: 'Finish', run: 'finish', bg: () => ['map-4k.webp', 'map-2k.png'],
     text: 'Upscales the round 4x, warps it onto the 4K frame, wipes Gemini\'s lettering round each label ticked reset (and fix) and sets those again in the map font, removes the sparkle mark and writes map-4k.webp. With none ticked reset, Gemini\'s names stand, unless "Set every place name again" is ticked. Look at map-4k-sheet.png.' },
   { n: 10, short: 'Import', name: 'Import and view', run: 'import', bg: () => ['map-4k.webp', 'map-2k.png'],
@@ -1279,7 +1285,7 @@ ${received ? `<div class="row">Received ${esc(received)}. <button class="primary
 <button data-open="${base_}labels.png"${files[`map-check-${rd}/labels.png`] ? '' : ' disabled'}>Open labels.png</button>
 <button data-open="${base_}flags.png"${files[`map-check-${rd}/flags.png`] ? '' : ' disabled'}>Open flags.png</button>
 <button data-do="clearreset"${tip('Clear reset', 'Unticks reset on every label: do this before checking a new round')}>Clear reset</button>
-<span class="note">${labels.filter(l => l.reset).length} reset, ${labels.filter(l => l.fix).length} fix ticked</span></div>`;
+<span class="note">${labels.filter(l => l.reset).length} reset, ${labels.filter(l => l.fix).length} fix ticked</span></div>${checkHtml(rd)}`;
       break; }
     case 9: {
       // what Finish will set again, said before it runs (ADR 0004): ticked labels decide; with none
@@ -1299,7 +1305,11 @@ ${received ? `<div class="row">Received ${esc(received)}. <button class="primary
       h += `<div class="row">${runBtn('Import', 'data-do="import"' + noRun)}<a href="/" target="_blank" rel="noopener">Open the player</a></div>`; break;
   }
   h += aboutHtml(s.text) + logHtml(s.n);
+  // the panel is rebuilt on every tick: keep it and step 8's list where they were scrolled
+  const top = p.scrollTop, ckTop = p.querySelector('.checks')?.scrollTop;
   p.innerHTML = h;
+  p.scrollTop = top;
+  const ck = p.querySelector('.checks'); if (ck && ckTop != null) ck.scrollTop = ckTop;
   const fa = $('finishall'); if (fa) fa.onchange = () => { finishAll = fa.checked; renderPanel(); };
   const r = $('rnd'); if (r) r.onchange = async () => { curRound = Math.max(0, Math.floor(Number(r.value) || 0)); roundSet = true; renderPanel(); renderRail(); if (curStep === 8) await openStep(8); };
   const th = $('thumb'); if (th) th.addEventListener('dragstart', e => { try { e.dataTransfer.setData('DownloadURL', `image/jpeg:map-2k-lettered.jpg:${th.src}`); } catch (x) {} });
@@ -1309,6 +1319,8 @@ ${received ? `<div class="row">Received ${esc(received)}. <button class="primary
   resize();
 }
 $('panel').onclick = async e => {
+  const t = e.target.closest('[data-tick]'); if (t) { tickCheck(Number(t.dataset.tick)); return; }
+  const c = e.target.closest('[data-ck]'); if (c) { select(Number(c.dataset.ck), true); renderPanel(); return; }
   const o = e.target.closest('[data-open]'); if (o) { window.open(o.dataset.open + '?' + Date.now(), '_blank', 'noopener'); return; }
   const b = e.target.closest('[data-do]'); if (!b || b.disabled) return;
   const what = b.dataset.do;
@@ -1321,6 +1333,35 @@ $('panel').onclick = async e => {
   if (what === 'copyprompt') return copyPrompt(b);
   await doStep(what, b);
 };
+
+// step 8: Check's findings (map-check-<n>/check.json), a row per label to look at, which selects it
+// and ticks reset (a place name) or fix (a kept label). The OCR is a hint only: labels.png decides
+let checkRes = { key: '', list: null };
+function checkHtml(rd) {
+  const k = `map-check-${rd}/check.json`, key = mt(k) ? k + mt(k) : '';
+  if (checkRes.key !== key) {
+    checkRes = { key, list: null };
+    if (key) fetch(`${at(k)}?t=${mt(k)}`, { cache: 'no-store' }).then(r => r.json()).catch(() => [])
+      .then(list => { if (checkRes.key === key) { checkRes.list = list; if (curStep === 8) renderPanel(); } });
+  }
+  const list = checkRes.list;
+  if (!list) return '';
+  if (!list.length) return '<div class="row note">The OCR read every label as listed.</div>';
+  return `<div class="row note">The OCR flags ${list.filter(f => f.i != null).length} labels: click one to go to it.</div><div class="checks">` + list.map(f => {
+    if (f.i == null) return `<div class="ck note"><span class="n">+</span>not in the list: ${esc(f.got)} at ${f.box.join(', ')}</div>`;
+    const l = labels[f.i]; if (!l) return '';
+    const tk = l.retype ? 'reset' : 'fix';
+    const how = f.kind === 'reads' ? `reads ${f.ratio} as ${esc(f.got)}` : f.kind === 'eye' ? `small: by eye (OCR ${esc(f.got)})` : 'missing';
+    return `<div class="ck${f.i === sel ? ' sel' : ''}" data-ck="${f.i}"><span class="n">${f.i}</span>${esc(l.text || '(empty)')} <span class="note">${how}</span>`
+      + `<button data-tick="${f.i}" class="${l[tk] ? 'on' : ''}" title="${tk === 'reset' ? 'Set this place name again at 4K' : 'Clear this kept label and set it in the map font at 4K'}">${l[tk] ? tk + ' ✓' : tk}</button></div>`;
+  }).join('') + '</div>';
+}
+function tickCheck(i) {
+  const l = labels[i]; if (!l) return;
+  const tk = l.retype ? 'reset' : 'fix';
+  push(); if (l[tk]) delete l[tk]; else l[tk] = true;
+  select(i, true); afterEdit();
+}
 
 // ---------- running ----------
 async function api(path, opts) {
