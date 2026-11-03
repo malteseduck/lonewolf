@@ -1,0 +1,17 @@
+{
+ "_readme": "The fight pictures the owner approved for this book (step 7 marked done): the player shows these whatever plates.json or a re-import would now pick. Keyed by section/enemy number; name is a hash of the enemy's name, so a pin is not used for another enemy; plate is {src, crop?, levels?, flip?} or null for the drawn emblem. Written by tools/plates_pin.mjs; see docs/reference/interface.md, Art pipeline.",
+ "approved": "2026-11-01",
+ "pins": {
+  "33/0": {"name":"1wm55w5","plate":{"src":"art/plates/27v/bhanarian-guards.webp","crop":[0.036,0.132,0.9249,0.7605]}},
+  "37/0": {"name":"wx4g9d","plate":{"src":"assets/plates/27v/bhanarian-roughriders.webp","crop":[0.0438,0.1521,0.8912,0.7064]}},
+  "97/0": {"name":"1hxj7cj","plate":{"src":"data/projectaon/27v/ill6.png"}},
+  "126/0": {"name":"bcbmi7","plate":{"src":"data/projectaon/23mh/ill1.png"}},
+  "186/0": {"name":"16olmr7","plate":{"src":"data/projectaon/27v/ill2.png"}},
+  "270/0": {"name":"1xa8i5u","plate":{"src":"data/projectaon/27v/ill11.png"}},
+  "282/0": {"name":"1brfrvr","plate":{"src":"data/projectaon/27v/ill15.png"}},
+  "297/0": {"name":"gt93tk","plate":{"src":"data/projectaon/27v/ill18.png"}},
+  "315/0": {"name":"1hxj7cj","plate":{"src":"data/projectaon/27v/ill6.png"}},
+  "326/0": {"name":"1wm55w5","plate":{"src":"art/plates/27v/bhanarian-guards.webp","crop":[0.036,0.132,0.9249,0.7605]}},
+  "338/0": {"name":"1g9gk2e","plate":{"src":"art/plates/27v/captain-gildas-psychically-possessed.webp","crop":[0.2121,0.0142,0.5949,0.8007]}}
+ }
+}

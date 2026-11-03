@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>All fights</title>
+<link rel="stylesheet" href="admin.css">
+<script type="module" src="parchment.js"></script>
+<style>
+  body.embed { padding: 0; }
+  body.embed::before, body.embed::after { display: none; }
+  .sheet-top { display: flex; gap: 10px; align-items: center; padding: 14px 24px 6px; flex-wrap: wrap; }
+  .sheet-top .sum { color: var(--dim); }
+  input, select { font: inherit; background: var(--btn); color: var(--fg); border: 1px solid var(--btn-line); border-radius: 4px; padding: 3px 6px; }
+  input[type=search] { min-width: 15em; }
+  input[type=number] { width: 4.5em; }
+  input[type=checkbox] { padding: 0; }
+
+  /* the trial rules: one form, moved into the fight's window while it is open */
+  #rules { margin: 0; padding: 6px 12px; border: 1px solid var(--line); border-radius: 3px; background: var(--btn); }
+  #rules summary { cursor: pointer; color: var(--bronze-hi); font: 15px var(--title); }
+  #rules summary .n { font: 12px var(--body); color: var(--rubric); margin-left: 6px; }
+  #rules .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(245px, 1fr)); gap: 4px 16px; margin: 8px 0 4px; }
+  #rules label { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; }
+  #rules label.moved { color: var(--rubric); font-weight: 600; }
+  #rules .acts { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 13px; }
+  .home { margin: 0 24px 6px; }
+  .sweep { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 6px 24px; font-size: 13px; }
+  .sweep .bar { flex: 1; min-width: 120px; height: 6px; border: 1px solid var(--line); border-radius: 3px; }
+  .sweep .bar i { display: block; height: 100%; background: var(--bronze); width: 0; }
+  .note { margin: 0 24px 6px; color: var(--dim); font-size: 12px; max-width: 1000px; }
+
+  table.tally { margin: 6px 24px; border-collapse: collapse; font-size: 13px; }
+  table.tally th, table.tally td { padding: 2px 10px; text-align: right; border-bottom: 1px solid var(--line-lo); white-space: nowrap; }
+  table.tally th:first-child, table.tally td:first-child { text-align: left; }
+  table.tally tr.all td { font-weight: 600; border-top: 1px solid var(--line); }
+  table.tally th { color: var(--bronze-hi); font-weight: 600; }
+  .worse { color: var(--blood); }
+  .better { color: var(--better); }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 6px 24px 32px; }
+  .cards h2 { grid-column: 1 / -1; margin: 10px 0 0; font: 18px var(--title); color: var(--bronze-hi); border-bottom: 1px solid var(--line); }
+  /* the book's own tan, as on the picture sheet */
+  .card { background: linear-gradient(var(--tan-hi), var(--tan-lo)); color: var(--ink); border: 0; border-radius: 3px; padding: 6px; text-align: left; cursor: pointer; white-space: normal; box-shadow: 0 2px 6px rgba(40, 24, 10, .4); display: flex; flex-direction: column; content-visibility: auto; contain-intrinsic-size: auto 240px; }
+  .card:hover { outline: 2px solid var(--blood); }
+  .card .pic { height: 130px; display: grid; place-items: center; overflow: hidden; }
+  .card img { max-width: 100%; max-height: 130px; mix-blend-mode: multiply; }
+  .card .none { font-size: 11px; color: var(--ink-dim); border: 1px dashed var(--ink-faint); padding: 14px 8px; }
+  .card b { font: 14px/1.2 var(--title); margin-top: 4px; overflow-wrap: anywhere; }
+  .card .stats { font-size: 12px; font-variant-numeric: tabular-nums; }
+  .card small { color: var(--ink-dim); font-size: 11px; }
+  .card .res { margin-top: auto; padding-top: 3px; font-size: 12px; font-variant-numeric: tabular-nums; min-height: 1.4em; }
+  .card.deadly { box-shadow: inset 0 0 0 2px var(--blood), 0 2px 6px rgba(40, 24, 10, .4); }
+
+  /* a fight's window */
+  #fight { width: 96vw; max-width: 1400px; max-height: 94vh; padding: 16px 20px; overflow: auto; }
+  #fight .head { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+  #fight h2 { margin: 0; font: 22px var(--title); color: var(--bronze-hi); }
+  #fight .head .sp { flex: 1; }
+  #fight .cols { display: grid; grid-template-columns: minmax(280px, 2fr) minmax(420px, 3fr); gap: 18px; align-items: start; }
+  #fight .plate { background: linear-gradient(var(--tan-hi), var(--tan-lo)); border-radius: 3px; padding: 8px; margin-bottom: 8px; text-align: center; }
+  #fight .plate canvas, #fight .plate img { max-width: 100%; max-height: 52vh; }
+  #fight .plate b { display: block; font: 16px var(--title); }
+  #fight .about { font-style: italic; font-size: 13px; }
+  #fight .tags { font-size: 13px; color: var(--bronze-hi); margin: 4px 0; }
+  #fight .text { font-size: 13px; line-height: 1.5; }
+  #fight .text p { margin: 4px 0; }
+  #fight h3 { margin: 10px 0 4px; font: 15px var(--title); color: var(--bronze-hi); }
+  #fight .form { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; font-size: 13px; }
+  #fight .form label { display: inline-flex; gap: 5px; align-items: center; }
+  #fight .ticks { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0 10px; font-size: 12.5px; max-height: 128px; overflow: auto; border: 1px solid var(--line-lo); padding: 3px 6px; margin: 3px 0; }
+  #fight .ticks label { display: flex; gap: 4px; align-items: center; }
+  #fight .ticks .cs { color: var(--ink-dim); margin-left: auto; }
+  #fight .hint { display: block; color: var(--dim); font-size: 12px; }
+  #fight .capped { color: var(--rubric); font-size: 11.5px; }
+  #fight .run { display: flex; gap: 8px; align-items: center; margin: 10px 0; font-size: 13px; }
+  #fight table { border-collapse: collapse; font-size: 13px; width: 100%; font-variant-numeric: tabular-nums; }
+  #fight th, #fight td { padding: 2px 7px; text-align: right; border-bottom: 1px solid var(--line-lo); }
+  #fight th:first-child, #fight td:first-child { text-align: left; }
+  #fight th { color: var(--bronze-hi); font-weight: 600; }
+  #fight td small { display: block; color: var(--dim); font-size: 11.5px; }
+  #fight tr.trial td { background: var(--picked); }
+  #fight .fightlog { font: 12px/1.45 Consolas, monospace; max-height: 240px; overflow: auto; border: 1px solid var(--line-lo); padding: 4px 8px; margin-top: 6px; }
+  @media (max-width: 900px) { #fight .cols { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header class="sheet-top">
+  <input type="search" id="q" placeholder="A foe's name, or undead, immune..." aria-label="Search">
+  <select id="series" aria-label="Series"></select>
+  <select id="book" aria-label="Book"></select>
+  <select id="sort" aria-label="Sort">
+    <option value="book">By book and section</option>
+    <option value="cs">Highest COMBAT SKILL</option>
+    <option value="ep">Most ENDURANCE</option>
+    <option value="name">By name</option>
+    <option value="lives">Deadliest first</option>
+    <option value="change">Most changed by the rules</option>
+  </select>
+  <span class="sum" id="sum">Reading the books...</span>
+</header>
+<div class="home" id="rules-home">
+  <details id="rules">
+    <summary>Trial rules<span class="n" id="rules-n"></span></summary>
+    <div class="grid" id="rules-grid"></div>
+    <div class="acts">
+      <label>Start from <select id="preset"></select></label>
+      <button id="rules-reset">The engine's rules</button>
+      <span class="sum">Here only: nothing on this sheet changes how the player fights.</span>
+    </div>
+  </details>
+</div>
+<div class="sweep">
+  <label>Hero <select id="who"><option value="novice">Novice</option><option value="typical">Typical for the book</option><option value="master">Master</option></select></label>
+  <label><input type="checkbox" id="sword"> with the Sommerswerd (from Book 2, not the New Order)</label>
+  <label>Trials a fight <select id="n"><option>100</option><option>200</option><option>500</option><option>1000</option></select></label>
+  <button id="go">Run the fights shown</button>
+  <span class="bar"><i id="bar"></i></span><span id="prog"></span>
+</div>
+<p class="note">Lives: the share of trials he came out of alive, each fight on its own from full ENDURANCE, with his mind's attack in use and nothing drunk. Under the engine's rules, then yours, with the same numbers drawn, so a change is the rule's and not the dice's.</p>
+<div id="tally"></div>
+<main class="cards" id="cards"></main>
+
+<dialog id="fight">
+  <div class="head"><h2 id="f-title"></h2><span class="sp"></span><button id="f-prev" title="The fight before (&larr;)">&larr;</button><button id="f-next" title="The next fight (&rarr;)">&rarr;</button><button id="f-close">Close</button></div>
+  <div class="cols">
+    <div id="f-left"></div>
+    <div>
+      <h3>The hero</h3>
+      <div class="form">
+        <label>Start from <select id="h-who"><option value="novice">Novice</option><option value="typical">Typical</option><option value="master">Master</option></select></label>
+        <label>COMBAT SKILL <input type="number" id="h-cs"></label>
+        <label>ENDURANCE <input type="number" id="h-ep" title="At the start of the fight"></label>
+        <label>of <input type="number" id="h-max"></label>
+        <label>Weapons <select id="h-w0"></select> <select id="h-w1"></select></label>
+        <label>Laumspur <input type="number" id="h-potions" min="0" max="10"></label>
+      </div>
+      <div id="h-discs"></div>
+      <div id="h-skill"></div>
+      <div id="h-items"></div>
+      <h3>How he fights</h3>
+      <div class="form">
+        <label>Mind <select id="t-mind"><option value="full">His strongest</option><option value="blast">Mindblast only</option><option value="rest">At rest</option></select></label>
+        <label>Drinks at <input type="number" id="t-drink" min="0"></label>
+        <label>Evades at <input type="number" id="t-evade" min="0" title="ENDURANCE at which he leaves, where the fight allows it; 0 never"></label>
+      </div>
+      <h3>The rules</h3>
+      <div id="rules-here"></div>
+      <div class="run">
+        <button id="f-run">Run the trial</button>
+        <label>Trials <select id="f-n"><option>500</option><option selected>2000</option><option>10000</option></select></label>
+        <button id="f-once">Show one fight</button>
+        <button id="f-clear">Clear results</button>
+      </div>
+      <div id="f-out"></div>
+      <div id="f-log"></div>
+    </div>
+  </div>
+</dialog>
+<div class="toast" id="toast" hidden></div>
+
+<script type="module">
+import { inkPlate } from '../../plates.js';
+import { compilePlates, pickPlate, pinKey, upscaledSrc } from '../../platepick.js';
+import { BASE_RULES, PRESETS, equipFor, listFights, oneFight, rulesChanged, setDiscipline, standIn, trial, trialAll } from './fightlab.js';
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+// like the other sheets, it opens only inside the dashboard (ADR 0021)
+if (!(new URLSearchParams(location.search).get('embed') === '1' && window.parent !== window)) {
+  document.body.innerHTML = '<p style="padding:24px">This page opens only inside the import dashboard, <a href="/tools/admin/">/tools/admin/</a>.</p>';
+  throw new Error('not embedded');
+}
+document.body.classList.add('embed');
+
+const script = (src) => new Promise((ok, bad) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = bad; document.head.append(s); });
+const getJson = (u) => fetch(u, { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+const KEEP = 'lw-fightlist';  // this sheet's settings, for this browser only
+const kept = (() => { try { return JSON.parse(localStorage.getItem(KEEP)) || {}; } catch (e) { return {}; } })();
+const keep = () => { try { localStorage.setItem(KEEP, JSON.stringify({ rules, who: $('#who').value, sword: $('#sword').checked, n: $('#n').value })); } catch (e) { /* not kept */ } };
+
+let LW, BOOKS = {}, rows = [], shown = [], plates = [], index = {};
+const tables = {}, pins = {}, ups = {}, results = new Map();
+let rules = Object.assign({}, BASE_RULES, kept.rules), running = null, baseWeapons = [];
+
+async function load() {
+  await script('/shared/core.js'); await script('/shared/rules-series.js'); await script('/shared/fight.js');
+  LW = window.LW; LW.BOOKS = LW.BOOKS || {}; baseWeapons = [...LW.WEAPONS];
+  // the demo book (ADR 0046) is no fight of the books'
+  const list = ((await getJson('/api/map/books')) || []).filter((b) => b.number >= 1 && b.number <= 29);
+  await Promise.all(list.map(async (b) => {
+    await script(`/data/projectaon/${b.code}/book.js`).catch(() => {});
+    if (!LW.BOOKS[b.code]) return;
+    tables[b.code] = await import(`/items/items-${b.code}.js`).catch(() => null);
+    [pins[b.code], ups[b.code]] = await Promise.all([getJson(`/assets/plates/approved/${b.code}.json`), getJson(`/assets/plates/upscaled/${b.code}.json`)]);
+  }));
+  for (const t of Object.values(tables)) if (t) LW.addItems(t.ITEMS, t.MARKS);
+  for (const [c, b] of Object.entries(LW.BOOKS)) if (list.some((x) => x.code === c)) { LW.applyItems(b, tables[c]); BOOKS[c] = b; }
+  plates = compilePlates(((await getJson('/assets/plates/plates.json')) || {}).plates);
+  index = (await getJson('/data/projectaon/ill-index.json')) || {};
+  rows = listFights(Object.values(BOOKS));
+  for (const r of rows) r.words = [...r.foes.map((f) => f.name), r.kind, r.foes.some((f) => f.undead) && 'undead', r.foes.some((f) => f.immune) && 'immune', r.foes.some((f) => f.mindforce || f.drain) && 'mind attack'].filter(Boolean).join(' ').toLowerCase();
+
+  const numbered = Object.values(BOOKS).sort((a, b) => a.number - b.number);
+  $('#book').innerHTML = '<option value="">Every book</option>' + numbered.map((b) => `<option value="${esc(b.id)}">${b.number}. ${esc(b.title)}</option>`).join('');
+  $('#series').innerHTML = '<option value="">Every series</option>' + Object.entries(LW.SERIES).map(([k, s]) => `<option value="${k}">${esc(s.name)}</option>`).join('');
+  $('#who').value = kept.who || 'typical'; $('#sword').checked = !!kept.sword; $('#n').value = kept.n || '200';
+  drawRules(); draw();
+}
+
+/* ---------- the plate of a foe ---------- */
+function plateOf(row, foe) {
+  const book = BOOKS[row.code], p = pins[row.code];
+  return pickPlate(foe, book, plates, p && p.pins, pinKey(row.id, foe.at));
+}
+const fullSrc = (row, plate) => '/' + upscaledSrc(plate.src, ups[row.code] && ups[row.code].srcs);
+/* the crop as the browser can show it cheaply; the ink is only for the fight's own window */
+function thumb(row) {
+  const pl = plateOf(row, row.foes[0]);
+  if (!pl) return '<span class="none">no picture</span>';
+  const [x, y, w, h] = pl.crop || [0, 0, 1, 1], pc = (v) => (v * 100).toFixed(1) + '%';
+  const style = `${pl.crop ? `object-view-box:inset(${pc(y)} ${pc(1 - x - w)} ${pc(1 - y - h)} ${pc(x)});` : ''}${pl.flip ? 'transform:scaleX(-1);' : ''}`;
+  return `<img loading="lazy" src="/${esc(pl.src)}" alt="" style="${style}">`;
+}
+
+/* ---------- the list ---------- */
+const lives = (x) => Math.round(100 * (1 - x.dead / x.n));
+const signed = (n) => (n > 0 ? '+' : '') + n;
+function resHtml(row) {
+  const r = results.get(row.key);
+  if (!r) return '';
+  const a = lives(r.a), b = lives(r.b), by = b - a;
+  return by ? `Lives ${a}% &rarr; ${b}% <span class="${by < 0 ? 'worse' : 'better'}">(${signed(by)})</span>` : `Lives ${a}%`;
+}
+const deadly = (row) => { const r = results.get(row.key); return r && lives(r.b) < 50; };
+const totalEp = (r) => r.foes.reduce((t, f) => t + (f.ep || 0), 0), topCs = (r) => Math.max(...r.foes.map((f) => f.cs || 0));
+function filter() {
+  const q = $('#q').value.trim().toLowerCase(), b = $('#book').value, s = $('#series').value, sort = $('#sort').value;
+  const list = rows.filter((r) => (!b || r.code === b) && (!s || (BOOKS[r.code].series || 'kai') === s) && (!q || r.words.includes(q)));
+  const noRes = (r) => (results.has(r.key) ? 0 : 1);
+  const by = {
+    cs: (x, y) => topCs(y) - topCs(x), ep: (x, y) => totalEp(y) - totalEp(x), name: (x, y) => x.foes[0].name.localeCompare(y.foes[0].name),
+    lives: (x, y) => noRes(x) - noRes(y) || (noRes(x) ? 0 : lives(results.get(x.key).b) - lives(results.get(y.key).b)),
+    change: (x, y) => noRes(x) - noRes(y) || (noRes(x) ? 0 : Math.abs(lives(results.get(y.key).b) - lives(results.get(y.key).a)) - Math.abs(lives(results.get(x.key).b) - lives(results.get(x.key).a))),
+  }[sort];
+  return by ? [...list].sort(by) : list;
+}
+function draw() {
+  shown = filter();
+  const heads = $('#sort').value === 'book';
+  let was = null;
+  $('#cards').innerHTML = shown.map((r, i) => {
+    const b = BOOKS[r.code], head = heads && r.code !== was ? `<h2>${b.number}. ${esc(b.title)}</h2>` : '';
+    was = r.code;
+    const many = r.foes.length > 1;
+    return `${head}<button class="card ${deadly(r) ? 'deadly' : ''}" data-i="${i}">
+      <span class="pic">${thumb(r)}</span>
+      <b>${esc(r.foes[0].name)}${many ? ` <small>and ${r.foes.length - 1} more</small>` : ''}</b>
+      <span class="stats">CS ${r.foes[0].cs} &middot; EP ${r.foes[0].ep}${many ? ` <small>(${r.foes.slice(1).map((f) => `${f.cs}/${f.ep}`).join(', ')})</small>` : ''}</span>
+      <small>${heads ? '' : `Book ${b.number}, `}section ${esc(r.id)}${r.kind === 'fight' ? '' : `, ${esc(r.kind)}`}</small>
+      <span class="res" id="res-${i}">${resHtml(r)}</span></button>`;
+  }).join('');
+  $('#sum').textContent = `${shown.length} of ${rows.length} fights in ${Object.keys(BOOKS).length} books`;
+  drawTally();
+}
+$('#cards').addEventListener('click', (e) => { const c = e.target.closest('.card'); if (c) openFight(+c.dataset.i); });
+for (const id of ['#q', '#book', '#series', '#sort']) $(id).addEventListener('input', draw);
+for (const id of ['#who', '#sword', '#n']) $(id).addEventListener('input', keep);
+
+/* what the sweep found, a line for each book with fights shown and a line for all of them */
+function drawTally() {
+  const done = shown.filter((r) => results.has(r.key));
+  if (!done.length) { $('#tally').innerHTML = ''; return; }
+  const line = (name, list, cls = '') => {
+    const R = list.map((r) => results.get(r.key)), mean = (f) => R.reduce((t, x) => t + f(x), 0) / R.length;
+    const pair = (a, b, dp = 0, worseUp = false) => {
+      const x = a.toFixed(dp), y = b.toFixed(dp), d = +(b - a).toFixed(dp);
+      return `<td>${x}</td><td>${y}</td><td class="${!d ? '' : (d > 0) === worseUp ? 'worse' : 'better'}">${d ? signed(d) : ''}</td>`;
+    };
+    return `<tr class="${cls}"><td>${esc(name)}</td><td>${list.length}</td>${pair(mean((x) => lives(x.a)), mean((x) => lives(x.b)))}`
+      + pair(R.filter((x) => lives(x.a) < 50).length, R.filter((x) => lives(x.b) < 50).length, 0, true)
+      + pair(mean((x) => x.a.lost), mean((x) => x.b.lost), 1, true) + pair(mean((x) => x.a.rounds), mean((x) => x.b.rounds), 1, true) + '</tr>';
+  };
+  const codes = [...new Set(done.map((r) => r.code))];
+  const head = (t) => `<th>${t}</th><th>Yours</th><th></th>`;
+  $('#tally').innerHTML = `<table class="tally"><tr><th>Book</th><th>Fights</th>${head('Lives %')}${head('Under 50%')}${head('EP lost')}${head('Rounds')}</tr>`
+    + codes.map((c) => line(`${BOOKS[c].number}. ${BOOKS[c].title}`, done.filter((r) => r.code === c))).join('')
+    + (codes.length > 1 ? line('All', done, 'all') : '') + '</table>';
+}
+
+/* ---------- the sweep ---------- */
+$('#go').onclick = async () => {
+  if (running) { running.stop = true; return; }
+  const run = running = { stop: false }, list = shown, opts = { n: +$('#n').value, who: $('#who').value, sword: $('#sword').checked, rules };
+  results.clear(); draw();
+  $('#go').textContent = 'Stop';
+  let at = 0, last = 0;
+  const started = Date.now();
+  await trialAll(LW, BOOKS, list, Object.assign({}, opts, {
+    stop: () => run.stop,
+    each: (row, a, b) => {
+      results.set(row.key, { a, b }); at++;
+      const i = shown.indexOf(row), el = i >= 0 && $('#res-' + i);
+      if (el) el.innerHTML = resHtml(row);
+      if (Date.now() - last > 250) { last = Date.now(); $('#bar').style.width = (100 * at / list.length) + '%'; $('#prog').textContent = `${at} of ${list.length}`; }
+    },
+  }));
+  running = null;
+  $('#go').textContent = 'Run the fights shown';
+  $('#bar').style.width = '100%'; $('#prog').textContent = `${at} of ${list.length} in ${((Date.now() - started) / 1000).toFixed(0)} s`;
+  draw();
+};
+
+/* ---------- the trial rules ---------- */
+const FIELDS = [
+  { k: 'ratioCap', label: 'Combat Ratio counts up to (99: no cap)', num: true },
+  { k: 'swordCs', label: 'Sommerswerd adds (empty: its +8)', num: true, empty: true },
+  { k: 'swordGrow', label: 'It grows by, each book past 2', num: true },
+  { k: 'swordMax', label: 'and at most to', num: true },
+  { k: 'unleashRounds', label: 'Unleashed: its first rounds', num: true },
+  { k: 'unleashCs', label: 'at this bonus', num: true },
+  { k: 'undead', label: 'It doubles against the undead', opts: [['always', 'always'], ['unleashed', 'only unleashed'], ['never', 'never']] },
+  { k: 'skillBy', label: 'Weapon mastery adds this more', num: true },
+  { k: 'mindBy', label: 'Mind attack adds this more', num: true },
+  { k: 'foeCs', label: 'Every foe\'s COMBAT SKILL plus', num: true },
+  { k: 'foeEp', label: 'Every foe\'s ENDURANCE, %', num: true },
+  { k: 'heroLoss', label: 'His losses on the table, %', num: true },
+  { k: 'foeLoss', label: 'Foes\' losses on the table, %', num: true },
+  { k: 'killAs', label: 'A table\'s "killed" costs him (empty: death)', num: true, empty: true },
+];
+function drawRules() {
+  $('#rules-grid').innerHTML = FIELDS.map((f) => `<label data-k="${f.k}"><span>${esc(f.label)}</span>${f.opts
+    ? `<select data-rule="${f.k}">${f.opts.map(([v, t]) => `<option value="${v}">${esc(t)}</option>`).join('')}</select>`
+    : `<input type="number" data-rule="${f.k}">`}</label>`).join('');
+  $('#preset').innerHTML = PRESETS.map((p) => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
+  showRules();
+}
+function showRules() {
+  for (const f of FIELDS) { const el = $(`[data-rule="${f.k}"]`); el.value = rules[f.k] ?? ''; el.closest('label').classList.toggle('moved', rules[f.k] !== BASE_RULES[f.k]); }
+  const n = rulesChanged(rules).length;
+  $('#rules-n').textContent = n ? `${n} changed` : 'the engine\'s';
+  $('#preset').value = (PRESETS.find((p) => !Object.keys(BASE_RULES).some((k) => p.rules[k] !== rules[k])) || { id: '' }).id;
+}
+$('#rules-grid').addEventListener('input', (e) => {
+  const f = FIELDS.find((x) => x.k === e.target.dataset.rule);
+  if (!f) return;
+  const v = e.target.value;
+  rules = Object.assign({}, rules, { [f.k]: f.opts ? v : v === '' ? (f.empty ? null : BASE_RULES[f.k]) : +v });
+  showRules(); keep();
+});
+$('#preset').oninput = () => { rules = Object.assign({}, PRESETS.find((p) => p.id === $('#preset').value).rules); showRules(); keep(); };
+$('#rules-reset').onclick = () => { rules = Object.assign({}, BASE_RULES); showRules(); keep(); };
+const ruleWords = () => rulesChanged(rules).map((k) => `${(FIELDS.find((f) => f.k === k).label).replace(/ \(.*/, '')}: ${rules[k] ?? 'none'}`).join('; ');
+
+/* ---------- a fight's window ---------- */
+const F = { i: 0, row: null, book: null, hero: null };
+const copy = (cv) => { const c = Object.assign(document.createElement('canvas'), { width: cv.width, height: cv.height }); c.getContext('2d').drawImage(cv, 0, 0); return c; };
+const kindOf = (name) => name.toLowerCase().replace(/\([^)]*\)/g, ' ').replace(/\b\d+\b/g, ' ').replace(/\s+/g, ' ').trim();
+/* what an enemy is, by the book (about/foe-about.json, through the index), as on the picture sheet */
+const about = (code, name) => { const mine = index.foes?.[code] || {}; return mine[name] || Object.entries(mine).find(([n]) => kindOf(n) === kindOf(name))?.[1] || ''; };
+
+/* what the engine reads of this fight, in its own terms */
+function rulesOf(c, row) {
+  const ev = [].concat(c.evade || []), names = (l) => l.map(LW.itemName).join(' or ');
+  const deaf = { true: 'immune to every attack of the mind', mindblast: 'immune to Mindblast', psi: 'immune to Mindblast and Psi-surge' };
+  return [
+    c.only && `only ${names(c.only)} can be used`, c.barred && `not ${names(c.barred)}`, c.lend && `fights with ${LW.itemName(c.lend)}`,
+    ...Object.entries(c.weaponCs || {}).map(([w, n]) => `${w === '*' ? 'any weapon' : LW.itemName(w)} adds ${n} here`), c.plain && 'weapons add no bonus of their own',
+    c.csMod && `${signed(c.csMod)} COMBAT SKILL${c.csNote ? ` (${c.csNote})` : ''}`,
+    c.with === 'none' && 'bare-handed', c.with && c.with !== 'none' && `only ${LW.itemName(c.with)}`,
+    c.noEvade ? 'no evading' : ev.length && `evade${ev[0].after ? ` after round ${ev[0].after}` : ''}`,
+    c.double && 'losses doubled', (c.rounds || []).length && `${c.rounds.length} special round rule${c.rounds.length > 1 ? 's' : ''}`,
+    c.stop && 'ends early', c.points && 'scored in points', c.mind && 'a fight of the mind', c.breath && 'out of breath in time', c.keep && 'wounds kept for later', c.byHand && 'can be stopped by hand', c.noMind && 'no mind attack',
+    row.foes.some((f) => f.undead) && 'undead', ...new Set(row.foes.filter((f) => f.immune).map((f) => deaf[f.immune])), row.foes.some((f) => f.mindforce) && `mind attack -${row.foes.find((f) => f.mindforce).mindforce}`, row.foes.some((f) => f.drain) && `drains ${row.foes.find((f) => f.drain).drain} a round`,
+  ].filter(Boolean).join(' · ') || 'no rules of its own';
+}
+
+function openFight(i) {
+  F.i = i; F.row = shown[i]; F.book = BOOKS[F.row.code];
+  const r = F.row, b = F.book, sec = b.sections[r.id];
+  $('#f-title').textContent = `${b.number}. ${b.title}, section ${r.id}`;
+  $('#f-left').innerHTML = r.foes.map((f, k) => `<div class="plate" id="pl${k}"><b>${esc(f.name)}: CS ${f.cs}, EP ${f.ep}</b></div>
+      <p class="about">${esc(about(r.code, f.name) || 'Not yet said what this enemy is.')}</p>`).join('')
+    + `<p class="tags">${esc(rulesOf(sec.combat, r))}</p><details open class="text"><summary>The book, section ${esc(r.id)}</summary>${(sec.text || []).map((p) => `<p>${esc(p)}</p>`).join('')}</details>`;
+  r.foes.forEach(async (f, k) => {
+    const pl = plateOf(r, f);
+    if (!pl) return;
+    const im = new Image(); im.crop = pl.crop; im.levels = pl.levels; im.flip = pl.flip;
+    await new Promise((ok) => { im.onload = ok; im.onerror = ok; im.src = fullSrc(r, pl); });
+    const box = $('#pl' + k);
+    if (box && F.row === r && im.naturalWidth) box.prepend(copy(inkPlate(im)));
+  });
+  $('#rules-here').append($('#rules'));
+  $('#h-who').value = $('#who').value;
+  newHero();
+  $('#f-log').innerHTML = '';
+  if (!$('#fight').open) $('#fight').showModal();
+  $('#fight').scrollTop = 0;
+  showOut();
+}
+// the event comes after close(): a window opened again by then keeps its form
+$('#fight').addEventListener('close', () => { if (!$('#fight').open) $('#rules-home').append($('#rules')); });
+$('#f-close').onclick = () => $('#fight').close();
+$('#f-prev').onclick = () => { if (F.i > 0) openFight(F.i - 1); };
+$('#f-next').onclick = () => { if (F.i < shown.length - 1) openFight(F.i + 1); };
+$('#fight').addEventListener('keydown', (e) => {
+  if (e.target.matches('input, select')) return;
+  if (e.key === 'ArrowLeft') $('#f-prev').click();
+  if (e.key === 'ArrowRight') $('#f-next').click();
+});
+
+function newHero() {
+  F.hero = equipFor(LW, standIn(LW, F.book, $('#h-who').value, { sword: $('#sword').checked }), F.book.sections[F.row.id].combat);
+  drawHero();
+}
+$('#h-who').oninput = newHero;
+const has = (id) => F.hero.special.includes(id);
+// what gives a number in any fight: the engine's weaponParts, heroCS, psi, shielded and cureOf; Huntmastery spares an ambush
+const TELLS = new Set(['weaponskill', 'mindblast', 'mindshield', 'weaponmastery', 'psiSurge', 'psiScreen', 'curing', 'huntmastery', 'grandWeaponmastery', 'kaiSurge', 'kaiScreen', 'deliverance']);
+function drawHero() {
+  const h = F.hero, S = LW.SERIES[h.series], num = F.book.number;
+  $('#h-cs').value = h.cs; $('#h-ep').value = h.ep; $('#h-max').value = h.epMax;
+  $('#h-potions').value = h.backpack.filter((x) => x === 'potion').length;
+  // the weapons of the engine and of the books up to this one
+  const mine = (t) => Object.entries(t?.ITEMS || {}).filter(([, it]) => it.kind === 'weapon').map(([id]) => id);
+  const pool = [...new Set([...baseWeapons, ...h.weapons, ...Object.entries(tables).filter(([c]) => parseInt(c, 10) <= num).flatMap(([, t]) => mine(t))])];
+  const opts = (at) => `<option value="">none</option>${pool.map((w) => `<option value="${esc(w)}" ${h.weapons[at] === w ? 'selected' : ''}>${esc(LW.itemName(w))}</option>`).join('')}`;
+  $('#h-w0').innerHTML = opts(0); $('#h-w1').innerHTML = opts(1);
+  const tick = (list, on, kind) => `<div class="ticks">${list.map(([id, name, note]) => `<label><input type="checkbox" data-${kind}="${esc(id)}" ${on(id) ? 'checked' : ''}> ${esc(name)}${note ? `<span class="cs">${esc(note)}</span>` : ''}</label>`).join('')}</div>`;
+  const named = (d) => [d, LW.DISCIPLINES[d].name, TELLS.has(d) ? 'in a fight' : ''];
+  // a Magnakai Discipline chosen still gives its numbers in the Grand Master series (ADR 0011), but not in the New Order
+  const more = h.series === 'grandmaster' ? `<h3>Magnakai Disciplines he chose</h3>${tick(LW.SERIES.magnakai.list.map(named), (d) => (h.magnakai || []).includes(d), 'mag')}` : '';
+  const earns = S.earn != null ? ` Each past the first ${S.earn} adds 1 CS and 2 EP.` : '';
+  $('#h-discs').innerHTML = `<h3>${esc(S.name)} Disciplines</h3><small class="hint">Only those marked add a number of their own; the others tell only where a fight's own rules name them.${earns}</small>` + `${tick(S.list.map(named), (d) => (h[S.field] || []).includes(d), 'disc')}${more}`;
+  const field = S.arms ? S.arms.field : 'weaponskill', skilled = (w) => [].concat(h[field] || []).includes(w);
+  $('#h-skill').innerHTML = `<h3>Skilled with</h3>${tick(baseWeapons.map((w) => [w, LW.itemName(w)]), skilled, 'skill')}`;
+  // the Special Items that tell in a fight, of this book and those before it, and any he holds
+  const fights = (it) => it.kind === 'special' && (it.cs || it.fightCs || it.weapon || it.ep);
+  // a Kai Weapon is the New Order's alone (ADR 0047)
+  const seen = new Set(h.series === 'neworder' ? [] : LW.KAI_WEAPONS.map((k) => k.id)), items = [];
+  const add = (id, it) => { if (!seen.has(id) && it && fights(it)) { seen.add(id); items.push([id, it.name, [it.cs && `CS +${it.cs}`, it.fightCs && `CS +${it.fightCs}`, it.ep && `EP +${it.ep}`].filter(Boolean)[0] || '']); } };
+  Object.entries(LW.ITEMS).filter(([id]) => !Object.values(tables).some((t) => t && t.ITEMS && id in t.ITEMS)).forEach(([id, it]) => add(id, it));
+  Object.entries(tables).filter(([c]) => parseInt(c, 10) <= num).sort(([a], [b]) => parseInt(a, 10) - parseInt(b, 10)).forEach(([, t]) => Object.entries(t?.ITEMS || {}).forEach(([id, it]) => add(id, it)));
+  h.special.forEach((id) => add(id, LW.ITEMS[id]));
+  $('#h-items').innerHTML = `<h3>Special Items that tell in a fight</h3>${tick(items, has, 'item')}`;
+}
+$('#fight').addEventListener('input', (e) => {
+  const h = F.hero, t = e.target, S = h && LW.SERIES[h.series];
+  if (!h) return;
+  if (t.id === 'h-cs') h.cs = +t.value;
+  if (t.id === 'h-ep') h.ep = +t.value;
+  if (t.id === 'h-max') h.epMax = +t.value;
+  if (t.id === 'h-w0' || t.id === 'h-w1') h.weapons = [$('#h-w0').value, $('#h-w1').value].filter(Boolean);
+  if (t.id === 'h-potions') h.backpack = [...h.backpack.filter((x) => x !== 'potion'), ...new Array(Math.max(0, +t.value)).fill('potion')];
+  const flip = (list, id, on) => (on ? [...new Set([...(list || []), id])] : (list || []).filter((x) => x !== id));
+  // a Discipline can move his scores and his weapon skill, so the form is drawn again
+  if (t.dataset.disc) { setDiscipline(LW, h, S.field, t.dataset.disc, t.checked); drawHero(); }
+  if (t.dataset.mag) { setDiscipline(LW, h, 'magnakai', t.dataset.mag, t.checked); drawHero(); }
+  if (t.dataset.item) { if (t.checked) LW.putItem(h, t.dataset.item); else LW.dropItem(h, t.dataset.item); $('#h-ep').value = h.ep; $('#h-max').value = h.epMax; }
+  if (t.dataset.skill) {
+    // Weaponskill is in one weapon alone; the masteries are lists
+    if (S.arms) h[S.arms.field] = flip(h[S.arms.field], t.dataset.skill, t.checked);
+    else { h.weaponskill = t.checked ? t.dataset.skill : null; document.querySelectorAll('[data-skill]').forEach((x) => { x.checked = x === t && t.checked; }); }
+  }
+});
+const tactics = () => ({ mind: $('#t-mind').value, drinkAt: +$('#t-drink').value || 0, evadeAt: +$('#t-evade').value || 0 });
+/* who he was, in a line, for a result kept beside others */
+function heroWords() {
+  const h = F.hero, S = LW.SERIES[h.series], t = tactics();
+  return [`CS ${h.cs}, EP ${h.ep}`, `${(h[S.field] || []).length} Disciplines`, h.weapons.map(LW.itemName).join(', ') || 'unarmed', h.special.filter((s) => (LW.ITEMS[s] || {}).weapon || (LW.ITEMS[s] || {}).fightCs).map(LW.itemName).join(', '),
+    t.mind !== 'full' && `mind ${t.mind}`, t.drinkAt && `drinks at ${t.drinkAt}`, t.evadeAt && `evades at ${t.evadeAt}`].filter(Boolean).join('; ');
+}
+
+/* The results stay until cleared or another fight is opened, so a change of items or Disciplines can be read
+   against the run before it. */
+const out = { key: null, list: [] };
+function showOut(ran) {
+  if (out.key !== F.row.key) { out.key = F.row.key; out.list = []; }
+  if (ran) requestAnimationFrame(() => $('#f-out').scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
+  const pct = (x, k) => (100 * x[k] / x.n).toFixed(1);
+  const parts = (x) => x.parts.map((p) => `${p.label} ${signed(p.n)}`).join(', ');
+  $('#f-out').innerHTML = !out.list.length ? '' : `<table><tr><th></th><th>Ratio</th><th>Win %</th><th>Dead %</th><th>Ended %</th><th>Evaded %</th><th>Rounds</th><th>EP lost</th><th>EP left</th></tr>${out.list.map((o) => `<tr class="${o.trial ? 'trial' : ''}" title="${esc(parts(o.r))}">
+      <td>${o.trial ? 'Your rules' : 'The engine'}<small>${esc(o.who)}</small>${o.trial ? `<small>${esc(o.rules)}</small>` : ''}<small>${esc(parts(o.r))}</small>${o.r.barred ? '<small class="capped">Unarmed: the rules of this fight let him use none of his weapons</small>' : ''}</td>
+      <td>${signed(o.r.ratio)}${o.r.uncapped > o.r.ratio ? `<small class="capped">capped, ${signed(o.r.uncapped)} before it</small>` : ''}</td><td>${pct(o.r, 'win')}</td><td>${pct(o.r, 'dead')}</td><td>${pct(o.r, 'stop')}${o.r.long ? ` <small>${pct(o.r, 'long')} no end</small>` : ''}</td><td>${pct(o.r, 'evade')}</td>
+      <td>${o.r.rounds.toFixed(1)}</td><td>${o.r.lost.toFixed(1)}</td><td>${o.r.left.toFixed(1)}</td></tr>`).join('')}</table>`;
+}
+$('#f-run').onclick = () => {
+  const b = $('#f-run'); b.disabled = true; b.textContent = 'Running...';
+  // the page paints the button first: a long trial holds it for a moment
+  setTimeout(() => {
+    try {
+      const opts = { n: +$('#f-n').value, tactics: tactics() }, who = heroWords(), row = F.row;
+      const add = (rs, isTrial) => out.list.unshift({ trial: isTrial, who, rules: ruleWords(), r: trial(LW, F.book, row.id, F.hero, { ...opts, rules: rs }) });
+      if (rulesChanged(rules).length) add(rules, true);
+      add({}, false);
+      showOut(true);
+    } catch (e) { toast(`The fight would not run: ${e.message}`, 7000); }
+    b.disabled = false; b.textContent = 'Run the trial';
+  });
+};
+let onceSeed = 1;
+$('#f-once').onclick = () => {
+  try {
+    const r = oneFight(LW, F.book, F.row.id, F.hero, { seed: onceSeed++, rules, tactics: tactics() });
+    $('#f-log').innerHTML = `<div class="fightlog">${r.log.map((l) => esc(l)).join('<br>')}<br><b>${esc(r.over)}, after ${r.rounds} rounds, with ${r.ep} ENDURANCE</b></div>`;
+  } catch (e) { toast(`The fight would not run: ${e.message}`, 7000); }
+};
+$('#f-clear').onclick = () => { out.list = []; showOut(); };
+
+let toastTimer;
+function toast(t, ms = 3000) {
+  const el = $('#toast'); el.textContent = t; el.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, ms);
+}
+load().catch((e) => { $('#sum').textContent = `Could not read the books: ${e.message}`; });
+</script>
+</body>
+</html>

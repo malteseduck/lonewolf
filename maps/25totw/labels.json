@@ -1,0 +1,1006 @@
+[
+ {
+  "text": "gazad helkona",
+  "box": [
+   225,
+   48,
+   844,
+   136
+  ],
+  "slant": -1.1,
+  "conf": 0.99,
+  "retype": false
+ },
+ {
+  "text": "& surrounding territories",
+  "box": [
+   228,
+   128,
+   835,
+   168
+  ],
+  "slant": -0.1,
+  "conf": 0.97,
+  "retype": false
+ },
+ {
+  "text": "naogizaga",
+  "box": [
+   553,
+   233,
+   814,
+   275
+  ],
+  "slant": 0.3,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    682.5,
+    257.4
+   ],
+   "angle": 0.07,
+   "length": 267.0,
+   "thick": 40.9,
+   "box": [
+    553,
+    233,
+    814,
+    275
+   ]
+  }
+ },
+ {
+  "text": "kagazitzaga",
+  "box": [
+   1691,
+   238,
+   1895,
+   332
+  ],
+  "slant": -19.0,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1796.4,
+    297.7
+   ],
+   "angle": -18.26,
+   "length": 226.1,
+   "thick": 68.0,
+   "box": [
+    1691,
+    238,
+    1895,
+    332
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "mozgoar",
+  "box": [
+   272,
+   375,
+   480,
+   416
+  ],
+  "slant": -0.6,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    374.4,
+    391.6
+   ],
+   "angle": -0.73,
+   "length": 213.1,
+   "thick": 42.8,
+   "box": [
+    272,
+    375,
+    480,
+    416
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "gazad helkona",
+  "box": [
+   1392,
+   399,
+   1701,
+   441
+  ],
+  "slant": -0.3,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1550.9,
+    421.2
+   ],
+   "angle": -0.61,
+   "length": 306.1,
+   "thick": 37.4,
+   "box": [
+    1392,
+    399,
+    1701,
+    441
+   ]
+  }
+ },
+ {
+  "text": "zandzordak mtns",
+  "box": [
+   413,
+   478,
+   722,
+   528
+  ],
+  "slant": 3.7,
+  "conf": 0.92,
+  "retype": true,
+  "ink": {
+   "at": [
+    566.3,
+    499.4
+   ],
+   "angle": 2.19,
+   "length": 311.3,
+   "thick": 60.1,
+   "box": [
+    413,
+    478,
+    722,
+    528
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "kokozritzaga",
+  "box": [
+   749,
+   571,
+   975,
+   604
+  ],
+  "slant": 1.1,
+  "conf": 0.93,
+  "retype": true,
+  "ink": {
+   "at": [
+    861.6,
+    587.4
+   ],
+   "angle": -0.39,
+   "length": 233.0,
+   "thick": 40.2,
+   "box": [
+    749,
+    571,
+    975,
+    604
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "shezar hills",
+  "box": [
+   1566,
+   570,
+   1761,
+   602
+  ],
+  "slant": -89.0,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1663.9,
+    584.3
+   ],
+   "angle": 0.5,
+   "length": 194.0,
+   "thick": 23.8,
+   "box": [
+    1566,
+    570,
+    1761,
+    602
+   ]
+  }
+ },
+ {
+  "text": "ghatan",
+  "box": [
+   663,
+   625,
+   855,
+   680
+  ],
+  "slant": -1.9,
+  "conf": 0.96,
+  "retype": true,
+  "ink": {
+   "at": [
+    757.8,
+    649.9
+   ],
+   "angle": -2.83,
+   "length": 200.2,
+   "thick": 54.3,
+   "box": [
+    663,
+    625,
+    855,
+    680
+   ]
+  }
+ },
+ {
+  "text": "R. ghat",
+  "box": [
+   286,
+   657,
+   402,
+   752
+  ],
+  "slant": -34.5,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    343.6,
+    696.5
+   ],
+   "angle": -34.5,
+   "length": 148.3,
+   "thick": 42.7,
+   "box": [
+    286,
+    657,
+    402,
+    752
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "nadulritzaga mtns",
+  "box": [
+   692,
+   718,
+   992,
+   881
+  ],
+  "slant": 26.0,
+  "conf": 0.94,
+  "retype": true,
+  "ink": {
+   "at": [
+    835.2,
+    814.0
+   ],
+   "angle": 26.0,
+   "length": 338.0,
+   "thick": 215.6,
+   "box": [
+    692,
+    718,
+    992,
+    881
+   ]
+  },
+  "angle": 26.0,
+  "joined": true
+ },
+ {
+  "text": "cragmantle",
+  "box": [
+   1151,
+   683,
+   1399,
+   721
+  ],
+  "slant": -0.8,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1274.2,
+    697.8
+   ],
+   "angle": 1.19,
+   "length": 255.0,
+   "thick": 42.4,
+   "box": [
+    1151,
+    683,
+    1399,
+    721
+   ]
+  }
+ },
+ {
+  "text": "ogshezar mtns",
+  "box": [
+   1531,
+   720,
+   1778,
+   838
+  ],
+  "slant": 20.6,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    1661.2,
+    754.3
+   ],
+   "angle": 20.6,
+   "length": 267.9,
+   "thick": 139.9,
+   "box": [
+    1531,
+    720,
+    1778,
+    838
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "torgar",
+  "box": [
+   396,
+   800,
+   542,
+   835
+  ],
+  "slant": 0.6,
+  "conf": 0.96,
+  "retype": true,
+  "ink": {
+   "at": [
+    465.8,
+    814.7
+   ],
+   "angle": 2.81,
+   "length": 149.0,
+   "thick": 33.8,
+   "box": [
+    396,
+    800,
+    542,
+    835
+   ]
+  }
+ },
+ {
+  "text": "vorgta forest",
+  "box": [
+   1244,
+   820,
+   1474,
+   847
+  ],
+  "slant": 0.0,
+  "conf": 0.94,
+  "retype": true,
+  "ink": {
+   "at": [
+    1362.5,
+    831.6
+   ],
+   "angle": -1.03,
+   "length": 227.2,
+   "thick": 27.2,
+   "box": [
+    1244,
+    820,
+    1474,
+    847
+   ]
+  }
+ },
+ {
+  "text": "R. torg",
+  "box": [
+   176,
+   843,
+   289,
+   868
+  ],
+  "slant": 0.0,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    233.0,
+    856.4
+   ],
+   "angle": 0.41,
+   "length": 106.1,
+   "thick": 20.7,
+   "box": [
+    176,
+    843,
+    289,
+    868
+   ]
+  }
+ },
+ {
+  "text": "zuttezna",
+  "box": [
+   843,
+   915,
+   1002,
+   946
+  ],
+  "slant": 2.2,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    924.1,
+    932.7
+   ],
+   "angle": 2.5,
+   "length": 157.8,
+   "thick": 34.0,
+   "box": [
+    843,
+    915,
+    1002,
+    946
+   ]
+  }
+ },
+ {
+  "text": "skaror trail",
+  "box": [
+   1700,
+   890,
+   1882,
+   1051
+  ],
+  "slant": 39.7,
+  "conf": 0.88,
+  "retype": true,
+  "ink": {
+   "at": [
+    1773.8,
+    995.9
+   ],
+   "angle": 38.55,
+   "length": 232.8,
+   "thick": 90.3,
+   "box": [
+    1700,
+    890,
+    1882,
+    1051
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "moggador forest",
+  "box": [
+   188,
+   953,
+   367,
+   1016
+  ],
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    272.9,
+    983.1
+   ],
+   "angle": 0.28,
+   "length": 178.0,
+   "thick": 68.6,
+   "box": [
+    188,
+    953,
+    367,
+    1016
+   ]
+  },
+  "lines": [
+   "moggador",
+   "forest"
+  ]
+ },
+ {
+  "text": "agna-kor-kuzim",
+  "box": [
+   1060,
+   950,
+   1214,
+   1205
+  ],
+  "slant": 56.9,
+  "conf": 0.91,
+  "retype": true,
+  "ink": {
+   "at": [
+    1145.9,
+    1073.2
+   ],
+   "angle": 59.82,
+   "length": 295.5,
+   "thick": 37.5,
+   "box": [
+    1060,
+    950,
+    1214,
+    1205
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "skaror",
+  "box": [
+   1208,
+   945,
+   1380,
+   979
+  ],
+  "slant": 0.0,
+  "conf": 0.97,
+  "retype": true,
+  "ink": {
+   "at": [
+    1293.0,
+    958.0
+   ],
+   "angle": 0.92,
+   "length": 170.4,
+   "thick": 32.6,
+   "box": [
+    1208,
+    945,
+    1380,
+    979
+   ]
+  }
+ },
+ {
+  "text": "akamazim forest",
+  "box": [
+   557,
+   999,
+   848,
+   1030
+  ],
+  "slant": 0.9,
+  "conf": 0.97,
+  "retype": true,
+  "ink": {
+   "at": [
+    702.0,
+    1011.3
+   ],
+   "angle": 0.13,
+   "length": 298.0,
+   "thick": 33.2,
+   "box": [
+    557,
+    999,
+    848,
+    1030
+   ]
+  }
+ },
+ {
+  "text": "the hammerlands",
+  "box": [
+   214,
+   1093,
+   670,
+   1135
+  ],
+  "slant": 0.1,
+  "conf": 0.96,
+  "retype": true,
+  "ink": {
+   "at": [
+    442.5,
+    1111.4
+   ],
+   "angle": -0.42,
+   "length": 460.9,
+   "thick": 45.9,
+   "box": [
+    214,
+    1093,
+    670,
+    1135
+   ]
+  }
+ },
+ {
+  "text": "ogian mtns",
+  "box": [
+   1436,
+   1142,
+   1622,
+   1237
+  ],
+  "slant": -20.7,
+  "conf": 0.95,
+  "retype": true,
+  "ink": {
+   "at": [
+    1518.6,
+    1164.8
+   ],
+   "angle": -20.7,
+   "length": 212.4,
+   "thick": 98.0,
+   "box": [
+    1436,
+    1142,
+    1622,
+    1237
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "tegaarn mtns",
+  "box": [
+   447,
+   1222,
+   684,
+   1252
+  ],
+  "slant": 0.5,
+  "conf": 0.93,
+  "retype": true,
+  "ink": {
+   "at": [
+    565.5,
+    1236.9
+   ],
+   "angle": 0.41,
+   "length": 237.2,
+   "thick": 37.8,
+   "box": [
+    447,
+    1222,
+    684,
+    1252
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "blackshroud trail",
+  "box": [
+   693,
+   1295,
+   992,
+   1371
+  ],
+  "slant": -7.9,
+  "conf": 0.89,
+  "retype": true,
+  "ink": {
+   "at": [
+    841.1,
+    1319.4
+   ],
+   "angle": -7.9,
+   "length": 311.3,
+   "thick": 89.0,
+   "box": [
+    693,
+    1295,
+    992,
+    1371
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "cetza",
+  "box": [
+   205,
+   1386,
+   310,
+   1418
+  ],
+  "slant": 1.0,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    259.5,
+    1399.1
+   ],
+   "angle": 0.37,
+   "length": 107.1,
+   "thick": 23.6,
+   "box": [
+    205,
+    1386,
+    310,
+    1418
+   ]
+  }
+ },
+ {
+  "text": "blackshroud",
+  "box": [
+   560,
+   1382,
+   826,
+   1438
+  ],
+  "slant": 1.7,
+  "conf": 0.83,
+  "retype": true,
+  "ink": {
+   "at": [
+    692.4,
+    1409.3
+   ],
+   "angle": 0.51,
+   "length": 272.7,
+   "thick": 63.3,
+   "box": [
+    560,
+    1382,
+    826,
+    1438
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "coniferous forest",
+  "box": [
+   265,
+   1474,
+   451,
+   1550
+  ],
+  "slant": 0,
+  "conf": 0.99,
+  "retype": false
+ },
+ {
+  "text": "petrified forest",
+  "box": [
+   556,
+   1475,
+   715,
+   1552
+  ],
+  "slant": 0,
+  "conf": 0.93,
+  "retype": false
+ },
+ {
+  "text": "tracks",
+  "box": [
+   849,
+   1487,
+   967,
+   1533
+  ],
+  "slant": 0.6,
+  "conf": 0.99,
+  "retype": false
+ },
+ {
+  "text": "wasteland",
+  "box": [
+   1167,
+   1488,
+   1344,
+   1522
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "volcanoes",
+  "box": [
+   1457,
+   1487,
+   1622,
+   1525
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "swamp",
+  "box": [
+   1751,
+   1492,
+   1872,
+   1528
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "50",
+  "box": [
+   1384,
+   1546,
+   1429,
+   1571
+  ],
+  "slant": 1.9,
+  "conf": 0.87,
+  "retype": false
+ },
+ {
+  "text": "100",
+  "box": [
+   1528,
+   1545,
+   1585,
+   1570
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "mountains",
+  "box": [
+   271,
+   1567,
+   450,
+   1604
+  ],
+  "slant": -0.0,
+  "conf": 0.99,
+  "retype": false
+ },
+ {
+  "text": "hills",
+  "box": [
+   561,
+   1562,
+   639,
+   1608
+  ],
+  "slant": -90.0,
+  "conf": 0.77,
+  "retype": false
+ },
+ {
+  "text": "plains",
+  "box": [
+   854,
+   1562,
+   956,
+   1611
+  ],
+  "slant": 0.0,
+  "conf": 0.98,
+  "retype": false
+ },
+ {
+  "text": "scale",
+  "box": [
+   1257,
+   1590,
+   1341,
+   1615
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "in",
+  "box": [
+   1462,
+   1589,
+   1500,
+   1617
+  ],
+  "slant": 1.5,
+  "conf": 0.99,
+  "retype": false
+ },
+ {
+  "text": "miles",
+  "box": [
+   1613,
+   1586,
+   1709,
+   1621
+  ],
+  "slant": -88.2,
+  "conf": 0.84,
+  "retype": false
+ },
+ {
+  "text": "R. brol",
+  "box": [
+   270,
+   1292,
+   372,
+   1332
+  ],
+  "slant": 18.0,
+  "retype": true,
+  "found": "agent",
+  "ink": {
+   "at": [
+    321.2,
+    1311.5
+   ],
+   "angle": -4.75,
+   "length": 110.9,
+   "thick": 55.4,
+   "box": [
+    270,
+    1292,
+    372,
+    1332
+   ]
+  },
+  "clip": true,
+  "set": {
+   "at": [
+    321,
+    1312
+   ],
+   "size": 30,
+   "angle": 12
+  }
+ },
+ {
+  "text": "n",
+  "box": [
+   1352,
+   130,
+   1380,
+   160
+  ],
+  "retype": false
+ },
+ {
+  "text": "0",
+  "box": [
+   1250,
+   1545,
+   1272,
+   1570
+  ],
+  "retype": false
+ },
+ {
+  "text": "150",
+  "box": [
+   1680,
+   1545,
+   1730,
+   1570
+  ],
+  "retype": false
+ }
+]

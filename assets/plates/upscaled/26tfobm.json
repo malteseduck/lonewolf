@@ -1,0 +1,16 @@
+{
+ "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
+ "srcs": [
+  "data/projectaon/26tfobm/ill1.png",
+  "data/projectaon/26tfobm/ill10.png",
+  "data/projectaon/26tfobm/ill13.png",
+  "data/projectaon/26tfobm/ill16.png",
+  "data/projectaon/26tfobm/ill19.png",
+  "data/projectaon/26tfobm/ill2.png",
+  "data/projectaon/26tfobm/ill3.png",
+  "data/projectaon/26tfobm/ill6.png",
+  "data/projectaon/26tfobm/ill7.png",
+  "data/projectaon/26tfobm/ill8.png",
+  "data/projectaon/26tfobm/ill9.png"
+ ]
+}

@@ -379,6 +379,8 @@ function openIcons() {  // every icon the player draws beside the books' items: 
   openInline({ code: '' }, '/tools/admin/icons.html?embed=1', 'Player icons');
 }
 $('[data-open="icons"]').onclick = openIcons;
+// every fight of every book, and a trial of any of them under rules of your own (fightlist.html, fightlab.js)
+$('[data-open="fightlist"]').onclick = () => openInline({ code: '' }, '/tools/admin/fightlist.html?embed=1', 'All fights');
 // every picture in art/: its link, none, or made with AI and moved into the committed library (ADR 0038, 0042)
 $('[data-open="sources"]').onclick = () => openInline({ code: '' }, '/tools/admin/sources.html?embed=1', 'Picture sources');
 // Lone Wolf on the title page and the Kai panel, baked into assets/hero/ (hero.html)

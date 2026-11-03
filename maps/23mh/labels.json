@@ -1,0 +1,1181 @@
+[
+ {
+  "text": "The Suncoast",
+  "box": [
+   361,
+   80,
+   479,
+   201
+  ],
+  "slant": 45.7,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    419.2,
+    140.6
+   ],
+   "angle": 46.45,
+   "length": 133.0,
+   "thick": 19.6,
+   "box": [
+    361,
+    80,
+    479,
+    201
+   ]
+  }
+ },
+ {
+  "text": "The Dammerdons",
+  "box": [
+   1102,
+   110,
+   1296,
+   225
+  ],
+  "slant": 25.8,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1198.5,
+    166.2
+   ],
+   "angle": 25.79,
+   "length": 190.5,
+   "thick": 20.8,
+   "box": [
+    1102,
+    110,
+    1296,
+    225
+   ]
+  }
+ },
+ {
+  "text": "DENZH",
+  "box": [
+   1261,
+   93,
+   1346,
+   122
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1304.0,
+    108.5
+   ],
+   "angle": -0.34,
+   "length": 76.1,
+   "thick": 20.6,
+   "box": [
+    1261,
+    93,
+    1346,
+    122
+   ]
+  }
+ },
+ {
+  "text": "Gt. Lunarlian Plain",
+  "box": [
+   1389,
+   84,
+   1581,
+   200
+  ],
+  "slant": 26.9,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1484.7,
+    142.6
+   ],
+   "angle": 26.53,
+   "length": 191.4,
+   "thick": 19.3,
+   "box": [
+    1389,
+    84,
+    1581,
+    200
+   ]
+  }
+ },
+ {
+  "text": "Flint Is.",
+  "box": [
+   192,
+   148,
+   279,
+   183
+  ],
+  "slant": 1.7,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    236.5,
+    167.8
+   ],
+   "angle": 2.36,
+   "length": 73.6,
+   "thick": 21.3,
+   "box": [
+    192,
+    148,
+    279,
+    183
+   ]
+  }
+ },
+ {
+  "text": "R.Inkil",
+  "box": [
+   1766,
+   172,
+   1841,
+   202
+  ],
+  "slant": 1.5,
+  "conf": 0.97,
+  "retype": true,
+  "ink": {
+   "at": [
+    1799.1,
+    192.3
+   ],
+   "angle": 1.5,
+   "length": 73.7,
+   "thick": 27.4,
+   "box": [
+    1766,
+    172,
+    1841,
+    202
+   ]
+  }
+ },
+ {
+  "text": "Sheasu Channel",
+  "box": [
+   458,
+   202,
+   512,
+   371
+  ],
+  "slant": 8.1,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    483.8,
+    287.6
+   ],
+   "angle": -80.72,
+   "length": 158.7,
+   "thick": 19.4,
+   "box": [
+    458,
+    202,
+    512,
+    371
+   ]
+  }
+ },
+ {
+  "text": "R.Huomi",
+  "box": [
+   657,
+   224,
+   758,
+   288
+  ],
+  "slant": -22.2,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    708.2,
+    256.4
+   ],
+   "angle": -23.56,
+   "length": 84.2,
+   "thick": 21.3,
+   "box": [
+    657,
+    224,
+    758,
+    288
+   ]
+  }
+ },
+ {
+  "text": "Sheasu",
+  "box": [
+   319,
+   254,
+   404,
+   288
+  ],
+  "slant": 2.5,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    362.6,
+    271.5
+   ],
+   "angle": 2.19,
+   "length": 74.7,
+   "thick": 21.5,
+   "box": [
+    319,
+    254,
+    404,
+    288
+   ]
+  }
+ },
+ {
+  "text": "Battle Pass",
+  "box": [
+   1689,
+   263,
+   1807,
+   290
+  ],
+  "slant": -0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1747.5,
+    277.0
+   ],
+   "angle": 0.01,
+   "length": 109.0,
+   "thick": 20.0,
+   "box": [
+    1689,
+    263,
+    1807,
+    290
+   ]
+  }
+ },
+ {
+  "text": "Stonara Is.",
+  "box": [
+   198,
+   298,
+   317,
+   324
+  ],
+  "slant": 0.2,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    257.0,
+    311.0
+   ],
+   "angle": 0.17,
+   "length": 110.0,
+   "thick": 18.3,
+   "box": [
+    198,
+    298,
+    317,
+    324
+   ]
+  }
+ },
+ {
+  "text": "BAKHASA",
+  "box": [
+   1192,
+   291,
+   1314,
+   324
+  ],
+  "slant": -0.2,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1256.8,
+    308.5
+   ],
+   "angle": -1.06,
+   "length": 116.0,
+   "thick": 21.4,
+   "box": [
+    1192,
+    291,
+    1314,
+    324
+   ]
+  }
+ },
+ {
+  "text": "JAROC",
+  "box": [
+   1565,
+   292,
+   1644,
+   321
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1606.3,
+    307.5
+   ],
+   "angle": -1.29,
+   "length": 75.0,
+   "thick": 22.5,
+   "box": [
+    1565,
+    292,
+    1644,
+    321
+   ]
+  }
+ },
+ {
+  "text": "MYDNIGHT",
+  "box": [
+   345,
+   383,
+   482,
+   418
+  ],
+  "slant": -1.1,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    409.1,
+    401.8
+   ],
+   "angle": -0.89,
+   "length": 136.1,
+   "thick": 20.7,
+   "box": [
+    345,
+    383,
+    482,
+    418
+   ]
+  }
+ },
+ {
+  "text": "unexplored",
+  "box": [
+   832,
+   379,
+   961,
+   412
+  ],
+  "slant": -0.9,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    897.6,
+    396.5
+   ],
+   "angle": -1.22,
+   "length": 119.4,
+   "thick": 24.7,
+   "box": [
+    832,
+    379,
+    961,
+    412
+   ]
+  }
+ },
+ {
+  "text": "Darkwall Mtns",
+  "box": [
+   1776,
+   401,
+   1899,
+   568
+  ],
+  "slant": -32.4,
+  "conf": 0.97,
+  "retype": true,
+  "ink": {
+   "at": [
+    1833.3,
+    474.8
+   ],
+   "angle": 58.07,
+   "length": 182.4,
+   "thick": 21.4,
+   "box": [
+    1776,
+    401,
+    1899,
+    568
+   ]
+  }
+ },
+ {
+  "text": "Gt. Forest of Kelderwood",
+  "box": [
+   658,
+   497,
+   946,
+   529
+  ],
+  "slant": 0.3,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    805.5,
+    517.2
+   ],
+   "angle": -0.15,
+   "length": 287.0,
+   "thick": 30.4,
+   "box": [
+    658,
+    497,
+    946,
+    529
+   ]
+  }
+ },
+ {
+  "text": "R.Tehda",
+  "box": [
+   1149,
+   591,
+   1233,
+   675
+  ],
+  "slant": -45.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1197.1,
+    629.0
+   ],
+   "angle": -43.06,
+   "length": 92.3,
+   "thick": 22.6,
+   "box": [
+    1149,
+    591,
+    1233,
+    675
+   ]
+  }
+ },
+ {
+  "text": "The Doomlands of Naaros",
+  "box": [
+   1565,
+   569,
+   1773,
+   628
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": true,
+  "lines": [
+   "The Doomlands of",
+   "Naaros"
+  ],
+  "ink": {
+   "at": [
+    1673.0,
+    598.8
+   ],
+   "angle": 0.47,
+   "length": 206.4,
+   "thick": 51.1,
+   "box": [
+    1565,
+    569,
+    1773,
+    628
+   ]
+  }
+ },
+ {
+  "text": "Morabi Is.",
+  "box": [
+   219,
+   613,
+   329,
+   637
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    274.6,
+    625.6
+   ],
+   "angle": 0.81,
+   "length": 105.0,
+   "thick": 20.2,
+   "box": [
+    219,
+    613,
+    329,
+    637
+   ]
+  }
+ },
+ {
+  "text": "CENTRAL SOUTHERN MAGNAMUND",
+  "box": [
+   1122,
+   818,
+   1878,
+   962
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": false,
+  "lines": [
+   "CENTRAL SOUTHERN",
+   "MAGNAMUND"
+  ]
+ },
+ {
+  "text": "R.Ioma",
+  "box": [
+   343,
+   845,
+   429,
+   913
+  ],
+  "slant": -30.6,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    386.5,
+    879.4
+   ],
+   "angle": -31.6,
+   "length": 70.4,
+   "thick": 19.0,
+   "box": [
+    343,
+    845,
+    429,
+    913
+   ]
+  }
+ },
+ {
+  "text": "Ioma Range",
+  "box": [
+   438,
+   877,
+   558,
+   981
+  ],
+  "slant": 38.9,
+  "conf": 0.83,
+  "retype": true,
+  "ink": {
+   "at": [
+    490.3,
+    932.4
+   ],
+   "angle": 39.23,
+   "length": 140.3,
+   "thick": 34.2,
+   "box": [
+    438,
+    877,
+    558,
+    981
+   ]
+  }
+ },
+ {
+  "text": "Golden Plain",
+  "box": [
+   644,
+   908,
+   777,
+   939
+  ],
+  "slant": 1.1,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    709.5,
+    924.1
+   ],
+   "angle": 0.27,
+   "length": 123.0,
+   "thick": 18.4,
+   "box": [
+    644,
+    908,
+    777,
+    939
+   ]
+  }
+ },
+ {
+  "text": "CAVALIA",
+  "box": [
+   320,
+   965,
+   428,
+   1012
+  ],
+  "slant": 3.1,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    377.1,
+    989.3
+   ],
+   "angle": 0.79,
+   "length": 108.2,
+   "thick": 24.0,
+   "box": [
+    320,
+    965,
+    428,
+    1012
+   ]
+  }
+ },
+ {
+  "text": "R.Dwerlir",
+  "box": [
+   727,
+   962,
+   846,
+   1034
+  ],
+  "slant": 18.7,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    792.1,
+    1004.1
+   ],
+   "angle": 18.93,
+   "length": 121.2,
+   "thick": 32.4,
+   "box": [
+    727,
+    962,
+    846,
+    1034
+   ]
+  }
+ },
+ {
+  "text": "Plains",
+  "box": [
+   1411,
+   1018,
+   1490,
+   1050
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "Hills",
+  "box": [
+   1698,
+   1016,
+   1758,
+   1047
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "Tentarias",
+  "box": [
+   1047,
+   1071,
+   1159,
+   1095
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1097.4,
+    1084.6
+   ],
+   "angle": 0.85,
+   "length": 91.1,
+   "thick": 18.0,
+   "box": [
+    1047,
+    1071,
+    1159,
+    1095
+   ]
+  }
+ },
+ {
+  "text": "VAREDO",
+  "box": [
+   399,
+   1091,
+   497,
+   1119
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    448.6,
+    1105.8
+   ],
+   "angle": -0.91,
+   "length": 89.1,
+   "thick": 21.1,
+   "box": [
+    399,
+    1091,
+    497,
+    1119
+   ]
+  }
+ },
+ {
+  "text": "SEROA",
+  "box": [
+   806,
+   1096,
+   888,
+   1124
+  ],
+  "slant": 0.5,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    851.0,
+    1110.9
+   ],
+   "angle": -1.03,
+   "length": 80.2,
+   "thick": 20.9,
+   "box": [
+    806,
+    1096,
+    888,
+    1124
+   ]
+  }
+ },
+ {
+  "text": "Mountains",
+  "box": [
+   1414,
+   1098,
+   1546,
+   1126
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "Desert",
+  "box": [
+   1699,
+   1096,
+   1779,
+   1124
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "OBERRA",
+  "box": [
+   659,
+   1157,
+   753,
+   1185
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    706.0,
+    1171.5
+   ],
+   "angle": -0.14,
+   "length": 86.0,
+   "thick": 19.2,
+   "box": [
+    659,
+    1157,
+    753,
+    1185
+   ]
+  }
+ },
+ {
+  "text": "R.Sero",
+  "box": [
+   661,
+   1196,
+   737,
+   1264
+  ],
+  "slant": -38.4,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    693.5,
+    1239.2
+   ],
+   "angle": -40.98,
+   "length": 86.2,
+   "thick": 27.2,
+   "box": [
+    661,
+    1196,
+    737,
+    1264
+   ]
+  }
+ },
+ {
+  "text": "Wasteland",
+  "box": [
+   1413,
+   1172,
+   1541,
+   1200
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "Chasm",
+  "box": [
+   1700,
+   1170,
+   1785,
+   1199
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "Lucien Plain",
+  "box": [
+   408,
+   1215,
+   539,
+   1243
+  ],
+  "slant": 0.1,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    473.4,
+    1229.5
+   ],
+   "angle": -1.38,
+   "length": 119.3,
+   "thick": 18.3,
+   "box": [
+    408,
+    1215,
+    539,
+    1243
+   ]
+  }
+ },
+ {
+  "text": "Nth. Siyen Range",
+  "box": [
+   940,
+   1227,
+   1002,
+   1418
+  ],
+  "slant": 80.3,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    970.6,
+    1324.3
+   ],
+   "angle": 80.34,
+   "length": 176.8,
+   "thick": 22.7,
+   "box": [
+    940,
+    1227,
+    1002,
+    1418
+   ]
+  }
+ },
+ {
+  "text": "Lucien Hills",
+  "box": [
+   421,
+   1244,
+   532,
+   1360
+  ],
+  "slant": -47.2,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    475.5,
+    1301.9
+   ],
+   "angle": -49.51,
+   "length": 115.6,
+   "thick": 22.2,
+   "box": [
+    421,
+    1244,
+    532,
+    1360
+   ]
+  }
+ },
+ {
+  "text": "Coniferous Forest",
+  "box": [
+   1414,
+   1252,
+   1622,
+   1279
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "L.Lucien",
+  "box": [
+   540,
+   1294,
+   636,
+   1375
+  ],
+  "slant": -34.9,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    598.6,
+    1333.9
+   ],
+   "angle": -33.52,
+   "length": 96.5,
+   "thick": 26.0,
+   "box": [
+    540,
+    1294,
+    636,
+    1375
+   ]
+  }
+ },
+ {
+  "text": "Northern Sadi Desert",
+  "box": [
+   1042,
+   1285,
+   1163,
+   1340
+  ],
+  "slant": 0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1102.7,
+    1314.6
+   ],
+   "angle": 1.32,
+   "length": 113.0,
+   "thick": 45.3,
+   "box": [
+    1042,
+    1285,
+    1163,
+    1340
+   ]
+  },
+  "lines": [
+   "Northern",
+   "Sadi Desert"
+  ]
+ },
+ {
+  "text": "100",
+  "box": [
+   1470,
+   1319,
+   1512,
+   1347
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "200",
+  "box": [
+   1573,
+   1319,
+   1617,
+   1346
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "300",
+  "box": [
+   1674,
+   1318,
+   1720,
+   1345
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "IN",
+  "box": [
+   1530,
+   1359,
+   1562,
+   1385
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "MILES",
+  "box": [
+   1661,
+   1359,
+   1731,
+   1385
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "Lognis Forest",
+  "box": [
+   361,
+   1364,
+   506,
+   1397
+  ],
+  "slant": 0.9,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    434.5,
+    1379.2
+   ],
+   "angle": -0.35,
+   "length": 133.1,
+   "thick": 20.2,
+   "box": [
+    361,
+    1364,
+    506,
+    1397
+   ]
+  }
+ },
+ {
+  "text": "L.Foathina",
+  "box": [
+   539,
+   1397,
+   653,
+   1423
+  ],
+  "slant": 1.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    598.5,
+    1409.6
+   ],
+   "angle": 0.24,
+   "length": 111.0,
+   "thick": 17.3,
+   "box": [
+    539,
+    1397,
+    653,
+    1423
+   ]
+  }
+ },
+ {
+  "text": "SCALE",
+  "box": [
+   1354,
+   1361,
+   1423,
+   1387
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ }
+]

@@ -1,0 +1,14 @@
+{
+ "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
+ "srcs": [
+  "art/plates/27v/bhanarian-guards.webp",
+  "art/plates/27v/captain-gildas-psychically-possessed.webp",
+  "assets/plates/27v/bhanarian-roughriders.webp",
+  "data/projectaon/23mh/ill1.png",
+  "data/projectaon/27v/ill11.png",
+  "data/projectaon/27v/ill15.png",
+  "data/projectaon/27v/ill18.png",
+  "data/projectaon/27v/ill2.png",
+  "data/projectaon/27v/ill6.png"
+ ]
+}

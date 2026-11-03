@@ -11,6 +11,7 @@
   --done: #a9a26a; --warn: #94560f; --bad: var(--blood); --todo: var(--ink-faint);
   --script: #46676c; --owner: #8a6420; --agent: #864242;
   --btn: rgba(255, 248, 226, .38); --btn-line: rgba(51, 35, 26, .45); --btn-fg: var(--ink); --btn-hi: var(--blood);
+  --tan-hi: #e2d3aa; --tan-lo: #cfbb89; --better: #3f5a2a;
   --hover: rgba(120, 88, 48, .13); --picked: rgba(125, 29, 20, .1);
   --title: 'Metamorphous', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
   --body: 'Segoe UI', system-ui, sans-serif;

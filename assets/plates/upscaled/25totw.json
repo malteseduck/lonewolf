@@ -1,0 +1,19 @@
+{
+ "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
+ "srcs": [
+  "art/plates/zombie-horde-lines.png",
+  "data/projectaon/02fotw/ill16.png",
+  "data/projectaon/10tdot/ill4.png",
+  "data/projectaon/10tdot/ill5.png",
+  "data/projectaon/25totw/ill1.png",
+  "data/projectaon/25totw/ill11.png",
+  "data/projectaon/25totw/ill12.png",
+  "data/projectaon/25totw/ill14.png",
+  "data/projectaon/25totw/ill15.png",
+  "data/projectaon/25totw/ill3.png",
+  "data/projectaon/25totw/ill5.png",
+  "data/projectaon/25totw/ill6.png",
+  "data/projectaon/25totw/ill7.png",
+  "data/projectaon/25totw/ill9.png"
+ ]
+}

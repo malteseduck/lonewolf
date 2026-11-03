@@ -1,0 +1,13 @@
+{
+ "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
+ "srcs": [
+  "art/plates/rogue-masked-blades.webp",
+  "data/projectaon/04tcod/ill1.png",
+  "data/projectaon/23mh/ill1.png",
+  "data/projectaon/23mh/ill12.png",
+  "data/projectaon/23mh/ill14.png",
+  "data/projectaon/23mh/ill2.png",
+  "data/projectaon/23mh/ill4.png",
+  "data/projectaon/23mh/ill5.png"
+ ]
+}

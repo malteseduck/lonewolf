@@ -69,7 +69,8 @@ tools/
                             book's text about each enemy and an image-generator prompt, where the owner picks or pastes an AI picture:
                             ADR 0008; plateprompt.js, that prompt's house style, shared with fights.html), ills.html
                             (one book's illustrations, each original beside its
-                            2x upscale), items.html and itemsheet.js (one book's items and their icons, which
+                            2x upscale), fightlist.html and fightlab.js (every fight of every book, and trials of
+                            one on LW.Fight under rules of the owner's, ADR 0021), items.html and itemsheet.js (one book's items and their icons, which
                             the owner changes: ADR 0021), icons.html (the player's other icons, for
                             every book), sources.html (every picture in art/: its link, none, or made
                             with AI: ADR 0038, 0042), iconpicker.js and icons.css (both sheets' icon picker), parchment.js (the tool pages' parchment and charred-rim filter, from

@@ -1,0 +1,808 @@
+[
+ {
+  "text": "Chai & the Great Lissan Plain",
+  "box": [
+   1127,
+   38,
+   1907,
+   107
+  ],
+  "slant": -0.3,
+  "conf": 0.95,
+  "retype": false
+ },
+ {
+  "text": "Scale",
+  "box": [
+   163,
+   74,
+   231,
+   106
+  ],
+  "slant": -1.7,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "25",
+  "box": [
+   229,
+   42,
+   262,
+   67
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "50",
+  "box": [
+   298,
+   40,
+   337,
+   68
+  ],
+  "slant": -0.8,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "in",
+  "box": [
+   303,
+   75,
+   336,
+   105
+  ],
+  "slant": -3.2,
+  "conf": 0.89,
+  "retype": false
+ },
+ {
+  "text": "75 100",
+  "box": [
+   376,
+   40,
+   487,
+   70
+  ],
+  "slant": 0.7,
+  "conf": 0.99,
+  "retype": false
+ },
+ {
+  "text": "Miles",
+  "box": [
+   400,
+   77,
+   471,
+   106
+  ],
+  "slant": 0.0,
+  "conf": 1.0,
+  "retype": false
+ },
+ {
+  "text": "Hyunsei Foothills",
+  "box": [
+   116,
+   152,
+   254,
+   212
+  ],
+  "slant": -90.0,
+  "conf": 0.96,
+  "retype": true,
+  "lines": [
+   "Hyunsei",
+   "Foothills"
+  ],
+  "ink": {
+   "at": [
+    185.4,
+    183.3
+   ],
+   "angle": -0.24,
+   "length": 131.0,
+   "thick": 55.0,
+   "box": [
+    116,
+    152,
+    254,
+    212
+   ]
+  }
+ },
+ {
+  "text": "Vale of Nahba",
+  "box": [
+   558,
+   149,
+   653,
+   205
+  ],
+  "slant": 2.5,
+  "conf": 1.0,
+  "retype": true,
+  "lines": [
+   "Vale of",
+   "Nahba"
+  ],
+  "ink": {
+   "at": [
+    605.8,
+    178.0
+   ],
+   "angle": 3.26,
+   "length": 81.6,
+   "thick": 43.1,
+   "box": [
+    558,
+    149,
+    653,
+    205
+   ]
+  }
+ },
+ {
+  "text": "Gt. Siyen Range",
+  "box": [
+   1543,
+   169,
+   1777,
+   201
+  ],
+  "slant": -90.0,
+  "conf": 0.92,
+  "retype": true,
+  "ink": {
+   "at": [
+    1658.0,
+    186.0
+   ],
+   "angle": -0.01,
+   "length": 220.0,
+   "thick": 22.0,
+   "box": [
+    1543,
+    169,
+    1777,
+    201
+   ]
+  }
+ },
+ {
+  "text": "Javai",
+  "box": [
+   334,
+   238,
+   402,
+   266
+  ],
+  "slant": -90.0,
+  "conf": 0.87,
+  "retype": true,
+  "ink": {
+   "at": [
+    367.0,
+    252.5
+   ],
+   "angle": -1.2,
+   "length": 56.3,
+   "thick": 16.0,
+   "box": [
+    334,
+    238,
+    402,
+    266
+   ]
+  }
+ },
+ {
+  "text": "Rakholi",
+  "box": [
+   713,
+   229,
+   833,
+   265
+  ],
+  "slant": -90.0,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    772.1,
+    246.3
+   ],
+   "angle": -0.6,
+   "length": 108.0,
+   "thick": 24.5,
+   "box": [
+    713,
+    229,
+    833,
+    265
+   ]
+  }
+ },
+ {
+  "text": "Zanaza",
+  "box": [
+   1109,
+   225,
+   1240,
+   259
+  ],
+  "slant": -0.6,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    1173.4,
+    241.2
+   ],
+   "angle": 0.36,
+   "length": 135.0,
+   "thick": 28.1,
+   "box": [
+    1109,
+    225,
+    1240,
+    259
+   ]
+  }
+ },
+ {
+  "text": "(ruins)",
+  "box": [
+   1133,
+   255,
+   1211,
+   287
+  ],
+  "slant": 0.0,
+  "conf": 0.89,
+  "retype": true,
+  "ink": {
+   "at": [
+    1172.0,
+    271.5
+   ],
+   "angle": -0.36,
+   "length": 66.1,
+   "thick": 23.4,
+   "box": [
+    1133,
+    255,
+    1211,
+    287
+   ]
+  }
+ },
+ {
+  "text": "Ft. Vlau",
+  "box": [
+   1474,
+   345,
+   1572,
+   383
+  ],
+  "slant": -3.2,
+  "conf": 0.91,
+  "retype": true,
+  "ink": {
+   "at": [
+    1523.0,
+    365.8
+   ],
+   "angle": -0.63,
+   "length": 86.1,
+   "thick": 23.5,
+   "box": [
+    1474,
+    345,
+    1572,
+    383
+   ]
+  }
+ },
+ {
+  "text": "Chai",
+  "box": [
+   410,
+   380,
+   515,
+   433
+  ],
+  "slant": 1.2,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    462.0,
+    407.1
+   ],
+   "angle": -0.38,
+   "length": 90.1,
+   "thick": 34.4,
+   "box": [
+    410,
+    380,
+    515,
+    433
+   ]
+  }
+ },
+ {
+  "text": "Pensei",
+  "box": [
+   127,
+   467,
+   239,
+   510
+  ],
+  "slant": -2.0,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    182.0,
+    492.0
+   ],
+   "angle": -1.51,
+   "length": 92.7,
+   "thick": 25.7,
+   "box": [
+    127,
+    467,
+    239,
+    510
+   ]
+  }
+ },
+ {
+  "text": "R. Tkukoma",
+  "box": [
+   600,
+   443,
+   670,
+   580
+  ],
+  "slant": -71.1,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    634.3,
+    510.5
+   ],
+   "angle": -70.33,
+   "length": 127.1,
+   "thick": 18.7,
+   "box": [
+    600,
+    443,
+    670,
+    580
+   ]
+  }
+ },
+ {
+  "text": "Tazhan",
+  "box": [
+   1657,
+   612,
+   1775,
+   647
+  ],
+  "slant": 0.5,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    1716.0,
+    629.5
+   ],
+   "angle": 0.54,
+   "length": 110.1,
+   "thick": 27.1,
+   "box": [
+    1657,
+    612,
+    1775,
+    647
+   ]
+  }
+ },
+ {
+  "text": "Great Lissan Plain",
+  "box": [
+   1036,
+   718,
+   1425,
+   778
+  ],
+  "slant": -0.7,
+  "conf": 0.97,
+  "retype": true,
+  "ink": {
+   "at": [
+    1230.4,
+    747.7
+   ],
+   "angle": -0.55,
+   "length": 377.3,
+   "thick": 46.3,
+   "box": [
+    1036,
+    718,
+    1425,
+    778
+   ]
+  }
+ },
+ {
+  "text": "Vabou",
+  "box": [
+   288,
+   765,
+   370,
+   798
+  ],
+  "slant": -88.1,
+  "conf": 0.8,
+  "retype": true,
+  "ink": {
+   "at": [
+    328.5,
+    782.0
+   ],
+   "angle": 0.65,
+   "length": 69.1,
+   "thick": 16.1,
+   "box": [
+    288,
+    765,
+    370,
+    798
+   ]
+  }
+ },
+ {
+  "text": "Klatii",
+  "box": [
+   472,
+   866,
+   536,
+   896
+  ],
+  "slant": 0.9,
+  "conf": 0.95,
+  "retype": true,
+  "ink": {
+   "at": [
+    503.9,
+    880.6
+   ],
+   "angle": 0.69,
+   "length": 56.0,
+   "thick": 19.0,
+   "box": [
+    472,
+    866,
+    536,
+    896
+   ]
+  }
+ },
+ {
+  "text": "Hi'joi",
+  "box": [
+   762,
+   912,
+   835,
+   948
+  ],
+  "slant": 2.2,
+  "conf": 0.88,
+  "retype": true,
+  "ink": {
+   "at": [
+    796.8,
+    930.0
+   ],
+   "angle": 1.69,
+   "length": 62.1,
+   "thick": 19.8,
+   "box": [
+    762,
+    912,
+    835,
+    948
+   ]
+  }
+ },
+ {
+  "text": "Twiloi Forest",
+  "box": [
+   581,
+   986,
+   693,
+   1044
+  ],
+  "slant": -1.3,
+  "conf": 0.78,
+  "retype": true,
+  "lines": [
+   "Twiloi",
+   "Forest"
+  ],
+  "ink": {
+   "at": [
+    640.9,
+    1012.9
+   ],
+   "angle": -1.3,
+   "length": 110.9,
+   "thick": 59.9,
+   "box": [
+    581,
+    986,
+    693,
+    1044
+   ]
+  }
+ },
+ {
+  "text": "Valus",
+  "box": [
+   623,
+   1086,
+   699,
+   1118
+  ],
+  "slant": 2.4,
+  "conf": 0.98,
+  "retype": true,
+  "joined": true,
+  "ink": {
+   "at": [
+    660.7,
+    1104.2
+   ],
+   "angle": 2.4,
+   "length": 75.0,
+   "thick": 22.3,
+   "box": [
+    623,
+    1086,
+    699,
+    1118
+   ]
+  }
+ },
+ {
+  "text": "Dwala",
+  "box": [
+   786,
+   1129,
+   898,
+   1167
+  ],
+  "slant": -0.5,
+  "conf": 1.0,
+  "retype": true,
+  "ink": {
+   "at": [
+    841.6,
+    1147.7
+   ],
+   "angle": 1.18,
+   "length": 99.4,
+   "thick": 26.4,
+   "box": [
+    786,
+    1129,
+    898,
+    1167
+   ]
+  }
+ },
+ {
+  "text": "Czantai",
+  "box": [
+   846,
+   1238,
+   939,
+   1268
+  ],
+  "slant": -90.0,
+  "conf": 0.84,
+  "retype": true,
+  "ink": {
+   "at": [
+    888.5,
+    1254.5
+   ],
+   "angle": -0.89,
+   "length": 83.2,
+   "thick": 16.5,
+   "box": [
+    846,
+    1238,
+    939,
+    1268
+   ]
+  }
+ },
+ {
+  "text": "Tzi-Tzi",
+  "box": [
+   395,
+   1253,
+   484,
+   1286
+  ],
+  "slant": -0.8,
+  "conf": 0.9,
+  "retype": true,
+  "joined": true,
+  "ink": {
+   "at": [
+    436.1,
+    1271.6
+   ],
+   "angle": -0.65,
+   "length": 82.0,
+   "thick": 20.2,
+   "box": [
+    395,
+    1253,
+    484,
+    1286
+   ]
+  }
+ },
+ {
+  "text": "Ozi Is.",
+  "box": [
+   556,
+   1268,
+   625,
+   1300
+  ],
+  "slant": -1.8,
+  "conf": 0.81,
+  "retype": true,
+  "ink": {
+   "at": [
+    592.0,
+    1283.0
+   ],
+   "angle": -0.2,
+   "length": 60.0,
+   "thick": 18.0,
+   "box": [
+    556,
+    1268,
+    625,
+    1300
+   ]
+  }
+ },
+ {
+  "text": "Huzang Forest",
+  "box": [
+   103,
+   1292,
+   333,
+   1324
+  ],
+  "slant": -0.1,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    218.7,
+    1311.0
+   ],
+   "angle": 1.57,
+   "length": 221.3,
+   "thick": 27.8,
+   "box": [
+    103,
+    1292,
+    333,
+    1324
+   ]
+  }
+ },
+ {
+  "text": "Mythenian Sea",
+  "box": [
+   546,
+   1361,
+   778,
+   1392
+  ],
+  "slant": -0.0,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    662.5,
+    1377.2
+   ],
+   "angle": 0.21,
+   "length": 221.0,
+   "thick": 24.1,
+   "box": [
+    546,
+    1361,
+    778,
+    1392
+   ]
+  }
+ },
+ {
+  "text": "Roads",
+  "box": [
+   190,
+   1452,
+   324,
+   1495
+  ],
+  "slant": -88.6,
+  "conf": 0.87,
+  "retype": false
+ },
+ {
+  "text": "Tracks",
+  "box": [
+   495,
+   1447,
+   641,
+   1498
+  ],
+  "slant": 0.1,
+  "conf": 0.99,
+  "retype": false
+ },
+ {
+  "text": "Hills",
+  "box": [
+   817,
+   1446,
+   907,
+   1492
+  ],
+  "slant": 0.0,
+  "conf": 0.94,
+  "retype": false
+ },
+ {
+  "text": "Mountains",
+  "box": [
+   1150,
+   1452,
+   1372,
+   1492
+  ],
+  "slant": -0.5,
+  "conf": 0.98,
+  "retype": false
+ },
+ {
+  "text": "Coniferous Forest",
+  "box": [
+   1530,
+   1443,
+   1902,
+   1506
+  ],
+  "slant": -90.0,
+  "conf": 0.98,
+  "retype": false
+ }
+]

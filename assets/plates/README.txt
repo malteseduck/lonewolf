@@ -60,3 +60,7 @@ hounds-stag-wellcome.jpg
   Wellcome Collection V0021541, CC BY 4.0. Commons' 1920 px copy, cropped to the hounds and the
   stag's forequarters (caption cut off), greyscale.
   https://commons.wikimedia.org/wiki/File:A_stag_with_his_antlers_caught_in_a_bush_is_pounced_on_by_ho_Wellcome_V0021541.jpg
+
+27v/bhanarian-roughriders.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-31.

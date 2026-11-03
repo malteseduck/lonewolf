@@ -79,7 +79,7 @@ Changes list names what it took in.
 
 | # | Decision | Amended |
 |---|---|---|
-| [0021](0021-dashboard-pages.md) | The dashboard is the map's burnt parchment; a rail of books, a book's steps as tabs, each sheet inside its step; the item and icon sheets pick icons | 2026-10-25 |
+| [0021](0021-dashboard-pages.md) | The dashboard is the map's burnt parchment; a rail of books, a book's steps as tabs, each sheet inside its step; the item and icon sheets pick icons; the fight list tries rules without touching the engine | 2026-11-01 |
 
 ### Rulings
 

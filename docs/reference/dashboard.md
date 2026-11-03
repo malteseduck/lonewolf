@@ -110,6 +110,27 @@ step left.
   item sheet's picker; it writes `glyphs.js` (`item_icons.set_ui_glyph()`, only an entry already
   there) or, for an engine item, `itemglyphs.js`. The compass rose and the plates' ornaments are drawn
   in code and not on it.
+- **The fight list** ("All fights" in the bar; `tools/admin/fightlist.html`, in the work area only; ADR 0021): every
+  fight of every book as a card, its foe's picture (cropped, not inked, so a thousand stay light), name,
+  COMBAT SKILL and ENDURANCE, with search, a series and a book filter and sorts. **Trial rules** are a form of
+  what can be changed: the Combat Ratio cap (ruling R1), the Sommerswerd's bonus, growth, unleashed rounds and
+  doubling, what weapon mastery and the mind's attack add, foes' scores, the table's losses and its outright death;
+  with presets from `sommerswerd-options.md`. They apply on this sheet alone (`tools/admin/fightlab.js`, laid over
+  the engine only while a trial runs); a rule worth keeping goes into the engine as a ruling. **Run the fights
+  shown** plays each under the engine's rules and the trial's with the same numbers drawn, for a stand-in hero
+  (novice, typical for the book, master, with or without the Sommerswerd), each fight alone from full ENDURANCE,
+  and fills in what share he lived through, a table by book (lives, fights under 50%, ENDURANCE lost, rounds) and
+  the Deadliest and Most changed sorts; the whole list at 200 trials takes about 12 s. A card opens the fight's
+  window: each foe's whole picture inked as in a fight, what it is (`foes` in the index), what the engine reads of
+  the fight, and the section's text (read here from `book.js`, as the proposal sheet does); then the hero to edit
+  (scores, weapons, skill, Disciplines, Special Items that tell in a fight, Laumspur), how he fights (mind, drinks
+  at, evades at), the rules, and **Run the trial**: each run's results stay above the last, so a change of item or
+  Discipline can be read against the run before, and **Show one fight** gives the engine's log. A Discipline ticked
+  follows through as at setting out (`setDiscipline`: Weaponskill's weapon, a Lore-circle's ENDURANCE, a Grand Master
+  Discipline's scores); a run says when the +10 cap hides his real ratio, or when a fight's own rules bar his weapons. A fight
+  that takes only some weapons is reached only with one, so a stand-in is given the first it names (`equipFor`). Edits there are for that window: the
+  list's run always uses its stand-in. A trial's charges
+  are not counted (each fight has its unleashed rounds in full), nor anything the fights before it cost him.
 - **The picture-sources sheet** ("Picture sources" in the bar; `tools/admin/sources.html`, in the
   work area only): every picture in `art/` from `GET /api/admin/art-sources` (`art_sources.listing()`), those
   without a link first, each with the books whose fights use it. Save link and No link post to

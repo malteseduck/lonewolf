@@ -51,6 +51,11 @@ Book 21 (`21votm`) goes through its steps as usual (`docs/book-checklist.md`). W
    never commits: the owner checks the book, then asks for its commit, one a book. Book 21 still
    lacks steps 6-8; the owner says whether it goes first.
 
+### Fight balance
+
+The owner's to decide later: fights feel too easy, and lesser enemies and bosses could be ruled apart. The findings
+and options are in `docs/reference/fight-balance.md`.
+
 ### Engine work found in play
 
 What a book's play-through left to the player that the engine could take over:

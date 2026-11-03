@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-11
-- Amended: 2026-10-25
+- Amended: 2026-11-01
 
 ## Context
 
@@ -16,7 +16,8 @@ own items, in the code. Choosing one meant guessing names for `tools/fetch_icons
 the table by hand, without seeing the icons side by side. The owner asked for a sheet like the
 picture and illustration sheets (2026-10-17). The same day the owner asked for the player's other
 icons (disciplines, tabs, fight medallions and the like) to be reviewed and changed the same way;
-they span the books, so they are not a book step.
+they span the books, so they are not a book step. The owner asked for a list of every fight with a trial
+fight (2026-11-01), to weigh changes to the fight rules without changing the engine first.
 
 ## Decision
 
@@ -33,14 +34,14 @@ they span the books, so they are not a book step.
   dashboard's). At their own addresses they show only a line pointing to the dashboard; there are no
   links to open them on their own, and agents do not open them there.
 - **The dashboard's layout.** The window holds a bar, a rail of books and the work area, and only the
-  panes inside scroll. The bar has the whole-project tools as buttons (Check everything, Player icons,
+  panes inside scroll. The bar has the whole-project tools as buttons (Check everything, All fights, Player icons,
   Picture sources, Lone Wolf, Setup as a popover, Release). The rail lists the downloaded books under
   their series, each with its steps as small seals; the books not downloaded are folded under it. The
   picked book's steps are a row of tabs under the checklist's groups, one step shown at a time ("All
   steps" shows the list). Each sheet opens inside the step it belongs to (the picture and proposal sheets in Fights,
   the item sheet in Item table, the illustration sheet in Illustrations, the map editor in Map), the
   step shrunk to a bar over it and the rail to the books' numbers; one that spans the books (the icon
-  sheet, picture sources, Lone Wolf's pictures) takes the work area alone. A sheet stays open while
+  sheet, picture sources, Lone Wolf's pictures, the fight list) takes the work area alone. A sheet stays open while
   another step or book is looked at, and the book's head offers the way back to it. The grid of every
   book is "All books"; a cell opens that book at that step. Where the owner is stays in the address,
   and the keys move between books and steps.
@@ -64,6 +65,12 @@ they span the books, so they are not a book step.
 - Those icons are named in one file, `glyphs.js`, one entry for each place an icon is drawn (the
   wolf's head on the title and on the crest are separate entries), so each can be changed alone. The
   sheet changes an entry already there; a new place to draw an icon is added in the code.
+
+- **The fight list.** "All fights" in the bar (it spans the books) opens `tools/admin/fightlist.html`: every fight as
+  a card, and a window for each with its picture, what the books say, and trials on the real `LW.Fight` for a hero
+  and tactics the owner sets. Rules to try are a form on the sheet, compared with the engine's on the same numbers
+  drawn, over one fight or every fight shown. They never reach the player: `fightlab.js` lays them over the engine
+  only while a trial runs. A rule the owner keeps is then built into the engine as a ruling.
 
 ## Consequences
 
@@ -89,3 +96,5 @@ they span the books, so they are not a book step.
 - 2026-10-25: the dashboard laid out as a rail of books and one book's steps as tabs, each sheet inside its
   step, instead of the grid with the book and the sheet below it; the owner found too much scrolling
   between books and steps at the width they work at.
+- 2026-11-01: the fight list added; the owner asked for a list of every fight, with a trial fight to see the
+  effect of changing the rules.

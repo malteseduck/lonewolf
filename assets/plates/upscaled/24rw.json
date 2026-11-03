@@ -1,0 +1,12 @@
+{
+ "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
+ "srcs": [
+  "art/plates/18dotd/eldenoran-horse-scouts.webp",
+  "data/projectaon/04tcod/ill1.png",
+  "data/projectaon/24rw/ill12.png",
+  "data/projectaon/24rw/ill13.png",
+  "data/projectaon/24rw/ill16.png",
+  "data/projectaon/24rw/ill17.png",
+  "data/projectaon/24rw/ill5.png"
+ ]
+}
