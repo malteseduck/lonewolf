@@ -7,6 +7,7 @@ import { printedCanvas } from './maps.js';
 import { compilePlates, pickPlate, pinKey, upscaledSrc } from './platepick.js';
 import * as Adv from './adventures.js';
 import { glyphName } from './itemglyphs.js';
+import { shown } from './choicetext.js';
 import { DISC_GLYPH, UI_GLYPH as UG } from './glyphs.js';
 
 import * as ITEMS_01 from './items/items-01fftd.js';
@@ -251,14 +252,6 @@ let intro = false;           // the book's introduction is showing: 'new' before
 const REWIND = 3;            // how many sections back a rewind reaches
 
 const isDead = () => game.lost;
-/* the book's own page references mean nothing here */
-const shown = (t) => {
-  let s = t.replace(/[,;]?\s*(?:(?:now|then|and|so|please|by)\s+)*(?:turn(?:ing)?|go(?:ing)?) to \d+[.?!]?\s*$/i, '').trim(); // "..., turn to 12."
-  s = s.replace(/\b(?:turn|go) to \d+ and /i, ''); // "..., turn to 12 and risk ..."
-  s = s.replace(/^(?:turn|go) to \d+,?\s*(?:and\s+)?/i, '').trim(); // "Turn to 12 and take the south path."
-  s = s.charAt(0).toUpperCase() + s.slice(1);
-  return /[a-z]{3,}/i.test(s.replace(/\b(?:now|then|and|so|please|you|may|must|can)\b/gi, '')) ? s.replace(/[,;:]+$/, '').replace(/([^.?!])$/, '$1.') : 'Continue'; // one full stop, or the question mark
-};
 
 /* ---------- the medallion of fate ---------- */
 function makeDial(onIdleClick) {

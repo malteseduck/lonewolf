@@ -12,6 +12,7 @@ plates.js                   ES module: ink creatures, inkPlate (restyles an illu
 maps.js                     ES module: printedCanvas, a book's scanned map repainted in sepia (a finished map is baked: tools/map_sepia.py)
 platepick.js                ES module: which picture a fight shows (pins, plates.json, the book's own); also used
                             by the picture sheet and tools/plates_pin.mjs
+choicetext.js               ES module: shown, a choice's label without its "turn to" (Continue when nothing is left)
 itemglyphs.js               ES module: ITEM_GLYPH, the engine's items' icons, and glyphName (an item's icon);
                             also used by the item and icon sheets, which rewrite it (ADR 0021)
 glyphs.js                   ES module: every other icon the player draws (DISC_GLYPH, UI_GLYPH and what each
@@ -159,7 +160,7 @@ data/projectaon/index.js    document.writes a <script> for each imported book ->
 shared/ui.js                LW.UI (LW.sfx blips: prototypes only)
 shared/rules-series.js      adds Magnakai, overrides LW.has and LW.heroCS, adds LW.Character, LW.HeroSetup, LW.KitSetup, LW.KITS
 shared/fight.js             LW.Fight, LW.ROMAN, LW.RATIO_CAP
-main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js, ./platepick.js, ./adventures.js, ./itemglyphs.js, ./glyphs.js
+main.js (module)            imports ./shared/ink.js, ./plates.js, ./maps.js, ./platepick.js, ./adventures.js, ./itemglyphs.js, ./choicetext.js, ./glyphs.js
 ```
 
 Order matters: `rules-series.js` overrides functions defined in `core.js` and needs `LW.UI`.
