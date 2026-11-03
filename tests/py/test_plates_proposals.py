@@ -73,14 +73,14 @@ def test_a_prompt_is_text_in_our_own_words(tree):
     """The prompt is sent to an image generator: never a run of the book's own words (ADR 0042)."""
     tree.book()
     tree.proposals([
-        {'name': 'Mire Toad', 'candidates': [], 'prompt': 'A squat warty toad the size of a pony, wide mouth agape, in a reedy bog'},
-        {'name': 'Iron Gate', 'candidates': [], 'prompt': ['not', 'text']},
+        {'name': 'Mire Toad', 'candidates': [], 'figures': 1, 'setting': 'a bog', 'prompt': 'A squat warty toad the size of a pony, wide mouth agape, in a reedy bog'},
+        {'name': 'Iron Gate', 'candidates': [], 'figures': 1, 'setting': 'a bog', 'prompt': ['not', 'text']},
     ])
     assert [p for p in pp.problems(CODE)] == ['Iron Gate: its prompt must be text']
     secs = json.loads((tree.root / 'data' / 'projectaon' / CODE / 'book.js').read_text(encoding='utf-8').split(', ', 1)[1].rsplit(');', 1)[0])
     secs[CODE]['sections']['2']['text'] = ['Out of the dark water rises a squat warty toad the size of a pony and it croaks.']
     tree.file(f'data/projectaon/{CODE}/book.js', '(window.LW = window.LW || {}).BOOKS = Object.assign(window.LW.BOOKS || {}, ' + json.dumps(secs) + ');')
-    tree.proposals([{'name': 'Mire Toad', 'candidates': [], 'prompt': 'Out of the dark water rises a squat warty toad the size of a pony'}])
+    tree.proposals([{'name': 'Mire Toad', 'candidates': [], 'figures': 1, 'setting': 'a bog', 'prompt': 'Out of the dark water rises a squat warty toad the size of a pony'}])
     assert pp.problems(CODE) == ["Mire Toad: its prompt repeats 8 or more of the book's words in a row: reword it"]
 
 
@@ -123,8 +123,8 @@ def test_a_prompt_names_no_colour(tree, monkeypatch):
     tree.book()
     tree.file('tools/admin/plateprompt.js', "export const COLOURS = ['red', 'black',\n  'grey'];\nconst C = 1;")
     tree.proposals([
-        {'name': 'Mire Toad', 'candidates': [], 'prompt': 'a reddish toad with blood-red eyes and a black-and-grey hide'},
-        {'name': 'Iron Gate', 'candidates': [], 'prompt': 'a gate guarded by Black Hawk, dark and weathered'},
+        {'name': 'Mire Toad', 'candidates': [], 'figures': 1, 'setting': 'a bog', 'prompt': 'a reddish toad with blood-red eyes and a black-and-grey hide'},
+        {'name': 'Iron Gate', 'candidates': [], 'figures': 1, 'setting': 'a bog', 'prompt': 'a gate guarded by Black Hawk, dark and weathered'},
     ])
     assert pp.problems(CODE) == ['Mire Toad: its prompt names a colour (reddish, red, black, grey): an ink drawing has none, describe it in tone and texture']
 
@@ -133,8 +133,8 @@ def test_what_a_prompt_says_beyond_the_book_is_a_list_of_text(tree):
     """`beyond` tells the owner which details of the prompt the book's text does not give (the owner, 2026-10-30)."""
     tree.book()
     tree.proposals([
-        {'name': 'Mire Toad', 'candidates': [], 'prompt': 'a squat toad', 'beyond': ['warty hide: ill3', 'squat build: my guess']},
-        {'name': 'Iron Gate', 'candidates': [], 'prompt': 'a gate', 'beyond': 'its studs'},
+        {'name': 'Mire Toad', 'candidates': [], 'figures': 1, 'setting': 'a bog', 'prompt': 'a squat toad', 'beyond': ['warty hide: ill3', 'squat build: my guess']},
+        {'name': 'Iron Gate', 'candidates': [], 'figures': 1, 'setting': 'a bog', 'prompt': 'a gate', 'beyond': 'its studs'},
     ])
     assert pp.problems(CODE) == ['Iron Gate: its beyond must be a list of text']
 
@@ -222,3 +222,21 @@ def test_finishing_moves_the_round_to_the_done_file_which_keeps_every_round(tree
     assert 'decided' not in done['rounds'][1]['enemies'][0]  # finished with it still open
     with pytest.raises(ValueError):
         pp.finish(CODE)
+
+
+def test_a_prompt_says_how_many_figures_and_the_setting_behind_them(tree, monkeypatch):
+    """A group is drawn as a group, one enemy alone, in a simple setting (the owner, 2026-11-03): a row with a
+    prompt says how many figures it shows and the kind of place, in our own words and no colour."""
+    tree.book()
+    tree.file('tools/admin/plateprompt.js', "export const COLOURS = ['red', 'black',\n  'grey'];\nconst C = 1;")
+    tree.proposals([
+        {'name': 'Mire Toad', 'candidates': [], 'prompt': 'a squat toad', 'figures': 1, 'setting': 'a reedy bog'},
+        {'name': 'Iron Gate', 'candidates': [], 'prompt': 'a gate'},
+    ])
+    assert pp.problems(CODE) == ['Iron Gate: say how many figures it shows (figures: 1 or more)',
+                                 'Iron Gate: say the kind of place behind it (setting)']
+    tree.proposals([
+        {'name': 'Mire Toad', 'candidates': [], 'prompt': 'squat toads', 'figures': 0, 'setting': 'a black bog'},
+    ])
+    assert pp.problems(CODE) == ['Mire Toad: say how many figures it shows (figures: 1 or more)',
+                                 'Mire Toad: its setting names a colour (black): an ink drawing has none, describe it in tone and texture']

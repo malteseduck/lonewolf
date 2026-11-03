@@ -24,10 +24,26 @@ describe('platePrompt', () => {
     expect(p).toMatch(/a beast stays on all fours, coiled or in flight as described, never made humanoid/);
     expect(p).toMatch(/part man or humanoid stands on two legs/);
   });
-  it('draws the subject alone, whatever place or figure its description names', () => {
+  it('draws no other figure, whatever person its description names', () => {
     const p = platePrompt('X', 'it slams the hero into the mud at the bridge');
-    expect(p).toMatch(/Draw the subject alone: any place or other figure named above is not drawn/);
-    expect(p).toContain('Plain white background');
+    expect(p).toMatch(/No other figure is drawn/);
+  });
+  it('draws one figure for a single enemy and exactly as many as a group has (the owner, 2026-11-03)', () => {
+    expect(platePrompt('X', 'a troll')).toMatch(/Exactly one figure/);
+    expect(platePrompt('X', 'a troll')).not.toMatch(/group/);
+    const g = platePrompt('Looters', 'ragged thieves', { figures: 4 });
+    expect(g).toMatch(/A group of exactly 4 figures, every one seen/);
+    expect(g).not.toMatch(/one figure|single/i);
+    expect(platePrompt('6 Gaolers', 'gaolers')).toMatch(/exactly 6 figures/);  // a count in the name, when none is given
+  });
+  it('sets the enemy in a simple, lightly drawn setting (the owner, 2026-11-03)', () => {
+    const p = platePrompt('X', 'a troll', { setting: 'a dim stone cell with straw on the floor' });
+    expect(p).toMatch(/simple setting behind it: a dim stone cell with straw on the floor/);
+    expect(p).toMatch(/lighter, sparser lines/);
+    expect(p).not.toMatch(/no scenery|Plain white background/);
+    expect(platePrompt('X', 'a troll', { setting: 'a black cave' })).toContain('setting behind it: a cave');
+    expect(platePrompt('X', 'a troll')).toMatch(/simple setting behind it, suited to the description/);
+    expect(platePrompt('Y', 'bandits', { figures: 3 })).toMatch(/behind them/);
   });
   it('asks the generator to follow the attached references only when told to', () => {
     expect(platePrompt('X', 'a beast', { refs: true })).toContain('attached reference images');

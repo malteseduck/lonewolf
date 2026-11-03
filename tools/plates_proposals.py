@@ -33,6 +33,14 @@ book's text from book.js itself, so the file holds names, ids, paths and our own
                                             figure, for the sheet's image-generator prompt
                                             (our own words: it is sent to the generator; never 8 of the book's
                                             in a row)
+       "figures": 1,                        how many the picture shows: 1 for one enemy, the group's number for
+                                            a group ("6 Henchmen": 6), so a group is drawn as one
+       "setting": "a dim stone cell",       the kind of place it is fought in, our own words and no colour, drawn
+                                            simply behind it (both needed with a prompt; the owner, 2026-11-03)
+       "figures": 1,                        how many the picture shows: 1 for one enemy, the group's number for
+                                            a group ("6 Henchmen": 6), so a group is drawn as one
+       "setting": "a dim stone cell",       the kind of place it is fought in, our own words and no colour, drawn
+                                            simply behind it (both needed with a prompt; the owner, 2026-11-03)
        "beyond": ["shaggy hide: ill9"],     each detail of the prompt the book's text does not give, and where it
                                             comes from, shown to the owner under the prompt
        "refs": ["data/projectaon/19wb/small6.png"]}   a good pick of the books' pictures to attach to the
@@ -202,6 +210,17 @@ def problems(code):
             hue = hue or re.compile(r'(?<![A-Za-z])((?:%s)(?:dish|ish|y)?)(?![a-z])' % '|'.join(colours()))
             if hue.findall(prompt):
                 out.append(f"{n}: its prompt names a colour ({', '.join(hue.findall(prompt))}): an ink drawing has none, describe it in tone and texture")
+            # a group drawn as a group, one enemy alone, in a simple setting (the owner, 2026-11-03)
+            figures = e.get('figures')
+            if not (isinstance(figures, int) and not isinstance(figures, bool) and figures >= 1):
+                out.append(f'{n}: say how many figures it shows (figures: 1 or more)')
+            setting = e.get('setting')
+            if not (isinstance(setting, str) and setting.strip()):
+                out.append(f'{n}: say the kind of place behind it (setting)')
+            elif about_check.runs(about_check.words(setting)) & said:
+                out.append(f"{n}: its setting repeats {about_check.RUN} or more of the book's words in a row: reword it")
+            elif hue.findall(setting):
+                out.append(f"{n}: its setting names a colour ({', '.join(hue.findall(setting))}): an ink drawing has none, describe it in tone and texture")
         beyond = e.get('beyond', [])
         if not (isinstance(beyond, list) and all(isinstance(b, str) for b in beyond)):
             out.append(f'{n}: its beyond must be a list of text')

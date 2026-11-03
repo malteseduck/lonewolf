@@ -423,9 +423,11 @@ as the owner's picture, as the picture sheet's Stand-in... or By address... woul
 that describes it (where it is first seen, fought, killed or opened, and what is compared to it) and the wiki,
 and what it does in the moment it is fought, with the pictures worth attaching shown beneath: the picture it shows now and every candidate on disk,
 then the agent's `refs` (`refsOf()` in `tools/admin/proposals.html`). Under the prompt the row shows the agent's `beyond`, each
-detail the book's text does not give and where it comes from (a picture, or its guess). The template draws the enemy alone,
-any place or other figure named being left out, keeps a beast's own posture and stands a part-man creature on two legs
-(the owner, 2026-10-30). No prompt names a colour
+detail the book's text does not give and where it comes from (a picture, or its guess). The template draws exactly the row's
+`figures` (a group as a group, a single enemy as one; with none given, a number the name starts with, else one) and
+no other figure, in a simple setting drawn lighter behind it (the row's `setting`, the kind of place; the owner,
+2026-11-03), keeps a beast's own posture and stands a part-man creature on two legs (the owner, 2026-10-30); `check`
+wants both fields with a prompt, and no colour or run of the book's words in the setting. No prompt names a colour
 (a fight picture is an ink drawing; the owner, 2026-10-26): `platePrompt()` takes every colour word out of the
 description it is given, foe-about entries included, and the check rejects one in the agent's `prompt`
 (the file's `prompt`, our own words, checked against the book's) in the picture sheet's style, asking it to

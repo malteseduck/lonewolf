@@ -184,8 +184,9 @@ function sentences(p, phrases) {
 }
 
 /* The agent's description of the enemy and the moment it is fought (`prompt`, our own words), else its foe-about
-   entry, in the picture sheet's style, telling the generator to follow any reference pictures attached. */
-const promptOf = (e) => platePrompt(e.name, e.prompt || about(e.name), { refs: true });
+   entry, in the picture sheet's style, telling the generator to follow any reference pictures attached; with how
+   many it shows (`figures`) and the place behind it (`setting`). */
+const promptOf = (e) => platePrompt(e.name, e.prompt || about(e.name), { refs: true, figures: e.figures, setting: e.setting });
 /* A picture made with AI is ours only from the prompt alone (ADR 0042): then it goes to the committed library;
    made from reference pictures (the books' art), it stays in git-ignored art/plates/ like any borrowed picture. */
 function aiCards(fi) {

@@ -32,9 +32,11 @@ describe('pictureFor', () => {
     // a list of one reads as the single card's prompt
     expect(pictureFor(b, [foe])).toBe(p);
   });
-  it('asks for the enemy alone, and for what the prompt says beyond the book\'s text', () => {
+  it('asks how many figures and the setting, and for what the prompt says beyond the book\'s text', () => {
     expect(p).toContain('"beyond"');
-    expect(p).toMatch(/Name no place, hero or victim/);
+    expect(p).toMatch(/Name no hero or victim, and no place by its name/);
+    expect(p).toMatch(/"figures", how many the picture shows/);
+    expect(p).toMatch(/"setting", the kind of place/);
     expect(p).not.toMatch(/marks, setting\)/);
     expect(p).toMatch(/stands on two legs/);
     expect(p).toMatch(/every gathered section/);

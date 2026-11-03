@@ -13,8 +13,10 @@ Rules for work on fight pictures (step 7). The root `AGENTS.md` applies as well;
   book pictures goes in with no candidates. Keep its `foe-about.json` entry descriptive too, since the
   picture sheet's Prompt button reads it. A man-beast is said outright to stand upright on two legs,
   with what is man and what is beast part by part: the word "beast" alone puts it on all fours. Name
-  no place, hero or victim: what is named gets drawn. The enemy goes at the viewer. Every detail the
-  book's text does not give goes in the row's `beyond`, with where it comes from.
+  no hero or victim, and no place by its name: what is named gets drawn. The enemy goes at the viewer.
+  The row's `figures` says how many are drawn (a group's whole number, else 1) and its `setting` the
+  kind of place, drawn simply behind (ADR 0008). Every detail the book's text does not
+  give goes in the row's `beyond`, with where it comes from.
 - **A prompt names no colour**, even where the book does: the pictures are ink drawings and a colour
   word pulls the generator towards paint. Say it in tone and texture (dark, pale, glossy, glowing,
   banded). `tools/admin/plateprompt.js` strips colour words from descriptions, and

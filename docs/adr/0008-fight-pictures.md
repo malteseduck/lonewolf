@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-01 (shown whole); varied humans 2026-10-09; pinned 2026-10-11; source order 2026-10-14
-- Amended: 2026-10-30
+- Amended: 2026-11-03
 
 ## Context
 
@@ -38,7 +38,9 @@ the very same creature. The owner set the order.
   only: no web search, Wikimedia Commons included, and no library stand-in (2026-10-28). An enemy no
   book's picture shows well is proposed with no candidates, for the owner to generate from the
   prompt. The prompt's reference pictures are the picture the enemy shows now, every candidate, then
-  a good pick of the books' pictures of it or its surroundings. The sheet quotes only the sections
+  a good pick of the books' pictures of it or its surroundings. The prompt draws as many figures as
+  the enemy is (a group as a group, one enemy alone, no other figure) in a simple setting of the kind
+  of place it is fought in, drawn lighter behind it. The sheet quotes only the sections
   where the enemy is fought or something describes it or its fight; one that only names it ("the
   guard", not "the burly guard") is no context and is left out.
 
@@ -139,3 +141,6 @@ the very same creature. The owner set the order.
 - 2026-10-30: a prompt keeps to what the book and its pictures give; the agent lists any other detail,
   and where it comes from, for the owner to judge. The picture is the enemy alone, with no setting or
   other figure, and a creature that is part man stands on two legs (owner).
+- 2026-11-03: a prompt says how many figures (a group of six henchmen came out as one) and puts the
+  enemy in a simple setting of where it is fought, drawn lighter (alone on white looked plain beside
+  the books' plates); this replaces "no setting" of 2026-10-30 (owner).
