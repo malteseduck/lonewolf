@@ -1,0 +1,31 @@
+{
+ "_readme": "The fight pictures the owner approved for this book (step 7 marked done): the player shows these whatever plates.json or a re-import would now pick. Keyed by section/enemy number; name is a hash of the enemy's name, so a pin is not used for another enemy; plate is {src, crop?, levels?, flip?} or null for the drawn emblem. Written by tools/plates_pin.mjs; see docs/reference/interface.md, Art pipeline.",
+ "approved": "2026-11-03",
+ "pins": {
+  "11/0": {"name":"rlnwk6","plate":{"src":"data/projectaon/22tbos/ill9.png"}},
+  "19/0": {"name":"19lxr1m","plate":{"src":"data/projectaon/22tbos/ill5.png"}},
+  "67/0": {"name":"nkzp8t","plate":{"src":"data/projectaon/22tbos/ill14.png"}},
+  "74/0": {"name":"19lxr1m","plate":{"src":"data/projectaon/22tbos/ill5.png"}},
+  "86/0": {"name":"l9i6se","plate":{"src":"data/projectaon/16tlov/ill7.png"}},
+  "89/0": {"name":"18bmh3k","plate":{"src":"assets/plates/22tbos/wrok-s-gate-guard.webp"}},
+  "96/0": {"name":"rlnwk6","plate":{"src":"data/projectaon/22tbos/ill9.png"}},
+  "105/0": {"name":"xr3ozx","plate":{"src":"assets/plates/22tbos/looters.webp"}},
+  "106/0": {"name":"13kn3wm","plate":{"src":"data/projectaon/22tbos/ill3.png"}},
+  "110/0": {"name":"x68x10","plate":{"src":"assets/plates/22tbos/6-wrok-s-henchmen.webp"}},
+  "122/0": {"name":"19lxr1m","plate":{"src":"data/projectaon/22tbos/ill5.png"}},
+  "131/0": {"name":"rlnwk6","plate":{"src":"data/projectaon/22tbos/ill9.png"}},
+  "154/0": {"name":"rlnwk6","plate":{"src":"data/projectaon/22tbos/ill9.png"}},
+  "166/0": {"name":"nkzp8t","plate":{"src":"data/projectaon/22tbos/ill14.png"}},
+  "169/0": {"name":"19lxr1m","plate":{"src":"data/projectaon/22tbos/ill5.png"}},
+  "176/0": {"name":"rlnwk6","plate":{"src":"data/projectaon/22tbos/ill9.png"}},
+  "207/0": {"name":"vemq8y","plate":{"src":"assets/plates/22tbos/citadel-gaolers.webp"}},
+  "208/0": {"name":"rlnwk6","plate":{"src":"data/projectaon/22tbos/ill9.png"}},
+  "222/0": {"name":"vemq8y","plate":{"src":"assets/plates/22tbos/citadel-gaolers.webp"}},
+  "224/0": {"name":"19lxr1m","plate":{"src":"data/projectaon/22tbos/ill5.png"}},
+  "233/0": {"name":"xr3ozx","plate":{"src":"assets/plates/22tbos/looters.webp"}},
+  "245/0": {"name":"13kn3wm","plate":{"src":"data/projectaon/22tbos/ill3.png"}},
+  "269/0": {"name":"l9i6se","plate":{"src":"data/projectaon/16tlov/ill7.png"}},
+  "270/0": {"name":"rlnwk6","plate":{"src":"data/projectaon/22tbos/ill9.png"}},
+  "340/0": {"name":"1j8o6ou","plate":{"src":"data/projectaon/22tbos/ill20.png"}}
+ }
+}
