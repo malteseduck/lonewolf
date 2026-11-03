@@ -309,6 +309,13 @@ dash, "0—4" (124). No other book has one, so Books 1-21 and 23-29 are unchange
 way on with none of them, rightly open); 277's "psychic Kai skills" (names no discipline, the owner's to say which); 55 (a Rope among
 the bonuses), 274 (Grand Weaponmastery with Bow), 8, 12, 37, 128, 202, 311 (odd or even, the number counting his ENDURANCE or a game).
 
+Book 23 as of 2026-11-02, after its step 3: 350 sections, 17 fights, Random 30 (17) / 10, gates 36 / 7 / 0, illustrated 54, dead 7,
+puzzles 3, Meals 25, fights 8 / 6 (4) / 0 / 0, enemies 6 / 4 / 2 (before it: gates 36 / 6 / 0). Step 3 taught: a rank after an item
+in a discipline gate, "X and a Flute and have attained the rank of Y" (335, whose rank had been dropped: found by reading, the scan
+has no kind for a gate read too loosely). Books 1-22 and 24-29 unchanged by it. Left: 277 (an item whose name holds a discipline's
+word, listed by the scan as a discipline gate: the item table's); 66, 76, 197 (a Dagger, a Rope among the bonuses), 112, 209 (Gold
+Crowns added), 117, 122, 239, 314, 330 (odd or even, the number counting his ENDURANCE).
+
 Introductions: 7, 7, 9, 4, 10, 7, 10, 10, 8, 9, 8, 8 paragraphs. The free Random Number sections
 left are those where the number counts gold or Endurance, plays a game, or is changed by a bow, a
 weapon in hand, an item or a wound: work for each book's item table.

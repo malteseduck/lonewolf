@@ -38,7 +38,7 @@ has its tests in `tests/js/` (`core-*`, `rules-series`, `fight`).
   found,                     // transient flag used for a toast after creation
   marks: {id: true | n},     // lasting conditions and flags (LW.MARKS); n: the book number it lasts for
   stash: {key: {items, gold}}, // what was taken to be given back later (take ... stash, back)
-  coins: {kika: n, lune: n}, // other coins (LW.COINS)
+  coins: {kika: n, lune: n, noble: n, ren: n}, // other coins (LW.COINS), sharing the pouch with gold
   notes: [text],             // notes the text asks for on the Action Chart
   doses: {id: n},            // doses left of an item that has several
   used: {key: n},            // addictive draughts swallowed (item.addict.key)
@@ -69,7 +69,7 @@ Item (`LW.specialLimit`: 12 in every book, ruling R2). And one an item's `apart`
 | Default hooks | `LW.has`, `LW.heals`, `LW.hunts`, `LW.rankCount`, `LW.heroCS` (all replaced by `rules-series.js` when it is loaded) |
 | Item tables | `LW.applyItems(book, table)`: lays a book's `items-<code>.js` over its sections, once (book-format.md, "Item tables"). `LW.pickable(tables, bookId)`: what adding by hand offers: the engine's and the open book's items by kind, and earlier books' Special Items by book |
 | Conditions | `LW.meets(hero, cond, ctx)`, `LW.condName(cond)`: disciplines (any, or all), rank, Lore-circles, Endurance now; from item tables also items (any, or all), weapons of a kind held or in hand (`ctx.weapon` in a fight, else `LW.inHand`), Weaponskill / Weaponmastery (`LW.skilledWith`), counts, gold, marks, `any`, `not` (book-format.md, Conditions). `need.any` is a list of them, any one opening the choice (checked in `choices()`) |
-| Lasting conditions, coins | `LW.MARKS` (from the tables' `MARKS`, through `LW.addItems(items, marks)`), `LW.marksOf(hero)` (those in force in this book); `LW.COINS` |
+| Lasting conditions, coins | `LW.MARKS` (from the tables' `MARKS`, through `LW.addItems(items, marks)`), `LW.marksOf(hero)` (those in force in this book); `LW.COINS`, `LW.COIN_RATE` (to the Crown), `LW.purseWorth` / `LW.purseShown` (all coins in Crowns; `LW.POUCH` 50 its cap), `LW.gainCoin(hero, coin, n)` (every gain and loss of gold or a coin; a gain cut at the cap), `LW.payWith(hero, coin, n, alt)` (the coin named, or `alt` Gold Crowns), `LW.coinCount(n, coin)` ("1 Noble"). A Condition's `coins: {noble: 2}` asks so many of a coin (under `not`, fewer); a draw's result `coins: {noble: n}` wins or loses them; `sec.sellCoin` has a trader pay in that coin |
 | Item uses | `LW.useUp(hero, id)`: one dose, else the item. `LW.counted(hero)` (Special Items under the limit, without `free` ones), `LW.quiverRoom(hero)` (Arrows, less what rides in their place) |
 | Book runner | `class Game` |
 
@@ -85,7 +85,7 @@ Item (`LW.specialLimit`: 12 in every book, ruling R2). And one an item's `apart`
   item with `meal: true` (healing its `heal`), else one bought for `sec.mealCost`, else -3 EP); a
   lasting condition's `ep` for every section passed; then +1 EP healing if the section has no combat. `sec.mealUnless`, a
   Condition, spares the Meal in Hunting's place.
-- `lose(take)`: an item (or the first held of a list), gold / Meals (`'half'`, `'all'`), a coin,
+- `lose(take)`: an item (or the first held of a list), gold / Meals (`'half'`, `'all'`), a coin, `purse: 'all'` (gold and every coin; all stashed with `stash`),
   weapons (`'all'`, `'one'`, `'used'`: `hero.lastWeapon`; `special: true` takes weapon-like Special
   Items too), Arrows, Special Items, the Backpack; `at` by place in the list as shown (`listed()`:
   Meals first); `pick`, the player's choice: pending in `s.picks`, resolved one medallion at a time by
@@ -108,7 +108,7 @@ Item (`LW.specialLimit`: 12 in every book, ruling R2). And one an item's `apart`
   ending, or while combat is pending. Applies `need.disc` (one, or a list: any, or all with
   `every`), `need.circle`, `need.rank`, `need.item` (with `not`), `need.gold` (`orAll`; `instead`: payable in items, which with `short` turns
   the choice into one paid in items when he is short of gold, and otherwise adds a second choice, `pay: 'items'`,
-  beside it; `choose` then queues the pick, `give: true`, ahead of any the section asks), `need.coin`,
+  beside it; `choose` then queues the pick, `give: true`, ahead of any the section asks), `need.coin` (with `alt`: or so many Gold Crowns),
   `need.came`, and shuts them all while a chosen loss or a stake is pending (a game's, as above); the `rnt: 'auto'`
   gate, and hides `evade` choices in sections that have combat. For authored combat with `to`,
   returns a single "Continue". `choose` pays `need.spend` items or gold. Only the choices with a
@@ -127,7 +127,7 @@ Item (`LW.specialLimit`: 12 in every book, ruling R2). And one an item's `apart`
 - Inventory: `loot()` (gifts and finds, `i` = `'give0'` or `0`, with `taken` and `closed` for an
   `or` group already used), `takeLoot(i)`, `addItem(id)`, `removeItem(id)`, `adjust('ep'|'gold', by)`,
   `usePotion(id)` (anything with `heal`; a dose of one with `doses`; it cures a mark it is `until`), `dropWeapon(id)`. Loot
-  `{coin, n}` is coins; `{item, cost, coin}` a price in them; a ware with `cost` stays on sale, but closes once
+  `{coin, n}` is coins; `{item, cost, coin}` (or `{arrows, cost, coin}`) a price in them (`alt`: or so many Gold Crowns); a ware with `cost` stays on sale, but closes once
   bought in an `or` group, or after `max` (`loot()` gives `left`); `for` takes something of his in exchange
   (his choice through `s.picks` when he has several). Loot `{arrows: n}` needs a Quiver;
   `adjust('arrows', by)` sets them by hand. `takeLoot` and `addItem` return an error
@@ -298,7 +298,7 @@ arrives with other items or marks than before (only those the book tests), at mo
 with the section before where the way he came matters. From a section it tries:
 
 - every choice open; a gate on Endurance at an Endurance that opens it; a gate still shut, with what
-  it asks for lent (the item put in, or for "if you have no ...", taken away; gold or coins made up, or for "if you have no Gold Crowns", the purse emptied;
+  it asks for lent (the item put in, or for "if you have no ...", taken away; gold or coins made up, or for "if you have no Gold Crowns" or fewer than so many of a coin (`coins` under `not`, or several under `not: {any}`), the purse lowered below it;
   a mark set, or for "not", cleared);
 - every Random Number 0-9 where one is drawn, and a range no number reached (his bonuses carry the
   total past it) at its own number;

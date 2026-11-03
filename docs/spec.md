@@ -77,7 +77,7 @@ apply.
 - **Combat Skill** = 10 + Random Number. **Endurance** = 20 + Random Number. Endurance never rises
   above its starting maximum except through items or bonuses that raise the maximum.
 - The character dies when Endurance reaches 0.
-- **Gold Crowns**: at most 50.
+- **Gold Crowns**: at most 50; other coins share the Belt Pouch, 50 Gold Crowns' worth in all, each at its rate (ADR 0047).
 - **Weapons**: at most 2.
 - **Backpack**: at most 8 items (10 in the Grand Master series). Meals are Backpack Items.
 - **Special Items**: at most 12 (from Book 8 in the books; in every book here, ruling R2). Some raise maximum Endurance while carried

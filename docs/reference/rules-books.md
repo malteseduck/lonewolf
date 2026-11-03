@@ -1570,3 +1570,178 @@ ranks.
 - **Wisdom**: this is the first stage of carrying the Moonstone back to the Shianti who made it; some
   finds are useless, so keep only what is worth keeping; a wise choice of the five Disciplines matters
   more than high scores.
+
+### Book 22, The Buccaneers of Shadaki (New Order)
+
+Read from its own rules pages against Book 21's (tools/rules_diff.py, 2026-11-02): the combat rules,
+the combat summary, the Random Number Table and the combat results table are unchanged. The series
+section above holds its Disciplines, its Kai Weapons and its ranks.
+
+- **Scores**: a new character: COMBAT SKILL = **25** + a Random Number (0 counts as zero), ENDURANCE =
+  **30** + a Random Number. ENDURANCE cannot rise above its value at the start; at zero or below the
+  hero is dead. A ten-sided die may stand in for the table. Books 1-21 help but are not needed.
+  *Engine*: yes (`base`, `fresh`); the page draws its own numbers.
+- **Kai name**: the player's own, or drawn: a Random Number on each of two tables, the prefix (0-9:
+  Swift, Sun, True, Bold, Moon, Sword, Wise, Storm, Rune, Brave) and the suffix (0-9: Blade, Fire, Hawk,
+  Heart, Friend, Star, Dancer, Helm, Strider, Shield). *Engine*: yes (`LW.kaiName`, `HeroSetup.setName`).
+- **Disciplines**: every Kai and Magnakai Discipline. A new hero, as Kai Grand Master Senior, chooses
+  **five** of the sixteen New Order Disciplines; a hero who completed Book 21 chooses **one** more, with
+  **+1** COMBAT SKILL and **+2** ENDURANCE for each Discipline past five. Curing gives +1 ENDURANCE for
+  each section with no further fight, **10** at most in this book; no COMBAT SKILL is lost bare-handed.
+  The summary gives the other earlier Disciplines no number. *Engine*: yes (`first`, `earn`,
+  `healCap`, `bareHanded`, `LW.readyHero`); the rest, gates only.
+- **Carried from Book 21**: COMBAT SKILL and ENDURANCE, Special Items, the Kai Weapon, Weapons and
+  Backpack Items, and gold (below). *Owner*: Meals do not carry (ADR 0047). *Engine*: yes
+  (`keepPack`); ENDURANCE starts full, as in every book.
+- **Completing it**: one more Discipline in Book 23, Mydnight's Hero, with the same **+1** COMBAT SKILL
+  and **+2** ENDURANCE for each past five; the page carries on the Disciplines, the bonuses, the Kai
+  Weapon, Special Items and Backpack Items. *Owner*: Weapons and gold too, Meals not (ADR 0047).
+  *Engine*: yes (`earn`, `keepPack`).
+- **Grand Weaponmastery**: +5 with a mastered weapon of the ten (Spear, Dagger, Mace, Short Sword,
+  Warhammer, Bow, Quarterstaff, Broadsword, Axe, Sword); one more mastered for each book completed;
+  with the Bow, +5 to a shot's Random Number, as the one shot that names a number says (274).
+  *Engine*: the +5 in a fight, yes (`arms`); on a shot, yes (`LW.bowShot`, from the item table's
+  `bowShot`).
+- **Deliverance**: at 8 ENDURANCE or less in a fight, restore 20; the page says once every 20 days.
+  *Owner*: once a book (ADR 0047). *Engine*: yes (`LW.cureOf`).
+- **Gold**: 20 + a Random Number, added to any carried from Book 21; at most 50 in the Belt Pouch,
+  with no Monastery for the rest. *Engine*: yes, `gold: 20` in `LW.KITS[22]`, the purse's 50.
+- **Kit**: a map of southeastern Magnamund, of no stated kind. Choose any **5** of ten, at most two of
+  them Weapons: Quarterstaff, Bow, Quiver (Special Item, six Arrows), Flute (Backpack Item), Dagger,
+  Sword, two Meals (one choice, a Backpack space each), Rope (Backpack Item), Potion of Laumspur
+  (Backpack Item, 4 ENDURANCE after a fight, one dose, never just before one), Axe. The page offers the
+  choice to a hero carried from Book 21 as well. Section 1 adds the Moonstone (Special Item) for a hero
+  who does not have it yet. *Engine*: yes, `LW.KITS[22]` (the map as a Special Item,
+  `mapSoutheastMagnamund`; the Moonstone, skipped when he has it; the two Weapons, `problems`). (Checked against the page by hand.)
+- **The Kai Weapon**: a new hero chooses it or draws it by a Random Number from the series section's
+  table; a hero from Book 21 already has one. +5 in a fight; the higher bonus in its place where its
+  property holds, not added; Grand Weaponmastery's +5 besides when its kind is mastered. It is a
+  Special Item, one of the twelve, beside the two Weapons. 50 sections name it. *Engine*: yes
+  (`LW.KAI_WEAPONS`, `kaiWeaponNow`, the control on the fight's panel); the item table marks each
+  fight's `kaiWeapon` where the text says the time, the place or the foe.
+- **Money**: southeastern Magnamund's currency is the Noble, carried in the Belt Pouch, **50** at
+  most; a Gold Crown is taken for a Noble, **1** for **1**. The pouch still holds 50 Gold Crowns, and
+  the old table of smaller coins stands (to the Gold Crown: 4 Silver Lune, 10 Kika, 1 Noble, 10 Ren,
+  4 Sheasu Torq, 2 Orla, 1 Ain; Ren at 10 to 1 before setting out). Sections name Nobles (31) and Gold
+  Crowns (14); none names another coin. *Owner*: Nobles kept as their own coin in the shared pouch, a
+  Noble price payable in Gold Crowns as the page allows (ADR 0047). *Engine*: yes (`hero.coins.noble`,
+  `LW.gainCoin`; the item table gives each Noble price its `alt` in Gold Crowns).
+- **Carrying**: two Weapons, one used at a time; ten Backpack Items, Meals included, one Backpack,
+  exchanged or dropped at any time outside a fight; a found item named with capitals or called a
+  Backpack Item goes in the Backpack unless it is said to be a Special Item; twelve Special Items, each
+  carried as the text says; all potions are Backpack Items, any other's effect given where it is found.
+  No food when told to eat: lose 3 ENDURANCE; Grand Huntmastery ticks off no Meal. *Engine*: yes
+  (`LW.backpackMax`, `LW.specialLimit`, the Meal rule).
+- **Bow**: used only when the section allows; needs a Quiver and an Arrow, one Arrow a shot; useless
+  hand to hand, so a close-combat weapon is advised beside it. *Engine*: yes (`ranged`, `hero.arrows`,
+  `bowShot`).
+- **Combat**: COMBAT SKILL with the bonuses of the Kai Weapon, Special Items and Disciplines, against
+  the enemy's, on the Combat Results Table, whose column for the hero is headed GM; Kai-surge costs 1
+  ENDURANCE each round it is used, beyond the round's loss. Evasion only where the section allows it,
+  in the first or any later round unless it says otherwise: that round is fought, the enemy's losses
+  are ignored and only the hero loses ENDURANCE. *Engine*: yes (`evade`, `noEvade`).
+- **Improved Disciplines** at Kai Grand Master Superior (six Disciplines): Animal Mastery deters a
+  predator of a known kind with a scent only it senses; Assimilance throws a thunder-like noise up to
+  15 yards to distract, not in a fight; Astrology works sextants, astrolabes, orreries and the like;
+  Herbmastery purifies about two pints of foul or salt water a day, more at higher ranks; Elementalism
+  draws a large bucketful of fresh water from the air, as spray, deluge or into a vessel; Bardsmanship
+  calms an excited or hostile animal with music. *Engine*: gates only; none carries a number for play.
+- **Footnotes**: the questions at 2 and 107 each have one right answer, marked by a footnote at the
+  section it leads to (80; 120). Footnote 1 only points to the Kai Weapon's rules. *Engine*: the
+  importer marks 2 and 107 `puzzle` ("Turn to section") and drops the marks; no rule needed.
+- **Wisdom**: this is the last stage of carrying the Moonstone back to the Shianti who made it; some
+  finds are useless, so keep only what is worth keeping; a wise choice of the five Disciplines matters
+  more than high scores.
+
+### Book 23, Mydnight's Hero (New Order)
+
+Read from its own rules pages against Book 22's (tools/rules_diff.py, 2026-11-02): the combat rules,
+the combat summary, the ranks, the Random Number Table and the combat results table are unchanged. The
+series section above holds its Disciplines, its Kai Weapons and its ranks.
+
+- **Scores**: a new character: COMBAT SKILL = **25** + a Random Number (0 counts as zero), ENDURANCE =
+  **30** + a Random Number. ENDURANCE cannot rise above its value at the start; at zero or below the
+  hero is dead. A ten-sided die may stand in for the table. Books 1-22 help but are not needed.
+  *Engine*: yes (`base`, `fresh`); the page draws its own numbers.
+- **Kai name**: the player's own, or drawn: a Random Number on each of two tables, the prefix (0-9:
+  Swift, Sun, True, Bold, Moon, Sword, Wise, Storm, Rune, Brave) and the suffix (0-9: Blade, Fire, Hawk,
+  Heart, Friend, Star, Dancer, Helm, Strider, Shield). *Engine*: yes (`LW.kaiName`, `HeroSetup.setName`).
+- **Disciplines**: every Kai and Magnakai Discipline. A new hero, as Kai Grand Master Senior, chooses
+  **five** of the sixteen New Order Disciplines; a hero who completed Book 21 or 22 chooses **one** more
+  for each New Order book completed (footnote 1), with **+1** COMBAT SKILL and **+2** ENDURANCE for each
+  Discipline past five. Curing gives +1 ENDURANCE for each section with no further fight, **10** at most
+  in this book; no COMBAT SKILL is lost bare-handed. The summary gives the other earlier Disciplines no
+  number. *Engine*: yes (`first`, `earn`, `healCap`, `bareHanded`, `LW.readyHero`); the rest, gates only.
+- **Carried from Book 21 or 22**: COMBAT SKILL and ENDURANCE, Special Items, the Kai Weapon, Weapons
+  and Backpack Items, and gold (below). *Owner*: Meals do not carry (ADR 0047). *Engine*: yes
+  (`keepPack`); ENDURANCE starts full, as in every book.
+- **Completing it**: one more Discipline in Book 24, Rune War, with the same **+1** COMBAT SKILL and
+  **+2** ENDURANCE for each past five; the page carries on the Disciplines, the bonuses, the Kai Weapon,
+  Special Items and Backpack Items. *Owner*: Weapons and gold too, Meals not (ADR 0047). *Engine*: yes
+  (`earn`, `keepPack`).
+- **Grand Weaponmastery**: +5 with a mastered weapon of the ten (Spear, Dagger, Mace, Short Sword,
+  Warhammer, Bow, Quarterstaff, Broadsword, Axe, Sword); one more mastered for each book completed;
+  with the Bow, +5 to a shot's Random Number. The book's one shot (102) names no number for it.
+  *Engine*: the +5 in a fight, yes (`arms`); on a shot, yes (`LW.bowShot`, from the item table's
+  `bowShot`).
+- **Deliverance**: at 8 ENDURANCE or less in a fight, restore 20; the page says once every 20 days.
+  *Owner*: once a book (ADR 0047). *Engine*: yes (`LW.cureOf`).
+- **Gold**: 20 + a Random Number, added to any carried from Book 21 or 22; at most 50 in the Belt
+  Pouch, with no Monastery for the rest. *Engine*: yes, `gold: 20` in `LW.KITS[23]`, the purse's 50.
+- **Kit**: a map of central Southern Magnamund, of no stated kind. Choose any **5** of ten, at most two
+  of them Weapons: Quarterstaff, Bow, Quiver (Special Item, six Arrows), Flute (Backpack Item), Dagger,
+  Sword, two Meals (one choice, a Backpack space each), Rope (Backpack Item), Potion of Laumspur
+  (Backpack Item, 4 ENDURANCE after a fight, one dose, never just before one), Axe. The page offers the
+  choice to a carried hero as well. *Engine*: yes, `LW.KITS[23]` (the map as a Special Item,
+  `mapCentralSouthernMagnamund`; the two Weapons, `problems`). (Checked against the page by hand.)
+- **The Kai Weapon**: a new hero chooses it or draws it by a Random Number from the series section's
+  table; a hero from Book 21 or 22 already has one (footnote 3). +5 in a fight; the higher bonus in its
+  place where its property holds, not added; Grand Weaponmastery's +5 besides when its kind is
+  mastered. It is a Special Item, one of the twelve, beside the two Weapons. 37 sections name it.
+  *Engine*: yes (`LW.KAI_WEAPONS`, `kaiWeaponNow`, the control on the fight's panel); the item table
+  marks each fight's `kaiWeapon` where the text says the time, the place or the foe.
+- **Money**: Siyen's currency is the Lune, carried in the Belt Pouch, **200** at most (or 50 Gold
+  Crowns); a Gold Crown is taken for **4** Lune. Ren are met too, at **10** to the Gold Crown, **500**
+  at most in the pouch. The old table of smaller coins stands (to the Gold Crown: 4 Silver Lune, 10
+  Kika, 1 Noble, 10 Ren, 4 Sheasu Torq, 2 Orla, 1 Ain). Sections name Lune (8: 32, 37, 52, 113, 120,
+  155, 166, 266), Ren (7: 4, 132, 166, 241, 246, 266, 325) and Gold Crowns (19); most prices give both,
+  but 120 and 166 price in Lune only. *Owner*: Lune and Ren kept as their own coins in the
+  shared pouch (50 Gold Crowns' worth in all), a price paid in the coin it names, or in Gold Crowns
+  where the text gives that price too (ADR 0047). *Engine*: yes (`hero.coins`, `LW.gainCoin`; the item
+  table's `alt` on a price given in both).
+- **Carrying**: two Weapons, one used at a time; ten Backpack Items, Meals included, one Backpack,
+  exchanged or dropped at any time outside a fight; a found item named with capitals or called a
+  Backpack Item goes in the Backpack unless it is said to be a Special Item; twelve Special Items, each
+  carried as the text says; all potions are Backpack Items, any other's effect given where it is found.
+  No food when told to eat: lose 3 ENDURANCE; Grand Huntmastery ticks off no Meal. *Engine*: yes
+  (`LW.backpackMax`, `LW.specialLimit`, the Meal rule).
+- **Bow**: used only when the section allows; needs a Quiver and an Arrow, one Arrow a shot; useless
+  hand to hand, so a close-combat weapon is advised beside it. *Engine*: yes (`ranged`, `hero.arrows`,
+  `bowShot`).
+- **Combat**: COMBAT SKILL with the bonuses of the Kai Weapon, Special Items and Disciplines, against
+  the enemy's, on the Combat Results Table, whose column for the hero is headed GM; Kai-surge costs 1
+  ENDURANCE each round it is used, beyond the round's loss. Evasion only where the section allows it,
+  in the first or any later round unless it says otherwise: that round is fought, the enemy's losses
+  are ignored and only the hero loses ENDURANCE. *Engine*: yes (`evade`, `noEvade`).
+- **Improved Disciplines** at Kai Grand Master Superior (six Disciplines): Animal Mastery deters a
+  predator of a known kind with a scent only it senses; Assimilance throws a thunder-like noise up to
+  15 yards to distract, not in a fight; Astrology works sextants, astrolabes, orreries and the like;
+  Herbmastery purifies about two pints of foul or salt water a day, more at higher ranks; Elementalism
+  draws a large bucketful of fresh water from the air, as spray, deluge or into a vessel; Bardsmanship
+  calms an excited or hostile animal with music. New at Kai Grand Sentinel (seven): Grand
+  Weaponmastery senses where the Kai Weapon is when parted from it, through anything but lead, further
+  and better by rank; Grand Pathsmanship foretells the weather **3** hours ahead within **ten** square
+  miles, more by rank; Astrology reads the psychic trace an owner leaves on a treasured object (most
+  everyday or shared things keep none); Herbmastery makes spoiled or tainted food safe to eat;
+  Elementalism charges the air round an object no bigger than a man, which strikes whoever touches or
+  opens it, but not the Kai himself; Bardsmanship counters a hostile sonic attack with song or music,
+  better by rank. *Engine*: gates only; none carries a number for play.
+- **Footnotes**: the lock puzzles at 113, 178 and 306 each have one right answer, marked by a footnote
+  at the section it leads to (240; 75; 211). At 320, the Prince's opening remarks hold only if the hero
+  met those men on the way from 256 through 111. At 323 the Prince is unarmed though he carried a short
+  sword at 170, with no reason given. Footnotes 1 and 3 are the carrying rules above; footnote 2 only
+  points to the Kai Weapon's rules. *Engine*: the importer marks 113, 178 and 306 `puzzle` ("Turn to
+  section") and drops the marks; 320 and 323 are the text's to read, no rule needed.
+- **Wisdom**: the mission is to save Siyen from Baron Sadanzo and his robber knights; some finds are
+  useless, so keep only what is worth keeping; a wise choice of the five Disciplines matters more than
+  high scores.

@@ -418,6 +418,8 @@
     19: { give: ['mapSommerlundWildlands'], gold: 20, choose: 4, from: ['broadsword', 'bow', 'quiver', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe'], store: true, storeGold: true },
     20: { give: ['mapPlanes'], gold: 20, choose: 4, from: ['quarterstaff', 'broadsword', 'bow', 'quiver', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe'], store: true, storeGold: true },
     21: { give: ['mapSeaRoute'], gold: 20, choose: 5, from: ['quarterstaff', 'bow', 'quiver', 'flute', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe'] },
+    22: { give: ['mapSoutheastMagnamund', 'moonstone'], gold: 20, choose: 5, from: ['quarterstaff', 'bow', 'quiver', 'flute', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe'] },
+    23: { give: ['mapCentralSouthernMagnamund'], gold: 20, choose: 5, from: ['quarterstaff', 'bow', 'quiver', 'flute', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe'] },
   };
   const entry = (x) => (typeof x === 'string' ? { item: x, n: 1 } : Object.assign({ n: 1 }, x));
   const entryName = (x) => (x.meal ? x.name || (x.meal > 1 ? `${x.meal} Meals` : 'a Meal') : x.n > 1 ? `${x.n} × ${LW.itemName(x.item)}` : LW.itemName(x.item));
@@ -438,7 +440,7 @@
       rollGold(n = LW.rand10()) { if (this.roll == null) this.roll = n; return this.roll; },
       /* the Belt Pouch after the book's 10 + the roll, what is over its 50, and the gold at the Monastery */
       gold() {
-        const all = hero.gold + (kit.gold || 10) + (this.roll || 0), purse = Math.min(50, all), over = all - purse;
+        const all = hero.gold + (kit.gold || 10) + (this.roll || 0), purse = Math.min(Math.floor(LW.POUCH - (LW.purseWorth(hero) - hero.gold) + 1e-9), all), over = all - purse;
         return { purse, over, bank: (hero.storedGold || 0) + (kit.storeGold ? over : 0) };
       },
       picks() { return [...this.chosen].map((i) => from[i]); },

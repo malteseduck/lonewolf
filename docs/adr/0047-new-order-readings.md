@@ -30,6 +30,13 @@ currency, but none of its sections uses any coin but the Gold Crown.
 - **From one New Order book to the next**: disciplines and their bonuses, the Kai Weapon, Weapons,
   Special Items, Backpack Items and gold (the new pouch added on, 50 at most). Meals do not carry.
 - **Other currencies** are not tracked in Book 21. A later book that uses one gets its own decision.
+- **Other coins share the Belt Pouch** (2026-11-03, for Books 22 on, and the coins of earlier books
+  with them): 50 Gold Crowns' worth in all, each coin at its rate to the Crown (Lune 4, Kika 10, Ren 10,
+  Nobles 1). Each coin is kept apart; a gain past the cap is cut. The Action Chart shows one figure, the
+  worth of them all in Gold Crowns rounded down; hovering lists the coins, touching opens each with its
+  own stepper. A price is paid only in the coin it names; where the text gives a price in Gold Crowns
+  too, either pays. Exchanging is by hand. (This replaces the reading of 2026-11-02 that took Book
+  22's Nobles as Gold Crowns.)
 
 ## Consequences
 

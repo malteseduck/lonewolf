@@ -120,6 +120,9 @@ What a book's play-through left to the player that the engine could take over:
   3 for each Backpack Item; 103, 6 for each Special Item but the Moonstone and the Iron Skull). 182's
   stake takes the Crowns but not the points; a stake or a pick that restores so much a unit would take
   all three. They are the table's todos there.
+- **A Special Item that heals when used** (Book 22's Pouch of Seota Dust, given at 167: 10 ENDURANCE,
+  once). `heal` and the Laumspur button take Backpack Items only, so the player drops it and adds the
+  points by hand; `heal` read on a Special Item too would take it.
 
 ### Book notes outside the steps
 

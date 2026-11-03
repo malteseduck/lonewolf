@@ -300,6 +300,8 @@ def test_grand_master_draw_with_both_disciplines_adding_more(grand):
     ('If you are still alive and you possess Grand Nexus and have reached the rank of Sun Knight or higher, turn to 5.', {'disc': 'grandNexus', 'rank': 6}),
     # with an item too (Book 21's 37): the discipline is read, the item is the item table's
     ('If you possess the Grand Master Discipline of Bardsmanship and you possess a lute, turn to 5.', {'disc': 'bardsmanship'}),
+    # an item between the discipline and a rank (Book 23's 335): the rank is read too, the item the item table's
+    ('If you possess Bardsmanship and a lute and have attained the rank of Sun Knight, turn to 5.', {'disc': 'bardsmanship', 'rank': 6}),
 ])
 def test_grand_master_gate_phrasings(grand, text, expect):
     assert grand['gate'](text) == expect

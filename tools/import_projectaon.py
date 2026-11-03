@@ -241,6 +241,11 @@ def gate(text):
             need = {'disc': ids[0] if len(ids) == 1 else ids}
             if every:
                 need['every'] = True
+            # "X and a Flute and have attained the rank of Y" (Book 23's 335): the item cut the whole
+            # condition short, but the rank is the hero's own and read for certain
+            k = re.search(r'\band (?:you )?(?:have )?(?:reached|attained|achieved) the (?:Kai |Magnakai )?rank of ([A-Za-z -]+?)(?: or (?:higher|above|more))?(?:,|\.| you| \(|$)', head + '.')
+            if k and rank_of(k.group(1)):
+                need['rank'] = rank_of(k.group(1))
             return need
     k = re.search(r'(?:reached|attained|achieved) the (?:Kai |Magnakai )?rank of ([A-Za-z -]+?)(?: or (?:higher|above|more))?(?:,|\.| you| \(|$)', head + '.')
     if k and rank_of(k.group(1)):

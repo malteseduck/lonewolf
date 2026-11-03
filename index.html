@@ -385,6 +385,14 @@ button.disc:not(.lit):hover .glyph i, .disc.sel:not(.lit) .glyph i { background:
 .purse b { font-weight: 400; font-size: 1.3em; font-variant-numeric: lining-nums; }
 .purse .glyph { width: 1.4em; height: 1.4em; }
 .purse .glyph i { background: linear-gradient(var(--bronze-hi), var(--bronze) 55%, var(--bronze-lo)); }
+.coinsbtn { padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; border-bottom: 1px dotted var(--ink-faint); }
+.coinbox { flex-basis: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.2em; margin: 0; padding: 0.2em 0.6em; list-style: none; border: 1px solid var(--ink-faint); font: 400 0.85em var(--title); }
+.coinbox .cap { grid-column: 1 / -1; }
+.coinbox li { display: flex; align-items: center; gap: 0.4em; white-space: nowrap; }
+.coinbox li b { font-weight: 400; font-size: 1.2em; min-width: 1.6em; text-align: right; font-variant-numeric: lining-nums; }
+.coinbox li .step { margin-left: auto; }
+.coinbox small, .coinbox .cap { color: var(--ink-dim); font-size: 0.8em; }
+.coinbox .cap { justify-content: flex-end; font-size: 0.9em; }
 
 /* the fight */
 .foebar { display: flex; align-items: center; gap: 0.8em; font: 400 1.05em var(--title); color: var(--blood); }

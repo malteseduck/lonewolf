@@ -82,6 +82,8 @@
     mapDarklands: { name: 'Map of the Darklands', kind: 'special', glyph: 'treasure-map' },
     mapRuel: { name: 'Map of Ruel', kind: 'special', glyph: 'treasure-map' },
     mapSeaRoute: { name: 'Map of the Sea Route', kind: 'special', glyph: 'treasure-map' },
+    mapSoutheastMagnamund: { name: 'Map of Southeastern Magnamund', kind: 'special', glyph: 'treasure-map' },
+    mapCentralSouthernMagnamund: { name: 'Map of Central Southern Magnamund', kind: 'special', glyph: 'treasure-map' },
     flute: { name: 'Flute', kind: 'backpack', glyph: 'straight-pipe' },
     mapTentarias: { name: 'Map of the Western Tentarias', kind: 'special', glyph: 'treasure-map' },
     mapMaakengorge: { name: 'Map of the Maakengorge', kind: 'special', glyph: 'treasure-map' },
@@ -108,8 +110,33 @@
       hero.assumed = [...(hero.assumed || []), m];
     }
   };
-  /* Coins other than Gold Crowns (hero.coins): Book 9's Lune, Book 12's Kika */
-  LW.COINS = { lune: 'Lune', kika: 'Kika' };
+  /* Coins other than Gold Crowns (hero.coins): Book 9's Lune, Book 12's Kika, Book 22's Nobles, Book 23's Ren.
+     They share the Belt Pouch with the Crowns (ADR 0047): 50 Crowns' worth in all, each coin at its rate to the Crown. */
+  LW.COINS = { lune: 'Lune', kika: 'Kika', noble: 'Nobles', ren: 'Ren' };
+  LW.COIN_RATE = { lune: 4, kika: 10, noble: 1, ren: 10 };
+  LW.POUCH = 50;
+  LW.purseWorth = (hero) => hero.gold + Object.entries(hero.coins || {}).reduce((t, [c, n]) => t + n / (LW.COIN_RATE[c] || 1), 0);
+  LW.purseShown = (hero) => Math.floor(LW.purseWorth(hero) + 1e-9);
+  /* n of a coin (null: Gold Crowns) gained or, when negative, lost; a gain is cut where the pouch is full.
+     Returns the change made. */
+  LW.gainCoin = (hero, coin, n) => {
+    const rate = coin ? LW.COIN_RATE[coin] || 1 : 1, have = coin ? (hero.coins || {})[coin] || 0 : hero.gold;
+    if (n > 0) n = Math.min(n, Math.max(0, Math.floor((LW.POUCH - LW.purseWorth(hero)) * rate + 1e-9)));
+    const now = Math.max(0, have + n);
+    if (coin) (hero.coins = hero.coins || {})[coin] = now; else hero.gold = now;
+    return now - have;
+  };
+  /* what a price of n in a coin (null: Gold Crowns) is paid with: that coin, or alt Gold Crowns where the
+     table gives them; null when he can pay neither */
+  LW.payWith = (hero, coin, n, alt) => {
+    const have = coin ? (hero.coins || {})[coin] || 0 : hero.gold;
+    if (have >= n) return { coin, n };
+    if (alt != null && coin && hero.gold >= alt) return { coin: null, n: alt };
+    return null;
+  };
+  LW.coinName = (coin) => (coin ? LW.COINS[coin] : 'Gold Crowns');
+  /* "1 Noble", "6 Lune", "2 Gold Crowns" */
+  LW.coinCount = (n, coin) => `${n} ${n === 1 ? LW.coinName(coin).replace(/s$/, '') : LW.coinName(coin)}`;
   /* The flags an item table's sections (top-level mark / unmark) leave on a hero who walked this trail of
      section ids, in order: for an adventure saved before a flag existed (main.js, backfillFlags) */
   LW.flagsFrom = (sections, trail) => {
@@ -299,6 +326,8 @@
     if (c.arrows && (hero.arrows || 0) < c.arrows) return false;
     if (c.packItems && hero.backpack.length < c.packItems) return false;
     if (c.gold && hero.gold < c.gold) return false;
+    // coins: {noble: 2}, so many of another coin (with not: fewer than that)
+    if (c.coins && Object.entries(c.coins).some(([k, n]) => ((hero.coins || {})[k] || 0) < n)) return false;
     if (c.mark && !(hero.marks || {})[c.mark]) return false;
     if (c.any && !c.any.some((x) => LW.meets(hero, x, ctx))) return false;
     if (c.not && LW.meets(hero, c.not, ctx)) return false;
@@ -314,7 +343,8 @@
     c.ep && 'your Endurance', c.each && 'your Magnakai Disciplines', c.weapon && (c.weapon === true ? 'a weapon' : c.weapon.map(kindName).join(' or ')),
     c.wield && (c.wield === true ? 'a weapon in hand' : c.wield.map(kindName).join(' or ') + ' in hand'), c.mastery && `skill with the ${kindName(c.mastery)}`,
     c.skilled && 'skill with your weapon', c.meals && `${c.meals} Meals`, c.arrows && `${c.arrows} Arrows`, c.packItems && `${c.packItems} Backpack Items`,
-    c.gold && `${c.gold} Gold Crowns`, c.mark && (LW.MARKS[c.mark] ? LW.MARKS[c.mark].name : c.mark), c.any && c.any.map(LW.condName).join(', or '), c.not && (Object.keys(c.not).join() === 'gold' ? (c.not.gold > 1 ? `fewer than ${c.not.gold} Gold Crowns` : 'no Gold Crowns') : `not ${LW.condName(c.not)}`)].filter(Boolean).join(', ');
+    c.gold && `${c.gold} Gold Crowns`, c.coins && Object.entries(c.coins).map(([k, n]) => LW.coinCount(n, k)).join(' and '), c.mark && (LW.MARKS[c.mark] ? LW.MARKS[c.mark].name : c.mark), c.any && c.any.map(LW.condName).join(', or '), c.not && (Object.keys(c.not).join() === 'gold' ? (c.not.gold > 1 ? `fewer than ${c.not.gold} Gold Crowns` : 'no Gold Crowns')
+      : Object.keys(c.not).join() === 'coins' ? `fewer than ${LW.condName(c.not)}` : `not ${LW.condName(c.not)}`)].filter(Boolean).join(', ');
 
   /* COMBAT SKILL with every modifier spelled out, so the UI can show its working. */
   LW.heroCS = (hero, ctx = {}) => {
@@ -526,8 +556,10 @@
         else if (t.item) { const id = [].concat(t.item).find((i) => LW.hasItem(hero, i)); if (id) this.drop(id, st, events); }
         else if (t.coin) {
           const have = (hero.coins || {})[t.coin] || 0, n = t.n === 'all' ? have : t.n === 'half' ? half(have, t) : Math.min(have, t.n);
-          if (n) { hero.coins[t.coin] -= n; events.push(`You lose ${n} ${LW.COINS[t.coin]}.`); }
+          if (n) { hero.coins[t.coin] -= n; if (st) this.stashGold(st, n, t.coin); events.push(`You lose ${n} ${LW.COINS[t.coin]}.`); }
         }
+        // purse: 'all', the Gold Crowns and every other coin
+        else if (t.purse === 'all') this.lose([{ gold: 'all', stash: st }, ...Object.keys(hero.coins || {}).map((c) => ({ coin: c, n: 'all', stash: st }))], events);
         else if (t.gold != null) {
           const n = t.gold === 'all' ? hero.gold : t.gold === 'half' ? half(hero.gold, t) : Math.min(hero.gold, t.gold);
           if (n) { hero.gold -= n; if (st) this.stashGold(st, n); events.push(`You lose ${n} Gold Crowns.`); }
@@ -557,7 +589,10 @@
         }
       }
     }
-    stashGold(key, n) { const hero = this.s.hero, st = ((hero.stash = hero.stash || {})[key] = hero.stash[key] || { items: [], gold: 0 }); st.gold += n; }
+    stashGold(key, n, coin) {
+      const hero = this.s.hero, st = ((hero.stash = hero.stash || {})[key] = hero.stash[key] || { items: [], gold: 0 });
+      if (coin) (st.coins = st.coins || {})[coin] = (st.coins[coin] || 0) + n; else st.gold += n;
+    }
     /* What was taken into hero.stash[key] comes back: b is the key, or {stash, only: [kinds]} (weapon,
        backpack, special, gold) for part of it. What will not fit stays on the page to take. */
     unstash(b, events) {
@@ -567,7 +602,8 @@
       if (st.pack && ok('backpack')) { hero.noPack = false; delete st.pack; } // the Backpack itself first, so its things fit
       const back = st.items.filter((id) => ok(kind(id))), left = [];
       for (const id of back) if (LW.putItem(hero, id)) left.push(id);
-      if (ok('gold') && st.gold) { hero.gold = Math.min(50, hero.gold + st.gold); st.gold = 0; }
+      if (ok('gold') && st.gold) { LW.gainCoin(hero, null, st.gold); st.gold = 0; }
+      if (ok('gold') && st.coins) { for (const c in st.coins) LW.gainCoin(hero, c, st.coins[c]); delete st.coins; }
       st.items = st.items.filter((id) => !ok(kind(id))).concat(left);
       if (back.length) events.push(`What was taken from you is given back${left.length ? `, but for what will not fit: ${left.map(LW.itemName).join(', ')}` : ''}.`);
       if (!st.items.length && !st.gold && !st.pack) delete hero.stash[key];
@@ -615,8 +651,7 @@
       const hero = this.s.hero, st = (this.s.stakes || {})[key];
       if (!st) return;
       const n = Math.round(st.n * by), was = st.coin ? (hero.coins || {})[st.coin] || 0 : hero.gold;
-      let now = Math.max(0, was + n); if (!st.coin) now = Math.min(50, now);
-      if (st.coin) (hero.coins = hero.coins || {})[st.coin] = now; else hero.gold = now;
+      const now = was + LW.gainCoin(hero, st.coin || null, n);
       const what = st.coin ? LW.COINS[st.coin] : 'Gold Crowns';
       events.push(now >= was ? `You win ${now - was} ${what}.` : `You lose ${was - now} ${what}.`);
       delete this.s.stakes[key];
@@ -625,18 +660,20 @@
        Returns why not, or null. */
     sell(id) {
       const price = (this.section.sell || {})[id], hero = this.s.hero;
+      // sec.sellCoin: he pays in that coin, not Gold Crowns
+      const coin = this.section.sellCoin || null, room = (n) => LW.POUCH - LW.purseWorth(hero) >= n / (coin ? LW.COIN_RATE[coin] : 1) - 1e-9;
       if (id === 'arrows' && price) {
         if ((hero.arrows || 0) < price.n) return `He buys ${price.n} Arrows at a time.`;
-        if (hero.gold + price.gold > 50) return 'Your Belt Pouch has no room for the price.';
-        hero.arrows -= price.n; hero.gold += price.gold;
-        this.s.events.push(`You sell ${price.n} Arrows for ${price.gold} Gold Crown${price.gold > 1 ? 's' : ''}.`);
+        if (!room(price.gold)) return 'Your Belt Pouch has no room for the price.';
+        hero.arrows -= price.n; LW.gainCoin(hero, coin, price.gold);
+        this.s.events.push(`You sell ${price.n} Arrows for ${LW.coinCount(price.gold, coin)}.`);
         this.save();
         return null;
       }
       if (price == null || !LW.hasItem(hero, id)) return 'He does not buy that.';
-      if (hero.gold + price > 50) return 'Your Belt Pouch has no room for the price.';
-      LW.dropItem(hero, id); hero.gold += price;
-      this.s.events.push(`You sell the ${LW.itemName(id)} for ${price} Gold Crown${price > 1 ? 's' : ''}.`);
+      if (!room(price)) return 'Your Belt Pouch has no room for the price.';
+      LW.dropItem(hero, id); LW.gainCoin(hero, coin, price);
+      this.s.events.push(`You sell the ${LW.itemName(id)} for ${LW.coinCount(price, coin)}.`);
       this.save();
       return null;
     }
@@ -724,8 +761,8 @@
       st.won += won;
       const what = bet.coin ? LW.COINS[bet.coin] : 'Gold Crowns';
       if (by >= 0) {
-        if (bet.coin) hero.coins[bet.coin] += (bet.n + won) * bet.rate;
-        else { this.s.tokens[this.s.at] += bet.token; hero.gold = Math.min(50, hero.gold + bet.n - bet.token + won); }
+        if (bet.coin) LW.gainCoin(hero, bet.coin, (bet.n + won) * bet.rate);
+        else { this.s.tokens[this.s.at] += bet.token; LW.gainCoin(hero, null, bet.n - bet.token + won); }
       }
       st.log.push(`${line}: ${by > 0 ? (won ? `you win ${won * bet.rate} ${what}` : 'you win, but the table pays no more') : by ? `you lose ${bet.n * bet.rate} ${what}` : 'level, the stake back'}.`);
       st.bet = null; st.bets += 1;
@@ -793,7 +830,7 @@
         // orAll: the price, or all he has if that is less
         if (c.pay === 'items') { if (c.noItems) { enabled = false; why = `You have nothing to ${c.how}`; } }
         else if (c.need && c.need.gold && !c.need.orAll && hero.gold < c.need.gold) { enabled = false; why = `Needs ${c.need.gold} Gold Crowns`; }
-        if (c.need && c.need.coin && ((hero.coins || {})[c.need.coin] || 0) < (c.need.n || 1)) { enabled = false; why = `Needs ${c.need.n || 1} ${LW.COINS[c.need.coin]}`; }
+        if (c.need && c.need.coin && !LW.payWith(hero, c.need.coin, c.need.n || 1, c.need.alt)) { enabled = false; why = `Needs ${c.need.n || 1} ${LW.COINS[c.need.coin]}${c.need.alt != null ? ` or ${c.need.alt} Gold Crowns` : ''}`; }
         // came: open only when he came from one of these sections
         if (c.need && c.need.came && !c.need.came.includes(came)) { enabled = false; why = 'Not the way you came'; }
         // a game of chance: its ways on by how it stands (a bet down, the purse lost, every bet made)
@@ -825,7 +862,7 @@
       const hero = this.s.hero;
       if (choice.need && choice.need.item && choice.need.spend) [].concat(choice.need.item).some((i) => LW.dropItem(hero, i)); // the first he has
       if (choice.need && choice.need.gold && choice.need.spend && choice.pay !== 'items') hero.gold -= Math.min(hero.gold, choice.need.gold);
-      if (choice.need && choice.need.coin && choice.need.spend) hero.coins[choice.need.coin] -= choice.need.n || 1;
+      if (choice.need && choice.need.coin && choice.need.spend) { const p = LW.payWith(hero, choice.need.coin, choice.need.n || 1, choice.need.alt); if (p) LW.gainCoin(hero, p.coin, -p.n); }
       this.go(to || choice.to, choice.text);
       // paid in items: what he hands over is chosen on the section he came to, before what it takes
       if (choice.pay === 'items') {
@@ -850,10 +887,10 @@
       // what a give-back here could not fit, still in its stash: his to take once he has made room
       const kept = [].concat(sec.back || []).flatMap((b) => { const k = b.stash || b, st = (this.s.hero.stash || {})[k]; return st ? st.items.map((id, n) => ({ i: `back:${k}:${n}`, label: id === 'meal' ? 'a Meal' : LW.itemName(id), taken: false, item: id })) : []; });
       return all.map(([l, i]) => {
-        const label = l.item ? LW.itemName(l.item) : l.coin ? `${l.n} ${LW.COINS[l.coin]}` : l.gold ? `${l.gold} Gold Crowns` : l.meal ? (l.meal > 1 ? `${l.meal} Meals` : 'a Meal') : l.pack ? 'a Backpack' : l.arrows ? `${l.arrows} Arrow${l.arrows > 1 ? 's' : ''}` : '';
+        const found = l.coin && !l.cost, label = l.item ? LW.itemName(l.item) : found ? LW.coinCount(l.n, l.coin) : l.gold ? `${l.gold} Gold Crowns` : l.meal ? (l.meal > 1 ? `${l.meal} Meals` : 'a Meal') : l.pack ? 'a Backpack' : l.arrows ? `${l.arrows} Arrow${l.arrows > 1 ? 's' : ''}` : '';
         const share = l.or && all.filter(([m, j]) => j !== i && m.or === l.or && got(j)).length >= (l.pick || 1);
         const left = l.max ? l.max - (this.s.looted[this.s.at + ':' + i + ':n'] || 0) : undefined;
-        return { i, label, taken: got(i), closed: share, cost: l.cost, left, coin: l.item && l.coin, swap: l.for, pick: l.pick, item: l.item || (l.coin ? 'coin' : l.meal ? 'meal' : l.gold ? 'gold' : l.arrows ? 'arrows' : 'pack') };
+        return { i, label, taken: got(i), closed: share, cost: l.cost, alt: l.alt, left, coin: l.cost ? l.coin : undefined, swap: l.for, pick: l.pick, item: l.item || (found ? 'coin' : l.meal ? 'meal' : l.gold ? 'gold' : l.arrows ? 'arrows' : 'pack') };
       }).concat(kept);
     }
     /* Returns an error string when it cannot be taken. */
@@ -874,9 +911,9 @@
       if (!l || this.s.looted[key]) return null;
       if (l.or && this.loot().find((o) => o.i === i).closed) return l.pick > 1 ? `You may take only ${l.pick} of these.` : 'You may take only one of these.';
       // a price in another coin: {item, cost, coin}; coins found: {coin, n}
-      const purse = l.item && l.coin ? (hero.coins || {})[l.coin] || 0 : hero.gold, coinName = l.item && l.coin ? LW.COINS[l.coin] : 'Gold Crowns';
+      const priceIn = l.cost && l.coin ? l.coin : null, pay = l.cost ? LW.payWith(hero, priceIn, l.cost, l.alt) : null;
       // orAll: the price, or all he has if that is less
-      if (l.cost && purse < l.cost && !l.orAll) return `It costs ${l.cost} ${coinName}.`;
+      if (l.cost && !pay && !l.orAll) return `It costs ${LW.coinCount(l.cost, priceIn)}${l.alt != null && priceIn ? ` or ${LW.coinCount(l.alt)}` : ''}.`;
       if (l.cost && l.pack && !hero.noPack) return 'You have a Backpack already.';
       // for: it is his only in exchange for one of these (an item id list, or 'weapon': any weapon of his)
       const swap = l.for && !this.s.looted[key + ':swapped'] && (l.for === 'weapon' ? hero.weapons.slice() : l.for.filter((x) => LW.hasItem(hero, x)));
@@ -885,8 +922,8 @@
       if (swap && swap.length > 1) { (this.s.picks = this.s.picks || []).push({ ids: swap, n: 1, loot: i }); this.s.events.push('Choose what you give in exchange, below.'); this.save(); return null; }
       if (swap) LW.dropItem(hero, swap[0]);
       delete this.s.looted[key + ':swapped'];
-      if (!l.item && l.coin) { (hero.coins = hero.coins || {})[l.coin] = (hero.coins[l.coin] || 0) + l.n; }
-      else if (l.gold) hero.gold = Math.min(50, hero.gold + l.gold);
+      if (!l.item && l.coin && !l.cost) LW.gainCoin(hero, l.coin, l.n);
+      else if (l.gold) LW.gainCoin(hero, null, l.gold);
       else if (l.pack) hero.noPack = false;
       else if (l.arrows) {
         if (!hero.special.includes('quiver')) return 'You need a Quiver to carry Arrows.';
@@ -899,8 +936,8 @@
         if (room < l.meal) return room ? `Your backpack has room for only ${room}.` : 'Your backpack is full.';
         hero.meals += l.meal;
       } else { const err = LW.putItem(hero, l.item); if (err) { if (swap) LW.putItem(hero, swap[0]); return err; } }
-      if (l.cost && l.coin) hero.coins[l.coin] -= l.cost;
-      else if (l.cost) hero.gold -= Math.min(hero.gold, l.cost);
+      if (pay) LW.gainCoin(hero, pay.coin, -pay.n);
+      else if (l.cost) hero.gold -= Math.min(hero.gold, l.cost); // orAll: all he has
       // a shop's goods stay on sale, but for one of several (or) or up to max of a ware
       const bought = l.cost ? (this.s.looted[key + ':n'] = (this.s.looted[key + ':n'] || 0) + 1) : 0;
       if (!l.cost || l.or || (l.max && bought >= l.max)) this.s.looted[key] = true;
@@ -951,7 +988,9 @@
         if (r.ep) { hero.ep = Math.max(0, Math.min(hero.epMax, hero.ep + ep)); this.s.events.push(ep < 0 ? `You lose ${-ep} ENDURANCE.` : ep ? `You regain ${ep} ENDURANCE.` : 'You lose nothing.'); }
         if (r.dead) { hero.ep = 0; this.s.events.push('It is the end of you.'); }
         if (r.mark) this.effects({ mark: r.mark }, this.s.events);
-        if (r.gold) { const was = hero.gold; hero.gold = Math.max(0, Math.min(50, hero.gold + r.gold)); this.s.events.push(r.gold > 0 ? `You win ${hero.gold - was} Gold Crowns.` : `You lose ${was - hero.gold} Gold Crowns.`); }
+        if (r.gold) { const was = hero.gold; LW.gainCoin(hero, null, r.gold); this.s.events.push(r.gold > 0 ? `You win ${hero.gold - was} Gold Crowns.` : `You lose ${was - hero.gold} Gold Crowns.`); }
+        // coins: {noble: n} won (or lost when negative)
+        for (const [k, n] of Object.entries(r.coins || {})) { const d = LW.gainCoin(hero, k, n); this.s.events.push(d >= 0 ? `You win ${LW.coinCount(d, k)}.` : `You lose ${LW.coinCount(-d, k)}.`); }
         this.lose(r.take, this.s.events);
       }
       this.save();
@@ -968,9 +1007,9 @@
       const hero = this.s.hero;
       if (field === 'cs') hero.cs = Math.max(0, hero.cs + by);
       if (field === 'ep') hero.ep = Math.max(0, Math.min(hero.epMax, hero.ep + by));
-      if (field === 'gold') hero.gold = Math.max(0, Math.min(50, hero.gold + by));
+      if (field === 'gold') LW.gainCoin(hero, null, by);
       if (field === 'arrows') hero.arrows = Math.max(0, Math.min(LW.quiverRoom(hero), (hero.arrows || 0) + by));
-      if (LW.COINS[field]) (hero.coins = hero.coins || {})[field] = Math.max(0, (hero.coins[field] || 0) + by);
+      if (LW.COINS[field]) LW.gainCoin(hero, field, by);
       this.save();
     }
     dropWeapon(id) {

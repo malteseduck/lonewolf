@@ -168,6 +168,24 @@ describe('always a new Kai, and carried on from book to book (ADR 0047)', () => 
     expect(kit.store).toBeFalsy();
     expect(kit.storeGold).toBeFalsy();
   });
+  it('Book 22 sets out with its own map and the same choice: 20 + the number, five of ten, no Monastery', () => {
+    const kit = LW.KITS[22];
+    expect(kit.give).toEqual(['mapSoutheastMagnamund', 'moonstone']); // section 1: the Moonstone, unless he has it already
+    expect(LW.itemName('mapSoutheastMagnamund')).toBe('Map of Southeastern Magnamund');
+    expect(kit.gold).toBe(20);
+    expect(kit.choose).toBe(5);
+    expect(kit.from).toEqual(LW.KITS[21].from);
+    expect(kit.store || kit.storeGold).toBeFalsy();
+  });
+  it('Book 23 sets out with its own map and the same choice: 20 + the number, five of ten, no Monastery', () => {
+    const kit = LW.KITS[23];
+    expect(kit.give).toEqual(['mapCentralSouthernMagnamund']);
+    expect(LW.itemName('mapCentralSouthernMagnamund')).toBe('Map of Central Southern Magnamund');
+    expect(kit.gold).toBe(20);
+    expect(kit.choose).toBe(5);
+    expect(kit.from).toEqual(LW.KITS[21].from);
+    expect(kit.store || kit.storeGold).toBeFalsy();
+  });
 });
 
 describe('the hero of the player\'s own', () => {

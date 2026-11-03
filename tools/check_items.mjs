@@ -48,15 +48,15 @@ export async function checkItems({ root = ROOT, book = '01fftd', json = false } 
   for (const f of fs.readdirSync(path.join(root, 'items')).filter((f) => /^items-\w+\.js$/.test(f))) { const t = await imp(path.join(root, 'items', f)); LW.addItems(t.ITEMS, t.MARKS); }
   LW.addItems(T.ITEMS, T.MARKS); // the demo book's table is not in items/
   const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'noHunt', 'todo', 'need', 'fight', 'bowShot', 'grandBow', 'rntMod',
-    'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax', 'epCap', 'game',
+    'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'sellCoin', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax', 'epCap', 'game',
     'zeroTen', 'against', 'mealUnless', 'add', 'forfeit', 'end']);
   const FIGHT = new Set(['csMod', 'csIf', 'csUnless', 'csNote', 'mindforce', 'unless', 'unarmed', 'undead', 'drain', 'with', 'double', 'ambush', 'evade',
     'rounds', 'stop', 'won', 'wounded', 'noEvade', 'noShield', 'noUnarmed', 'weaponCs', 'kaiWeapon', 'plain', 'only', 'barred', 'lend', 'mind', 'keep', 'healLost', 'restore', 'noBoost', 'to', 'points', 'lose', 'byHand', 'breath', 'noMind', 'noStrike', 'kind', 'act']);
   const WHEN = new Set(['if', 'unless', 'ate', 'came', 'ep', 'epMax', 'cs', 'healLost', 'take', 'back', 'mark', 'unmark', 'settle', 'dead']);
   // what a choice's need reads (Game.choices and the gold spent on choosing), and what a Condition in its any reads (LW.meets):
   // any other key is silently ignored by the page
-  const NEED = new Set(['disc', 'every', 'circle', 'any', 'ep', 'rank', 'item', 'not', 'ever', 'gold', 'spend', 'orAll', 'coin', 'n', 'came', 'instead']);
-  const COND = new Set(['disc', 'every', 'rank', 'item', 'items', 'ep', 'weapon', 'wield', 'mastery', 'skilled', 'meals', 'arrows', 'packItems', 'gold', 'mark', 'any', 'not', 'circle', 'label']);
+  const NEED = new Set(['disc', 'every', 'circle', 'any', 'ep', 'rank', 'item', 'not', 'ever', 'gold', 'spend', 'orAll', 'coin', 'n', 'alt', 'came', 'instead']);
+  const COND = new Set(['disc', 'every', 'rank', 'item', 'items', 'ep', 'weapon', 'wield', 'mastery', 'skilled', 'meals', 'arrows', 'packItems', 'gold', 'coins', 'mark', 'any', 'not', 'circle', 'label']);
   const condFields = (c) => (c && typeof c === 'object' ? Object.keys(c).filter((f) => !COND.has(f)).concat([].concat(c.any || []).flatMap(condFields), c.not ? condFields(c.not) : []) : []);
   const ROUND = new Set(['from', 'upTo', 'fromFoe', 'if', 'unless', 'came', 'ambush', 'mind', 'csMod', 'note', 'unarmed', 'heroLoss', 'foeLoss', 'heroPlus', 'heroEach', 'foeEach', 'psi', 'barred', 'fatal', 'behind', 'offMax']);
   const STOP = new Set(['after', 'wound', 'foeAt', 'drawn', 'to', 'by', 'if']);

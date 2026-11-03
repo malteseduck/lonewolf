@@ -6,10 +6,10 @@ import path from 'path';
 import { pathToFileURL } from 'url';
 import { ROOT, loadShared } from './helpers.js';
 
-const CODES = ['01fftd', '02fotw', '03tcok', '04tcod', '05sots', '06tkot', '07cd', '08tjoh', '09tcof', '10tdot', '11tpot', '12tmod', '13tplor', '14tcok', '15tdc', '16tlov', '17tdoi', '18dotd', '19wb', '20tcon', '21votm'];
+const CODES = ['01fftd', '02fotw', '03tcok', '04tcod', '05sots', '06tkot', '07cd', '08tjoh', '09tcof', '10tdot', '11tpot', '12tmod', '13tplor', '14tcok', '15tdc', '16tlov', '17tdoi', '18dotd', '19wb', '20tcon', '21votm', '22tbos', '23mh'];
 // from tools/check_items.mjs
 const FIELDS = new Set(['give', 'loot', 'take', 'ep', 'cs', 'rolls', 'meal', 'noHunt', 'todo', 'need', 'fight', 'bowShot', 'grandBow', 'rntMod',
-  'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax', 'epCap', 'game',
+  'when', 'mark', 'unmark', 'rnt', 'note', 'stake', 'settle', 'sell', 'sellCoin', 'back', 'mealCost', 'lessen', 'ranges', 'draws', 'healLost', 'epMax', 'epCap', 'game',
   'zeroTen', 'against', 'mealUnless', 'add', 'forfeit', 'end']);
 const FIGHT = new Set(['csMod', 'csIf', 'csUnless', 'csNote', 'mindforce', 'unless', 'unarmed', 'undead', 'drain', 'with', 'double', 'ambush', 'evade',
   'rounds', 'stop', 'won', 'wounded', 'noEvade', 'noShield', 'noUnarmed', 'weaponCs', 'kaiWeapon', 'plain', 'only', 'barred', 'lend', 'mind', 'keep', 'healLost', 'restore', 'noBoost', 'to', 'points', 'lose', 'byHand', 'breath', 'noMind', 'noStrike', 'kind', 'act']);

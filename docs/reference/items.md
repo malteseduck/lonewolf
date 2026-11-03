@@ -3,8 +3,8 @@
 Two jobs done by hand for each imported book, after importing it and writing its reading copy
 (`tools/reading_copy.py`): the **item table**, so the engine gives, offers, takes and gates what the
 text says (spec 4.5a), and the **fight pictures**, so every fight has a plate (spec 6.5). Book 1
-has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-21 have
-their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 and 14 2026-10-17, 15, 16, 17 and 18 2026-10-25, 19 and 20 2026-10-26, 21 2026-10-31). The field reference is in `book-format.md` ("Section", "Item tables").
+has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-22 have
+their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 and 14 2026-10-17, 15, 16, 17 and 18 2026-10-25, 19 and 20 2026-10-26, 21 2026-10-31, 22 2026-11-02, 23 2026-11-03). The field reference is in `book-format.md` ("Section", "Item tables").
 
 Never put the book's text anywhere but `data/projectaon/`: tools print section numbers and
 counts, the table holds only the book's short item names, and everything else is in our words.
@@ -291,6 +291,25 @@ gift and 219's fee read as found, 208's Crown in a sentence about a Crown not pa
 not touch needed an entry: every fight the Kai Weapon's mark (ADR 0047; 21, 50, 60, 162, 210, 300, 303, 331), rounds-only changes (5, 44,
 94, 192, 230, 257, 261), won within four rounds (31), the gates on a fee and on the three things sold (6, 54), and 251's footnote way on.
 The check itself did not know the Kai Weapons, which 155's buyer takes as Special Items: fixed. No importer miss came back.
+Book 22 (from the draft, 2026-11-02): no errors; 23 items, 139 sections; 135 left out. Of the draft's
+141 sections, 110 with a todo, about 30 needed nothing (enemy arrows read as Arrows, coins only described, the importer's Meals, 219's
+and 317's after a shot); its readings were wrong at 83 and 97 (the fee is 3, read as the "1 Noble = 1 Gold Crown" aside), 21 (the doll's
+price paid at 126's gate, read as found), 223 and 308 (the Moonstone spared or recovered, read as lost) and 20 (the whole seizure, read as
+the Moonstone alone), and its bow gates lacked the Arrow. Sections it did not touch needed an entry: the Arrows loosed (165, 306), the
+weapon fallen (31's gate on a normal Weapon), the seizures given back (33, 187, 234, 279, 302, 308), the gaol's at 228 and 345, the fees
+at 23, 30, 232 and 300, the finds at 7, 153, 206 and 220, the odd-or-even draws (8, 12, 37, 128, 202, 311) and every fight's Kai Weapon
+mark. No importer miss came back. Rewritten 2026-11-03 for the coins (ADR 0047): Nobles are their own coin, found (7, 206), priced
+(57, Nobles only; 61, 98, 116, 156 and the fees, each payable in Gold Crowns 1 for 1) and lost with the purse (20, given back at 308; 223).
+8's draw wins Nobles, 156's Arrows are priced in them (or Crowns), the traders at 156, 164 and 278 pay in them (`sellCoin`), and the
+way for too few at 66, 211 and 341 opens with neither 2 Nobles nor 2 Crowns. A price is paid in one coin, never a mix.
+Book 23 (from the draft, 2026-11-03): no errors; 12 items, 131 sections; 133 left out. Of the draft's 147 sections, 120 with a todo,
+about 35 needed nothing (the importer's Meals and gates, enemy arrows read as Arrows, coins only described), 36's loss is a death's,
+155's way for too little is also the way for refusing (no gate), and its bow gates lacked the Arrow. Sections it did not touch needed an
+entry: the Lune and Ren fees and finds (4, 52, 155, 246, 266), 166's shop and 120's buyer in Lune, the draws the importer left free by a
+Dagger or a Rope (66, 76, 197), the bribes at 112 and 209 (stakes, settled at 26, 141, 347), 80's gate on having visited the Oridon Stone
+(a mark at 104), 335's Flute, the Cavalia and Varedo seizures and their returns, the fights won within some rounds (34, 128, 284),
+Karvas joining after three rounds (25), 60's single pass, and the Kai Weapon's marks. Torqs are no coin the page keeps (74, 161: by hand).
+No importer miss came back.
 `--json` also writes `data/projectaon/<book>/check-items.json`, which `tools/book_status.py` reads
 for checklist step 5 (the dashboard's "Check items" runs it so).
 

@@ -18,7 +18,8 @@ const SECTIONS = {
   2: { combat: { enemies: foe('Rat'), won: { within: 1, to: '12', else: '13' } }, choices: [] }, // either way, whatever the dice
   // a mark set at 13 (never on the way here), and one set nowhere
   12: { choices: [{ to: '4' }, { to: '9' }, { to: '14', need: { any: [{ mark: 'met' }] } }, { to: '19', need: { any: [{ mark: 'lost' }] } }] },
-  13: { choices: [{ to: '4' }, { to: '19', need: { any: [{ not: { gold: 1 } }] } }] }, // only with no gold: the purse is emptied
+  // only with no gold: the purse is emptied; only with neither a Noble nor a Crown: both lowered
+  13: { choices: [{ to: '4' }, { to: '19', need: { any: [{ not: { gold: 1 } }] } }, { to: '17', need: { any: [{ not: { any: [{ coins: { noble: 1 } }, { gold: 1 }] }, label: 'no Nobles' }] } }] },
   3: { choices: [{ to: '5', need: { item: 'key' } }, { to: '14', need: { item: 'lamp' } }, { to: '4' }] }, // no Key anywhere; the Lamp is at 13
   4: { choices: [{ to: '6', need: { came: ['99'] } }, { to: '7' }, { to: '11' }] },
   7: { combat: { enemies: foe('Ghost'), rounds: [{ foeLoss: 0, heroLoss: 0 }], to: '8' }, choices: [{ to: '8' }] }, // neither side takes harm
@@ -48,7 +49,7 @@ describe('walk_book.mjs', () => {
     expect(r.closed.map((c) => `${c.id}>${c.to}`)).toEqual(['4>6', '11>6']);
     expect(r.lent).toEqual([{ id: '3', to: '5', why: ['Needs key'], missing: ['key'] }, { id: '3', to: '14', why: ['Needs Lamp'], missing: [] },
       { id: '12', to: '14', why: ['Needs met'], missing: [] }, { id: '12', to: '19', why: ['Needs lost'], missing: ['mark:lost'] },
-      { id: '13', to: '19', why: ['Needs no Gold Crowns'], missing: [] }]);
+      { id: '13', to: '19', why: ['Needs no Gold Crowns'], missing: [] }, { id: '13', to: '17', why: ['Needs no Nobles'], missing: [] }]);
     expect(r.stuck.map((s) => s.id)).toEqual(['11']);
     expect(r.long).toEqual(['7']);
     expect(r.unreached).toEqual(['6']);

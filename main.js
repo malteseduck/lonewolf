@@ -31,6 +31,8 @@ import * as ITEMS_18 from './items/items-18dotd.js';
 import * as ITEMS_19 from './items/items-19wb.js';
 import * as ITEMS_20 from './items/items-20tcon.js';
 import * as ITEMS_21 from './items/items-21votm.js';
+import * as ITEMS_22 from './items/items-22tbos.js';
+import * as ITEMS_23 from './items/items-23mh.js';
 
 const LW = window.LW;
 const ROMAN = LW.ROMAN;
@@ -51,6 +53,8 @@ const ITEM_TABLES = {
   '19wb': ITEMS_19,
   '20tcon': ITEMS_20,
   '21votm': ITEMS_21,
+  '22tbos': ITEMS_22,
+  '23mh': ITEMS_23,
 };
 /* The made-up demo book (ADR 0046) is on the PC alone: its table loads only where its book.js does, and
    a release (which has neither) never shows it. */
@@ -402,7 +406,7 @@ function leftHTML() {
   const loot = game.loot();
   // what is found here: each a medallion to touch to take it; things handed over come already taken
   // a shop's goods are bought, as often as he likes; a "choose two" closes once two are taken
-  const note = (l) => (l.taken ? 'yours' : l.closed ? (l.pick > 1 ? 'you have taken your share' : 'you took the other') : l.cost ? `buy it: ${l.cost} Gold Crown${l.cost > 1 ? 's' : ''}${l.left != null ? `, ${l.left} more at most` : ''}` : 'take it');
+  const note = (l) => (l.taken ? 'yours' : l.closed ? (l.pick > 1 ? 'you have taken your share' : 'you took the other') : l.cost ? `buy it: ${LW.coinCount(l.cost, l.coin)}${l.coin && l.alt != null ? ` or ${LW.coinCount(l.alt)}` : ''}${l.left != null ? `, ${l.left} more at most` : ''}` : 'take it');
   if (loot.length && !isDead()) h += `<div class="block finds"><span class="eyebrow">${loot.every((l) => l.cost) ? 'For sale' : 'Found here'}</span>${loot.map((l) => `<button type="button" class="find ${l.taken ? 'got' : ''}" data-loot="${l.i}" ${l.taken || l.closed ? 'disabled' : ''}>
       <span class="med ${l.taken ? 'lit' : ''}">${itemGlyph(l.item)}</span><span>${esc(l.label)}<i>${note(l)}</i></span></button>`).join('')}</div>`;
   // a loss he chooses (game.s.picks): what he can lose, a medallion each
@@ -640,14 +644,24 @@ function packHTML() {
   return `${kit}
     ${ruled(h.noPack ? 'Backpack <small>lost: find another to carry anything</small>' : `Backpack <small>${h.backpack.length + h.meals} of ${room}</small>`)}
     <div class="pack" style="--cols:${cols}">${cells.map((c) => `<div class="cell">${c}</div>`).join('')}${packLattice(cols, Math.ceil(cells.length / cols))}</div>
-    <div class="ledger"><span class="purse">${glyph(UG.purse)}<b>${h.gold}</b> Gold Crowns ${stepper('gold')}</span>${
-      Object.keys(LW.COINS).filter((c) => (h.coins || {})[c] != null).map((c) => `<span class="purse">${glyph(UG.purse)}<b>${h.coins[c]}</b> ${esc(LW.COINS[c])} ${stepper(c)}</span>`).join('')}
+    <div class="ledger">${purseHTML(h)}
       ${adding ? '' : '<button type="button" class="inkbtn addhand" data-adding="open">Add an item by hand</button>'}</div>
     ${kept.length && !adding ? `<p class="kept">At the Kai Monastery, taken up or left at the start of a book: ${esc(kept.join(', '))}.</p>` : ''}${
       // what was taken from him to be given back later (hero.stash), lasting conditions, and the notes the text asks for
       taken.length && !adding ? `<p class="kept">Taken from you, perhaps to be found again: ${esc(taken.join(', '))}.</p>` : ''}${
       ails.length && !adding ? `<p class="kept">${esc(ails.join('. '))}.</p>` : ''}${
       (h.notes || []).length && !adding ? `<p class="kept">Noted: ${esc(h.notes.join('; '))}.</p>` : ''}`;
+}
+/* The Belt Pouch: one figure, the Crowns and every other coin at its rate (LW.purseWorth, ADR 0047). With
+   other coins the figure's title lists them (hover) and a touch opens the coins, each with its own stepper. */
+let purseOpen = false;
+function purseHTML(h) {
+  const others = Object.keys(LW.COINS).filter((c) => (h.coins || {})[c]);
+  if (!others.length && !purseOpen) return `<span class="purse">${glyph(UG.purse)}<b>${h.gold}</b> <button type="button" class="coinsbtn" data-purse="open" title="Other coins">Gold Crowns</button> ${stepper('gold')}</span>`;
+  const list = [`${h.gold} Gold Crowns`, ...others.map((c) => `${h.coins[c]} ${LW.COINS[c]}`)].join(', ');
+  const row = (c) => `<li${c === 'gold' ? '' : ` title="${LW.COIN_RATE[c]} to the Gold Crown"`}><b>${c === 'gold' ? h.gold : (h.coins || {})[c] || 0}</b> ${esc(LW.coinName(c === 'gold' ? null : c))} ${stepper(c)}</li>`;
+  return `<span class="purse" title="${esc(list)}">${glyph(UG.purse)}<b>${LW.purseShown(h)}</b> <button type="button" class="coinsbtn" data-purse="${purseOpen ? 'close' : 'open'}" aria-expanded="${purseOpen}">Gold Crowns${others.length ? '’ worth' : ''}</button></span>${
+    purseOpen ? `<ul class="coinbox">${['gold', ...Object.keys(LW.COINS)].map(row).join('')}<li class="cap">${Math.floor(LW.POUCH - LW.purseWorth(h) + 1e-9)} Crowns’ worth of room</li></ul>` : ''}`;
 }
 /* Adding by hand: every item of every book as medallions in place of the worn kit, so the Backpack
    below fills while you pick. Earlier books' Special Items fold away, filtered to one book. */
@@ -780,7 +794,7 @@ function gauges(cs, h) {
   const pts = B && !B.over && B.c && B.c.points, ep = Math.max(0, h.ep), most = pts ? pts.n : h.epMax, g = (id, art, label, v, extra = '') => `<span class="gauge ${id}" title="${label}" aria-label="${label} ${v.replace(/<[^>]+>/g, '')}"><span class="med">${art}</span><b>${v}</b>${extra}</span>`;
   return g('cs', glyph(UG.statCs), 'Combat Skill', String(cs))
     + g('ep', glyph(UG.statEp), pts ? 'Target points' : 'Endurance', `${ep}<small>/${most}</small>`, `<i class="thread"><i style="width:${Math.round((ep / most) * 100)}%"></i></i>`)
-    + g('gold', glyph(UG.statGold), 'Gold Crowns', String(h.gold));
+    + g('gold', glyph(UG.statGold), LW.purseWorth(h) > h.gold ? 'Gold Crowns’ worth, all coins' : 'Gold Crowns', String(LW.purseShown(h)));
 }
 function renderRight() {
   const tabs = [['kai', 'Kai Disciplines'], ['pack', 'Inventory'], ['map', 'Map']]; // Map opens the modal, not a panel
@@ -1218,6 +1232,7 @@ bookEl.addEventListener('click', (e) => {
   else if (d.panel === 'map') openMap();
   else if (d.panel) { panel = d.panel; sel = null; adding = false; render(); }
   else if (d.adding) { adding = d.adding === 'open'; renderRight(); }
+  else if (d.purse) { purseOpen = d.purse === 'open'; renderRight(); }
   else if (d.add) addItem(d.add);
   else if (d.sel) { const [kind, id] = d.sel.split('|'); sel = { kind, id }; renderRight(); }
   else if (d.adj) { const [field, by] = d.adj.split(':'); game.adjust(field, +by); render(); }

@@ -146,7 +146,7 @@ on the same medallion again, or Escape closes it; touching another medallion mov
   `.tight`, rather than broken); as tall as its items, the Backpack right under it,
   scrolling within itself past what fits (twelve fit on the iPad). Then a ruled "Backpack n of N" heading over the tiles, as many
   as `LW.backpackMax` in two rows (`--cols`), each item its glyph alone in the tile, under the HD sheet's ironwork (`packLattice`: a curl in each tile's corners, diamond studs
-  where they meet, a double frame, a scroll off each corner); a `.ledger` line (gold -/+, other coins he has met with their own -/+ (`hero.coins`), and "Add an item by hand" at its right); and, when anything is kept at the Kai Monastery
+  where they meet, a double frame, a scroll off each corner); a `.ledger` line (the Belt Pouch: gold with -/+; once he holds another coin, one figure, every coin's worth in Gold Crowns rounded down (`LW.purseShown`), its title listing the coins; touching "Gold Crowns" opens `.coinbox`, every coin in two columns with its own -/+ and the room left; then "Add an item by hand" at its right); and, when anything is kept at the Kai Monastery
   (`hero.stored`, `hero.storedGold`), a line (`.kept`) saying what; likewise what was taken to be found again
   (`hero.stash`), his lasting conditions (`LW.marksOf`), and the notes the text asked for (`hero.notes`). A touched item's box has
   Drink / Drop / Eat; the Quiver's counts its Arrows, with -/+ (`adjust('arrows')`). With
