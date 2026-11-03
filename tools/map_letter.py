@@ -262,22 +262,21 @@ def halo(mask, lh):
 
 def place(base, mask, lh, centre, ang):
     deg = -np.degrees(ang)  # PIL turns anticlockwise; ang is measured with y down
-    if PHASE == 'halo':
-        p = max(3, round(lh * GLOW)) * 3  # room round the type for the halo to spread into
-        grown = Image.new('L', (mask.width + 2 * p, mask.height + 2 * p), 0)
-        grown.paste(mask, (p, p))
-        h = halo(grown, lh)
-        if h is None:
-            return
-        mask, colour = Image.fromarray(h[0]).rotate(deg, resample=Image.BICUBIC, expand=True), h[1]
-        x, y = int(round(centre[0] - mask.width / 2)), int(round(centre[1] - mask.height / 2))
-        region = np.asarray(base.crop((x, y, x + mask.width, y + mask.height))).astype(np.float32)
-        a = np.asarray(mask, np.float32)[..., None] / 255
-        base.paste(Image.fromarray((region * (1 - a) + np.array(colour, np.float32) * a).astype(np.uint8)), (x, y))
-        return
-    mask = mask.rotate(deg, resample=Image.BICUBIC, expand=True)
+    # every phase pads and turns the type alike, so the halo is ringed round the very pixels the type takes:
+    # ringing it before the turn left it a pixel or two off on a slanted name, a shadow, not an outline
+    p = max(3, round(lh * GLOW)) * 3  # room round the type for the halo to spread into
+    grown = Image.new('L', (mask.width + 2 * p, mask.height + 2 * p), 0)
+    grown.paste(mask, (p, p))
+    mask = grown.rotate(deg, resample=Image.BICUBIC, expand=True)
     x = int(round(centre[0] - mask.width / 2))
     y = int(round(centre[1] - mask.height / 2))
+    if PHASE == 'halo':
+        h = halo(mask, lh)
+        if h is not None:
+            region = np.asarray(base.crop((x, y, x + mask.width, y + mask.height))).astype(np.float32)
+            a = h[0].astype(np.float32)[..., None] / 255
+            base.paste(Image.fromarray((region * (1 - a) + np.array(h[1], np.float32) * a).astype(np.uint8)), (x, y))
+        return
     if PHASE == 'mask':  # masks(): where the type goes, nothing painted
         PLACED.append((x, y, np.asarray(mask) > 40))
         return

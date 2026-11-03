@@ -162,6 +162,21 @@ def test_an_outline_rings_the_type_in_hard_white_before_gemini(monkeypatch):
     assert base.getpixel((50, 58)) == (90, 90, 90)     # 1-2 px only, just enough to tell it apart
 
 
+@pytest.mark.parametrize('size,at,deg', [((31, 11), (50.0, 50.0), 0), ((30, 10), (50.5, 49.5), 0), ((31, 11), (50.3, 50.0), 90),
+                                          ((41, 13), (50.0, 50.0), 7), ((41, 13), (50.0, 50.0), 23)])
+def test_the_outline_is_as_wide_on_every_side_not_a_shadow(monkeypatch, size, at, deg):
+    monkeypatch.setattr(map_letter, 'HALO', 'outline')
+    base = Image.new('RGB', (100, 100), (90, 90, 90))
+    mask = Image.new('L', size, 255)
+    for map_letter.PHASE in ('halo', 'draw'):
+        map_letter.place(base, mask, 40, np.array(at), np.radians(deg))
+    px = np.asarray(base)[..., 0]
+    white, ink = np.argwhere(px > 200), np.argwhere(px < 60)
+    (wy0, wx0), (wy1, wx1) = white.min(0), white.max(0)
+    (iy0, ix0), (iy1, ix1) = ink.min(0), ink.max(0)
+    assert ix0 - wx0 == wx1 - ix1 and iy0 - wy0 == wy1 - iy1 and ix0 - wx0 in (1, 2)
+
+
 def test_a_glow_fades_from_white_beside_the_type_to_the_map_at_finish(monkeypatch):
     base = halo_on_grey(monkeypatch, 'glow')
     near, mid = base.getpixel((50, 56))[0], base.getpixel((50, 59))[0]
