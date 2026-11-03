@@ -273,7 +273,9 @@ Commands run from the project root as
 ## Tools
 
 - `tools/map-editor.html` with `tools/serve.py`: the page that runs all of the above, opened from the dashboard only (endpoints in
-  serve.py's docstring: `/api/map/<book>/state`, `run/<step>`, `gemini/<n>`; local requests only).
+  serve.py's docstring: `/api/map/<book>/state`, `run/<step>`, `gemini/<n>`, `copy-image`; local requests only).
+  Copy image (PNG) tries the browser's clipboard first; the desktop app's browser pane refuses any
+  picture there, so `copy-image` has the server put `map-2k-lettered.jpg` on the Windows clipboard.
   Its colours are the dashboard's (2026-10-08); the label outlines stay bright to read over any map.
   Its steps and the dashboard's jobs share one lock: one runs at a time.
 - `tools/map_upscale.py`: Real-ESRGAN (`tools/realesrgan/`, the v0.2.5.0 Windows build, git-ignored)

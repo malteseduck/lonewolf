@@ -479,6 +479,19 @@ def test_map_upload_saves_a_round_image(root):
     assert post_image('/api/map/01fftd/gemini/4', b'RIFF' + b'0' * 10, 'image/webp')[1]['saved'] == 'map-gemini-4.webp'
 
 
+def test_map_copy_image_puts_the_lettered_map_on_the_clipboard(root, monkeypatch):
+    # the desktop app's browser pane refuses pictures on the clipboard, so the server puts it there
+    d = book(root)
+    got = []
+    monkeypatch.setattr(serve, '_clipboard_image', lambda p: got.append(p) or None)
+    assert jsend('POST', '/api/map/01fftd/copy-image') == (404, {'error': 'no map-2k-lettered.jpg'})
+    write(str(d / 'work' / 'map-2k-lettered.jpg'), 'x')
+    assert jsend('POST', '/api/map/01fftd/copy-image') == (200, {'copied': 'map-2k-lettered.jpg'})
+    assert got == [str(d / 'work' / 'map-2k-lettered.jpg')]
+    monkeypatch.setattr(serve, '_clipboard_image', lambda p: 'no clipboard here')
+    assert jsend('POST', '/api/map/01fftd/copy-image') == (500, {'error': 'no clipboard here'})
+
+
 def test_map_upload_refuses_a_wrong_type(root):
     d = book(root)
     st, got = post_image('/api/map/01fftd/gemini/1', PNG, 'text/plain')

@@ -32,6 +32,8 @@ Static files as `python -m http.server` serves them, from the project root, plus
                                       ?undo=1 removes it. Drafting again removes it too
     POST /api/map/<book>/gemini/<n>   body: the round's image (png, jpeg or webp, up to 30 MB), saved
                                       as work/map-gemini-<n>.<ext>; 409 if there is one, unless ?force=1
+    POST /api/map/<book>/copy-image   put work/map-2k-lettered.jpg on the Windows clipboard as a picture
+                                      (the desktop app's browser pane refuses pictures on the clipboard)
 
     The import dashboard, tools/admin/ (docs/reference/dashboard.md). Local requests only, like the map's:
     GET  /api/admin/status            every book's steps: tools/book_status.py's all_status(), and the job running
@@ -198,6 +200,28 @@ def _work(d, make=False):
 def _gemini_files(d, n):
     w = _work(d)
     return [f for f in os.listdir(w) if re.fullmatch(rf'map-gemini-{n}\.(png|jpg|webp)', f)] if os.path.isdir(w) else []
+
+
+# Windows only. Both a bitmap and a "PNG" entry: Chrome pastes the PNG, older apps the bitmap.
+_CLIP_PS = r'''Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+$img = [System.Drawing.Image]::FromFile($env:LW_CLIP)
+$png = New-Object System.IO.MemoryStream
+$img.Save($png, [System.Drawing.Imaging.ImageFormat]::Png)
+$d = New-Object System.Windows.Forms.DataObject
+$d.SetImage($img); $d.SetData('PNG', $false, $png)
+[System.Windows.Forms.Clipboard]::SetDataObject($d, $true)'''
+
+
+def _clipboard_image(path):
+    """Put the picture at `path` on the Windows clipboard; None, or what went wrong."""
+    if os.name != 'nt':
+        return 'the clipboard copy works on Windows only'
+    try:
+        p = subprocess.run(['powershell', '-NoProfile', '-STA', '-Command', _CLIP_PS], env={**os.environ, 'LW_CLIP': path},
+                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=30)
+    except (OSError, subprocess.TimeoutExpired) as e:
+        return str(e)
+    return None if p.returncode == 0 else p.stdout.decode('utf-8', 'replace').strip()[-300:] or 'powershell failed'
 
 
 def map_books():
@@ -644,6 +668,12 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(200, map_state(d))
         if method == 'POST' and len(parts) == 3 and parts[1] == 'gemini' and re.fullmatch(r'\d{1,3}', parts[2]):
             return self._map_upload(d, int(parts[2]), q)
+        if method == 'POST' and parts[1:] == ['copy-image']:
+            f = os.path.join(_work(d), 'map-2k-lettered.jpg')
+            if not os.path.isfile(f):
+                return self._json(404, {'error': 'no map-2k-lettered.jpg'})
+            err = _clipboard_image(f)
+            return self._json(500, {'error': err}) if err else self._json(200, {'copied': 'map-2k-lettered.jpg'})
         self.close_connection = True
         return self._json(404, {'error': 'nothing here'})
 
