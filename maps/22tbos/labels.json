@@ -7,8 +7,8 @@
    590,
    135
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -47,7 +47,7 @@
    246
   ],
   "slant": 0,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false,
   "lines": [
    "The Lands of the Free Alliance",
@@ -62,8 +62,8 @@
    1151,
    184
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -116,7 +116,7 @@
    985,
    222
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.99,
   "retype": true,
   "ink": {
@@ -170,8 +170,8 @@
    1190,
    237
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -197,8 +197,8 @@
    1612,
    260
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -224,8 +224,8 @@
    270,
    303
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -252,7 +252,7 @@
    274
   ],
   "slant": -0.3,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -263,7 +263,7 @@
    917,
    278
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.99,
   "retype": true,
   "ink": {
@@ -318,7 +318,7 @@
    315
   ],
   "slant": 0,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "lines": [
    "GHOL",
@@ -349,7 +349,7 @@
    296
   ],
   "slant": -0.9,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -375,8 +375,8 @@
    361,
    319
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -403,7 +403,7 @@
    352
   ],
   "slant": 0,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "lines": [
    "Dlash-da",
@@ -516,7 +516,7 @@
    906,
    385
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.96,
   "retype": true,
   "ink": {
@@ -543,7 +543,7 @@
    1140,
    350
   ],
-  "slant": -90.0,
+  "slant": -90,
   "conf": 0.98,
   "retype": true,
   "ink": {
@@ -570,8 +570,8 @@
    1142,
    373
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -597,7 +597,7 @@
    1274,
    350
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.95,
   "retype": true,
   "ink": {
@@ -624,7 +624,7 @@
    1282,
    400
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.9,
   "retype": true,
   "ink": {
@@ -656,7 +656,7 @@
    352
   ],
   "slant": 0.8,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -682,8 +682,8 @@
    1658,
    360
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -709,8 +709,8 @@
    1648,
    379
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -736,8 +736,8 @@
    424,
    390
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -763,7 +763,7 @@
    436,
    415
   ],
-  "slant": -90.0,
+  "slant": -90,
   "conf": 0.88,
   "retype": true,
   "ink": {
@@ -790,8 +790,8 @@
    1754,
    421
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -818,7 +818,7 @@
    466
   ],
   "slant": 3.4,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -844,8 +844,8 @@
    615,
    436
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -872,7 +872,7 @@
    463
   ],
   "slant": 4.8,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -899,7 +899,7 @@
    567
   ],
   "slant": 83.3,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -925,8 +925,8 @@
    1323,
    480
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -952,7 +952,7 @@
    1538,
    470
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.98,
   "retype": true,
   "ink": {
@@ -979,8 +979,8 @@
    1792,
    478
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1006,8 +1006,8 @@
    361,
    503
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1034,7 +1034,7 @@
    522
   ],
   "slant": 0.4,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1061,7 +1061,7 @@
    512
   ],
   "slant": 1.4,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1087,7 +1087,7 @@
    1528,
    522
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.88,
   "retype": true,
   "ink": {
@@ -1114,7 +1114,7 @@
    1512,
    570
   ],
-  "slant": -25.0,
+  "slant": -25,
   "conf": 0.99,
   "retype": true,
   "ink": {
@@ -1141,7 +1141,7 @@
    1628,
    522
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.94,
   "retype": true,
   "ink": {
@@ -1168,7 +1168,7 @@
    1722,
    522
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.94,
   "retype": true,
   "ink": {
@@ -1196,7 +1196,7 @@
    618
   ],
   "slant": -33.2,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1257,8 +1257,8 @@
    979,
    568
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1285,7 +1285,7 @@
    573
   ],
   "slant": -16.8,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1312,7 +1312,7 @@
    660
   ],
   "slant": 73.2,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1366,7 +1366,7 @@
    634
   ],
   "slant": -31.5,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "set": {
    "at": [
@@ -1400,8 +1400,8 @@
    664,
    608
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1513,7 +1513,7 @@
    1785,
    596
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.88,
   "retype": true,
   "ink": {
@@ -1540,8 +1540,8 @@
    456,
    648
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1567,7 +1567,7 @@
    696,
    682
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.81,
   "retype": true,
   "ink": {
@@ -1621,8 +1621,8 @@
    839,
    638
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1648,8 +1648,8 @@
    891,
    632
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1676,7 +1676,7 @@
    641
   ],
   "slant": 2.3,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1729,7 +1729,7 @@
    955,
    683
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.99,
   "retype": true,
   "ink": {
@@ -1756,8 +1756,8 @@
    1770,
    661
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1783,8 +1783,8 @@
    216,
    703
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1810,7 +1810,7 @@
    296,
    715
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.92,
   "retype": true,
   "ink": {
@@ -1868,8 +1868,8 @@
    1566,
    707
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1896,7 +1896,7 @@
    822
   ],
   "slant": 1.7,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1922,8 +1922,8 @@
    265,
    841
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1950,7 +1950,7 @@
    864
   ],
   "slant": -0.4,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -1976,8 +1976,8 @@
    290,
    906
   ],
-  "slant": 6.0,
-  "conf": 1.0,
+  "slant": 6,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2004,7 +2004,7 @@
    896
   ],
   "slant": -0.5,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2030,8 +2030,8 @@
    600,
    867
   ],
-  "slant": -1.0,
-  "conf": 1.0,
+  "slant": -1,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2057,8 +2057,8 @@
    1240,
    866
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -2069,8 +2069,8 @@
    1364,
    866
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -2081,8 +2081,8 @@
    1485,
    867
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -2094,7 +2094,7 @@
    896
   ],
   "slant": 1.5,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -2106,7 +2106,7 @@
    911
   ],
   "slant": 2.1,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -2117,8 +2117,8 @@
    1296,
    911
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -2129,8 +2129,8 @@
    1471,
    910
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -2141,7 +2141,7 @@
    214,
    966
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.99,
   "retype": true,
   "ink": {
@@ -2168,8 +2168,8 @@
    317,
    975
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2195,8 +2195,8 @@
    382,
    949
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2222,8 +2222,8 @@
    1742,
    948
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -2234,8 +2234,8 @@
    438,
    997
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2262,7 +2262,7 @@
    990
   ],
   "slant": 0.7,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2289,7 +2289,7 @@
    1001
   ],
   "slant": 0.9,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -2300,7 +2300,7 @@
    285,
    1044
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.91,
   "retype": true,
   "ink": {
@@ -2327,7 +2327,7 @@
    343,
    1033
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.91,
   "retype": true,
   "ink": {
@@ -2355,7 +2355,7 @@
    1087
   ],
   "slant": -28.6,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2381,8 +2381,8 @@
    1317,
    1037
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2408,8 +2408,8 @@
    1767,
    1053
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -2421,7 +2421,7 @@
    1138
   ],
   "slant": 52.9,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2501,8 +2501,8 @@
    1120,
    1091
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2529,7 +2529,7 @@
    1107
   ],
   "slant": 1.4,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -2596,8 +2596,8 @@
    543,
    1157
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2623,8 +2623,8 @@
    609,
    1165
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2650,8 +2650,8 @@
    1096,
    1115
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2678,7 +2678,7 @@
    1142
   ],
   "slant": 0.9,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2704,7 +2704,7 @@
    350,
    1192
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.92,
   "retype": true,
   "ink": {
@@ -2731,7 +2731,7 @@
    677,
    1194
   ],
-  "slant": -30.0,
+  "slant": -30,
   "conf": 0.95,
   "retype": true,
   "ink": {
@@ -2758,8 +2758,8 @@
    820,
    1166
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2786,7 +2786,7 @@
    1169
   ],
   "slant": 3.1,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2812,8 +2812,8 @@
    1762,
    1155
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -2852,7 +2852,7 @@
    1201
   ],
   "slant": 1.2,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2878,8 +2878,8 @@
    997,
    1209
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2906,7 +2906,7 @@
    1195
   ],
   "slant": -0.6,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2933,7 +2933,7 @@
    1206
   ],
   "slant": 0,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "lines": [
    "Shuri",
@@ -2963,8 +2963,8 @@
    1439,
    1193
   ],
-  "slant": 1.0,
-  "conf": 1.0,
+  "slant": 1,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -2990,8 +2990,8 @@
    1760,
    1207
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -3003,7 +3003,7 @@
    1285
   ],
   "slant": -30.6,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -3056,8 +3056,8 @@
    830,
    1232
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -3084,7 +3084,7 @@
    1251
   ],
   "slant": 0.9,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -3111,7 +3111,7 @@
    1245
   ],
   "slant": 0,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "lines": [
    "Sea",
@@ -3142,7 +3142,7 @@
    1261
   ],
   "slant": 1.4,
-  "conf": 1.0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -3153,8 +3153,8 @@
    721,
    1282
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -3181,7 +3181,7 @@
    1309
   ],
   "slant": 26.3,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -3235,7 +3235,7 @@
    1271
   ],
   "slant": 0.6,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -3288,8 +3288,8 @@
    867,
    1322
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -3316,7 +3316,7 @@
    1358
   ],
   "slant": 0,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "lines": [
    "Gulf",
@@ -3346,7 +3346,7 @@
    1095,
    1344
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.99,
   "retype": true,
   "ink": {
@@ -3373,7 +3373,7 @@
    1088,
    1318
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.98,
   "retype": true,
   "ink": {
@@ -3400,7 +3400,7 @@
    1208,
    1327
   ],
-  "slant": 3.0,
+  "slant": 3,
   "conf": 0.98,
   "retype": true,
   "ink": {
@@ -3427,8 +3427,8 @@
    1802,
    1313
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
@@ -3466,8 +3466,8 @@
    987,
    1383
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -3493,7 +3493,7 @@
    1265,
    1349
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.99,
   "retype": true,
   "ink": {
@@ -3520,7 +3520,7 @@
    1426,
    1347
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.98,
   "retype": true,
   "ink": {
@@ -3547,7 +3547,7 @@
    1344,
    1373
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.97,
   "retype": true,
   "ink": {
@@ -3567,28 +3567,20 @@
   }
  },
  {
-  "text": "Forest",
+  "text": "Coniferous Forest",
   "box": [
    1682,
-   1359,
-   1759,
-   1387
-  ],
-  "slant": 1.5,
-  "conf": 1.0,
-  "retype": false
- },
- {
-  "text": "Coniferous",
-  "box": [
-   1683,
    1334,
    1809,
-   1362
+   1387
   ],
-  "slant": 0.0,
-  "conf": 1.0,
-  "retype": false
+  "slant": 0,
+  "conf": 1,
+  "retype": false,
+  "lines": [
+   "Coniferous",
+   "Forest"
+  ]
  },
  {
   "text": "Southern Shada Mtns",
@@ -3625,8 +3617,8 @@
    844,
    1423
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -3652,8 +3644,8 @@
    1189,
    1393
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -3679,7 +3671,7 @@
    1380,
    1424
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.94,
   "retype": true,
   "ink": {
@@ -3706,8 +3698,8 @@
    1488,
    1384
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -3734,7 +3726,7 @@
    1407
   ],
   "slant": -1.2,
-  "conf": 1.0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -3760,8 +3752,8 @@
    418,
    1452
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -3814,8 +3806,8 @@
    964,
    1451
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -3841,8 +3833,8 @@
    1172,
    1440
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": true,
   "ink": {
    "at": [
@@ -3857,6 +3849,33 @@
     1418,
     1172,
     1440
+   ]
+  }
+ },
+ {
+  "text": "lon",
+  "box": [
+   273,
+   642,
+   303,
+   662
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "ink": {
+   "at": [
+    288.6,
+    655.2
+   ],
+   "angle": -11.66,
+   "length": 27.3,
+   "thick": 20.2,
+   "box": [
+    273,
+    642,
+    303,
+    662
    ]
   }
  }
