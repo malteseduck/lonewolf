@@ -87,6 +87,29 @@ def test_names_on_other_checked_maps_count_and_unchecked_ones_do_not(tmp_path):
     assert map_names.check('KAKARMI', idx)['status'] == 'unknown'
 
 
+LAKES = ('(window.LW = window.LW || {}).BOOKS = Object.assign(window.LW.BOOKS || {}, {"95vv": {"sections": '
+         '{"1": {"text": ["<p>You sail across Lake Vellamor at dawn.</p>"]}, "2": {"text": ["<p>Then Lamar, Lamorn, '
+         'Clamor and Lamors ride with you to Kelamore, Stravo and Ostravell.</p>"]}}}});')
+
+
+def lakes(tmp_path):
+    idx_root = books(tmp_path)
+    (idx_root / '95vv').mkdir()
+    (idx_root / '95vv' / 'book.js').write_text(LAKES, encoding='utf-8')
+    return map_names.build_index(idx_root, maps(tmp_path, []))
+
+
+def test_a_name_the_books_print_whole_wins_over_closer_single_words(tmp_path):
+    # OCR lost the start of the lake's name: four other names are closer to what is left, word for word
+    r = map_names.check('LAKE LAMOR', lakes(tmp_path))
+    assert r['status'] == 'near' and r['suggest'][0] == 'LAKE VELLAMOR'
+
+
+def test_a_read_held_whole_in_a_name_beats_a_name_closer_letter_for_letter(tmp_path):
+    # letters lost at both ends, as when a road or the frame runs into the name
+    assert map_names.check('STRAVE', lakes(tmp_path))['suggest'][0] == 'OSTRAVELL'
+
+
 def test_the_command_writes_every_label_by_its_wording(tmp_path):
     root = books(tmp_path)
     lf = maps(tmp_path, [{'text': 'HOLMGARD'}, {'text': 'H0LMGARD'}, {'text': '25'}, {'text': 'QWXZYV', 'lines': ['QWX', 'ZYV']},

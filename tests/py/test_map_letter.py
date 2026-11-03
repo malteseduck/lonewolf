@@ -148,6 +148,31 @@ def test_place_draws_ink_colour_at_the_centre():
     assert base.getpixel((50, 62)) == (255, 255, 255)
 
 
+def halo_on_grey(monkeypatch, kind):
+    monkeypatch.setattr(map_letter, 'HALO', kind)
+    monkeypatch.setattr(map_letter, 'PHASE', 'halo')
+    base = Image.new('RGB', (100, 100), (90, 90, 90))
+    map_letter.place(base, Image.new('L', (30, 10), 255), 20, np.array([50.0, 50.0]), 0.0)
+    return base
+
+
+def test_an_outline_rings_the_type_in_hard_white_before_gemini(monkeypatch):
+    base = halo_on_grey(monkeypatch, 'outline')
+    assert base.getpixel((50, 55)) == (255, 255, 255)  # just below the type
+    assert base.getpixel((50, 58)) == (90, 90, 90)     # 1-2 px only, just enough to tell it apart
+
+
+def test_a_glow_fades_from_white_beside_the_type_to_the_map_at_finish(monkeypatch):
+    base = halo_on_grey(monkeypatch, 'glow')
+    near, mid = base.getpixel((50, 56))[0], base.getpixel((50, 59))[0]
+    assert near > mid > 90 and near < 255
+    assert base.getpixel((50, 80)) == (90, 90, 90)
+
+
+def test_no_halo_leaves_the_map_alone(monkeypatch):
+    assert halo_on_grey(monkeypatch, None).getpixel((50, 56)) == (90, 90, 90)
+
+
 
 
 
@@ -318,6 +343,21 @@ def test_main_resets_ticked_labels_and_fix_labels(monkeypatch, files, capsys):
 
 
 
+
+
+def test_main_outlines_gemini_input_and_glows_the_finish_every_halo_before_any_type(monkeypatch, files):
+    seen = []
+    monkeypatch.setattr(map_letter, 'WIDTH', 400)
+    monkeypatch.setattr(map_letter, 'letter', lambda base, lab, *a: seen.append((map_letter.PHASE, map_letter.HALO)))
+    for warp, kind in (('-', 'outline'), ('H.json', 'glow')):
+        seen.clear()
+        argv = ['map_letter.py', str(files / 'scan.png'), str(files / 'labels.json'), str(files / 'rep.png'),
+                warp if warp == '-' else str(files / warp), str(files / 'out.png')]
+        monkeypatch.setattr(sys, 'argv', argv)
+        map_letter.main()
+        phases = [p for p, _ in seen if p != 'wipe']
+        assert phases == sorted(phases, key=['halo', 'draw'].index) and 'halo' in phases
+        assert {h for _, h in seen} == {kind}
 
 
 def test_main_writes_the_sheet_beside_the_output_or_where_told(monkeypatch, files):

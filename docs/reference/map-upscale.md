@@ -135,7 +135,12 @@ Commands run from the project root as
    or on another checked map), *words* (each word is, not together), *near* (a word is not, but is
    close to one the books capitalise at least half the times they print it, or another checked map
    holds, after reading a digit as the letter OCR mistakes it for: 2 Z, 0 O, 5 S...) or *unknown*.
-   The list marks near with `?` and unknown with `✗`; the label's form shows the suggestions (best
+   A read held whole in a name scores high, as OCR loses letters at a name's ends; and a wording of
+   two words or more is also matched as a whole against the names of as many words the books print
+   (runs of capitals, "Gulf of ..." too) or checked maps hold, sharing a word it gets right, so
+   "Lake Rahi" finds "Lake Inrahim" where its last word alone has closer names (2026-11-02: with the
+   checked maps' names misread on purpose, the first suggestion right for a lost start rose from 64%
+   to 73%, a lost end 80% to 86%). The list marks near with `?` and unknown with `✗`; the label's form shows the suggestions (best
    first, wordings the books hold before others) to press, and **Right as it is**, which stores the
    wording as `named` so the check leaves it be until the wording changes. Map abbreviations (Mt,
    Mtns, R., St) count as words; numbers are not judged. On the checked lists of Books 3-6 and 12
@@ -200,6 +205,9 @@ Commands run from the project root as
    shading on Books 3 and 8 are tinted) goes with the name (2026-10-21; it also took leftover blots
    on Books 6, 7 and 10, and smudges the foot of Book 1's monastery tower).
 4. **Set them again**: `map_letter.py $W/map-2k.png $L $W/map-2k-erased.jpg - $W/map-2k-lettered.jpg --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"` (or the font `maps/<code>/font.txt` names).
+   Each name is ringed by a hard white outline of 1-2 px (`OUTLINE`, a share of its line height), so Gemini
+   sees it whole against the map's lines; at Finish, a soft white glow instead (`GLOW`, `GLOW_PEAK`).
+   Every halo is drawn before any type, so one never covers a near name (ADR 0004, 2026-11-02).
    Each name's angle and size come from the scan's ink (the angle from OCR's `slant` where the ink is a little off it, step 2); each one-line name is set at 1.05 times the map's common size (`common_size()`: the median of the
    lettered one-line names fitted to their own ink) times its own fitted size over that to the 0.6 (`PULL`: most of the way to the common size; on Books 3-6 and 12, 16 of 159 names more than 15% off the owner's hand size, where one size a map left 44), unless fitted over 1.25 times it (a title or
    region keeps its own; ADR 0004), and the editor's preview does the same. Look at
@@ -330,7 +338,8 @@ Commands run from the project root as
 
 Also tried and dropped: copying the scan's letter strokes onto Gemini's paint by script (its letters
 and trees are the same dark olive, so neither could be found cleanly), and lettering in IM Fell
-English with a light halo (the owner wanted it bigger and bolder, and no halo).
+English with a light halo (the owner wanted it bigger and bolder, and no halo; a white outline and
+glow came back on 2026-11-02, above).
 
 ## The Gemini API, if the hand-off gets tedious
 

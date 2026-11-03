@@ -15,8 +15,10 @@ Each label's wording (case, hyphens and a leading "the" ignored) is one of:
   unknown  some word is not, and nothing is close: an OCR misread, or a name found only on the map
 Numbers are not judged, and the map abbreviations in ABBREVIATIONS count as words. A label whose
 "named" holds its present wording (the editor's Right as it is) is a name. Close means alike after
-reading a digit as the letter OCR confuses it with (0 O, 1 I, 2 Z, 5 S, 8 B), by difflib's ratio,
-for words of four letters or more; only words the books capitalise mid-sentence at least half the
+reading a digit as the letter OCR confuses it with (0 O, 1 I, 2 Z, 5 S, 8 B), by difflib's ratio
+(a read held whole in the word scoring high, as OCR loses letters at a name's ends),
+for words of four letters or more; a wording of two words or more is also matched whole against
+the books' names of as many words that share a word it gets right, those first; only words the books capitalise mid-sentence at least half the
 times they print them, or other checked maps hold, are suggested, so a name found only on the map is not "mended" into a common word.
 
 It prints the counts and the indexes of the labels to look at, not their wordings.
@@ -37,6 +39,8 @@ CUTOFF = 0.72
 # shortened words the printed maps letter beside names (Books 3-12's lists)
 ABBREVIATIONS = {'mt', 'mts', 'mtn', 'mtns', 'r', 'st', 'is', 'n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'}
 OPENS = re.compile('(^|[.!?:;]["“”‘’\']?)\\s*$')  # what goes before a sentence's first word
+# a run of capitalised words, as the books print a name of two or more ("Lake Inrahim", "Gulf of Kalte")
+RUN = re.compile(r"[A-Z][^\W_]*(?:['’][^\W_]+)*(?:(?:\s+|-)(?:of\s+(?:the\s+)?)?[A-Z][^\W_]*(?:['’][^\W_]+)*)+")
 
 
 def words(text):
@@ -75,13 +79,16 @@ def label_wording(lab):
 
 def build_index(books_root, labels_file):
     """{'words': Counter, 'text': ' every word of the books ', 'phrases': set of other maps' wordings}."""
-    count, names, chunks, phrases = Counter(ABBREVIATIONS), Counter(), [], set()
+    count, names, chunks, phrases, runs = Counter(ABBREVIATIONS), Counter(), [], set(), set()
     for folder in sorted(Path(books_root).iterdir()):
         if folder.is_dir():
             for s in book_texts(folder):
                 w = words(s)
                 count.update(w)
                 chunks.append(' '.join(w))
+                for m in RUN.finditer(s):  # each tail too, since a sentence's first word may lead the run
+                    rw = strip_the(words(m.group()))
+                    runs.update(' '.join(rw[k:]) for k in range(len(rw) - 1))
                 for m in WORD.finditer(s):  # capitalised mid-sentence: a name, or part of one
                     if m.group()[0].isupper() and not OPENS.search(s[max(0, m.start() - 4):m.start()]):
                         names[m.group().replace('’', "'").lower()] += 1
@@ -97,12 +104,23 @@ def build_index(books_root, labels_file):
                 phrases.add(' '.join(strip_the(w)))
         except (OSError, ValueError):
             continue
-    return {'words': count, 'text': ' ' + ' \n '.join(chunks) + ' ', 'phrases': phrases - {''},
+    by_word = {}  # the names of two or more words, by each word in them, for a wording's whole-name match
+    for p in (runs | phrases) - {''}:
+        for x in set(p.split()):
+            by_word.setdefault(x, set()).add(p)
+    return {'words': count, 'text': ' ' + ' \n '.join(chunks) + ' ', 'phrases': phrases - {''}, 'by_word': by_word,
             'long': sorted({w for w, n in names.items() if len(w) >= 3 and not w.isdigit() and 2 * n >= count[w]})}
 
 
 def strip_the(ws):
     return ws[1:] if len(ws) > 1 and ws[0] == 'the' else ws
+
+
+def like(s, x):
+    """How alike a read word and a name are; a read held whole in the name scores high, as OCR loses
+    letters at a name's ends (a road or the frame running into them)."""
+    r = difflib.SequenceMatcher(None, s, x).ratio()
+    return max(r, 0.8 + 0.2 * len(s) / len(x)) if len(s) >= 4 and s in x else r
 
 
 def near(w, idx):
@@ -114,7 +132,7 @@ def near(w, idx):
     if len(w) < 4:
         return []
     pool = [x for x in idx['long'] if abs(len(x) - len(s)) <= 3]
-    scored = [(difflib.SequenceMatcher(None, s, x).ratio(), count[x], x) for x in pool if x != w]
+    scored = [(like(s, x), count[x], x) for x in pool if x != w]
     return [x for r, _, x in sorted(scored, reverse=True) if r >= CUTOFF][:3]
 
 
@@ -129,6 +147,20 @@ def in_case(cand, like):
 def known(ws, idx):
     p = ' '.join(strip_the(ws))
     return p in idx['phrases'] or f' {p} ' in idx['text']
+
+
+def whole(ws, bad, idx):
+    """Names of the books (or of checked maps) as long as the wording, sharing a word it gets right and
+    alike as a whole, best first, as picks for mend(): word for word, a misread word's three closest
+    names can all beat the right one ("Lake Inrahim" read as "Lake Rahi")."""
+    at = 1 if strip_the(ws) is not ws else 0
+    body = ws[at:]
+    if len(body) < 2:
+        return []
+    p = ' '.join(body)
+    pool = set().union(*(idx.get('by_word', {}).get(w, set()) for i, w in enumerate(body) if i + at not in bad and len(w) >= 3))
+    scored = sorted(((difflib.SequenceMatcher(None, p, q).ratio(), q) for q in pool if len(q.split()) == len(body)), reverse=True)
+    return [{at + j: x for j, x in enumerate(q.split())} for r, q in scored if r >= CUTOFF][:3]
 
 
 def check(text, idx):
@@ -153,6 +185,7 @@ def check(text, idx):
 
     first = {i: c[0] for i, c in cands.items() if c}
     tries = [first] + [{**first, i: c} for i in bad for c in cands[i][1:]] if first else []
+    tries = whole(ws, bad, idx) + tries
     seen, suggest = set(), []
     for pick in tries:
         m = mend(pick)
