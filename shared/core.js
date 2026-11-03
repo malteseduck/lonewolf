@@ -110,10 +110,10 @@
       hero.assumed = [...(hero.assumed || []), m];
     }
   };
-  /* Coins other than Gold Crowns (hero.coins): Book 9's Lune, Book 12's Kika, Book 22's Nobles, Book 23's Ren.
+  /* Coins other than Gold Crowns (hero.coins): Book 9's Lune, Book 12's Kika, Book 22's Nobles, Book 23's Ren and (Sheasu) Torqs.
      They share the Belt Pouch with the Crowns (ADR 0047): 50 Crowns' worth in all, each coin at its rate to the Crown. */
-  LW.COINS = { lune: 'Lune', kika: 'Kika', noble: 'Nobles', ren: 'Ren' };
-  LW.COIN_RATE = { lune: 4, kika: 10, noble: 1, ren: 10 };
+  LW.COINS = { lune: 'Lune', kika: 'Kika', noble: 'Nobles', ren: 'Ren', torq: 'Torqs' };
+  LW.COIN_RATE = { lune: 4, kika: 10, noble: 1, ren: 10, torq: 4 };
   LW.POUCH = 50;
   LW.purseWorth = (hero) => hero.gold + Object.entries(hero.coins || {}).reduce((t, [c, n]) => t + n / (LW.COIN_RATE[c] || 1), 0);
   LW.purseShown = (hero) => Math.floor(LW.purseWorth(hero) + 1e-9);

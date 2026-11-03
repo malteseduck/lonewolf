@@ -82,6 +82,7 @@ describe('more ways with coins', () => {
     expect(g.sell('rope')).toBeNull();
     expect(g.s.hero.coins.noble).toBe(3);
     expect(LW.coinCount(1, 'noble')).toBe('1 Noble');
+    expect([LW.coinCount(1, 'torq'), LW.COIN_RATE.torq]).toEqual(['1 Torq', 4]);
   });
 });
 

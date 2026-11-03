@@ -75,7 +75,7 @@ export const SECTIONS = {
   65: { give: [{ item: 'riverboatTicket' }] },
   66: { rntMod: [{ item: 'dagger', plus: 2 }], ranges: { 233: [-99, 3], 279: [4, 99] } },
   68: { ep: -5 },
-  74: { todo: 'The clerk gives 4 Torqs for each Gold Crown. The page keeps no Torqs: note any you take' },
+  74: { todo: 'The clerk gives 4 Torqs for each Gold Crown: change what you wish by hand in the purse (touch Gold Crowns on the Action Chart)' },
   75: { give: [{ item: 'sadanzosScroll' }] },
   76: { rntMod: [{ disc: 'grandHuntmastery', plus: 2 }, { item: 'rope', plus: 1 }], ranges: { 163: [-99, 5], 231: [6, 99] } },
   77: { ep: 6 },
@@ -114,7 +114,7 @@ export const SECTIONS = {
   157: { need: { 286: bowArrow } },
   158: { ep: -2 },
   159: { fight: { kaiWeapon: ['night'] } },
-  161: { todo: 'Torqs are not kept by the page: turn to 236 if you hold any, else to 19' },
+  161: { need: { 236: { any: [{ coins: { torq: 1 } }] }, 19: { any: [{ not: { coins: { torq: 1 } } }] } } },
   166: {
     loot: [{ meal: 1, ...lune(4) }, { arrows: 1, ...lune(4) }, { item: 'rope', ...lune(8) }, { item: 'lantern', ...lune(8) },
       { item: 'alether', ...lune(12) }, { item: 'quarterstaff', ...lune(20) }, { item: 'bow', ...lune(32) }],

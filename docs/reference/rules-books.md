@@ -1681,9 +1681,9 @@ series section above holds its Disciplines, its Kai Weapons and its ranks.
   (`earn`, `keepPack`).
 - **Grand Weaponmastery**: +5 with a mastered weapon of the ten (Spear, Dagger, Mace, Short Sword,
   Warhammer, Bow, Quarterstaff, Broadsword, Axe, Sword); one more mastered for each book completed;
-  with the Bow, +5 to a shot's Random Number. The book's one shot (102) names no number for it.
-  *Engine*: the +5 in a fight, yes (`arms`); on a shot, yes (`LW.bowShot`, from the item table's
-  `bowShot`).
+  with the Bow, +5 to a shot's Random Number. The book has no such shot: at 102 the Arrow hits
+  outright and the number drawn is for dodging. *Engine*: the +5 in a fight, yes (`arms`); on a shot,
+  yes (`LW.bowShot`), unused here.
 - **Deliverance**: at 8 ENDURANCE or less in a fight, restore 20; the page says once every 20 days.
   *Owner*: once a book (ADR 0047). *Engine*: yes (`LW.cureOf`).
 - **Gold**: 20 + a Random Number, added to any carried from Book 21 or 22; at most 50 in the Belt
