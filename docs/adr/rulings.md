@@ -60,3 +60,4 @@ row, not a decision by analogy.
 | R28 | Folder `AGENTS.md` files for work inside them: now ADR 0044. | ADR 0044 | 2026-10-27 |
 | R29 | The docs kept in line at commit (the hook) and at release (the pass): now ADR 0044. | ADR 0044 | 2026-10-27 |
 | R30 | `docs/reference/harness.md` describes the harness and is checked: now ADR 0044. | ADR 0044 | 2026-10-27 |
+| R32 | **Books 22-29 are taken to "human ready" one book at a time, when the owner asks.** Every step an agent can do is done and marked; an engine change beyond the book's kit is asked of the owner first; the owner checks the book, then asks for its one commit. | `docs/plan.md`, "The New Order series" | 2026-11-02 |

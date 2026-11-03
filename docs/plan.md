@@ -1,7 +1,7 @@
 # Plan
 
 Work not yet done that is not a book step. Rough; to be refined with the owner. Last updated
-2026-10-25. What the player does now is in `docs/reference/`, what it is meant to do in
+2026-11-02. What the player does now is in `docs/reference/`, what it is meant to do in
 `docs/spec.md`, and the owner's decisions in `docs/adr/`; finished work leaves this file for those.
 
 Where each book stands, step by step, is not kept here: the import dashboard
@@ -11,8 +11,8 @@ every book can become a step or a check there.
 
 ## Next steps
 
-In order of importance. The owner picks what is done, and when. Books 1-21 are imported;
-downloading and importing Books 22-29 is the owner's go-ahead.
+In order of importance. The owner picks what is done, and when. Books 1-29 are downloaded and
+imported.
 
 ### Classify the AI fight pictures
 
@@ -24,10 +24,32 @@ Picture sources sheet and marks "Made with AI" each one made from the prompt alo
 The series is in the engine, the importer and the page (ADR 0047; `docs/reference/rules-books.md`).
 Book 21 (`21votm`) goes through its steps as usual (`docs/book-checklist.md`). What is left:
 
-1. Books 22-29, the last on Project Aon, are in `book_status.CATALOGUE`, the importer and the shelf;
-   downloading and importing each is the owner's go-ahead. Each adds its kit to `LW.KITS` at its
-   step 4, and until then a hero begins it without one. A later book that gates on a Kai Weapon by
-   name would need a Condition for it (Book 21 has none).
+1. Books 22-29, the last on Project Aon, are downloaded and imported. Each adds its kit to `LW.KITS`
+   at its step 4, and until then a hero begins it without one. A later book that gates on a Kai
+   Weapon by name would need a Condition for it (Book 21 has none).
+2. **Each of Books 22-29 to "human ready"** (ruling R32): every step an agent can do, done and
+   marked, so that what is left is the owner's alone (step 7's proposals settled and marked; the
+   map's Labels checked, Gemini rounds and Finish). A book is run when the owner asks, in book
+   order, one at a time (the importer, `rules-books.md`, `LW.KITS` and `main.js` are shared, and
+   each book's rules diff and carried items build on the one before). Each agent step goes to a
+   fresh subagent on the main model with the dashboard's prompt for it (`tools/admin/prompts.js`):
+   1. Step 3, phrasings (Book 22's is done); `check_all.py` after any importer change. Book 24's
+      four sections with no way on are settled here.
+   2. The reading copy made again (`reading_copy.py`, `item_sections.py`).
+   3. Step 4, the rules addendum, and the book's kit in `LW.KITS`.
+   4. Step 5, the item table from the script's draft: its todos read, icons fetched, checker clean,
+      registered.
+   5. Step 6, test play: the walk, then the book played in Node; misreadings fixed in the importer
+      or the table, what stays left to the player listed under "Engine work found in play".
+   6. Step 9, illustrations upscaled 2x, then re-imported through `check_all.py` (Book 29 has none).
+   7. Step 7 rechecked: an enemy renamed or read afresh by steps 3 or 6 has its `plates.json` entry
+      or proposal row redone. The first round of proposals and the maps' first pass were done
+      2026-11-01 (notes for the owner in git-ignored `data/projectaon/first-pass-notes.md`).
+   8. `book_status.py show` confirms every mark; the book's line in those notes is brought up to date.
+
+   Any engine change beyond the kit is asked of the owner first and the run stops there. The agent
+   never commits: the owner checks the book, then asks for its commit, one a book. Book 21 still
+   lacks steps 6-8; the owner says whether it goes first.
 
 ### Engine work found in play
 
