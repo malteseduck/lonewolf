@@ -1,0 +1,14 @@
+{
+ "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
+ "srcs": [
+  "art/plates/21votm/shadakine-raiders.webp",
+  "assets/plates/21votm/city-guards.webp",
+  "assets/plates/21votm/svolta.webp",
+  "data/projectaon/21votm/ill1.png",
+  "data/projectaon/21votm/ill12.png",
+  "data/projectaon/21votm/ill17.png",
+  "data/projectaon/21votm/ill2.png",
+  "data/projectaon/21votm/ill3.png",
+  "data/projectaon/21votm/ill5.png"
+ ]
+}

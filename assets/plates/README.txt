@@ -64,3 +64,11 @@ hounds-stag-wellcome.jpg
 27v/bhanarian-roughriders.webp
   Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
   no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-10-31.
+
+21votm/city-guards.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-11-02.
+
+21votm/svolta.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-11-02.
