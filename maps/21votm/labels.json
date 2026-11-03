@@ -1,0 +1,2728 @@
+[
+ {
+  "text": "CALENCUT",
+  "box": [
+   1435,
+   78,
+   1516,
+   95
+  ],
+  "slant": 0,
+  "conf": 0.93,
+  "retype": true,
+  "ink": {
+   "at": [
+    1476,
+    87.5
+   ],
+   "angle": 1.13,
+   "length": 75.8,
+   "thick": 12.7,
+   "box": [
+    1435,
+    78,
+    1516,
+    95
+   ]
+  },
+  "joined": true,
+  "set": {
+   "at": [
+    1476,
+    87.5
+   ],
+   "size": 15,
+   "angle": -2
+  }
+ },
+ {
+  "text": "DURENOR",
+  "box": [
+   1068,
+   82,
+   1184,
+   110
+  ],
+  "slant": 0.6,
+  "conf": 0.9,
+  "retype": true,
+  "ink": {
+   "at": [
+    1128,
+    98.3
+   ],
+   "angle": 0.61,
+   "length": 110.1,
+   "thick": 21.6,
+   "box": [
+    1068,
+    82,
+    1184,
+    110
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "SOMMERLUND and DESSI",
+  "box": [
+   88,
+   151,
+   418,
+   188
+  ],
+  "slant": -0.7,
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "The coastal route between",
+  "box": [
+   146,
+   125,
+   362,
+   150
+  ],
+  "slant": -0.3,
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "THE KALTERSEE",
+  "box": [
+   799,
+   170,
+   974,
+   194
+  ],
+  "slant": 0,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    886.5,
+    183.5
+   ],
+   "angle": 0.32,
+   "length": 171,
+   "thick": 20.4,
+   "box": [
+    799,
+    170,
+    974,
+    194
+   ]
+  }
+ },
+ {
+  "text": "THE GULF OF DURENOR",
+  "box": [
+   1064,
+   199,
+   1213,
+   258
+  ],
+  "slant": 0,
+  "conf": 0.96,
+  "retype": true,
+  "lines": [
+   "THE GULF",
+   "OF DURENOR"
+  ],
+  "ink": {
+   "at": [
+    1139,
+    228.5
+   ],
+   "angle": 0,
+   "length": 144,
+   "thick": 51,
+   "box": [
+    1064,
+    199,
+    1213,
+    258
+   ]
+  }
+ },
+ {
+  "text": "BLAVE",
+  "box": [
+   1292,
+   211,
+   1362,
+   237
+  ],
+  "slant": -1.2,
+  "conf": 0.93,
+  "retype": true,
+  "ink": {
+   "at": [
+    1324.5,
+    225.4
+   ],
+   "angle": -3.92,
+   "length": 61.7,
+   "thick": 15.1,
+   "box": [
+    1292,
+    211,
+    1362,
+    237
+   ]
+  }
+ },
+ {
+  "text": "PLAINS",
+  "box": [
+   148,
+   245,
+   213,
+   271
+  ],
+  "slant": -0.3,
+  "conf": 0.99,
+  "retype": true
+ },
+ {
+  "text": "SALT LAKE",
+  "box": [
+   305,
+   247,
+   395,
+   268
+  ],
+  "slant": -0.5,
+  "conf": 0.97,
+  "retype": true
+ },
+ {
+  "text": "WASTE LANDS",
+  "box": [
+   148,
+   293,
+   209,
+   334
+  ],
+  "slant": 0,
+  "conf": 0.9,
+  "retype": true,
+  "lines": [
+   "WASTE",
+   "LANDS"
+  ]
+ },
+ {
+  "text": "DESERTS",
+  "box": [
+   307,
+   301,
+   381,
+   325
+  ],
+  "slant": 1.5,
+  "conf": 1,
+  "retype": true
+ },
+ {
+  "text": "GORN COVE",
+  "box": [
+   1135,
+   308,
+   1221,
+   330
+  ],
+  "slant": -2,
+  "conf": 0.93,
+  "retype": true,
+  "ink": {
+   "at": [
+    1178.1,
+    319.5
+   ],
+   "angle": -3.07,
+   "length": 78.4,
+   "thick": 13.7,
+   "box": [
+    1135,
+    308,
+    1221,
+    330
+   ]
+  }
+ },
+ {
+  "text": "LAKURI ISLANDS",
+  "box": [
+   1612,
+   304,
+   1764,
+   333
+  ],
+  "slant": 0,
+  "conf": 0.96,
+  "retype": true,
+  "ink": {
+   "at": [
+    1686.5,
+    320.1
+   ],
+   "angle": 1.1,
+   "length": 144.8,
+   "thick": 16.2,
+   "box": [
+    1612,
+    304,
+    1764,
+    333
+   ]
+  }
+ },
+ {
+  "text": "HILLS",
+  "box": [
+   147,
+   350,
+   203,
+   378
+  ],
+  "slant": 1.8,
+  "conf": 0.93,
+  "retype": true
+ },
+ {
+  "text": "CONIFEROUS FOREST",
+  "box": [
+   304,
+   341,
+   414,
+   388
+  ],
+  "slant": -0.8,
+  "conf": 0.91,
+  "retype": true,
+  "lines": [
+   "CONIFEROUS",
+   "FOREST"
+  ],
+  "reset": true
+ },
+ {
+  "text": "EGEN",
+  "box": [
+   746,
+   335,
+   791,
+   359
+  ],
+  "slant": 2.9,
+  "conf": 0.84,
+  "retype": true,
+  "ink": {
+   "at": [
+    768.6,
+    346.6
+   ],
+   "angle": 4.03,
+   "length": 39.5,
+   "thick": 23.9,
+   "box": [
+    746,
+    335,
+    791,
+    359
+   ]
+  },
+  "reset": true
+ },
+ {
+  "text": "THE RYMERIFT",
+  "box": [
+   1422,
+   345,
+   1561,
+   373
+  ],
+  "slant": 1.6,
+  "conf": 0.92,
+  "retype": true,
+  "ink": {
+   "at": [
+    1493.9,
+    358.8
+   ],
+   "angle": 1.64,
+   "length": 128,
+   "thick": 17.2,
+   "box": [
+    1422,
+    345,
+    1561,
+    373
+   ]
+  },
+  "set": {
+   "at": [
+    1493.9,
+    358.8
+   ],
+   "size": 17,
+   "angle": 0
+  },
+  "reset": true
+ },
+ {
+  "text": "DECIDUOUS FOREST",
+  "box": [
+   307,
+   396,
+   405,
+   437
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "lines": [
+   "DECIDUOUS",
+   "FOREST"
+  ]
+ },
+ {
+  "text": "THE KIRLUNDIN ISLES",
+  "box": [
+   858,
+   395,
+   987,
+   468
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "lines": [
+   "THE",
+   "KIRLUNDIN",
+   "ISLES"
+  ],
+  "ink": {
+   "at": [
+    923.5,
+    432.5
+   ],
+   "angle": 0,
+   "length": 119,
+   "thick": 67,
+   "box": [
+    858,
+    395,
+    987,
+    468
+   ]
+  }
+ },
+ {
+  "text": "MOUNTAINS",
+  "box": [
+   150,
+   406,
+   249,
+   426
+  ],
+  "slant": -0.1,
+  "conf": 0.9,
+  "retype": true
+ },
+ {
+  "text": "THE KIRLUNDIN",
+  "box": [
+   622,
+   401,
+   793,
+   427
+  ],
+  "slant": 0,
+  "conf": 0.94,
+  "retype": true,
+  "ink": {
+   "at": [
+    707.6,
+    415.8
+   ],
+   "angle": -0.46,
+   "length": 165.1,
+   "thick": 20.3,
+   "box": [
+    622,
+    401,
+    793,
+    427
+   ]
+  }
+ },
+ {
+  "text": "STRAITS",
+  "box": [
+   708,
+   426,
+   795,
+   453
+  ],
+  "slant": 0,
+  "conf": 0.93,
+  "retype": true,
+  "ink": {
+   "at": [
+    755.4,
+    440.7
+   ],
+   "angle": -1.07,
+   "length": 85.1,
+   "thick": 18.4,
+   "box": [
+    708,
+    426,
+    795,
+    453
+   ]
+  }
+ },
+ {
+  "text": "HROD",
+  "box": [
+   808,
+   411,
+   856,
+   428
+  ],
+  "slant": 0,
+  "conf": 0.81,
+  "retype": true,
+  "ink": {
+   "at": [
+    833.5,
+    420
+   ],
+   "angle": 0,
+   "length": 41,
+   "thick": 14,
+   "box": [
+    808,
+    411,
+    856,
+    428
+   ]
+  },
+  "joined": true,
+  "reset": true
+ },
+ {
+  "text": "SWAMP",
+  "box": [
+   147,
+   457,
+   213,
+   482
+  ],
+  "slant": -0.5,
+  "conf": 0.71,
+  "retype": true
+ },
+ {
+  "text": "OASIS",
+  "box": [
+   308,
+   457,
+   357,
+   479
+  ],
+  "slant": -0.2,
+  "conf": 0.81,
+  "retype": true
+ },
+ {
+  "text": "RAGADORN",
+  "box": [
+   1104,
+   476,
+   1231,
+   508
+  ],
+  "slant": -1.4,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1168,
+    494.2
+   ],
+   "angle": -0.66,
+   "length": 118.2,
+   "thick": 21,
+   "box": [
+    1104,
+    476,
+    1231,
+    508
+   ]
+  }
+ },
+ {
+  "text": "JUNGLE",
+  "box": [
+   307,
+   511,
+   376,
+   531
+  ],
+  "slant": 0,
+  "conf": 0.89,
+  "retype": true
+ },
+ {
+  "text": "MANNON",
+  "box": [
+   894,
+   503,
+   960,
+   529
+  ],
+  "slant": 0,
+  "conf": 0.8,
+  "retype": true,
+  "ink": {
+   "at": [
+    924,
+    516.6
+   ],
+   "angle": -0.25,
+   "length": 60,
+   "thick": 13.1,
+   "box": [
+    894,
+    503,
+    960,
+    529
+   ]
+  },
+  "joined": true,
+  "reset": true
+ },
+ {
+  "text": "SAMIZ",
+  "box": [
+   1598,
+   530,
+   1659,
+   554
+  ],
+  "slant": -0.5,
+  "conf": 0.95,
+  "retype": true,
+  "ink": {
+   "at": [
+    1629.9,
+    541.9
+   ],
+   "angle": -1.17,
+   "length": 54.1,
+   "thick": 13.4,
+   "box": [
+    1598,
+    530,
+    1659,
+    554
+   ]
+  }
+ },
+ {
+  "text": "ROCK SPIRES",
+  "box": [
+   151,
+   560,
+   256,
+   588
+  ],
+  "slant": -0.7,
+  "conf": 0.93,
+  "retype": true
+ },
+ {
+  "text": "SOMMERLUND",
+  "box": [
+   503,
+   587,
+   667,
+   616
+  ],
+  "slant": 0.3,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    589,
+    602
+   ],
+   "angle": 0.79,
+   "length": 159.9,
+   "thick": 33.7,
+   "box": [
+    503,
+    587,
+    667,
+    616
+   ]
+  }
+ },
+ {
+  "text": "THE HOLMGULF",
+  "box": [
+   800,
+   577,
+   962,
+   606
+  ],
+  "slant": -0.3,
+  "conf": 0.87,
+  "retype": true,
+  "ink": {
+   "at": [
+    880,
+    591.8
+   ],
+   "angle": -1.15,
+   "length": 162.2,
+   "thick": 35.1,
+   "box": [
+    800,
+    577,
+    962,
+    606
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "THE WILD LANDS",
+  "box": [
+   1078,
+   595,
+   1268,
+   622
+  ],
+  "slant": 0.6,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    1173,
+    610.8
+   ],
+   "angle": 0.57,
+   "length": 184.1,
+   "thick": 19,
+   "box": [
+    1078,
+    595,
+    1268,
+    622
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "KADRIAN",
+  "box": [
+   1343,
+   585,
+   1410,
+   609
+  ],
+  "slant": 0,
+  "conf": 0.73,
+  "retype": true,
+  "ink": {
+   "at": [
+    1377,
+    597.5
+   ],
+   "angle": 0,
+   "length": 62,
+   "thick": 29,
+   "box": [
+    1343,
+    585,
+    1410,
+    609
+   ]
+  },
+  "reset": true
+ },
+ {
+  "text": "KUCHEK",
+  "box": [
+   1612,
+   589,
+   1694,
+   617
+  ],
+  "slant": 3.4,
+  "conf": 0.89,
+  "retype": true,
+  "ink": {
+   "at": [
+    1651.4,
+    604.8
+   ],
+   "angle": 2.74,
+   "length": 74.8,
+   "thick": 16.8,
+   "box": [
+    1612,
+    589,
+    1694,
+    617
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "SCALE IN MILES",
+  "box": [
+   188,
+   607,
+   332,
+   632
+  ],
+  "slant": -0.6,
+  "conf": 0.94,
+  "retype": true
+ },
+ {
+  "text": "LOHN",
+  "box": [
+   1857,
+   618,
+   1912,
+   645
+  ],
+  "slant": 0,
+  "conf": 0.92,
+  "retype": true,
+  "ink": {
+   "at": [
+    1882,
+    630
+   ],
+   "angle": 0,
+   "length": 50,
+   "thick": 20,
+   "box": [
+    1857,
+    618,
+    1912,
+    645
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "TYSO",
+  "box": [
+   709,
+   670,
+   759,
+   697
+  ],
+  "slant": 0,
+  "conf": 0.75,
+  "retype": true,
+  "ink": {
+   "at": [
+    734.1,
+    682.4
+   ],
+   "angle": -0.73,
+   "length": 38,
+   "thick": 15,
+   "box": [
+    709,
+    670,
+    759,
+    697
+   ]
+  }
+ },
+ {
+  "text": "LUJAR",
+  "box": [
+   1385,
+   660,
+   1453,
+   691
+  ],
+  "slant": 3.9,
+  "conf": 0.86,
+  "retype": true,
+  "ink": {
+   "at": [
+    1422.8,
+    677.1
+   ],
+   "angle": 3.9,
+   "length": 65.1,
+   "thick": 15,
+   "box": [
+    1385,
+    660,
+    1453,
+    691
+   ]
+  }
+ },
+ {
+  "text": "TORAN",
+  "box": [
+   596,
+   688,
+   662,
+   713
+  ],
+  "slant": -0.5,
+  "conf": 0.86,
+  "retype": true,
+  "ink": {
+   "at": [
+    631,
+    698.7
+   ],
+   "angle": -0.5,
+   "length": 58.1,
+   "thick": 23.1,
+   "box": [
+    596,
+    688,
+    662,
+    713
+   ]
+  },
+  "reset": true
+ },
+ {
+  "text": "VAKAR MOUNTAINS",
+  "box": [
+   1565,
+   676,
+   1686,
+   726
+  ],
+  "slant": 0,
+  "conf": 0.79,
+  "retype": true,
+  "lines": [
+   "VAKAR",
+   "MOUNTAINS"
+  ],
+  "ink": {
+   "at": [
+    1624.9,
+    704.6
+   ],
+   "angle": -0.84,
+   "length": 120.2,
+   "thick": 47.8,
+   "box": [
+    1565,
+    676,
+    1686,
+    726
+   ]
+  },
+  "joined": true,
+  "keep": [
+   [
+    1555,
+    667,
+    1594,
+    701
+   ],
+   [
+    1658,
+    664,
+    1699,
+    700
+   ]
+  ]
+ },
+ {
+  "text": "FERUFEZAN",
+  "box": [
+   1760,
+   702,
+   1872,
+   732
+  ],
+  "slant": 1.9,
+  "conf": 0.75,
+  "retype": true,
+  "ink": {
+   "at": [
+    1813.1,
+    718
+   ],
+   "angle": 0.82,
+   "length": 106.1,
+   "thick": 17.5,
+   "box": [
+    1760,
+    702,
+    1872,
+    732
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "RIVER TOR",
+  "box": [
+   604,
+   740,
+   666,
+   780
+  ],
+  "slant": 0,
+  "conf": 0.97,
+  "retype": true,
+  "lines": [
+   "RIVER",
+   "TOR"
+  ],
+  "ink": {
+   "at": [
+    632.1,
+    763.8
+   ],
+   "angle": 46.22,
+   "length": 41,
+   "thick": 23,
+   "box": [
+    604,
+    740,
+    666,
+    780
+   ]
+  }
+ },
+ {
+  "text": "HOLMGARD",
+  "box": [
+   723,
+   748,
+   861,
+   780
+  ],
+  "slant": -0.3,
+  "conf": 0.92,
+  "retype": true,
+  "ink": {
+   "at": [
+    796.8,
+    762.9
+   ],
+   "angle": 2.18,
+   "length": 135,
+   "thick": 23.3,
+   "box": [
+    723,
+    748,
+    861,
+    780
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "BENOI HILLS",
+  "box": [
+   748,
+   919,
+   812,
+   966
+  ],
+  "slant": 0,
+  "conf": 0.88,
+  "retype": true,
+  "lines": [
+   "BENOI",
+   "HILLS"
+  ],
+  "ink": {
+   "at": [
+    781,
+    945
+   ],
+   "angle": 0,
+   "length": 66,
+   "thick": 40,
+   "box": [
+    748,
+    919,
+    812,
+    966
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "CHULA",
+  "box": [
+   614,
+   933,
+   693,
+   962
+  ],
+  "slant": 0.5,
+  "conf": 0.89,
+  "retype": true,
+  "ink": {
+   "at": [
+    652.5,
+    948
+   ],
+   "angle": 0.33,
+   "length": 65,
+   "thick": 15.9,
+   "box": [
+    614,
+    933,
+    693,
+    962
+   ]
+  }
+ },
+ {
+  "text": "CAPE KABAR",
+  "box": [
+   870,
+   922,
+   977,
+   946
+  ],
+  "slant": 0,
+  "conf": 0.73,
+  "retype": true,
+  "ink": {
+   "at": [
+    922.5,
+    937.6
+   ],
+   "angle": -0.31,
+   "length": 104.9,
+   "thick": 17.4,
+   "box": [
+    870,
+    922,
+    977,
+    946
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "LAKE INRAHIM",
+  "box": [
+   636,
+   1012,
+   717,
+   1052
+  ],
+  "slant": 0,
+  "conf": 0.97,
+  "retype": true,
+  "lines": [
+   "LAKE",
+   "INRAHIM"
+  ],
+  "ink": {
+   "at": [
+    674.5,
+    1031.5
+   ],
+   "angle": 0,
+   "length": 69,
+   "thick": 47,
+   "box": [
+    636,
+    1012,
+    717,
+    1052
+   ]
+  },
+  "reset": true
+ },
+ {
+  "text": "BARRAKEESH",
+  "box": [
+   427,
+   1052,
+   561,
+   1073
+  ],
+  "slant": 0,
+  "conf": 0.88,
+  "retype": true,
+  "ink": {
+   "at": [
+    494.5,
+    1064.5
+   ],
+   "angle": -0.04,
+   "length": 131,
+   "thick": 19,
+   "box": [
+    427,
+    1052,
+    561,
+    1073
+   ]
+  }
+ },
+ {
+  "text": "BIR RABALOU",
+  "box": [
+   1069,
+   1075,
+   1196,
+   1103
+  ],
+  "slant": -0.8,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1130.1,
+    1090
+   ],
+   "angle": -0.77,
+   "length": 122.1,
+   "thick": 15.3,
+   "box": [
+    1069,
+    1075,
+    1196,
+    1103
+   ]
+  }
+ },
+ {
+  "text": "KHORDAIM ISLES",
+  "box": [
+   1339,
+   1059,
+   1537,
+   1092
+  ],
+  "slant": -0.1,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1438.4,
+    1077.3
+   ],
+   "angle": 0.66,
+   "length": 183,
+   "thick": 21.2,
+   "box": [
+    1339,
+    1059,
+    1537,
+    1092
+   ]
+  }
+ },
+ {
+  "text": "CHIRAS",
+  "box": [
+   440,
+   1092,
+   520,
+   1123
+  ],
+  "slant": 1.1,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    478.6,
+    1108.6
+   ],
+   "angle": -1.79,
+   "length": 69.3,
+   "thick": 19.7,
+   "box": [
+    440,
+    1092,
+    520,
+    1123
+   ]
+  }
+ },
+ {
+  "text": "GOLOGO",
+  "box": [
+   1752,
+   1108,
+   1842,
+   1136
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1797.5,
+    1123.2
+   ],
+   "angle": 1.31,
+   "length": 81,
+   "thick": 20.8,
+   "box": [
+    1752,
+    1108,
+    1842,
+    1136
+   ]
+  }
+ },
+ {
+  "text": "LAKURI ISLANDS",
+  "box": [
+   183,
+   1157,
+   332,
+   1182
+  ],
+  "slant": 0,
+  "conf": 0.96,
+  "retype": true,
+  "ink": {
+   "at": [
+    256.5,
+    1170
+   ],
+   "angle": 0.3,
+   "length": 141,
+   "thick": 16.5,
+   "box": [
+    183,
+    1157,
+    332,
+    1182
+   ]
+  }
+ },
+ {
+  "text": "BAY OF SHARKS",
+  "box": [
+   1336,
+   1134,
+   1506,
+   1165
+  ],
+  "slant": 0.8,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1421.4,
+    1149.8
+   ],
+   "angle": 1.39,
+   "length": 161,
+   "thick": 20.9,
+   "box": [
+    1336,
+    1134,
+    1506,
+    1165
+   ]
+  }
+ },
+ {
+  "text": "HIKAS",
+  "box": [
+   1555,
+   1154,
+   1629,
+   1185
+  ],
+  "slant": 2.4,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1589,
+    1171.1
+   ],
+   "angle": 2.73,
+   "length": 71.4,
+   "thick": 18.9,
+   "box": [
+    1555,
+    1154,
+    1629,
+    1185
+   ]
+  }
+ },
+ {
+  "text": "IKARESH",
+  "box": [
+   492,
+   1197,
+   570,
+   1216
+  ],
+  "slant": 3.9,
+  "conf": 0.94,
+  "retype": true,
+  "ink": {
+   "at": [
+    526.9,
+    1207.8
+   ],
+   "angle": 3.42,
+   "length": 77.9,
+   "thick": 19.6,
+   "box": [
+    492,
+    1197,
+    570,
+    1216
+   ]
+  },
+  "reset": true
+ },
+ {
+  "text": "DAHIR MOUNTAINS",
+  "box": [
+   724,
+   1211,
+   854,
+   1261
+  ],
+  "slant": 0,
+  "conf": 0.81,
+  "retype": true,
+  "lines": [
+   "DAHIR",
+   "MOUNTAINS"
+  ],
+  "ink": {
+   "at": [
+    784.5,
+    1236.5
+   ],
+   "angle": 0,
+   "length": 129,
+   "thick": 55,
+   "box": [
+    724,
+    1211,
+    854,
+    1261
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "BISUTAN",
+  "box": [
+   1285,
+   1215,
+   1395,
+   1255
+  ],
+  "slant": 0,
+  "conf": 0.91,
+  "retype": true,
+  "ink": {
+   "at": [
+    1338,
+    1234.5
+   ],
+   "angle": -0.11,
+   "length": 92,
+   "thick": 19.1,
+   "box": [
+    1285,
+    1215,
+    1395,
+    1255
+   ]
+  }
+ },
+ {
+  "text": "KARA KALA",
+  "box": [
+   390,
+   1308,
+   488,
+   1326
+  ],
+  "slant": 0,
+  "conf": 0.79,
+  "retype": true,
+  "ink": {
+   "at": [
+    439.2,
+    1317.9
+   ],
+   "angle": -2.37,
+   "length": 92,
+   "thick": 15.3,
+   "box": [
+    390,
+    1308,
+    488,
+    1326
+   ]
+  }
+ },
+ {
+  "text": "THE KOOS",
+  "box": [
+   606,
+   1280,
+   699,
+   1318
+  ],
+  "slant": -1.6,
+  "conf": 0.93,
+  "retype": true,
+  "ink": {
+   "at": [
+    651.8,
+    1296.4
+   ],
+   "angle": -4.39,
+   "length": 80.3,
+   "thick": 22.9,
+   "box": [
+    606,
+    1280,
+    699,
+    1318
+   ]
+  }
+ },
+ {
+  "text": "ELZIAN",
+  "box": [
+   1820,
+   1306,
+   1930,
+   1338
+  ],
+  "slant": 0,
+  "conf": 0.89,
+  "retype": true,
+  "ink": {
+   "at": [
+    1876.6,
+    1317.6
+   ],
+   "angle": -0.73,
+   "length": 107,
+   "thick": 26.6,
+   "box": [
+    1820,
+    1306,
+    1930,
+    1338
+   ]
+  },
+  "set": {
+   "at": [
+    1876,
+    1320
+   ],
+   "size": 19,
+   "angle": -0.7
+  }
+ },
+ {
+  "text": "BAVARI HILLS",
+  "box": [
+   1245,
+   1338,
+   1373,
+   1362
+  ],
+  "slant": -0.2,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    1310,
+    1350.4
+   ],
+   "angle": 0.78,
+   "length": 116,
+   "thick": 17.4,
+   "box": [
+    1245,
+    1338,
+    1373,
+    1362
+   ]
+  }
+ },
+ {
+  "text": "THE",
+  "box": [
+   1481,
+   1328,
+   1528,
+   1354
+  ],
+  "slant": -1.6,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    1508.7,
+    1344.6
+   ],
+   "angle": -1.6,
+   "length": 45.2,
+   "thick": 25.4,
+   "box": [
+    1481,
+    1328,
+    1528,
+    1354
+   ]
+  },
+  "set": {
+   "at": [
+    1504,
+    1342
+   ],
+   "size": 16,
+   "angle": -1.6
+  }
+ },
+ {
+  "text": "GREAT",
+  "box": [
+   1482,
+   1356,
+   1562,
+   1384
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1521,
+    1369.5
+   ],
+   "angle": 0,
+   "length": 70,
+   "thick": 29,
+   "box": [
+    1482,
+    1356,
+    1562,
+    1384
+   ]
+  }
+ },
+ {
+  "text": "GORGORON",
+  "box": [
+   1634,
+   1334,
+   1754,
+   1370
+  ],
+  "slant": 1.7,
+  "conf": 0.96,
+  "retype": true,
+  "ink": {
+   "at": [
+    1694.3,
+    1351
+   ],
+   "angle": 1.7,
+   "length": 126,
+   "thick": 39.5,
+   "box": [
+    1634,
+    1334,
+    1754,
+    1370
+   ]
+  }
+ },
+ {
+  "text": "KONESHI MOUNTAINS",
+  "box": [
+   1063,
+   1361,
+   1178,
+   1410
+  ],
+  "slant": 0,
+  "conf": 0.9,
+  "retype": true,
+  "lines": [
+   "KONESHI",
+   "MOUNTAINS"
+  ],
+  "ink": {
+   "at": [
+    1120,
+    1382.5
+   ],
+   "angle": 0,
+   "length": 122,
+   "thick": 51,
+   "box": [
+    1063,
+    1361,
+    1178,
+    1410
+   ]
+  }
+ },
+ {
+  "text": "MASOURN",
+  "box": [
+   1473,
+   1380,
+   1590,
+   1417
+  ],
+  "slant": 0,
+  "conf": 0.9,
+  "retype": true,
+  "ink": {
+   "at": [
+    1535.8,
+    1404.3
+   ],
+   "angle": 2.43,
+   "length": 106.5,
+   "thick": 30.5,
+   "box": [
+    1473,
+    1380,
+    1590,
+    1417
+   ]
+  },
+  "set": {
+   "at": [
+    1534,
+    1399.7
+   ],
+   "size": 19,
+   "angle": 0
+  }
+ },
+ {
+  "text": "HEAVEN'S",
+  "box": [
+   1865,
+   1399,
+   1975,
+   1428
+  ],
+  "slant": -0.8,
+  "conf": 0.91,
+  "retype": true,
+  "ink": {
+   "at": [
+    1924.1,
+    1413.6
+   ],
+   "angle": -3.08,
+   "length": 105.1,
+   "thick": 32.5,
+   "box": [
+    1865,
+    1399,
+    1975,
+    1428
+   ]
+  },
+  "set": {
+   "at": [
+    1924.1,
+    1413.6
+   ],
+   "size": 19,
+   "angle": 1
+  }
+ },
+ {
+  "text": "SAMIZ",
+  "box": [
+   53,
+   1408,
+   115,
+   1435
+  ],
+  "slant": -1.6,
+  "conf": 0.96,
+  "retype": true,
+  "ink": {
+   "at": [
+    84.6,
+    1421.1
+   ],
+   "angle": 1.33,
+   "length": 53,
+   "thick": 14.7,
+   "box": [
+    53,
+    1408,
+    115,
+    1435
+   ]
+  }
+ },
+ {
+  "text": "RIVER KHORDA",
+  "box": [
+   1215,
+   1403,
+   1327,
+   1457
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "lines": [
+   "RIVER",
+   "KHORDA"
+  ],
+  "ink": {
+   "at": [
+    1274,
+    1427
+   ],
+   "angle": 0,
+   "length": 104,
+   "thick": 56,
+   "box": [
+    1215,
+    1403,
+    1327,
+    1457
+   ]
+  }
+ },
+ {
+  "text": "TRAIL",
+  "box": [
+   1477,
+   1412,
+   1543,
+   1437
+  ],
+  "slant": 0,
+  "conf": 0.98,
+  "retype": true,
+  "ink": {
+   "at": [
+    1516,
+    1425
+   ],
+   "angle": 0,
+   "length": 60,
+   "thick": 22,
+   "box": [
+    1477,
+    1412,
+    1543,
+    1437
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "CHAIR MT.",
+  "box": [
+   1874,
+   1423,
+   1963,
+   1449
+  ],
+  "slant": 1.7,
+  "conf": 0.72,
+  "retype": true,
+  "ink": {
+   "at": [
+    1925,
+    1439.5
+   ],
+   "angle": 1.52,
+   "length": 82.3,
+   "thick": 26.3,
+   "box": [
+    1874,
+    1423,
+    1963,
+    1449
+   ]
+  },
+  "named": "CHAIR MT.",
+  "set": {
+   "at": [
+    1925,
+    1439.5
+   ],
+   "size": 16,
+   "angle": 0
+  }
+ },
+ {
+  "text": "LONN",
+  "box": [
+   299,
+   1462,
+   354,
+   1485
+  ],
+  "slant": 0.8,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    325.5,
+    1475.9
+   ],
+   "angle": 0.47,
+   "length": 45,
+   "thick": 13.9,
+   "box": [
+    299,
+    1462,
+    354,
+    1485
+   ]
+  },
+  "named": "LONN"
+ },
+ {
+  "text": "THE DRY MAIN",
+  "box": [
+   397,
+   1456,
+   550,
+   1482
+  ],
+  "slant": -0.3,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    473,
+    1470
+   ],
+   "angle": 0.15,
+   "length": 142,
+   "thick": 18.1,
+   "box": [
+    397,
+    1456,
+    550,
+    1482
+   ]
+  }
+ },
+ {
+  "text": "MOUNT DHANAMET",
+  "box": [
+   588,
+   1472,
+   760,
+   1502
+  ],
+  "slant": 0.8,
+  "conf": 0.87,
+  "retype": true,
+  "ink": {
+   "at": [
+    677,
+    1487.5
+   ],
+   "angle": -0.03,
+   "length": 158,
+   "thick": 19,
+   "box": [
+    588,
+    1472,
+    760,
+    1502
+   ]
+  }
+ },
+ {
+  "text": "CARCOS RANGE",
+  "box": [
+   1436,
+   1450,
+   1531,
+   1506
+  ],
+  "slant": 0,
+  "conf": 0.99,
+  "retype": true,
+  "lines": [
+   "CARCOS",
+   "RANGE"
+  ],
+  "ink": {
+   "at": [
+    1482,
+    1476
+   ],
+   "angle": 0,
+   "length": 96,
+   "thick": 54,
+   "box": [
+    1436,
+    1450,
+    1531,
+    1506
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "FERUFEZAN",
+  "box": [
+   68,
+   1488,
+   178,
+   1509
+  ],
+  "slant": 0,
+  "conf": 0.95,
+  "retype": true,
+  "ink": {
+   "at": [
+    123.5,
+    1499.2
+   ],
+   "angle": 0.99,
+   "length": 102.7,
+   "thick": 16.3,
+   "box": [
+    68,
+    1488,
+    178,
+    1509
+   ]
+  }
+ },
+ {
+  "text": "FIO FADALI",
+  "box": [
+   1058,
+   1483,
+   1211,
+   1528
+  ],
+  "slant": 2.7,
+  "conf": 0.93,
+  "retype": true,
+  "ink": {
+   "at": [
+    1124,
+    1504.8
+   ],
+   "angle": 1.89,
+   "length": 104.1,
+   "thick": 20,
+   "box": [
+    1058,
+    1483,
+    1211,
+    1528
+   ]
+  }
+ },
+ {
+  "text": "HERDOS",
+  "box": [
+   1464,
+   1536,
+   1554,
+   1563
+  ],
+  "slant": 0.6,
+  "conf": 0.99,
+  "retype": true,
+  "ink": {
+   "at": [
+    1513.3,
+    1546.8
+   ],
+   "angle": 2.04,
+   "length": 86.5,
+   "thick": 28.7,
+   "box": [
+    1464,
+    1536,
+    1554,
+    1563
+   ]
+  }
+ },
+ {
+  "text": "COLOCANA",
+  "box": [
+   1778,
+   1531,
+   1898,
+   1561
+  ],
+  "slant": -0.6,
+  "conf": 0.9,
+  "retype": true,
+  "ink": {
+   "at": [
+    1838,
+    1546.7
+   ],
+   "angle": -1.74,
+   "length": 106.3,
+   "thick": 21.1,
+   "box": [
+    1778,
+    1531,
+    1898,
+    1561
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "CLOEASIA",
+  "box": [
+   1472,
+   596,
+   1585,
+   624
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1526,
+    609.5
+   ],
+   "angle": 0.01,
+   "length": 100,
+   "thick": 17,
+   "box": [
+    1472,
+    596,
+    1585,
+    624
+   ]
+  }
+ },
+ {
+  "text": "BAVARI",
+  "box": [
+   1405,
+   1215,
+   1524,
+   1255
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1464,
+    1234.5
+   ],
+   "angle": 0,
+   "length": 126,
+   "thick": 47,
+   "box": [
+    1405,
+    1215,
+    1524,
+    1255
+   ]
+  },
+  "set": {
+   "at": [
+    1455,
+    1234
+   ],
+   "size": 18,
+   "angle": 0
+  }
+ },
+ {
+  "text": "DESSI",
+  "box": [
+   1612,
+   1376,
+   1669,
+   1410
+  ],
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "angle": 0,
+  "ink": {
+   "at": [
+    1638.9,
+    1393.2
+   ],
+   "angle": 2.1,
+   "length": 53.8,
+   "thick": 17.6,
+   "box": [
+    1612,
+    1376,
+    1669,
+    1410
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "KEY",
+  "box": [
+   231,
+   203,
+   281,
+   227
+  ],
+  "retype": true,
+  "set": {
+   "at": [
+    256,
+    215
+   ],
+   "size": 23,
+   "angle": 1.5
+  }
+ },
+ {
+  "text": "MARSH",
+  "box": [
+   148,
+   508,
+   211,
+   534
+  ],
+  "retype": true
+ },
+ {
+  "text": "BRONIN",
+  "box": [
+   793,
+   263,
+   856,
+   292
+  ],
+  "retype": true,
+  "ink": {
+   "at": [
+    820.9,
+    277.8
+   ],
+   "angle": 1.09,
+   "length": 64.4,
+   "thick": 29.1,
+   "box": [
+    793,
+    263,
+    856,
+    292
+   ]
+  }
+ },
+ {
+  "text": "KIRGU",
+  "box": [
+   852,
+   466,
+   899,
+   491
+  ],
+  "retype": true,
+  "named": "KIRGU",
+  "ink": {
+   "at": [
+    877.3,
+    481.3
+   ],
+   "angle": -4.72,
+   "length": 44,
+   "thick": 13.7,
+   "box": [
+    852,
+    466,
+    899,
+    491
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "WATCH POINT",
+  "box": [
+   874,
+   530,
+   934,
+   562
+  ],
+  "retype": true,
+  "ink": {
+   "at": [
+    902.7,
+    542.9
+   ],
+   "angle": 5.82,
+   "length": 53.3,
+   "thick": 31.9,
+   "box": [
+    874,
+    530,
+    934,
+    562
+   ]
+  },
+  "lines": [
+   "WATCH",
+   "POINT"
+  ],
+  "height": 24,
+  "reset": true
+ },
+ {
+  "text": "PORT BAX",
+  "box": [
+   1164,
+   270,
+   1236,
+   288
+  ],
+  "retype": true,
+  "ink": {
+   "at": [
+    1199.5,
+    278.8
+   ],
+   "angle": -0.57,
+   "length": 65.1,
+   "thick": 12.2,
+   "box": [
+    1164,
+    270,
+    1236,
+    288
+   ]
+  }
+ },
+ {
+  "text": "RAT CREEK",
+  "box": [
+   1284,
+   439,
+   1369,
+   465
+  ],
+  "retype": true,
+  "ink": {
+   "at": [
+    1328.5,
+    449.6
+   ],
+   "angle": -0.09,
+   "length": 83,
+   "thick": 15,
+   "box": [
+    1284,
+    439,
+    1369,
+    465
+   ]
+  }
+ },
+ {
+  "text": "RYME",
+  "box": [
+   1422,
+   314,
+   1471,
+   338
+  ],
+  "retype": true,
+  "ink": {
+   "at": [
+    1445.7,
+    328.4
+   ],
+   "angle": -3.55,
+   "length": 46.1,
+   "thick": 23.6,
+   "box": [
+    1422,
+    314,
+    1471,
+    338
+   ]
+  },
+  "set": {
+   "at": [
+    1446.9,
+    328.8
+   ],
+   "size": 16,
+   "angle": 0
+  },
+  "joined": true
+ },
+ {
+  "text": "RIVER HANNERD",
+  "box": [
+   1552,
+   171,
+   1680,
+   191
+  ],
+  "retype": true,
+  "named": "RIVER HANNERD",
+  "ink": {
+   "at": [
+    1616,
+    181.3
+   ],
+   "angle": 0.56,
+   "length": 122,
+   "thick": 13.8,
+   "box": [
+    1552,
+    171,
+    1680,
+    191
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "LYON",
+  "box": [
+   1878,
+   300,
+   1930,
+   321
+  ],
+  "retype": true,
+  "ink": {
+   "at": [
+    1904,
+    310.2
+   ],
+   "angle": -1.04,
+   "length": 46.2,
+   "thick": 15.1,
+   "box": [
+    1878,
+    300,
+    1930,
+    321
+   ]
+  }
+ },
+ {
+  "text": "KARA KALA",
+  "box": [
+   1945,
+   476,
+   1996,
+   517
+  ],
+  "retype": true,
+  "lines": [
+   "KARA",
+   "KALA"
+  ],
+  "ink": {
+   "at": [
+    1969.1,
+    497.6
+   ],
+   "angle": -36.56,
+   "length": 59.4,
+   "thick": 51.3,
+   "box": [
+    1945,
+    476,
+    1996,
+    517
+   ]
+  },
+  "joined": true
+ },
+ {
+  "text": "RIVER-DA",
+  "box": [
+   482,
+   1133,
+   570,
+   1157
+  ],
+  "retype": true,
+  "ink": {
+   "at": [
+    525.3,
+    1145.8
+   ],
+   "angle": -3.26,
+   "length": 80,
+   "thick": 27,
+   "box": [
+    482,
+    1133,
+    570,
+    1157
+   ]
+  },
+  "joined": true,
+  "reset": true
+ },
+ {
+  "text": "KABAR RANGE",
+  "box": [
+   856,
+   1109,
+   918,
+   1156
+  ],
+  "retype": true,
+  "ink": {
+   "at": [
+    883.9,
+    1131
+   ],
+   "angle": -3.54,
+   "length": 61.8,
+   "thick": 31.7,
+   "box": [
+    856,
+    1109,
+    918,
+    1156
+   ]
+  },
+  "lines": [
+   "KABAR",
+   "RANGE"
+  ]
+ },
+ {
+  "text": "DAHIR PASS",
+  "box": [
+   828,
+   1167,
+   930,
+   1194
+  ],
+  "retype": true,
+  "ink": {
+   "at": [
+    879.5,
+    1183.4
+   ],
+   "angle": 0.78,
+   "length": 95.1,
+   "thick": 14.4,
+   "box": [
+    828,
+    1167,
+    930,
+    1194
+   ]
+  }
+ },
+ {
+  "text": "KHOR",
+  "box": [
+   1219,
+   1095,
+   1276,
+   1118
+  ],
+  "retype": true,
+  "ink": {
+   "at": [
+    1247.6,
+    1106.3
+   ],
+   "angle": 1.53,
+   "length": 51.1,
+   "thick": 16.7,
+   "box": [
+    1219,
+    1095,
+    1276,
+    1118
+   ]
+  }
+ },
+ {
+  "text": "LIO",
+  "box": [
+   1964,
+   1233,
+   2004,
+   1254
+  ],
+  "retype": true,
+  "ink": {
+   "at": [
+    1983.8,
+    1243.6
+   ],
+   "angle": -3.97,
+   "length": 34.4,
+   "thick": 16.4,
+   "box": [
+    1964,
+    1233,
+    2004,
+    1254
+   ]
+  }
+ },
+ {
+  "text": "VERLIK",
+  "box": [
+   1441,
+   185,
+   1499,
+   211
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "ink": {
+   "at": [
+    1468.6,
+    198.6
+   ],
+   "angle": 3.84,
+   "length": 53.8,
+   "thick": 16.8,
+   "box": [
+    1441,
+    185,
+    1499,
+    211
+   ]
+  },
+  "joined": true,
+  "set": {
+   "at": [
+    1470,
+    198
+   ],
+   "size": 17,
+   "angle": 0
+  },
+  "keep": [
+   [
+    1434,
+    178,
+    1509,
+    190
+   ]
+  ]
+ },
+ {
+  "text": "CHASM",
+  "box": [
+   1687,
+   1281,
+   1764,
+   1307
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "set": {
+   "at": [
+    1725.5,
+    1294
+   ],
+   "size": 18,
+   "angle": 1
+  },
+  "ink": {
+   "at": [
+    1724.3,
+    1295
+   ],
+   "angle": -2.64,
+   "length": 70.2,
+   "thick": 19,
+   "box": [
+    1687,
+    1281,
+    1764,
+    1307
+   ]
+  }
+ },
+ {
+  "text": "OF",
+  "box": [
+   1686,
+   1309,
+   1730,
+   1337
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "set": {
+   "at": [
+    1708,
+    1323
+   ],
+   "size": 18,
+   "angle": -0.5
+  },
+  "ink": {
+   "at": [
+    1705.5,
+    1326.5
+   ],
+   "angle": -77.04,
+   "length": 26.1,
+   "thick": 20.8,
+   "box": [
+    1686,
+    1309,
+    1730,
+    1337
+   ]
+  }
+ }
+]

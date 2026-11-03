@@ -48,8 +48,8 @@ Book 21 (`21votm`) goes through its steps as usual (`docs/book-checklist.md`). W
    8. `book_status.py show` confirms every mark; the book's line in those notes is brought up to date.
 
    Any engine change beyond the kit is asked of the owner first and the run stops there. The agent
-   never commits: the owner checks the book, then asks for its commit, one a book. Book 21 still
-   lacks steps 6-8; the owner says whether it goes first.
+   never commits: the owner checks the book, then asks for its commit, one a book. Book 21 is
+   human ready (2026-11-02): step 7's proposals and the map's own steps wait for the owner.
 
 ### Fight balance
 
@@ -113,6 +113,13 @@ What a book's play-through left to the player that the engine could take over:
 - **The last places of the Backpack** (Book 20's 330: the items in the last three places lost; 8 takes
   the first three, `at: [1, 2, 3]`). `at` counts from the front only; places counted from the end
   (with how empty places count left to the owner) would take it. It is the table's todo there.
+- **ENDURANCE given up to raise a draw** (Book 21's 51 and 197: 1 added to the number for each point
+  he chooses to lose). Both are free draws with a todo; an `rntMod` paid in ENDURANCE, the points set
+  before the draw, would take them.
+- **Offerings that give back ENDURANCE** (Book 21's festival: 182, 1 for each Gold Crown laid down; 277,
+  3 for each Backpack Item; 103, 6 for each Special Item but the Moonstone and the Iron Skull). 182's
+  stake takes the Crowns but not the points; a stake or a pick that restores so much a unit would take
+  all three. They are the table's todos there.
 
 ### Book notes outside the steps
 
