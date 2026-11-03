@@ -176,6 +176,18 @@ def test_a_picture_made_with_ai_moves_to_the_committed_library_and_every_mention
     assert '10xx/orc.webp' in readme and 'AI' in readme
 
 
+def test_a_picture_made_again_for_the_same_enemy_keeps_one_credit(root):
+    # replace: the owner's new picture for the same enemy; its credit was added again each time
+    root.file('assets/plates/README.txt', b'Fight plates.\n\nwolf.jpg\n  An engraving.\n')
+    for day in ('2026-11-01', '2026-11-02', '2026-11-03'):
+        root.file('art/plates/10xx/orc.webp', b'pic')
+        asrc.record('art/plates/10xx/orc.webp', None)
+        asrc.make_ai('art/plates/10xx/orc.webp', today=day, replace=True)
+    readme = open(root.path('assets/plates/README.txt'), encoding='utf-8').read()
+    assert readme.count('10xx/orc.webp') == 1 and 'Moved here 2026-11-03' in readme and '2026-11-01' not in readme
+    assert 'wolf.jpg\n  An engraving.' in readme
+
+
 def test_made_with_ai_refuses_what_is_not_a_fight_picture_here_or_would_overwrite_one(root):
     root.file('art/me.png')
     root.file('art/plates/10xx/orc.webp')

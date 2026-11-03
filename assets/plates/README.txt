@@ -73,14 +73,6 @@ hounds-stag-wellcome.jpg
   Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
   no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-11-02.
 
-22tbos/looters.webp
-  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
-  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-11-03.
-
-22tbos/looters.webp
-  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
-  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-11-03.
-
 22tbos/citadel-gaolers.webp
   Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
   no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-11-03.

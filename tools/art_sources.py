@@ -104,6 +104,9 @@ def forget(rel):
         save(sources)
 
 
+# one credit in assets/plates/README.txt: the picture's path, then its indented lines, and a blank line
+CREDIT = re.compile(r'^(\S[^\r\n]*)\r?\n((?:[ \t]+\S[^\r\n]*(?:\r?\n|$))+)(?:\r?\n)?', re.M)
+
 AI_NOTE = ('  Made with an AI image generator from a text prompt alone (the proposal sheet\'s prompt);\n'
            '  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here {date}.\n')
 
@@ -123,8 +126,16 @@ def make_ai(rel, today=None, replace=False):
     moves = [(rel, new)] + ([(stem(rel), stem(new))] if os.path.isfile(path(stem(rel))) else [])
     _move_mentioned(moves)
     forget(rel)
-    with open(path('assets/plates/README.txt'), 'a', encoding='utf-8', newline='\n') as f:
-        f.write(f'\n{new[len("assets/plates/"):]}\n' + AI_NOTE.format(date=today or datetime.date.today().isoformat()))
+    name = new[len('assets/plates/'):]
+    readme = ''
+    if os.path.isfile(path('assets/plates/README.txt')):
+        with open(path('assets/plates/README.txt'), encoding='utf-8', newline='') as f:
+            readme = f.read()
+    # a picture made again for the same enemy replaces its credit rather than adding another
+    readme = CREDIT.sub(lambda m: '' if m.group(1) == name else m.group(0), readme).rstrip()
+    with open(path('assets/plates/README.txt') + '.part', 'w', encoding='utf-8', newline='\n') as f:
+        f.write(readme + f'\n\n{name}\n' + AI_NOTE.format(date=today or datetime.date.today().isoformat()))
+    os.replace(path('assets/plates/README.txt') + '.part', path('assets/plates/README.txt'))
     return new
 
 
@@ -164,7 +175,7 @@ def unmake_all_ai():
     stem = lambda r: r.rsplit('.', 1)[0] + '-2x.webp'
     with open(path('assets/plates/README.txt'), encoding='utf-8', newline='') as f:
         readme = f.read()
-    block = re.compile(r'^(\S[^\r\n]*)\r?\n((?:[ \t]+\S[^\r\n]*(?:\r?\n|$))+)(?:\r?\n)?', re.M)
+    block = CREDIT
     named = list(dict.fromkeys(m.group(1) for m in block.finditer(readme) if 'AI image generator' in m.group(2)))
     here = [n for n in named if os.path.isfile(path('assets/plates/' + n))]
     gone = [n for n in named if n not in here]
