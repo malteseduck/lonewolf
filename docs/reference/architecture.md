@@ -90,7 +90,8 @@ tools/
                             (about/ill-notes.json) and what it is (about/ill-about.json), also for the
                             stand-ins fights use, and what each enemy is by the book (about/foe-about.json)
                             (docs/reference/items.md, Fight pictures)
-  about_check.py            no description in about/ shares a run of 8 words with its book (ADR 0042);
+  about_check.py            no description in about/ shares a run of 8 words with its book (ADR 0042),
+                            and every enemy kind has a valid setting and figures in foe-scene.json (ADR 0008);
                             check_all.py runs it
   docs_check.py             the docs agree: ruling ids, the ADR index's dates, citations, named paths (READMEs too),
                             every asset credited in its folder's README.txt, AGENTS.md's
@@ -129,7 +130,8 @@ tools/
   realesrgan/               git-ignored. Real-ESRGAN's Windows build, used by map_upscale.py and ill_upscale.py
                             (setup.py install realesrgan fetches it)
 about/                      committed: what each picture and enemy is, in our own words (foe-about.json,
-                            ill-about.json, ill-notes.json; ADR 0042, tools/about_check.py)
+                            ill-about.json, ill-notes.json; ADR 0042, tools/about_check.py), and where each
+                            enemy kind is drawn and how many (foe-scene.json; ADR 0008)
 maps/<code>/                the owner's work on each book's printed map, committed: labels.json (the label
                             list), style.txt (the repaint's look), labels-checked.txt (step 3 done);
                             labels.json.bak is git-ignored (docs/reference/map-upscale.md)

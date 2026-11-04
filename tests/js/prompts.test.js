@@ -48,4 +48,11 @@ describe('pictureFor', () => {
       expect(all).toContain(s);
     }
   });
+  it('has every kind of enemy given a setting and figure count in about/foe-scene.json (the owner, 2026-11-03)', () => {
+    const all = PROMPTS.pictures({ ...b, imp: { bare: 2, kinds: 20 } });
+    for (const x of [p, all]) {
+      expect(x).toContain('about/foe-scene.json');
+      expect(x).toMatch(/every kind of enemy of the book/);
+    }
+  });
 });

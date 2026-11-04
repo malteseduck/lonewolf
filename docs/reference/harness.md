@@ -181,7 +181,7 @@ Each check answers one question with a script (spec principle 8; ADR 0022):
 | `tools/check_all.py` | Do the real books still import, their item tables check clean, their approved pictures hold, the offline copy have every file? | After a change to the importer, an item table, `about/` or anything the books go through |
 | `tools/offline_check.py` | Does every file the page loads exist, and how big is the offline copy? | After adding or moving a file the page loads |
 | `node tools/check_items.mjs <book>` | Does a book's item table agree with the book? | Item-table work (step 5) |
-| `tools/about_check.py` | Does any description repeat the book's wording? | Within `check_all.py`; after writing descriptions |
+| `tools/about_check.py` | Does any description repeat the book's wording? Has every enemy kind a valid scene? | Within `check_all.py`; after writing descriptions |
 | `tools/book_status.py done <book> <step>` | Is the step really done? (For steps read from files, it checks them and says NOT done, and why) | At the end of every book step |
 
 **Why it is shaped this way.** The suites take a couple of seconds each, so agents run them every

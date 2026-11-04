@@ -160,7 +160,7 @@
 import { inkPlate } from '../../plates.js';
 import { compilePlates, pickPlate, pinState, upscaledSrc } from '../../platepick.js';
 import { pictureFor } from './prompts.js';
-import { platePrompt, savedFor, countOf } from './plateprompt.js';
+import { platePrompt, savedFor, countOf, sceneFor } from './plateprompt.js';
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -270,7 +270,7 @@ async function render() {
     <div class="pic" id="pic${i}">${f.src ? '' : '<div class="none">no picture<br><small>drop one here</small></div>'}</div>
     <b>${esc(f.name)}</b><small>section${f.secs.length > 1 ? 's' : ''} ${esc(f.secs.join(', '))}</small><small>${esc(f.from)}</small><small id="size${i}"></small>
     <small class="about${about(f.name) ? '' : ' unsaid'}">${esc(about(f.name) || 'not yet said what this enemy is')}</small>
-    <div class="tools">${f.src ? '<button data-do="adjust">Adjust</button>' : ''}<button data-do="image" title="Copy a prompt for an image generator: its proposal row's description, count and setting when it has one, else its description here">Prompt</button>
+    <div class="tools">${f.src ? '<button data-do="adjust">Adjust</button>' : ''}<button data-do="image" title="Copy a prompt for an image generator: its proposal row's description, count and setting when it has one, else its description here, in its stored setting">Prompt</button>
       <details class="more"><summary>Picture</summary><div class="menu"><button data-do="choose">Choose file...</button><button data-do="address">By address...</button><button data-do="standin">Stand-in...</button><button data-do="prompt" title="Copy a prompt for Claude Code: other pictures for this enemy, and a prompt written from the book, on the proposal sheet">Ask Claude Code...</button>${ownFile(f) ? '<button data-do="link">Link...</button>' : ''}</div></details>
       <label class="sel" title="Tick several, then Prompt for them all at the top"><input type="checkbox" data-pick ${picked.has(f.name) ? 'checked' : ''}> Select</label></div></div>`).join('');
   // ink them one by one, so the page shows at once
@@ -406,22 +406,25 @@ async function copyPrompt(foe) {
 }
 
 /* The image-generator prompt the proposal sheet would give (plateprompt.js, ADR 0008): the enemy's latest
-   proposal row, open or finished, else its description here with the setting left to it. A count not
-   certain from the row or the name is asked. */
+   proposal row, open or finished, else its description here; the setting and count the row lacks come from
+   about/foe-scene.json (written at step 7 for every kind), and a count stored nowhere and not certain from the
+   name is asked. */
 async function copyImagePrompt(foe) {
   const get = (f) => fetch(`/data/projectaon/${code}/${f}`, { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
   const saved = savedFor(await Promise.all([get('plate-proposals.done.json'), get('plate-proposals.json')]), foe.name);
+  const scenes = await fetch('/about/foe-scene.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+  const scene = sceneFor(scenes, code, foe.name), setting = saved?.setting || scene?.setting || '';
   const what = saved?.prompt || about(foe.name);
   if (!what) return toast('Nothing yet says what this enemy is: use Ask Claude Code... in the Picture menu.', 5000);
-  let figures = countOf(foe.name, saved);
+  let figures = countOf(foe.name, saved, scene);
   if (figures == null) {
     const a = await ask(`How many figures does the picture of ${foe.name} show?`, '1');
     if (a == null) return;
     figures = Math.max(1, parseInt(a, 10) || 1);
   }
-  if (!await copyText(platePrompt(foe.name, what, { figures, setting: saved?.setting || '' }))) return;
-  toast(saved?.setting ? 'Image prompt copied, from its proposal row'
-    : `Image prompt copied${saved ? ', from its proposal row' : ''}; the setting is left to the generator`, 3500);
+  if (!await copyText(platePrompt(foe.name, what, { figures, setting }))) return;
+  toast(`Image prompt copied${saved ? ', from its proposal row' : ''}`
+    + (!setting ? '; the setting is left to the generator' : saved?.setting ? '' : ', in its stored setting'), 3500);
 }
 
 /* The answer typed in the #ask dialog, or null if cancelled (Escape, Cancel). */
