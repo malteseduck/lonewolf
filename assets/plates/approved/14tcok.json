@@ -15,7 +15,7 @@
   "122/0": {"name":"yy41jl","plate":{"src":"data/projectaon/14tcok/ill6.png"}},
   "126/0": {"name":"1ci7p40","plate":{"src":"data/projectaon/12tmod/ill2.png"}},
   "128/0": {"name":"5i8xvt","plate":{"src":"data/projectaon/14tcok/ill12.png"}},
-  "129/0": {"name":"m4szhc","plate":{"src":"art/plates/01fftd/vordak.webp","crop":[0.0491,0.055,0.8445,0.6839],"levels":[44,141],"flip":true}},
+  "129/0": {"name":"m4szhc","plate":{"src":"assets/plates/01fftd/vordak.webp","crop":[0.0491,0.055,0.8445,0.6839],"levels":[44,141],"flip":true}},
   "132/0": {"name":"1hyp58n","plate":{"src":"data/projectaon/12tmod/ill1.png"}},
   "135/0": {"name":"lv0peq","plate":{"src":"data/projectaon/10tdot/ill4.png"}},
   "151/0": {"name":"5we905","plate":{"src":"data/projectaon/12tmod/ill1.png"}},

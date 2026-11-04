@@ -8,6 +8,10 @@ it changes, chooses or cannot settle, shown with their context on the proposal s
         # pictures and plates.json entries of its kind in every book, the sections naming it (or the
         # --also words: "stranger", "the serpent") and those around its fights, what was settled before;
         # --text adds those sections' text, for the agent's own reading
+    python tools/plates_proposals.py scenes <code>         # gather every kind of the book, text and all, into
+        # data/projectaon/<code>/scene-gather/, for the Sonnet subagent that writes the scene digest
+        # (tools/scene-digest.md; the owner, 2026-11-04)
+    python tools/plates_proposals.py digest-check <code>   # the digest's sections and phrases against the book
 
 The file is data/projectaon/<code>/plate-proposals.json (git-ignored with the book; the sheet reads the
 book's text from book.js itself, so the file holds names, ids, paths and our own words only):
@@ -37,7 +41,9 @@ book's text from book.js itself, so the file holds names, ids, paths and our own
                                             a group ("6 Henchmen": 6), so a group is drawn as one
        "setting": "a dim stone cell",       the kind of place it is fought in, our own words, no colour and nobody in it, drawn
                                             simply behind it (both needed with a prompt; the owner, 2026-11-03;
-                                            about/foe-scene.json keeps the same for every kind)
+                                            about/foe-scene.json keeps the same for every kind, with the row's
+                                            prompt, beyond, refs and sections, never describe: gather prints it
+                                            as "stored", and a new row starts from it)
        "beyond": ["shaggy hide: ill9"],     each detail of the prompt the book's text does not give, and where it
                                             comes from, shown to the owner under the prompt
        "refs": ["data/projectaon/19wb/small6.png"]}   a good pick of the books' pictures to attach to the
@@ -53,7 +59,9 @@ next round reads so as not to propose again what the owner has settled.
 What the enemy shows now is not listed: the sheet puts it first itself. An enemy left with no picture
 (a creature no book draws) is listed with no candidates and its prompt.
 """
+import contextlib
 import datetime
+import io
 import json
 import os
 import re
@@ -253,6 +261,13 @@ def gather(code, name, also=()):
     except OSError:
         foes = {}
     about = {f'{c}: {n}': t for c, rows in foes.items() for n, t in rows.items() if pd.same_kind(k, pd.kind(n))}
+    try:
+        with open(os.path.join(ROOT, 'about', 'foe-scene.json'), encoding='utf-8') as f:
+            scenes = json.load(f).get(code, {})
+    except OSError:
+        scenes = {}
+    # the kind's stored record (setting, figures, and a past row's prompt, beyond, refs, sections): a new row starts from it
+    stored = scenes.get(name) or next((r for n, r in scenes.items() if pd.kind(n) == k), None)
     mine = pd.book_no(code)
     pictures = []
     for key, row in pd.load_index().items():
@@ -283,7 +298,7 @@ def gather(code, name, also=()):
     after = list(dict.fromkeys(t for sid in fights for t in to(secs[sid]) if t not in fights))
     settled = [f"{r['decided']['on']} {r['decided']['how']}" + (f" {r['decided']['src']}" if r['decided'].get('src') else '')
                for rnd in done(code)['rounds'] for r in rnd.get('enemies', []) if r.get('name') == name and r.get('decided')]
-    return {'fights': fights, 'kin': kin, 'now': pf.current(plates, code, book, name)[0], 'about': about,
+    return {'fights': fights, 'kin': kin, 'now': pf.current(plates, code, book, name)[0], 'about': about, 'stored': stored,
             'pictures': pictures, 'plates': entries, 'named': named, 'into': into, 'after': after, 'settled': settled,
             'terms': [' '.join(t) for t in terms], 'proposed': os.path.isfile(path(code)) and any(
                 e.get('name') == name for e in load(code).get('enemies', []))}
@@ -295,6 +310,9 @@ def _print_gather(code, name, g, text):
     for n, s in g['kin'].items():
         print(f"  same kind here: {n} at {', '.join(s)}")
     print('settled before: ' + ('; '.join(g['settled']) or 'never'))
+    st = g.get('stored')
+    print('\nstored in about/foe-scene.json (start the row from it): '
+          + (json.dumps(st, ensure_ascii=False) if st else 'nothing'))
     print(f"\nfoe-about ({len(g['about'])}):")
     for k, t in g['about'].items():
         print(f'  {k}: {t}')
@@ -318,7 +336,86 @@ def _print_gather(code, name, g, text):
             print(f'\n#{sid}\n' + '\n'.join(secs[sid].get('text', [])))
 
 
+def _scene_dir(code):
+    return os.path.join(ROOT, 'data', 'projectaon', code, 'scene-gather')
+
+
+def digest_path(code):
+    return os.path.join(ROOT, 'data', 'projectaon', code, 'scene-digest.json')
+
+
+def scenes(code):
+    """Step 7's first pass (the owner, 2026-11-04): gather every kind of the book (each name under its code in
+    about/foe-about.json), with its sections' text, into scene-gather/NN.txt and index.json, for the Sonnet
+    subagent that writes the scene digest (tools/scene-digest.md). A kind fought under numbered names ("Soldier 1")
+    is gathered under the first of them."""
+    with open(os.path.join(ROOT, 'about', 'foe-about.json'), encoding='utf-8') as f:
+        kinds = list(json.load(f).get(code, {}))
+    names = pf.enemy_names(_book(code))
+    out = _scene_dir(code)
+    os.makedirs(out, exist_ok=True)
+    index = []
+    for i, kind in enumerate(kinds):
+        as_ = kind if kind in names else next(iter(sorted(n for n in names if re.fullmatch(re.escape(kind) + r' \d+', n))), None)
+        row = {'file': f'{i:02d}.txt', 'kind': kind, 'gathered_as': as_, 'ok': as_ is not None}
+        if as_:
+            words = re.findall(r'[a-z]{3,}', kind.lower())
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                _print_gather(code, as_, gather(code, as_, words), True)
+            with open(os.path.join(out, row['file']), 'w', encoding='utf-8') as f:
+                f.write(buf.getvalue())
+        index.append(row)
+    with open(os.path.join(out, 'index.json'), 'w', encoding='utf-8') as f:
+        json.dump(index, f, indent=1, ensure_ascii=False)
+    return index
+
+
+def digest_problems(code):
+    """What is wrong with the subagent's scene digest, one line each; [] if none: a kind left out, a section
+    the book lacks, a phrase not in its section (the sheet highlights them) or only the enemy's name."""
+    if not os.path.isfile(digest_path(code)):
+        return [f'no data/projectaon/{code}/scene-digest.json']
+    with open(digest_path(code), encoding='utf-8') as f:
+        digest = json.load(f)
+    with open(os.path.join(ROOT, 'about', 'foe-about.json'), encoding='utf-8') as f:
+        kinds = list(json.load(f).get(code, {}))
+    secs = _book(code)['sections']
+    norm = lambda t: re.sub(r'\s+', ' ', t.replace('’', "'").replace('‘', "'")).lower()
+    out = [f'{k}: no digest entry' for k in kinds if k not in digest]
+    for k, e in digest.items():
+        if e.get('verdict') not in ('ok', 'fix'):
+            out.append(f'{k}: verdict must be "ok" or "fix"')
+        for s in list(e.get('fought', [])) + list(e.get('sections', [])):
+            if str(s) not in secs:
+                out.append(f'{k}: no section {s}')
+        bare = _name_words(k, [])
+        for sid, phrases in (e.get('describe') or {}).items():
+            if sid not in secs:
+                out.append(f'{k}: no section {sid}')
+                continue
+            text = norm(' '.join(secs[sid].get('text', [])))
+            out += [f'{k}: section {sid} has no {ph!r}' for ph in phrases if norm(ph) not in text]
+            out += [f'{k}: section {sid}: {ph!r} is only its name' for ph in phrases if norm(ph) in text and not _words(ph) - bare]
+    return out
+
+
 def main(argv):
+    if len(argv) == 2 and argv[0] == 'scenes':
+        idx = scenes(argv[1])
+        missed = [x['kind'] for x in idx if not x['ok']]
+        print(f"{argv[1]}: {len(idx) - len(missed)} of {len(idx)} kinds gathered into data/projectaon/{argv[1]}/scene-gather/"
+              + (f"; no enemy of that name: {', '.join(missed)}" if missed else ''))
+        return 0
+    if len(argv) == 2 and argv[0] == 'digest-check':
+        found = digest_problems(argv[1])
+        for p in found:
+            print(p)
+        if not found:
+            with open(digest_path(argv[1]), encoding='utf-8') as f:
+                d = json.load(f)
+            print(f"{argv[1]}: {len(d)} kinds digested, {sum(e.get('verdict') == 'fix' for e in d.values())} to fix")
+        return 1 if found else 0
     if len(argv) >= 3 and argv[0] == 'gather':
         also = next((a.split('=', 1)[1] for a in argv if a.startswith('--also=')), '')
         try:

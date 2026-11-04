@@ -84,14 +84,18 @@ tools/
                             the picture it names (og:image); `ai` moves a fight picture made with AI into
                             the committed assets/plates/ (ADR 0042)
   plates_proposals.py       checks data/projectaon/<code>/plate-proposals.json, the agent's step 7 candidates
-                            for the proposal sheet (ADR 0008)
+                            for the proposal sheet (ADR 0008); `gather` one enemy's files and text; `scenes`
+                            every kind's into data/projectaon/<code>/scene-gather/ and `digest-check` the
+                            Sonnet scene digest (scene-digest.json) against the book
+  scene-digest.md           the Sonnet subagent's brief for step 7's scene digest (ADR 0008)
   ill_index.py              writes git-ignored data/projectaon/ill-index.json: every book's illustrations, the
                             fights near each, and the committed hand notes of what each shows
                             (about/ill-notes.json) and what it is (about/ill-about.json), also for the
                             stand-ins fights use, and what each enemy is by the book (about/foe-about.json)
                             (docs/reference/items.md, Fight pictures)
   about_check.py            no description in about/ shares a run of 8 words with its book (ADR 0042),
-                            and every enemy kind has a valid setting and figures in foe-scene.json (ADR 0008);
+                            and every enemy kind has a valid setting and figures in foe-scene.json, and a valid
+                            prompt, beyond, refs and sections where it keeps them (ADR 0008);
                             check_all.py runs it
   docs_check.py             the docs agree: ruling ids, the ADR index's dates, citations, named paths (READMEs too),
                             every asset credited in its folder's README.txt, AGENTS.md's
@@ -131,7 +135,8 @@ tools/
                             (setup.py install realesrgan fetches it)
 about/                      committed: what each picture and enemy is, in our own words (foe-about.json,
                             ill-about.json, ill-notes.json; ADR 0042, tools/about_check.py), and where each
-                            enemy kind is drawn and how many (foe-scene.json; ADR 0008)
+                            enemy kind is drawn, how many, and the rest of its picture record: prompt,
+                            beyond, refs, sections (foe-scene.json; ADR 0008)
 maps/<code>/                the owner's work on each book's printed map, committed: labels.json (the label
                             list), style.txt (the repaint's look), labels-checked.txt (step 3 done);
                             labels.json.bak is git-ignored (docs/reference/map-upscale.md)

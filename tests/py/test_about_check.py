@@ -121,3 +121,33 @@ def test_a_setting_that_puts_a_figure_in_the_place_is_refused(tree):
     got = ac.scene_problems()
     assert len(got) == 2 and all('figure' in g for g in got)
     assert 'onlookers' in got[0] and 'horses' in got[1]
+
+
+# ---- a kind's stored picture record (the owner, 2026-11-03): the proposal row's prompt, beyond, refs and
+# sections may be kept beside its setting and figures, so a proposal or the Prompt button starts from it
+
+def test_a_full_record_in_our_own_words_passes(tree):
+    scened(tree, {'01xx': {'Wolf': {'setting': 'a forest road at dusk', 'figures': 1,
+                                    'prompt': 'A lean shaggy wolf, ears back, leaping at the viewer.',
+                                    'beyond': ['ears back: my guess'], 'refs': ['data/projectaon/01xx/ill1.png'],
+                                    'sections': [1, 2]},
+                           '3 Bandits': {'setting': 'a forest road at dusk', 'figures': 3}}})
+    assert ac.scene_problems() == []
+
+
+def test_a_records_prompt_names_no_colour_and_repeats_none_of_the_books_words(tree):
+    scened(tree, {'01xx': {'Wolf': {'setting': 'a forest road', 'figures': 1,
+                                    'prompt': 'A grey wolf that sat by the old stone bridge and waited for prey'},
+                           '3 Bandits': {'setting': 'a forest road', 'figures': 3, 'prompt': ''}}})
+    got = ac.scene_problems()
+    assert any('Wolf: its prompt names a colour' in g for g in got)
+    assert any("Wolf: its prompt repeats" in g for g in got)
+    assert any('3 Bandits: its prompt' in g and 'empty' in g for g in got)
+
+
+def test_a_records_lists_must_be_lists(tree):
+    scened(tree, {'01xx': {'Wolf': {'setting': 'a forest road', 'figures': 1, 'prompt': 'A wolf leaping.',
+                                    'beyond': 'shaggy: my guess', 'refs': [3], 'sections': ['x']},
+                           '3 Bandits': {'setting': 'a forest road', 'figures': 3}}})
+    got = ac.scene_problems()
+    assert len(got) == 3 and all(g.startswith('01xx/Wolf: ') for g in got)

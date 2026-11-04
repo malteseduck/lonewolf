@@ -160,7 +160,7 @@
 import { inkPlate } from '../../plates.js';
 import { compilePlates, pickPlate, pinState, upscaledSrc } from '../../platepick.js';
 import { pictureFor } from './prompts.js';
-import { platePrompt, savedFor, countOf, sceneFor } from './plateprompt.js';
+import { platePrompt, savedFor, countOf, sceneFor, whatOf } from './plateprompt.js';
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -406,15 +406,15 @@ async function copyPrompt(foe) {
 }
 
 /* The image-generator prompt the proposal sheet would give (plateprompt.js, ADR 0008): the enemy's latest
-   proposal row, open or finished, else its description here; the setting and count the row lacks come from
-   about/foe-scene.json (written at step 7 for every kind), and a count stored nowhere and not certain from the
-   name is asked. */
+   proposal row, open or finished, else its kind's stored prompt, else its description here (whatOf()); the
+   setting and count the row lacks come from about/foe-scene.json (written at step 7 for every kind, with the
+   prompt), and a count stored nowhere and not certain from the name is asked. */
 async function copyImagePrompt(foe) {
   const get = (f) => fetch(`/data/projectaon/${code}/${f}`, { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
   const saved = savedFor(await Promise.all([get('plate-proposals.done.json'), get('plate-proposals.json')]), foe.name);
   const scenes = await fetch('/about/foe-scene.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
   const scene = sceneFor(scenes, code, foe.name), setting = saved?.setting || scene?.setting || '';
-  const what = saved?.prompt || about(foe.name);
+  const what = whatOf(saved, scene, about(foe.name));
   if (!what) return toast('Nothing yet says what this enemy is: use Ask Claude Code... in the Picture menu.', 5000);
   let figures = countOf(foe.name, saved, scene);
   if (figures == null) {
@@ -423,7 +423,7 @@ async function copyImagePrompt(foe) {
     figures = Math.max(1, parseInt(a, 10) || 1);
   }
   if (!await copyText(platePrompt(foe.name, what, { figures, setting }))) return;
-  toast(`Image prompt copied${saved ? ', from its proposal row' : ''}`
+  toast(`Image prompt copied${saved?.prompt ? ', from its proposal row' : scene?.prompt ? ', from its stored record' : ''}`
     + (!setting ? '; the setting is left to the generator' : saved?.setting ? '' : ', in its stored setting'), 3500);
 }
 

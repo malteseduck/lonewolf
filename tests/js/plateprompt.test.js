@@ -1,7 +1,7 @@
 /* tools/admin/plateprompt.js, the image-generator prompt the proposal sheet copies: a fight picture is an ink
    drawing, so the description it carries names no colour (the owner, 2026-10-26). */
 import { describe, it, expect } from 'vitest';
-import { platePrompt, uncolour, COLOURS, savedFor, countOf, sceneFor } from '../../tools/admin/plateprompt.js';
+import { platePrompt, uncolour, COLOURS, savedFor, countOf, sceneFor, lookOf, whatOf } from '../../tools/admin/plateprompt.js';
 
 describe('platePrompt', () => {
   it('describes the subject with every colour word taken out', () => {
@@ -99,5 +99,26 @@ describe('sceneFor (about/foe-scene.json, for enemies with no proposal row: the 
 describe('uncolour', () => {
   it('drops colour words, their -ish forms and a colour joined to another word', () => {
     expect(uncolour('reddish fur, a white-hot blade, red-eyed and crimson-scaled')).toBe('fur, a hot blade, eyed and scaled');
+  });
+});
+
+describe('lookOf (a foe-about entry as a description to draw: the owner, 2026-11-03)', () => {
+  it('drops the bracket saying where it is met and fought, and the wiki note, keeping the look', () => {
+    expect(lookOf('A huge scaly serpent with bat wings, lunging. (Bursts from a statue: sections 100 and 133)'))
+      .toBe('A huge scaly serpent with bat wings, lunging.');
+    expect(lookOf('A slimy grub with tentacles (section 170). Six-legged, with a stinger tail (wiki)'))
+      .toBe('A slimy grub with tentacles. Six-legged, with a stinger tail');
+  });
+  it('keeps a bracket that only describes', () => {
+    expect(lookOf('A troll (huge, warty) with a club')).toBe('A troll (huge, warty) with a club');
+  });
+});
+
+describe('whatOf (what the Prompt button describes: the owner, 2026-11-03)', () => {
+  it("takes the proposal row's prompt, else the kind's stored one, else its foe-about entry without its brackets", () => {
+    expect(whatOf({ prompt: 'row words' }, { prompt: 'stored words' }, 'about (section 3)')).toBe('row words');
+    expect(whatOf(null, { prompt: 'stored words' }, 'about (section 3)')).toBe('stored words');
+    expect(whatOf({ note: 'no prompt' }, { setting: 'a bog' }, 'A bog wyrm (section 3)')).toBe('A bog wyrm');
+    expect(whatOf(null, null, '')).toBe('');
   });
 });

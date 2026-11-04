@@ -412,7 +412,16 @@ proposals". `plates_proposals.py gather <code> "<enemy>" [--also=words] [--text]
 what a row needs: the enemy's fights and other enemies of its kind in the book, its picture now, what the owner
 settled before, the `foe-about.json` entries, index pictures and `plates.json` entries of its kind in every book
 (this book first, then the nearest), the sections naming it or the `--also` words and those leading into and out
-of its fights, and with `--text` those sections' text for the agent's reading; the step 7 prompts start from it. Each enemy there shows what it has now, every candidate inked as in a fight (a web one by its
+of its fights, and with `--text` those sections' text for the agent's reading; the step 7 prompts start from it.
+Step 7 first gets every kind's scene right (the owner, 2026-11-04): `plates_proposals.py scenes <code>` gathers
+every kind of the book (a kind fought only under numbered names, "Soldier 1", under the first) with `--text` into
+git-ignored `data/projectaon/<code>/scene-gather/` (`NN.txt` and `index.json`); a Sonnet subagent, briefed by
+`tools/scene-digest.md`, reads every section there and writes `data/projectaon/<code>/scene-digest.json`: each
+kind's describing sections and exact phrases, its place, count and moment, and what its stored `foe-scene.json`
+record gets wrong or lacks; `plates_proposals.py digest-check <code>` names a kind left out, a section the book
+lacks, a phrase not word for word in its section or only the enemy's name. The step 7 agent writes each kind's
+`foe-scene.json` entry from the digest and the stored record rather than the whole text (about 15 times less
+reading), and each row starts from that entry and the digest's sections and phrases. Each enemy there shows what it has now, every candidate inked as in a fight (a web one by its
 thumbnail, fetched only when chosen), the agent's note and pick, its `foe-about.json` entry, and the book's
 text where it is fought or where the agent marked something describing it or its fight (the owner, 2026-10-28: a
 section that only names it, "the guard", is no context; "the burly guard" is; `check` refuses a listed section
@@ -433,7 +442,9 @@ description it is given, foe-about entries included, and the check rejects one i
 (the file's `prompt`, our own words, checked against the book's) in the picture sheet's style, asking it to
 follow any reference pictures attached (`tools/admin/plateprompt.js`). The picture sheet's **Prompt** button copies that image prompt for any
 enemy of any book (the owner, 2026-11-03): from its latest proposal row with a prompt, in `plate-proposals.json`
-or the done file (`savedFor()`), with that row's count and setting; else from its `foe-about.json` entry. A setting
+or the done file (`savedFor()`), with that row's count and setting; else from its kind's stored `prompt` in
+`about/foe-scene.json`; else from its `foe-about.json` entry without the brackets saying where it is fought
+(`whatOf()`, `lookOf()`; the owner, 2026-11-03). A setting
 or count the row lacks comes from `about/foe-scene.json` (`sceneFor()`, its name else its plain kind), and only an
 enemy with none there leaves the setting to the generator. The count is the row's, else the stored one, else the
 number the name starts with, else one; a plural-looking name ("Ambushers") stored nowhere asks for it (`countOf()`). Its Picture menu's **Ask Claude Code...** copies
@@ -488,8 +499,13 @@ Where a fight's picture comes from, first that applies (ADR 0008):
    where the enemy is met and fought. Every kind there also has a scene for its image prompt in
    `about/foe-scene.json` (`{book: {enemy name: {"setting": ..., "figures": n}}}`, the same names, the owner,
    2026-11-03): the kind of place it is fought in, a few plain words in lower case with no colour and nothing
-   by its name, and how many the picture shows. An agent writes it at step 7 from the section where the enemy
-   is fought (a script cannot read the place reliably); a proposal row's `setting` and `figures` say the same.
+   by its name, and how many the picture shows. An agent writes it at step 7 from the scene digest (above), which
+   reads every section that describes the enemy or its fight (a script cannot read the place reliably); a proposal row's `setting` and `figures` say the same.
+   Each kind's entry also keeps the rest of its picture record, as a proposal row has it (the owner,
+   2026-11-03): `prompt`, `beyond`, `refs` and `sections`, so the picture sheet's Prompt button draws any
+   enemy from a full description and a new proposal row starts from it (`gather` prints it as "stored");
+   never `describe`, the book's own phrases, which stay in the git-ignored `plate-proposals.json` (ADR 0042).
+   `about_check.py` checks the prompt as a setting (no colour, no 8 of the book's words in a row).
    `tools/about_check.py` fails a kind with none, a count under 1, a colour word, a capitalised word or a word
    the book only writes as a name, a figure in the place (a crowd, a guard, a horse: it would be drawn too),
    and 8 of the book's words in a row; `plates_proposals.py check` fails a row's setting alike. Books 1-29 were written on 2026-11-03. All 405 `ill*` pictures of Books 1-20 have a `shows` note (2026-10-11); every picture

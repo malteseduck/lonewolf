@@ -10,8 +10,9 @@ Rules for work on fight pictures (step 7). The root `AGENTS.md` applies as well;
   `plate-proposals.json` in `data/projectaon/`, never as a contact sheet or a description in chat.
 - **Image-generator prompts go in that file's `prompt` field**, never in a chat report: a fuller
   description in our own words of what the enemy looks like and the moment it is fought. An enemy no
-  book pictures goes in with no candidates. Keep its `foe-about.json` entry descriptive too, since the
-  picture sheet's Prompt button reads it. A man-beast is said outright to stand upright on two legs,
+  book pictures goes in with no candidates. Keep the same prompt, `beyond`, `refs` and `sections`, with
+  its setting and figures, in its kind's entry in `about/foe-scene.json`, which the picture sheet's
+  Prompt button reads and a later row starts from (never `describe`: the book's words). A man-beast is said outright to stand upright on two legs,
   with what is man and what is beast part by part: the word "beast" alone puts it on all fours. Name
   no hero or victim, and no place by its name: what is named gets drawn. The enemy goes at the viewer.
   The row's `figures` says how many are drawn (a group's whole number, else 1) and its `setting` the

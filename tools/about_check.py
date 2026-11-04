@@ -7,7 +7,9 @@ sheet's image prompt draws each kind of enemy in (ADR 0008, the owner, 2026-11-0
 foe-about.json has one, "figures" a whole number of 1 or more, and "setting" the kind of place, short, in
 our own words, with no colour (a fight picture is an ink drawing), nothing by its name, person or place,
 as what is named gets drawn (any capitalised word, or a word the book only ever writes as a name), and no
-one in it (a crowd, a guard, a horse): the place only, as the enemy is drawn alone.
+one in it (a crowd, a guard, a horse): the place only, as the enemy is drawn alone. A kind's entry may also
+keep the rest of its proposal row (the owner, 2026-11-03): "prompt" (our own words, no colour), "beyond",
+"refs" and "sections", which a new proposal row and the picture sheet's Prompt button start from.
 
     python tools/about_check.py        exit 1 if any entry does, or any scene is wrong
 
@@ -111,6 +113,30 @@ FIGURES = re.compile(r"\b(?:crew|enem(?:y|ies)|corpses?|bod(?:y|ies)|m[ae]n|wom[
                      r"figures?|creatures?|beasts?|horses?|hounds?|dogs?|war-dogs|wolves|leaders?|cultists|allies|companions?)\b", re.I)
 
 
+def record_problems(at, code, sc, hue, cache):
+    """The rest of a kind's stored picture record, each field optional (the owner, 2026-11-03): "prompt", what it
+    looks like and does as it is fought, our own words with no colour; "beyond", "refs" (paths) as lists of text;
+    "sections" as section numbers."""
+    out = []
+    if 'prompt' in sc:
+        p = sc['prompt']
+        if not (isinstance(p, str) and p.strip()):
+            out.append(f'{at}: its prompt is empty or not text')
+        else:
+            if hue.search(p):
+                out.append(f"{at}: its prompt names a colour ({', '.join(hue.findall(p))}): say it in tone and texture")
+            book = book_runs(code, cache)
+            if book and runs(words(p)) & book:
+                out.append(f"{at}: its prompt repeats {RUN} or more of the book's words in a row: reword it")
+    for key in ('beyond', 'refs'):
+        if key in sc and not (isinstance(sc[key], list) and all(isinstance(x, str) and x.strip() for x in sc[key])):
+            out.append(f'{at}: {key} must be a list of text')
+    if 'sections' in sc and not (isinstance(sc['sections'], list)
+                                 and all(re.fullmatch(r'\d+', str(x)) for x in sc['sections'])):
+        out.append(f'{at}: sections must be a list of section numbers')
+    return out
+
+
 def scene_problems():
     """What is wrong in foe-scene.json, one line per enemy (book/name: why); our words only, never the book's."""
     about, scenes, cache, out = _load('foe-about.json'), _load('foe-scene.json'), {}, []
@@ -128,6 +154,7 @@ def scene_problems():
             n = sc.get('figures')
             if not (isinstance(n, int) and not isinstance(n, bool) and n >= 1):
                 out.append(f'{at}: figures must be how many the picture shows, 1 or more')
+            out += record_problems(at, code, sc, hue, cache)
             setting = sc.get('setting')
             if not (isinstance(setting, str) and setting.strip()):
                 out.append(f'{at}: no setting (the kind of place it is fought in)')

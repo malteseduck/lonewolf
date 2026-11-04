@@ -55,4 +55,21 @@ describe('pictureFor', () => {
       expect(x).toMatch(/every kind of enemy of the book/);
     }
   });
+  it("keeps each kind's full picture record there, which a proposal row starts from (the owner, 2026-11-03)", () => {
+    const all = PROMPTS.pictures({ ...b, imp: { bare: 2, kinds: 20 } });
+    for (const x of [p, all]) {
+      expect(x).toMatch(/"prompt", "beyond", "refs" and "sections"/);
+      expect(x).toMatch(/start .*row from the kind's record/i);
+      expect(x).toMatch(/never "describe"/);
+    }
+  });
+  it("gets each kind's scene right first: a Sonnet digest of the whole text, then the entries from it (the owner, 2026-11-04)", () => {
+    const all = PROMPTS.pictures({ ...b, imp: { bare: 2, kinds: 20 } });
+    for (const s of ['python tools/plates_proposals.py scenes 09sb', 'tools/scene-digest.md', 'model: "sonnet"',
+      'data/projectaon/09sb/scene-digest.json']) expect(all).toContain(s);
+    expect(all.indexOf('scenes 09sb')).toBeLessThan(all.indexOf('Each entry also carries'));
+    // one enemy's prompt reads a digest already made
+    expect(p).toContain('data/projectaon/09sb/scene-digest.json');
+    expect(p).not.toContain('scenes 09sb');
+  });
 });

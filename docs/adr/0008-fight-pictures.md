@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-01 (shown whole); varied humans 2026-10-09; pinned 2026-10-11; source order 2026-10-14
-- Amended: 2026-11-03
+- Amended: 2026-11-04
 
 ## Context
 
@@ -41,7 +41,7 @@ the very same creature. The owner set the order.
   a good pick of the books' pictures of it or its surroundings. The prompt draws as many figures as
   the enemy is (a group as a group, one enemy alone, no other figure) in a simple setting of the kind
   of place it is fought in, drawn lighter behind it. Every enemy kind keeps that setting and count in
-  committed `about/foe-scene.json`, written at step 7 for every kind, proposed or not. The sheet quotes only the sections
+  committed `about/foe-scene.json`, written at step 7 for every kind, proposed or not, from a scene digest of every section describing it. The sheet quotes only the sections
   where the enemy is fought or something describes it or its fight; one that only names it ("the
   guard", not "the burly guard") is no context and is left out.
 
@@ -155,3 +155,15 @@ the very same creature. The owner set the order.
   (`about/foe-scene.json`), so the picture sheet's Prompt draws any enemy in its own place, not a
   generic one; written by an agent at step 7 from the section where it is fought, never by the
   importer; the button asks for a count only when none is stored (owner).
+- 2026-11-03: each kind's entry in `about/foe-scene.json` keeps its whole picture record as a proposal
+  row has it (prompt, beyond, refs, sections, beside setting and figures), so the Prompt button draws
+  any enemy from a full description, not its foe-about summary (which drew Book 1's Winged Serpent as
+  a dragon in a courtyard), and a new proposal starts from it and only gathers candidates. The
+  book's own phrases (`describe`) stay out of it (ADR 0042); foe-about stays what the enemy is and
+  where it is fought (owner).
+- 2026-11-04: step 7 gets each kind's scene right when it first writes it. A bulk pass that read only
+  the fight got weapons, places and moments wrong (Book 1's Giak held its dagger in its fist, not its
+  teeth), so step 7 starts with a scene digest: `plates_proposals.py scenes` gathers every kind's
+  sections, a Sonnet subagent (`tools/scene-digest.md`) reads them all and lists each kind's describing
+  phrases and what its stored record gets wrong or lacks, and the step 7 agent writes the
+  `foe-scene.json` entries from the digest (owner).

@@ -89,7 +89,7 @@ hounds-stag-wellcome.jpg
   Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
   no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-11-03.
 
-18dotd/eldenoran-ambushers.webp
+18dotd/eldenoran-brigands.webp
   Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
   no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-11-03.
 
@@ -97,10 +97,30 @@ hounds-stag-wellcome.jpg
   Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
   no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-11-03.
 
+18dotd/eldenoran-ambushers.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-11-03.
+
 18dotd/eldenoran-assault-troops.webp
   Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
   no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-11-03.
 
-18dotd/eldenoran-brigands.webp
+18dotd/eldenoran-war-dogs-in-blood-frenzy.webp
   Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
   no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-11-03.
+
+18dotd/eldenoran-thug-drunk.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-11-03.
+
+01fftd/winged-serpent.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-11-03.
+
+01fftd/doomwolf-1.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-11-03.
+
+01fftd/vordak.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here 2026-11-04.

@@ -73,7 +73,8 @@ step left.
   a new picture asks for its link, or No link (ADR 0038), and Link... gives one to a picture already in `art/`; Adjust crops any card's picture, flips it left to right and sets levels, with the fight panel previewed as it will look (and, for a picture shown from its 2x copy, Show original to compare);
   Remove takes the owner's entry away. A card's buttons are Adjust, Prompt and a Picture menu (Choose file...,
   By address..., Stand-in..., Link..., Ask Claude Code...); Prompt copies the enemy's image-generator prompt
-  (`plateprompt.js`: its proposal row's description, count and setting, else its `foe-about.json` entry, in its
+  (`plateprompt.js`: its proposal row's description, count and setting, else its kind's stored prompt in
+  `about/foe-scene.json`, else its `foe-about.json` entry, in its
   `about/foe-scene.json` setting with its count; `docs/reference/items.md`, the owner, 2026-11-03). Ask Claude Code...
   copies the step 7 agent prompt narrowed to that enemy (`pictureFor()` in `tools/admin/prompts.js`; the owner,
   2026-10-26): pasted into Claude Code, it proposes other pictures for it and gathers its description on the

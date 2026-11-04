@@ -43,6 +43,20 @@ export function platePrompt(name, what, { refs = false, figures, setting = '' } 
     + 'Filling a tall frame (2:3). White paper, no colour, no grey wash, no text, no border.';
 }
 
+/* A foe-about entry as a description to draw (the owner, 2026-11-03): the entry says first what the enemy looks
+   like and does as it is fought, then, in brackets, where it is met and fought; those brackets (a section number,
+   "section", "wiki") are dropped, as what is named in them would get drawn. A bracket that only describes stays. */
+export function lookOf(text) {
+  return String(text || '').replace(/\s*\([^()]*(?:\d|section|wiki)[^()]*\)/gi, '')
+    .replace(/\s+([,.;:])/g, '$1').replace(/\s{2,}/g, ' ').trim();
+}
+
+/* What the Prompt button describes (the owner, 2026-11-03): the enemy's latest proposal row's prompt, else its kind's
+   stored one (about/foe-scene.json keeps a row's prompt for every kind), else its foe-about entry as lookOf() reads it. */
+export function whatOf(saved, scene, about) {
+  return saved?.prompt || scene?.prompt || lookOf(about);
+}
+
 /* An enemy's name without its numbers and notes in brackets ("2 Ruel Giganite", "Plague Hound (wounded)"). */
 const kindOf = (name) => String(name).toLowerCase().replace(/\([^)]*\)/g, ' ').replace(/\b\d+\b/g, ' ').replace(/\s+/g, ' ').trim();
 

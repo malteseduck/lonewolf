@@ -245,3 +245,58 @@ def test_a_prompt_says_how_many_figures_and_the_setting_behind_them(tree, monkey
         {'name': 'Mire Toad', 'candidates': [], 'prompt': 'a squat toad', 'figures': 1, 'setting': 'a bog, frightened horses behind'},
     ])
     assert pp.problems(CODE) == ['Mire Toad: its setting has a figure in it (horses): the place only, the enemy is drawn alone']
+
+
+def test_gather_gives_the_kinds_stored_record_to_start_the_row_from(tree):
+    """The kind's record in about/foe-scene.json (prompt, setting, figures...) is what a new row starts from
+    (the owner, 2026-11-03): its own name first, else its plain kind's."""
+    _wyrm_book(tree)
+    rec = {'setting': 'a reedy bog', 'figures': 1, 'prompt': 'A long scaly wyrm rearing.'}
+    tree.file('about/foe-scene.json', json.dumps({CODE: {'Bog Wyrm': rec}}))
+    assert pp.gather(CODE, 'Bog Wyrm')['stored'] == rec
+    assert pp.gather(CODE, '2 Bog Wyrms')['stored'] == rec
+
+
+def _scene_book(tree):
+    """A book whose kinds are the Bog Wyrm (seen at 1, fought at 3) and the Reed Imp, fought under a numbered name."""
+    secs = {'1': {'text': ['Far off a long scaly wyrm coils in the reeds.'], 'choices': [{'to': '3'}]},
+            '3': {'text': ['It strikes.'], 'combat': {'enemies': [{'name': 'Bog Wyrm'}]}, 'choices': []},
+            '7': {'text': ['A grinning reed imp hops near.'], 'combat': {'enemies': [{'name': 'Reed Imp 1'}]}, 'choices': []}}
+    tree.file(f'data/projectaon/{CODE}/book.js', '(window.LW = window.LW || {}).BOOKS = Object.assign(window.LW.BOOKS || {}, '
+              + json.dumps({CODE: {'id': CODE, 'sections': secs}}) + ');')
+    tree.file('about/foe-about.json', json.dumps({CODE: {'Bog Wyrm': 'A wyrm (3)', 'Reed Imp': 'Imps (7)', 'Marsh Hag': 'Gone'}}))
+    tree.file('assets/plates/plates.json', json.dumps({'plates': []}))
+    tree.file('data/projectaon/ill-index.json', json.dumps({}))
+
+
+def test_scenes_gathers_every_kind_of_the_book_for_the_digest(tree):
+    """Step 7 gets each kind's scene right from the start (the owner, 2026-11-04): `scenes` gathers every kind of
+    the book, with its sections' text, into files a Sonnet subagent reads for the digest."""
+    _scene_book(tree)
+    idx = pp.scenes(CODE)
+    assert [(x['kind'], x['gathered_as'], x['ok']) for x in idx] == [
+        ('Bog Wyrm', 'Bog Wyrm', True), ('Reed Imp', 'Reed Imp 1', True), ('Marsh Hag', None, False)]
+    out = tree.root.joinpath('data', 'projectaon', CODE, 'scene-gather')
+    assert 'coils in the reeds' in out.joinpath(idx[0]['file']).read_text(encoding='utf-8')
+    assert json.loads(out.joinpath('index.json').read_text(encoding='utf-8')) == idx
+
+
+def test_digest_check_names_what_the_subagent_got_wrong(tree):
+    """The digest's phrases must be the book's own (the sheet highlights them) and every kind must be covered."""
+    _scene_book(tree)
+    good = {'Bog Wyrm': {'fought': ['3'], 'sections': ['3', '1'], 'describe': {'1': ['a long scaly wyrm coils']},
+                         'wrong': [], 'missing': [], 'verdict': 'ok'},
+            'Reed Imp': {'fought': ['7'], 'sections': ['7'], 'describe': {'7': ['A grinning reed imp']}, 'verdict': 'fix'},
+            'Marsh Hag': {'fought': [], 'sections': [], 'describe': {}, 'verdict': 'ok'}}
+    digest = tree.root.joinpath('data', 'projectaon', CODE, 'scene-digest.json')
+    digest.write_text(json.dumps(good), encoding='utf-8')
+    assert pp.digest_problems(CODE) == []
+    bad = json.loads(json.dumps(good))
+    del bad['Marsh Hag']
+    bad['Bog Wyrm']['describe'] = {'1': ['a short wyrm', 'wyrm'], '9': ['x y z']}
+    bad['Reed Imp']['verdict'] = 'maybe'
+    digest.write_text(json.dumps(bad), encoding='utf-8')
+    found = ' | '.join(pp.digest_problems(CODE))
+    assert 'Marsh Hag' in found and "'a short wyrm'" in found and 'section 9' in found
+    assert "'wyrm' is only its name" in found and 'verdict' in found
+    assert pp.main(['digest-check', CODE]) == 1
