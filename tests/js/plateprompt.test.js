@@ -1,7 +1,7 @@
 /* tools/admin/plateprompt.js, the image-generator prompt the proposal sheet copies: a fight picture is an ink
    drawing, so the description it carries names no colour (the owner, 2026-10-26). */
 import { describe, it, expect } from 'vitest';
-import { platePrompt, uncolour, COLOURS, savedFor, countOf } from '../../tools/admin/plateprompt.js';
+import { platePrompt, uncolour, COLOURS, savedFor, countOf, sceneFor } from '../../tools/admin/plateprompt.js';
 
 describe('platePrompt', () => {
   it('describes the subject with every colour word taken out', () => {
@@ -78,6 +78,21 @@ describe('countOf', () => {
     expect(countOf('Eldenoran Ambushers')).toBeNull();
     expect(countOf('Hunting Dogs (wounded)')).toBeNull();
     expect(countOf('Bandit Boss')).toBe(1);
+  });
+});
+
+describe('sceneFor (about/foe-scene.json, for enemies with no proposal row: the owner, 2026-11-03)', () => {
+  const scenes = { '09sb': { 'Ruel Giganite': { setting: 'a gorge', figures: 1 }, Looters: { setting: 'a warehouse', figures: 5 } } };
+  it("gives the enemy's stored setting and count, its own name first, else its plain kind", () => {
+    expect(sceneFor(scenes, '09sb', 'Looters')).toEqual({ setting: 'a warehouse', figures: 5 });
+    expect(sceneFor(scenes, '09sb', '2 Ruel Giganite')).toEqual({ setting: 'a gorge', figures: 1 });
+    expect(sceneFor(scenes, '09sb', 'Troll')).toBeNull();
+    expect(sceneFor(null, '09sb', 'Looters')).toBeNull();
+  });
+  it("lets the stored count stand behind a proposal row's, so the owner is asked only when none is stored", () => {
+    expect(countOf('Looters', null, { figures: 5 })).toBe(5);
+    expect(countOf('Looters', { figures: 4 }, { figures: 5 })).toBe(4);
+    expect(countOf('Looters', { prompt: 'x' }, null)).toBeNull();
   });
 });
 

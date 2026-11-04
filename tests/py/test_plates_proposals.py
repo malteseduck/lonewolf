@@ -240,3 +240,8 @@ def test_a_prompt_says_how_many_figures_and_the_setting_behind_them(tree, monkey
     ])
     assert pp.problems(CODE) == ['Mire Toad: say how many figures it shows (figures: 1 or more)',
                                  'Mire Toad: its setting names a colour (black): an ink drawing has none, describe it in tone and texture']
+    # the place only: what a setting names gets drawn beside the enemy (as about/foe-scene.json)
+    tree.proposals([
+        {'name': 'Mire Toad', 'candidates': [], 'prompt': 'a squat toad', 'figures': 1, 'setting': 'a bog, frightened horses behind'},
+    ])
+    assert pp.problems(CODE) == ['Mire Toad: its setting has a figure in it (horses): the place only, the enemy is drawn alone']

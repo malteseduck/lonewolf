@@ -28,7 +28,7 @@ licence is that no licensed content is in it, not that it is private.
 - **The repository is public.** It holds the code, the docs, our own work about the books and assets
   free to redistribute; no Project Aon text or images, nor anything made from them (spec 3). Everything
   committed is written as if anyone will read it.
-- **Descriptions are committed**, in `about/` (`foe-about.json`, `ill-about.json`, `ill-notes.json`),
+- **Descriptions are committed**, in `about/` (`foe-about.json`, `foe-scene.json`, `ill-about.json`, `ill-notes.json`),
   in our own words. None may share a run of 8 words with its book's sections:
   `tools/about_check.py` checks it, and `check_all.py` runs it. A description says what a picture
   or an enemy is and where it is met; it never retells a section.

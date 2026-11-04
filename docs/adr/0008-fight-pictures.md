@@ -40,7 +40,8 @@ the very same creature. The owner set the order.
   prompt. The prompt's reference pictures are the picture the enemy shows now, every candidate, then
   a good pick of the books' pictures of it or its surroundings. The prompt draws as many figures as
   the enemy is (a group as a group, one enemy alone, no other figure) in a simple setting of the kind
-  of place it is fought in, drawn lighter behind it. The sheet quotes only the sections
+  of place it is fought in, drawn lighter behind it. Every enemy kind keeps that setting and count in
+  committed `about/foe-scene.json`, written at step 7 for every kind, proposed or not. The sheet quotes only the sections
   where the enemy is fought or something describes it or its fight; one that only names it ("the
   guard", not "the burly guard") is no context and is left out.
 
@@ -150,3 +151,7 @@ the very same creature. The owner set the order.
 - 2026-11-03: the picture sheet's Prompt button copies the image prompt itself, for any enemy of any book:
   its latest proposal row's, else one made from its foe-about entry; the agent prompt moved to the card's
   Picture menu (owner).
+- 2026-11-03: every enemy kind of every book has a stored setting and figure count
+  (`about/foe-scene.json`), so the picture sheet's Prompt draws any enemy in its own place, not a
+  generic one; written by an agent at step 7 from the section where it is fought, never by the
+  importer; the button asks for a count only when none is stored (owner).

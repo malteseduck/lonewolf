@@ -55,10 +55,19 @@ export function savedFor(files, name) {
   return rows.findLast((e) => e.name === name) || rows.findLast((e) => kindOf(e.name) === k) || null;
 }
 
-/* How many figures the picture shows: the saved count, else the number the name starts with, else one for
+/* An enemy's stored setting and count (about/foe-scene.json, {book: {name: {setting, figures}}}, written at
+   step 7 for every kind; the owner, 2026-11-03): its own name first, else its plain kind's; null if none. */
+export function sceneFor(scenes, code, name) {
+  const mine = scenes?.[code] || {};
+  if (mine[name]) return mine[name];
+  const k = kindOf(name);
+  return Object.entries(mine).find(([n]) => kindOf(n) === k)?.[1] || null;
+}
+
+/* How many figures the picture shows: the saved count, else the stored one (sceneFor), else the number the name starts with, else one for
    a name in the singular; null for a plural-looking one ("Ambushers", but also "Gildas"), which the owner says. */
-export function countOf(name, saved) {
-  const n = Number(saved?.figures) || Number(String(name).match(/^\d+/)?.[0]);
+export function countOf(name, saved, scene) {
+  const n = Number(saved?.figures) || Number(scene?.figures) || Number(String(name).match(/^\d+/)?.[0]);
   if (n) return n;
   return /[^su]s$/.test(kindOf(name)) ? null : 1;
 }

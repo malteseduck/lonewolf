@@ -72,10 +72,13 @@ step left.
   picture, and so does one by its address (dragged from another site, pasted, or By address...: the server fetches it);
   a new picture asks for its link, or No link (ADR 0038), and Link... gives one to a picture already in `art/`; Adjust crops any card's picture, flips it left to right and sets levels, with the fight panel previewed as it will look (and, for a picture shown from its 2x copy, Show original to compare);
   Remove takes the owner's entry away. A card's buttons are Adjust, Prompt and a Picture menu (Choose file...,
-  By address..., Stand-in..., Link...); Prompt copies the step 7 agent prompt narrowed to that enemy
-  (`pictureFor()` in `tools/admin/prompts.js`; the owner, 2026-10-26): pasted into Claude Code, it proposes other
-  pictures for it and gathers its description on the proposal sheet, keeping any other rows there, where the
-  owner picks one or generates one from the sheet's image-generator prompt. A card's Select tick adds it to
+  By address..., Stand-in..., Link..., Ask Claude Code...); Prompt copies the enemy's image-generator prompt
+  (`plateprompt.js`: its proposal row's description, count and setting, else its `foe-about.json` entry, in its
+  `about/foe-scene.json` setting with its count; `docs/reference/items.md`, the owner, 2026-11-03). Ask Claude Code...
+  copies the step 7 agent prompt narrowed to that enemy (`pictureFor()` in `tools/admin/prompts.js`; the owner,
+  2026-10-26): pasted into Claude Code, it proposes other pictures for it and gathers its description on the
+  proposal sheet, keeping any other rows there, where the owner picks one or generates one from the sheet's
+  image-generator prompt. A card's Select tick adds it to
   the top bar's "Prompt for N selected", one prompt for all the ticked enemies (cheaper than one each: the
   session reads the procedure once; the owner, 2026-10-26); Clear unticks them. Each save redraws the cards and the "with none" count, and the
   dashboard's seals follow. The rules for the entry: `docs/reference/items.md`, "Fight pictures".

@@ -35,12 +35,9 @@ book's text from book.js itself, so the file holds names, ids, paths and our own
                                             in a row)
        "figures": 1,                        how many the picture shows: 1 for one enemy, the group's number for
                                             a group ("6 Henchmen": 6), so a group is drawn as one
-       "setting": "a dim stone cell",       the kind of place it is fought in, our own words and no colour, drawn
-                                            simply behind it (both needed with a prompt; the owner, 2026-11-03)
-       "figures": 1,                        how many the picture shows: 1 for one enemy, the group's number for
-                                            a group ("6 Henchmen": 6), so a group is drawn as one
-       "setting": "a dim stone cell",       the kind of place it is fought in, our own words and no colour, drawn
-                                            simply behind it (both needed with a prompt; the owner, 2026-11-03)
+       "setting": "a dim stone cell",       the kind of place it is fought in, our own words, no colour and nobody in it, drawn
+                                            simply behind it (both needed with a prompt; the owner, 2026-11-03;
+                                            about/foe-scene.json keeps the same for every kind)
        "beyond": ["shaggy hide: ill9"],     each detail of the prompt the book's text does not give, and where it
                                             comes from, shown to the owner under the prompt
        "refs": ["data/projectaon/19wb/small6.png"]}   a good pick of the books' pictures to attach to the
@@ -74,10 +71,8 @@ def path(code):
 
 
 def colours():
-    """The colour words the sheets strip from a prompt, read from tools/admin/plateprompt.js's COLOURS (one list)."""
-    with open(os.path.join(ROOT, 'tools', 'admin', 'plateprompt.js'), encoding='utf-8') as f:
-        js = f.read()
-    return re.findall(r"'([a-z]+)'", re.search(r'COLOURS = \[(.*?)\]', js, re.S).group(1))
+    """The colour words the sheets strip from a prompt (about_check keeps the one reading of the list)."""
+    return about_check.colours(ROOT)
 
 
 def load(code):
@@ -221,6 +216,8 @@ def problems(code):
                 out.append(f"{n}: its setting repeats {about_check.RUN} or more of the book's words in a row: reword it")
             elif hue.findall(setting):
                 out.append(f"{n}: its setting names a colour ({', '.join(hue.findall(setting))}): an ink drawing has none, describe it in tone and texture")
+            elif about_check.FIGURES.findall(setting):
+                out.append(f"{n}: its setting has a figure in it ({', '.join(about_check.FIGURES.findall(setting))}): the place only, the enemy is drawn alone")
         beyond = e.get('beyond', [])
         if not (isinstance(beyond, list) and all(isinstance(b, str) for b in beyond)):
             out.append(f'{n}: its beyond must be a list of text')
