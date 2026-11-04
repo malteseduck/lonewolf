@@ -1,7 +1,7 @@
 /* tools/admin/plateprompt.js, the image-generator prompt the proposal sheet copies: a fight picture is an ink
    drawing, so the description it carries names no colour (the owner, 2026-10-26). */
 import { describe, it, expect } from 'vitest';
-import { platePrompt, uncolour, COLOURS } from '../../tools/admin/plateprompt.js';
+import { platePrompt, uncolour, COLOURS, savedFor, countOf } from '../../tools/admin/plateprompt.js';
 
 describe('platePrompt', () => {
   it('describes the subject with every colour word taken out', () => {
@@ -48,6 +48,36 @@ describe('platePrompt', () => {
   it('asks the generator to follow the attached references only when told to', () => {
     expect(platePrompt('X', 'a beast', { refs: true })).toContain('attached reference images');
     expect(platePrompt('X', 'a beast')).not.toContain('attached reference images');
+  });
+});
+
+describe('savedFor (the picture sheet\'s Prompt button)', () => {
+  const done = { rounds: [
+    { enemies: [{ name: 'Looters', prompt: 'old words' }, { name: 'Troll', note: 'no prompt here' }] },
+    { enemies: [{ name: 'Looters', prompt: 'newer words', figures: 4, setting: 'a ruined hall' }] }] };
+  const open = { enemies: [{ name: 'Gaoler', prompt: 'a gaoler' }] };
+  it('takes the latest round\'s row with a prompt, the open file last', () => {
+    expect(savedFor([done, open], 'Looters')).toMatchObject({ prompt: 'newer words', figures: 4 });
+    expect(savedFor([done, { enemies: [{ name: 'Looters', prompt: 'newest' }] }], 'Looters').prompt).toBe('newest');
+  });
+  it('finds a name\'s variant by its plain kind, and nothing for a row with no prompt', () => {
+    expect(savedFor([open], '2 Gaoler').prompt).toBe('a gaoler');
+    expect(savedFor([done], 'Troll')).toBeNull();
+    expect(savedFor([null, undefined], 'Troll')).toBeNull();
+  });
+});
+
+describe('countOf', () => {
+  it('takes the saved count, else the number the name starts with, else one for a plain name', () => {
+    expect(countOf('Looters', { figures: 4 })).toBe(4);
+    expect(countOf('6 Wrok\'s Henchmen')).toBe(6);
+    expect(countOf('Kalkoth 1')).toBe(1);
+    expect(countOf('Cave Troll')).toBe(1);
+  });
+  it('leaves a name that may be a group to the owner (null)', () => {
+    expect(countOf('Eldenoran Ambushers')).toBeNull();
+    expect(countOf('Hunting Dogs (wounded)')).toBeNull();
+    expect(countOf('Bandit Boss')).toBe(1);
   });
 });
 

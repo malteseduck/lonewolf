@@ -431,8 +431,13 @@ wants both fields with a prompt, and no colour or run of the book's words in the
 (a fight picture is an ink drawing; the owner, 2026-10-26): `platePrompt()` takes every colour word out of the
 description it is given, foe-about entries included, and the check rejects one in the agent's `prompt`
 (the file's `prompt`, our own words, checked against the book's) in the picture sheet's style, asking it to
-follow any reference pictures attached (`tools/admin/plateprompt.js`). The picture sheet's Prompt button copies the step 7 agent prompt for
-one enemy (`pictureFor()` in `tools/admin/prompts.js`), to have its row proposed on this sheet; its top
+follow any reference pictures attached (`tools/admin/plateprompt.js`). The picture sheet's **Prompt** button copies that image prompt for any
+enemy of any book (the owner, 2026-11-03): from its latest proposal row with a prompt, in `plate-proposals.json`
+or the done file (`savedFor()`), with that row's count and setting; else from its `foe-about.json` entry with the
+setting left to the generator. The count is the row's, else the number the name starts with, else one; a
+plural-looking name ("Ambushers") asks for it (`countOf()`). Its Picture menu's **Ask Claude Code...** copies
+the step 7 agent prompt for one enemy (`pictureFor()` in `tools/admin/prompts.js`), to have its row proposed
+on this sheet, with a prompt written from the book; its top
 bar's "Prompt for N selected" copies one prompt for every card ticked Select, a row for each. A
 picture pasted (Ctrl+V) or dropped on a row joins it as "from AI"; Use this saves it, made from the prompt
 alone into the committed library (`made: 'ai'`), or, made from reference pictures (the default), into
@@ -444,8 +449,7 @@ dashboard's button goes too. The next round's agent reads the done file and does
 the owner settled. The agent's candidates are the books' own pictures only (the owner, 2026-10-28): no web
 search, Wikimedia Commons included, and no library stand-in. An enemy that no book's picture shows well gets
 none: the agent names it in its report and lists it on the proposal sheet with no candidates, and the
-owner generates its picture from that sheet's prompt (or the picture sheet's **Prompt** button, from its
-`foe-about.json` entry). Its `refs` are a good pick of the books' pictures of it or its surroundings, the one it
+owner generates its picture from that sheet's prompt (or the picture sheet's **Prompt** button, the same). Its `refs` are a good pick of the books' pictures of it or its surroundings, the one it
 shows now first; the sheet adds the candidates after that. The stand-in step below is the owner's own, on the
 picture sheet.
 

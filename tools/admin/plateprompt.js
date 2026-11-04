@@ -42,3 +42,23 @@ export function platePrompt(name, what, { refs = false, figures, setting = '' } 
     + `a few telling details in lighter, sparser lines, so that ${n > 1 ? 'they stand' : 'it stands'} out against it. `
     + 'Filling a tall frame (2:3). White paper, no colour, no grey wash, no text, no border.';
 }
+
+/* An enemy's name without its numbers and notes in brackets ("2 Ruel Giganite", "Plague Hound (wounded)"). */
+const kindOf = (name) => String(name).toLowerCase().replace(/\([^)]*\)/g, ' ').replace(/\b\d+\b/g, ' ').replace(/\s+/g, ' ').trim();
+
+/* The picture sheet's Prompt button (the owner, 2026-11-03): an enemy's latest proposal row with a prompt,
+   from its book's plate-proposals.done.json and plate-proposals.json, oldest first (the open file last),
+   so the button gives the description, count and setting the proposal sheet would; null if none. */
+export function savedFor(files, name) {
+  const rows = files.flatMap((f) => (f?.rounds || [f]).flatMap((r) => r?.enemies || [])).filter((e) => e.prompt);
+  const k = kindOf(name);
+  return rows.findLast((e) => e.name === name) || rows.findLast((e) => kindOf(e.name) === k) || null;
+}
+
+/* How many figures the picture shows: the saved count, else the number the name starts with, else one for
+   a name in the singular; null for a plural-looking one ("Ambushers", but also "Gildas"), which the owner says. */
+export function countOf(name, saved) {
+  const n = Number(saved?.figures) || Number(String(name).match(/^\d+/)?.[0]);
+  if (n) return n;
+  return /[^su]s$/.test(kindOf(name)) ? null : 1;
+}

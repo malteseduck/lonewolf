@@ -144,3 +144,9 @@ the very same creature. The owner set the order.
 - 2026-11-03: a prompt says how many figures (a group of six henchmen came out as one) and puts the
   enemy in a simple setting of where it is fought, drawn lighter (alone on white looked plain beside
   the books' plates); this replaces "no setting" of 2026-10-30 (owner).
+- 2026-11-03: an AI picture enlarged only to 1100 px still goes through Real-ESRGAN. A plain resize was
+  tried: it was 15 times faster, but the paper came out grey and the lines soft, and the file was no
+  smaller (owner).
+- 2026-11-03: the picture sheet's Prompt button copies the image prompt itself, for any enemy of any book:
+  its latest proposal row's, else one made from its foe-about entry; the agent prompt moved to the card's
+  Picture menu (owner).

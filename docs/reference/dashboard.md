@@ -321,7 +321,7 @@ downloads and imports still need the owner's word (AGENTS.md).
 `tools/admin/prompts.js`, one per agent step: phrasings (3), rules addendum (4), item table (5, and
 a fix prompt when `check_items` reports errors), test play-through (6), fight pictures (7), the map's
 first pass, style and retype ticks, and a new book the importer does not know; and `pictureFor()`, step 7's
-narrowed to one enemy or to the cards selected, which the picture sheet's Prompt buttons copy. Each is pasted into a fresh
+narrowed to one enemy or to the cards selected, which the picture sheet's Ask Claude Code... and Prompt for N selected copy. Each is pasted into a fresh
 Claude Code session in the project, which loads AGENTS.md by itself, so a prompt does not repeat its
 rules: it gives the book, the figures the dashboard has (counts only, never the books' words), the
 procedure's file, and the `book_status.py done` line. Where a step has a script (ADR 0036), its prompt

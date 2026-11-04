@@ -160,6 +160,7 @@
 import { inkPlate } from '../../plates.js';
 import { compilePlates, pickPlate, pinState, upscaledSrc } from '../../platepick.js';
 import { pictureFor } from './prompts.js';
+import { platePrompt, savedFor, countOf } from './plateprompt.js';
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -269,8 +270,8 @@ async function render() {
     <div class="pic" id="pic${i}">${f.src ? '' : '<div class="none">no picture<br><small>drop one here</small></div>'}</div>
     <b>${esc(f.name)}</b><small>section${f.secs.length > 1 ? 's' : ''} ${esc(f.secs.join(', '))}</small><small>${esc(f.from)}</small><small id="size${i}"></small>
     <small class="about${about(f.name) ? '' : ' unsaid'}">${esc(about(f.name) || 'not yet said what this enemy is')}</small>
-    <div class="tools">${f.src ? '<button data-do="adjust">Adjust</button>' : ''}<button data-do="prompt" title="Copy a prompt for Claude Code: other pictures for this enemy, and what to generate one from, on the proposal sheet">Prompt</button>
-      <details class="more"><summary>Picture</summary><div class="menu"><button data-do="choose">Choose file...</button><button data-do="address">By address...</button><button data-do="standin">Stand-in...</button>${ownFile(f) ? '<button data-do="link">Link...</button>' : ''}</div></details>
+    <div class="tools">${f.src ? '<button data-do="adjust">Adjust</button>' : ''}<button data-do="image" title="Copy a prompt for an image generator: its proposal row's description, count and setting when it has one, else its description here">Prompt</button>
+      <details class="more"><summary>Picture</summary><div class="menu"><button data-do="choose">Choose file...</button><button data-do="address">By address...</button><button data-do="standin">Stand-in...</button><button data-do="prompt" title="Copy a prompt for Claude Code: other pictures for this enemy, and a prompt written from the book, on the proposal sheet">Ask Claude Code...</button>${ownFile(f) ? '<button data-do="link">Link...</button>' : ''}</div></details>
       <label class="sel" title="Tick several, then Prompt for them all at the top"><input type="checkbox" data-pick ${picked.has(f.name) ? 'checked' : ''}> Select</label></div></div>`).join('');
   // ink them one by one, so the page shows at once
   for (const [i, f] of foes.entries()) {
@@ -330,6 +331,7 @@ $('#cards').addEventListener('click', (e) => {
   setActive(c);
   b.closest('details')?.removeAttribute('open');
   if (b.dataset.do === 'prompt') copyPrompt(foes[+c.dataset.i]);
+  if (b.dataset.do === 'image') copyImagePrompt(foes[+c.dataset.i]);
   if (b.dataset.do === 'choose') { $('#file').value = ''; $('#file').click(); }
   if (b.dataset.do === 'adjust') edit(foes[+c.dataset.i]);
   if (b.dataset.do === 'standin') pickStandIn(foes[+c.dataset.i]);
@@ -386,17 +388,40 @@ document.addEventListener('click', (e) => {
 
 // step 7's agent prompt narrowed to this enemy, or the selected ones (prompts.js): their proposals, to pick another
 // picture or generate one
-async function copyPrompt(foe) {
-  const text = pictureFor({ n: book.number, title: book.title, code, series: book.series || 'kai' }, foe);
-  try { await navigator.clipboard.writeText(text); }
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; }
   catch {  // no clipboard permission: the old way
     const t = Object.assign(document.createElement('textarea'), { value: text });
     document.body.append(t); t.select();
     const ok = document.execCommand('copy'); t.remove();
-    if (!ok) return toast('Could not copy the prompt.', 4000);
+    if (!ok) toast('Could not copy the prompt.', 4000);
+    return ok;
   }
+}
+
+async function copyPrompt(foe) {
+  if (!await copyText(pictureFor({ n: book.number, title: book.title, code, series: book.series || 'kai' }, foe))) return;
   const n = [].concat(foe).length;
   toast(`Prompt${n > 1 ? ` for ${n} enemies` : ''} copied: paste it into Claude Code`, 3000);
+}
+
+/* The image-generator prompt the proposal sheet would give (plateprompt.js, ADR 0008): the enemy's latest
+   proposal row, open or finished, else its description here with the setting left to it. A count not
+   certain from the row or the name is asked. */
+async function copyImagePrompt(foe) {
+  const get = (f) => fetch(`/data/projectaon/${code}/${f}`, { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+  const saved = savedFor(await Promise.all([get('plate-proposals.done.json'), get('plate-proposals.json')]), foe.name);
+  const what = saved?.prompt || about(foe.name);
+  if (!what) return toast('Nothing yet says what this enemy is: use Ask Claude Code... in the Picture menu.', 5000);
+  let figures = countOf(foe.name, saved);
+  if (figures == null) {
+    const a = await ask(`How many figures does the picture of ${foe.name} show?`, '1');
+    if (a == null) return;
+    figures = Math.max(1, parseInt(a, 10) || 1);
+  }
+  if (!await copyText(platePrompt(foe.name, what, { figures, setting: saved?.setting || '' }))) return;
+  toast(saved?.setting ? 'Image prompt copied, from its proposal row'
+    : `Image prompt copied${saved ? ', from its proposal row' : ''}; the setting is left to the generator`, 3500);
 }
 
 /* The answer typed in the #ask dialog, or null if cancelled (Escape, Cancel). */
