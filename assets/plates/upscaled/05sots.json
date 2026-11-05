@@ -1,12 +1,19 @@
 {
  "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
  "srcs": [
-  "art/plates/villager-spear-pencil.png",
-  "assets/plates/01fftd/vordak.webp",
-  "art/plates/05sots/vestibule-guard-2.webp",
-  "assets/plates/water-snake.jpg",
-  "data/projectaon/01fftd/ill14.png",
-  "data/projectaon/02fotw/ill19.png",
+  "assets/plates/05sots/armoury-guard.webp",
+  "assets/plates/05sots/courier.webp",
+  "assets/plates/05sots/darklord-haakon.webp",
+  "assets/plates/05sots/drakkar.webp",
+  "assets/plates/05sots/drakkarim-kraan-rider.webp",
+  "assets/plates/05sots/drakkarim-sentry.webp",
+  "assets/plates/05sots/drakkarim.webp",
+  "assets/plates/05sots/platform-sentry.webp",
+  "assets/plates/05sots/sentry.webp",
+  "assets/plates/05sots/vestibule-guard-2.webp",
+  "assets/plates/05sots/vestibule-guard.webp",
+  "assets/plates/05sots/vordak.webp",
+  "assets/plates/05sots/yas.webp",
   "data/projectaon/04tcod/ill13.png",
   "data/projectaon/04tcod/ill18.png",
   "data/projectaon/05sots/ill1.png",
@@ -16,14 +23,10 @@
   "data/projectaon/05sots/ill13.png",
   "data/projectaon/05sots/ill14.png",
   "data/projectaon/05sots/ill15.png",
-  "data/projectaon/05sots/ill17.png",
   "data/projectaon/05sots/ill2.png",
   "data/projectaon/05sots/ill22.png",
-  "data/projectaon/05sots/ill23.png",
   "data/projectaon/05sots/ill4.png",
-  "data/projectaon/05sots/ill6.png",
   "data/projectaon/05sots/ill7.png",
-  "data/projectaon/05sots/ill8.png",
-  "data/projectaon/09tcof/ill19.png"
+  "data/projectaon/05sots/ill8.png"
  ]
 }

@@ -1,13 +1,13 @@
 {
  "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
  "srcs": [
-  "art/plates/rogue-helmeted-dagger.png",
-  "art/plates/rogue-sneaking.webp",
-  "art/plates/thief-hooded-swordsman.webp",
-  "art/plates/06tkot/chanda-the-taxidermist.webp",
   "art/plates/06tkot/grave-robbers.webp",
   "art/plates/06tkot/sewer-door.webp",
-  "art/plates/06tkot/yawshath.webp",
+  "art/plates/rogue-sneaking.webp",
+  "art/plates/thief-hooded-swordsman.webp",
+  "assets/plates/06tkot/backstabbers.webp",
+  "assets/plates/06tkot/chanda-the-taxidermist.webp",
+  "assets/plates/06tkot/yawshath.webp",
   "data/projectaon/06tkot/ill1.png",
   "data/projectaon/06tkot/ill10.png",
   "data/projectaon/06tkot/ill11.png",
