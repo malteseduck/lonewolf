@@ -82,7 +82,7 @@ tools/
   art_sources.py            art/sources.json: each art/ picture's link (ADR 0038); what is here, what can be
                             fetched again, and the fetch (Setup's gated setup-art); a page link is followed to
                             the picture it names (og:image); `ai` moves a fight picture made with AI into
-                            the committed assets/plates/ (ADR 0042)
+                            the git-ignored assets/plates/<code>/ (ADR 0042)
   plates_proposals.py       checks data/projectaon/<code>/plate-proposals.json, the agent's step 7 candidates
                             for the proposal sheet (ADR 0008); `gather` one enemy's files and text; `scenes`
                             every kind's into data/projectaon/<code>/scene-gather/ and `digest-check` the

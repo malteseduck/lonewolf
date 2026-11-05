@@ -1,8 +1,8 @@
-# 0042. The repository is public: our descriptions and AI-made fight pictures are committed; nothing that rebuilds a book is
+# 0042. The repository is public: our descriptions are committed; AI-made pictures and anything that rebuilds a book are not
 
 - Status: Accepted
 - Date: 2026-10-24
-- Amended: 2026-10-31
+- Amended: 2026-11-05
 
 ## Context
 
@@ -32,14 +32,14 @@ licence is that no licensed content is in it, not that it is private.
   in our own words. None may share a run of 8 words with its book's sections:
   `tools/about_check.py` checks it, and `check_all.py` runs it. A description says what a picture
   or an enemy is and where it is met; it never retells a section.
-- **A fight picture made with AI from a text prompt alone is committed**: the picture sheet's new
-  picture and its Link... dialog, and the dashboard's Picture sources sheet, offer "Made with AI";
-  `art_sources.make_ai` moves it (and its -2x copy) from `art/plates/` to `assets/plates/`, rewrites
-  its path wherever it is named (plates.json, the approved pins, the upscaled lists,
-  `about/ill-about.json`), drops its link entry and adds it to `assets/plates/README.txt`. A
-  picture made from a book picture, a screenshot or other art given to the generator is not ours
-  and stays in `art/`. The owner marks which is which: nothing is committed until then, so the sheet
-  asks for it and assumes references were attached.
+- **No picture made with AI is committed**, whatever it was made from. Fight pictures made with AI
+  live in the book folders of `assets/plates/` (`assets/plates/<code>/`), which git ignores; the
+  committed scene prompts in `about/foe-scene.json` are what is kept, and a lost picture is made
+  again from its prompt. Which pictures (book art, screenshots, other art) were given to the
+  generator is not recorded: that would be the ideal, but is not worth the tokens. "Made with AI"
+  (`art_sources.make_ai`) still moves a picture and its -2x copy from `art/plates/` to
+  `assets/plates/<code>/`, following its path wherever it is named, and credits it in
+  `assets/plates/README.txt`.
 - **`book.js` stays git-ignored and is not split.** Every fix and decision behind it is already
   committed (the importer, the item tables, plates.json and the pins, the rulings) and it is rebuilt
   from the downloaded books. A committed copy of every section's choices, gates and fights would be
@@ -51,7 +51,9 @@ licence is that no licensed content is in it, not that it is private.
   (the step 7 prompt says so). A failure is fixed by rewording, never by raising the run length.
 - The image-generator prompt (the proposal sheet's, `tools/admin/plateprompt.js`) describes the
   style (ink linework, cross-hatching, a 1980s gamebook plate) and names no artist; its test says so.
-- Pictures with a link, or none, stay in `art/` (ADR 0038); only AI-made ones move.
+- Pictures with a link, or none, stay in `art/` (ADR 0038). "Made with AI" still moves a picture
+  to `assets/plates/<code>/`, where the player looks for it, but that folder is git-ignored. The
+  free engravings at the top of `assets/plates/` stay committed.
 
 ## Changes
 
@@ -60,3 +62,5 @@ licence is that no licensed content is in it, not that it is private.
 - 2026-10-31: the owner had not marked reliably which AI pictures used references, so every AI-made
   picture went back to `art/plates/` for the owner to classify again; one made from the prompt alone
   is then committed as before (owner).
+- 2026-11-05: no AI-made picture is committed, from a prompt alone or not; the book folders of
+  `assets/plates/` are git-ignored and the pictures are made again from the scene prompts (owner).

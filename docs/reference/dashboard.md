@@ -139,7 +139,7 @@ step left.
   work area only): every picture in `art/` from `GET /api/admin/art-sources` (`art_sources.listing()`), those
   without a link first, each with the books whose fights use it. Save link and No link post to
   `/api/admin/art-link` (ADR 0038); Made with AI, for a fight picture, posts `made: 'ai'`, which moves
-  it into the committed `assets/plates/` (`art_sources.make_ai`, ADR 0042). The picture sheet offers
+  it into the git-ignored `assets/plates/<code>/` (`art_sources.make_ai`, ADR 0042). The picture sheet offers
   the same choice for a new picture and in its Link... dialog.
 - **Lone Wolf's pictures** (in the bar; `tools/admin/hero.html`, in the work area only): draws the title
   page's and the Kai panel's Lone Wolf from `assets/hero/lone-wolf.webp` and `monastery.webp` with

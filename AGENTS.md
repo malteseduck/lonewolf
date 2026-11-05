@@ -71,7 +71,8 @@ page only spot-checks (ADR 0036).
   docs, commit messages or chat. When inspecting imported data, print counts and ids, not prose.
 - **What of a book is committed** (ADR 0042): our item tables (`items/`), map label lists and styles
   (`maps/<code>/`), descriptions (`about/`, never 8 of the book's words in a row:
-  `tools/about_check.py`) and AI-made fight pictures (`assets/plates/`). Anything copied or made from
+  `tools/about_check.py`). AI-made pictures are not committed
+  (`assets/plates/<code>/` is git-ignored). Anything copied or made from
   Project Aon's text or images stays in `data/projectaon/<code>/`. Borrowed art stays in git-ignored
   `art/` (links in `art/sources.json`, ADR 0038), reference images in git-ignored `data/reference/`.
 - **Downloading a book needs the owner's go-ahead for that download**, naming the books and rough

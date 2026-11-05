@@ -355,7 +355,7 @@ add is written some other way (`ice barbarian$`, `kalkoth`).
    (in the dashboard's step 7, "Open picture sheet"): drop a picture file on
    the enemy's card, paste it, or Choose; the page shrinks it to 2000 px on its long side as WebP and
    `POST /api/admin/plate` saves it as git-ignored `art/plates/<code>/<name>.webp` (or, ticked "Made with AI
-   from a text prompt", moves it to the committed `assets/plates/<code>/`: `art_sources.make_ai`, ADR 0042)
+   from a text prompt", moves it to the git-ignored `assets/plates/<code>/`: `art_sources.make_ai`, ADR 0042)
    and writes the entry
    (`tools/plates_file.py`): `match` the enemy's exact name, escaped and anchored, `book` set, at the top
    of the list so it wins; `over: true` where the book has its own picture, or a broader `over` entry would

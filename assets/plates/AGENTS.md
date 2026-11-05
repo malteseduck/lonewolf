@@ -4,7 +4,7 @@ Rules for work on fight pictures (step 7). The root `AGENTS.md` applies as well;
 `docs/reference/items.md` ("Fight pictures") says how the pictures are found, pinned and upscaled.
 
 - **Every file here is credited in `README.txt`**: its source, licence and any change made to it.
-  AI-made pictures (in the book folders) are ours (ADR 0042); borrowed art stays in git-ignored `art/`
+  AI-made pictures (in the git-ignored book folders) are never committed (ADR 0042); borrowed art stays in git-ignored `art/`
   with its link in `art/sources.json` (ADR 0038).
 - **Candidates go on the proposal sheet** (ADR 0008): write them to the book's
   `plate-proposals.json` in `data/projectaon/`, never as a contact sheet or a description in chat.

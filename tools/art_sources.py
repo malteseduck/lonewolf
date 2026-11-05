@@ -108,7 +108,7 @@ def forget(rel):
 CREDIT = re.compile(r'^(\S[^\r\n]*)\r?\n((?:[ \t]+\S[^\r\n]*(?:\r?\n|$))+)(?:\r?\n)?', re.M)
 
 AI_NOTE = ('  Made with an AI image generator from a text prompt alone (the proposal sheet\'s prompt);\n'
-           '  no book picture was given to it, so it is ours to commit (ADR 0042). Moved here {date}.\n')
+           '  no book picture was given to it, kept uncommitted (ADR 0042). Moved here {date}.\n')
 
 
 def make_ai(rel, today=None, replace=False):

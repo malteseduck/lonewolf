@@ -26,3 +26,7 @@ release/
 .vitest/
 # the demo book's Gemini inputs and outputs (docs/showcase/gemini-prompts.md): made with Book 1 as a style example, never committed
 data/demo/
+# AI-made fight pictures, one folder per book: never committed, made again from about/foe-scene.json (ADR 0042)
+assets/plates/*/
+!assets/plates/approved/
+!assets/plates/upscaled/

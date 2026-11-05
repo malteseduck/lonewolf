@@ -105,7 +105,8 @@ redistribution.
 - Tools print counts and ids, never prose, so nothing of a book reaches a chat log or a commit
   message through an agent reading tool output.
 - What is committed about a book is our own work: item tables, map label lists and styles,
-  descriptions in `about/`, and fight pictures made with AI from a text prompt alone.
+  descriptions in `about/` (among them the scene prompts that remake the AI fight pictures, which are
+  not committed).
 - `tools/about_check.py` fails any description that shares a run of 8 words with its book;
   `tools/plates_proposals.py check` does the same for image prompts. Both are scripts, not review.
 - `book.js`, the imported book, is never committed or split: even its skeleton of choices and
