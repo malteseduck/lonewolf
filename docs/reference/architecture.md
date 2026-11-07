@@ -139,7 +139,8 @@ about/                      committed: what each picture and enemy is, in our ow
                             enemy kind is drawn, how many, and the rest of its picture record: prompt,
                             beyond, refs, sections (foe-scene.json; ADR 0008)
 maps/<code>/                the owner's work on each book's printed map, committed: labels.json (the label
-                            list), style.txt (the repaint's look), labels-checked.txt (step 3 done);
+                            list), style.txt (the repaint's look), labels-checked.txt (step 3 done),
+                            rounds/prompt-<n>.txt (each Gemini round's prompt, ADR 0042);
                             labels.json.bak is git-ignored (docs/reference/map-upscale.md)
 data/projectaon/            git-ignored. Downloaded pages and images, generated book.js files, index.js;
                             maps/: sheets 1-2 of Project Aon's Maps of Magnamund (reference only)

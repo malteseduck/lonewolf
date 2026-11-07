@@ -4,7 +4,8 @@ Rules for work on a book's map, `<code>/` here. The root `AGENTS.md` applies as 
 `docs/reference/map-upscale.md` is the chain, step by step, and what each `tools/map_*.py` does.
 
 - **Only our own files are committed here** (ADR 0042): `labels.json`, `style.txt`, `font.txt`,
-  `labels-checked.txt`. The scan, its upscales and every working picture stay in `data/projectaon/`.
+  `labels-checked.txt`, and `rounds/prompt-<n>.txt` (a round's prompt: once its picture is in, never
+  rewrite it). The scan, its upscales and every working picture stay in `data/projectaon/`.
 - **The agent gives the labels a first pass, on a budget; the owner finishes them** in
   `tools/map-editor.html` and presses Labels checked (ADR 0004). A map at a time, in a fresh
   conversation of its own, on the main model:

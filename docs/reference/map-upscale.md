@@ -55,7 +55,8 @@ the fit.
 
 The owner's work on a map is committed, in `maps/<code>/`: `labels.json` (the label list: every
 label's wording, box on `map-2k.png`, and how to treat it), `style.txt` (the book's own look, opening
-the prompt in place of the default) and `labels-checked.txt` (step 3 done). Saving keeps the previous
+the prompt in place of the default), `labels-checked.txt` (step 3 done) and `rounds/prompt-<n>.txt`
+(round n's prompt, the record of what made its picture; ADR 0042). Saving keeps the previous
 list as `labels.json.bak` (git-ignored). Everything made from the scan is in `data/projectaon/<code>/`
 (git-ignored): the scan and the finished map beside `book.js`, which names the map, and every other
 step's file in its `work/` subfolder, so the book folder holds only what the importer reads and the
@@ -68,7 +69,6 @@ player loads (the map editor and `serve.py` make `work/` when a step first needs
 | `work/map-2k.png` | Real-ESRGAN of `map.png`, 2048 wide |
 | `work/map-2k-erased.jpg` | `map-2k.png` with the place names erased |
 | `work/map-2k-lettered.jpg` | The same with the place names set again in Cabin: the picture Gemini gets, and `map-2k-lettered-sheet.png` beside it |
-| `work/map-prompt-<n>.txt` | The prompt for round n |
 | `work/map-gemini-<n>.jpg` | Gemini's output, round n, saved by the owner |
 | `work/map-check-<n>/` | Round n's checks: `aligned.png`, `H.json`, `flags.png`, `labels.png`, `check.json` (the OCR diff, for the editor) |
 | `work/map-gemini-<n>-x4.png` | Real-ESRGAN 4x of the round kept |
@@ -236,7 +236,7 @@ Commands run from the project root as
    own placement (`map_letter.masks`). With the fixes on Books 15, 18 and 19 taken off it flagged 9 of the
    11 names fixed by eye; the other two show on the full sheet unflagged. It flags 4 to 18 names a map on
    Books 14-19, and 24 of 48 on Book 7, lettered as boldly as it is.
-5. **Prompt**: `map_labels.py prompt $L $W/map-prompt-<n>.txt --lettered`. It opens
+5. **Prompt**: `map_labels.py prompt $L maps/<code>/rounds/prompt-<n>.txt --lettered`. It opens
    with `maps/<code>/style.txt` when the book has one: the default asks for forests and water, and on Book 3
    Gemini painted the snowfields as green woodland and the white sea deep teal (Book 5: the desert
    came back green). Every book 1-12 has one since 2026-10-08, written from its map, key and text
@@ -298,7 +298,7 @@ Commands run from the project root as
   Copy image (PNG) tries the browser's clipboard first; the desktop app's browser pane refuses any
   picture there, so `copy-image` has the server put `map-2k-lettered.jpg` on the Windows clipboard.
   Step 7's Clear rounds (`clear-rounds`, after a confirm) deletes every round's picture, prompt and
-  check folder and unticks reset, so the next round is 1 again; `map-4k.webp` stays. Rounds are worth
+  check folder (the prompts stay in git history) and unticks reset, so the next round is 1 again; `map-4k.webp` stays. Rounds are worth
   keeping only when each is to be kept (owner, 2026-11-06).
   A round's prompt is written again when the labels or style change, until Gemini's picture for that
   round is in: then it is the round's record, and neither Copy prompt nor `run/prompt` (409) rewrites it.

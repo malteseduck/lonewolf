@@ -184,7 +184,9 @@ if (EMBED) document.body.classList.add('embed');
 const book = params.get('book') || '';
 const dir = `/data/projectaon/${book}/`;
 // the steps' files are in work/; the scan and the finished map stay beside book.js, which names the map
-const at = name => (name === 'map.png' || name === 'map-4k.webp' ? dir : dir + 'work/') + name;
+// a round's prompt is committed beside the label list (maps/<book>/rounds/), the rest is the book's
+const at = name => (/^prompt-\d+\.txt$/.test(name) ? `/maps/${encodeURIComponent(book)}/rounds/`
+  : name === 'map.png' || name === 'map-4k.webp' ? dir : dir + 'work/') + name;
 const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 let base = { w: 0, h: 0 };  // the frame the boxes are in (map-2k.png's size); every background is drawn into it
 
@@ -1277,12 +1279,12 @@ ${runBtn('Find missed labels', 'data-do="missed"' + noRun, 'Saves, then asks Cla
     case 6:
       h += `<div class="row">${runBtn('Erase and letter', 'data-do="erase+letter"' + noRun)}${runBtn('Erase only', 'data-do="erase"' + noRun)}${runBtn('Letter only', 'data-do="letter"' + noRun)}</div>`; break;
     case 7: {
-      const have = !!files[`map-prompt-${rd}.txt`], rf = roundFile(rd);
+      const have = !!files[`prompt-${rd}.txt`], rf = roundFile(rd);
       h += `<div class="row">${roundInput()}<span class="note">next free is ${nextFree()}${rf ? `; <span class="bad">map-gemini-${rd} exists</span>` : ''}</span>
 <button data-run data-do="copyprompt"${noRun}${tip('Copy prompt', 'Copies the Gemini prompt for this round (writing it first if needed), to paste into a new Gemini chat')}>Copy prompt${have ? '' : ' (writes it first)'}</button>
 <button data-do="copyimage"${tip('Copy image (PNG)', 'Copies the lettered picture as a PNG, to paste into the same Gemini chat')}>Copy image (PNG)</button>
 <a href="https://gemini.google.com/app" target="_blank" rel="noopener">Open Gemini</a>
-<button data-do="clearrounds"${S.rounds.length || Object.keys(files).some(k => /^map-(prompt|check)-\d+/.test(k)) ? '' : ' disabled'}${tip('Clear rounds', 'Deletes every Gemini round (its picture, prompt and check) and unticks reset, so the next round is round 1 again; the finished map-4k.webp stays')}>Clear rounds</button></div>
+<button data-do="clearrounds"${S.rounds.length || Object.keys(files).some(k => /^(prompt|map-check)-\d+/.test(k)) ? '' : ' disabled'}${tip('Clear rounds', 'Deletes every Gemini round (its picture, prompt and check) and unticks reset, so the next round is round 1 again; the finished map-4k.webp stays')}>Clear rounds</button></div>
 <div class="row">${files['map-2k-lettered.jpg'] ? `<img class="thumb" id="thumb" src="${at('map-2k-lettered.jpg')}?v=${mt('map-2k-lettered.jpg')}" draggable="true"${tip('Thumbnail', 'Drag this JPEG straight into the Gemini tab. On Book 1 a 2048 px PNG with a long prompt was once refused and a roughly 1 MB JPEG went through, so drag the JPEG if a paste is refused')}>` : '<span class="bad">no map-2k-lettered.jpg yet: step 6</span>'}
 <span class="note"><b>Receive</b>: Ctrl+V Gemini's image anywhere here, drop the file, or</span> <input type="file" id="pick" accept="image/png,image/jpeg,image/webp"${tip('Receive', `Gemini's picture comes back by paste, drop or this file picker, saved as map-gemini-${rd}.*`)}></div>
 ${received ? `<div class="row">Received ${esc(received)}. <button class="primary" data-do="gotocheck">Go to Check</button></div>` : ''}`;
@@ -1475,14 +1477,14 @@ async function copyPrompt(btn) {
     if (dirtyNow() && !(await save())) return;
     // written again after the labels or the book's style changed, but never once the round has its
     // picture: then the prompt is the record of what made it
-    const pm = mt(`map-prompt-${rd}.txt`);
+    const pm = mt(`prompt-${rd}.txt`);
     if (!pm || (!roundFile(rd) && (pm < mt('labels.json') || pm < (mt('style.txt') || 0)))) {
       const r = await runOne('prompt', `?round=${rd}`);
       logs[7] = r;
       if (!r.ok) { msg('Could not write the prompt', 6000); return; }
       await refreshState();
     }
-    const t = await (await fetch(`${at(`map-prompt-${rd}.txt`)}?${Date.now()}`)).text();
+    const t = await (await fetch(`${at(`prompt-${rd}.txt`)}?${Date.now()}`)).text();
     await copyText(t);
     msg(`Prompt for round ${rd} copied (${t.length} characters)`);
   } catch (e) { msg('Copy failed: ' + e.message, 6000); }

@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-24
-- Amended: 2026-11-05
+- Amended: 2026-11-06
 
 ## Context
 
@@ -40,6 +40,11 @@ licence is that no licensed content is in it, not that it is private.
   (`art_sources.make_ai`) still moves a picture and its -2x copy from `art/plates/` to
   `assets/plates/<code>/`, following its path wherever it is named, and credits it in
   `assets/plates/README.txt`.
+- **Every prompt we make our art from is committed**: the fight pictures' scene prompts in
+  `about/foe-scene.json`, each map repaint round's prompt in `maps/<code>/rounds/prompt-<n>.txt`, and
+  any later kind (proposals, items) where it is kept. A prompt is our own wording around our own
+  label list and style, not a significant reproduction of the book, and it is what remakes a lost
+  picture.
 - **`book.js` stays git-ignored and is not split.** Every fix and decision behind it is already
   committed (the importer, the item tables, plates.json and the pins, the rulings) and it is rebuilt
   from the downloaded books. A committed copy of every section's choices, gates and fights would be
@@ -64,3 +69,5 @@ licence is that no licensed content is in it, not that it is private.
   is then committed as before (owner).
 - 2026-11-05: no AI-made picture is committed, from a prompt alone or not; the book folders of
   `assets/plates/` are git-ignored and the pictures are made again from the scene prompts (owner).
+- 2026-11-06: every prompt that makes our art is committed, the map rounds' too, which had lived in
+  the git-ignored `work/` (owner).

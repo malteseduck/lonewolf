@@ -69,8 +69,8 @@ page only spot-checks (ADR 0036).
 - **No book content in the repository or in your output.** Project Aon's text and images live in
   `data/projectaon/` (git-ignored) and nowhere else. Do not paste section text into code, comments,
   docs, commit messages or chat. When inspecting imported data, print counts and ids, not prose.
-- **What of a book is committed** (ADR 0042): our item tables (`items/`), map label lists and styles
-  (`maps/<code>/`), descriptions (`about/`, never 8 of the book's words in a row:
+- **What of a book is committed** (ADR 0042): our item tables (`items/`), map label lists, styles and
+  repaint prompts (`maps/<code>/`), every prompt our art is made from, descriptions (`about/`, never 8 of the book's words in a row:
   `tools/about_check.py`). AI-made pictures are not committed
   (`assets/plates/<code>/` is git-ignored). Anything copied or made from
   Project Aon's text or images stays in `data/projectaon/<code>/`. Borrowed art stays in git-ignored

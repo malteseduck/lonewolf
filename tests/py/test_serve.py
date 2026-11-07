@@ -184,9 +184,12 @@ def test_maplabels_post_refusal(root):
 def test_clear_rounds_removes_every_gemini_round_and_keeps_the_rest(root):
     d = book(root)
     w = d / 'work'
-    for f in ['map-gemini-1.png', 'map-gemini-2.jpg', 'map-gemini-2-x4.png', 'map-prompt-1.txt',
-              'map-prompt-2.txt', 'map-check-1/labels.png', 'map-check-2/H.json']:
+    for f in ['map-gemini-1.png', 'map-gemini-2.jpg', 'map-gemini-2-x4.png',
+              'map-check-1/labels.png', 'map-check-2/H.json']:
         write(str(w / f), PNG)
+    own = root / 'maps' / '01fftd'  # the prompts are committed, beside the label list
+    for f in ['rounds/prompt-1.txt', 'rounds/prompt-2.txt', 'labels.json', 'style.txt']:
+        write(str(own / f), 'x')
     keep = ['work/map-2k.png', 'work/map-2k-lettered.jpg', 'map-4k.webp', 'map.png']
     for f in keep:
         write(str(d / f), PNG)
@@ -194,6 +197,7 @@ def test_clear_rounds_removes_every_gemini_round_and_keeps_the_rest(root):
     assert st == 200 and got['cleared'] == 7 and got['rounds'] == []
     assert sorted(os.listdir(w)) == ['map-2k-lettered.jpg', 'map-2k.png']
     assert all((d / f).exists() for f in keep)
+    assert sorted(os.listdir(own)) == ['labels.json', 'style.txt']
 
 
 def test_clear_rounds_waits_for_a_running_job(root):
@@ -459,9 +463,11 @@ def test_map_books_and_state(root):
     write(str(d / 'work' / 'map-2k.png'), 'x')
     write(str(d / 'work' / 'map-gemini-2.png'), 'x')
     write(str(root / 'maps' / '01fftd' / 'labels.json'), '[]')
+    write(str(root / 'maps' / '01fftd' / 'rounds' / 'prompt-2.txt'), 'Repaint')
     assert jsend('GET', '/api/map/books') == (200, [{'code': '01fftd', 'number': 1, 'title': 'Flight', 'stage': 'gemini'}])
     st, got = jsend('GET', '/api/map/01fftd/state')
     assert st == 200 and got['rounds'] == [2] and got['files']['map.png']['size'] == 3 and 'labels.json' in got['files']
+    assert got['files']['prompt-2.txt']['size'] == 7  # a round's prompt, from maps/<book>/rounds/
     assert jsend('GET', '/api/map/nope/state') == (404, {'error': 'not a book folder'})
     assert got['styleDraft'] is False
     write(str(root / 'maps' / '01fftd' / 'style.txt'), '# DRAFT by tools/map_labels.py style: ...\nRepaint')
@@ -496,12 +502,15 @@ def test_map_commands_builds_a_step_and_refuses_a_bad_one(root):
 
 def test_a_round_with_its_picture_keeps_its_prompt(root):
     d = book(root)
-    write(str(d / 'work' / 'map-prompt-8.txt'), 'the prompt round 8 was made from')
-    assert serve.map_commands('prompt', '01fftd', {'round': ['8']})[0]  # no picture yet: written again
+    pf = root / 'maps' / '01fftd' / 'rounds' / 'prompt-8.txt'  # committed: the record of the round
+    write(str(pf), 'the prompt round 8 was made from')
+    cmds = serve.map_commands('prompt', '01fftd', {'round': ['8']})[0]  # no picture yet: written again
+    assert cmds == [serve.PY + ['tools/map_labels.py', 'prompt', 'maps/01fftd/labels.json',
+                                'maps/01fftd/rounds/prompt-8.txt', '--lettered']]
     write(str(d / 'work' / 'map-gemini-8.jpg'), PNG)
     assert serve.map_commands('prompt', '01fftd', {'round': ['8']}) == (
         None, 'round 8 has its Gemini picture: its prompt is kept as made', 409)
-    os.remove(d / 'work' / 'map-prompt-8.txt')  # a round with no prompt on file may have one written
+    os.remove(pf)  # a round with no prompt on file may have one written
     assert serve.map_commands('prompt', '01fftd', {'round': ['8']})[0]
 
 

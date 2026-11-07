@@ -51,14 +51,15 @@ served from my PC; it is played on my iPad, mainly, with or without a connection
 - Book content is fetched onto the owner's machine by a tool and kept in a folder that is excluded
   from version control. It must never be committed, published, uploaded or pasted into documents,
   commit messages, chat logs or code comments.
-- Anything made from that content (reading copies, restyled or upscaled pictures, repaints and
-  their prompts) stays beside it, uncommitted.
+- Anything made from that content (reading copies, restyled or upscaled pictures, repaints)
+  stays beside it, uncommitted.
 - Our own work about a book is committed: its item table, its map's label list and repaint style,
-  and our descriptions of its pictures and enemies. These record readings and decisions in our own
+  our descriptions of its pictures and enemies, and every prompt we make our art from (the map
+  repaints' and the fight pictures'), so the art can be made again. These record readings and decisions in our own
   words, not the book's text; nothing committed may rebuild a book, its text or its structure.
 - Pictures made for this project with an AI are not committed, whatever they were made from: they
-  are kept on the owner's machine and can be made again from the committed scene prompts
-  (`about/foe-scene.json`). Which pictures were given to the generator is not recorded (ADR 0042).
+  are kept on the owner's machine and can be made again from the committed prompts
+  (`about/foe-scene.json`, `maps/<code>/rounds/`). Which pictures were given to the generator is not recorded (ADR 0042).
 - The repository itself contains only original work and assets free to redistribute (CC0 or
   similar, each with its source noted): the engine, the interface, drawn art, icons, fonts, and a
   short demo book written for this project (ADR 0046).

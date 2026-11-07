@@ -33,7 +33,8 @@ Static files as `python -m http.server` serves them, from the project root, plus
                                       ?undo=1 removes it. Drafting again removes it too
     POST /api/map/<book>/gemini/<n>   body: the round's image (png, jpeg or webp, up to 30 MB), saved
                                       as work/map-gemini-<n>.<ext>; 409 if there is one, unless ?force=1
-    POST /api/map/<book>/clear-rounds every Gemini round gone (work/map-gemini-*, map-prompt-*, map-check-*/),
+    POST /api/map/<book>/clear-rounds every Gemini round gone (work/map-gemini-*, map-check-*/, and the
+                                      prompts, maps/<book>/rounds/prompt-*),
                                       so the next is round 1 again; map-4k.webp stays. 409 while a job runs
     POST /api/map/<book>/copy-image   put work/map-2k-lettered.jpg on the Windows clipboard as a picture
                                       (the desktop app's browser pane refuses pictures on the clipboard)
@@ -205,14 +206,28 @@ def _gemini_files(d, n):
     return [f for f in os.listdir(w) if re.fullmatch(rf'map-gemini-{n}\.(png|jpg|webp)', f)] if os.path.isdir(w) else []
 
 
-# a round's files in work/: its picture (and Finish's x4 upscale), its prompt, its check folder
-_ROUND = re.compile(r'map-(gemini-\d+(-x4)?\.(png|jpg|webp)|prompt-\d+\.txt|check-\d+)')
+# a round's files in work/: its picture (and Finish's x4 upscale), its check folder
+_ROUND = re.compile(r'map-(gemini-\d+(-x4)?\.(png|jpg|webp)|check-\d+)')
+_PROMPT = re.compile(r'prompt-\d+\.txt')
+
+
+def _rounds_dir(book):
+    """maps/<book>/rounds/: each round's prompt, committed with the label list it was made from, as
+    what made the round's picture (ADR 0042: what reproduces our art is committed)."""
+    return os.path.join(MAPS, book, 'rounds')
 
 
 def clear_rounds(d):
     """Remove every Gemini round from a book's work/, so the next is round 1 (owner: keeping rounds is
     only worth it when each is to be kept). The finished map-4k.webp is left. Returns files removed."""
     w, n = _work(d), 0
+    r = _rounds_dir(os.path.basename(d))
+    for e in list(os.scandir(r)) if os.path.isdir(r) else []:
+        if e.is_file() and _PROMPT.fullmatch(e.name):
+            os.remove(e.path)
+            n += 1
+    if os.path.isdir(r) and not os.listdir(r):
+        os.rmdir(r)
     for e in list(os.scandir(w)) if os.path.isdir(w) else []:
         if not _ROUND.fullmatch(e.name):
             continue
@@ -286,8 +301,13 @@ def map_state(d):
     for f in MAPS_FILES:
         if os.path.isfile(os.path.join(own, f)):
             add(f, own)
+    r = _rounds_dir(os.path.basename(d))
+    for f in sorted(os.listdir(r)) if os.path.isdir(r) else []:
+        if _PROMPT.fullmatch(f):
+            add(f, r)
     w = _work(d)
-    # named without their folder: the editor knows map.png and map-4k.webp are in the book's, the rest in work/
+    # named without their folder: the editor knows map.png and map-4k.webp are in the book's, prompt-<n>.txt
+    # in maps/<book>/rounds/, the rest in work/
     for base in (d, w) if os.path.isdir(w) else (d,):
         for e in sorted(os.scandir(base), key=lambda e: e.name):
             if e.is_file() and e.name.startswith('map'):
@@ -369,9 +389,10 @@ def map_commands(step, book, q):
         return [PY + [t('map_letter.py'), f'{wk}/map-2k.png', labels, f'{wk}/map-2k-erased.jpg', '-', f'{wk}/map-2k-lettered.jpg'] + _fonts(book)], None, 0
     if step == 'prompt':
         # a round's prompt is its record once Gemini has painted from it (owner: that is the point of rounds)
-        if _gemini_files(full, rnd) and os.path.isfile(os.path.join(_work(full), f'map-prompt-{rnd}.txt')):
+        if _gemini_files(full, rnd) and os.path.isfile(os.path.join(_rounds_dir(book), f'prompt-{rnd}.txt')):
             return None, f'round {rnd} has its Gemini picture: its prompt is kept as made', 409
-        return [PY + [t('map_labels.py'), 'prompt', labels, f'{wk}/map-prompt-{rnd}.txt', '--lettered']], None, 0
+        os.makedirs(_rounds_dir(book), exist_ok=True)
+        return [PY + [t('map_labels.py'), 'prompt', labels, f'maps/{book}/rounds/prompt-{rnd}.txt', '--lettered']], None, 0
     if step in ('check', 'finish'):
         got = _gemini_files(full, rnd)
         if not got:
