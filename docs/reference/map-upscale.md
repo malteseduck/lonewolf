@@ -259,7 +259,8 @@ Commands run from the project root as
    (Book 12, round 1): its `style.txt` asks for continuous sculpted ranges over the same ground
    instead, and names what the map does not have. Every prompt, after the style, asks for the look of Book
    1's round 8, the best repaint (owner, 2026-11-06): inked outlines, rich deepened colour and shading
-   lit from one side, sculpted ranges "not rows of identical symbols", each tree in a wood its own
+   lit from one side, in the original's drawn, illustrated style and never a realistic painting (the
+   owner, of ChatGPT's repaint, 2026-11-06), crisp clean buildings, sculpted ranges "not rows of identical symbols", each tree in a wood its own
    crown "never a flat blob of colour", water deepening off the shore, and the existing frame, border,
    panels, title, key and compass embellished, adding no map feature. Only panels, emblems, banners
    and flags are held to their colours: "every object ... with its colours" (Book 1's rounds 10

@@ -151,6 +151,17 @@ def test_prompt_asks_every_map_for_round_8s_richness_without_new_features():
         assert 'with its colours' not in p
 
 
+def test_prompt_keeps_the_maps_drawn_spirit_not_realism():
+    # owner, 2026-11-06: ChatGPT's repaint was "closer to real", round 8 truer to the map's spirit;
+    # its crisp buildings were the part worth keeping
+    for style in (None, 'Repaint this map of somewhere.'):
+        p = map_labels.prompt([PLACE, CAPTION], True, style)
+        assert "Keep the original's drawn, illustrated style" in p
+        assert 'never turned into a realistic or photographic painting' in p
+        assert 'Towns, castles and towers are crisp and clean, drawn as on the original' in p
+        assert p.index("drawn, illustrated style") < p.index('Keep the layout')
+
+
 
 
 

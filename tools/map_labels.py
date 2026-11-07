@@ -323,6 +323,9 @@ def prompt(labels, lettered=False, style=None, lettering=None):
          'and finer detail in the existing frame, panels and key. ')
     # every map, whatever its style: what made Book 1's round 8 the best repaint, as the owner asked for
     # every map (richer, not more); printed symbols otherwise come back recoloured, flat (Books 12 and 23)
+    # the owner, against ChatGPT's repaint: round 8 is truer to the map's spirit, not "closer to real"
+    p += ("Keep the original's drawn, illustrated style: the same simple shapes and symbols, enriched with colour, "
+          'shading and decorative flourishes, never turned into a realistic or photographic painting. ')
     p += ('Paint it as a finely hand-inked and painted fantasy game map: every shape crisply outlined in dark ink, '
           'filled with rich, deep, harmonious colour and soft painted shading, lit from one side, on warm aged '
           'parchment. Give each ground the colour the map gives it, deepened and enriched, with gentle variation of '
@@ -330,8 +333,8 @@ def prompt(labels, lettered=False, style=None, lettering=None):
           'rows of identical symbols. In every wood, however crowded, each tree is its own crown with a lit side, a '
           'shadow side and a dark outline, so the wood reads as many trees, never a flat blob of colour; lone trees '
           'are small outlined trees. Hills are soft rises with a lit and a shaded side. Water deepens in tone away '
-          'from the shore, with fine white strokes of waves. Towns, castles and towers are crisp and outlined, with '
-          'stonework. Richer means finer detail in what is drawn, not more things: embellish the existing frame, '
+          'from the shore, with fine white strokes of waves. Towns, castles and towers are crisp and clean, drawn as on '
+          'the original, outlined, with stonework.Richer means finer detail in what is drawn, not more things: embellish the existing frame, '
           'border, panels, title, key and compass with gilding, carved scrollwork, knotwork and fine patterning, '
           'and add no map feature. ')
     p += ('Keep the layout: every coastline, river, road, island, mountain range, forest and town stays where it is, '
