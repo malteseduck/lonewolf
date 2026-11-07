@@ -249,18 +249,22 @@ Commands run from the project root as
    tools/map_labels.py style`, names any key entry it had no sentence for; lines starting `#` are
    left out of the prompt, and the dashboard counts the style done once that line is deleted. The
    regions' own ground and what must not appear are the agent's to add (the map's Copy prompt). It asks
-   for a richly painted repaint (shaded mountains, dense forests, textured water), every label as
+   for a richly painted repaint (round 8's look, below), every label as
    listed, the place names kept in clean sans-serif on clear ground (or as `font.txt`'s second line
    describes them), every object already drawn kept in place, the woods free to be filled out, and no
-   feature added (no fruit, foliage or ornaments, no new castles, towers, towns, buildings, ruins,
+   feature added (no fruit, foliage or scrolls outside the existing frame, no new castles, towers, towns, buildings, ruins,
    creatures or ships). It names no ship or compass rose: Book
    12 has neither, and naming them got it two ships in round 1.
    A map drawn as rows of small identical mountain symbols comes back as those symbols recoloured
    (Book 12, round 1): its `style.txt` asks for continuous sculpted ranges over the same ground
-   instead, and names what the map does not have. Since Book 23's round 1 (rows of identical cones
-   and triangles), every prompt, after the style, asks for land painted with depth and light: each
-   range one sculpted mass, each wood a varied canopy, hills modelled, "not rows of identical
-   symbols"; the style draft's stock sentences for mountains, hills and forests say the same.
+   instead, and names what the map does not have. Every prompt, after the style, asks for the look of Book
+   1's round 8, the best repaint (owner, 2026-11-06): inked outlines, rich deepened colour and shading
+   lit from one side, sculpted ranges "not rows of identical symbols", each tree in a wood its own
+   crown "never a flat blob of colour", water deepening off the shore, and the existing frame, border,
+   panels, title, key and compass embellished, adding no map feature. Only panels, emblems, banners
+   and flags are held to their colours: "every object ... with its colours" (Book 1's rounds 10
+   and 11, 2026-11-06) got near copies of the input. The style draft's stock sentences for mountains,
+   hills and forests ask for the same.
 6. **The owner runs it** in a new Gemini chat with `map-2k-lettered.jpg` attached (about 1180 px
    out) and saves `map-gemini-<n>.jpg`.
 7. **Check**: `map_check.py $W/map-2k.png $W/map-gemini-<n>.jpg $W/map-check-<n>` (alignment,
@@ -296,6 +300,8 @@ Commands run from the project root as
   Step 7's Clear rounds (`clear-rounds`, after a confirm) deletes every round's picture, prompt and
   check folder and unticks reset, so the next round is 1 again; `map-4k.webp` stays. Rounds are worth
   keeping only when each is to be kept (owner, 2026-11-06).
+  A round's prompt is written again when the labels or style change, until Gemini's picture for that
+  round is in: then it is the round's record, and neither Copy prompt nor `run/prompt` (409) rewrites it.
   Its colours are the dashboard's (2026-10-08); the label outlines stay bright to read over any map.
   Its steps and the dashboard's jobs share one lock: one runs at a time.
 - `tools/map_upscale.py`: Real-ESRGAN (`tools/realesrgan/`, the v0.2.5.0 Windows build, git-ignored)

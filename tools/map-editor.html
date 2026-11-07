@@ -1473,8 +1473,10 @@ async function copyPrompt(btn) {
   setBusy(true, btn, 'prompt');
   try {
     if (dirtyNow() && !(await save())) return;
-    const pm = mt(`map-prompt-${rd}.txt`);  // written again after the labels or the book's style changed
-    if (!pm || pm < mt('labels.json') || pm < (mt('style.txt') || 0)) {
+    // written again after the labels or the book's style changed, but never once the round has its
+    // picture: then the prompt is the record of what made it
+    const pm = mt(`map-prompt-${rd}.txt`);
+    if (!pm || (!roundFile(rd) && (pm < mt('labels.json') || pm < (mt('style.txt') || 0)))) {
       const r = await runOne('prompt', `?round=${rd}`);
       logs[7] = r;
       if (!r.ok) { msg('Could not write the prompt', 6000); return; }

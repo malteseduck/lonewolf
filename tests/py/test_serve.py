@@ -494,6 +494,17 @@ def test_map_commands_builds_a_step_and_refuses_a_bad_one(root):
     assert serve.map_commands('prompt', '01fftd', {}) == (None, 'round must be a small integer', 400)
 
 
+def test_a_round_with_its_picture_keeps_its_prompt(root):
+    d = book(root)
+    write(str(d / 'work' / 'map-prompt-8.txt'), 'the prompt round 8 was made from')
+    assert serve.map_commands('prompt', '01fftd', {'round': ['8']})[0]  # no picture yet: written again
+    write(str(d / 'work' / 'map-gemini-8.jpg'), PNG)
+    assert serve.map_commands('prompt', '01fftd', {'round': ['8']}) == (
+        None, 'round 8 has its Gemini picture: its prompt is kept as made', 409)
+    os.remove(d / 'work' / 'map-prompt-8.txt')  # a round with no prompt on file may have one written
+    assert serve.map_commands('prompt', '01fftd', {'round': ['8']})[0]
+
+
 def post_image(path, body, kind='image/png'):
     return jsend('POST', path, body, headers={'Content-Type': kind} if kind else None)
 

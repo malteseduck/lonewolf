@@ -9,7 +9,6 @@
   ],
   "where": "title cartouche, top centre, first line",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -22,7 +21,6 @@
   ],
   "where": "title cartouche, second line, large",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -35,7 +33,6 @@
   ],
   "where": "title cartouche, third line, small",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -48,7 +45,6 @@
   ],
   "where": "title cartouche, last line, large",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -61,7 +57,6 @@
   ],
   "where": "top-left panel, right of the winged-horse banner, four lines",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -74,7 +69,6 @@
   ],
   "where": "top-left panel, under the red sun-and-crown shield, two lines",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -87,13 +81,35 @@
   ],
   "where": "top-left panel, under the purple moon shield, two lines",
   "small": false,
-  "ok": true,
   "retype": false,
   "fix": true,
   "lines": [
    "THE MAGICIAN'S",
    "GUILD OF TORAN"
-  ]
+  ],
+  "ink": {
+   "at": [
+    383.6,
+    495.9
+   ],
+   "angle": 0.71,
+   "length": 158.9,
+   "thick": 35.5,
+   "box": [
+    300,
+    476,
+    469,
+    517
+   ],
+   "fit": {
+    "at": [
+     386.4,
+     495.9
+    ],
+    "angle": 0.0,
+    "size": 18.73
+   }
+  }
  },
  {
   "text": "WAR BANNER OF THE KAI LORDS OF SOMMERLUND",
@@ -105,7 +121,6 @@
   ],
   "where": "top-left panel, under the chequered sun banner, four lines",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -118,7 +133,6 @@
   ],
   "where": "top-right key panel, heading",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -131,7 +145,6 @@
   ],
   "where": "key, first column, first swatch",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -144,7 +157,6 @@
   ],
   "where": "key, first column, second swatch, two lines",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -157,7 +169,6 @@
   ],
   "where": "key, first column, third swatch",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -170,7 +181,6 @@
   ],
   "where": "key, first column, fourth swatch",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -183,7 +193,6 @@
   ],
   "where": "key, second column, first swatch",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -196,7 +205,6 @@
   ],
   "where": "key, second column, second swatch",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -209,7 +217,6 @@
   ],
   "where": "key, on the ribbon across the dividers",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -221,9 +228,8 @@
    420
   ],
   "where": "key, under the scale bar",
-  "small": true,
-  "ok": true,
-  "retype": true,
+  "small": false,
+  "retype": false,
   "clip": true,
   "spread": true,
   "height": 9
@@ -238,7 +244,6 @@
   ],
   "where": "right edge, under the blue mountain-and-stars shield, two lines",
   "small": false,
-  "ok": true,
   "retype": false
  },
  {
@@ -251,8 +256,30 @@
   ],
   "where": "the open sea, top centre, slanting up to the right",
   "small": false,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1186.9,
+    478.4
+   ],
+   "angle": -10.74,
+   "length": 241.8,
+   "thick": 23.9,
+   "box": [
+    1065,
+    445,
+    1311,
+    512
+   ],
+   "fit": {
+    "at": [
+     1184.5,
+     479.1
+    ],
+    "angle": -10.74,
+    "size": 31.27
+   }
+  }
  },
  {
   "text": "SOMMERLUND",
@@ -264,8 +291,30 @@
   ],
   "where": "west coast, slanting down to the right",
   "small": false,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    457.0,
+    662.3
+   ],
+   "angle": 39.81,
+   "length": 214.5,
+   "thick": 35.3,
+   "box": [
+    364,
+    584,
+    548,
+    732
+   ],
+   "fit": {
+    "at": [
+     456.4,
+     659.9
+    ],
+    "angle": 39.81,
+    "size": 31.67
+   }
+  }
  },
  {
   "text": "ANSKAVEN",
@@ -277,8 +326,30 @@
   ],
   "where": "beside the northern town on the west coast",
   "small": false,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    686.9,
+    635.3
+   ],
+   "angle": -26.05,
+   "length": 102.3,
+   "thick": 14.9,
+   "box": [
+    640,
+    604,
+    737,
+    666
+   ],
+   "fit": {
+    "at": [
+     686.0,
+     636.1
+    ],
+    "angle": -26.05,
+    "size": 18.92
+   }
+  }
  },
  {
   "text": "TORAN",
@@ -290,9 +361,31 @@
   ],
   "where": "beside the walled town in the north-west",
   "small": false,
-  "ok": true,
   "retype": true,
-  "angle": -35
+  "angle": -35,
+  "ink": {
+   "at": [
+    395.0,
+    735.2
+   ],
+   "angle": -32.15,
+   "length": 51.1,
+   "thick": 13.1,
+   "box": [
+    375,
+    717,
+    420,
+    758
+   ],
+   "fit": {
+    "at": [
+     394.3,
+     736.7
+    ],
+    "angle": -35.0,
+    "size": 14.64
+   }
+  }
  },
  {
   "text": "R Tor",
@@ -304,8 +397,30 @@
   ],
   "where": "on the river west of the walled town in the north-west",
   "small": true,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    266.9,
+    820.8
+   ],
+   "angle": -13.51,
+   "length": 43.7,
+   "thick": 13.2,
+   "box": [
+    246,
+    814,
+    297,
+    835
+   ],
+   "fit": {
+    "at": [
+     267.4,
+     821.1
+    ],
+    "angle": -13.76,
+    "size": 16.14
+   }
+  }
  },
  {
   "text": "KAI MONASTERY",
@@ -317,12 +432,43 @@
   ],
   "where": "beside the tower in the west, two lines",
   "small": false,
-  "ok": true,
   "retype": true,
   "lines": [
    "KAI",
    "MONASTERY"
-  ]
+  ],
+  "ink": {
+   "at": [
+    276.7,
+    936.0
+   ],
+   "angle": 4.93,
+   "length": 154.3,
+   "thick": 50.2,
+   "box": [
+    205,
+    911,
+    358,
+    963
+   ],
+   "fit": {
+    "at": [
+     279.1,
+     936.0
+    ],
+    "angle": 0.0,
+    "size": 24.17
+   }
+  },
+  "set": {
+   "at": [
+    281.2,
+    938.1
+   ],
+   "size": 24,
+   "angle": 0
+  },
+  "leading": 0.88
  },
  {
   "text": "TYSO",
@@ -334,13 +480,39 @@
   ],
   "where": "beside the small town on the Holmgulf",
   "small": false,
-  "ok": true,
   "retype": true,
-  "nudge": [
-   12,
-   0
-  ],
-  "clip": true
+  "clip": true,
+  "ink": {
+   "at": [
+    566.6,
+    890.7
+   ],
+   "angle": -1.18,
+   "length": 57.2,
+   "thick": 31.8,
+   "box": [
+    542,
+    879,
+    592,
+    903
+   ],
+   "fit": {
+    "at": [
+     568.0,
+     894.7
+    ],
+    "angle": -1.18,
+    "size": 23.4
+   }
+  },
+  "set": {
+   "at": [
+    567.1,
+    896.7
+   ],
+   "size": 18.6,
+   "angle": -4
+  }
  },
  {
   "text": "THE HOLMGULF",
@@ -352,9 +524,38 @@
   ],
   "where": "in the inlet west of the islands, slanting up to the right",
   "small": false,
-  "ok": true,
   "retype": true,
-  "angle": -33
+  "ink": {
+   "at": [
+    607.2,
+    938.6
+   ],
+   "angle": -37.06,
+   "length": 192.8,
+   "thick": 19.0,
+   "box": [
+    522,
+    870,
+    681,
+    1004
+   ],
+   "fit": {
+    "at": [
+     606.2,
+     940.0
+    ],
+    "angle": -37.06,
+    "size": 24.45
+   }
+  },
+  "set": {
+   "at": [
+    605.5,
+    941.4
+   ],
+   "size": 24.4,
+   "angle": -37
+  }
  },
  {
   "text": "R Unoram",
@@ -366,8 +567,30 @@
   ],
   "where": "on the river under the Kai Monastery",
   "small": true,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    304.2,
+    992.4
+   ],
+   "angle": -5.59,
+   "length": 81.7,
+   "thick": 10.9,
+   "box": [
+    261,
+    978,
+    348,
+    998
+   ],
+   "fit": {
+    "at": [
+     304.9,
+     991.2
+    ],
+    "angle": -5.59,
+    "size": 18.64
+   }
+  }
  },
  {
   "text": "R Eledil",
@@ -379,8 +602,30 @@
   ],
   "where": "on the river west of Holmgard",
   "small": true,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    340.7,
+    1062.2
+   ],
+   "angle": -10.08,
+   "length": 64.3,
+   "thick": 14.0,
+   "box": [
+    307,
+    1053,
+    379,
+    1073
+   ],
+   "fit": {
+    "at": [
+     340.5,
+     1063.1
+    ],
+    "angle": -10.21,
+    "size": 17.8
+   }
+  }
  },
  {
   "text": "HOLMGARD",
@@ -392,8 +637,30 @@
   ],
   "where": "under the red-roofed capital at the head of the Holmgulf",
   "small": false,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    497.0,
+    1074.1
+   ],
+   "angle": -0.15,
+   "length": 138.0,
+   "thick": 28.0,
+   "box": [
+    425,
+    1057,
+    563,
+    1085
+   ],
+   "fit": {
+    "at": [
+     492.4,
+     1071.7
+    ],
+    "angle": -1.65,
+    "size": 23.67
+   }
+  }
  },
  {
   "text": "THE KIRLUNDIN STRAITS",
@@ -405,7 +672,6 @@
   ],
   "where": "in the water west of the island chain, running up to the right",
   "small": false,
-  "ok": true,
   "retype": true,
   "keep": [
    [
@@ -414,7 +680,30 @@
     800,
     590
    ]
-  ]
+  ],
+  "ink": {
+   "at": [
+    783.6,
+    637.8
+   ],
+   "angle": -55.6,
+   "length": 268.4,
+   "thick": 36.8,
+   "box": [
+    707,
+    527,
+    881,
+    758
+   ],
+   "fit": {
+    "at": [
+     791.1,
+     641.0
+    ],
+    "angle": -55.1,
+    "size": 21.9
+   }
+  }
  },
  {
   "text": "THE KIRLUNDIN ISLES",
@@ -426,12 +715,38 @@
   ],
   "where": "in the water east of the island chain, running up to the right",
   "small": false,
-  "ok": true,
   "retype": true,
-  "nudge": [
-   10,
-   4
-  ]
+  "ink": {
+   "at": [
+    896.9,
+    778.7
+   ],
+   "angle": -65.48,
+   "length": 240.1,
+   "thick": 19.3,
+   "box": [
+    835,
+    671,
+    957,
+    891
+   ],
+   "fit": {
+    "at": [
+     896.0,
+     781.8
+    ],
+    "angle": -65.48,
+    "size": 22.07
+   }
+  },
+  "set": {
+   "at": [
+    897.4,
+    780.3
+   ],
+   "size": 22.5,
+   "angle": -65.5
+  }
  },
  {
   "text": "Broka",
@@ -443,8 +758,30 @@
   ],
   "where": "above the northernmost island",
   "small": true,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    951.0,
+    553.6
+   ],
+   "angle": 1.03,
+   "length": 46.2,
+   "thick": 17.5,
+   "box": [
+    927,
+    548,
+    973,
+    563
+   ],
+   "fit": {
+    "at": [
+     951.5,
+     554.6
+    ],
+    "angle": 1.03,
+    "size": 17.18
+   }
+  }
  },
  {
   "text": "Egen",
@@ -456,8 +793,30 @@
   ],
   "where": "beside the second island from the north",
   "small": true,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    885.4,
+    597.3
+   ],
+   "angle": 2.41,
+   "length": 41.5,
+   "thick": 19.9,
+   "box": [
+    865,
+    584,
+    906,
+    604
+   ],
+   "fit": {
+    "at": [
+     887.7,
+     595.3
+    ],
+    "angle": 2.16,
+    "size": 16.66
+   }
+  }
  },
  {
   "text": "Thel",
@@ -469,8 +828,38 @@
   ],
   "where": "left of the large middle island",
   "small": true,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    809.5,
+    696.6
+   ],
+   "angle": 39.07,
+   "length": 25.8,
+   "thick": 20.0,
+   "box": [
+    799,
+    686,
+    835,
+    709
+   ],
+   "fit": {
+    "at": [
+     809.4,
+     694.9
+    ],
+    "angle": 39.07,
+    "size": 12.71
+   }
+  },
+  "set": {
+   "at": [
+    819.5,
+    697.2
+   ],
+   "size": 16.7,
+   "angle": -0.5
+  }
  },
  {
   "text": "Hemd",
@@ -482,8 +871,30 @@
   ],
   "where": "right of the small island under it",
   "small": true,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    864.7,
+    736.2
+   ],
+   "angle": -2.94,
+   "length": 44.1,
+   "thick": 16.6,
+   "box": [
+    842,
+    727,
+    886,
+    745
+   ],
+   "fit": {
+    "at": [
+     865.4,
+     738.3
+    ],
+    "angle": -2.94,
+    "size": 15.6
+   }
+  }
  },
  {
   "text": "Kirlu",
@@ -495,8 +906,30 @@
   ],
   "where": "left of the large southern island",
   "small": true,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    744.6,
+    827.1
+   ],
+   "angle": 1.58,
+   "length": 47.0,
+   "thick": 18.6,
+   "box": [
+    722,
+    819,
+    768,
+    840
+   ],
+   "fit": {
+    "at": [
+     744.7,
+     826.4
+    ],
+    "angle": 1.45,
+    "size": 22.45
+   }
+  }
  },
  {
   "text": "Mannon",
@@ -508,8 +941,30 @@
   ],
   "where": "right of the southernmost island",
   "small": true,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    849.0,
+    921.7
+   ],
+   "angle": 0.68,
+   "length": 82.0,
+   "thick": 14.9,
+   "box": [
+    809,
+    911,
+    891,
+    932
+   ],
+   "fit": {
+    "at": [
+     849.5,
+     921.0
+    ],
+    "angle": 0.68,
+    "size": 21.44
+   }
+  }
  },
  {
   "text": "Wreck Point",
@@ -521,12 +976,34 @@
   ],
   "where": "below the southernmost island, with a small arrow, two lines",
   "small": true,
-  "ok": true,
   "retype": true,
   "lines": [
    "Wreck",
    "Point"
-  ]
+  ],
+  "ink": {
+   "at": [
+    824.6,
+    960.1
+   ],
+   "angle": -9.01,
+   "length": 47.0,
+   "thick": 29.3,
+   "box": [
+    804,
+    942,
+    850,
+    973
+   ],
+   "fit": {
+    "at": [
+     823.6,
+     961.5
+    ],
+    "angle": 0.0,
+    "size": 14.33
+   }
+  }
  },
  {
   "text": "DURENOR",
@@ -538,12 +1015,39 @@
   ],
   "where": "east coast, slanting up to the right",
   "small": false,
-  "ok": true,
   "retype": true,
-  "nudge": [
-   8,
-   -12
-  ]
+  "ink": {
+   "at": [
+    1517.6,
+    836.3
+   ],
+   "angle": -21.82,
+   "length": 144.6,
+   "thick": 36.0,
+   "box": [
+    1449,
+    799,
+    1592,
+    876
+   ],
+   "fit": {
+    "at": [
+     1514.1,
+     839.1
+    ],
+    "angle": -21.82,
+    "size": 29.77
+   }
+  },
+  "joined": true,
+  "set": {
+   "at": [
+    1517.2,
+    835.9
+   ],
+   "size": 29.9,
+   "angle": -20.4
+  }
  },
  {
   "text": "LOF",
@@ -555,8 +1059,30 @@
   ],
   "where": "beside the northern tower on the east coast",
   "small": false,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1645.5,
+    690.1
+   ],
+   "angle": -9.92,
+   "length": 34.6,
+   "thick": 16.9,
+   "box": [
+    1628,
+    681,
+    1664,
+    701
+   ],
+   "fit": {
+    "at": [
+     1645.5,
+     690.9
+    ],
+    "angle": -3.67,
+    "size": 17.42
+   }
+  }
  },
  {
   "text": "THE GULF OF DURENOR",
@@ -568,13 +1094,35 @@
   ],
   "where": "in the gulf, centre, slanting down to the right, two lines",
   "small": false,
-  "ok": true,
   "retype": true,
   "lines": [
    "THE GULF OF",
    "DURENOR"
   ],
-  "angle": 12
+  "angle": 12,
+  "ink": {
+   "at": [
+    1134.1,
+    994.5
+   ],
+   "angle": 9.79,
+   "length": 178.1,
+   "thick": 48.3,
+   "box": [
+    1047,
+    957,
+    1227,
+    1029
+   ],
+   "fit": {
+    "at": [
+     1132.7,
+     994.9
+    ],
+    "angle": 12.0,
+    "size": 27.3
+   }
+  }
  },
  {
   "text": "RAGADORN",
@@ -586,8 +1134,30 @@
   ],
   "where": "right of the port town on the south coast of the gulf",
   "small": false,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1112.5,
+    1108.0
+   ],
+   "angle": -0.1,
+   "length": 117.0,
+   "thick": 20.2,
+   "box": [
+    1053,
+    1096,
+    1172,
+    1121
+   ],
+   "fit": {
+    "at": [
+     1112.0,
+     1108.9
+    ],
+    "angle": -0.1,
+    "size": 21.26
+   }
+  }
  },
  {
   "text": "PORT BAX",
@@ -599,13 +1169,35 @@
   ],
   "where": "left of the tower at the south-east corner of the gulf, two lines",
   "small": false,
-  "ok": true,
   "retype": true,
   "fix": true,
   "lines": [
    "PORT",
    "BAX"
-  ]
+  ],
+  "ink": {
+   "at": [
+    1377.0,
+    1105.0
+   ],
+   "angle": 78.13,
+   "length": 38.3,
+   "thick": 40.6,
+   "box": [
+    1355,
+    1087,
+    1395,
+    1123
+   ],
+   "fit": {
+    "at": [
+     1377.0,
+     1107.8
+    ],
+    "angle": 0.0,
+    "size": 14.18
+   }
+  }
  },
  {
   "text": "GORN COVE",
@@ -617,13 +1209,43 @@
   ],
   "where": "left of the hut on the coast below Port Bax, two lines",
   "small": false,
-  "ok": true,
   "retype": true,
   "fix": true,
   "lines": [
    "GORN",
    "COVE"
-  ]
+  ],
+  "ink": {
+   "at": [
+    1270.4,
+    1203.2
+   ],
+   "angle": -18.74,
+   "length": 50.7,
+   "thick": 34.3,
+   "box": [
+    1247,
+    1186,
+    1292,
+    1219
+   ],
+   "fit": {
+    "at": [
+     1269.4,
+     1203.2
+    ],
+    "angle": 0.0,
+    "size": 15.86
+   }
+  },
+  "set": {
+   "at": [
+    1268.5,
+    1202.5
+   ],
+   "size": 15.3,
+   "angle": 0
+  }
  },
  {
   "text": "R Durenon",
@@ -635,9 +1257,23 @@
   ],
   "where": "on the river in the north of Durenor",
   "small": true,
-  "ok": true,
   "retype": true,
-  "height": 13
+  "height": 13,
+  "ink": {
+   "at": [
+    1653.0,
+    886.0
+   ],
+   "angle": -31.82,
+   "length": 76.8,
+   "thick": 14.8,
+   "box": [
+    1610,
+    855,
+    1705,
+    912
+   ]
+  }
  },
  {
   "text": "HAMMERDAL",
@@ -649,9 +1285,31 @@
   ],
   "where": "under the castle in the mountains, east",
   "small": false,
-  "ok": true,
   "retype": true,
-  "clip": true
+  "clip": true,
+  "ink": {
+   "at": [
+    1827.0,
+    1003.8
+   ],
+   "angle": -2.75,
+   "length": 121.0,
+   "thick": 72.1,
+   "box": [
+    1772,
+    973,
+    1884,
+    1034
+   ],
+   "fit": {
+    "at": [
+     1828.7,
+     999.6
+    ],
+    "angle": -13.25,
+    "size": 19.49
+   }
+  }
  },
  {
   "text": "Tarnalin",
@@ -663,10 +1321,39 @@
   ],
   "where": "on the road west of the castle in the eastern mountains, slanting up",
   "small": true,
-  "ok": true,
   "retype": true,
   "clip": true,
-  "height": 13
+  "ink": {
+   "at": [
+    1627.3,
+    1067.5
+   ],
+   "angle": -73.74,
+   "length": 82.5,
+   "thick": 81.6,
+   "box": [
+    1598,
+    1040,
+    1674,
+    1110
+   ],
+   "fit": {
+    "at": [
+     1647.1,
+     1072.7
+    ],
+    "angle": -73.74,
+    "size": 20.69
+   }
+  },
+  "set": {
+   "at": [
+    1632,
+    1077
+   ],
+   "size": 20.5,
+   "angle": -44
+  }
  },
  {
   "text": "Calencut",
@@ -678,9 +1365,38 @@
   ],
   "where": "on the road south of the castle in the eastern mountains, written upwards",
   "small": true,
-  "ok": true,
   "retype": true,
-  "height": 11
+  "ink": {
+   "at": [
+    1786.3,
+    1147.4
+   ],
+   "angle": -97.43,
+   "length": 89.9,
+   "thick": 31.2,
+   "box": [
+    1761,
+    1106,
+    1802,
+    1188
+   ],
+   "fit": {
+    "at": [
+     1782.5,
+     1146.5
+    ],
+    "angle": -97.43,
+    "size": 22.64
+   }
+  },
+  "set": {
+   "at": [
+    1784.1,
+    1151.4
+   ],
+   "size": 18,
+   "angle": -73
+  }
  },
  {
   "text": "R Hammerd",
@@ -692,10 +1408,38 @@
   ],
   "where": "on the river near Verlik, written upwards",
   "small": true,
-  "ok": true,
   "retype": true,
-  "height": 11,
-  "angle": -62
+  "ink": {
+   "at": [
+    1806.3,
+    1217.6
+   ],
+   "angle": -98.59,
+   "length": 80.1,
+   "thick": 49.7,
+   "box": [
+    1770,
+    1183,
+    1843,
+    1278
+   ],
+   "fit": {
+    "at": [
+     1798.0,
+     1218.3
+    ],
+    "angle": -98.59,
+    "size": 13.13
+   }
+  },
+  "set": {
+   "at": [
+    1805.8,
+    1232.1
+   ],
+   "size": 18,
+   "angle": -57.5
+  }
  },
  {
   "text": "Weldon",
@@ -707,14 +1451,39 @@
   ],
   "where": "at the right edge, written upwards, with an arrow",
   "small": true,
-  "ok": true,
   "retype": true,
   "clip": true,
-  "nudge": [
-   -4,
-   0
-  ],
-  "height": 13
+  "ink": {
+   "at": [
+    1939.6,
+    1111.3
+   ],
+   "angle": -88.31,
+   "length": 103.0,
+   "thick": 21.8,
+   "box": [
+    1930,
+    1064,
+    1946,
+    1160
+   ],
+   "fit": {
+    "at": [
+     1939.7,
+     1111.5
+    ],
+    "angle": -90.18,
+    "size": 25.82
+   }
+  },
+  "set": {
+   "at": [
+    1938,
+    1124.6
+   ],
+   "size": 16.9,
+   "angle": -88.3
+  }
  },
  {
   "text": "BLAVE",
@@ -726,13 +1495,39 @@
   ],
   "where": "right of the tower in the middle of Durenor",
   "small": false,
-  "ok": true,
   "retype": true,
   "clip": true,
-  "nudge": [
-   10,
-   0
-  ]
+  "ink": {
+   "at": [
+    1633.9,
+    1247.9
+   ],
+   "angle": -0.55,
+   "length": 70.0,
+   "thick": 30.4,
+   "box": [
+    1603,
+    1237,
+    1671,
+    1260
+   ],
+   "fit": {
+    "at": [
+     1635.4,
+     1247.9
+    ],
+    "angle": -0.55,
+    "size": 21.42
+   }
+  },
+  "set": {
+   "at": [
+    1636.3,
+    1245.6
+   ],
+   "size": 21.4,
+   "angle": -0.5
+  }
  },
  {
   "text": "VERLIK",
@@ -744,10 +1539,38 @@
   ],
   "where": "below the hut in the south-east, slanting",
   "small": false,
-  "ok": true,
   "retype": true,
-  "height": 15,
-  "angle": -55
+  "ink": {
+   "at": [
+    1716.5,
+    1329.9
+   ],
+   "angle": -48.53,
+   "length": 63.5,
+   "thick": 19.6,
+   "box": [
+    1684,
+    1292,
+    1766,
+    1377
+   ],
+   "fit": {
+    "at": [
+     1716.9,
+     1329.9
+    ],
+    "angle": -48.53,
+    "size": 19.15
+   }
+  },
+  "set": {
+   "at": [
+    1716.4,
+    1329.2
+   ],
+   "size": 19.2,
+   "angle": -48
+  }
  },
  {
   "text": "RYME",
@@ -759,8 +1582,30 @@
   ],
   "where": "right of the red-roofed town in the south of Durenor",
   "small": false,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1571.0,
+    1365.5
+   ],
+   "angle": 2.56,
+   "length": 50.6,
+   "thick": 16.0,
+   "box": [
+    1544,
+    1357,
+    1597,
+    1377
+   ],
+   "fit": {
+    "at": [
+     1570.5,
+     1365.8
+    ],
+    "angle": 2.56,
+    "size": 19.78
+   }
+  }
  },
  {
   "text": "THE RYMERIFT",
@@ -772,8 +1617,30 @@
   ],
   "where": "in the water at the bottom, south of Ryme",
   "small": false,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1572.6,
+    1444.9
+   ],
+   "angle": 3.33,
+   "length": 148.3,
+   "thick": 17.5,
+   "box": [
+    1495,
+    1434,
+    1651,
+    1459
+   ],
+   "fit": {
+    "at": [
+     1568.4,
+     1444.8
+    ],
+    "angle": 3.33,
+    "size": 20.53
+   }
+  }
  },
  {
   "text": "Rat Creek",
@@ -785,8 +1652,30 @@
   ],
   "where": "on the stream at the east edge of the Wildlands, written downwards",
   "small": true,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1298.3,
+    1392.0
+   ],
+   "angle": 82.49,
+   "length": 65.7,
+   "thick": 16.6,
+   "box": [
+    1280,
+    1343,
+    1320,
+    1432
+   ],
+   "fit": {
+    "at": [
+     1298.2,
+     1392.7
+    ],
+    "angle": 81.49,
+    "size": 14.45
+   }
+  }
  },
  {
   "text": "F Dorn",
@@ -798,8 +1687,30 @@
   ],
   "where": "on the river south of Ragadorn, written downwards",
   "small": true,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    995.4,
+    1240.1
+   ],
+   "angle": 72.78,
+   "length": 52.0,
+   "thick": 16.6,
+   "box": [
+    974,
+    1194,
+    1016,
+    1270
+   ],
+   "fit": {
+    "at": [
+     997.5,
+     1240.2
+    ],
+    "angle": 71.78,
+    "size": 16.24
+   }
+  }
  },
  {
   "text": "THE WILD-",
@@ -811,8 +1722,38 @@
   ],
   "where": "across the pale south, left part",
   "small": false,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    880.9,
+    1319.0
+   ],
+   "angle": 13.23,
+   "length": 179.1,
+   "thick": 28.0,
+   "box": [
+    794,
+    1285,
+    973,
+    1352
+   ],
+   "fit": {
+    "at": [
+     880.7,
+     1319.3
+    ],
+    "angle": 13.23,
+    "size": 33.36
+   }
+  },
+  "set": {
+   "at": [
+    888.4,
+    1321.1
+   ],
+   "size": 36.4,
+   "angle": 13.2
+  }
  },
  {
   "text": "LANDS",
@@ -824,8 +1765,30 @@
   ],
   "where": "across the pale south, right part",
   "small": false,
-  "ok": true,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1128.0,
+    1381.7
+   ],
+   "angle": 12.36,
+   "length": 114.8,
+   "thick": 27.3,
+   "box": [
+    1065,
+    1352,
+    1188,
+    1408
+   ],
+   "fit": {
+    "at": [
+     1131.3,
+     1381.9
+    ],
+    "angle": 13.36,
+    "size": 34.26
+   }
+  }
  },
  {
   "text": "THE PASS OF MOYTURA",
@@ -837,12 +1800,34 @@
   ],
   "where": "in the hills south of Holmgard, two lines",
   "small": false,
-  "ok": true,
   "retype": true,
   "lines": [
    "THE PASS OF",
    "MOYTURA"
-  ]
+  ],
+  "ink": {
+   "at": [
+    442.8,
+    1238.6
+   ],
+   "angle": 0.95,
+   "length": 102.0,
+   "thick": 31.0,
+   "box": [
+    389,
+    1224,
+    506,
+    1260
+   ],
+   "fit": {
+    "at": [
+     443.3,
+     1239.6
+    ],
+    "angle": 0.0,
+    "size": 16.51
+   }
+  }
  },
  {
   "text": "THE DURNCRAG MOUNTAINS",
@@ -854,12 +1839,42 @@
   ],
   "where": "bottom-left corner, slanting down, two lines",
   "small": false,
-  "ok": true,
   "retype": true,
   "lines": [
    "THE DURNCRAG",
    "MOUNTAINS"
   ],
-  "angle": 33
+  "ink": {
+   "at": [
+    206.4,
+    1327.9
+   ],
+   "angle": 21.28,
+   "length": 201.5,
+   "thick": 119.4,
+   "box": [
+    108,
+    1280,
+    292,
+    1413
+   ],
+   "fit": {
+    "at": [
+     205.5,
+     1336.5
+    ],
+    "angle": 0.0,
+    "size": 25.87
+   }
+  },
+  "set": {
+   "at": [
+    201.6,
+    1352.2
+   ],
+   "size": 26.4,
+   "angle": 33
+  },
+  "leading": 0.8
  }
 ]

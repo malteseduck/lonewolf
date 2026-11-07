@@ -179,8 +179,8 @@ GROUND = [
     ({'HILLS'}, 'The hills are soft rolling ground, each rise with a sunlit and a shaded side, not repeated bumps.'),
     ({'PLAIN', 'PLAINS', 'GRASSLAND'}, 'The plains are open grassland.'),
     ({'FOREST', 'FORESTS', 'CONIFEROUSFOREST', 'DECIDUOUSFOREST', 'WOODS'},
-     'The forests are deep, textured woods of trees of many sizes and shades, crowded into a rich canopy with light on '
-     'the tops and shadow beneath, not rows of identical trees, and only where the map draws trees.'),
+     'The forests are deep, textured woods of trees of many sizes and shades, crowded close yet each tree its own '
+     'outlined crown with a lit side and a shadow side, never a flat blob, and only where the map draws trees.'),
     ({'LAKE', 'LAKES'}, 'The lakes are dark blue water.'),
 ]
 DRAFT = '# DRAFT by tools/map_labels.py style'
@@ -321,15 +321,22 @@ def prompt(labels, lettered=False, style=None, lettering=None):
          'Repaint this fantasy map as a richly detailed hand-painted fantasy illustration on aged parchment: '
          'shaded, three-dimensional mountain ranges, dense individually painted forests, textured water with depth, '
          'and finer detail in the existing frame, panels and key. ')
-    # every map, whatever its style: printed symbols otherwise come back recoloured, flat
-    # (Books 12 and 23, round 1)
-    p += ('Paint the land with depth, texture and varied light, never flat clip-art: each mountain range one '
-          'continuous, sculpted mass of crags, ridges and cliffs with sunlit faces and deep shadow, each wood a '
-          'crowded canopy of trees of many sizes and shades with light on the tops and shadow beneath, and the hills '
-          'modelled rises with a sunlit and a shaded side, not rows of identical symbols. ')
-    # no ship or compass rose named here: Book 12 has neither, and naming them got it two ships
+    # every map, whatever its style: what made Book 1's round 8 the best repaint, as the owner asked for
+    # every map (richer, not more); printed symbols otherwise come back recoloured, flat (Books 12 and 23)
+    p += ('Paint it as a finely hand-inked and painted fantasy game map: every shape crisply outlined in dark ink, '
+          'filled with rich, deep, harmonious colour and soft painted shading, lit from one side, on warm aged '
+          'parchment. Give each ground the colour the map gives it, deepened and enriched, with gentle variation of '
+          'tone. Each mountain range is sculpted, overlapping peaks, each with a lit face and a deep shadow side, not '
+          'rows of identical symbols. In every wood, however crowded, each tree is its own crown with a lit side, a '
+          'shadow side and a dark outline, so the wood reads as many trees, never a flat blob of colour; lone trees '
+          'are small outlined trees. Hills are soft rises with a lit and a shaded side. Water deepens in tone away '
+          'from the shore, with fine white strokes of waves. Towns, castles and towers are crisp and outlined, with '
+          'stonework. Richer means finer detail in what is drawn, not more things: embellish the existing frame, '
+          'border, panels, title, key and compass with gilding, carved scrollwork, knotwork and fine patterning, '
+          'and add no map feature. ')
     p += ('Keep the layout: every coastline, river, road, island, mountain range, forest and town stays where it is, '
-         'and every panel and every object already drawn on the map stays in its place with its colours. '
+         'and every object already drawn on the map stays in its place. Every panel, emblem, banner and flag '
+         'keeps its own colours. '
          'Keep these labels in their present places and directions, spelled exactly as written here, letter for '
          'letter: ' + names(keep) + '.')
     if lettered and lettering:  # font.txt's second line (ADR 0004), e.g. a hand Gemini is not to tidy into type
@@ -343,8 +350,8 @@ def prompt(labels, lettered=False, style=None, lettering=None):
               'leave them that way, with no lettering of any kind there.')
     # woods may be fleshed out, new features may not (owner, ADR 0004)
     return p + (' Do not add, remove or rename any other label. The woods already drawn may be filled out, but add no '
-                'feature that is not on the original: no fruit, foliage, vines, scrolls or extra ornaments along the '
-                'edges or in the corners, no new castles, towers, towns, buildings, ruins, creatures or ships. '
+                'feature that is not on the original: no fruit, foliage, vines or scrolls added along the edges '
+                'or in the corners outside the existing frame, no new castles, towers, towns, buildings, ruins, creatures or ships. '
                 'Keep the burnt, torn parchment edge as it is. Every line stays clean and steady: '
                 'straight roads, frame lines and lettering, no warping or melting.\n')
 

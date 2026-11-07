@@ -24,7 +24,8 @@ Static files as `python -m http.server` serves them, from the project root, plus
                                       maps/<book>/'s labels.json, style.txt, labels-checked.txt, font.txt) with
                                       size and mtime, the Gemini rounds present, the job running, when book.js was written
     POST /api/map/<book>/run/<step>   run one step: upscale, draft, retype, missed, names, measure, erase, letter, prompt,
-                                      check, finish, import. ?round=n for prompt, check, finish;
+                                      check, finish, import. ?round=n for prompt (409 for a round with its
+                                      picture and prompt: a round's prompt is kept), check, finish;
                                       ?force=1 for draft over an existing list; ?width=n for finish;
                                       ?all=1 for finish to set every place name again when none is ticked reset.
                                       One job at a time (409 if busy). Returns {code, out}
@@ -367,6 +368,9 @@ def map_commands(step, book, q):
     if step == 'letter':
         return [PY + [t('map_letter.py'), f'{wk}/map-2k.png', labels, f'{wk}/map-2k-erased.jpg', '-', f'{wk}/map-2k-lettered.jpg'] + _fonts(book)], None, 0
     if step == 'prompt':
+        # a round's prompt is its record once Gemini has painted from it (owner: that is the point of rounds)
+        if _gemini_files(full, rnd) and os.path.isfile(os.path.join(_work(full), f'map-prompt-{rnd}.txt')):
+            return None, f'round {rnd} has its Gemini picture: its prompt is kept as made', 409
         return [PY + [t('map_labels.py'), 'prompt', labels, f'{wk}/map-prompt-{rnd}.txt', '--lettered']], None, 0
     if step in ('check', 'finish'):
         got = _gemini_files(full, rnd)

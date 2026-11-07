@@ -138,12 +138,17 @@ def test_prompt_lets_woods_be_filled_out_but_adds_no_new_feature():
     assert 'no new castles, towers, towns, buildings, ruins, creatures or ships' in p
 
 
-def test_prompt_asks_every_map_for_painted_ground_not_rows_of_symbols():
-    # Book 23's round 1: identical cones and triangles, the printed symbols recoloured
+def test_prompt_asks_every_map_for_round_8s_richness_without_new_features():
+    # what made Book 1's round 8 the best repaint: inked outlines, rich shading, trees with definition,
+    # the existing frame embellished; the map's own colours not frozen (rounds 10-11 came back as copies)
     for style in (None, 'Repaint this map of somewhere.'):
         p = map_labels.prompt([PLACE, CAPTION], True, style)
-        assert 'not rows of identical symbols' in p
-        assert p.index('not rows of identical symbols') < p.index('Keep the layout')
+        look = p.index('crisply outlined in dark ink')
+        assert look < p.index('Keep the layout')
+        assert 'never a flat blob of colour' in p and 'not rows of identical symbols' in p
+        assert 'embellish the existing frame' in p and 'add no map feature' in p
+        assert 'every object already drawn on the map stays in its place.' in p
+        assert 'with its colours' not in p
 
 
 
