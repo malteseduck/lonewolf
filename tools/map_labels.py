@@ -306,15 +306,28 @@ def names(labels):
     return ', '.join(out)
 
 
-def prompt(labels, lettered=False, style=None, lettering=None):
+EXAMPLE = ('The first picture is a printed fantasy map and the second is the same map repainted by hand. Repaint the '
+           'third picture, a different map, in exactly the same way: the same inked outlines, the same rich, deep '
+           'colour and painted shading, mountains, hills and trees painted in the same manner. '
+           'Keep this map\'s own colours, kinds of ground and '
+           'border pattern as drawn, with no ivy or ornament the example has and this map lacks. But paint it with '
+           'the example\'s depth and variety: lighter meadows, dark massed woods, deep shadows in the mountains, '
+           'dark ink outlines everywhere, and the frame, shields, panels and compass enriched as the example\'s '
+           'were. Keep every place, line and word where it is and as it is written, and add nothing: no new '
+           'buildings, creatures, ships or features.\n')
+# Book 6: round 3, with no word on colour, took Book 1's tan ground, grey peaks and ivy; round 4, told
+# "not its colours, ground, border or decoration", came back clean but plain (owner, 2026-11-07)
+
+
+def prompt(labels, lettered=False, style=None, lettering=None, example=False):
     """The repaint prompt, for the picture map_erase.py made. Labels marked "retype" are ones Gemini
     cannot spell reliably (Book 1: the small hand-lettered names, and a few it got wrong in every
     round); they are erased from its picture and lettered afterwards, so the prompt only asks it not
-    to letter the bare places. Book 1's rounds behind the wording: docs/reference/map-upscale.md."""
-    # lettered: the "retype" labels were erased and set again in clean type (map_letter.py with -),
-    # so Gemini gets every label to copy, and copies the clean type far better than the scan's hand
-    keep = labels if lettered else [lab for lab in labels if not lab.get('retype')]
-    erased = [] if lettered else [lab for lab in labels if lab.get('retype')]
+    to letter the bare places. Book 1's rounds behind the wording: docs/reference/map-upscale.md.
+    example: Book 1's lettered input and round 8 go to Gemini first, as a before and after, and the prompt
+    points at them instead of describing the look (owner, 2026-11-07, ADR 0004)."""
+    if example:  # basic guidance only: no label list, no style (owner: the close round had neither)
+        return EXAMPLE
     # style: the book's own look, from style.txt beside the list. The default asks for forests and
     # water, and Gemini painted Book 3's snowfields as green woodland with it
     p = ((style.strip() + ' ') if style else
@@ -337,6 +350,15 @@ def prompt(labels, lettered=False, style=None, lettering=None):
           'the original, outlined, with stonework.Richer means finer detail in what is drawn, not more things: embellish the existing frame, '
           'border, panels, title, key and compass with gilding, carved scrollwork, knotwork and fine patterning, '
           'and add no map feature. ')
+    return _rules(p, labels, lettered, lettering)
+
+
+def _rules(p, labels, lettered, lettering):
+    """What every prompt ends with, after the look: the layout, the labels, nothing added."""
+    # lettered: the "retype" labels were erased and set again in clean type (map_letter.py with -),
+    # so Gemini gets every label to copy, and copies the clean type far better than the scan's hand
+    keep = labels if lettered else [lab for lab in labels if not lab.get('retype')]
+    erased = [] if lettered else [lab for lab in labels if lab.get('retype')]
     p += ('Keep the layout: every coastline, river, road, island, mountain range, forest and town stays where it is, '
          'and every object already drawn on the map stays in its place. Every panel, emblem, banner and flag '
          'keeps its own colours. '
@@ -407,7 +429,7 @@ def main():
         font = font.read_text(encoding='utf-8').splitlines() if font.exists() else []
         lettering = font[1].strip() if len(font) > 1 and font[1].strip() else None
         Path(b).write_text(prompt(json.loads(Path(a).read_text(encoding='utf-8')), '--lettered' in sys.argv, style,
-                                  lettering), encoding='utf-8')
+                                  lettering, '--example' in sys.argv), encoding='utf-8')
     else:
         sys.exit('draft, retype, style, check or prompt')
 

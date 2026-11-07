@@ -82,34 +82,10 @@
   "where": "top-left panel, under the purple moon shield, two lines",
   "small": false,
   "retype": false,
-  "fix": true,
   "lines": [
    "THE MAGICIAN'S",
    "GUILD OF TORAN"
-  ],
-  "ink": {
-   "at": [
-    383.6,
-    495.9
-   ],
-   "angle": 0.71,
-   "length": 158.9,
-   "thick": 35.5,
-   "box": [
-    300,
-    476,
-    469,
-    517
-   ],
-   "fit": {
-    "at": [
-     386.4,
-     495.9
-    ],
-    "angle": 0.0,
-    "size": 18.73
-   }
-  }
+  ]
  },
  {
   "text": "WAR BANNER OF THE KAI LORDS OF SOMMERLUND",

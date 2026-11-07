@@ -17,7 +17,8 @@ size, angle} places the type by hand (the map editor's text frame): centre of it
 map-2k px, reading angle in degrees; it overrides all of the above. Mixed-case labels (the hand-lettered
 names) get --hand, capitals get --caps, set larger and heavier than the scan's ink measures
 (SCALE, BOLD): at the scan's size they looked faint beside Gemini's own labels (owner, Book 1).
-Each name is ringed in white: a hard outline on Gemini's input, a soft glow at Finish (halo()).
+Each name is ringed in white: a hard outline on Gemini's input, a soft glow at Finish (halo());
+--no-halo sets plain type, as Book 1's round 8 input had it.
 Before lettering, Gemini's own ink is erased from "fix" boxes, any ghost letters in "retype" boxes,
 and anything in a --mark box (a stray colon); its sparkle watermark, bottom right, always.
 --only n,n,... limits the erasing and lettering to those labels (Book 1, round 8: Gemini copied
@@ -360,6 +361,7 @@ def main():
     ap.add_argument('--hand', default='Cabin.ttf|SemiBold')
     ap.add_argument('--caps', default='Cabin.ttf|SemiBold')
     ap.add_argument('--sheet', default='')  # where the sheet goes; map-4k.webp's goes to work/, not beside it
+    ap.add_argument('--no-halo', action='store_true')  # plain type, as Book 1's round 8 input had (a trial)
     a = ap.parse_args()
     F = read(a.faithful)
     fh, fw = F.shape[:2]
@@ -400,7 +402,7 @@ def main():
 
     global K, WIPE, HALO
     K, WIPE = k, a.warp != '-'
-    HALO = 'glow' if WIPE else 'outline'
+    HALO = None if a.no_halo else 'glow' if WIPE else 'outline'
     scan_ink = LabelInk(F, labels)  # the same ink map_erase.py takes out
     base = Image.fromarray(cv2.cvtColor(A, cv2.COLOR_BGR2RGB))
     global PHASE

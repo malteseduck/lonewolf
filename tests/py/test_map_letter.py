@@ -362,6 +362,16 @@ def test_main_outlines_gemini_input_and_glows_the_finish_every_halo_before_any_t
         assert {h for _, h in seen} == {kind}
 
 
+def test_no_halo_letters_gemini_input_plain_as_round_8_had_it(monkeypatch, files):
+    seen = []
+    monkeypatch.setattr(map_letter, 'WIDTH', 400)
+    monkeypatch.setattr(map_letter, 'letter', lambda base, lab, *a: seen.append(map_letter.HALO))
+    monkeypatch.setattr(sys, 'argv', ['map_letter.py', str(files / 'scan.png'), str(files / 'labels.json'),
+                                      str(files / 'rep.png'), '-', str(files / 'out.png'), '--no-halo'])
+    map_letter.main()
+    assert seen and set(seen) == {None}
+
+
 def test_main_writes_the_sheet_beside_the_output_or_where_told(monkeypatch, files):
     run_main(monkeypatch, files)
     assert (files / 'out-sheet.png').exists()

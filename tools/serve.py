@@ -36,8 +36,6 @@ Static files as `python -m http.server` serves them, from the project root, plus
     POST /api/map/<book>/clear-rounds every Gemini round gone (work/map-gemini-*, map-check-*/, and the
                                       prompts, maps/<book>/rounds/prompt-*),
                                       so the next is round 1 again; map-4k.webp stays. 409 while a job runs
-    POST /api/map/<book>/copy-image   put work/map-2k-lettered.jpg on the Windows clipboard as a picture
-                                      (the desktop app's browser pane refuses pictures on the clipboard)
 
     The import dashboard, tools/admin/ (docs/reference/dashboard.md). Local requests only, like the map's:
     GET  /api/admin/status            every book's steps: tools/book_status.py's all_status(), and the job running
@@ -240,28 +238,6 @@ def clear_rounds(d):
     return n
 
 
-# Windows only. Both a bitmap and a "PNG" entry: Chrome pastes the PNG, older apps the bitmap.
-_CLIP_PS = r'''Add-Type -AssemblyName System.Windows.Forms, System.Drawing
-$img = [System.Drawing.Image]::FromFile($env:LW_CLIP)
-$png = New-Object System.IO.MemoryStream
-$img.Save($png, [System.Drawing.Imaging.ImageFormat]::Png)
-$d = New-Object System.Windows.Forms.DataObject
-$d.SetImage($img); $d.SetData('PNG', $false, $png)
-[System.Windows.Forms.Clipboard]::SetDataObject($d, $true)'''
-
-
-def _clipboard_image(path):
-    """Put the picture at `path` on the Windows clipboard; None, or what went wrong."""
-    if os.name != 'nt':
-        return 'the clipboard copy works on Windows only'
-    try:
-        p = subprocess.run(['powershell', '-NoProfile', '-STA', '-Command', _CLIP_PS], env={**os.environ, 'LW_CLIP': path},
-                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=30)
-    except (OSError, subprocess.TimeoutExpired) as e:
-        return str(e)
-    return None if p.returncode == 0 else p.stdout.decode('utf-8', 'replace').strip()[-300:] or 'powershell failed'
-
-
 def map_books():
     """Every book folder, for the editor's picker: code, number and title (from book.js's head),
     and how far its map has got."""
@@ -343,6 +319,18 @@ def _exec(argv, timeout):
         return -1, f'could not start: {e}'
 
 
+# Book 1's lettered input and its round 8, the best repaint: shown to Gemini as a before and after with every
+# other map, which got nearer that look than any wording (owner, 2026-11-07, ADR 0004)
+EXAMPLE_BOOK = '01fftd'
+
+
+def _example():
+    # JPEGs, as each map's own lettered input is: map-2k.png (4 MB) is too big to paste (owner);
+    # the before is the lettered picture round 8 was painted from, like the map that follows it
+    w = os.path.join(ROOT, 'data', 'projectaon', EXAMPLE_BOOK, 'work')
+    return {'before': os.path.join(w, 'map-2k-lettered.jpg'), 'after': os.path.join(w, 'map-gemini-8.jpg')}
+
+
 def map_commands(step, book, q):
     """(argv lists a step runs in order, None, 0), or (None, error, http code)."""
     d = f'data/projectaon/{book}'
@@ -392,7 +380,8 @@ def map_commands(step, book, q):
         if _gemini_files(full, rnd) and os.path.isfile(os.path.join(_rounds_dir(book), f'prompt-{rnd}.txt')):
             return None, f'round {rnd} has its Gemini picture: its prompt is kept as made', 409
         os.makedirs(_rounds_dir(book), exist_ok=True)
-        return [PY + [t('map_labels.py'), 'prompt', labels, f'maps/{book}/rounds/prompt-{rnd}.txt', '--lettered']], None, 0
+        ex = ['--example'] if book != EXAMPLE_BOOK and all(map(os.path.isfile, _example().values())) else []
+        return [PY + [t('map_labels.py'), 'prompt', labels, f'maps/{book}/rounds/prompt-{rnd}.txt', '--lettered'] + ex], None, 0
     if step in ('check', 'finish'):
         got = _gemini_files(full, rnd)
         if not got:
@@ -723,12 +712,6 @@ class Handler(SimpleHTTPRequestHandler):
             finally:
                 _job_lock.release()
             return self._json(200, {**map_state(d), 'cleared': n})
-        if method == 'POST' and parts[1:] == ['copy-image']:
-            f = os.path.join(_work(d), 'map-2k-lettered.jpg')
-            if not os.path.isfile(f):
-                return self._json(404, {'error': 'no map-2k-lettered.jpg'})
-            err = _clipboard_image(f)
-            return self._json(500, {'error': err}) if err else self._json(200, {'copied': 'map-2k-lettered.jpg'})
         self.close_connection = True
         return self._json(404, {'error': 'nothing here'})
 

@@ -514,6 +514,18 @@ def test_a_round_with_its_picture_keeps_its_prompt(root):
     assert serve.map_commands('prompt', '01fftd', {'round': ['8']})[0]
 
 
+def test_a_prompt_shows_book_1s_round_8_as_an_example_once_it_is_on_disk(root):
+    # owner, 2026-11-07 (ADR 0004): the pair attached beside the map; not on Book 1 itself
+    book(root, '06tkot')
+    cmd = lambda code: serve.map_commands('prompt', code, {'round': ['4']})[0][0]
+    assert '--example' not in cmd('06tkot')
+    ex = book(root) / 'work'
+    write(str(ex / 'map-2k-lettered.jpg'), PNG)  # round 8's own input, not the 4 MB map-2k.png (owner)
+    write(str(ex / 'map-gemini-8.jpg'), PNG)
+    assert cmd('06tkot')[-1] == '--example'
+    assert '--example' not in cmd('01fftd')
+
+
 def post_image(path, body, kind='image/png'):
     return jsend('POST', path, body, headers={'Content-Type': kind} if kind else None)
 
@@ -523,19 +535,6 @@ def test_map_upload_saves_a_round_image(root):
     assert post_image('/api/map/01fftd/gemini/3', PNG) == (200, {'saved': 'map-gemini-3.png', 'size': len(PNG)})
     assert (d / 'work' / 'map-gemini-3.png').read_bytes() == PNG
     assert post_image('/api/map/01fftd/gemini/4', b'RIFF' + b'0' * 10, 'image/webp')[1]['saved'] == 'map-gemini-4.webp'
-
-
-def test_map_copy_image_puts_the_lettered_map_on_the_clipboard(root, monkeypatch):
-    # the desktop app's browser pane refuses pictures on the clipboard, so the server puts it there
-    d = book(root)
-    got = []
-    monkeypatch.setattr(serve, '_clipboard_image', lambda p: got.append(p) or None)
-    assert jsend('POST', '/api/map/01fftd/copy-image') == (404, {'error': 'no map-2k-lettered.jpg'})
-    write(str(d / 'work' / 'map-2k-lettered.jpg'), 'x')
-    assert jsend('POST', '/api/map/01fftd/copy-image') == (200, {'copied': 'map-2k-lettered.jpg'})
-    assert got == [str(d / 'work' / 'map-2k-lettered.jpg')]
-    monkeypatch.setattr(serve, '_clipboard_image', lambda p: 'no clipboard here')
-    assert jsend('POST', '/api/map/01fftd/copy-image') == (500, {'error': 'no clipboard here'})
 
 
 def test_map_upload_refuses_a_wrong_type(root):

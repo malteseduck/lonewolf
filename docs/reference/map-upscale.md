@@ -212,6 +212,7 @@ Commands run from the project root as
    Each name is ringed by a hard white outline of 1-2 px (`OUTLINE`, a share of its line height), so Gemini
    sees it whole against the map's lines; at Finish, a soft white glow instead (`GLOW`, `GLOW_PEAK`).
    Every halo is drawn before any type, so one never covers a near name (ADR 0004, 2026-11-02).
+   `--no-halo` sets plain type, as Book 1's round 8 input had it (a trial, 2026-11-07).
    Each name's angle and size are first measured from the scan's ink (the angle from OCR's `slant` where the ink is a little off it, step 2; the size fitted to the ink's length).
    **The fit** (`map_fit.py`, ADR 0004, 2026-11-06) then lays the type over the printed name: a pattern search moves,
    turns and scales it while the type's pixels and the name's ink come closer (each one's mean distance to the
@@ -266,8 +267,17 @@ Commands run from the project root as
    and flags are held to their colours: "every object ... with its colours" (Book 1's rounds 10
    and 11, 2026-11-06) got near copies of the input. The style draft's stock sentences for mountains,
    hills and forests ask for the same.
-6. **The owner runs it** in a new Gemini chat with `map-2k-lettered.jpg` attached (about 1180 px
-   out) and saves `map-gemini-<n>.jpg`.
+   On every map but Book 1 the prompt starts instead from an example pair (`--example`, which the
+   editor passes once Book 1's `work/map-2k-lettered.jpg`, round 8's own input, and
+   `work/map-gemini-8.jpg` are on disk; JPEGs, as the 4 MB `map-2k.png` is too big to paste): it points
+   at the first two pictures as a before and after, asks for the same way of painting, keeping the
+   map's own colours, ground and border but with the example's depth and variety (light meadows, dark
+   massed woods, deep mountain shadow, the frame enriched; Book 6's round 4, told "not its colours",
+   came back plain), and to keep every place, line and word and add nothing. That is all: no label
+   list, no `style.txt`, no description of the look (ADR 0004, 2026-11-07).
+6. **The owner runs it** in a new Gemini chat (Pro) with, in order, Book 1's `map-2k-lettered.jpg`,
+   Book 1's round 8 and this map's `map-2k-lettered.jpg` attached (step 7's thumbnails 1 to 3)
+   (about 1180 px out, 1024 px since November) and saves `map-gemini-<n>.jpg`.
 7. **Check**: `map_check.py $W/map-2k.png $W/map-gemini-<n>.jpg $W/map-check-<n>` (alignment,
    colour and shape flags), then
    `map_labels.py check $L $W/map-check-<n>/aligned.png $W/map-2k-lettered.jpg`,
@@ -295,9 +305,10 @@ Commands run from the project root as
 ## Tools
 
 - `tools/map-editor.html` with `tools/serve.py`: the page that runs all of the above, opened from the dashboard only (endpoints in
-  serve.py's docstring: `/api/map/<book>/state`, `run/<step>`, `gemini/<n>`, `copy-image`, `clear-rounds`; local requests only).
-  Copy image (PNG) tries the browser's clipboard first; the desktop app's browser pane refuses any
-  picture there, so `copy-image` has the server put `map-2k-lettered.jpg` on the Windows clipboard.
+  serve.py's docstring: `/api/map/<book>/state`, `run/<step>`, `gemini/<n>`, `clear-rounds`; local requests only).
+  Step 7 shows the pictures for Gemini as numbered thumbnails (the example before and after, then
+  the map), each dragged in or right-click copied as its JPEG: a copy button put a re-encoded PNG of
+  several MB on the clipboard, too big to paste (owner, 2026-11-07).
   Step 7's Clear rounds (`clear-rounds`, after a confirm) deletes every round's picture, prompt and
   check folder (the prompts stay in git history) and unticks reset, so the next round is 1 again; `map-4k.webp` stays. Rounds are worth
   keeping only when each is to be kept (owner, 2026-11-06).

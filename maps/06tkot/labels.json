@@ -811,32 +811,6 @@
   "retype": false
  },
  {
-  "text": "\u2606",
-  "box": [
-   103,
-   714,
-   336,
-   947
-  ],
-  "conf": 0.91,
-  "retype": true,
-  "ink": {
-   "at": [
-    234.7,
-    867.9
-   ],
-   "angle": -76.57,
-   "length": 196.2,
-   "thick": 237.7,
-   "box": [
-    103,
-    714,
-    336,
-    947
-   ]
-  }
- },
- {
   "text": "ELDENORA",
   "box": [
    367,
@@ -1817,7 +1791,7 @@
    1425
   ],
   "conf": 0.9,
-  "retype": true,
+  "retype": false,
   "spread": true,
   "ink": {
    "at": [
@@ -1844,7 +1818,7 @@
    1447
   ],
   "conf": 1,
-  "retype": true,
+  "retype": false,
   "spread": true,
   "ink": {
    "at": [
@@ -1871,7 +1845,7 @@
    1474
   ],
   "conf": 1,
-  "retype": true,
+  "retype": false,
   "spread": true,
   "ink": {
    "at": [
