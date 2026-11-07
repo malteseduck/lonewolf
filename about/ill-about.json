@@ -766,7 +766,7 @@
  "20tcon/small2.png": "The gold ring of the Kunae, retrieved from the severed fingers of its right hand (section 311)",
  "20tcon/small8.png": "A small picture in section 314, as Lone Wolf paddles a sea-going canoe through a thick sea fog; the text does not say what it shows",
  "20tcon/ill20.png": "A swarm of Muntaag, insects with whirling tail-blades, diving in a long line at Lone Wolf's head (section 318; fought there and at 212)",
- "art/plates/13tplor/high-priest.webp": "A fight picture of its own (no source in art/sources.json) for Book 13's High Priest, a high-ranking Cener druid who comes through a secret door and turns a dagger into a spike of power (sections 126, 156, 212)",
+ "assets/plates/13tplor/high-priest.webp": "A fight picture of its own (no source in art/sources.json) for Book 13's High Priest, a high-ranking Cener druid who comes through a secret door and turns a dagger into a spike of power (sections 126, 156, 212)",
  "art/plates/13tplor/2-ruel-giganite.webp": "A fight picture of its own (no source in art/sources.json) for Book 13's pairs and trios of Ruel Giganites, the huge cat-headed serpents that rise from the pits on the plateau (sections 38, 80, 148)",
  "art/plates/13tplor/vazhag-archer.webp": "A fight picture of its own (no source in art/sources.json) for Book 13's Vazhag archer, one of the Ceners' rat-men shooting from the walls and galleries of Mogaruith",
  "art/plates/10tdot/lite-death-knights.webp": "The owner's picture of armoured, skull-helmed Drakkarim Death Knights: in Book 10 the squad of elite Death Knights guarding the doors to the Lorestones (sections 109, 320); in Book 15 the Death Knights who climb the tower stairs to trap Lone Wolf (section 254)",
@@ -1020,5 +1020,13 @@
  "21votm/ill18.png": "Sergeant Dryan of the Kirlundin Marines, fair-haired and smiling, saluting in a surcoat with an anchor badge over mail, in the crew's hold among the hammocks (section 311)",
  "21votm/ill19.png": "The village elder in a dark hooded robe with a crooked staff, walking out through the stockade gate with two spearmen behind him (section 332)",
  "21votm/ill20.png": "The turbaned toll collector in flowing robes, shouting and brandishing a curved sword on the bridge into the mountain village (section 338)",
- "art/plates/03tcok/doomwolf-1.webp": "The owner's AI picture of a Doomwolf: a huge shaggy wolf with bristling fur, a bushy raised tail and slavering bared fangs, lunging forward with claws spread: Book 3's Doomwolves, the guard beasts of Vonotar's fortress (sections 89 and 343)"
+ "art/plates/03tcok/doomwolf-1.webp": "The owner's AI picture of a Doomwolf: a huge shaggy wolf with bristling fur, a bushy raised tail and slavering bared fangs, lunging forward with claws spread: Book 3's Doomwolves, the guard beasts of Vonotar's fortress (sections 89 and 343)",
+ "assets/plates/05sots/drakkarim.webp": "Our AI picture of two Drakkarim side by side in skull-visored helms and scale armour, swords raised, one behind a shield, advancing: Book 5's Drakkarim",
+ "assets/plates/10tdot/drakkarim-garrison.webp": "Our AI picture of a squad of Drakkarim in crested helms behind round shields, swords and axes up, striding up a ruined street: Book 10's Drakkarim garrison",
+ "assets/plates/01fftd/vordak.webp": "Our AI picture of a Vordak, a skull-faced undead in a ragged hooded robe, swinging a spiked mace in a forest, a raven at its hand: Book 1's Vordak",
+ "assets/plates/05sots/vordak.webp": "Our AI picture of a Vordak, a hooded skeletal undead in tattered robes, lunging with a spiked mace among bare trees: Book 5's Vordak",
+ "art/plates/08tjoh/vordaks.webp": "The owner's picture of three hooded, skull-faced Vordaks in long robes, standing together with tall staves trailing smoke: Book 8's Vordaks",
+ "art/plates/14tcok/3-vordaks.webp": "The owner's picture of three skull-headed Vordaks in ragged robes over armour, spiked maces in hand: Book 14's three Vordaks who rush in after their joint mind-blast",
+ "art/plates/14tcok/3-vordak-in-psychic-shock.webp": "The owner's picture of three skull-headed Vordaks in ragged robes over armour, clutching their heads and reeling, maces dropped: Book 14's three Vordaks struck by their own rebounding mind-blast",
+ "art/plates/02fotw/giaks.webp": "The owner's picture of three snarling, fanged Giaks in iron helmets, crouched and charging with blades, arrows flying past: Book 2's Giaks"
 }

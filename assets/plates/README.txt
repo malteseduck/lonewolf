@@ -320,3 +320,59 @@ hounds-stag-wellcome.jpg
 12tmod/darklord-kraagensk-l-without-helshezag.webp
   Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
   no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-04.
+
+12tmod/darklord-taktaal-wounded.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-05.
+
+13tplor/plaghatar.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-05.
+
+13tplor/pit-agarashi.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-05.
+
+13tplor/high-priest.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-05.
+
+13tplor/cener-druid.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-05.
+
+13tplor/cener-druid-prone.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-05.
+
+13tplor/defender.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-05.
+
+13tplor/brother-croumah-with-power-rod.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-05.
+
+13tplor/stragnah.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-05.
+
+13tplor/vazhag-pack.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-05.
+
+13tplor/fat-vazhag.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-05.
+
+13tplor/vazhag.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-05.
+
+13tplor/vazhag-patrol.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-05.
+
+14tcok/vodok.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-05.

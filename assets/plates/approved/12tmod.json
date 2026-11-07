@@ -49,7 +49,7 @@
   "213/0": {"name":"tu8tan","plate":{"src":"data/projectaon/09tcof/ill13.png","crop":[0.12,0.08,0.7,0.6]}},
   "224/0": {"name":"w73s0h","plate":{"src":"data/projectaon/12tmod/ill1.png"}},
   "226/0": {"name":"10phlc1","plate":{"src":"data/projectaon/12tmod/ill13.png"}},
-  "230/0": {"name":"3l3q85","plate":{"src":"art/plates/12tmod/darklord-taktaal-wounded.webp","crop":[0.0585,0.0742,0.7789,0.8865],"levels":[30,217]}},
+  "230/0": {"name":"3l3q85","plate":{"src":"assets/plates/12tmod/darklord-taktaal-wounded.webp"}},
   "231/0": {"name":"yefm6s","plate":{"src":"data/projectaon/10tdot/ill5.png"}},
   "239/0": {"name":"1xysgxw","plate":{"src":"data/projectaon/12tmod/ill8.png","crop":[0,0.56,0.75,0.42]}},
   "247/0": {"name":"1n60d1w","plate":{"src":"art/plates/12tmod/giak-sentries.webp","crop":[0,0,0.9906,0.8933],"levels":[38,151]}},
