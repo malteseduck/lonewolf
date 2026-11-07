@@ -73,3 +73,12 @@ describe('pictureFor', () => {
     expect(p).not.toContain('scenes 09sb');
   });
 });
+
+describe('mapReview', () => {
+  const p = PROMPTS.mapReview(b);
+  it('says the names are already fitted, and a hand placement only where the sheet flags it', () => {
+    expect(p).toMatch(/already fitted/i);
+    expect(p).toMatch(/only where .*flags it `off` or `size`/);
+    expect(p).toMatch(/overrides the fit/i);
+  });
+});

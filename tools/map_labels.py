@@ -174,11 +174,13 @@ GROUND = [
     ({'SALTLAKE', 'SALTLAKES', 'SALTFLATS'}, 'The salt lakes are pale white crusted flats, not blue water.'),
     ({'OASIS', 'OASES'}, 'The oases are small green pools with a few palms in the sand, as drawn.'),
     ({'ROCKSPIRES', 'SPIRES'}, 'The rock spires are tall, sculpted pinnacles of bare rock, as drawn.'),
-    ({'MOUNTAINS', 'MOUNTAIN', 'MOUNTAINRANGE'}, 'The mountains are shaded, three-dimensional rocky ranges.'),
-    ({'HILLS'}, 'The hills are soft rolling ground with shaded rises.'),
+    ({'MOUNTAINS', 'MOUNTAIN', 'MOUNTAINRANGE'}, 'The mountains are continuous, sculpted, three-dimensional rocky ranges with jagged ridges, sunlit faces and deep '
+     'shadow, not rows of identical triangles.'),
+    ({'HILLS'}, 'The hills are soft rolling ground, each rise with a sunlit and a shaded side, not repeated bumps.'),
     ({'PLAIN', 'PLAINS', 'GRASSLAND'}, 'The plains are open grassland.'),
     ({'FOREST', 'FORESTS', 'CONIFEROUSFOREST', 'DECIDUOUSFOREST', 'WOODS'},
-     'The forests are dense, individually painted trees, only where the map draws trees.'),
+     'The forests are deep, textured woods of trees of many sizes and shades, crowded into a rich canopy with light on '
+     'the tops and shadow beneath, not rows of identical trees, and only where the map draws trees.'),
     ({'LAKE', 'LAKES'}, 'The lakes are dark blue water.'),
 ]
 DRAFT = '# DRAFT by tools/map_labels.py style'
@@ -319,6 +321,12 @@ def prompt(labels, lettered=False, style=None, lettering=None):
          'Repaint this fantasy map as a richly detailed hand-painted fantasy illustration on aged parchment: '
          'shaded, three-dimensional mountain ranges, dense individually painted forests, textured water with depth, '
          'and finer detail in the existing frame, panels and key. ')
+    # every map, whatever its style: printed symbols otherwise come back recoloured, flat
+    # (Books 12 and 23, round 1)
+    p += ('Paint the land with depth, texture and varied light, never flat clip-art: each mountain range one '
+          'continuous, sculpted mass of crags, ridges and cliffs with sunlit faces and deep shadow, each wood a '
+          'crowded canopy of trees of many sizes and shades with light on the tops and shadow beneath, and the hills '
+          'modelled rises with a sunlit and a shaded side, not rows of identical symbols. ')
     # no ship or compass rose named here: Book 12 has neither, and naming them got it two ships
     p += ('Keep the layout: every coastline, river, road, island, mountain range, forest and town stays where it is, '
          'and every panel and every object already drawn on the map stays in its place with its colours. '

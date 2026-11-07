@@ -257,7 +257,10 @@ Commands run from the project root as
    12 has neither, and naming them got it two ships in round 1.
    A map drawn as rows of small identical mountain symbols comes back as those symbols recoloured
    (Book 12, round 1): its `style.txt` asks for continuous sculpted ranges over the same ground
-   instead, and names what the map does not have.
+   instead, and names what the map does not have. Since Book 23's round 1 (rows of identical cones
+   and triangles), every prompt, after the style, asks for land painted with depth and light: each
+   range one sculpted mass, each wood a varied canopy, hills modelled, "not rows of identical
+   symbols"; the style draft's stock sentences for mountains, hills and forests say the same.
 6. **The owner runs it** in a new Gemini chat with `map-2k-lettered.jpg` attached (about 1180 px
    out) and saves `map-gemini-<n>.jpg`.
 7. **Check**: `map_check.py $W/map-2k.png $W/map-gemini-<n>.jpg $W/map-check-<n>` (alignment,
@@ -287,9 +290,12 @@ Commands run from the project root as
 ## Tools
 
 - `tools/map-editor.html` with `tools/serve.py`: the page that runs all of the above, opened from the dashboard only (endpoints in
-  serve.py's docstring: `/api/map/<book>/state`, `run/<step>`, `gemini/<n>`, `copy-image`; local requests only).
+  serve.py's docstring: `/api/map/<book>/state`, `run/<step>`, `gemini/<n>`, `copy-image`, `clear-rounds`; local requests only).
   Copy image (PNG) tries the browser's clipboard first; the desktop app's browser pane refuses any
   picture there, so `copy-image` has the server put `map-2k-lettered.jpg` on the Windows clipboard.
+  Step 7's Clear rounds (`clear-rounds`, after a confirm) deletes every round's picture, prompt and
+  check folder and unticks reset, so the next round is 1 again; `map-4k.webp` stays. Rounds are worth
+  keeping only when each is to be kept (owner, 2026-11-06).
   Its colours are the dashboard's (2026-10-08); the label outlines stay bright to read over any map.
   Its steps and the dashboard's jobs share one lock: one runs at a time.
 - `tools/map_upscale.py`: Real-ESRGAN (`tools/realesrgan/`, the v0.2.5.0 Windows build, git-ignored)

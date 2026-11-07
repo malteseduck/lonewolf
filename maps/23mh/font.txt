@@ -1,0 +1,2 @@
+Cabin.ttf|SemiBold
+set in clean, rounded sans-serif type of even weight, in capitals and lower case

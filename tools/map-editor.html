@@ -1281,7 +1281,8 @@ ${runBtn('Find missed labels', 'data-do="missed"' + noRun, 'Saves, then asks Cla
       h += `<div class="row">${roundInput()}<span class="note">next free is ${nextFree()}${rf ? `; <span class="bad">map-gemini-${rd} exists</span>` : ''}</span>
 <button data-run data-do="copyprompt"${noRun}${tip('Copy prompt', 'Copies the Gemini prompt for this round (writing it first if needed), to paste into a new Gemini chat')}>Copy prompt${have ? '' : ' (writes it first)'}</button>
 <button data-do="copyimage"${tip('Copy image (PNG)', 'Copies the lettered picture as a PNG, to paste into the same Gemini chat')}>Copy image (PNG)</button>
-<a href="https://gemini.google.com/app" target="_blank" rel="noopener">Open Gemini</a></div>
+<a href="https://gemini.google.com/app" target="_blank" rel="noopener">Open Gemini</a>
+<button data-do="clearrounds"${S.rounds.length || Object.keys(files).some(k => /^map-(prompt|check)-\d+/.test(k)) ? '' : ' disabled'}${tip('Clear rounds', 'Deletes every Gemini round (its picture, prompt and check) and unticks reset, so the next round is round 1 again; the finished map-4k.webp stays')}>Clear rounds</button></div>
 <div class="row">${files['map-2k-lettered.jpg'] ? `<img class="thumb" id="thumb" src="${at('map-2k-lettered.jpg')}?v=${mt('map-2k-lettered.jpg')}" draggable="true"${tip('Thumbnail', 'Drag this JPEG straight into the Gemini tab. On Book 1 a 2048 px PNG with a long prompt was once refused and a roughly 1 MB JPEG went through, so drag the JPEG if a paste is refused')}>` : '<span class="bad">no map-2k-lettered.jpg yet: step 6</span>'}
 <span class="note"><b>Receive</b>: Ctrl+V Gemini's image anywhere here, drop the file, or</span> <input type="file" id="pick" accept="image/png,image/jpeg,image/webp"${tip('Receive', `Gemini's picture comes back by paste, drop or this file picker, saved as map-gemini-${rd}.*`)}></div>
 ${received ? `<div class="row">Received ${esc(received)}. <button class="primary" data-do="gotocheck">Go to Check</button></div>` : ''}`;
@@ -1339,6 +1340,7 @@ $('panel').onclick = async e => {
   if (what === 'checked' || what === 'unchecked') return markChecked(what === 'checked');
   if (busy) return;
   if (what === 'copyprompt') return copyPrompt(b);
+  if (what === 'clearrounds') return clearRounds();
   await doStep(what, b);
 };
 
@@ -1369,6 +1371,21 @@ function tickCheck(i) {
   const tk = l.retype ? 'reset' : 'fix';
   push(); if (l[tk]) delete l[tk]; else l[tk] = true;
   select(i, true); afterEdit();
+}
+
+// step 7: back to round 1 (owner: more rounds only help when each is to be kept). Reset ticks belong
+// to the round just checked, so they go too; fix stays, as it does across rounds
+async function clearRounds() {
+  const n = S.rounds.length;
+  if (!(await ask(`Delete ${n ? `all ${n} Gemini round(s)` : 'the round files'} (pictures, prompts and checks) and untick reset, so the next round is round 1? This cannot be undone; map-4k.webp stays.`, 'Clear rounds'))) return;
+  busy = true;
+  const r = await api('clear-rounds', { method: 'POST' });
+  busy = false;
+  if (r.status !== 200) { msg('Clear failed: ' + (r.j.error || r.status), 6000); return; }
+  if (labels.some(l => l.reset)) { clearReset(); await save(); }
+  received = null; roundSet = false; curRound = 1;
+  await refreshState(); renderPanel();
+  msg(`Cleared ${r.j.cleared} file(s): the next round is 1`, 5000);
 }
 
 // ---------- running ----------

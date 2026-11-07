@@ -109,7 +109,7 @@ ${TAIL}`,
 
   mapReview: (b) => `${HEAD(b)}
 
-Task: give this map's labels their first pass, by the routine in maps/AGENTS.md, on its budget. The dashboard's "Prepare first pass" has run: data/projectaon/${b.code}/work/ holds map-review-fonts.jpg, map-review-overview.jpg and the map-review-<n>.jpg sheets. Read no other picture of the map. In short: choose the font and write maps/${b.code}/font.txt; correct the wordings, boxes and placements in one pass; check once with map_review.py sheet ${b.code} --flagged; write maps/${b.code}/style.txt from what you saw (docs/reference/map-upscale.md, step 5). Then tell me which font you chose and why, and give me a short list of label indexes still worth my eye. I press Labels checked in the map editor myself.
+Task: give this map's labels their first pass, by the routine in maps/AGENTS.md, on its budget. The dashboard's "Prepare first pass" has run: data/projectaon/${b.code}/work/ holds map-review-fonts.jpg, map-review-overview.jpg and the map-review-<n>.jpg sheets. Read no other picture of the map. In short: choose the font and write maps/${b.code}/font.txt; correct the wordings and boxes in one pass (prepare has already fitted every name over the printed one; place a name by hand only where the sheet flags it \`off\` or \`size\`, as a hand \`set\` overrides the fit from then on); check once with map_review.py sheet ${b.code} --flagged; write maps/${b.code}/style.txt from what you saw (docs/reference/map-upscale.md, step 5). Then tell me which font you chose and why, and give me a short list of label indexes still worth my eye. I press Labels checked in the map editor myself.
 ${TAIL}`,
 
   mapRetype: (b) => `${HEAD(b)}

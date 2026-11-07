@@ -181,6 +181,32 @@ def test_maplabels_post_refusal(root):
     assert not (root / 'maps' / '01fftd' / 'labels.json').exists()
 
 
+def test_clear_rounds_removes_every_gemini_round_and_keeps_the_rest(root):
+    d = book(root)
+    w = d / 'work'
+    for f in ['map-gemini-1.png', 'map-gemini-2.jpg', 'map-gemini-2-x4.png', 'map-prompt-1.txt',
+              'map-prompt-2.txt', 'map-check-1/labels.png', 'map-check-2/H.json']:
+        write(str(w / f), PNG)
+    keep = ['work/map-2k.png', 'work/map-2k-lettered.jpg', 'map-4k.webp', 'map.png']
+    for f in keep:
+        write(str(d / f), PNG)
+    st, got = jsend('POST', '/api/map/01fftd/clear-rounds')
+    assert st == 200 and got['cleared'] == 7 and got['rounds'] == []
+    assert sorted(os.listdir(w)) == ['map-2k-lettered.jpg', 'map-2k.png']
+    assert all((d / f).exists() for f in keep)
+
+
+def test_clear_rounds_waits_for_a_running_job(root):
+    d = book(root)
+    write(str(d / 'work' / 'map-gemini-1.png'), PNG)
+    assert serve._job_lock.acquire(blocking=False)
+    try:
+        assert jsend('POST', '/api/map/01fftd/clear-rounds')[0] == 409
+    finally:
+        serve._job_lock.release()
+    assert (d / 'work' / 'map-gemini-1.png').exists()
+
+
 # ---------------------------------------------------------------- local-only guard
 
 def test_map_and_admin_apis_are_refused_from_other_machines(root, monkeypatch):

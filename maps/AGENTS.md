@@ -12,8 +12,11 @@ Rules for work on a book's map, `<code>/` here. The root `AGENTS.md` applies as 
   2. Read `map-review-fonts.jpg` and write `font.txt` for the hand nearest the printed one, with its
      line 2 for Gemini; most later maps are not Cabin. Name it in ADR 0004. Choose before placing
      names by hand: a hand-set size is for its font.
-  3. Read the label list, `map-review-overview.jpg` and the sheets. Correct wordings, boxes and
-     placements in one pass, then measure, erase and letter again.
+  3. Read the label list, `map-review-overview.jpg` and the sheets. Correct wordings and boxes in
+     one pass, then measure, erase and letter again (`prepare` does all three). Placements are
+     already fitted over the printed names (`map_fit.py`, run by measure and letter); place a name
+     by hand only where the sheet flags it `off` or `size`, as a hand `set` overrides the fit from
+     then on.
   4. `map_review.py sheet <book> --flagged`, and read that one sheet. Fix only what is plain.
   5. Write `style.txt` from what you have seen (no `# DRAFT` line left).
   Do not cut the map into tiles or zoom round after round: what is still fiddly goes on a short list

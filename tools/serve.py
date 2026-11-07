@@ -32,6 +32,8 @@ Static files as `python -m http.server` serves them, from the project root, plus
                                       ?undo=1 removes it. Drafting again removes it too
     POST /api/map/<book>/gemini/<n>   body: the round's image (png, jpeg or webp, up to 30 MB), saved
                                       as work/map-gemini-<n>.<ext>; 409 if there is one, unless ?force=1
+    POST /api/map/<book>/clear-rounds every Gemini round gone (work/map-gemini-*, map-prompt-*, map-check-*/),
+                                      so the next is round 1 again; map-4k.webp stays. 409 while a job runs
     POST /api/map/<book>/copy-image   put work/map-2k-lettered.jpg on the Windows clipboard as a picture
                                       (the desktop app's browser pane refuses pictures on the clipboard)
 
@@ -200,6 +202,26 @@ def _work(d, make=False):
 def _gemini_files(d, n):
     w = _work(d)
     return [f for f in os.listdir(w) if re.fullmatch(rf'map-gemini-{n}\.(png|jpg|webp)', f)] if os.path.isdir(w) else []
+
+
+# a round's files in work/: its picture (and Finish's x4 upscale), its prompt, its check folder
+_ROUND = re.compile(r'map-(gemini-\d+(-x4)?\.(png|jpg|webp)|prompt-\d+\.txt|check-\d+)')
+
+
+def clear_rounds(d):
+    """Remove every Gemini round from a book's work/, so the next is round 1 (owner: keeping rounds is
+    only worth it when each is to be kept). The finished map-4k.webp is left. Returns files removed."""
+    w, n = _work(d), 0
+    for e in list(os.scandir(w)) if os.path.isdir(w) else []:
+        if not _ROUND.fullmatch(e.name):
+            continue
+        if e.is_dir():
+            n += sum(len(fs) for _, _, fs in os.walk(e.path))
+            shutil.rmtree(e.path)
+        else:
+            os.remove(e.path)
+            n += 1
+    return n
 
 
 # Windows only. Both a bitmap and a "PNG" entry: Chrome pastes the PNG, older apps the bitmap.
@@ -668,6 +690,14 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(200, map_state(d))
         if method == 'POST' and len(parts) == 3 and parts[1] == 'gemini' and re.fullmatch(r'\d{1,3}', parts[2]):
             return self._map_upload(d, int(parts[2]), q)
+        if method == 'POST' and parts[1:] == ['clear-rounds']:
+            if not _job_lock.acquire(blocking=False):  # a check or finish may be reading the round
+                return self._json(409, {'error': f'busy: {_job[0]} is running'})
+            try:
+                n = clear_rounds(d)
+            finally:
+                _job_lock.release()
+            return self._json(200, {**map_state(d), 'cleared': n})
         if method == 'POST' and parts[1:] == ['copy-image']:
             f = os.path.join(_work(d), 'map-2k-lettered.jpg')
             if not os.path.isfile(f):
