@@ -343,7 +343,7 @@ def run_step(book, step):
         'upscale': [t('map_upscale.py'), d / 'map.png', w / 'map-2k.png', '--width', '2048'],
         'draft': [t('map_labels.py'), 'draft', w / 'map-2k.png', labels],
         'clean': [t('map_review.py'), 'clean', book],
-        'measure': [t('map_measure.py'), w / 'map-2k.png', labels],
+        'measure': [t('map_measure.py'), w / 'map-2k.png', labels, '--hand', font, '--caps', font],
         'erase': [t('map_erase.py'), w / 'map-2k.png', labels, w / 'map-2k-erased.jpg'],
         'letter': [t('map_letter.py'), w / 'map-2k.png', labels, w / 'map-2k-erased.jpg', '-', w / 'map-2k-lettered.jpg', '--hand', font, '--caps', font],
         'sheet': [t('map_review.py'), 'sheet', book],

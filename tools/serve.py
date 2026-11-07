@@ -339,7 +339,7 @@ def map_commands(step, book, q):
             return None, 'no labels.json yet', 404
         return [PY + [t('map_names.py'), labels, f'{wk}/map-names.json']], None, 0
     if step == 'measure':
-        return [PY + [t('map_measure.py'), f'{wk}/map-2k.png', labels]], None, 0
+        return [PY + [t('map_measure.py'), f'{wk}/map-2k.png', labels] + _fonts(book)], None, 0
     if step == 'erase':
         return [PY + [t('map_erase.py'), f'{wk}/map-2k.png', labels, f'{wk}/map-2k-erased.jpg']], None, 0
     if step == 'letter':

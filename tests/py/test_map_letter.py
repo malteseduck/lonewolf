@@ -27,11 +27,10 @@ def write_png(path, im):
 
 @pytest.fixture(autouse=True)
 def module_state(monkeypatch):
-    """map_letter keeps K, WIPE, PHASE and COMMON in module globals that main sets."""
+    """map_letter keeps K, WIPE and PHASE in module globals that main sets."""
     monkeypatch.setattr(map_letter, 'K', 1)
     monkeypatch.setattr(map_letter, 'WIPE', False)
     monkeypatch.setattr(map_letter, 'PHASE', 'draw')
-    monkeypatch.setattr(map_letter, 'COMMON', None)
 
 
 # ---- ink_mask -----------------------------------------------------------------------------
@@ -260,29 +259,17 @@ def test_letter_measures_the_scan_and_fits_the_ink_length():
     assert w <= 49 * 1.1                                 # fitted to the ink, at most a little over
 
 
-def test_letter_sets_a_name_between_its_own_size_and_the_maps_unless_its_own_is_much_bigger(monkeypatch):
-    ink = scan_ink(lambda im: cv2.putText(im, 'HOLM', (110, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.6, INK, 2))
-    lab = {'text': 'HOLM', 'box': [100, 90, 180, 118]}
-    def width(common):
-        monkeypatch.setattr(map_letter, 'COMMON', common)
-        base = blank_base()
-        map_letter.letter(base, lab, ink, CABIN, CABIN, 1)
-        return drawn_centre(base)[2]
-    own = width(None)               # no common size: fitted to its own ink
-    assert width(1) == own          # its own is over 1.25 times the map's: a title or region keeps it
-    s = map_letter.fit_size(['HOLM'], CABIN, *map_letter.geometry(ink, lab)[2:])
-    assert 1.4 < width(3 * s) / own < 2.5  # a small name on a map of names 3 times its size: pulled up, not all the way
-
-
-def test_common_size_is_the_median_of_the_single_line_names():
-    bars = ((20, 12), (60, 20), (100, 28))  # short enough that each is sized by its length
-    li = scan_ink(lambda im: [im.__setitem__((slice(y, y + 6), slice(20, 20 + n)), INK) for y, n in bars])
-    labs = [{'text': 'HOLM', 'box': [15, y - 5, 25 + n, y + 11], 'retype': True} for y, n in bars]
-    sizes = [map_letter.fit_size(['HOLM'], CABIN, *map_letter.geometry(li, lab)[2:], 1) for lab in labs]
-    others = [{'text': 'A B', 'box': [15, 140, 200, 190], 'retype': True, 'lines': ['A', 'B']},  # stacked: fills its box
-              {'text': 'KEY', 'box': [15, 15, 60, 30], 'retype': False},                       # left as drawn
-              {'text': 'NONE', 'box': [250, 150, 290, 190], 'retype': True}]                     # no ink to measure
-    assert map_letter.common_size(labs + others, li, CABIN, CABIN) == pytest.approx(sorted(sizes)[1])
+def test_letter_lays_the_type_over_the_printed_name():
+    # the scan's name printed in the very font, turned 8 degrees: the type is set over it, not beside
+    scan = blank_base()
+    map_letter.place(scan, *map_letter.render(['HOLM'], CABIN, 0, 0, 1, size=26), np.array([150.0, 100.0]), math.radians(8))
+    ink = LabelInk(cv2.cvtColor(np.asarray(scan), cv2.COLOR_RGB2BGR), None)
+    base = blank_base()
+    map_letter.letter(base, {'text': 'HOLM', 'box': [105, 75, 195, 125], 'retype': True}, ink, CABIN, CABIN, 1)
+    printed = np.asarray(scan).sum(-1) < 600
+    lettered = np.asarray(base).sum(-1) < 600
+    assert (printed & lettered).sum() > 0.8 * printed.sum()
+    assert lettered.sum() < 1.25 * printed.sum()
 
 
 def test_letter_skips_a_label_with_no_ink_to_measure(capsys):

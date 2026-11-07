@@ -417,9 +417,9 @@ function hit(sx, sy) {
 
 // ---------- drawing ----------
 // The preview follows map_letter.py's letter() and render(): the ink measure (map_measure.py writes
-// it as "ink") gives centre, angle, length and thickness; the hand fields override as there.
-const FILL = 0.92, TRACK = 0.05, BOLD = 0.025, SCALE = 1.3, SMALL = 30, SNAP = 1.05, PULL = 0.6, BIG = 1.25;
-let COMMON = null;  // the map's usual type size, common_size(): worked out at each draw()
+// it as "ink") gives centre, angle, length and thickness, and its "fit" where map_fit.py lays the
+// type over the scan's letters; the hand fields override as there.
+const FILL = 0.92, TRACK = 0.05, BOLD = 0.025, SCALE = 1.3, SMALL = 30;
 function stale(l) { return l.ink && l.ink.box.some((v, j) => v !== l.box[j]); }
 function flip(a, where) {  // map_letter.py geometry(): "upwards"/"downwards" pick the reading direction
   let dx = Math.cos(a), dy = Math.sin(a);
@@ -479,22 +479,18 @@ function fitSize(lines, length, thick, boost, leading) {  // render()'s type siz
   if (boost == null) boost = thick < SMALL ? SCALE : 1;
   return Math.max(Math.floor(natural(lines, length, thick, leading) * boost), 6);
 }
-function oneLine(l) { return (l.retype || l.fix) && !(l.lines && l.lines.length) && !l.spread && !l.height; }
-function commonSize() {  // common_size(): the median of the lettered one-line names fitted to their ink
-  const s = labels.filter(oneLine).map(l => { const g = letterGeom(l); return natural([l.text || ' '], g.length, g.thick, 1); })
-    .filter(Number.isFinite).sort((a, b) => a - b);
-  return s.length ? (s.length % 2 ? s[(s.length - 1) / 2] : (s[s.length / 2 - 1] + s[s.length / 2]) / 2) : null;
-}
 function typeOf(l) {  // what gets set: lines, type size, centre, reading angle (radians)
   const lines = l.lines && l.lines.length ? l.lines : [l.text || ' '], leading = l.leading || 1;
   if (l.set) return { lines, leading, size: l.set.size, centre: l.set.at, ang: l.set.angle * Math.PI / 180 };
   const g = letterGeom(l);
-  if (!g.stacked && !l.height && !l.spread) {  // letter(): a one-line name between its own size and the map's common one, unless much bigger
-    let size = natural(lines, g.length, g.thick, 1);
-    if (COMMON && size <= BIG * COMMON) size = COMMON * SNAP * (size / COMMON) ** PULL;
-    return { lines, leading, size: Math.max(Math.floor(size), 6), centre: g.centre, ang: g.ang };
+  const f = l.ink && l.ink.fit;
+  if (f && !l.height && !l.spread) {  // letter(): fitted over the scan's letters (map_fit.py), moved with its box, then nudged
+    const b = l.ink.box, n = l.nudge || [0, 0];
+    const dx = (l.box[0] + l.box[2] - b[0] - b[2]) / 2 + n[0], dy = (l.box[1] + l.box[3] - b[1] - b[3]) / 2 + n[1];
+    const ang = typeof l.angle === 'number' && !g.stacked ? g.ang : f.angle * Math.PI / 180;  // an angle given since
+    return { lines, leading, size: Math.max(f.size, 6), centre: [f.at[0] + dx, f.at[1] + dy], ang };
   }
-  return { lines, leading, size: fitSize(lines, g.length, g.thick, g.stacked ? 1 : null, leading), centre: g.centre, ang: g.ang };
+  return { lines, leading, size: fitSize(lines, g.length, g.thick, g.stacked || !l.height ? 1 : null, leading), centre: g.centre, ang: g.ang };
 }
 function frameOf(l) {  // the type's outline: longest line by the lines' height, as place() centres it
   const t = typeOf(l), b = block(t.lines, Math.max(t.size, 1)), lh = b.own * t.leading;
@@ -539,7 +535,6 @@ function visible(i) {
   return String(i).startsWith(q) || (l.text || '').toLowerCase().includes(q) || (l.where || '').toLowerCase().includes(q);
 }
 function draw() {
-  COMMON = commonSize();
   const d = devicePixelRatio || 1;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.fillStyle = '#17100b'; ctx.fillRect(0, 0, cv.width, cv.height);
@@ -694,7 +689,7 @@ const TIPS = {  // what each field does in the map tools (docs/reference/map-ups
   'type at x,y': 'Placed by hand (the frame on the map): centre of the type, in map-2k px. Overrides the measured place, nudge, height and angle.',
   'type size': 'Type size in map-2k px, set by sizing the frame.',
   'type angle': 'Reading angle in degrees, clockwise, 0 = left to right, set by the frame\u2019s round handle.',
-  measured: 'Drop the hand placement: the type goes back to where the scan\u2019s ink puts it.',
+  measured: 'Drop the hand placement: the type goes back to the fit over the printed letters (Measure and fit, step 4).',
 };
 let focusPushed = false;
 function setField(key, val) {  // val === undefined removes the key
@@ -795,7 +790,7 @@ function renderForm() {
       row('type at x,y', sp);
       row('type size', sv('setsize', 0.5, () => l.set.size, v => { l.set.size = Math.max(v, 1); }));
       row('type angle', sv('setangle', 0.5, () => l.set.angle, v => { l.set.angle = v; }));
-      const back = document.createElement('button'); back.textContent = 'Back to measured';
+      const back = document.createElement('button'); back.textContent = 'Use the fit';
       back.onclick = () => { push(); delete l.set; renderForm(); afterEdit(); };
       row('measured', back);
     } else {
@@ -1093,6 +1088,15 @@ async function save() {
   msg('Save failed: ' + (j.error || r.status), 6000);
   return false;
 }
+// Fit hand-placed too: every place name takes map_fit.py's placement, the hand ones dropped
+async function fitAll() {
+  const hand = lettered().filter(l => l.set && !l.spread && !l.height);
+  if (!hand.length) return;
+  if (!(await ask(`Drop the hand placement on ${hand.length} place name(s), so each takes the fit? Ctrl+Z undoes it.`, 'Fit them'))) return;
+  push(); hand.forEach(l => { delete l.set; }); renderForm(); afterEdit(); renderPanel();
+  const need = hand.filter(l => !(l.ink && l.ink.fit) || stale(l)).length;
+  msg(`${hand.length} name(s) now take the fit` + (need ? `; ${need} not fitted yet or with a box moved since: press Measure and fit` : ''), 8000);
+}
 $('clearreset').onclick = clearReset;
 function clearReset() {
   const n = labels.filter(l => l.reset).length;
@@ -1174,7 +1178,7 @@ const STEPS = [
   { n: 3, short: 'Labels', name: 'Labels: wording and boxes (by hand)', bg: () => ['map-2k.png'],
     text: 'Correct every label\'s wording and box by eye, and add what OCR missed (New box, N). The draft ticks retype on every label except those surely not a place name (another book\'s key and captions, caption words, the title\'s lines, the key\'s entries); once the wording is right, Untick captions does the same again. Untick it on the title, banner and any other captions they missed, which Gemini copies as drawn, and check the ones left unticked are not place names. Save with Ctrl+S. When the list is right, press Labels checked to mark this step done.' },
   { n: 4, short: 'Measure', name: 'Measure', run: 'measure', bg: () => ['map-2k.png'],
-    text: 'Reads the scan\'s ink in each place name\'s box (centre, angle, length, thickness), so the preview starts from what the lettering step will really set. Run it again after moving boxes: a red dashed outline marks a label whose box moved since.' },
+    text: 'Measure and fit reads the scan\'s ink in each place name\'s box and fits the type over the printed letters (place, angle, size), as the lettering step will set it; a name you placed by hand keeps your placement. Fit hand-placed too drops those hand placements, so every name takes the fit (Ctrl+Z undoes it; save to keep it). Run Measure and fit again after moving boxes: a red dashed outline marks a label whose box moved since.' },
   { n: 5, short: 'Lettering', name: 'Lettering: adjust over the original (by hand)', bg: () => ['map-2k.png'], preview: true,
     text: 'The preview sets each place name in type over the original scan. Fix what is off by dragging the name’s frame: move it, resize it by its handles, turn it by the round handle (or lines, line spacing). Hold H to see the map under the boxes. Save, then measure again if you moved an erase box (E).' },
   { n: 6, short: 'Erase + letter', name: 'Erase and letter', bg: () => ['map-2k-lettered.jpg', 'map-2k-erased.jpg', 'map-2k.png'],
@@ -1264,7 +1268,10 @@ ${runBtn('Find missed labels', 'data-do="missed"' + noRun, 'Saves, then asks Cla
 <span class="note">${labels.length} labels, ${places} place names${found ? `, ${found} found not checked yet` : ''}${S.files['map-names.json'] ? `, ${labels.filter(flagged).length} names to look at` : ''}</span></div>`; break; }
     case 4: {
       const l = lettered(), m = l.filter(x => x.ink).length, old = l.filter(x => x.ink && stale(x)).length;
-      h += `<div class="row">${runBtn('Measure', 'data-do="measure"' + noRun)}<span class="note">${m} of ${l.length} lettered labels measured${old ? `, ${old} with a box moved since` : ''}</span></div>`; break; }
+      const hand = l.filter(x => x.set && !x.spread && !x.height).length;
+      h += `<div class="row">${runBtn('Measure and fit', 'data-do="measure"' + noRun, 'Saves, then fits every place name\'s type over the printed letters; names placed by hand keep their placement')}
+<button data-do="fitall"${hand ? '' : ' disabled'}${tip('Fit hand-placed too', 'Drops the hand placement on every place name, so each takes the fit. Undo with Ctrl+Z; save to keep it')}>Fit hand-placed too</button>
+<span class="note">${m} of ${l.length} lettered labels measured${old ? `, ${old} with a box moved since` : ''}, ${hand} placed by hand</span></div>`; break; }
     case 5:
       h += `<div class="row"><span class="note">Background is the original scan, preview on. Saved changes make step 6 out of date.</span></div>`; break;
     case 6:
@@ -1325,6 +1332,7 @@ $('panel').onclick = async e => {
   const b = e.target.closest('[data-do]'); if (!b || b.disabled) return;
   const what = b.dataset.do;
   if (what === 'clearreset') { clearReset(); renderPanel(); return; }
+  if (what === 'fitall') return fitAll();
   if (what === 'copyimage') return copyImage(b);
   if (what === 'copyclaude') return copyClaude();
   if (what === 'gotocheck') return openStep(8);

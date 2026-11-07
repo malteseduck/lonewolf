@@ -62,7 +62,7 @@ Changes list names what it took in.
 
 | # | Decision | Amended |
 |---|---|---|
-| [0004](0004-maps.md) | The book's own printed map only, upscaled by a Gemini repaint over names set in type (the map's `font.txt`), shown in sepia; the agent's first pass over the labels, on a budget | 2026-11-02 |
+| [0004](0004-maps.md) | The book's own printed map only, upscaled by a Gemini repaint over names set in type (the map's `font.txt`), shown in sepia; the agent's first pass over the labels, on a budget; names fitted over the printed ones | 2026-11-06 |
 | [0008](0008-fight-pictures.md) | A fight's picture: its own, the same creature in this book, then another, then a stand-in; plain humans varied; shown whole; upscaled 2x; pinned once approved; candidates on the proposal sheet | 2026-11-04 |
 | [0038](0038-art-keeps-its-source-links.md) | Pictures added to `art/` keep their source link where there is one, so Setup can fetch them again | 2026-10-24 |
 | [0042](0042-what-of-a-book-is-committed.md) | The repository is public, with no licensed content; our descriptions (`about/`, never 8 of the book's words in a row) are committed; AI-made pictures and `book.js` are not, nor is it split | 2026-11-05 |

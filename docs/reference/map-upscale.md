@@ -47,8 +47,11 @@ erases the letters inside it and Measure reads them. Its **frame**, drawn round 
 gets set: drag it to move the name, its handles to resize it (the type keeps its proportions), the
 round handle to turn it. Touching the frame stores the placement as `set` {`at` [x, y], `size`,
 `angle`} (centre, type size in map-2k px, degrees), which overrides the measured place and `nudge`,
-`height` and `angle`; "Back to measured" drops it. <kbd>E</kbd> or "Erase box" switches the handles
-to the box.
+`height` and `angle`; "Use the fit" drops it. <kbd>E</kbd> or "Erase box" switches the handles
+to the box. Step 4's **Measure and fit** saves and runs `map_measure.py`, which fits every place name
+over the printed letters (`map_fit.py`, step 4 below); a name with a `set` keeps it. **Fit hand-placed
+too** drops `set` on every place name (asking first; undo with Ctrl+Z, save to keep), so each takes
+the fit.
 
 The owner's work on a map is committed, in `maps/<code>/`: `labels.json` (the label list: every
 label's wording, box on `map-2k.png`, and how to treat it), `style.txt` (the book's own look, opening
@@ -157,9 +160,10 @@ Commands run from the project root as
    2026-10-07, which meant ticking every box.
    The title, banner and shield captions and the key are left as drawn: Gemini copied them right
    in every round. Book 1: 60 labels, 42 place names.
-   Then **measure**: `map_measure.py $W/map-2k.png $L` writes each lettered
-   label's measured ink (`ink`: centre, angle, length, thickness) into the list, so the map editor's
-   preview starts from what step 4 will set. Optional: no other tool reads it. Run it once the
+   Then **measure**: `map_measure.py $W/map-2k.png $L` (with the map's font as `--hand`/`--caps`, as
+   step 4) writes each lettered label's measured ink (`ink`: centre, angle, length, thickness, and
+   `fit`: where step 4's fit puts the type) into the list, so the map editor's preview starts from
+   what step 4 will set. Optional: no other tool reads it. Run it once the
    wording and boxes are right, and again after moving a box (the editor outlines stale ones in red).
    Where the ink spans under 0.4 of the box's long side (`SPAN`: a title's strip took in one tall
    letter, or a tower or palm joined to a short name left a speck), the box is measured instead,
@@ -208,9 +212,17 @@ Commands run from the project root as
    Each name is ringed by a hard white outline of 1-2 px (`OUTLINE`, a share of its line height), so Gemini
    sees it whole against the map's lines; at Finish, a soft white glow instead (`GLOW`, `GLOW_PEAK`).
    Every halo is drawn before any type, so one never covers a near name (ADR 0004, 2026-11-02).
-   Each name's angle and size come from the scan's ink (the angle from OCR's `slant` where the ink is a little off it, step 2); each one-line name is set at 1.05 times the map's common size (`common_size()`: the median of the
-   lettered one-line names fitted to their own ink) times its own fitted size over that to the 0.6 (`PULL`: most of the way to the common size; on Books 3-6 and 12, 16 of 159 names more than 15% off the owner's hand size, where one size a map left 44), unless fitted over 1.25 times it (a title or
-   region keeps its own; ADR 0004), and the editor's preview does the same. Look at
+   Each name's angle and size are first measured from the scan's ink (the angle from OCR's `slant` where the ink is a little off it, step 2; the size fitted to the ink's length).
+   **The fit** (`map_fit.py`, ADR 0004, 2026-11-06) then lays the type over the printed name: a pattern search moves,
+   turns and scales it while the type's pixels and the name's ink come closer (each one's mean distance to the
+   other, capped at 3 strokes so a speck cannot drag it), each degree turned costing a little (`TURN`) and the size
+   kept within 0.75-1.33 times the measure's (`GROW`: on part of a name's ink it shrank onto it). A hand `angle`,
+   or stacked `lines`, keep their angle; `nudge` moves the fitted type after; `height` and `spread` are not fitted.
+   About 3 s a map. `map_fit.py score <book> ...` scores it against the owner's hand placements (`set`): on 14 maps,
+   458 of them, 200 came within 3 px, 2 degrees and 6% (the old measure and size pull, 95), and 144 were over 5 px,
+   3 degrees or 10% off (226). Where the map's font is not the printed hand's shape (Books 18, 19 and 25: printed
+   small capitals set in mixed-case Cabin) no size fits both height and length. The editor's preview takes the fit
+   from `ink.fit`. Look at
    it and fix by hand what the measuring got wrong: `angle` (degrees), `nudge` [dx, dy], `height`
    (px), `lines` (a name stacked over lines, set level), `leading` (their line spacing, 1 = the font's own), `spread` (the scale's numbers). Book 1
    needed about 15 such fixes. Since Book 3 the editor's frame does the same by dragging, as `set`.
@@ -293,7 +305,9 @@ Commands run from the project root as
   a place name on the corrected list), `style` (a first `style.txt`), `prompt` (the Gemini prompt,
   `--lettered` for step 5) and `check` (OCR hint plus the `labels.png` eye-check sheet).
 - `tools/map_measure.py`: measures each lettered label's ink with the same code `map_letter.py` uses and
-  stores it as `ink` in `labels.json`, for the map editor's preview.
+  stores it, with the fit, as `ink` in `labels.json`, for the map editor's preview.
+- `tools/map_fit.py`: lays each name's type over the scan's printed letters (step 4); `score` compares
+  it with the owner's hand placements. Prints counts, never wordings.
 - `tools/map_erase.py`: erases the `retype` labels; its `LabelInk` (which of the scan's pixels belong
   to a label, only along its line of letters) is shared with `map_letter.py`, which measures labels
   with it.

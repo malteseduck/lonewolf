@@ -10,7 +10,7 @@ Labels marked "retype" (erased before Gemini saw the map) and "fix" (Gemini miss
 lettered here. For each, the scan's ink in its box gives the angle (its long axis, or the OCR draft's "slant" where that is
 3-20 degrees off it; "upwards" or
 "downwards" in its "where" picks the reading direction) and the size (the type is fitted to the
-ink's length, then pulled most of the way to the map's common size unless much bigger: COMMON, PULL). "lines" splits a label over lines as printed, set level ("angle" in degrees
+ink's length); map_fit.py then moves, turns and sizes the type to lie over the scan's own letters. "lines" splits a label over lines as printed, set level ("angle" in degrees
 otherwise) and fitted to the box, "leading" its line spacing (1 = the font's own); "height" gives the type's height outright, in map-2k px;
 "nudge" [dx, dy] (map-2k px) moves a label off something the larger type runs into. "set" {at: [x, y],
 size, angle} places the type by hand (the map editor's text frame): centre of its lines, type size in
@@ -48,9 +48,6 @@ FONTS = Path(__file__).parent / 'fonts'
 INK = (38, 30, 24)        # RGB: Gemini's lettering on Book 1 is a warm near-black
 SCALE = 1.3               # type size over the scan's for the scale's small numbers
 SMALL = 30                # px on map-2k: numbers thinner than this are small and get SCALE
-SNAP = 1.05               # a name's type size over the map's common size, before PULL (the owner's, 2026-10-19)
-PULL = 0.6                # how far a name's own size moves it off the common one (0 none, 1 its own)
-BIG = 1.25                # a name fitted over this times the common size keeps its own (a title, a region)
 TRACK = 0.05              # extra space between letters, as a share of the type size
 BOLD = 0.025              # stroke added round each glyph, as a share of the type size
 OUTLINE = 0.06            # the white outline round a name on Gemini's input, as a share of its line height: 1-2 px
@@ -134,7 +131,6 @@ def geometry(scan_ink, lab):
 
 
 K = 1  # 4K or 2K px per map-2k px, set in main
-COMMON = None  # the map's usual type size in map-2k px (common_size()), set in main
 
 
 def block(lines, font_path, size, leading=1):
@@ -154,20 +150,6 @@ def fit_size(lines, font_path, length, thick, leading=1):
     ink was, with a little give."""
     _, w, h, _ = block(lines, font_path, 100, leading)
     return 100 * min(length * FILL / w, thick * 1.25 / h)
-
-
-def common_size(labels, scan_ink, hand, caps):
-    """The map's usual type size (map-2k px): the median of its lettered one-line names fitted to
-    their own ink. None with no such name."""
-    sizes = []
-    for lab in labels:
-        if not (lab.get('retype') or lab.get('fix')) or lab.get('lines') or lab.get('spread') or lab.get('height'):
-            continue
-        g = geometry(scan_ink, lab)
-        if g is not None:
-            font = hand if any(ch.islower() for ch in lab['text']) else caps
-            sizes.append(fit_size([lab['text']], font, g[2], g[3]))
-    return float(np.median(sizes)) if sizes else None
 
 
 def render(lines, font_path, length, thick, nlines, boost=None, leading=1, size=None):
@@ -231,13 +213,12 @@ def letter(base, lab, scan_ink, hand, caps, k):
         return
     lines = lab.get('lines') or [text]
     size = None
-    if not lab.get('lines') and not lab.get('height'):
-        # a one-line name between its own fitted size and the map's common one: of the owner's 159 hand
-        # sizes on Books 3-6 and 12, fitting each to its own ink set 71 more than 15% off, one size a
-        # map 44, this blend 16. A name much bigger than the rest (a title, a region) keeps its own.
-        size = fit_size(lines, font, length * k, thick * k)
-        if COMMON and size <= BIG * COMMON * k:
-            size = COMMON * k * SNAP * (size / (COMMON * k)) ** PULL
+    if not lab.get('height'):
+        # laid over the scan's own letters: place, angle and size fitted to the ink (map_fit.py; owner,
+        # 2026-11-06); a nudge, given by hand, still moves it after
+        import map_fit
+        c, ang, size = map_fit.placement(scan_ink, lab, hand, caps)
+        centre, size = c + np.array(lab.get('nudge', [0, 0])), size * k
     # stacked lines are fitted to their box, which is already the size wanted
     mask, lh = render(lines, font, length * k, thick * k, len(lines), 1 if lab.get('lines') else None,
                       lab.get('leading', 1), size)
@@ -299,14 +280,13 @@ PLACED = []  # masks(): each piece of type as (x, y, mask)
 def masks(scan, labels, hand, caps):
     """{label index: the pixels its type covers on the scan's frame}, for each name the Letter step
     sets (map_review.py). The same placement as letter(), at map-2k size."""
-    global K, WIPE, COMMON, PHASE
-    was = K, WIPE, COMMON, PHASE
+    global K, WIPE, PHASE
+    was = K, WIPE, PHASE
     h, w = scan.shape[:2]
     out = {}
     try:
         scan_ink = LabelInk(scan, labels)
         K, WIPE, PHASE = 1, False, 'mask'
-        COMMON = common_size(labels, scan_ink, hand, caps)
         for i, lab in enumerate(labels):
             if not (lab.get('retype') or lab.get('fix')):
                 continue
@@ -320,7 +300,7 @@ def masks(scan, labels, hand, caps):
                         m[y0:y1, x0:x1] |= part[y0 - y:y1 - y, x0 - x:x1 - x]
                 out[i] = m
     finally:
-        K, WIPE, COMMON, PHASE = was
+        K, WIPE, PHASE = was
     return out
 
 
@@ -418,12 +398,10 @@ def main():
             erase(A, pad([int(v) for v in m.split(',')], 0), 'all')
         unmark(A, k)
 
-    global K, WIPE, COMMON, HALO
+    global K, WIPE, HALO
     K, WIPE = k, a.warp != '-'
     HALO = 'glow' if WIPE else 'outline'
     scan_ink = LabelInk(F, labels)  # the same ink map_erase.py takes out
-    # from every lettered name, not only those set this run, so a name set again keeps its size
-    COMMON = common_size(labels, scan_ink, FONTS / a.hand, FONTS / a.caps)
     base = Image.fromarray(cv2.cvtColor(A, cv2.COLOR_BGR2RGB))
     global PHASE
     for PHASE in (['wipe'] if WIPE else []) + ['halo', 'draw']:  # every halo before any type, or one eats a near name
