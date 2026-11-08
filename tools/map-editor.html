@@ -1200,7 +1200,7 @@ const STEPS = [
   { n: 8, short: 'Check', name: 'Check', run: 'check', bg: () => [`map-check-${activeRound()}/aligned.png`, `map-gemini-${activeRound()}.jpg`, 'map-2k.png'],
     text: 'Lines Gemini\'s picture up with the scan and flags colour and shape changes, then reads its labels against the list. Open labels.png and compare every label by eye; the OCR diff, listed under the buttons, is only a hint (click a row to go to its label; its button ticks reset or fix). Tick reset on place names Gemini garbled, and fix on kept labels it garbled (title, captions, key), then Save.' },
   { n: 9, short: 'Finish', name: 'Finish', run: 'finish', bg: () => ['map-4k.webp', 'map-2k.png'],
-    text: 'Upscales the round 4x, warps it onto the 4K frame, wipes Gemini\'s lettering round each label ticked reset (and fix) and sets those again in the map font, removes the sparkle mark and writes map-4k.webp. With none ticked reset, Gemini\'s names stand, unless "Set every place name again" is ticked. Look at map-4k-sheet.png.' },
+    text: 'Upscales the round 4x, warps it onto the 4K frame, wipes Gemini\'s lettering round each label ticked reset (and fix) and sets those again in the map font, removes the sparkle mark and writes map-4k.webp. With none ticked reset, Gemini\'s names stand, unless "Set every place name again" is ticked. Look at map-4k-sheet.png. The map it replaces is kept, with its sheet, under Earlier finishes, named by the round that made it: click one to show it below, Restore to make it map-4k.webp again (then import, step 10).' },
   { n: 10, short: 'Import', name: 'Import and view', run: 'import', bg: () => ['map-4k.webp', 'map-2k.png'],
     text: 'Imports the book again which bakes map-4k.webp into map-sepia.webp, the file the player shows, then open the player and look at the map there.' },
 ];
@@ -1293,7 +1293,7 @@ ${runBtn('Find missed labels', 'data-do="missed"' + noRun, 'Saves, then asks Cla
       h += `<div class="row">${roundInput()}<span class="note">next free is ${nextFree()}${rf ? `; <span class="bad">map-gemini-${rd} exists</span>` : ''}</span>
 <button data-run data-do="copyprompt"${noRun}${tip('Copy prompt', 'Copies the Gemini prompt for this round (writing it first if needed), to paste into a new Gemini chat')}>Copy prompt${have ? '' : ' (writes it first)'}</button>
 <a href="https://gemini.google.com/app" target="_blank" rel="noopener">Open Gemini</a>
-<button data-do="clearrounds"${S.rounds.length || Object.keys(files).some(k => /^(prompt|map-check)-\d+/.test(k)) ? '' : ' disabled'}${tip('Clear rounds', 'Deletes every Gemini round (its picture, prompt and check) and unticks reset, so the next round is round 1 again; the finished map-4k.webp stays')}>Clear rounds</button></div>
+<button data-do="clearrounds"${S.rounds.length || Object.keys(files).some(k => /^(prompt|map-check)-\d+/.test(k)) ? '' : ' disabled'}${tip('Clear rounds', 'Deletes every Gemini round (its picture, prompt and check) and unticks reset, so the next round is round 1 again; the finished map-4k.webp and the earlier finishes stay')}>Clear rounds</button></div>
 <div class="row">${book === EXAMPLE_BOOK ? '' : EXAMPLE.map(([label, f], i) => `<figure class="pic"><img class="thumb" data-drag="${f}" src="/data/projectaon/${EXAMPLE_BOOK}/${f}" draggable="true"${tip(label, 'Drag this JPEG into the Gemini chat, or right-click and copy it')}><figcaption>${i + 1}. ${label}</figcaption></figure>`).join('')}
 ${files['map-2k-lettered.jpg'] ? `<figure class="pic"><img class="thumb" data-drag="work/map-2k-lettered.jpg" src="${at('map-2k-lettered.jpg')}?v=${mt('map-2k-lettered.jpg')}" draggable="true"${tip('This map', 'Drag this JPEG into the Gemini chat, or right-click and copy it. A 2048 px PNG with a long prompt was once refused; the JPEG goes through')}><figcaption>${book === EXAMPLE_BOOK ? '' : '3. '}This map</figcaption></figure>` : '<span class="bad">no map-2k-lettered.jpg yet: step 6</span>'}
 <span class="note"><b>Receive</b>: Ctrl+V Gemini's image anywhere here, drop the file, or</span> <input type="file" id="pick" accept="image/png,image/jpeg,image/webp"${tip('Receive', `Gemini's picture comes back by paste, drop or this file picker, saved as map-gemini-${rd}.*`)}></div>
@@ -1320,7 +1320,7 @@ ${received ? `<div class="row">Received ${esc(received)}. <button class="primary
       h += `<div class="row">${roundInput()}${runBtn('Finish', 'data-do="finish"' + noRun)}
 <label class="note"><input type="checkbox" id="finishall"${finishAll ? ' checked' : ''}${nReset ? ' disabled' : ''}> Set every place name again</label>
 <button data-open="${at('map-4k-sheet.png')}"${files['map-4k-sheet.png'] ? '' : ' disabled'}>Open map-4k-sheet.png</button></div>
-<div class="row"><span class="note">${esc(will)}</span></div>`; break; }
+<div class="row"><span class="note">${esc(will)}</span></div>${finishesHtml()}`; break; }
     case 10:
       h += `<div class="row">${runBtn('Import', 'data-do="import"' + noRun)}<a href="/" target="_blank" rel="noopener">Open the player</a></div>`; break;
   }
@@ -1337,6 +1337,7 @@ ${received ? `<div class="row">Received ${esc(received)}. <button class="primary
     try { e.dataTransfer.setData('DownloadURL', `image/jpeg:${th.dataset.drag.split('/').pop()}:${th.src}`); } catch (x) {} }));
   const pk = $('pick'); if (pk) pk.onchange = () => { if (pk.files[0]) upload(pk.files[0]); };
   p.querySelector('details.log')?.addEventListener('toggle', e => { logOpen = e.target.open; });
+  p.querySelector('details.finishes')?.addEventListener('toggle', e => { finishesOpen = e.target.open; resize(); });
   p.querySelector('details.about')?.addEventListener('toggle', e => { aboutOpen = e.target.open; resize(); });
   resize();
 }
@@ -1344,6 +1345,8 @@ $('panel').onclick = async e => {
   const t = e.target.closest('[data-tick]'); if (t) { tickCheck(Number(t.dataset.tick)); return; }
   const c = e.target.closest('[data-ck]'); if (c) { select(Number(c.dataset.ck), true); renderPanel(); return; }
   const o = e.target.closest('[data-open]'); if (o) { window.open(o.dataset.open + '?' + Date.now(), '_blank', 'noopener'); return; }
+  const rs = e.target.closest('[data-restore]'); if (rs) return restoreFinish(rs.dataset.restore);
+  const fv = e.target.closest('[data-fin]'); if (fv) { await setBg(fv.dataset.fin); draw(); renderPanel(); return; }
   const b = e.target.closest('[data-do]'); if (!b || b.disabled) return;
   const what = b.dataset.do;
   if (what === 'clearreset') { clearReset(); renderPanel(); return; }
@@ -1401,6 +1404,33 @@ async function clearRounds() {
   msg(`Cleared ${r.j.cleared} file(s): the next round is 1`, 5000);
 }
 
+// step 9: every finish kept (work/map-4k-backups/, named by round and when made), the current first; a row
+// shows its map, Restore makes it map-4k.webp again (the current one kept first)
+let finishesOpen = false;
+const madeText = m => m ? `${m.slice(0, 4)}-${m.slice(4, 6)}-${m.slice(6, 8)} ${m.slice(9, 11)}:${m.slice(11, 13)}` : '';
+function finishesHtml() {
+  const f = S.finish || { current: null, backups: [] };
+  if (!f.current && !f.backups.length) return '';
+  const shown = $('bg').value;
+  const row = (key, label, sheet, restore) => `<div class="row">
+<button data-fin="${esc(key)}"${shown === key ? ' class="on"' : ''} title="Show this map below">${esc(label)}</button>
+${sheet ? `<button data-open="${at(sheet)}">Sheet</button>` : ''}${restore ? `<button data-restore="${esc(restore)}">Restore</button>` : ''}</div>`;
+  const cur = f.current ? row('map-4k.webp', `Current: round ${f.current.round}, ${madeText(f.current.made)}`, S.files['map-4k-sheet.png'] && 'map-4k-sheet.png', '') : '';
+  const old = f.backups.map(b => row(`map-4k-backups/${b.name}`, `Round ${b.round}, ${madeText(b.made)}`, b.sheet && `map-4k-backups/${b.name.slice(0, -5)}-sheet.png`, b.name)).join('');
+  return `<details class="finishes"${finishesOpen ? ' open' : ''}><summary>Earlier finishes (${f.backups.length})</summary>${cur}${old}</details>`;
+}
+async function restoreFinish(name) {
+  const b = (S.finish?.backups || []).find(x => x.name === name); if (!b) return;
+  if (!(await ask(`Make round ${b.round} (${madeText(b.made)}) map-4k.webp again? The current map is kept in this list. Import (step 10) to see it in the player.`, 'Restore'))) return;
+  busy = true;
+  const r = await api(`restore-4k?name=${encodeURIComponent(name)}`, { method: 'POST' });
+  busy = false;
+  if (r.status !== 200) { msg('Restore failed: ' + (r.j.error || r.status), 6000); return; }
+  await refreshState(); renderPanel();
+  await setBg('map-4k.webp'); draw(); renderPanel();
+  msg(`Round ${b.round} restored: import (step 10) to see it in the player`, 5000);
+}
+
 // ---------- running ----------
 async function api(path, opts) {
   try {
@@ -1453,7 +1483,7 @@ async function doStep(what, btn) {
   }
   if (['prompt', 'check', 'finish'].includes(what)) q = `?round=${rd}`;
   if (what === 'finish' && finishAll && !labels.some(l => l.reset)) q += '&all=1';
-  if (what === 'finish' && S.files['map-4k.webp'] && !(await ask('map-4k.webp exists and will be replaced. Go on?', 'Replace'))) return;
+  if (what === 'finish' && S.files['map-4k.webp'] && !(await ask('map-4k.webp exists and will be replaced; it is kept under Earlier finishes. Go on?', 'Replace'))) return;
   setBusy(true, btn, what);
   let all = { code: 0, out: '' };
   for (const st of seq) {

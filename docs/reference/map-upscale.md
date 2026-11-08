@@ -73,6 +73,8 @@ player loads (the map editor and `serve.py` make `work/` when a step first needs
 | `work/map-check-<n>/` | Round n's checks: `aligned.png`, `H.json`, `flags.png`, `labels.png`, `check.json` (the OCR diff, for the editor) |
 | `work/map-gemini-<n>-x4.png` | Real-ESRGAN 4x of the round kept |
 | `map-4k.webp` | The result, 3840 wide, in colour; its sheet is `work/map-4k-sheet.png` |
+| `work/map-4k.json` | The round that made `map-4k.webp` and when |
+| `work/map-4k-backups/` | Each earlier `map-4k.webp` and its sheet, `map-4k-r<round>-<made>.webp` / `-sheet.png` (step 8) |
 | `map-sepia.webp` | The same in the player's sepia, baked by the importer (`tools/map_sepia.py`); the file `book.js` names and the player shows |
 | `work/map-names.json` | Check names' finding for each label (step 3), by wording |
 | `work/map-labels-lettered.json` | The label list step 4 last lettered from, so the editor can tell which later edits matter |
@@ -309,18 +311,27 @@ Commands run from the project root as
    drawing), sets them again, and removes Gemini's sparkle watermark. Look at
    `map-4k-sheet.png`. A correct name next to a re-set one can lose strokes to the wipe: add it to
    `--only`. Book 1: 12 names re-set.
+   In the editor, Finish first keeps the `map-4k.webp` it replaces, and its sheet, in
+   `work/map-4k-backups/` as `map-4k-r<n>-<made>.webp` (and `-sheet.png`): `n` the round that made it,
+   to match its prompt and check, and `made` when (YYYYMMDD-HHMMSS), which keeps two round 3s apart
+   after Clear rounds (owner, 2026-11-08). Each Finish records its round in `work/map-4k.json`; a map
+   made before that takes the newest round upscaled no later than it, else 0. A Finish that fails
+   with the map untouched drops its copy. Step 9's **Earlier finishes**, collapsed, lists the current
+   map and every backup: a row shows that map in the view, Sheet opens its sheet, and **Restore**
+   (`restore-4k`, after a confirm) makes it `map-4k.webp` again, the current one kept first; its file
+   time is set to now, so the next import bakes its sepia (step 10).
 9. **Re-import** the book (`tools/import_projectaon.py <code>`): when `map-4k.webp` exists it bakes
    `map-sepia.webp` from it, if that is missing or older (about 7 s), and points `map` at it.
 
 ## Tools
 
 - `tools/map-editor.html` with `tools/serve.py`: the page that runs all of the above, opened from the dashboard only (endpoints in
-  serve.py's docstring: `/api/map/<book>/state`, `run/<step>`, `gemini/<n>`, `clear-rounds`; local requests only).
+  serve.py's docstring: `/api/map/<book>/state`, `run/<step>`, `gemini/<n>`, `clear-rounds`, `restore-4k`; local requests only).
   Step 7 shows the pictures for Gemini as numbered thumbnails (the example before and after, then
   the map), each dragged in or right-click copied as its JPEG: a copy button put a re-encoded PNG of
   several MB on the clipboard, too big to paste (owner, 2026-11-07).
   Step 7's Clear rounds (`clear-rounds`, after a confirm) deletes every round's picture, prompt and
-  check folder (the prompts stay in git history) and unticks reset, so the next round is 1 again; `map-4k.webp` stays. Rounds are worth
+  check folder (the prompts stay in git history) and unticks reset, so the next round is 1 again; `map-4k.webp`, its record and the earlier finishes stay. Rounds are worth
   keeping only when each is to be kept (owner, 2026-11-06).
   A round's prompt is written again when the labels or style change, until Gemini's picture for that
   round is in: then it is the round's record, and neither Copy prompt nor `run/prompt` (409) rewrites it.

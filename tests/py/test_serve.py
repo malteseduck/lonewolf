@@ -200,6 +200,89 @@ def test_clear_rounds_removes_every_gemini_round_and_keeps_the_rest(root):
     assert sorted(os.listdir(own)) == ['labels.json', 'style.txt']
 
 
+def test_clear_rounds_keeps_the_earlier_finishes(root):
+    d = book(root)
+    write(str(d / 'work' / 'map-gemini-1.png'), PNG)
+    write(str(d / 'work' / 'map-4k.json'), '{"round": 1, "made": "20261108-120000"}')
+    old = write(str(d / 'work' / 'map-4k-backups' / 'map-4k-r1-20261107-090000.webp'), PNG)
+    assert jsend('POST', '/api/map/01fftd/clear-rounds')[0] == 200
+    assert os.path.exists(old) and (d / 'work' / 'map-4k.json').exists()
+
+
+def finished(root, d, monkeypatch, out_ok=True):
+    """Finish run through the route with a fake _exec, which writes a new map-4k.webp (and sheet) when it
+    succeeds, as map_letter.py does."""
+    def fake(argv, timeout):
+        if out_ok and any('map_letter.py' in a for a in argv):
+            write(str(d / 'map-4k.webp'), b'new')
+            write(str(d / 'work' / 'map-4k-sheet.png'), b'newsheet')
+        return (0, 'ok') if out_ok else (1, 'broke')
+    monkeypatch.setattr(serve, '_exec', fake)
+    return jsend('POST', '/api/map/01fftd/run/finish?round=3&width=1024')
+
+
+def test_finish_backs_up_the_map_it_replaces_named_by_its_round(root, monkeypatch):
+    d = book(root)
+    write(str(d / 'work' / 'map-gemini-3.jpg'), PNG)
+    assert finished(root, d, monkeypatch)[0] == 200  # nothing to back up the first time
+    assert not (d / 'work' / 'map-4k-backups').exists()
+    rec = json.loads((d / 'work' / 'map-4k.json').read_text())
+    assert rec['round'] == 3
+    write(str(d / 'map-4k.webp'), b'round3')
+    write(str(d / 'work' / 'map-4k-sheet.png'), b'sheet3')
+    finished(root, d, monkeypatch)
+    name = f"map-4k-r3-{rec['made']}"
+    bk = d / 'work' / 'map-4k-backups'
+    assert sorted(os.listdir(bk)) == [name + '-sheet.png', name + '.webp']
+    assert (bk / (name + '.webp')).read_bytes() == b'round3' and (bk / (name + '-sheet.png')).read_bytes() == b'sheet3'
+    st = jsend('GET', '/api/map/01fftd/state')[1]
+    assert st['finish']['current']['round'] == 3
+    assert [b['name'] for b in st['finish']['backups']] == [name + '.webp'] and st['finish']['backups'][0]['sheet']
+    assert f'map-4k-backups/{name}.webp' in st['files']  # shown in the editor's pickers like any picture
+
+
+def test_a_failed_finish_leaves_no_backup(root, monkeypatch):
+    d = book(root)
+    write(str(d / 'work' / 'map-gemini-3.jpg'), PNG)
+    write(str(d / 'map-4k.webp'), b'old')
+    assert finished(root, d, monkeypatch, out_ok=False)[1]['code'] == 1
+    assert (d / 'map-4k.webp').read_bytes() == b'old'
+    assert not os.listdir(d / 'work' / 'map-4k-backups')
+
+
+def test_a_map_made_before_the_record_takes_its_round_from_the_newest_upscale(root):
+    d = book(root)
+    w = d / 'work'
+    write(str(w / 'map-gemini-2-x4.png'), PNG)
+    write(str(w / 'map-gemini-5-x4.png'), PNG)
+    write(str(d / 'map-4k.webp'), PNG)
+    now = time.time()
+    os.utime(w / 'map-gemini-2-x4.png', (now - 100, now - 100))
+    os.utime(d / 'map-4k.webp', (now - 50, now - 50))  # round 5's upscale came after it
+    assert serve.current_4k(str(d))['round'] == 2
+    os.remove(w / 'map-gemini-2-x4.png')
+    assert serve.current_4k(str(d))['round'] == 0  # nothing to tell by
+
+
+def test_restore_puts_a_backup_back_and_keeps_the_current_one(root):
+    d = book(root)
+    w = d / 'work'
+    write(str(d / 'map-4k.webp'), b'r5')
+    write(str(w / 'map-4k-sheet.png'), b's5')
+    write(str(w / 'map-4k.json'), '{"round": 5, "made": "20261108-120000"}')
+    write(str(w / 'map-4k-backups' / 'map-4k-r3-20261107-090000.webp'), b'r3')
+    write(str(w / 'map-4k-backups' / 'map-4k-r3-20261107-090000-sheet.png'), b's3')
+    before = time.time()
+    st, got = jsend('POST', '/api/map/01fftd/restore-4k?name=map-4k-r3-20261107-090000.webp')
+    assert st == 200 and got['finish']['current'] == {'round': 3, 'made': '20261107-090000'}
+    assert (d / 'map-4k.webp').read_bytes() == b'r3' and (w / 'map-4k-sheet.png').read_bytes() == b's3'
+    assert os.stat(d / 'map-4k.webp').st_mtime >= before - 1  # newer than its sepia, so the import bakes it
+    assert [b['name'] for b in got['finish']['backups']] == ['map-4k-r5-20261108-120000.webp']
+    assert (w / 'map-4k-backups' / 'map-4k-r5-20261108-120000-sheet.png').read_bytes() == b's5'
+    assert jsend('POST', '/api/map/01fftd/restore-4k?name=..%2Fmap.png')[0] == 404
+    assert jsend('POST', '/api/map/01fftd/restore-4k?name=map-4k-r9-20261101-000000.webp')[0] == 404
+
+
 def test_clear_rounds_waits_for_a_running_job(root):
     d = book(root)
     write(str(d / 'work' / 'map-gemini-1.png'), PNG)

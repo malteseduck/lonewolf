@@ -28,14 +28,19 @@ Static files as `python -m http.server` serves them, from the project root, plus
                                       picture and prompt: a round's prompt is kept), check, finish;
                                       ?force=1 for draft over an existing list; ?width=n for finish;
                                       ?all=1 for finish to set every place name again when none is ticked reset.
+                                      Finish first keeps the map-4k.webp it replaces, and its sheet, in
+                                      work/map-4k-backups/ as map-4k-r<round>-<made>.webp (and -sheet.png), and
+                                      records its own round in work/map-4k.json.
                                       One job at a time (409 if busy). Returns {code, out}
+    POST /api/map/<book>/restore-4k   ?name=<a backup's .webp>: that finish becomes map-4k.webp again (and its
+                                      sheet), the current one kept first; 404 for no such backup, 409 while a job runs
     POST /api/map/<book>/checked      mark step 3 (labels checked) done: writes maps/<book>/labels-checked.txt;
                                       ?undo=1 removes it. Drafting again removes it too
     POST /api/map/<book>/gemini/<n>   body: the round's image (png, jpeg or webp, up to 30 MB), saved
                                       as work/map-gemini-<n>.<ext>; 409 if there is one, unless ?force=1
     POST /api/map/<book>/clear-rounds every Gemini round gone (work/map-gemini-*, map-check-*/, and the
                                       prompts, maps/<book>/rounds/prompt-*),
-                                      so the next is round 1 again; map-4k.webp stays. 409 while a job runs
+                                      so the next is round 1 again; map-4k.webp and its backups stay. 409 while a job runs
 
     The import dashboard, tools/admin/ (docs/reference/dashboard.md). Local requests only, like the map's:
     GET  /api/admin/status            every book's steps: tools/book_status.py's all_status(), and the job running
@@ -238,6 +243,93 @@ def clear_rounds(d):
     return n
 
 
+# Each Finish keeps the map-4k.webp it replaces (and its sheet), named by the round that made it and when,
+# so a round's prompt and check can be matched to it; the date keeps two round 3s apart after Clear rounds
+_BACKUPS = 'map-4k-backups'
+_BACKUP = re.compile(r'map-4k-r(\d{1,3})-(\d{8}-\d{6})\.webp')
+
+
+def _stamp(t=None):
+    return time.strftime('%Y%m%d-%H%M%S', time.localtime(t))
+
+
+def current_4k(d):
+    """{round, made} of the book's map-4k.webp, or None. work/map-4k.json records them at Finish; a map
+    made before that takes the newest round upscaled no later than it (0 if none) and its file time."""
+    f = os.path.join(d, 'map-4k.webp')
+    if not os.path.isfile(f):
+        return None
+    try:
+        with open(os.path.join(_work(d), 'map-4k.json'), encoding='utf-8') as fh:
+            rec = json.load(fh)
+        return {'round': int(rec['round']), 'made': str(rec['made'])}
+    except (OSError, ValueError, KeyError, TypeError):
+        pass
+    made, w, best = os.stat(f).st_mtime, _work(d), (None, 0)
+    for e in os.scandir(w) if os.path.isdir(w) else []:
+        m = re.fullmatch(r'map-gemini-(\d+)-x4\.png', e.name)
+        if m and e.stat().st_mtime <= made + 1 and (best[0] is None or e.stat().st_mtime > best[0]):
+            best = (e.stat().st_mtime, int(m.group(1)))
+    return {'round': best[1], 'made': _stamp(made)}
+
+
+def _record_4k(d, rnd, made=None):
+    with open(os.path.join(_work(d, True), 'map-4k.json'), 'w', encoding='utf-8') as fh:
+        json.dump({'round': rnd, 'made': made or _stamp()}, fh)
+
+
+def backup_4k(d):
+    """Copy map-4k.webp (and work/map-4k-sheet.png) into work/map-4k-backups/; the backup's name, or None
+    when there is no map yet."""
+    cur = current_4k(d)
+    if not cur:
+        return None
+    bk = os.path.join(_work(d, True), _BACKUPS)
+    os.makedirs(bk, exist_ok=True)
+    name = f"map-4k-r{cur['round']}-{cur['made']}.webp"
+    shutil.copy2(os.path.join(d, 'map-4k.webp'), os.path.join(bk, name))
+    sheet = os.path.join(_work(d), 'map-4k-sheet.png')
+    if os.path.isfile(sheet):
+        shutil.copy2(sheet, os.path.join(bk, name[:-5] + '-sheet.png'))
+    return name
+
+
+def _drop_backup(d, name):
+    bk = os.path.join(_work(d), _BACKUPS)
+    for f in (name, name[:-5] + '-sheet.png'):
+        if os.path.isfile(os.path.join(bk, f)):
+            os.remove(os.path.join(bk, f))
+
+
+def finishes(d):
+    """The earlier finishes kept, newest first: [{name, round, made, sheet}]."""
+    bk = os.path.join(_work(d), _BACKUPS)
+    out = []
+    for f in os.listdir(bk) if os.path.isdir(bk) else []:
+        if m := _BACKUP.fullmatch(f):
+            out.append({'name': f, 'round': int(m.group(1)), 'made': m.group(2),
+                        'sheet': os.path.isfile(os.path.join(bk, f[:-5] + '-sheet.png'))})
+    return sorted(out, key=lambda b: b['made'], reverse=True)
+
+
+def restore_4k(d, name):
+    """Make a kept finish map-4k.webp again; the current one is kept first. False if no such backup."""
+    m = _BACKUP.fullmatch(name or '')
+    bk = os.path.join(_work(d), _BACKUPS)
+    if not m or not os.path.isfile(os.path.join(bk, name)):
+        return False
+    backup_4k(d)
+    sheet, kept = os.path.join(_work(d), 'map-4k-sheet.png'), os.path.join(bk, name[:-5] + '-sheet.png')
+    os.replace(os.path.join(bk, name), os.path.join(d, 'map-4k.webp'))
+    if os.path.isfile(kept):
+        os.replace(kept, sheet)
+    elif os.path.isfile(sheet):
+        os.remove(sheet)  # the current one's sheet is kept with it; this map has none
+    os.utime(os.path.join(d, 'map-4k.webp'))  # newer than its sepia, so the import bakes it again
+    _record_4k(d, int(m.group(1)), m.group(2))
+    return True
+
+
 def map_books():
     """Every book folder, for the editor's picker: code, number and title (from book.js's head),
     and how far its map has got."""
@@ -288,7 +380,7 @@ def map_state(d):
         for e in sorted(os.scandir(base), key=lambda e: e.name):
             if e.is_file() and e.name.startswith('map'):
                 add(e.name, base)
-            elif e.is_dir() and re.fullmatch(r'map-check-\d+', e.name):
+            elif e.is_dir() and (re.fullmatch(r'map-check-\d+', e.name) or e.name == _BACKUPS):
                 for f in sorted(os.listdir(e.path)):
                     if os.path.isfile(os.path.join(e.path, f)):
                         add(f'{e.name}/{f}', base)
@@ -301,6 +393,7 @@ def map_state(d):
         with open(style, encoding='utf-8') as f:
             draft = f.readline().startswith('# DRAFT')
     return {'files': files, 'rounds': rounds, 'running': _job[0], 'styleDraft': draft,
+            'finish': {'current': current_4k(d), 'backups': finishes(d)},
             'book': int(os.stat(book_js).st_mtime * 1000) if os.path.isfile(book_js) else None}
 
 
@@ -712,6 +805,14 @@ class Handler(SimpleHTTPRequestHandler):
             finally:
                 _job_lock.release()
             return self._json(200, {**map_state(d), 'cleared': n})
+        if method == 'POST' and parts[1:] == ['restore-4k']:  # an earlier finish made map-4k.webp again
+            if not _job_lock.acquire(blocking=False):
+                return self._json(409, {'error': f'busy: {_job[0]} is running'})
+            try:
+                ok = restore_4k(d, q.get('name', [''])[0])
+            finally:
+                _job_lock.release()
+            return self._json(200, map_state(d)) if ok else self._json(404, {'error': 'no such earlier finish'})
         self.close_connection = True
         return self._json(404, {'error': 'nothing here'})
 
@@ -890,13 +991,23 @@ class Handler(SimpleHTTPRequestHandler):
         try:
             _job[0] = f'{book} {step}'
             out, rc = '', 0
+            d = _book_dir(book)
+            if step == 'finish':  # the map it replaces is kept, named by its round
+                f4k = os.path.join(d, 'map-4k.webp')
+                was = os.stat(f4k).st_mtime_ns if os.path.isfile(f4k) else None
+                kept = backup_4k(d)
             for argv in cmds:
                 rc, o = _exec(argv, 15 * 60)
                 out += o
                 if rc:
                     break
+            if step == 'finish':
+                if not rc:
+                    _record_4k(d, int(q['round'][0]))
+                elif kept and os.path.isfile(f4k) and os.stat(f4k).st_mtime_ns == was:
+                    _drop_backup(d, kept)  # nothing was replaced
             if step == 'letter' and not rc:  # the list the lettered picture was made from, so the
-                d = _book_dir(book)          # editor can tell which later edits matter to it
+                # editor can tell which later edits matter to it
                 shutil.copyfile(os.path.join(MAPS, book, 'labels.json'), os.path.join(_work(d, True), 'map-labels-lettered.json'))
             self._json(200, {'code': rc, 'out': _tail(out)})
         finally:
