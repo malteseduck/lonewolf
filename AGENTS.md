@@ -16,12 +16,13 @@ reverse or work around one without the owner's say-so in chat. Cite them as "ADR
   the owner really wants it changed. Do nothing that depends on the change until they answer.
 - **Show the diff, then wait.** Before writing to `docs/spec.md` or anything in `docs/adr/` (the
   index included), show the owner the exact diff in chat as a ```` ```diff ```` block (the question
-  tool shows no colour), then ask for approval with the question tool (`AskUserQuestion`); wait for
-  an explicit yes to that diff.
+  tool shows no colour), with the answers listed under it as text (for example: **Yes, write it** /
+  **Change it**), and end the reply there; wait for an explicit yes to that diff. Do not use the
+  question tool for it: its box appears before the reply's text and hides the diff.
   Talk about the idea, agreement in passing, or "sounds good" to something else is not approval. A
   diff changed after approval is shown again.
-- **Ask with the question tool.** Any question the owner must answer before work goes on (a choice,
-  a go-ahead, a warning) is asked with `AskUserQuestion`, so it stands out, not left in prose.
+- **Ask with the question tool.** Any other question the owner must answer before work goes on (a
+  choice, a go-ahead, a warning) is asked with `AskUserQuestion`, so it stands out, not left in prose.
 - This holds for every agent and every pass, the `repo-maintenance` skill and subagents included: a
   fix it finds in these files is proposed as a diff, never applied unasked.
 

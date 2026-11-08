@@ -31,8 +31,10 @@ no superseded records, since decisions are updated in place.
   and their numbers left as gaps; ruling ids are never reused either.
 - The index in `docs/adr/README.md` is grouped by topic, one line per ADR.
 - An accepted ADR or ruling, or the spec, changes only when the owner approves the exact diff, shown
-  in chat first and then asked with the question tool; casual agreement is not approval. An agent
-  warns first, with the question tool, when a request goes against a record. Agents read the spec
+  in chat with the answers listed under it as text, for the owner to reply with one; casual agreement
+  is not approval. The question tool is not used for a diff: its box appears before the reply's text,
+  hiding the diff. An agent warns first, with the question tool, when a request goes against a
+  record. Agents read the spec
   and the index
   before changing behaviour (AGENTS.md says so), and the rulings in the area they touch.
 
@@ -54,3 +56,5 @@ no superseded records, since decisions are updated in place.
 - 2026-11-08: spec and record changes need the owner's yes to the shown diff; agents warn first when
   a request goes against the spec or a record; both asked with the question tool, the diff shown in
   chat first (owner).
+- 2026-11-08: a diff is approved by the owner's reply to answers listed under it, not the question
+  tool, whose box hid the diff three times (owner).

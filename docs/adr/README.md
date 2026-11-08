@@ -10,8 +10,9 @@ tool's output, and the rulings (`rulings.md`) in the area you touch.
 - **ADRs and rulings are binding.** Do not reverse or work around one without the owner's say-so in
   chat. If a task seems to need it, stop, say which record it goes against, and ask.
 - **Nothing here or in `docs/spec.md` changes without the owner's yes to the exact diff**, shown in
-  chat first, then asked with the question tool. Agreement in passing is not approval; a diff
-  changed after approval is asked again.
+  chat with the answers listed under it as text, the reply ending there (the question tool's box
+  would hide the diff). Agreement in passing is not approval; a diff changed after approval is asked
+  again.
 - **When the owner decides something, record it in the same piece of work**, as an approved diff. Change `docs/spec.md`
   too only when the intent itself changes, but always search it for the decision's subject and bring
   any sentence it contradicts into line. The spec keeps to intent; how a thing looks or is laid out
