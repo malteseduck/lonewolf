@@ -64,9 +64,6 @@ licence is that no licensed content is in it, not that it is private.
 
 - 2026-10-27: the repository is public, with no licensed content in it (owner); the image prompt
   describes the style instead of naming the artist.
-- 2026-10-31: the owner had not marked reliably which AI pictures used references, so every AI-made
-  picture went back to `art/plates/` for the owner to classify again; one made from the prompt alone
-  is then committed as before (owner).
 - 2026-11-05: no AI-made picture is committed, from a prompt alone or not; the book folders of
   `assets/plates/` are git-ignored and the pictures are made again from the scene prompts (owner).
 - 2026-11-06: every prompt that makes our art is committed, the map rounds' too, which had lived in
