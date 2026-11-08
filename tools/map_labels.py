@@ -309,9 +309,11 @@ def names(labels):
 EXAMPLE = ('The first picture is a printed fantasy map and the second is the same map repainted by hand. Repaint the '
            'third picture, a different map, the way the second was painted. Take only the way of painting, not '
            'the example\'s colours or ornament. Be bold: the result must look richly painted, not like the printed '
-           'original. Ink every outline dark. Mass the trees into deep, dark woods with lit edges, each tree '
-           'given definition. Vary the meadows from light to deep green with painted shading. Sculpt each '
-           'mountain with a lit face and a deep shadow side. Give rivers and lakes depth. Enrich the frame, '
+           'original, yet as light overall as the printed original and its colours as clear: the depth comes from '
+           'shading, light against shadow, not from darkening. Ink every outline crisply. Paint the woods with '
+           'each tree given definition, a sunlit crown and a shaded side. Vary the meadows from light to rich '
+           'green with painted shading. Sculpt each mountain with a sunlit face and a shadow side. Give rivers '
+           'and lakes depth. Enrich the frame, '
            'shields, panels and compass with shading and fine detail, in their own colours. '
            'Keep every place, line, word and number exactly where and as it is, and add no features.\n')
 # Book 6: round 3, with no word on colour, took Book 1's tan ground, grey peaks and ivy; round 4, told

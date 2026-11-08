@@ -283,12 +283,17 @@ Commands run from the project root as
    editor passes once Book 1's `work/map-2k-lettered.jpg`, round 8's own input, and
    `work/map-gemini-8.jpg` are on disk; JPEGs, as the 4 MB `map-2k.png` is too big to paste): it points
    at the first two pictures as a before and after, asks for the same way of painting, keeping the
-   map's own colours, ground and border but with the example's depth and variety (light meadows, dark
-   massed woods, deep mountain shadow, the frame enriched; Book 6's round 4, told "not its colours",
-   came back plain), and to keep every place, line and word and add nothing. That is all: no label
+   map's own colours, ground and border but with the example's depth and variety (light meadows,
+   defined trees, sunlit and shaded mountain faces, the frame enriched; Book 6's round 4, told "not its
+   colours", came back plain), as light overall as the printed map, the depth from shading and not
+   darkening, and to keep every place, line and word and add nothing. Round 8 goes in lightened:
+   writing the prompt runs `map_example.py`, which makes `work/map-gemini-8-light.jpg` beside it, the
+   mid-tones lifted to 85% of the scan's median brightness while ink and deep shadows stay put and
+   colour keeps its strength (owner, 2026-11-08: Books 6-9 came back 35-40% darker than their scans,
+   as round 8 is a third darker than its own; "more shading, not darker", but not washed out). That is all: no label
    list, no `style.txt`, no description of the look (ADR 0004, 2026-11-07).
 6. **The owner runs it** in a new Gemini chat (Pro) with, in order, Book 1's `map-2k-lettered.jpg`,
-   Book 1's round 8 and this map's `map-2k-lettered.jpg` attached (step 7's thumbnails 1 to 3)
+   Book 1's round 8 (its lightened copy) and this map's `map-2k-lettered.jpg` attached (step 7's thumbnails 1 to 3)
    (about 1180 px out, 1024 px since November) and saves `map-gemini-<n>.jpg`.
 7. **Check**: `map_check.py $W/map-2k.png $W/map-gemini-<n>.jpg $W/map-check-<n>` (alignment,
    colour and shape flags), then
@@ -361,6 +366,7 @@ Commands run from the project root as
   with it.
 - `tools/map_review.py`: the agent's first pass: `prepare` and `fonts` (above, "The first pass"), `clean` (step 2) and `sheet` (step 4). Prints
   counts and label indexes, never wordings.
+- `tools/map_example.py`: makes `map-gemini-8-light.jpg`, Book 1's round 8 lightened for the example pair; run when a prompt is written.
 - `tools/map_sepia.py`: bakes `map-4k.webp` into `map-sepia.webp`, the ink and parchment of `maps.js` and `shared/ink.js` with the repaint's lighter settings; run by the importer.
 - `tools/map_check.py`: SIFT homography of the repaint onto `map-2k.png` (edge error 1-4 px), saved
   as `H.json`; then a 48 px grid, red where the hue moved (Lab a*b* distance over 25), blue where

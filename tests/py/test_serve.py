@@ -629,6 +629,12 @@ def test_a_prompt_shows_book_1s_round_8_as_an_example_once_it_is_on_disk(root):
     write(str(ex / 'map-gemini-8.jpg'), PNG)
     assert cmd('06tkot')[-1] == '--example'
     assert '--example' not in cmd('01fftd')
+    # round 8 goes to Gemini lightened, made beside it when the prompt is written (owner, 2026-11-08)
+    cmds = serve.map_commands('prompt', '06tkot', {'round': ['4']})[0]
+    assert cmds[1] == serve.PY + ['tools/map_example.py', 'data/projectaon/01fftd/work/map-2k-lettered.jpg',
+                                  'data/projectaon/01fftd/work/map-gemini-8.jpg',
+                                  'data/projectaon/01fftd/work/map-gemini-8-light.jpg']
+    assert len(serve.map_commands('prompt', '01fftd', {'round': ['4']})[0]) == 1
 
 
 def post_image(path, body, kind='image/png'):

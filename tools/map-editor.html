@@ -196,7 +196,7 @@ const book = params.get('book') || '';
 const dir = `/data/projectaon/${book}/`;
 // Book 1's lettered input and round 8, shown to Gemini as a before and after (owner, 2026-11-07, ADR 0004)
 const EXAMPLE_BOOK = '01fftd';
-const EXAMPLE = [['Example before', 'work/map-2k-lettered.jpg'], ['Example after', 'work/map-gemini-8.jpg']];  // JPEGs, not the 4 MB PNG
+const EXAMPLE = [['Example before', 'work/map-2k-lettered.jpg'], ['Example after', 'work/map-gemini-8-light.jpg']];  // JPEGs, not the 4 MB PNG; round 8 lightened when a prompt is written (map_example.py)
 // the steps' files are in work/; the scan and the finished map stay beside book.js, which names the map
 // a round's prompt is committed beside the label list (maps/<book>/rounds/), the rest is the book's
 const at = name => (/^prompt-\d+\.txt$/.test(name) ? `/maps/${encodeURIComponent(book)}/rounds/`

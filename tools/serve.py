@@ -446,8 +446,13 @@ EXAMPLE_BOOK = '01fftd'
 def _example():
     # JPEGs, as each map's own lettered input is: map-2k.png (4 MB) is too big to paste (owner);
     # the before is the lettered picture round 8 was painted from, like the map that follows it
+    # round 8 goes to Gemini lightened (map_example.py), made when a prompt is written: Gemini copied its dark
+    # tone onto Books 6-9 (owner, 2026-11-08)
     w = os.path.join(ROOT, 'data', 'projectaon', EXAMPLE_BOOK, 'work')
     return {'before': os.path.join(w, 'map-2k-lettered.jpg'), 'after': os.path.join(w, 'map-gemini-8.jpg')}
+
+
+EXAMPLE_LIGHT = 'map-gemini-8-light.jpg'
 
 
 def map_commands(step, book, q):
@@ -500,7 +505,12 @@ def map_commands(step, book, q):
             return None, f'round {rnd} has its Gemini picture: its prompt is kept as made', 409
         os.makedirs(_rounds_dir(book), exist_ok=True)
         ex = ['--example'] if book != EXAMPLE_BOOK and all(map(os.path.isfile, _example().values())) else []
-        return [PY + [t('map_labels.py'), 'prompt', labels, f'maps/{book}/rounds/prompt-{rnd}.txt', '--lettered'] + ex], None, 0
+        cmds = [PY + [t('map_labels.py'), 'prompt', labels, f'maps/{book}/rounds/prompt-{rnd}.txt', '--lettered'] + ex]
+        if ex:
+            exw = f'data/projectaon/{EXAMPLE_BOOK}/work'
+            cmds.append(PY + [t('map_example.py'), f'{exw}/map-2k-lettered.jpg', f'{exw}/map-gemini-8.jpg',
+                              f'{exw}/{EXAMPLE_LIGHT}'])
+        return cmds, None, 0
     if step in ('check', 'finish'):
         got = _gemini_files(full, rnd)
         if not got:

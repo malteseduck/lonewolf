@@ -159,7 +159,9 @@ def test_prompt_with_the_example_pair_shows_round_8_rather_than_describing_it():
     assert 'third picture' in p and p.index('third picture') < p.index('Keep every place')
     # round 4 read "not its colours, ground..." as change little: take only the painting, not the colours
     assert "only the way of painting, not the example's colours" in p and 'not its colours' not in p
-    assert 'Mass the trees' in p and 'The plains are green.' not in p  # nor style.txt
+    assert 'each tree' in p and 'The plains are green.' not in p  # nor style.txt
+    # owner, 2026-11-08: Books 6-9 came back 35-40% darker than their scans: more shading, not darker
+    assert p.lower().count('dark') == 1 and 'not from darkening' in p and 'as light overall as' in p
     assert 'never a flat blob' not in p  # the example shows the look; the long description is left out
     # owner, 2026-11-07: basic guidance only, as the round that came close had; no label list
     assert 'HOLMGARD' not in p and 'SCALE' not in p and len(p) < 1100

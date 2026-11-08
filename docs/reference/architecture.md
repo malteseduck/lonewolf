@@ -131,6 +131,7 @@ tools/
   map_sepia.py              bakes a book's map-4k.webp into map-sepia.webp, the sepia the player shows; run by the importer
   map_check.py              aligns a repainted map to the faithful one, flags colour and shape changes
   map_review.py             cleans a map's OCR draft and makes the sheets the agent reads the labels from
+  map_example.py            lightens Book 1's round 8 for the example pair shown to Gemini; run by the prompt step
   map_fit.py                lays each place name's type over the scan's printed letters; scores it against hand placements
                             (the four: docs/reference/map-upscale.md; Python in tools/.venv)
   realesrgan/               git-ignored. Real-ESRGAN's Windows build, used by map_upscale.py and ill_upscale.py
