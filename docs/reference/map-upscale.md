@@ -329,7 +329,10 @@ Commands run from the project root as
   serve.py's docstring: `/api/map/<book>/state`, `run/<step>`, `gemini/<n>`, `clear-rounds`, `restore-4k`; local requests only).
   Step 7 shows the pictures for Gemini as numbered thumbnails (the example before and after, then
   the map), each dragged in or right-click copied as its JPEG: a copy button put a re-encoded PNG of
-  several MB on the clipboard, too big to paste (owner, 2026-11-07).
+  several MB on the clipboard, too big to paste (owner, 2026-11-07). A click on a thumbnail, and
+  steps 8 and 9's Open buttons (`labels.png`, `flags.png`, `map-4k-sheet.png`), show the picture in a
+  viewer over the editor (click for full size, Esc to close): a new window left the editor in the
+  app's browser pane (owner, 2026-11-08).
   Step 7's Clear rounds (`clear-rounds`, after a confirm) deletes every round's picture, prompt and
   check folder (the prompts stay in git history) and unticks reset, so the next round is 1 again; `map-4k.webp`, its record and the earlier finishes stay. Rounds are worth
   keeping only when each is to be kept (owner, 2026-11-06).

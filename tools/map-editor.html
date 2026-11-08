@@ -78,6 +78,16 @@ button.primary { background: rgba(111, 106, 46, .3); border-color: #6f6a2e; font
 #ask { color: inherit; border: 0; border-radius: 3px; padding: 14px 16px; max-width: 46ch; }
 #ask::backdrop { background: #0008; }
 #ask .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+/* a picture viewed over the editor (window.open leaves the editor in the app's browser pane): fitted to the
+   window, a click shows it at full size to scroll round, Esc or the close button shuts it */
+#view { border: 0; padding: 0; background: var(--bg); width: 96vw; height: 94vh; max-width: none; max-height: none; overflow: hidden; }
+#view::backdrop { background: #000c; }
+#view .vbar { position: absolute; top: 6px; right: 6px; z-index: 1; display: flex; gap: 6px; align-items: center; }
+#view .vbar span { background: #000a; color: #b5a684; padding: 3px 8px; border-radius: 4px; }
+#view .vbox { width: 100%; height: 100%; overflow: auto; display: grid; place-items: center; }
+#view img { max-width: 96vw; max-height: 94vh; cursor: zoom-in; }
+#view.full img { max-width: none; max-height: none; cursor: zoom-out; }
+#panel .thumb { cursor: zoom-in; }
 input[type=text], textarea { width: 100%; }
 #filter { flex: 1; }
 #retypeallrow { display: flex; gap: 6px; align-items: center; cursor: pointer; }
@@ -1007,6 +1017,7 @@ function renderFormValues() {  // update numeric inputs in place
 function typing() { const a = document.activeElement; return a && (a.tagName === 'INPUT' && a.type !== 'checkbox' || a.tagName === 'TEXTAREA'); }
 window.addEventListener('keydown', e => {
   if (!e.key) return;  // autofill sends keydowns with no key
+  if ($('view').open) return;  // the viewer takes the keys (Esc shuts it)
   if (e.key === ' ' && !typing()) { spaceDown = true; e.preventDefault(); return; }
   const ctrl = e.ctrlKey || e.metaKey;
   if (ctrl && e.key.toLowerCase() === 's') { e.preventDefault(); save(); return; }
@@ -1084,6 +1095,12 @@ function ask(text, ok = 'OK') {
     $('askok').onclick = () => done(true); $('askno').onclick = () => done(false); d.onclose = () => done(false);
     d.showModal(); $('askok').focus();
   });
+}
+function showPic(src, title) {
+  const d = $('view');
+  d.classList.remove('full'); $('viewt').textContent = title; $('viewi').src = src;
+  $('viewx').onclick = () => d.close(); $('viewi').onclick = () => d.classList.toggle('full');
+  d.showModal(); $('viewx').focus();
 }
 async function del() {
   if (sel < 0) return;
@@ -1344,7 +1361,8 @@ ${received ? `<div class="row">Received ${esc(received)}. <button class="primary
 $('panel').onclick = async e => {
   const t = e.target.closest('[data-tick]'); if (t) { tickCheck(Number(t.dataset.tick)); return; }
   const c = e.target.closest('[data-ck]'); if (c) { select(Number(c.dataset.ck), true); renderPanel(); return; }
-  const o = e.target.closest('[data-open]'); if (o) { window.open(o.dataset.open + '?' + Date.now(), '_blank', 'noopener'); return; }
+  const o = e.target.closest('[data-open]'); if (o) { showPic(o.dataset.open + '?' + Date.now(), o.dataset.open.split('/').pop()); return; }
+  const th = e.target.closest('img.thumb'); if (th) { showPic(th.src, th.nextElementSibling?.textContent || ''); return; }
   const rs = e.target.closest('[data-restore]'); if (rs) return restoreFinish(rs.dataset.restore);
   const fv = e.target.closest('[data-fin]'); if (fv) { await setBg(fv.dataset.fin); draw(); renderPanel(); return; }
   const b = e.target.closest('[data-do]'); if (!b || b.disabled) return;
@@ -1589,6 +1607,7 @@ resize();
 init();
 window.__ed = { get labels() { return labels; }, select, save };
 </script>
+<dialog id="view"><div class="vbar"><span id="viewt"></span><button id="viewx">Close</button></div><div class="vbox"><img id="viewi" alt=""></div></dialog>
 <dialog id="ask"><div id="askt"></div><div class="row"><button value="" id="askno">Cancel</button><button class="primary" id="askok">OK</button></div></dialog>
 </body>
 </html>
