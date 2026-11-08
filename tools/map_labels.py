@@ -307,16 +307,17 @@ def names(labels):
 
 
 EXAMPLE = ('The first picture is a printed fantasy map and the second is the same map repainted by hand. Repaint the '
-           'third picture, a different map, in exactly the same way: the same inked outlines, the same rich, deep '
-           'colour and painted shading, mountains, hills and trees painted in the same manner. '
-           'Keep this map\'s own colours, kinds of ground and '
-           'border pattern as drawn, with no ivy or ornament the example has and this map lacks. But paint it with '
-           'the example\'s depth and variety: lighter meadows, dark massed woods, deep shadows in the mountains, '
-           'dark ink outlines everywhere, and the frame, shields, panels and compass enriched as the example\'s '
-           'were. Keep every place, line and word where it is and as it is written, and add nothing: no new '
-           'buildings, creatures, ships or features.\n')
+           'third picture, a different map, the way the second was painted. Take only the way of painting, not '
+           'the example\'s colours or ornament. Be bold: the result must look richly painted, not like the printed '
+           'original. Ink every outline dark. Mass the trees into deep, dark woods with lit edges, each tree '
+           'given definition. Vary the meadows from light to deep green with painted shading. Sculpt each '
+           'mountain with a lit face and a deep shadow side. Give rivers and lakes depth. Enrich the frame, '
+           'shields, panels and compass with shading and fine detail, in their own colours. '
+           'Keep every place, line, word and number exactly where and as it is, and add no features.\n')
 # Book 6: round 3, with no word on colour, took Book 1's tan ground, grey peaks and ivy; round 4, told
-# "not its colours, ground, border or decoration", came back clean but plain (owner, 2026-11-07)
+# "not its colours, ground, border or decoration", came back clean but plain (owner, 2026-11-07).
+# Round 6, mostly clauses on what to keep, came back a near copy with its scale's figures garbled: the
+# keeping is one line now, the rest the painting (owner, 2026-11-07)
 
 
 def prompt(labels, lettered=False, style=None, lettering=None, example=False):

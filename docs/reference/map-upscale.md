@@ -210,7 +210,17 @@ Commands run from the project root as
    on Books 6, 7 and 10, and smudges the foot of Book 1's monastery tower).
 4. **Set them again**: `map_letter.py $W/map-2k.png $L $W/map-2k-erased.jpg - $W/map-2k-lettered.jpg --hand "Cabin.ttf|SemiBold" --caps "Cabin.ttf|SemiBold"` (or the font `maps/<code>/font.txt` names).
    Each name is ringed by a hard white outline of 1-2 px (`OUTLINE`, a share of its line height), so Gemini
-   sees it whole against the map's lines; at Finish, a soft white glow instead (`GLOW`, `GLOW_PEAK`).
+   sees it whole against the map's lines. At Finish a re-set name's halo only lifts the type off dark
+   ground: the same outline at the 4K scale, softened, at most 0.7 strong, full where the ground under
+   it is as dark as mean RGB 90 and gone where it is 170 or lighter (`HALO_DARK`, `HALO_LIGHT`,
+   `FINISH_PEAK`; owner, 2026-11-08: a halo to read the type by, "not a stand-out feature"). The wipe
+   before it takes Gemini's own copy of the outline with its letters (pale near-grey pixels joined to
+   them), which had smeared into a pale block round the name set again.
+   The scale's numbers (`spread`) are set from their box, not the ink, which takes in the bar: the
+   first number starts at the box's left edge, the last ends at its right, the rest evenly between,
+   level unless `angle` says otherwise, at `height` (map-2k px) or else 0.45 of the box's height
+   (`SCALE_HEIGHT`; about 9 px on the books so far). Book 6's scale, measured, came out the bar's
+   height, and its ink missed the numbers on coloured bars (2026-11-08).
    Every halo is drawn before any type, so one never covers a near name (ADR 0004, 2026-11-02).
    `--no-halo` sets plain type, as Book 1's round 8 input had it (a trial, 2026-11-07).
    Each name's angle and size are first measured from the scan's ink (the angle from OCR's `slant` where the ink is a little off it, step 2; the size fitted to the ink's length).
@@ -381,7 +391,7 @@ Commands run from the project root as
 Also tried and dropped: copying the scan's letter strokes onto Gemini's paint by script (its letters
 and trees are the same dark olive, so neither could be found cleanly), and lettering in IM Fell
 English with a light halo (the owner wanted it bigger and bolder, and no halo; a white outline and
-glow came back on 2026-11-02, above).
+glow came back on 2026-11-02, above; the glow gave way to the outline on 2026-11-08).
 
 ## The Gemini API, if the hand-off gets tedious
 

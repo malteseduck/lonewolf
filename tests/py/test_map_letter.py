@@ -176,11 +176,62 @@ def test_the_outline_is_as_wide_on_every_side_not_a_shadow(monkeypatch, size, at
     assert ix0 - wx0 == wx1 - ix1 and iy0 - wy0 == wy1 - iy1 and ix0 - wx0 in (1, 2)
 
 
-def test_a_glow_fades_from_white_beside_the_type_to_the_map_at_finish(monkeypatch):
-    base = halo_on_grey(monkeypatch, 'glow')
-    near, mid = base.getpixel((50, 56))[0], base.getpixel((50, 59))[0]
-    assert near > mid > 90 and near < 255
-    assert base.getpixel((50, 80)) == (90, 90, 90)
+def finish_halo_on(monkeypatch, grey):
+    monkeypatch.setattr(map_letter, 'K', 2)
+    monkeypatch.setattr(map_letter, 'WIPE', True)
+    monkeypatch.setattr(map_letter, 'HALO', 'outline')
+    base = Image.new('RGB', (100, 100), (grey,) * 3)
+    for map_letter.PHASE in ('halo', 'draw'):  # type 10 px tall, line height 40 px on the 4K map
+        map_letter.place(base, Image.new('L', (30, 10), 255), 40, np.array([50.0, 50.0]), 0.0)
+    col = np.asarray(base)[50:, 50, 0].astype(int)
+    return col, int(np.argmax(col != map_letter.INK[0]))  # the column below the type, its first px past it
+
+
+def test_at_finish_the_halo_only_lifts_type_off_dark_ground(monkeypatch):
+    # its point is to define the type against dark paint, not to stand out (owner, Book 6): on dark
+    # ground a soft light edge, gone within a few px; on light ground none at all
+    col, below = finish_halo_on(monkeypatch, 50)
+    assert col[below] > 110 and col[below] > col[below + 2] >= 50
+    assert col[below + 6] == 50
+    col, below = finish_halo_on(monkeypatch, 200)
+    assert (col[below:] == 200).all()
+
+
+def test_scale_numbers_without_a_height_are_sized_from_their_box_not_the_bar(monkeypatch):
+    # the scale's ink box takes in its coloured bar, so measuring it set numbers the bar's height
+    # (Book 6, round 6); without a "height" they take 0.45 of the box's height, as the books' scales have
+    im = paper()
+    im[100:120, 60:260] = (40, 80, 200)  # the bar
+    for x in (64, 140, 250):
+        im[104:114, x:x + 4] = INK       # its numbers
+    lab = {'text': '0 50 100', 'box': [58, 98, 262, 122], 'spread': True, 'fix': True}
+    monkeypatch.setattr(map_letter, 'PHASE', 'mask')
+    sizes = []
+    for extra in ({}, {'height': 0.45 * 24}):
+        map_letter.PLACED.clear()
+        map_letter.letter(None, {**lab, **extra}, LabelInk(im, [lab]), CABIN, CABIN, 1)
+        assert len(map_letter.PLACED) == 3
+        sizes.append([int(np.ptp(np.argwhere(m.any(1)))) for _, _, m in map_letter.PLACED])
+    assert sizes[0] == sizes[1] and max(sizes[0]) < 20  # the bar is 20 px tall
+
+
+def test_scale_numbers_run_from_end_to_end_of_their_box_whatever_bars_lie_under_them(monkeypatch):
+    # on coloured bars the scan's ink misses numbers, so the row bunched up (Book 6, round 6):
+    # the box spans the row, so the first number starts at its left edge and the last ends at its right
+    im = paper()
+    im[100:120, 60:160] = (40, 40, 200)   # a red bar under the first numbers, which hide in it
+    im[100:120, 160:260] = (230, 230, 230)
+    im[104:114, 240:254] = INK            # only the last number is found in the ink
+    lab = {'text': '0 50 100', 'box': [60, 98, 260, 122], 'spread': True, 'height': 10, 'angle': 0}
+    monkeypatch.setattr(map_letter, 'PHASE', 'mask')
+    map_letter.PLACED.clear()
+    map_letter.letter(None, lab, LabelInk(im, [lab]), CABIN, CABIN, 1)
+    xs = [x + np.argwhere(m.any(0)).ravel() for x, _, m in map_letter.PLACED]
+    assert abs(xs[0].min() - 60) <= 3 and abs(xs[-1].max() - 260) <= 3
+    centres = [(c.min() + c.max()) / 2 for c in xs]
+    assert centres[0] < centres[1] < centres[2]
+    ys = [y + np.argwhere(m.any(1)).ravel() for _, y, m in map_letter.PLACED]
+    assert all(abs((c.min() + c.max()) / 2 - 110) <= 2 for c in ys)  # on the box's middle line
 
 
 def test_no_halo_leaves_the_map_alone(monkeypatch):
@@ -195,6 +246,20 @@ def test_no_halo_leaves_the_map_alone(monkeypatch):
 
 # ---- wipe ---------------------------------------------------------------------------------
 
+def test_the_wipe_takes_geminis_white_outline_with_its_letters_but_not_a_road_further_off():
+    # Gemini copies the input's white outline round each name; wiping only its dark letters left the
+    # ring as a pale smudge round the name set again (Book 6, round 6)
+    ground = (100, 140, 90)
+    region = np.full((100, 160, 3), ground, np.uint8)
+    region[30:58, 20:110] = (230, 225, 200)  # Gemini's cream outline round its letters, a few px wide
+    for x in range(26, 104, 12):
+        region[36:52, x:x + 4] = (30, 25, 20)  # its letters' strokes
+    region[85:89, :] = (235, 230, 220)       # a pale road well below the name
+    mask = np.zeros((100, 160), np.uint8)
+    mask[36:52, 26:104] = 255                # where the name is set again
+    out = map_letter.wipe(region.copy(), mask, 20).astype(int)
+    assert np.abs(out[30:58, 20:110] - ground).mean(2).max() < 40
+    assert (out[86, :] > 200).all()
 
 
 # ---- erase --------------------------------------------------------------------------------
@@ -347,11 +412,11 @@ def test_main_resets_ticked_labels_and_fix_labels(monkeypatch, files, capsys):
 
 
 
-def test_main_outlines_gemini_input_and_glows_the_finish_every_halo_before_any_type(monkeypatch, files):
+def test_main_outlines_gemini_input_and_the_finish_every_halo_before_any_type(monkeypatch, files):
     seen = []
     monkeypatch.setattr(map_letter, 'WIDTH', 400)
     monkeypatch.setattr(map_letter, 'letter', lambda base, lab, *a: seen.append((map_letter.PHASE, map_letter.HALO)))
-    for warp, kind in (('-', 'outline'), ('H.json', 'glow')):
+    for warp, kind in (('-', 'outline'), ('H.json', 'outline')):
         seen.clear()
         argv = ['map_letter.py', str(files / 'scan.png'), str(files / 'labels.json'), str(files / 'rep.png'),
                 warp if warp == '-' else str(files / warp), str(files / 'out.png')]

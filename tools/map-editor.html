@@ -520,13 +520,17 @@ function setText(lines, centre, ang, size, leading) {
   ctx.restore();
 }
 function drawText(l) {
-  if (l.spread) {
-    const g = letterGeom(l);  // the scale's numbers, each on its own
+  if (l.spread) {  // the scale's numbers, each on its own, end to end of the box (map_letter.py)
     const words = l.text.split(/\s+/);
-    const step = g.length / Math.max(words.length - 1, 1) * 0.94;
+    const [x0, y0, x1, y1] = l.box, ang = (l.angle || 0) * Math.PI / 180, c = Math.cos(ang), s = Math.sin(ang);
+    const span = Math.abs((x1 - x0) * c) + Math.abs((y1 - y0) * s);
+    const height = l.height || 0.45 * (Math.abs((x1 - x0) * s) + Math.abs((y1 - y0) * c));  // SCALE_HEIGHT
+    const sizes = words.map(w => fitSize([w], 1e6, height / 1.25, null, 1));
+    const wid = words.map((w, i) => block([w], sizes[i]).wid);
+    const first = -span / 2 + (wid[0] || 0) / 2, last = span / 2 - (wid[wid.length - 1] || 0) / 2;
     words.forEach((w, i) => {
-      const o = (i - (words.length - 1) / 2) * step;
-      setText([w], [g.centre[0] + Math.cos(g.ang) * o, g.centre[1] + Math.sin(g.ang) * o], g.ang, fitSize([w], 1e6, g.thick, null, 1), 1);
+      const o = words.length === 1 ? (first + last) / 2 : first + (last - first) * i / (words.length - 1);
+      setText([w], [(x0 + x1) / 2 + c * o, (y0 + y1) / 2 + s * o], ang, sizes[i], 1);
     });
   } else { const t = typeOf(l); setText(t.lines, t.centre, t.ang, t.size, t.leading); }
   if ((!l.set || l.spread) && (stale(l) || !l.ink || l.ink.from_box)) {  // a box moved since measuring, never measured, or measured from the box: the preview is a guess
@@ -1172,7 +1176,9 @@ function status(n) {
     case 7: return !rd ? 'todo' : mt(rf) < lt ? 'stale' : 'done';
     case 8: return !ck ? 'todo' : ck < mt(rf) ? 'stale' : 'done';
     case 9: return !mt('map-4k.webp') || !rd ? 'todo' : mt('map-4k.webp') < mt(rf) || (mt(`map-check-${rd}/H.json`) || 0) > mt('map-4k.webp') ? 'stale' : 'done';
-    case 10: return !S.book ? 'todo' : S.book < mt('map-4k.webp') ? 'stale' : 'done';
+    // as book_status.py's sepia_shown(): the import bakes map-sepia.webp from a newer map-4k.webp, but
+    // leaves book.js untouched when it already names it, so book.js's date says nothing (Book 6)
+    case 10: return !S.book ? 'todo' : (mt('map-sepia.webp') || 0) < mt('map-4k.webp') ? 'stale' : 'done';
   }
 }
 

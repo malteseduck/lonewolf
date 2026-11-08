@@ -157,13 +157,14 @@ def test_prompt_with_the_example_pair_shows_round_8_rather_than_describing_it():
     p = map_labels.prompt([PLACE, CAPTION], True, 'Repaint this map of somewhere. The plains are green.', example=True)
     assert p.startswith('The first picture is a printed fantasy map and the second')
     assert 'third picture' in p and p.index('third picture') < p.index('Keep every place')
-    # round 4 read "not its colours, ground..." as change little: keep the colours, take the richness
-    assert "Keep this map's own colours" in p and "the example's depth and variety" in p and 'not its colours' not in p
-    assert 'dark massed woods' in p and 'The plains are green.' not in p  # nor style.txt
+    # round 4 read "not its colours, ground..." as change little: take only the painting, not the colours
+    assert "only the way of painting, not the example's colours" in p and 'not its colours' not in p
+    assert 'Mass the trees' in p and 'The plains are green.' not in p  # nor style.txt
     assert 'never a flat blob' not in p  # the example shows the look; the long description is left out
     # owner, 2026-11-07: basic guidance only, as the round that came close had; no label list
     assert 'HOLMGARD' not in p and 'SCALE' not in p and len(p) < 1100
-    assert 'Keep every place, line and word where it is' in p and 'add nothing' in p
+    # round 6, mostly what to keep, came back a near copy: the keeping is one sentence, numbers included
+    assert p.count('Keep ') == 1 and 'word and number exactly' in p and 'add no features' in p
 
 
 def test_prompt_keeps_the_maps_drawn_spirit_not_realism():

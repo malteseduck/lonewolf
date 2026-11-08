@@ -17,7 +17,7 @@ size, angle} places the type by hand (the map editor's text frame): centre of it
 map-2k px, reading angle in degrees; it overrides all of the above. Mixed-case labels (the hand-lettered
 names) get --hand, capitals get --caps, set larger and heavier than the scan's ink measures
 (SCALE, BOLD): at the scan's size they looked faint beside Gemini's own labels (owner, Book 1).
-Each name is ringed in white: a hard outline on Gemini's input, a soft glow at Finish (halo());
+Each name is ringed in a thin white outline, on Gemini's input and, a little softened, at Finish (halo());
 --no-halo sets plain type, as Book 1's round 8 input had it.
 Before lettering, Gemini's own ink is erased from "fix" boxes, any ghost letters in "retype" boxes,
 and anything in a --mark box (a stray colon); its sparkle watermark, bottom right, always.
@@ -51,9 +51,10 @@ SCALE = 1.3               # type size over the scan's for the scale's small numb
 SMALL = 30                # px on map-2k: numbers thinner than this are small and get SCALE
 TRACK = 0.05              # extra space between letters, as a share of the type size
 BOLD = 0.025              # stroke added round each glyph, as a share of the type size
-OUTLINE = 0.06            # the white outline round a name on Gemini's input, as a share of its line height: 1-2 px
-GLOW = 0.4                # the reach of the white glow round a name at Finish, as a share of its line height
-GLOW_PEAK = 0.85          # the glow's strength beside the type (1 would be solid white)
+OUTLINE = 0.06            # the white outline round a name, as a share of its line height: 1-2 px on Gemini's input
+HALO_DARK, HALO_LIGHT = 90, 170  # at Finish the halo is full on ground this dark (mean RGB) or darker, none this light
+FINISH_PEAK = 0.7         # its strength at full: a light edge to read the type by, not a white ring
+SCALE_HEIGHT = 0.45       # a scale's number height, as a share of its box's, where no "height" is given
 HALO_INK = (255, 255, 255)
 FILL = 0.92               # type length as a share of the scan's ink length: hand ink is loose
 SLANT_TRUST = (3, 20)     # degrees between the ink's axis and OCR's slant where the slant is taken
@@ -188,6 +189,22 @@ def letter(base, lab, scan_ink, hand, caps, k):
         mask, lh = render(lines, font, 0, 0, len(lines), leading=lab.get('leading', 1), size=s['size'] * k)
         place(base, mask, lh, np.array(s['at'], np.float64) * k, np.radians(s['angle']))
         return
+    if lab.get('spread'):  # the scale's numbers: each word on its own, from end to end of the box
+        # the box, not the ink: the ink takes in the bar, so numbers came out the bar's height, and on
+        # coloured bars it missed numbers, so the row bunched up (Book 6)
+        x0, y0, x1, y1 = lab['box']
+        ang = np.radians(lab.get('angle', 0))
+        d = np.array([np.cos(ang), np.sin(ang)])
+        mid = np.array([(x0 + x1) / 2, (y0 + y1) / 2])
+        span = abs((x1 - x0) * d[0]) + abs((y1 - y0) * d[1])  # the box's length along the row
+        height = lab.get('height') or SCALE_HEIGHT * (abs((x1 - x0) * d[1]) + abs((y1 - y0) * d[0]))
+        typed = [render([w], font, 10 ** 6, height / 1.25 * k, 1) for w in text.split()]
+        widths = [(m.getbbox() or (0, 0, 0, 0))[2] - (m.getbbox() or (0, 0, 0, 0))[0] for m, _ in typed]
+        first, last = -span / 2 * k + widths[0] / 2, span / 2 * k - widths[-1] / 2
+        for i, (m, lh) in enumerate(typed):
+            t = (first + last) / 2 if len(typed) == 1 else first + (last - first) * i / (len(typed) - 1)
+            place(base, m, lh, mid * k + d * t, ang)
+        return
     g = geometry(scan_ink, lab)
     if g is None:
         if PHASE == 'draw':
@@ -200,18 +217,9 @@ def letter(base, lab, scan_ink, hand, caps, k):
         ang = np.radians(lab.get('angle', 0))
         length = (lab['box'][2] - lab['box'][0]) / FILL * 0.95  # fills the box: a panel or a gap
         thick = lab['box'][3] - lab['box'][1]
-    if lab.get('height'):  # type height given outright (the scale's ink box takes in the bar)
+    if lab.get('height'):  # type height given outright, the length following from it
         thick = lab['height'] / 1.25
-        if not lab.get('spread'):  # the length follows from it (spread words keep their ends)
-            length = 10 ** 6
-    if lab.get('spread'):  # the scale's numbers: each word on its own, evenly from end to end
-        words = text.split()
-        d = np.array([np.cos(ang), np.sin(ang)])
-        step = length / max(len(words) - 1, 1) * 0.94
-        for i, w in enumerate(words):
-            c = centre + d * (i - (len(words) - 1) / 2) * step
-            place(base, *render([w], font, 10 ** 6, thick * k, 1), c * k, ang)
-        return
+        length = 10 ** 6
     lines = lab.get('lines') or [text]
     size = None
     if not lab.get('height'):
@@ -228,17 +236,16 @@ def letter(base, lab, scan_ink, hand, caps, k):
 
 def halo(mask, lh):
     """(the halo's mask, its colour) round the type, or None. Gemini's input gets a hard white outline,
-    so the dark names stand clear of the map's own lines and Gemini copies them whole; the finish a soft
-    white glow, which parts them from the paint for the reader (owner, 2026-11-02)."""
+    so the dark names stand clear of the map's own lines and Gemini copies them whole. Its copies keep
+    it, so a name set again at Finish gets the same outline at the 4K map's scale, softened a little as
+    Gemini's are: a wide glow stood out beside them (owner, 2026-11-08, Book 6)."""
     m = np.asarray(mask, np.uint8)
     if HALO == 'outline':
-        r = min(max(1, round(lh * OUTLINE)), 2)  # just enough to tell the type from what it crosses (owner)
-        return cv2.dilate(m, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))), HALO_INK
-    if HALO == 'glow':
-        r = max(3, round(lh * GLOW))
-        g = cv2.dilate(m, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * (r // 3) + 1,) * 2))
-        g = cv2.GaussianBlur(g.astype(np.float32), (0, 0), r / 2)
-        return np.clip(g * GLOW_PEAK, 0, 255).astype(np.uint8), HALO_INK
+        r = min(max(1, round(lh * OUTLINE)), round(2 * K))  # just enough to tell the type from what it crosses (owner)
+        m = cv2.dilate(m, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1)))
+        if WIPE:
+            m = cv2.GaussianBlur(m, (0, 0), r / 2)
+        return m, HALO_INK
     return None
 
 
@@ -246,7 +253,7 @@ def place(base, mask, lh, centre, ang):
     deg = -np.degrees(ang)  # PIL turns anticlockwise; ang is measured with y down
     # every phase pads and turns the type alike, so the halo is ringed round the very pixels the type takes:
     # ringing it before the turn left it a pixel or two off on a slanted name, a shadow, not an outline
-    p = max(3, round(lh * GLOW)) * 3  # room round the type for the halo to spread into
+    p = max(3, round(lh * OUTLINE * 3)) * 3  # room round the type for the halo to spread into
     grown = Image.new('L', (mask.width + 2 * p, mask.height + 2 * p), 0)
     grown.paste(mask, (p, p))
     mask = grown.rotate(deg, resample=Image.BICUBIC, expand=True)
@@ -257,6 +264,9 @@ def place(base, mask, lh, centre, ang):
         if h is not None:
             region = np.asarray(base.crop((x, y, x + mask.width, y + mask.height))).astype(np.float32)
             a = h[0].astype(np.float32)[..., None] / 255
+            if WIPE:  # at Finish, only where the ground is dark enough to swallow the type (owner, Book 6)
+                lum = cv2.GaussianBlur(region.mean(2), (0, 0), max(2.0, lh * 0.15))
+                a *= FINISH_PEAK * np.clip((HALO_LIGHT - lum) / (HALO_LIGHT - HALO_DARK), 0, 1)[..., None]
             base.paste(Image.fromarray((region * (1 - a) + np.array(h[1], np.float32) * a).astype(np.uint8)), (x, y))
         return
     if PHASE == 'mask':  # masks(): where the type goes, nothing painted
@@ -273,7 +283,7 @@ def place(base, mask, lh, centre, ang):
 
 
 WIPE = False  # set in main: on a repaint, clear Gemini's own try at a name before setting it
-HALO = None   # set in main: 'outline' on Gemini's input, 'glow' at Finish (halo())
+HALO = None   # set in main: 'outline', on Gemini's input and at Finish (halo()), or None
 PHASE = 'draw'
 PLACED = []  # masks(): each piece of type as (x, y, mask)
 
@@ -315,7 +325,14 @@ def wipe(region, mask, lh):
     m &= cv2.dilate(blob, np.ones((9, 9), np.uint8)) == 0
     r = max(int(lh * 0.5), 3)
     near = cv2.dilate((mask > 40).astype(np.uint8), cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1)))
-    m = cv2.dilate((m & (near > 0)).astype(np.uint8) * 255, np.ones((5, 5), np.uint8))
+    m &= near > 0
+    # Gemini's copy of the input's white outline rings its letters: filled from, it smeared into a pale
+    # block round the name set again (Book 6). Pale near-grey pixels joined to the letters go with them.
+    lab = cv2.cvtColor(bgr, cv2.COLOR_BGR2LAB).astype(np.int16)
+    pale = (lab[..., 0] > 185) & (np.hypot(lab[..., 1] - 128, lab[..., 2] - 128) < 30) & (near > 0)
+    n, cc = cv2.connectedComponents((pale | m).astype(np.uint8), connectivity=8)
+    m |= pale & np.isin(cc, np.unique(cc[m]))
+    m = cv2.dilate(m.astype(np.uint8) * 255, np.ones((5, 5), np.uint8))
     return cv2.cvtColor(cv2.inpaint(bgr, m, 7, cv2.INPAINT_TELEA), cv2.COLOR_BGR2RGB)
 
 
@@ -402,7 +419,7 @@ def main():
 
     global K, WIPE, HALO
     K, WIPE = k, a.warp != '-'
-    HALO = None if a.no_halo else 'glow' if WIPE else 'outline'
+    HALO = None if a.no_halo else 'outline'
     scan_ink = LabelInk(F, labels)  # the same ink map_erase.py takes out
     base = Image.fromarray(cv2.cvtColor(A, cv2.COLOR_BGR2RGB))
     global PHASE
