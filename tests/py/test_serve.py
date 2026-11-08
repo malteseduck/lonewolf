@@ -557,6 +557,28 @@ def test_map_books_and_state(root):
     assert jsend('GET', '/api/map/01fftd/state')[1]['styleDraft'] is True
 
 
+def test_map_index_lists_each_books_map_with_its_figures(root):
+    d = book(root)
+    write(str(d / 'map.png'), PNG)
+    book(root, '02fotw', '{"number": 2, "title": "Fire"}')  # no printed map yet
+    assert jsend('GET', '/api/map/index')[1][0] == {
+        'code': '01fftd', 'number': 1, 'title': 'Flight', 'stage': 'not started', 'labels': None, 'checked': None,
+        'font': None, 'rounds': [], 'finish': None, 'thumb': '/data/projectaon/01fftd/map.png'}
+    write(str(root / 'maps' / '01fftd' / 'labels.json'), '[{"text": "a"}, {"text": "b"}]')
+    write(str(root / 'maps' / '01fftd' / 'labels-checked.txt'), '2026-11-01 10:00\n')
+    write(str(root / 'maps' / '01fftd' / 'font.txt'), 'Cabin\nline two\n')
+    write(str(d / 'work' / 'map-gemini-3.png'), PNG)
+    write(str(d / 'work' / 'map-gemini-0.png'), PNG)  # the owner's tries from before the procedure
+    write(str(d / 'map-4k.webp'), PNG)
+    write(str(d / 'map-sepia.webp'), PNG)
+    st, got = jsend('GET', '/api/map/index')
+    one, two = got
+    assert st == 200 and one['stage'] == 'done' and one['labels'] == 2 and one['checked'] == '2026-11-01 10:00'
+    assert one['font'] == 'Cabin' and one['rounds'] == [3] and one['finish']['round'] == 0
+    assert one['thumb'] == '/data/projectaon/01fftd/map-sepia.webp'  # as the player shows it
+    assert two['stage'] == 'no map' and two['thumb'] is None
+
+
 def test_map_retype_step_needs_a_label_list(root):
     book(root)
     assert serve.map_commands('retype', '01fftd', {}) == (None, 'no labels.json yet', 404)

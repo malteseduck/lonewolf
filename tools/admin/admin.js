@@ -381,6 +381,8 @@ function openIcons() {  // every icon the player draws beside the books' items: 
 $('[data-open="icons"]').onclick = openIcons;
 // every fight of every book, and a trial of any of them under rules of your own (fightlist.html, fightlab.js)
 $('[data-open="fightlist"]').onclick = () => openInline({ code: '' }, '/tools/admin/fightlist.html?embed=1', 'All fights');
+// every book's map, how far it has got; a card opens that book's editor (maps.html)
+$('[data-open="maps"]').onclick = () => openInline({ code: '' }, '/tools/admin/maps.html?embed=1', 'All maps');
 // every picture in art/: its link, none, or made with AI and moved into the committed library (ADR 0038, 0042)
 $('[data-open="sources"]').onclick = () => openInline({ code: '' }, '/tools/admin/sources.html?embed=1', 'Picture sources');
 // Lone Wolf on the title page and the Kai panel, baked into assets/hero/ (hero.html)
@@ -414,7 +416,9 @@ $('#map-close').onclick = () => {
   load();
 };
 window.addEventListener('message', (e) => {
-  if (e.origin === location.origin && (e.data?.mapEditor === 'state' || e.data?.fightSheet === 'changed' || e.data?.itemSheet === 'changed')) reloadSoon();
+  if (e.origin !== location.origin) return;
+  if (e.data?.mapIndex === 'open') return openMap(book(e.data.book));  // a card of All maps: that book's editor
+  if (e.data?.mapEditor === 'state' || e.data?.fightSheet === 'changed' || e.data?.itemSheet === 'changed') reloadSoon();
 });
 window.addEventListener('beforeunload', (e) => {
   try { if ($('#mapframe').contentWindow.mapEditorDirty?.()) { e.preventDefault(); e.returnValue = ''; } } catch { /* none */ }

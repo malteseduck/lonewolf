@@ -135,6 +135,11 @@ step left.
   that takes only some weapons is reached only with one, so a stand-in is given the first it names (`equipFor`). Edits there are for that window: the
   list's run always uses its stand-in. A trial's charges
   are not counted (each fight has its unleashed rounds in full), nor anything the fights before it cost him.
+- **The map list** ("All maps" in the bar; `tools/admin/maps.html`, in the work area only; ADR 0021): every
+  downloaded book's map as a card, from `GET /api/map/index` (`serve.map_index()`): the picture the player shows
+  (`map-sepia.webp`, else `map-4k.webp`, the lettered 2K or the scan), how far it has got (`map_books()`'s stage),
+  how many labels, when they were checked, the font, the Gemini rounds and the finish's round and date. Books with
+  no printed map are named in the summary. A card opens that book's map editor in its Map step.
 - **The picture-sources sheet** ("Picture sources" in the bar; `tools/admin/sources.html`, in the
   work area only): every picture in `art/` from `GET /api/admin/art-sources` (`art_sources.listing()`), those
   without a link first, each with the books whose fights use it. Save link and No link post to

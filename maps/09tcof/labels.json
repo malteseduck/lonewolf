@@ -237,7 +237,8 @@
    ],
    "size": 27,
    "angle": -0.9
-  }
+  },
+  "reset": true
  },
  {
   "text": "SLOVIA",
@@ -294,7 +295,8 @@
     428,
     -22.5
    ]
-  ]
+  ],
+  "reset": true
  },
  {
   "text": "Anari Pass",
@@ -329,7 +331,8 @@
    ],
    "size": 29,
    "angle": -31.1
-  }
+  },
+  "reset": true
  },
  {
   "text": "THE ARMS OF THE CITY OFTAHOU",
@@ -478,7 +481,8 @@
    ],
    "size": 31.5,
    "angle": 0.3
-  }
+  },
+  "reset": true
  },
  {
   "text": "PIRAZIN",
@@ -694,7 +698,8 @@
    "size": 26,
    "angle": -95
   },
-  "joined": true
+  "joined": true,
+  "reset": true
  },
  {
   "text": "5th Chah Range",
@@ -730,7 +735,8 @@
    ],
    "size": 33.2,
    "angle": -23.5
-  }
+  },
+  "reset": true
  },
  {
   "text": "HALOK",
@@ -938,7 +944,8 @@
    "angle": 0.5
   },
   "small": false,
-  "joined": true
+  "joined": true,
+  "reset": true
  },
  {
   "text": "L. Adon",
@@ -1260,7 +1267,8 @@
   "lines": [
    "DECIDUOUS",
    "FOREST"
-  ]
+  ],
+  "fix": true
  },
  {
   "text": "HILLS",
@@ -1320,7 +1328,8 @@
   ],
   "slant": 1,
   "conf": 1,
-  "retype": false
+  "retype": false,
+  "fix": true
  },
  {
   "text": "MOUNTAINS",
@@ -1416,7 +1425,8 @@
   ],
   "slant": 0,
   "conf": 1,
-  "retype": false
+  "retype": false,
+  "fix": true
  },
  {
   "text": "0",

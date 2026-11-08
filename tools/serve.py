@@ -19,6 +19,7 @@ Static files as `python -m http.server` serves them, from the project root, plus
     from this machine (127.0.0.1 or ::1), because they run scripts, even if the server is bound to
     the LAN. <book> is an existing folder of data/projectaon:
     GET  /api/map/books               every book folder: {code, number, title, stage} (how far its map is)
+    GET  /api/map/index               the same, with each map's labels, checked, font, rounds, finish and thumb
     GET  /api/map/<book>/state        the map files (names starting "map" in the book's folder and its
                                       work/, named without the folder, and work/map-check-<n>/*, and
                                       maps/<book>/'s labels.json, style.txt, labels-checked.txt, font.txt) with
@@ -356,6 +357,31 @@ def map_books():
                  else 'labels' if os.path.isfile(os.path.join(MAPS, e.name, 'labels.json')) else 'started' if work('map-2k.png')
                  else 'not started' if has('map.png') else 'no map')
         out.append({'code': e.name, 'number': num, 'title': title, 'stage': stage})
+    return out
+
+
+def map_index():
+    """map_books() with each map's figures, for the dashboard's All maps sheet: how many labels, when they were
+    checked, the font, the Gemini rounds, the finish, and the picture to show (the player's, else the nearest to it)."""
+    out = []
+    for b in map_books():
+        d = os.path.join(ROOT, 'data', 'projectaon', b['code'])
+        own, w = os.path.join(MAPS, b['code']), _work(d)
+
+        def read(f, whole=False):
+            try:
+                with open(os.path.join(own, f), encoding='utf-8') as fh:
+                    return json.load(fh) if whole else (fh.readline().strip() or None)
+            except (OSError, ValueError):
+                return None
+        labels = read('labels.json', True)
+        rounds = sorted({int(m.group(1)) for f in (os.listdir(w) if os.path.isdir(w) else [])
+                         if (m := re.fullmatch(r'map-gemini-([1-9]\d*)\.(png|jpg|webp)', f))})
+        url = f"/data/projectaon/{b['code']}/"
+        thumb = next((url + f for f in ('map-sepia.webp', 'map-4k.webp', 'work/map-2k-lettered.jpg', 'map.png')
+                      if os.path.isfile(os.path.join(d, *f.split('/')))), None)
+        out.append({**b, 'labels': len(labels) if isinstance(labels, list) else None, 'checked': read('labels-checked.txt'),
+                    'font': read('font.txt'), 'rounds': rounds, 'finish': current_4k(d), 'thumb': thumb})
     return out
 
 
@@ -777,6 +803,8 @@ class Handler(SimpleHTTPRequestHandler):
         parts = [unquote(p) for p in route[len('/api/map/'):].split('/')]
         if method == 'GET' and parts == ['books']:
             return self._json(200, map_books())
+        if method == 'GET' and parts == ['index']:
+            return self._json(200, map_index())
         d = _book_dir(parts[0])
         if not d:
             self.close_connection = True

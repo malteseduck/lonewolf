@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-11
-- Amended: 2026-11-01
+- Amended: 2026-11-08
 
 ## Context
 
@@ -18,6 +18,7 @@ picture and illustration sheets (2026-10-17). The same day the owner asked for t
 icons (disciplines, tabs, fight medallions and the like) to be reviewed and changed the same way;
 they span the books, so they are not a book step. The owner asked for a list of every fight with a trial
 fight (2026-11-01), to weigh changes to the fight rules without changing the engine first.
+The owner asked for a list of every book's map, opening each in the map editor (2026-11-08).
 
 ## Decision
 
@@ -35,13 +36,13 @@ fight (2026-11-01), to weigh changes to the fight rules without changing the eng
   links to open them on their own, and agents do not open them there.
 - **The dashboard's layout.** The window holds a bar, a rail of books and the work area, and only the
   panes inside scroll. The bar has the whole-project tools as buttons (Check everything, All fights, Player icons,
-  Picture sources, Lone Wolf, Setup as a popover, Release). The rail lists the downloaded books under
+  All maps, Picture sources, Lone Wolf, Setup as a popover, Release). The rail lists the downloaded books under
   their series, each with its steps as small seals; the books not downloaded are folded under it. The
   picked book's steps are a row of tabs under the checklist's groups, one step shown at a time ("All
   steps" shows the list). Each sheet opens inside the step it belongs to (the picture and proposal sheets in Fights,
   the item sheet in Item table, the illustration sheet in Illustrations, the map editor in Map), the
   step shrunk to a bar over it and the rail to the books' numbers; one that spans the books (the icon
-  sheet, picture sources, Lone Wolf's pictures, the fight list) takes the work area alone. A sheet stays open while
+  sheet, picture sources, Lone Wolf's pictures, the fight list, the map list) takes the work area alone. A sheet stays open while
   another step or book is looked at, and the book's head offers the way back to it. The grid of every
   book is "All books"; a cell opens that book at that step. Where the owner is stays in the address,
   and the keys move between books and steps.
@@ -71,6 +72,9 @@ fight (2026-11-01), to weigh changes to the fight rules without changing the eng
   and tactics the owner sets. Rules to try are a form on the sheet, compared with the engine's on the same numbers
   drawn, over one fight or every fight shown. They never reach the player: `fightlab.js` lays them over the engine
   only while a trial runs. A rule the owner keeps is then built into the engine as a ruling.
+- **The map list.** "All maps" in the bar opens `tools/admin/maps.html`: every downloaded book's map as a
+  card, with the picture the player shows (or the nearest to it), how far it has got, its labels, font,
+  rounds and finish. A card opens that book's map editor in its Map step.
 
 ## Consequences
 
@@ -98,3 +102,4 @@ fight (2026-11-01), to weigh changes to the fight rules without changing the eng
   between books and steps at the width they work at.
 - 2026-11-01: the fight list added; the owner asked for a list of every fight, with a trial fight to see the
   effect of changing the rules.
+- 2026-11-08: the map list added; the owner asked to see every book's map in one place.
