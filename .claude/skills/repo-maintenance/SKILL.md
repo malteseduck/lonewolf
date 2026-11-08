@@ -10,10 +10,13 @@ content in output, every Python run through uv, no commit unless the owner asks.
 
 ## What may be fixed, and what goes to the owner
 
-Fix without asking: a stale fact (a path, function, command, button or count the code no longer
-has), a date or index line out of step, a duplicate ruling id (renumber the later one to the next
-free id and update every citation outside `release/`), a contradiction between the spec and an ADR
-or ruling (the record wins: bring the spec into line), a sentence in the wrong file (move it).
+Fix without asking, outside `docs/spec.md` and `docs/adr/`: a stale fact (a path, function,
+command, button or count the code no longer has), a sentence in the wrong file (move it).
+
+Propose as a diff and apply only on the owner's yes to it (AGENTS.md): any change to `docs/spec.md`
+or `docs/adr/`, such as a date or index line out of step, a duplicate ruling id (renumber the later
+one to the next free id and update every citation outside `release/`), a contradiction between the
+spec and an ADR or ruling (the record wins: the spec is brought into line), a stale fact there.
 
 List for the owner, change nothing: anything that would reverse, narrow or widen what an ADR or
 ruling decides; a ruling that seems to have grown into an ADR; a plan item that may be finished but
@@ -26,7 +29,7 @@ unused icons, untracked files). Never touch `backups/`, `data/`, `art/` or `prot
    ADR index against each ADR's dates, citations of records that do not exist, paths named in
    AGENTS.md, the spec, the ADRs' decisions, the READMEs and the harness doc, every asset credited in
    its folder's README.txt, AGENTS.md's sections and dates, every part of the harness named in
-   `docs/reference/harness.md`. Fix what it reports.
+   `docs/reference/harness.md`. Fix what it reports (in the spec or the ADRs, as a diff to approve).
    A check that would catch what you find by reading in a later step belongs in this script, with a
    test in `tests/py/test_docs_check.py`.
 2. **What changed since the last pass.** `git log --since=<the last pass's date> --stat` (the last
@@ -40,7 +43,7 @@ unused icons, untracked files). Never touch `backups/`, `data/`, `art/` or `prot
    `items/`, `maps/`, `assets/plates/`); read those too, against the root file (no rule in both) and
    the reference doc each points to. Keep a one-line pointer only where an agent would otherwise miss it.
 4. **Spec against the records.** For each ADR and ruling, search the spec for its subject; any
-   sentence that contradicts it is brought into line. The spec states intent, not state: no "partly
+   sentence that contradicts it gets a proposed diff. The spec states intent, not state: no "partly
    done", no counts of books.
 5. **Records against the code.** For each ADR's Decision and Consequences, check the names it gives
    (functions, files, buttons, flags, steps) still exist and do what it says: grep, read the code.

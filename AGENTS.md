@@ -9,6 +9,22 @@ readings before working on that book). ADRs and rulings are the owner's decision
 reverse or work around one without the owner's say-so in chat. Cite them as "ADR NNNN" or "ruling Rn".
 `docs/reference/` describes the code as it is. In a new session, read `docs/plan.md` first.
 
+**The spec, the ADRs and the rulings change only on the owner's approval of the diff.**
+
+- **Warn first.** When a request goes against `docs/spec.md`, an ADR or a ruling, say so before doing
+  any of the work: name the record, say what it decides and how the request differs, and ask whether
+  the owner really wants it changed. Do nothing that depends on the change until they answer.
+- **Show the diff, then wait.** Before writing to `docs/spec.md` or anything in `docs/adr/` (the
+  index included), show the owner the exact diff in chat as a ```` ```diff ```` block (the question
+  tool shows no colour), then ask for approval with the question tool (`AskUserQuestion`); wait for
+  an explicit yes to that diff.
+  Talk about the idea, agreement in passing, or "sounds good" to something else is not approval. A
+  diff changed after approval is shown again.
+- **Ask with the question tool.** Any question the owner must answer before work goes on (a choice,
+  a go-ahead, a warning) is asked with `AskUserQuestion`, so it stands out, not left in prose.
+- This holds for every agent and every pass, the `repo-maintenance` skill and subagents included: a
+  fix it finds in these files is proposed as a diff, never applied unasked.
+
 ## What is live
 
 The player is the page at the project root: `index.html`, `main.js`, `plates.js`, `maps.js` and their
@@ -116,9 +132,9 @@ sides, both suites run again).
 
 - **A decision of the owner's** is recorded in the same piece of work, as `docs/adr/README.md` says
   (amend the topic's ADR, or add a ruling with the next free id), and any sentence of the spec it
-  contradicts is brought into line.
+  contradicts is brought into line: each as a diff the owner approves first (above).
 - **Before committing**, search `docs/spec.md` for the subject of every ADR or ruling this work
-  adds or amends, and for each behaviour it changes; bring any sentence it contradicts into line. A
+  adds or amends, and for each behaviour it changes; propose a diff for any sentence it contradicts. A
   hook runs `tools/docs_check.py` on every `git commit` and blocks it on a problem (ADR 0044).
 - **When the owner is about to release**, ask whether to run the `repo-maintenance` skill first,
   saying roughly what changed since the last pass; never run it unasked (ADR 0044).

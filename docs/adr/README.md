@@ -8,8 +8,11 @@ tool's output, and the rulings (`rulings.md`) in the area you touch.
 ## Rules
 
 - **ADRs and rulings are binding.** Do not reverse or work around one without the owner's say-so in
-  chat. If a task seems to need it, stop and ask.
-- **When the owner decides something, record it in the same piece of work.** Change `docs/spec.md`
+  chat. If a task seems to need it, stop, say which record it goes against, and ask.
+- **Nothing here or in `docs/spec.md` changes without the owner's yes to the exact diff**, shown in
+  chat first, then asked with the question tool. Agreement in passing is not approval; a diff
+  changed after approval is asked again.
+- **When the owner decides something, record it in the same piece of work**, as an approved diff. Change `docs/spec.md`
   too only when the intent itself changes, but always search it for the decision's subject and bring
   any sentence it contradicts into line. The spec keeps to intent; how a thing looks or is laid out
   goes in the ADR.
@@ -41,7 +44,7 @@ Changes list names what it took in.
 
 | # | Decision | Amended |
 |---|---|---|
-| [0001](0001-record-decisions-as-adrs.md) | Decisions: an ADR per topic, small ones as rulings, all updated in place, the index grouped | 2026-10-17 |
+| [0001](0001-record-decisions-as-adrs.md) | Decisions: an ADR per topic, small ones as rulings, all updated in place, the index grouped | 2026-11-08 |
 | [0022](0022-unit-tests.md) | Tests guard the main functionality, written first, a couple of seconds a suite; `check_all.py` runs the real books; the engine is modular and tested before its rules change | 2026-10-17 |
 | [0036](0036-book-steps.md) | The book steps: their order (6 test play, 7-9 pictures), every step offered where it can work, a script for each that drafts leaning to flagging, an agent only refines; test play driven in Node | 2026-10-23 |
 | [0037](0037-tools-are-a-uv-project.md) | The Python tools are a uv project with a lock file; every run is `uv run --project tools` | |

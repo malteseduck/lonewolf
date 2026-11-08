@@ -1626,7 +1626,8 @@
    ],
    "size": 29.8,
    "angle": 1
-  }
+  },
+  "reset": true
  },
  {
   "text": "HIKAS",

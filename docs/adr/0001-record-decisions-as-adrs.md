@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-10
-- Amended: 2026-10-17
+- Amended: 2026-11-08
 
 ## Context
 
@@ -30,7 +30,10 @@ no superseded records, since decisions are updated in place.
 - There are no superseded records: git keeps the old wording. Records merged into another are deleted
   and their numbers left as gaps; ruling ids are never reused either.
 - The index in `docs/adr/README.md` is grouped by topic, one line per ADR.
-- An accepted ADR or ruling changes only on the owner's word. Agents read the spec and the index
+- An accepted ADR or ruling, or the spec, changes only when the owner approves the exact diff, shown
+  in chat first and then asked with the question tool; casual agreement is not approval. An agent
+  warns first, with the question tool, when a request goes against a record. Agents read the spec
+  and the index
   before changing behaviour (AGENTS.md says so), and the rulings in the area they touch.
 
 ## Consequences
@@ -48,3 +51,6 @@ no superseded records, since decisions are updated in place.
   0009, 0010, 0013, 0018-0020, 0024, 0032-0035, 0039, 0042, 0043 merged; 0012, 0014, 0016, 0023,
   0025, 0026, 0029, 0030, 0040 became rulings); reversals rewrite in place, no superseded records; the
   index grouped by topic (owner).
+- 2026-11-08: spec and record changes need the owner's yes to the shown diff; agents warn first when
+  a request goes against the spec or a record; both asked with the question tool, the diff shown in
+  chat first (owner).
