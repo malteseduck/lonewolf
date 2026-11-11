@@ -41,6 +41,11 @@ fetched onto this machine and kept out of git (`data/projectaon/` is git-ignored
     uv run --project tools python tools/fetch_projectaon.py 01fftd
     uv run --project tools python tools/import_projectaon.py 01fftd
 
+or, from a fresh checkout, the packages and every book (or the books named, `... quickstart.py 1 2`)
+in one command, ready to play with their printed maps and own pictures:
+
+    uv run --no-project python tools/quickstart.py
+
 The importer reads choices, discipline and item gates, Random Number ranges, combats and their
 rules; what it cannot read with certainty stays as text, with by-hand controls on the page. What
 each section gives, takes or needs is read by hand into the book's item table (`items/`). Each

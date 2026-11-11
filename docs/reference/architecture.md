@@ -114,6 +114,8 @@ tools/
                             (docs/reference/offline.md)
   release.py                copies a commit's files (and the git-ignored books and art) into release/, which
                             serve.py --release serves to the iPad (docs/reference/offline.md, Releasing)
+  quickstart.py             a fresh checkout to playable books in one command: the packages, then each book's
+                            fetch and import (docs/reference/importer.md)
   fetch_projectaon.py       downloads one book into data/projectaon/<code>/
   import_projectaon.py      converts it to data/projectaon/<code>/book.js (and import-report.json, its report's
                             figures) and rewrites data/projectaon/index.js

@@ -605,7 +605,7 @@ like Drakkarim but are its Tukodak Guardians.
    - **Anything else**: save it to git-ignored `art/plates/<code>/` and record its link with
      `python tools/art_sources.py link art/plates/<code>/<file> <url>` (the picture's own address, or its page), so
      Setup can fetch it again; say what was done to it by hand (greyscale, trimmed) as the entry's `note` in
-     `art/sources.json`. A fresh clone shows the drawn emblem for that enemy until then.
+     `art/sources.json`. A fresh clone shows the book's own illustration of that enemy until then, or a blank plate.
 
    Lay the candidates out in the page to compare, and prefer menacing over quaint (the owner
    turned down a cute bear). Prefer line work: tonal prints (aquatints, such as Goya's) come out as a

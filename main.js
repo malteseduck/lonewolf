@@ -2,9 +2,9 @@
    Left page: the story. Right page: a panel (Kai Disciplines, inventory, or the fight); the map is a modal.
    Plays the books imported by tools/import_projectaon.py. */
 import * as Ink from './shared/ink.js';
-import { drawCreature, setArt, setEmblem, newWound, drawFrame, drawBanner, drawCrest, gearSVG } from './plates.js';
+import { drawCreature, setArt, newWound, drawFrame, drawBanner, drawCrest, gearSVG } from './plates.js';
 import { printedCanvas } from './maps.js';
-import { compilePlates, pickPlate, pinKey, upscaledSrc } from './platepick.js';
+import { compilePlates, plateTries, pinKey } from './platepick.js';
 import * as Adv from './adventures.js';
 import { glyphName } from './itemglyphs.js';
 import { shown } from './choicetext.js';
@@ -1112,9 +1112,15 @@ async function startBattle() {
 /* a new foe on the plate: its picture, unhurt */
 function showFoe() {
   B.fx.dead = 0; B.fx.wounds = []; B.img = null;
-  // the approved picture, else the plate library's or the section's own, else the drawn emblem (platepick.js)
-  const foe = B.foe, plate = pickPlate(foe, book, PLATES, PINS[book.id], pinKey(game.s.at, B.foe.at));
-  if (plate) { const im = new Image(); im.crop = plate.crop; im.levels = plate.levels; im.flip = plate.flip; im.onload = () => { if (B && B.foe === foe) B.img = im; }; im.src = upscaledSrc(plate.src, UPSCALED[book.id]); }
+  // the approved picture, else the plate library's or the section's own; a file that is not there (art is
+  // git-ignored) falls back to the book's own illustration, and with none the plate stays blank (platepick.js)
+  const foe = B.foe, tries = plateTries(foe, book, PLATES, PINS[book.id], pinKey(game.s.at, B.foe.at), UPSCALED[book.id]);
+  (function next() {
+    const plate = tries.shift();
+    if (!plate || !B || B.foe !== foe) return;
+    const im = new Image(); im.crop = plate.crop; im.levels = plate.levels; im.flip = plate.flip;
+    im.onload = () => { if (B && B.foe === foe) B.img = im; }; im.onerror = next; im.src = plate.src;
+  })();
 }
 /* assets/plates/plates.json: pictures for enemies the book does not picture */
 let PLATES = [];
@@ -1298,12 +1304,6 @@ async function begin(id, fresh, anew, reread) {
   await turn(render);
 }
 window.addEventListener('resize', () => { if (B && B.fit) B.fit(); });
-
-/* the emblem (crossed swords) drawn on the plate of a foe with no picture */
-fetch(`assets/icons/${UG.foeEmblem}.svg`).then((r) => r.text()).then((t) => {
-  const d = [...t.matchAll(/ d="([^"]+)"/g)].map((m) => m[1]).join(' ');
-  if (d) setEmblem(d);
-}).catch(() => {});
 
 /* optional illustrations dropped into art/ */
 const portraitDone = () => { if (mode === 'title') renderLeft(); else if (mode === 'story' && panel === 'kai') renderRight(); };

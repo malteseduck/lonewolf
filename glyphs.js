@@ -65,7 +65,6 @@ export const UI_GLYPH = {
   cure: 'healing',
   evade: 'boulder-dash',
   evadeFree: 'invisible',
-  foeEmblem: 'fish-monster',
 };
 
 /* an item with no glyph of its own (one typed in by hand in an older save, or a table's item without one), by its kind */
@@ -98,5 +97,4 @@ export const WHERE = {
   cure: ['Fights', 'the healing discipline used in a fight (Curing, Deliverance)'],
   evade: ['Fights', 'Evade, taking a blow'],
   evadeFree: ['Fights', 'Evade, untouched'],
-  foeEmblem: ['Fights', 'drawn on the plate of a foe with no picture'],
 };

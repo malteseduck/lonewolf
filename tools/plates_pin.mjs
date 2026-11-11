@@ -17,7 +17,7 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const { compilePlates, choosePlate, nameKey, pinKey, samePlate } = await import(pathToFileURL(path.join(ROOT, 'platepick.js')).href);
 const README = 'The fight pictures the owner approved for this book (step 7 marked done): the player shows these whatever '
   + 'plates.json or a re-import would now pick. Keyed by section/enemy number; name is a hash of the enemy\'s name, so a pin '
-  + 'is not used for another enemy; plate is {src, crop?, levels?, flip?} or null for the drawn emblem. Written by tools/plates_pin.mjs; '
+  + 'is not used for another enemy; plate is {src, crop?, levels?, flip?} or null for none (a blank plate). Written by tools/plates_pin.mjs; '
   + 'see docs/reference/interface.md, Art pipeline.';
 
 const require = createRequire(import.meta.url);
@@ -58,8 +58,8 @@ export function comparePins({ root = ROOT, book: code, plates = platesOf(root) }
 export function compareText(code, r) {
   if (!r) return `${code}: no approved pictures (step 7 not marked done), or not imported`;
   return [`${code}: ${r.fights} fights, approved ${r.approved}; ${r.changed.length} would change, ${r.unpinned.length} have no pin, ${r.gone.length} pins for fights no longer there`,
-    ...r.changed.map((c) => `  ${c.key}: ${c.was || 'emblem'} -> ${c.now || 'emblem'}`),
-    ...r.unpinned.map((u) => `  ${u.key}: no pin (shows ${u.now || 'emblem'})`)].join('\n');
+    ...r.changed.map((c) => `  ${c.key}: ${c.was || 'none'} -> ${c.now || 'none'}`),
+    ...r.unpinned.map((u) => `  ${u.key}: no pin (shows ${u.now || 'none'})`)].join('\n');
 }
 
 /* every pinned book's comparison, by code; books not imported are left out */

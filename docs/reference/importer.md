@@ -10,6 +10,13 @@ python tools/import_projectaon.py 01fftd
 Output goes to `data/projectaon/`, which is git-ignored and must stay on the owner's machine.
 Fetching a book is a download: get the owner's go-ahead first (see `CLAUDE.md`).
 
+`tools/quickstart.py [book ...] [--no-setup]` (run with `--no-project`) does both for a fresh checkout:
+`uv sync --project tools`, then for each book (a number or a code; none named: every book in the
+importer's `BOOKS`) without a `book.js`, the fetch and the import through uv. A book the importer
+does not know is refused before anything runs; a failed fetch skips that book's import and the rest go
+on. Exits 1 if a step failed, 2 on a bad argument. The result is the basics only: the printed map
+(`map.png`) and the book's own pictures, no repainted map or made fight pictures.
+
 ## fetch_projectaon.py
 
 Source: `https://www.projectaon.org/en/xhtml/lw/<code>/`.

@@ -244,7 +244,7 @@ function choose() {
     // tools/plates_draft.py writes its picks as the owner's would be, marked draft: Adjust or Remove makes them yours
     f.from = (f.mine?.draft ? `the script's pick (${f.mine.draft}: ${f.mine.src.split('/').pop()}); Adjust makes it yours, Remove drops it`
       : f.mine ? 'your picture' + (f.mine.src.startsWith('art/') ? '' : ` (re-cropped: ${f.mine.src.split('/').pop()})`)
-      : f.lib ? `plates.json: "${f.lib.match}"${f.lib.over ? ' (over)' : ''}` : f.art ? `the book's ${f.art}` : 'none: the drawn emblem')
+      : f.lib ? `plates.json: "${f.lib.match}"${f.lib.over ? ' (over)' : ''}` : f.art ? `the book's ${f.art}` : 'none: a blank plate')
       + (f.src && sharp(f.src) !== f.src ? ', upscaled 2x' : '')
       + (ownFile(f) ? (sources[ownFile(f)]?.url ? `; link: ${new URL(sources[ownFile(f)].url).hostname}` : ownFile(f) in sources ? '; no link' : '; no link given yet') : '')
       + (f.waiting ? (f.isNew ? '; a fight with no approved picture yet' : `; the player still shows the approved picture${f.waiting < f.fights.length ? ` (${f.waiting} of ${f.fights.length} fights)` : ''}`) : '');
@@ -292,7 +292,7 @@ async function render() {
       + (cw > 1100 * 1.05 ? ': more than the iPad needs (step 7\'s Upscale reduces it)' : '');
     // before and after: the approved picture, small, in the corner of a changed card
     const was = f.was && $('#was' + i), old = was && f.was.src && await image(url(f.was.src), f.was);
-    if (was) was.prepend(old ? copy(inkPlate(old)) : Object.assign(document.createElement('div'), { className: 'none', textContent: f.was.src ? 'file missing' : 'emblem' }));
+    if (was) was.prepend(old ? copy(inkPlate(old)) : Object.assign(document.createElement('div'), { className: 'none', textContent: f.was.src ? 'file missing' : 'none' }));
   }
 }
 // inkPlate() hands back one cached canvas per picture; a second card using it would take it from the first

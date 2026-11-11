@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { compilePlates, choosePlate, nameKey, pinKey, pickPlate, samePlate, pinState, upscaledSrc } from '../../platepick.js';
+import { compilePlates, choosePlate, nameKey, pinKey, pickPlate, samePlate, pinState, upscaledSrc, plateTries } from '../../platepick.js';
 
 const book = { id: '04tcod', assets: 'data/projectaon/04tcod/' };
 const lib = compilePlates([
@@ -37,7 +37,7 @@ describe('choosePlate', () => {
     expect(choosePlate({ name: 'Wolf' }, book, lib)).toBeNull();
     expect(choosePlate({ name: 'Wolf' }, { id: '05sots' }, lib).src).toBe('art/wolf-book5.png');
   });
-  it('gives null (the emblem) when nothing matches', () => {
+  it('gives null (no picture) when nothing matches', () => {
     expect(choosePlate({ name: 'Zombie' }, book, lib)).toBeNull();
   });
   it('works without book.assets', () => {
@@ -73,7 +73,7 @@ describe('pickPlate', () => {
   it('uses the pin for the same enemy, even over what is picked now', () => {
     expect(pickPlate(foe, book, lib, pins, '17/0')).toEqual({ src: 'pinned.png' });
   });
-  it('honours a pin of null (the emblem)', () => {
+  it('honours a pin of null (no picture)', () => {
     expect(pickPlate(foe, book, lib, { k: { name: nameKey('Giak'), plate: null } }, 'k')).toBeNull();
   });
   it('ignores a pin made for another enemy', () => {
@@ -117,5 +117,21 @@ describe('upscaledSrc: a fight picture shown as its 2x copy once step 7 has made
     expect(upscaledSrc('art/plates/02fotw/giak.webp', list)).toBe('art/plates/02fotw/giak-2x.webp');
     expect(upscaledSrc('assets/plates/troll.png', list)).toBe('assets/plates/troll.png');
     expect(upscaledSrc('data/projectaon/02fotw/ill5.png', null)).toBe('data/projectaon/02fotw/ill5.png');
+  });
+});
+
+describe('plateTries: the pictures a fight tries in turn, where a file may be missing (a fresh checkout)', () => {
+  const pins = { '8/0': { name: nameKey('Kraan'), plate: { src: 'art/plates/01fftd/kraan.webp', crop: [0, 0, 1, 1] } } };
+  it('the approved picture (its 2x copy first), then the book\'s own illustration of the enemy', () => {
+    const tries = plateTries({ name: 'Kraan', art: 'ill3.png' }, book, lib, pins, '8/0', ['art/plates/01fftd/kraan.webp']);
+    expect(tries.map((p) => p.src)).toEqual(['art/plates/01fftd/kraan-2x.webp', 'art/plates/01fftd/kraan.webp', 'data/projectaon/04tcod/ill3.png']);
+    expect(tries[0].crop).toEqual([0, 0, 1, 1]); // the crop goes with the picture, not with the fallback
+    expect(tries[2]).toEqual({ src: 'data/projectaon/04tcod/ill3.png' });
+  });
+  it('the book\'s own illustration is not tried twice when it is the pick', () => {
+    expect(plateTries({ name: 'Giak', art: 'ill1.png' }, book, lib, null, '1/0', null).map((p) => p.src)).toEqual(['data/projectaon/04tcod/ill1.png']);
+  });
+  it('nothing to try for an enemy with no picture: the plate stays blank', () => {
+    expect(plateTries({ name: 'Nobody' }, book, lib, null, '1/0', null)).toEqual([]);
   });
 });

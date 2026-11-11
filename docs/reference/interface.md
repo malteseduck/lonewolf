@@ -256,9 +256,8 @@ else back to the section with its choices open.
   from `art/manifest.json`) it draws the whole inked illustration, fitted to 94% of the width and to
   the room between the enemy's name and the controls, and centred in that room. `floor` is where the
   controls begin, as a fraction of the canvas height: `B.fit` in main.js measures it (the top of the
-  medallions and the dial), so the picture never runs under them. Without, it draws a procedural silhouette (`kraan`,
-  `giak`, `vordak`) or the crossed-swords `emblem`: the crossed-swords glyph (handed over by
-  `setEmblem` once main.js has fetched it) over a blot of wash, or a plain ring and blades until then.
+  medallions and the dial), so the picture never runs under them. Without either it draws nothing: the
+  plate is left blank, never a drawn stand-in.
 - Whichever picture is picked, it is loaded from its copy (Real-ESRGAN 2x, or reduced to what the panel inks) (`<name>-2x.webp` beside it)
   when the book's `assets/plates/upscaled/<code>.json` lists it (`upscaledSrc` in platepick.js; the
   Upscale 2x of step 7, ADR 0031).
@@ -268,8 +267,10 @@ else back to the section with its choices open.
   picture to the book's own; Book 1's Vordak), else the enemy's own `art` (its section's
   illustration, or one the importer borrowed from the same book), else the first entry of `assets/plates/plates.json`
   whose `match` is found in its name and whose `book`, if it has one, is the open book (`PLATES`;
-  `__lw.plates` in the console), else the drawn
-  sprite. Library entries are free engravings and the owner's AI-made pictures in `assets/plates/`
+  `__lw.plates` in the console), else none. The picture's files are git-ignored, so a fresh checkout has
+  the picks but not every file: `plateTries` lists what is tried in turn (the 2x copy, the picture, then
+  the enemy's own `art` from the book), the next taken when a file does not load, the plate blank when
+  none does. Library entries are free engravings and the owner's AI-made pictures in `assets/plates/`
   (sources in its README.txt; ADR 0042),
   pictures the owner supplied or that were found by search and are not free, in git-ignored `art/`
   (Winged Serpent; the links of found ones in the committed `art/sources.json`, ADR 0038), or Project Aon

@@ -1,111 +1,15 @@
 /* Ink drawings that are redrawn every frame (battle plates) or once (map, figure). */
 import * as Ink from './shared/ink.js';
 
-const INK = '38,28,18', RED = '140,28,18', PAPER = '217,203,166';
+const INK = '38,28,18', RED = '140,28,18';
 const solid = `rgba(${INK},0.94)`;
 const poly = (x, pts, fill) => { x.beginPath(); pts.forEach(([a, b], i) => (i ? x.lineTo(a, b) : x.moveTo(a, b))); x.closePath(); x.fillStyle = fill; x.fill(); };
 const dot = (x, px, py, r, fill) => { x.beginPath(); x.arc(px, py, r, 0, Math.PI * 2); x.fillStyle = fill; x.fill(); };
 const oval = (x, px, py, rx, ry, fill, rot = 0) => { x.beginPath(); x.ellipse(px, py, rx, ry, rot, 0, Math.PI * 2); x.fillStyle = fill; x.fill(); };
-const line = (x, pts, w, stroke) => { x.beginPath(); pts.forEach(([a, b], i) => (i ? x.lineTo(a, b) : x.moveTo(a, b))); x.lineWidth = w; x.strokeStyle = stroke; x.lineCap = 'round'; x.lineJoin = 'round'; x.stroke(); };
-const mir = (pts) => pts.map(([a, b]) => [-a, b]);
-const eye = (x, px, py, r) => { x.save(); x.shadowColor = `rgba(${RED},0.9)`; x.shadowBlur = 18; dot(x, px, py, r, `rgba(${RED},1)`); x.restore(); dot(x, px, py, r * 0.4, `rgba(255,190,150,0.9)`); };
 const cut = (x, fn) => { x.save(); x.globalCompositeOperation = 'destination-out'; fn(); x.restore(); };
 
-const CREATURES = {
-  kraan(x, t) {
-    const flap = Math.sin(t * 4) * 0.22, bob = Math.sin(t * 4) * 10;
-    x.translate(0, -120 - bob);
-    const W = [[0, 0.1], [0.9, 0.75], [1.7, 0.85], [2.5, 0.35], [2.05, 0.05], [1.85, 0.3], [1.45, -0.4], [1.2, 0.05], [0.8, -0.6], [0.5, -0.1], [0.15, -0.55], [0, -0.35]].map(([a, b]) => [a * 165, -b * 165]);
-    [-1, 1].forEach((s) => {
-      x.save(); x.translate(s * 34, -70); x.scale(s, 1); x.rotate(-0.12 - flap);
-      poly(x, W, `rgba(${INK},0.55)`);
-      x.translate(-5, 5); poly(x, W, solid);
-      const bone = `rgba(${PAPER},0.34)`, wrist = [280, -140];
-      line(x, [[0, -16], [148, -124], wrist], 5, bone);
-      [[412, -58], [239, 66], [132, 99], [25, 91]].forEach((tip) => line(x, [wrist, tip], 2.5, bone));
-      x.restore();
-    });
-    poly(x, [[-14, 150], [14, 150], [4, 330]], solid);
-    oval(x, 0, 40, 52, 128, solid); oval(x, 0, -52, 84, 46, solid);
-    [-1, 1].forEach((s) => {
-      line(x, [[s * 22, 150], [s * 34, 262]], 9, solid);
-      [-24, 0, 24].forEach((d) => line(x, [[s * 34, 262], [s * 34 + d, 300]], 4, solid));
-    });
-    const hy = -132 + Math.sin(t * 1.7) * 4;
-    poly(x, [[-18, hy - 22], [-56, hy - 118], [-2, hy - 30]], solid); poly(x, mir([[-18, hy - 22], [-56, hy - 118], [-2, hy - 30]]), solid);
-    oval(x, 0, hy, 34, 40, solid);
-    poly(x, [[-15, hy + 10], [15, hy + 10], [7, hy + 86], [-1, hy + 108], [-5, hy + 80]], `rgba(${PAPER},0.85)`);
-    line(x, [[-15, hy + 10], [-5, hy + 80], [-1, hy + 108], [7, hy + 86], [15, hy + 10]], 2.5, solid);
-    eye(x, -15, hy - 6, 5.5); eye(x, 15, hy - 6, 5.5);
-  },
-  giak(x, t) {
-    const sway = Math.sin(t * 1.3) * 5, breathe = Math.sin(t * 2.2) * 3;
-    x.translate(sway, 40);
-    line(x, [[128, 270], [150, -300]], 9, solid); poly(x, [[150, -372], [132, -296], [168, -296]], solid);
-    poly(x, [[-52, 118], [-14, 118], [-22, 262], [-70, 262]], solid); poly(x, mir([[-52, 118], [-14, 118], [-22, 262], [-70, 262]]), solid);
-    poly(x, [[-92, 262], [-16, 262], [-16, 284], [-104, 284]], solid); poly(x, mir([[-92, 262], [-16, 262], [-16, 284], [-104, 284]]), solid);
-    poly(x, [[-88, -44 - breathe], [88, -44 - breathe], [104, 60], [76, 134], [-76, 134], [-104, 60]], solid);
-    poly(x, [[78, -34], [132, 10], [150, 56], [116, 70], [70, 20]], solid);
-    const hy = -104 - breathe;
-    poly(x, [[-46, hy - 12], [-132, hy - 58], [-52, hy + 22]], solid); poly(x, mir([[-46, hy - 12], [-132, hy - 58], [-52, hy + 22]]), solid);
-    dot(x, 0, hy, 58, solid);
-    x.beginPath(); x.arc(0, hy - 10, 64, Math.PI, 0); x.closePath(); x.fillStyle = solid; x.fill();
-    poly(x, [[-9, hy - 72], [9, hy - 72], [0, hy - 124]], solid);
-    line(x, [[-64, hy - 10], [64, hy - 10]], 3, `rgba(${PAPER},0.4)`);
-    cut(x, () => {
-      poly(x, [[-40, hy + 2], [-10, hy + 14], [-38, hy + 20]], '#000'); poly(x, mir([[-40, hy + 2], [-10, hy + 14], [-38, hy + 20]]), '#000');
-      poly(x, [[-24, hy + 36], [-14, hy + 36], [-19, hy + 54]], '#000'); poly(x, mir([[-24, hy + 36], [-14, hy + 36], [-19, hy + 54]]), '#000');
-    });
-    eye(x, -26, hy + 12, 3.5); eye(x, 26, hy + 12, 3.5);
-    dot(x, -116, 44, 82, solid);
-    cut(x, () => { x.beginPath(); x.arc(-116, 44, 62, 0, Math.PI * 2); x.lineWidth = 4; x.strokeStyle = 'rgba(0,0,0,0.7)'; x.stroke(); x.beginPath(); x.arc(-116, 44, 16, 0, Math.PI * 2); x.lineWidth = 3; x.stroke(); });
-  },
-  vordak(x, t) {
-    const bob = Math.sin(t * 1.2) * 9, sw = Math.sin(t * 0.9) * 0.04;
-    x.translate(0, -30 + bob); x.rotate(sw);
-    for (let i = 0; i < 9; i++) oval(x, (i - 4) * 46, 300 + Math.sin(t + i) * 8, 70, 22, `rgba(${INK},0.06)`);
-    line(x, [[168, -26], [222, -292]], 10, solid);
-    dot(x, 226, -316, 34, solid);
-    for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2; poly(x, [[226 + Math.cos(a - 0.22) * 30, -316 + Math.sin(a - 0.22) * 30], [226 + Math.cos(a) * 62, -316 + Math.sin(a) * 62], [226 + Math.cos(a + 0.22) * 30, -316 + Math.sin(a + 0.22) * 30]], solid); }
-    const hem = Math.sin(t * 1.6) * 6;
-    poly(x, [[-72, -150], [72, -150], [122, 100], [162, 296 + hem], [120, 280], [90, 308 - hem], [50, 284], [10, 312 + hem], [-30, 286], [-70, 310 - hem], [-110, 284], [-152, 300 + hem], [-116, 100]], solid);
-    poly(x, [[-70, -132], [-192, -12], [-160, 42], [-58, -40]], solid);
-    poly(x, [[70, -132], [178, -62], [162, -2], [58, -40]], solid);
-    [[-218, 50], [-230, 26], [-224, 2], [-204, 62]].forEach((f) => line(x, [[-178, 16], f], 5, solid));
-    oval(x, 0, -192, 78, 94, solid);
-    oval(x, 0, -176, 44, 58, `rgba(10,6,4,0.98)`);
-    line(x, [[-20, -150], [-12, -138], [12, -138], [20, -150]], 2, `rgba(${PAPER},0.28)`);
-    line(x, [[-4, -176], [0, -164], [4, -176]], 2, `rgba(${PAPER},0.22)`);
-    eye(x, -18, -188, 6); eye(x, 18, -188, 6);
-    line(x, [[-16, -60], [-30, 260]], 2, `rgba(${PAPER},0.14)`); line(x, [[22, -60], [44, 270]], 2, `rgba(${PAPER},0.14)`);
-  },
-};
-
-/* the drawn crossed swords (a game-icons.net glyph, 512 square) for foes with no picture, once loaded */
-let EMBLEM = null;
-export function setEmblem(d) { EMBLEM = new Path2D(d); }
-CREATURES.emblem = (x) => {
-  if (EMBLEM) {
-    // a blot of wash behind, as if the plate were inked over a stain, then the blades in solid ink
-    const r = Ink.seeded(7);
-    for (let i = 0; i < 26; i++) oval(x, (r() - 0.5) * 260, (r() - 0.5) * 220, 90 + r() * 120, 70 + r() * 110, `rgba(${INK},0.035)`);
-    x.save(); x.translate(-235, -235); x.scale(470 / 512, 470 / 512); x.fillStyle = solid; x.fill(EMBLEM); x.restore();
-    return;
-  }
-  // until it loads: crossed blades in a ring
-  x.beginPath(); x.arc(0, 0, 250, 0, Math.PI * 2); x.lineWidth = 10; x.strokeStyle = solid; x.stroke();
-  x.beginPath(); x.arc(0, 0, 226, 0, Math.PI * 2); x.lineWidth = 2.5; x.stroke();
-  [-1, 1].forEach((d) => {
-    x.save(); x.rotate(d * 0.72);
-    poly(x, [[-13, 150], [13, 150], [11, -170], [0, -212], [-11, -170]], solid);
-    poly(x, [[-56, 150], [56, 150], [56, 168], [-56, 168]], solid);
-    poly(x, [[-9, 168], [9, 168], [9, 224], [-9, 224]], solid); dot(x, 0, 236, 16, solid);
-    x.restore();
-  });
-};
-
-const bgCache = {}, ART = {};
-/* A supplied illustration replaces the drawn creature of that kind. */
+const ART = {};
+/* art/manifest.json's picture for an enemy kind, shown where a fight has no picture of its own */
 export function setArt(kind, img) { ART[kind] = img; }
 /* Turn a black-on-white illustration into page ink: sepia line on clear ground, so the picture
    sits in the parchment instead of on it as a white rectangle.
@@ -165,23 +69,13 @@ export function drawCreature(cv, kind, scene, t, fx, img, floor = 0.83, ceil = 0
   const x = cv.getContext('2d'), w = cv.width, h = cv.height, u = w / 900, cy = h * 0.4;
   x.clearRect(0, 0, w, h);
   const art = img || ART[kind];
-  if (scene && !art) {
-    const key = scene + w + 'x' + h, bg = bgCache[key] || (bgCache[key] = Ink.inkScene(scene, w, h));
-    x.globalAlpha = 0.34; x.drawImage(bg, 0, 0); x.globalAlpha = 1;
-  }
+  if (!art) return; // no picture: the plate is left blank, never a drawn stand-in
   x.save();
   x.translate(w / 2 + (Math.random() - 0.5) * fx.hit * 22 * u, cy + fx.dead * 70 * u + (Math.random() - 0.5) * fx.hit * 14 * u);
   x.scale(1 + fx.lunge * 0.1, 1 + fx.lunge * 0.1); x.globalAlpha = 1 - fx.dead;
-  if (art) {
-    // the whole picture, a little smaller than the panel, centred between the name above and the controls below
-    const top = ceil + 0.015, room = Math.max(0.3, floor - top - 0.015), pl = inkPlate(art), sc = Math.min((w * 0.94) / pl.width, (h * room) / pl.height);
-    x.drawImage(pl, (-pl.width * sc) / 2, -cy + h * top + (h * room - pl.height * sc) / 2, pl.width * sc, pl.height * sc);
-  } else {
-    const s = u * (kind === 'kraan' ? 1.05 : 1.2);
-    x.save(); x.scale(s, s);
-    if (kind !== 'emblem') oval(x, 0, 320, 210, 30, `rgba(${INK},0.16)`);
-    (CREATURES[kind] || CREATURES.emblem)(x, t); x.restore();
-  }
+  // the whole picture, a little smaller than the panel, centred between the name above and the controls below
+  const top = ceil + 0.015, room = Math.max(0.3, floor - top - 0.015), pl = inkPlate(art), sc = Math.min((w * 0.94) / pl.width, (h * room) / pl.height);
+  x.drawImage(pl, (-pl.width * sc) / 2, -cy + h * top + (h * room - pl.height * sc) / 2, pl.width * sc, pl.height * sc);
   // wounds stay on the plate, in red ink
   x.scale(u * 1.2, u * 1.2);
   fx.wounds.forEach((wd) => {

@@ -238,7 +238,7 @@ function render() {
       <h2>${esc(e.name)}</h2><div class="meta">fought at ${esc(secs.join(', ') || 'no section: check the name')}</div>
       <p class="about">${esc(about(e.name) || 'no foe-about entry yet')}</p>
       ${e.note ? `<div class="why">${esc(e.note)}</div>` : ''}
-      <div class="cands"><div class="cand now"><span class="badge now">now</span><div class="pic" id="p${fi}-now">${now?.src ? '' : '<div class="none">no picture<br><small>the drawn emblem</small></div>'}</div>
+      <div class="cands"><div class="cand now"><span class="badge now">now</span><div class="pic" id="p${fi}-now">${now?.src ? '' : '<div class="none">no picture<br><small>a blank plate</small></div>'}</div>
         ${now?.src ? `<small class="path">${esc(now.src)}</small>${ixAbout(now.src) ? `<small class="about">${esc(ixAbout(now.src))}</small>` : ''}` : ''}
         <div class="tools"><button data-keep="${fi}" title="Settle this row with the picture it has now (or none, for later)">Keep as is</button></div></div>${cands}${aiCards(fi)}</div>
       <details class="prompt"${(e.candidates || []).length ? '' : ' open'}><summary>Prompt for an image generator</summary>

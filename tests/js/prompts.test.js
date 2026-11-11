@@ -23,10 +23,10 @@ describe('pictureFor', () => {
     expect(p).toMatch(/do not change plates\.json/i);
   });
   it('takes several enemies at once, the sheet\'s selection, each with its sections and picture now', () => {
-    const two = pictureFor(b, [foe, { name: 'Gourgaz', secs: ['77'], from: 'none: the drawn emblem' }]);
+    const two = pictureFor(b, [foe, { name: 'Gourgaz', secs: ['77'], from: 'none: a blank plate' }]);
     expect(two).toContain('2 enemies only');
     expect(two).toContain('"Bog Wyrm" (fought in sections 12, 140; its picture now: the book\'s ill3)');
-    expect(two).toContain('"Gourgaz" (fought in section 77; its picture now: none: the drawn emblem)');
+    expect(two).toContain('"Gourgaz" (fought in section 77; its picture now: none: a blank plate)');
     expect(two).toMatch(/a row for each/i);
     expect(two).toMatch(/keep any other rows/i);
     // a list of one reads as the single card's prompt

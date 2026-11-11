@@ -6,9 +6,9 @@
    - else a plates.json entry marked over (the owner's choice, even over the section's own);
    - else the section's own illustration;
    - else the first plates.json entry that matches (one with a book is for that book only);
-   - else none: the drawn emblem.
+   - else none: the plate is left blank.
 
-   A plate is {src, crop?, levels?, flip?} with src relative to the project root, or null for the emblem. */
+   A plate is {src, crop?, levels?, flip?} with src relative to the project root, or null for none. */
 
 /* plates.json's entries with their match compiled */
 export const compilePlates = (list) => (list || []).map((p) => Object.assign({ re: new RegExp(p.match, 'i') }, p));
@@ -36,7 +36,18 @@ export function pickPlate(foe, book, plates, pins, key) {
   return pin && pin.name === nameKey(foe.name) ? pin.plate : choosePlate(foe, book, plates);
 }
 
-export const samePlate = (a, b) => JSON.stringify(a || null) === JSON.stringify(b || null);
+/* The pictures a fight tries in turn, as a picture's file may be missing (they are git-ignored: a fresh
+   checkout has the picks but not the art): the plate shown (its 2x copy first), then the book's own
+   illustration of the enemy. None left: the plate stays blank. */
+export function plateTries(foe, book, plates, pins, key, upscaled) {
+  const plate = pickPlate(foe, book, plates, pins, key), tries = [];
+  const add = (p) => { if (p.src && !tries.some((t) => t.src === p.src)) tries.push(p); };
+  if (plate) { add(Object.assign({}, plate, { src: upscaledSrc(plate.src, upscaled) })); add(plate); }
+  if (foe.art) add({ src: (book.assets || '') + foe.art });
+  return tries;
+}
+
+export const samePlate =(a, b) => JSON.stringify(a || null) === JSON.stringify(b || null);
 
 /* What the picture sheet asks the owner about (ADR 0008), once a book's pictures are approved: 'same';
    'changed' (was: the approved picture, now: the one that would replace it); or 'new', a fight with no

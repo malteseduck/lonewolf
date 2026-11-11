@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-10-01 (shown whole); varied humans 2026-10-09; pinned 2026-10-11; source order 2026-10-14
-- Amended: 2026-11-04
+- Amended: 2026-11-10
 
 ## Context
 
@@ -33,6 +33,11 @@ the very same creature. The owner set the order.
   4. A stand-in: the owner's `art/plates/` pictures, the library in `assets/plates/`, or a picture
      found by searching, for ordinary things (animals, plain humans, a door). A creature particular to
      Lone Wolf that no book pictures takes none: the owner generates its picture from a prompt.
+
+  **A picture's file may be missing** (pictures are git-ignored, ADR 0042: a fresh checkout has the
+  picks but not the art). The player then shows the book's own illustration of the enemy, else leaves
+  the plate blank. It never draws a stand-in of its own: the code-drawn silhouettes and the
+  crossed-swords emblem are gone (2026-11-10).
 
   **The agent's proposals** (step 7's proposal sheet) take candidates from the books' own pictures
   only: no web search, Wikimedia Commons included, and no library stand-in (2026-10-28). An enemy no
@@ -167,3 +172,6 @@ the very same creature. The owner set the order.
   sections, a Sonnet subagent (`tools/scene-digest.md`) reads them all and lists each kind's describing
   phrases and what its stored record gets wrong or lacks, and the step 7 agent writes the
   `foe-scene.json` entries from the digest (owner).
+- 2026-11-10: no code-drawn plates. A fight whose picture file is missing (seen on a fresh checkout)
+  falls back to the book's own illustration of the enemy, else a blank plate; the drawn silhouettes
+  (Kraan, Giak, Vordak) and the emblem were dropped (owner).

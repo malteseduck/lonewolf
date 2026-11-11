@@ -92,7 +92,7 @@ describe('--approve', () => {
     expect(read(PIN_FILE).endsWith('}\n')).toBe(true);
   });
 
-  it('stores null for a fight that shows the drawn emblem', () => {
+  it('stores null for a fight that shows no picture', () => {
     w('data/projectaon/t1/book.js', `LW.BOOKS['t1'] = { id: 't1', sections: { '1': { combat: { enemies: [{ name: 'Zombie' }] } } } };`);
     run('t1', '--approve');
     expect(pins().pins['1/0'].plate).toBeNull();
@@ -127,17 +127,17 @@ describe('comparing after approval', () => {
     expect(r.lines).toContain('  3/0: assets/plates/giak.png -> assets/plates/new.png');
   });
 
-  it('names the emblem when a picture appears or goes', () => {
+  it('says none when a picture appears or goes', () => {
     w('assets/plates/plates.json', JSON.stringify({ plates: [] }));
     const r = run('t1');
-    expect(r.lines).toContain('  1/0: assets/plates/giak.png -> emblem');
+    expect(r.lines).toContain('  1/0: assets/plates/giak.png -> none');
   });
 
   it('lists a fight with no pin, and a pin whose fight holds another enemy', () => {
     w('data/projectaon/t1/book.js', BOOK.replace("'3': { combat: { enemies: [{ name: 'Giak' }] } }", "'3': { combat: { enemies: [{ name: 'Wolf' }, { name: 'Giak' }] } }"));
     const r = run('t1');
     expect(r.lines[0]).toMatch(/0 would change, 2 have no pin/);
-    expect(r.lines).toContain('  3/0: no pin (shows emblem)');
+    expect(r.lines).toContain('  3/0: no pin (shows none)');
     expect(r.lines).toContain('  3/1: no pin (shows assets/plates/giak.png)');
   });
 
