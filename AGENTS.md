@@ -43,8 +43,11 @@ package with `uv add --project tools <name>`, never `uv pip install`.
 
 - A fresh checkout: `uv run --no-project python tools/setup.py install all` (the venv and npm
   packages; `setup.py` alone runs with `--no-project`).
-- `python tools/serve.py` serves http://localhost:8766/ (`lone-wolf` in `.claude/launch.json`; start it
-  with the preview tools). The page must be served, as `main.js` is an ES module.
+- `python tools/serve.py` serves http://localhost:8766/. The page must be served, as `main.js` is an
+  ES module. The owner keeps it running for the dashboard: if port 8766 is already listening, use it.
+  Otherwise start `uv run --project tools python tools/serve.py 8766 --bind 127.0.0.1` in a Terminal
+  panel tab (`run_in_terminal`), never with `preview_start` (the app stops those with the session), and
+  never stop it yourself; open the browser pane at the URL.
 - The import dashboard is http://localhost:8766/tools/admin/ (`docs/reference/dashboard.md`). Never
   press its gated buttons (download, import, re-import all, approve picture changes, release): those
   are the owner's go-ahead.

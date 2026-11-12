@@ -236,7 +236,9 @@ two places.
   the venv and npm packages.
 - **`.claude/launch.json`** names the servers the agent's preview tools start: `lone-wolf` (the
   working copy on 8766, this PC only), `lone-wolf-lan` (the same on the network) and
-  `lone-wolf-release` (the release on 8765, which the iPad is served; ADR 0045).
+  `lone-wolf-release` (the release on 8765, which the iPad is served; ADR 0045). The working copy's
+  server is not started from here: the owner keeps it running for the dashboard, so an agent uses the
+  one on 8766 or starts it in a Terminal panel tab, which outlives the session (AGENTS.md).
 - **The console hook** (`__lw.game`, `__lw.render()`, `__lw.BOOKS`, `__lw.begin()`) lets an agent
   jump to a section or set a state and look, rather than click through a book.
 - Agents verify in the browser by driving the page and looking at it; layout is judged by eye, not
