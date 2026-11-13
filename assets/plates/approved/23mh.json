@@ -1,0 +1,23 @@
+{
+ "_readme": "The fight pictures the owner approved for this book (step 7 marked done): the player shows these whatever plates.json or a re-import would now pick. Keyed by section/enemy number; name is a hash of the enemy's name, so a pin is not used for another enemy; plate is {src, crop?, levels?, flip?} or null for none (a blank plate). Written by tools/plates_pin.mjs; see docs/reference/interface.md, Art pipeline.",
+ "approved": "2026-11-13",
+ "pins": {
+  "10/0": {"name":"hcilne","plate":{"src":"data/projectaon/23mh/ill1.png"}},
+  "25/0": {"name":"1h3yfj4","plate":{"src":"assets/plates/23mh/hunting-party.webp"}},
+  "34/0": {"name":"1gpquej","plate":{"src":"data/projectaon/23mh/ill2.png"}},
+  "60/0": {"name":"rs7ql7","plate":{"src":"data/projectaon/23mh/ill4.png"}},
+  "83/0": {"name":"1u72a3k","plate":{"src":"data/projectaon/23mh/ill5.png"}},
+  "103/0": {"name":"wwg8ke","plate":{"src":"assets/plates/23mh/peutrimax-with-magical-sword.webp"}},
+  "107/0": {"name":"1vlzzpk","plate":{"src":"assets/plates/23mh/tehda-stables-guard.webp"}},
+  "128/0": {"name":"1gpquej","plate":{"src":"data/projectaon/23mh/ill2.png"}},
+  "159/0": {"name":"fs0hpd","plate":{"src":"art/plates/23mh/sadanzo-s-knights.webp"}},
+  "203/0": {"name":"1akxr7n","plate":{"src":"data/projectaon/23mh/ill12.png"}},
+  "216/0": {"name":"1vlzzpk","plate":{"src":"assets/plates/23mh/tehda-stables-guard.webp"}},
+  "217/0": {"name":"1h1j03r","plate":{"src":"assets/plates/23mh/sadanzo-s-sorcerous-blades.webp"}},
+  "244/0": {"name":"1h1j03r","plate":{"src":"assets/plates/23mh/sadanzo-s-sorcerous-blades.webp"}},
+  "254/0": {"name":"1epzg0f","plate":{"src":"data/projectaon/23mh/ill14.png"}},
+  "275/0": {"name":"1akxr7n","plate":{"src":"data/projectaon/23mh/ill12.png"}},
+  "284/0": {"name":"1gpquej","plate":{"src":"data/projectaon/23mh/ill2.png"}},
+  "301/0": {"name":"1ixjapo","plate":{"src":"data/projectaon/23mh/ill1.png"}}
+ }
+}
