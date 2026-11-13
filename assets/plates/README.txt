@@ -376,3 +376,19 @@ hounds-stag-wellcome.jpg
 14tcok/vodok.webp
   Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
   no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-05.
+
+23mh/hunting-party.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-13.
+
+23mh/peutrimax-with-magical-sword.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-13.
+
+23mh/tehda-stables-guard.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-13.
+
+23mh/sadanzo-s-sorcerous-blades.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-13.

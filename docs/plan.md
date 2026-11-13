@@ -79,7 +79,8 @@ What a book's play-through left to the player that the engine could take over:
   Cetza or Darke (22), the Isle of Ghosts (149, 160, 349) and the Plane of Darkness (150). Book 18
   asks for Varetta (56), a hut on Raider's Road, Tahou or Lake Vorndarol (90, 112, 194, 308),
   Stonewatch (121), Garthen or Torgar (175), Quarlen or the Isle of Ghosts (240), and Ixia or Lake
-  Vorndarol (280).
+  Vorndarol (280). Book 23's 1 asks whether he visited Caeno in an earlier New Order book (165 or
+  299, both left open): a flag set where Book 22 reaches the city would gate it.
 - **The weapon he fights with, chosen in the fight.** The engine fights with the weapon that adds
   most, so a choice the text leaves to him is not his: Book 12's Helshezag, which costs 1 ENDURANCE
   for good a round, is taken up only where a fight names it (133, 230, 88), so "if you wish to use
@@ -115,7 +116,16 @@ What a book's play-through left to the player that the engine could take over:
   (with how empty places count left to the owner) would take it. It is the table's todo there.
 - **ENDURANCE given up to raise a draw** (Book 21's 51 and 197: 1 added to the number for each point
   he chooses to lose). Both are free draws with a todo; an `rntMod` paid in ENDURANCE, the points set
-  before the draw, would take them.
+  before the draw, would take them. Book 23's bribes ask the same of Gold Crowns: 1 added for each
+  Crown offered past the first 2 (112, 209); the stake takes the Crowns, and an `rntMod` counted from
+  the stake would add the points.
+- **A money changer** (Book 23's 37: 5 Lune for each Gold Crown; 74: 4 Torqs for each, which 161's
+  gate then asks for). A loot entry buys an item in any coin but cannot buy a coin with Gold Crowns, as
+  its `coin` names the price's coin; a buy of so many of a coin for one Crown, as often as he likes,
+  would take both. They are the table's todos there; the walk lists 161 -> 236 as never opened.
+- **A fee or, short of it, an item** (Book 23's 32: 8 Lune or 2 Gold Crowns, else 1 Weapon or 1
+  Backpack Item of his choice). The section has one way on, so no gate can split it; a `take` that
+  asks the price first and a `pick` only when he is short would take it. It is the table's todo there.
 - **Offerings that give back ENDURANCE** (Book 21's festival: 182, 1 for each Gold Crown laid down; 277,
   3 for each Backpack Item; 103, 6 for each Special Item but the Moonstone and the Iron Skull). 182's
   stake takes the Crowns but not the points; a stake or a pick that restores so much a unit would take

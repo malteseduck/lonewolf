@@ -1,8 +1,11 @@
 {
  "_readme": "The fight pictures of this book with a copy beside them, Real-ESRGAN 2x or reduced to what the fight panel inks, <name>-2x.webp, which the player and the picture sheet show instead (platepick.js upscaledSrc). Written by tools/ill_upscale.py --fights; see ADR 0031.",
  "srcs": [
-  "art/plates/rogue-masked-blades.webp",
-  "data/projectaon/04tcod/ill1.png",
+  "art/plates/23mh/sadanzo-s-knights.webp",
+  "assets/plates/23mh/hunting-party.webp",
+  "assets/plates/23mh/peutrimax-with-magical-sword.webp",
+  "assets/plates/23mh/sadanzo-s-sorcerous-blades.webp",
+  "assets/plates/23mh/tehda-stables-guard.webp",
   "data/projectaon/23mh/ill1.png",
   "data/projectaon/23mh/ill12.png",
   "data/projectaon/23mh/ill14.png",

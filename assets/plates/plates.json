@@ -1,6 +1,10 @@
 {
   "_readme": "Pictures for fights whose section has no illustration of its own. The first entry whose match (a regular expression, case ignored) is found in the enemy's name is used, so put the narrower ones first. book, if given, limits an entry to that book (its own characters, or a stand-in that would be wrong elsewhere); book entries go first. src is relative to the project root: files in assets/plates/ are free to redistribute (sources in README.txt); files under data/projectaon/ are Project Aon illustrations on the owner's machine only, from the same book or borrowed from another, and files under art/ are pictures the owner supplied for personal use (git-ignored); a missing one falls back to the drawn emblem. crop, if given, is the part of the picture to use, [x, y, w, h] as fractions. over: true makes the entry win even where the section has an illustration of its own (the owner preferred another picture). levels, if given, is [black, white] (0-255): the tones that become full ink and bare paper, for a painting whose mid-tones would otherwise all turn to solid ink. draft, if given, marks an entry tools/plates_draft.py wrote (where it came from) that the owner has not yet adjusted on the picture sheet. See docs/reference/interface.md, Art pipeline, and docs/reference/items.md, Fight pictures.",
   "plates": [
+    { "match": "^sadanzo’s knights$", "book": "23mh", "src": "art/plates/23mh/sadanzo-s-knights.webp" },
+    { "match": "^tehda stables guard$", "book": "23mh", "src": "assets/plates/23mh/tehda-stables-guard.webp" },
+    { "match": "^peutrimax \\(with magical sword\\)$", "book": "23mh", "src": "assets/plates/23mh/peutrimax-with-magical-sword.webp" },
+    { "match": "^hunting party$", "book": "23mh", "src": "assets/plates/23mh/hunting-party.webp" },
     { "match": "^vazhag$", "book": "13tplor", "src": "assets/plates/13tplor/vazhag.webp", "crop": [0.065, 0.0267, 0.8647, 0.9306], "over": true },
     { "match": "^stragnah$", "book": "13tplor", "src": "assets/plates/13tplor/stragnah.webp", "crop": [0.0411, 0.024, 0.9178, 0.9457] },
     { "match": "^brother croumah \\(with power rod\\)$", "book": "13tplor", "src": "assets/plates/13tplor/brother-croumah-with-power-rod.webp", "crop": [0.0451, 0.0249, 0.9218, 0.9342] },
@@ -64,7 +68,7 @@
     { "match": "^eldenoran horse-scouts$", "book": "24rw", "src": "art/plates/18dotd/eldenoran-horse-scouts.webp", "crop": [0.1518, 0.1819, 0.6163, 0.6692], "draft": "Book 18" },
     { "match": "^vorka rune defenders$", "book": "24rw", "src": "data/projectaon/24rw/ill16.png", "draft": "this book" },
     { "match": "^bavazanur \\(winged agarashi\\)$", "book": "23mh", "src": "data/projectaon/23mh/ill1.png", "draft": "this book" },
-    { "match": "^sadanzo’s sorcerous blades$", "book": "23mh", "src": "art/plates/rogue-masked-blades.webp", "draft": "stand-in" },
+    { "match": "^sadanzo’s sorcerous blades$", "book": "23mh", "src": "assets/plates/23mh/sadanzo-s-sorcerous-blades.webp" },
     { "match": "^6 wrok’s henchmen$", "book": "22tbos", "src": "assets/plates/22tbos/6-wrok-s-henchmen.webp" },
     { "match": "^wrok’s gate guard$", "book": "22tbos", "src": "assets/plates/22tbos/wrok-s-gate-guard.webp" },
     { "match": "^looters$", "book": "22tbos", "src": "assets/plates/22tbos/looters.webp" },
