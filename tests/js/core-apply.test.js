@@ -13,7 +13,7 @@ const book = () => ({
     3: { text: ['z'], choices: [{ text: 'hit', to: '5' }, { text: 'miss', to: '6' }, { text: 'miss too', to: '6' }] },
   },
 });
-const table = {
+const table = () => ({ // fresh each time: applyItems hands the book the table's own arrays
   ITEMS: {},
   SECTIONS: {
     1: { give: [{ item: 'rope' }], need: { 2: null, 3: { item: 'rope', not: true }, 4: { any: [{ disc: 'hunting' }, { item: 'rope' }] } } },
@@ -21,12 +21,12 @@ const table = {
     3: { bowShot: { 5: [7, 99], 6: [0, 6] } },
     99: { give: [{ gold: 1 }] }, // a section the book does not have is passed over
   },
-};
+});
 
 describe('an item table laid over a book', () => {
   it('adds what sections give, sets and clears gates, and marks each enemy of a fight', () => {
     const b = book();
-    LW.applyItems(b, table);
+    LW.applyItems(b, table());
     const s = b.sections;
     expect(s[1].give).toEqual([{ item: 'rope' }]);
     expect(s[1].choices.map((c) => c.need)).toEqual([undefined, { item: 'rope', not: true }, { any: [{ disc: 'hunting' }, { item: 'rope' }] }]);
@@ -39,9 +39,9 @@ describe('an item table laid over a book', () => {
   });
   it('is laid over once only, and a book with no table is left as it is', () => {
     const b = book();
-    LW.applyItems(b, table);
+    LW.applyItems(b, table());
     b.sections[1].give.push({ gold: 2 });
-    LW.applyItems(b, table);
+    LW.applyItems(b, table());
     expect(b.sections[1].give).toHaveLength(2);
     const plain = book();
     LW.applyItems(plain, undefined);

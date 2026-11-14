@@ -143,7 +143,8 @@ def test_a_required_file_the_zip_lacks_is_asked_for_on_its_own(tmp_path, offline
     assert site.names() == ['22x.zip', 'map.htm']
 
 
-@pytest.mark.parametrize('data', [b'not a zip', book_zip('22x', {'title.htm': b'x'}), book_zip('22x', {'sect1.htm': b'x'}, prefix='elsewhere/')])
+@pytest.mark.parametrize('data', [b'not a zip', book_zip('22x', {'title.htm': b'x'}), book_zip('22x', {'sect1.htm': b'x'}, prefix='elsewhere/')],
+                         ids=['not-a-zip', 'no-sections', 'elsewhere'])  # a zip's bytes hold the time: an id from them differs between xdist workers
 def test_a_bad_zip_or_one_without_the_book_falls_back_to_the_pages(tmp_path, offline, data):
     site = offline({'22x.zip': data, 'sect1.htm': art(''), 'map.png': b'M'})
     run_script(tmp_path, '22x')

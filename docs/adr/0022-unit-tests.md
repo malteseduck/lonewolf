@@ -44,7 +44,10 @@ for it to work exactly as before: it is known to play well from playing it (2026
 ## Consequences
 
 - `package.json` holds the dev dependencies (Vitest, jsdom); `node_modules/` stays git-ignored.
-  pytest is in the tools' uv project (ADR 0037).
+  pytest and pytest-xdist are in the tools' uv project (ADR 0037). Both suites run in parallel
+  (Vitest in worker threads, each file isolated; pytest on up to 6 xdist workers), so a test shares
+  nothing with another, writes only to its own temporary folder and has a name that never changes
+  between runs.
 - Tests live in `tests/js/` (`*.test.js`, `npm test`) and `tests/py/` (`test_*.py`,
   `uv run --project tools python -m pytest`). Both pass before a commit; `check_all.py` after a change
   to the importer or the books' data.

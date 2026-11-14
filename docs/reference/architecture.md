@@ -51,9 +51,12 @@ shared/                     used by the player and the prototypes (classic scrip
   ink.js                    ES module: procedural parchment, leather, wood, ink-wash scenes
   art.js, battle.js, flow.js, shared.css   pixel sprites, Dragon Quest battle, shared flow: prototypes A and B only
 tests/                      unit tests (ADR 0022), stand-in data only
-  js/                       Vitest (npm test; vitest.config.mjs, package.json): helpers.js loads shared/ into a
+  js/                       Vitest (npm test; vitest.config.mjs, package.json): files run in parallel worker
+                            threads, each isolated (its own globals and modules); helpers.js loads shared/ into a
                             test; parse.test.js parses every script; the main functionality, by module
-  py/                       pytest (pytest.ini; conftest.py puts tools/ on the path); test_parse.py compiles every
+  py/                       pytest (pytest.ini; conftest.py puts tools/ on the path), in parallel with pytest-xdist
+                            (up to 6 workers; -n 0 runs in one process), so test ids must not change between
+                            runs; test_parse.py compiles every
                             script; the main functionality, by tool. Tools that run on import are copied into
                             tmp_path and run with runpy
 prototypes/                 historical, for reference only: not run, tested or changed (ADR 0002)
