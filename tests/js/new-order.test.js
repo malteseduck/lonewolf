@@ -186,6 +186,16 @@ describe('always a new Kai, and carried on from book to book (ADR 0047)', () => 
     expect(kit.from).toEqual(LW.KITS[21].from);
     expect(kit.store || kit.storeGold).toBeFalsy();
   });
+  it('Book 24 sets out with its own map and a new choice: a Lute and a Broadsword for the Quarterstaff and Flute', () => {
+    const kit = LW.KITS[24];
+    expect(kit.give).toEqual(['mapCentralStornlands']);
+    expect(LW.itemName('mapCentralStornlands')).toBe('Map of the Central Stornlands');
+    expect(kit.gold).toBe(20);
+    expect(kit.choose).toBe(5);
+    expect(kit.from).toEqual(['axe', 'sword', 'quiver', 'lute', 'dagger', 'bow', { meal: 2 }, 'rope', 'potion', 'broadsword']);
+    expect([LW.itemName('lute'), LW.itemKind('lute')]).toEqual(['Lute', 'backpack']);
+    expect(kit.store || kit.storeGold).toBeFalsy();
+  });
 });
 
 describe('the hero of the player\'s own', () => {

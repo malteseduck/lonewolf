@@ -57,7 +57,7 @@ It works on the contents of `<div class="maintext">`, in document order:
 | `<div class="signpost">` | a paragraph per line (`<br>`): a sign or price board the story shows (Book 6's 98). List lines |
 | `<table>`, alone or in a signpost | a paragraph per row, its cells joined by " — " (Book 16's 226, Book 18's 339). List lines |
 | `<blockquote>` with no `<p>` inside | verse: a paragraph per line (Book 4) |
-| `<p class="deadend">` | a paragraph, and `end: 'death'`; so too a section listed in `UNMARKED_DEATHS`, a death the print left unmarked (Book 29's 253) |
+| `<p class="deadend">` | a paragraph, and `end: 'death'`; so too a section listed in `UNMARKED_DEATHS`, a death the print left unmarked (Book 24's 42, 111, 267, 300; Book 29's 253) |
 | `<p class="choice">` with `<a href="sectN.htm">` | a choice to N with the paragraph as its text |
 | `<p class="choice">` with no section link | a paragraph; if the section has no other way on, `end: 'failed'` (Book 3's 61, a mission given up) |
 | `<p class="puzzle">` | a paragraph, and `puzzle: true`: the answer is a section number (Books 5, 7-9) |
@@ -99,7 +99,8 @@ Heuristics layered on top, all by regular expression:
   above (that of) Y, add N" (a Discipline of the series more for each rank above Y's count; Book 15's 102; also "every Grand Master rank",
   "level of Kai Mastery", "Kai level" or "level", "above the rank of Y", "add N for every Kai level you are above ..." and the same after
   "If you possess X," as that discipline's bonus, Book 16; "that you have attained", "you have so far attained", "Add N to the number
-  you have picked for every level ...", Book 19; "..., (you may) add a further N", Book 20), "You may also add N if you possess X"
+  you have picked for every level ...", Book 19; "..., (you may) add a further N", Book 20; "You may add N to this number for every
+  level ...", Book 24's 321), "You may also add N if you possess X"
   (the "add" first, Book 20's 161), rules joined by semicolons ("add 3; and if you ...") read one by one,
   "If have" (the "you" missing, Book 16's 2), "..., you must deduct N" (Book 21's 98), the same after a condition ("If you
   have Huntmastery, add 1 ... for every Magnakai Discipline ... after the first three", Book 11's 189), or "(Pick a number ... and) add N
@@ -121,7 +122,8 @@ Endurance; "If you possess X as well" is not read (it may lean on the rule befor
   "after the first round", "after the third round" (an ordinal up to sixth: Book 17's 89, 110, 275, read as 0 until 2026-10-25)
   and "until the beginning of the third round" set the wait; "in the first
   round of combat only" sets `within: 1`.
-- **Mind immunity**: "immune to Mindblast / Psi-surge / all (forms of) psychic attack(s)" in the section; "immune to Mindblast (but
+- **Mind immunity**: "immune to Mindblast / Psi-surge / all (forms of) psychic attack(s) / your level of psychic attack" (Book 24's 75,
+  154; not "normally immune to ...", as in 136, where this time it is not) in the section; "immune to Mindblast (but
   not Psi-surge)" or "(but not Kai-surge)" (Book 21) makes it `'mindblast'`; "immune to Mindblast and Psi-surge (but not Kai-surge)", "..., but he is vulnerable to Kai-surge" (Book 16's Cadak),
   "...; only (the Grand Mastery of) Kai-surge" or "..., and suffers only half-damage ... Kai-surge" or "... . If you (choose to) use Kai-surge, add only N" or "immune to all forms of psychic attack, except Kai-surge" (Book 17, 2026-10-25) makes it `'psi'`;
   "immune to the effects of ..." is read the same
@@ -130,7 +132,7 @@ Endurance; "If you possess X as well" is not read (it may lean on the rule befor
   book, Kai-screen in a Grand Master one), deduct N ENDURANCE points every round" sets each enemy's `drain`.
 - **Combat Skill adjustment** (`cs_rule()`): one sentence that adds to, deducts from or reduces
   "your COMBAT SKILL (score)" for the fight, taken as `csMod`, with "If you have X," (or "If you have X you may ...", no comma) as `csIf` and
-  "unless you have X" as `csUnless` (disciplines, a rank, Lore-circles). "add an additional / a
+  "unless you have X" or "if you do not possess X" (Book 24's 136) as `csUnless` (disciplines, a rank, Lore-circles). "add an additional / a
   further / an extra N" counts. Sentences are not split after "i.e." or "e.g.". Left as text: a change for some rounds only, one
   "instead of" the engine's own bonus, one from a weapon's or item's power (its own bonus may count
   it; the enemies' weapons given as the reason do not count), one with any other condition, and a section with two.
@@ -322,6 +324,14 @@ in a discipline gate, "X and a Flute and have attained the rank of Y" (335, whos
 has no kind for a gate read too loosely). Books 1-22 and 24-29 unchanged by it. Left: 277 (an item whose name holds a discipline's
 word, listed by the scan as a discipline gate: the item table's); 66, 76, 197 (a Dagger, a Rope among the bonuses), 112, 209 (Gold
 Crowns added), 117, 122, 239, 314, 330 (odd or even, the number counting his ENDURANCE).
+
+Book 24 as of 2026-11-13, after its step 3: 350 sections, 36 fights, Random 32 (16) / 6, gates 48 / 15 / 0, illustrated 44, dead 6,
+puzzles 3, Meals 23, fights 7 (6 on a discipline) / 10 (2) / 0 / 0, enemies 5 / 6 / 3 (before it: Random 31 (15) / 7, dead 2, fights 6,
+foes immune 8, 4 sections with no way on). Step 3 taught: "You may add 1 to this number for every level of Kai rank ..." (321; Book 25's
+47 gained it too); "if you do not possess the Discipline of X, you must reduce your COMBAT SKILL" as `csUnless` (136); "immune to your
+level of psychic attack" (75, 154), not "normally immune" (136, where a vial lifts it); 42, 111, 267, 300 as `UNMARKED_DEATHS` (the
+mission won at the cost of his life, in plain paragraphs). Books 1-23 and 26-29 unchanged by it. Left: 136 (listed as `immune`: rightly
+not immune); 178, 222, 288, 320, 328 (a weapon or item among the bonuses), 62 (the number counts).
 
 Introductions: 7, 7, 9, 4, 10, 7, 10, 10, 8, 9, 8, 8 paragraphs. The free Random Number sections
 left are those where the number counts gold or Endurance, plays a game, or is changed by a bow, a

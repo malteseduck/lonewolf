@@ -96,6 +96,13 @@ def test_a_death_the_print_left_unmarked_is_an_ending(tmp_path):
     assert 'end' not in s['254']  # only the section listed; the report still names any other
 
 
+def test_book_24s_unmarked_deaths_are_endings(tmp_path):
+    # the mission won at the cost of his life, printed as plain paragraphs
+    ids = (41, 42, 111, 267, 300, 350)  # 350, the highest, is the victory
+    s = secs(tmp_path, {n: '<p>A stand-in ending.</p>' for n in ids}, book='24rw')
+    assert [s[str(n)].get('end') for n in ids[:5]] == [None] + ['death'] * 4
+
+
 def test_plain_strips_tags_entities_and_footnote_marks(kai):
     p = kai['plain']
     assert p('<i>Hello</i>&nbsp;  &amp; <b>bye</b>\n now') == 'Hello & bye now'
@@ -348,6 +355,21 @@ def test_immune_to_mindblast_but_not_kai_surge(tmp_path):
     assert s['1']['combat']['enemies'][0]['immune'] == 'mindblast'   # Book 21: was read as immune to all, shutting out Kai-surge
 
 
+def test_immune_to_your_level_of_psychic_attack(tmp_path):
+    s = secs(tmp_path, {1: '<p>This creature is immune to your level of psychic attack.</p>' + foe('Rat', 1, 1),
+                        2: '<p>This creature is normally immune to your level of psychic attack. However, a draught '
+                           'lets you use Kai-surge to full effect.</p>' + foe('Rat', 1, 1)}, book='24rw')
+    assert s['1']['combat']['enemies'][0]['immune'] is True     # Book 24's 75, 154
+    assert 'immune' not in s['2']['combat']['enemies'][0]       # Book 24's 136: not this time
+
+
+def test_combat_skill_penalty_if_you_do_not_possess_a_discipline(tmp_path):
+    s = secs(tmp_path, {1: '<p>However, if you do not possess the Discipline of Kai-screen, you must reduce your COMBAT '
+                           'SKILL by 3 (for the duration of this combat only).</p>' + foe('Rat', 1, 1)}, book='24rw')
+    c = s['1']['combat']
+    assert (c['csMod'], c['csUnless'], 'csIf' in c) == (-3, {'disc': ['kaiScreen']}, False)   # Book 24's 136
+
+
 def test_number_rules_reads_a_penalty_he_must_take(grand):
     assert grand['number_rules']('If your current ENDURANCE score is 20 or higher, you may add 2. '
                                  'If your current ENDURANCE score is 10 or lower, you must deduct 2.') == [
@@ -434,7 +456,9 @@ def test_grand_master_book_19_phrasings(grand, tmp_path):
               'you have chosen.',
               'For every level of Kai rank you have so far attained above the rank of Kai Grand Guardian, add 1.',
               'Add 1 to the number you have picked for every level of Kai Mastery you have attained above the rank of Kai '
-              'Grand Guardian.'):
+              'Grand Guardian.',
+              'You may add 1 to this number for every level of Kai rank you have attained above the rank of Kai Grand '
+              'Guardian.'):  # Book 24's 321
         assert nr(s) == [{'plus': 1, 'each': 'grandmaster', 'over': 5}], s
     # a cap on the bonus is not something a rule can hold: the draw stays free
     assert nr('For every level of Kai rank you have attained above the rank of Sun Knight, add 1 to the number you have '

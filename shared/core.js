@@ -85,6 +85,8 @@
     mapSoutheastMagnamund: { name: 'Map of Southeastern Magnamund', kind: 'special', glyph: 'treasure-map' },
     mapCentralSouthernMagnamund: { name: 'Map of Central Southern Magnamund', kind: 'special', glyph: 'treasure-map' },
     flute: { name: 'Flute', kind: 'backpack', glyph: 'straight-pipe' },
+    mapCentralStornlands: { name: 'Map of the Central Stornlands', kind: 'special', glyph: 'treasure-map' },
+    lute: { name: 'Lute', kind: 'backpack', glyph: 'lyre' },
     mapTentarias: { name: 'Map of the Western Tentarias', kind: 'special', glyph: 'treasure-map' },
     mapMaakengorge: { name: 'Map of the Maakengorge', kind: 'special', glyph: 'treasure-map' },
     mapIxia: { name: 'Map of Ixia and the Hardlands', kind: 'special', glyph: 'treasure-map' },

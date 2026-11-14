@@ -33,8 +33,7 @@ Book 21 (`21votm`) goes through its steps as usual (`docs/book-checklist.md`). W
    order, one at a time (the importer, `rules-books.md`, `LW.KITS` and `main.js` are shared, and
    each book's rules diff and carried items build on the one before). Each agent step goes to a
    fresh subagent on the main model with the dashboard's prompt for it (`tools/admin/prompts.js`):
-   1. Step 3, phrasings (Book 22's is done); `check_all.py` after any importer change. Book 24's
-      four sections with no way on are settled here.
+   1. Step 3, phrasings (Book 22's is done); `check_all.py` after any importer change.
    2. The reading copy made again (`reading_copy.py`, `item_sections.py`).
    3. Step 4, the rules addendum, and the book's kit in `LW.KITS`.
    4. Step 5, the item table from the script's draft: its todos read, icons fetched, checker clean,
@@ -118,7 +117,12 @@ What a book's play-through left to the player that the engine could take over:
   he chooses to lose). Both are free draws with a todo; an `rntMod` paid in ENDURANCE, the points set
   before the draw, would take them. Book 23's bribes ask the same of Gold Crowns: 1 added for each
   Crown offered past the first 2 (112, 209); the stake takes the Crowns, and an `rntMod` counted from
-  the stake would add the points.
+  the stake would add the points. Book 24's 328 adds every Crown offered (8 or less to 32, 9 or more to
+  234), its todo there.
+- **A Discipline lost for the rest of the book** (Book 24's 61, 289 and 334: one Grand Master
+  Discipline of his choice, given back after the book). The player keeps it unused by hand; a `pick`
+  of a Discipline that the gates and bonuses then leave out until the book ends would take it. It is
+  the table's todo there.
 - **A money changer** (Book 23's 37: 5 Lune for each Gold Crown; 74: 4 Torqs for each, which 161's
   gate then asks for). A loot entry buys an item in any coin but cannot buy a coin with Gold Crowns, as
   its `coin` names the price's coin; a buy of so many of a coin for one Crown, as often as he likes,

@@ -72,7 +72,7 @@ CIRCLES = {'fire': 'Circle of Fire', 'light': 'Circle of Light', 'solaris': 'Cir
 # Plates for enemies pictured in a section other than the one where they are fought. Checked by eye.
 PLATE_FIXES = {'01fftd': {'kraan': 'ill3.png', 'vordak': 'ill3.png', 'giak': 'ill4.png', 'doomwolf': 'ill4.png', 'gourgaz': 'ill7.png'}}
 # Deaths in plain paragraphs, without the print's "deadend" mark. Read one by one, as no wording tells them apart.
-UNMARKED_DEATHS = {'29tsoc': {253}}
+UNMARKED_DEATHS = {'24rw': {42, 111, 267, 300}, '29tsoc': {253}}
 WORDS = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10, 'first': 1,
          'second': 2, 'third': 3, 'fourth': 4, 'fifth': 5, 'sixth': 6}  # "after the third round": after three
 OPEN = 99  # the far end of "5 or more" / "4 or less"
@@ -306,7 +306,7 @@ def per_rank(s):
     # or the "add" first, with "to the number you have picked" before the "for every" (Book 19's 208)
     # "..., you may add a further 1" (Book 20's 57, 335)
     p = (re.fullmatch(r'(?:Also, )?[Ff]' + above[1:] + r',? (?:you may )?add (?:a further |another |an additional )?(?P<n>\d+)' + to, s)
-         or re.fullmatch(r'[Aa]dd (?P<n>\d+) (?:to the number you have (?:picked|chosen) )?' + above + to, s))
+         or re.fullmatch(r'(?:You may )?[Aa]dd (?P<n>\d+) (?:to (?:the number you have (?:picked|chosen)|this number) )?' + above + to, s))  # "to this number" (Book 24's 321)
     return (int(p['n']), rank_of(p['rank'])) if p and rank_of(p['rank']) else None
 
 
@@ -426,8 +426,9 @@ def cs_rule(whole):
             return None
         n = int(m.group(2)) * (1 if m.group(1).lower() in ('add', 'increase') else -1)
         # the condition ends at a comma, or with none at "you may" ("If you have X you may add 2")
-        u = re.search(r'\b[Uu]nless you ((?:have|possess) .+?)(?:,| you (?:may|can|must)\b|\.?$)', s)
-        i = re.search(r'\b[Ii]f you (.+?)(?:,| you (?:may|can|must)\b)', s)
+        # "if you do not possess X, you must reduce ..." is an unless (Book 24's 136)
+        u = re.search(r'\b(?:[Uu]nless you|[Ii]f you do not) ((?:have|possess) .+?)(?:,| you (?:may|can|must)\b|\.?$)', s)
+        i = not u and re.search(r'\b[Ii]f you (.+?)(?:,| you (?:may|can|must)\b)', s)
         cond = condition(u.group(1)) if u else condition(i.group(1)) if i else None
         if (u or i) and (not cond or set(cond) - {'disc', 'every', 'rank', 'circle'}):
             return None
@@ -530,7 +531,8 @@ for n in numbers:
         if obstacle:
             combat['kind'] = 'obstacle'  # broken down, not killed: the engine words it so, and leaving it is free
         # the sentence that grants immunity; when it names some of the enemies, only they are immune
-        said = next((x for x in re.split(r'(?<=\.)\s+', whole) if re.search(r'immune to (?:the effects of )?(?:Mindblast|Psi-surge|all (?:forms of )?psychic attacks?)', x, re.I)), '')
+        # "immune to your level of psychic attack" (Book 24's 75, 154), not "normally immune to ..." (136: this time it is not)
+        said = next((x for x in re.split(r'(?<=\.)\s+', whole) if re.search(r'(?<!normally )immune to (?:the effects of )?(?:Mindblast|Psi-surge|(?:all (?:forms of )?|your level of )psychic attacks?)', x, re.I)), '')
         named = [e for e in enemies if re.sub(r'\s+\d+$', '', e['name']).lower() in said.lower()]
         for e in enemies:
             if named and e not in named:

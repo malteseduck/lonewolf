@@ -33,6 +33,7 @@ import * as ITEMS_20 from './items/items-20tcon.js';
 import * as ITEMS_21 from './items/items-21votm.js';
 import * as ITEMS_22 from './items/items-22tbos.js';
 import * as ITEMS_23 from './items/items-23mh.js';
+import * as ITEMS_24 from './items/items-24rw.js';
 
 const LW = window.LW;
 const ROMAN = LW.ROMAN;
@@ -55,6 +56,7 @@ const ITEM_TABLES = {
   '21votm': ITEMS_21,
   '22tbos': ITEMS_22,
   '23mh': ITEMS_23,
+  '24rw': ITEMS_24,
 };
 /* The made-up demo book (ADR 0046) is on the PC alone: its table loads only where its book.js does, and
    a release (which has neither) never shows it. */

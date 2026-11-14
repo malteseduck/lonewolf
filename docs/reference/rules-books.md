@@ -1745,3 +1745,105 @@ series section above holds its Disciplines, its Kai Weapons and its ranks.
 - **Wisdom**: the mission is to save Siyen from Baron Sadanzo and his robber knights; some finds are
   useless, so keep only what is worth keeping; a wise choice of the five Disciplines matters more than
   high scores.
+
+### Book 24, Rune War (New Order)
+
+Read from its own rules pages against Book 23's (tools/rules_diff.py, 2026-11-13): the combat rules,
+the combat summary, the ranks, the Random Number Table and the combat results table are unchanged. The
+series section above holds its Disciplines, its Kai Weapons and its ranks.
+
+- **Scores**: a new character: COMBAT SKILL = **25** + a Random Number (0 counts as zero), ENDURANCE =
+  **30** + a Random Number. ENDURANCE cannot rise above its value at the start; at zero or below the
+  hero is dead. A ten-sided die may stand in for the table. Books 1-23 help but are not needed.
+  *Engine*: yes (`base`, `fresh`); the page draws its own numbers.
+- **Kai name**: the player's own, or drawn: a Random Number on each of two tables, the prefix (0-9:
+  Swift, Sun, True, Bold, Moon, Sword, Wise, Storm, Rune, Brave) and the suffix (0-9: Blade, Fire, Hawk,
+  Heart, Friend, Star, Dancer, Helm, Strider, Shield). *Engine*: yes (`LW.kaiName`, `HeroSetup.setName`).
+- **Disciplines**: every Kai and Magnakai Discipline. A new hero, as Kai Grand Master Senior, chooses
+  **five** of the sixteen New Order Disciplines; a hero who completed any of Books 21-23 chooses **one**
+  more for each New Order book completed (footnote 1), with **+1** COMBAT SKILL and **+2** ENDURANCE for
+  each Discipline past five. Curing gives +1 ENDURANCE for each section with no further fight, **10** at
+  most in this book; no COMBAT SKILL is lost bare-handed. The summary gives the other earlier
+  Disciplines no number. *Engine*: yes (`first`, `earn`, `healCap`, `bareHanded`, `LW.readyHero`); the
+  rest, gates only.
+- **Carried from Books 21-23**: COMBAT SKILL and ENDURANCE, Special Items, the Kai Weapon, Weapons and
+  Backpack Items, and gold (below). *Owner*: Meals do not carry (ADR 0047). *Engine*: yes
+  (`keepPack`); ENDURANCE starts full, as in every book.
+- **Completing it**: one more Discipline in Book 25, Trail of the Wolf, with the same **+1** COMBAT
+  SKILL and **+2** ENDURANCE for each past five; the page carries on the Disciplines, the bonuses, the
+  Kai Weapon, Special Items and Backpack Items. *Owner*: Weapons and gold too, Meals not (ADR 0047).
+  *Engine*: yes (`earn`, `keepPack`).
+- **Grand Weaponmastery**: +5 with a mastered weapon of the ten (Spear, Dagger, Mace, Short Sword,
+  Warhammer, Bow, Quarterstaff, Broadsword, Axe, Sword); one more mastered for each book completed;
+  with the Bow, +5 to a shot's Random Number. The book has no such shot: the one section that names the
+  Discipline (178) gives a draw its own +2 for mastering the Kai Weapon's kind. *Engine*: the +5 in a
+  fight, yes (`arms`); on a shot, yes (`LW.bowShot`), unused here.
+- **Deliverance**: at 8 ENDURANCE or less in a fight, restore 20; the page says once every 20 days.
+  *Owner*: once a book (ADR 0047). *Engine*: yes (`LW.cureOf`).
+- **Gold**: 20 + a Random Number, added to any carried from Books 21-23; at most 50 in the Belt Pouch,
+  with no Monastery for the rest. *Engine*: yes, `gold: 20` in `LW.KITS[24]`, the purse's 50.
+- **Kit**: a map of the central Stornlands, of no stated kind. Choose any **5** of ten, at most two of
+  them Weapons: Axe, Sword, Quiver (Special Item, six Arrows), Lute (Backpack Item, named by no
+  section), Dagger, Bow, two Meals (one choice, a Backpack space each), Rope (Backpack Item), Potion of
+  Laumspur (Backpack Item, 4 ENDURANCE after a fight, one dose, never just before one), Broadsword. The
+  page offers the choice to a carried hero as well. *Engine*: yes, `LW.KITS[24]` (the map as a Special
+  Item, `mapCentralStornlands`; the Lute, `lute`; the two Weapons, `problems`). (Checked against the
+  page by hand.)
+- **The Kai Weapon**: a new hero chooses it or draws it by a Random Number from the series section's
+  table; a hero from Books 21-23 already has one (footnote 3). +5 in a fight; the higher bonus in its
+  place where its property holds, not added; Grand Weaponmastery's +5 besides when its kind is
+  mastered. It is a Special Item, one of the twelve, beside the two Weapons. 43 sections name it.
+  *Engine*: yes (`LW.KAI_WEAPONS`, `kaiWeaponNow`, the control on the fight's panel); the item table
+  marks each fight's `kaiWeapon` where the text says the time, the place or the foe.
+- **Money**: the Stornlands' currency is the Gold Crown, carried in the Belt Pouch, **50** at most. The
+  carrying page still names Chai's Ren (**10** to the Gold Crown, exchangeable before setting out) and
+  the old table of smaller coins (to the Gold Crown: 4 Silver Lune, 10 Kika, 1 Noble, 10 Ren, 4 Sheasu
+  Torq, 2 Orla, 1 Ain). Sections name Gold Crowns (10); no other coin is paid or taken (Lune appear at
+  91 and 310 only as loot left behind). *Engine*: yes (the purse); no other coin is needed.
+- **Carrying**: two Weapons, one used at a time; ten Backpack Items, Meals included, one Backpack,
+  exchanged or dropped at any time outside a fight; a found item named with capitals or called a
+  Backpack Item goes in the Backpack unless it is said to be a Special Item; twelve Special Items, each
+  carried as the text says; all potions are Backpack Items, any other's effect given where it is found.
+  No food when told to eat: lose 3 ENDURANCE; Grand Huntmastery ticks off no Meal. *Engine*: yes
+  (`LW.backpackMax`, `LW.specialLimit`, the Meal rule).
+- **Bow**: used only when the section allows; needs a Quiver and an Arrow, one Arrow a shot; useless
+  hand to hand, so a close-combat weapon is advised beside it. *Engine*: yes (`ranged`, `hero.arrows`,
+  `bowShot`).
+- **Combat**: COMBAT SKILL with the bonuses of the Kai Weapon, Special Items and Disciplines, against
+  the enemy's, on the Combat Results Table, whose column for the hero is headed GM; Kai-surge costs 1
+  ENDURANCE each round it is used, beyond the round's loss. Evasion only where the section allows it,
+  in the first or any later round unless it says otherwise: that round is fought, the enemy's losses
+  are ignored and only the hero loses ENDURANCE. *Engine*: yes (`evade`, `noEvade`).
+- **Improved Disciplines** at Kai Grand Master Superior (six Disciplines): Animal Mastery deters a
+  predator of a known kind with a scent only it senses; Assimilance throws a thunder-like noise up to
+  15 yards to distract, not in a fight; Astrology works sextants, astrolabes, orreries and the like;
+  Herbmastery purifies about two pints of foul or salt water a day, more at higher ranks; Elementalism
+  draws a large bucketful of fresh water from the air, as spray, deluge or into a vessel; Bardsmanship
+  calms an excited or hostile animal with music. At Kai Grand Sentinel (seven): Grand Weaponmastery
+  senses where the Kai Weapon is when parted from it, through anything but lead, further and better by
+  rank; Grand Pathsmanship foretells the weather **3** hours ahead within **10** square miles, more by
+  rank; Astrology reads the psychic trace an owner leaves on a treasured object (most everyday or shared
+  things keep none); Herbmastery makes spoiled or tainted food safe to eat; Elementalism charges the air
+  round an object no bigger than a man, which strikes whoever touches or opens it, but not the Kai
+  himself; Bardsmanship counters a hostile sonic attack with song or music, better by rank. New at Kai
+  Grand Defender (eight): Deliverance undoes rot, rust and mould in wood, stone, cloth, metal and the
+  like by touch; Telegnosis finds a known or familiar object within **15** feet, further by rank;
+  Astrology uses the common devices of fortune-telling, such as cards, dice and crystal spheres;
+  Herbmastery draws the poison out of plants, berries and fruit, which may then give ENDURANCE or COMBAT
+  SKILL when eaten; Elementalism raises a thick mist within **5** feet that hides him from sight and
+  night sight for three to five minutes, more by rank; Bardsmanship calms an intelligent creature within
+  hearing, or plants a suggestion in its mind, much as Kai-alchemy's Mind Charm. *Engine*: gates only;
+  none carries a number for play (Herbmastery's gains are the sections' to give).
+- **Footnotes**: the combination locks at 148, 158 and 297 each have one right answer, marked by a
+  footnote at the section it leads to (280; 221; 40). At 39 he must break a hand weapon (not a Bow nor
+  the Kai Weapon) that he may not carry; the book leaves the player to settle it. 174 is reached only
+  through 149's way for a hero without Assimilance (by 70 and 299), so its Assimilance way to 321, and
+  321's to 275 and 306, cannot be taken; the book leaves them in. Footnotes 1 and 3 are the carrying
+  rules above; footnote 2 only points to the Kai Weapon's rules. *Engine*: the importer marks 148, 158
+  and 297 `puzzle` ("Turn to section") and drops the marks; 39's loss is the item table's, the choice
+  of weapon the player's; 149's way to 70 is open to any hero, as every "if you do not possess" way is,
+  so 174, 321, 275 and 306 are reached only by a player who takes it against the text.
+- **Wisdom**: the crusade is against Lord Vandyan of Eldenora, whose power comes from ancient runes of
+  Agarash the Damned that must be destroyed before he enslaves the free kingdoms of Northern
+  Magnamund; some finds are useless, so keep only what is worth keeping; a wise choice of the five
+  Disciplines matters more than high scores.

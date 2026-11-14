@@ -1,6 +1,6 @@
 [
  {
-  "text": "the stornlands",
+  "text": "THE STORNLANDS",
   "box": [
    258,
    131,
@@ -9,10 +9,10 @@
   ],
   "slant": 0.6,
   "conf": 0.99,
-  "retype": true
+  "retype": false
  },
  {
-  "text": "the maakengorge",
+  "text": "THE MAAKENGORGE",
   "box": [
    616,
    278,
@@ -20,11 +20,34 @@
    382
   ],
   "slant": 14.4,
-  "conf": 1.0,
-  "retype": true
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    759,
+    328
+   ],
+   "angle": 14.7,
+   "length": 273.1,
+   "thick": 39,
+   "box": [
+    616,
+    278,
+    898,
+    382
+   ],
+   "fit": {
+    "at": [
+     760.9,
+     331.9
+    ],
+    "angle": 14.7,
+    "size": 26.07
+   }
+  }
  },
  {
-  "text": "eshnaR",
+  "text": "ESHNAR",
   "box": [
    1331,
    249,
@@ -33,10 +56,33 @@
   ],
   "slant": 0.5,
   "conf": 0.95,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1395.6,
+    263.7
+   ],
+   "angle": 1.69,
+   "length": 119.4,
+   "thick": 24,
+   "box": [
+    1331,
+    249,
+    1452,
+    274
+   ],
+   "fit": {
+    "at": [
+     1395.7,
+     262.6
+    ],
+    "angle": 1.69,
+    "size": 24.78
+   }
+  }
  },
  {
-  "text": "L.kazonara",
+  "text": "L.KAZONARA",
   "box": [
    166,
    343,
@@ -45,10 +91,34 @@
   ],
   "slant": 12.5,
   "conf": 0.98,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    259.1,
+    383.4
+   ],
+   "angle": 12.05,
+   "length": 196.3,
+   "thick": 27.6,
+   "box": [
+    166,
+    343,
+    353,
+    415
+   ],
+   "fit": {
+    "at": [
+     259.5,
+     381.5
+    ],
+    "angle": 12.05,
+    "size": 16.71
+   }
+  },
+  "reset": true
  },
  {
-  "text": "L.vornoarol",
+  "text": "L. VORNOAROL",
   "box": [
    417,
    326,
@@ -57,10 +127,33 @@
   ],
   "slant": -4.1,
   "conf": 0.91,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    516.5,
+    344.5
+   ],
+   "angle": -4.15,
+   "length": 186.5,
+   "thick": 21.8,
+   "box": [
+    417,
+    326,
+    615,
+    365
+   ],
+   "fit": {
+    "at": [
+     516.7,
+     346.9
+    ],
+    "angle": -4.28,
+    "size": 17.53
+   }
+  }
  },
  {
-  "text": "helgor trail",
+  "text": "HELGOR TRAIL",
   "box": [
    93,
    375,
@@ -69,22 +162,69 @@
   ],
   "slant": 28.2,
   "conf": 0.91,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    203.3,
+    447.7
+   ],
+   "angle": 29.81,
+   "length": 206.2,
+   "thick": 28.7,
+   "box": [
+    93,
+    375,
+    289,
+    509
+   ],
+   "fit": {
+    "at": [
+     202.5,
+     449.2
+    ],
+    "angle": 29.81,
+    "size": 22.11
+   }
+  }
  },
  {
-  "text": "Raanon",
+  "text": "RAANON",
   "box": [
    1184,
    380,
    1304,
    400
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1245,
+    387.6
+   ],
+   "angle": -0.28,
+   "length": 114.1,
+   "thick": 21.4,
+   "box": [
+    1184,
+    380,
+    1304,
+    400
+   ],
+   "fit": {
+    "at": [
+     1245,
+     389.9
+    ],
+    "angle": -0.53,
+    "size": 16.73
+   }
+  },
+  "reset": true
  },
  {
-  "text": "the zaut",
+  "text": "THE ZAUT",
   "box": [
    790,
    426,
@@ -92,23 +232,73 @@
    475
   ],
   "slant": -8.5,
-  "conf": 1.0,
-  "retype": true
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    864.6,
+    449.6
+   ],
+   "angle": -7.87,
+   "length": 138.4,
+   "thick": 22.1,
+   "box": [
+    790,
+    426,
+    934,
+    475
+   ],
+   "fit": {
+    "at": [
+     865,
+     452.6
+    ],
+    "angle": -8.62,
+    "size": 19.65
+   }
+  }
  },
  {
-  "text": "maakenmire",
+  "text": "MAAKENMIRE SWAMP",
   "box": [
    1373,
    458,
    1580,
-   484
+   509
   ],
   "slant": 0.1,
   "conf": 0.96,
-  "retype": true
+  "retype": true,
+  "lines": [
+   "MAAKENMIRE",
+   "SWAMP"
+  ],
+  "ink": {
+   "at": [
+    1480.8,
+    485.7
+   ],
+   "angle": -1.13,
+   "length": 205.3,
+   "thick": 48.7,
+   "box": [
+    1373,
+    458,
+    1580,
+    509
+   ],
+   "fit": {
+    "at": [
+     1480.8,
+     485.7
+    ],
+    "angle": 0,
+    "size": 24.62
+   }
+  }
  },
  {
-  "text": "helgor",
+  "text": "HELGOR",
   "box": [
    217,
    516,
@@ -117,10 +307,33 @@
   ],
   "slant": 1.5,
   "conf": 0.95,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    291.5,
+    538.5
+   ],
+   "angle": 1.85,
+   "length": 126.8,
+   "thick": 29.8,
+   "box": [
+    217,
+    516,
+    352,
+    557
+   ],
+   "fit": {
+    "at": [
+     291.6,
+     536.2
+    ],
+    "angle": 1.35,
+    "size": 24.74
+   }
+  }
  },
  {
-  "text": "helin",
+  "text": "HELIN",
   "box": [
    842,
    506,
@@ -129,10 +342,33 @@
   ],
   "slant": 1.4,
   "conf": 0.91,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    884,
+    520.7
+   ],
+   "angle": 0.59,
+   "length": 74,
+   "thick": 17.4,
+   "box": [
+    842,
+    506,
+    924,
+    533
+   ],
+   "fit": {
+    "at": [
+     884,
+     522.5
+    ],
+    "angle": 0.59,
+    "size": 19.84
+   }
+  }
  },
  {
-  "text": "QuarlenRange",
+  "text": "QUARLEN RANGE",
   "box": [
    1035,
    494,
@@ -141,22 +377,34 @@
   ],
   "slant": 23.6,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1144,
+    564.2
+   ],
+   "angle": 24.54,
+   "length": 232.6,
+   "thick": 43.1,
+   "box": [
+    1035,
+    494,
+    1258,
+    615
+   ],
+   "fit": {
+    "at": [
+     1148.2,
+     554.9
+    ],
+    "angle": 24.54,
+    "size": 26.36
+   }
+  },
+  "named": "QUARLEN RANGE"
  },
  {
-  "text": "swamp",
-  "box": [
-   1413,
-   482,
-   1541,
-   509
-  ],
-  "slant": 0.9,
-  "conf": 1.0,
-  "retype": true
- },
- {
-  "text": "karkaste",
+  "text": "KARKASTE",
   "box": [
    644,
    527,
@@ -165,10 +413,33 @@
   ],
   "slant": 0.9,
   "conf": 0.98,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    719,
+    541.5
+   ],
+   "angle": -0.21,
+   "length": 138,
+   "thick": 17.4,
+   "box": [
+    644,
+    527,
+    794,
+    558
+   ],
+   "fit": {
+    "at": [
+     719,
+     544.3
+    ],
+    "angle": -0.21,
+    "size": 15.44
+   }
+  }
  },
  {
-  "text": "vakovaR",
+  "text": "VAKOVAR",
   "box": [
    468,
    585,
@@ -177,10 +448,33 @@
   ],
   "slant": 1.2,
   "conf": 0.92,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    549,
+    595.2
+   ],
+   "angle": 0.22,
+   "length": 150,
+   "thick": 24.1,
+   "box": [
+    468,
+    585,
+    628,
+    615
+   ],
+   "fit": {
+    "at": [
+     549,
+     599.5
+    ],
+    "angle": 0.22,
+    "size": 19.3
+   }
+  }
  },
  {
-  "text": "LyRis",
+  "text": "LYRIS",
   "box": [
    689,
    599,
@@ -189,58 +483,155 @@
   ],
   "slant": -4.3,
   "conf": 0.95,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    736.8,
+    619.2
+   ],
+   "angle": -4.3,
+   "length": 88.8,
+   "thick": 32.4,
+   "box": [
+    689,
+    599,
+    791,
+    643
+   ],
+   "fit": {
+    "at": [
+     737.1,
+     622.5
+    ],
+    "angle": -4.92,
+    "size": 25.47
+   }
+  }
  },
  {
-  "text": "schaan magaOoR",
+  "text": "SCHAAN",
   "box": [
    104,
    607,
-   449,
+   225,
    647
   ],
   "slant": -0.3,
   "conf": 0.94,
-  "retype": true
+  "retype": true,
+  "named": "SCHAAN",
+  "ink": {
+   "at": [
+    165.5,
+    626.8
+   ],
+   "angle": 1.51,
+   "length": 107.5,
+   "thick": 22.9,
+   "box": [
+    104,
+    607,
+    225,
+    647
+   ],
+   "fit": {
+    "at": [
+     165.4,
+     630.4
+    ],
+    "angle": 1.51,
+    "size": 17.15
+   }
+  }
  },
  {
-  "text": "varetta",
+  "text": "VARETTA",
   "box": [
    814,
    635,
    968,
    665
   ],
-  "slant": -0.0,
+  "slant": 0,
   "conf": 0.94,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    890,
+    645
+   ],
+   "angle": 0.03,
+   "length": 144,
+   "thick": 28,
+   "box": [
+    814,
+    635,
+    968,
+    665
+   ],
+   "fit": {
+    "at": [
+     890,
+     651.7
+    ],
+    "angle": 0.03,
+    "size": 22.46
+   }
+  }
  },
  {
-  "text": "Hr",
+  "text": "QUARLEN",
   "box": [
-   831,
-   621,
-   854,
-   637
-  ],
-  "slant": 86.6,
-  "conf": 0.85,
-  "retype": true
- },
- {
-  "text": "Quarlen",
-  "box": [
-   1105,
-   641,
+   1088,
+   642,
    1264,
-   674
+   675
   ],
   "slant": -0.3,
   "conf": 0.96,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1189.3,
+    662.4
+   ],
+   "angle": -1.16,
+   "length": 146.7,
+   "thick": 30.1,
+   "box": [
+    1088,
+    642,
+    1264,
+    675
+   ],
+   "fit": {
+    "at": [
+     1189.3,
+     661.1
+    ],
+    "angle": -1.16,
+    "size": 25.69
+   }
+  },
+  "set": {
+   "at": [
+    1168.1,
+    659.9
+   ],
+   "size": 25.7,
+   "angle": -0.5
+  },
+  "keep": [
+   [
+    1068,
+    626,
+    1113,
+    683
+   ]
+  ]
  },
  {
-  "text": "casiorn",
+  "text": "CASIORN",
   "box": [
    1472,
    662,
@@ -249,10 +640,33 @@
   ],
   "slant": -0.6,
   "conf": 0.97,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1545.1,
+    676
+   ],
+   "angle": 2.01,
+   "length": 144.4,
+   "thick": 24.2,
+   "box": [
+    1472,
+    662,
+    1622,
+    694
+   ],
+   "fit": {
+    "at": [
+     1545,
+     677.9
+    ],
+    "angle": 2.01,
+    "size": 19.89
+   }
+  }
  },
  {
-  "text": "telc",
+  "text": "TELT",
   "box": [
    282,
    684,
@@ -261,31 +675,116 @@
   ],
   "slant": -1.4,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    313.5,
+    696.7
+   ],
+   "angle": -0.59,
+   "length": 54.9,
+   "thick": 17.2,
+   "box": [
+    282,
+    684,
+    344,
+    709
+   ],
+   "fit": {
+    "at": [
+     313.5,
+     699
+    ],
+    "angle": -0.59,
+    "size": 18.89
+   }
+  }
  },
  {
-  "text": "ssoren",
+  "text": "SOREN",
   "box": [
    682,
    689,
    780,
    712
   ],
-  "slant": -90.0,
+  "slant": -90,
   "conf": 0.83,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    731,
+    702.4
+   ],
+   "angle": -0.16,
+   "length": 88,
+   "thick": 17.1,
+   "box": [
+    682,
+    689,
+    780,
+    712
+   ],
+   "fit": {
+    "at": [
+     731,
+     700.5
+    ],
+    "angle": -0.16,
+    "size": 16.7
+   }
+  },
+  "keep": [
+   [
+    682,
+    712,
+    731,
+    724
+   ]
+  ]
  },
  {
-  "text": "kROD",
+  "text": "KRON",
   "box": [
-   499,
-   759,
-   622,
-   799
+   507,
+   768,
+   586,
+   793
   ],
   "slant": -3.2,
   "conf": 0.79,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    549.6,
+    779.1
+   ],
+   "angle": -3.2,
+   "length": 79.9,
+   "thick": 21.5,
+   "box": [
+    507,
+    768,
+    586,
+    793
+   ],
+   "fit": {
+    "at": [
+     549.7,
+     780.9
+    ],
+    "angle": -3.2,
+    "size": 22.87
+   }
+  },
+  "set": {
+   "at": [
+    549.7,
+    780.9
+   ],
+   "size": 22.9,
+   "angle": -1
+  }
  },
  {
   "text": "R.QUARL",
@@ -297,22 +796,69 @@
   ],
   "slant": -26.7,
   "conf": 0.88,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    931.4,
+    775.2
+   ],
+   "angle": -25.86,
+   "length": 112.3,
+   "thick": 28.8,
+   "box": [
+    862,
+    722,
+    999,
+    822
+   ],
+   "fit": {
+    "at": [
+     929.8,
+     774.1
+    ],
+    "angle": -25.86,
+    "size": 22.72
+   }
+  }
  },
  {
-  "text": "R.churoas",
+  "text": "R. CHURDAS",
   "box": [
    1363,
    755,
    1450,
    927
   ],
-  "slant": 69.0,
+  "slant": 69,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1407.3,
+    841.6
+   ],
+   "angle": 69.01,
+   "length": 161.1,
+   "thick": 19,
+   "box": [
+    1363,
+    755,
+    1450,
+    927
+   ],
+   "fit": {
+    "at": [
+     1405.1,
+     842.4
+    ],
+    "angle": 69.01,
+    "size": 17.13
+   }
+  },
+  "reset": true
  },
  {
-  "text": "solo",
+  "text": "SOLD",
   "box": [
    281,
    771,
@@ -321,10 +867,33 @@
   ],
   "slant": 0.3,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    315.9,
+    783.2
+   ],
+   "angle": -2.6,
+   "length": 62.3,
+   "thick": 18,
+   "box": [
+    281,
+    771,
+    350,
+    798
+   ],
+   "fit": {
+    "at": [
+     316,
+     785.2
+    ],
+    "angle": -2.6,
+    "size": 17.06
+   }
+  }
  },
  {
-  "text": "slouarian",
+  "text": "SLOVARIAN RANGE",
   "box": [
    1053,
    784,
@@ -333,10 +902,37 @@
   ],
   "slant": -19.8,
   "conf": 0.94,
-  "retype": true
+  "retype": true,
+  "lines": [
+   "SLOVARIAN",
+   "RANGE"
+  ],
+  "ink": {
+   "at": [
+    1137.7,
+    834.8
+   ],
+   "angle": -17.99,
+   "length": 147.7,
+   "thick": 48.1,
+   "box": [
+    1053,
+    784,
+    1207,
+    861
+   ],
+   "fit": {
+    "at": [
+     1137.7,
+     832.9
+    ],
+    "angle": 0,
+    "size": 23.65
+   }
+  }
  },
  {
-  "text": "ceners",
+  "text": "CENERS",
   "box": [
    620,
    824,
@@ -344,23 +940,69 @@
    849
   ],
   "slant": 0.7,
-  "conf": 1.0,
-  "retype": true
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    675,
+    840.9
+   ],
+   "angle": 0.16,
+   "length": 102,
+   "thick": 18.1,
+   "box": [
+    620,
+    824,
+    732,
+    849
+   ],
+   "fit": {
+    "at": [
+     675,
+     838.5
+    ],
+    "angle": 0.16,
+    "size": 16.7
+   }
+  }
  },
  {
-  "text": "thel",
+  "text": "THE",
   "box": [
    640,
    803,
    707,
    828
   ],
-  "slant": -90.0,
+  "slant": -90,
   "conf": 0.84,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    677,
+    813.2
+   ],
+   "angle": -0.52,
+   "length": 60.2,
+   "thick": 19.9,
+   "box": [
+    640,
+    803,
+    707,
+    828
+   ],
+   "fit": {
+    "at": [
+     677,
+     817.5
+    ],
+    "angle": -0.52,
+    "size": 17.28
+   }
+  }
  },
  {
-  "text": "amory",
+  "text": "AMORY",
   "box": [
    744,
    836,
@@ -369,34 +1011,69 @@
   ],
   "slant": 0.9,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    804.4,
+    847.3
+   ],
+   "angle": 2.58,
+   "length": 104.8,
+   "thick": 21.9,
+   "box": [
+    744,
+    836,
+    860,
+    864
+   ],
+   "fit": {
+    "at": [
+     804.3,
+     848.9
+    ],
+    "angle": 2.58,
+    "size": 19.72
+   }
+  },
+  "reset": true
  },
  {
-  "text": "Range",
-  "box": [
-   1089,
-   813,
-   1194,
-   873
-  ],
-  "slant": -19.2,
-  "conf": 0.99,
-  "retype": true
- },
- {
-  "text": "oelden",
+  "text": "DELDEN",
   "box": [
    276,
    854,
    427,
    889
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.97,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    349.5,
+    869.5
+   ],
+   "angle": 0.64,
+   "length": 141.2,
+   "thick": 28.4,
+   "box": [
+    276,
+    854,
+    427,
+    889
+   ],
+   "fit": {
+    "at": [
+     349.5,
+     873.7
+    ],
+    "angle": 0.64,
+    "size": 24.95
+   }
+  }
  },
  {
-  "text": "Layen",
+  "text": "LUYEN",
   "box": [
    490,
    870,
@@ -405,10 +1082,33 @@
   ],
   "slant": 1.8,
   "conf": 0.98,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    543.5,
+    891
+   ],
+   "angle": 0.18,
+   "length": 103,
+   "thick": 27.8,
+   "box": [
+    490,
+    870,
+    601,
+    910
+   ],
+   "fit": {
+    "at": [
+     543.5,
+     890.1
+    ],
+    "angle": 0.18,
+    "size": 27.3
+   }
+  }
  },
  {
-  "text": "salony",
+  "text": "SALONY",
   "box": [
    692,
    879,
@@ -417,10 +1117,33 @@
   ],
   "slant": 2.6,
   "conf": 0.98,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    760.3,
+    898.7
+   ],
+   "angle": 2.03,
+   "length": 140.9,
+   "thick": 29.1,
+   "box": [
+    692,
+    879,
+    836,
+    920
+   ],
+   "fit": {
+    "at": [
+     760.3,
+     899.8
+    ],
+    "angle": 2.03,
+    "size": 26.03
+   }
+  }
  },
  {
-  "text": "northpass",
+  "text": "NORTH PASS",
   "box": [
    1081,
    857,
@@ -428,35 +1151,105 @@
    953
   ],
   "slant": -24.4,
-  "conf": 1.0,
-  "retype": true
+  "conf": 1,
+  "retype": true,
+  "named": "NORTH PASS",
+  "ink": {
+   "at": [
+    1167.5,
+    907.9
+   ],
+   "angle": -24.09,
+   "length": 160.8,
+   "thick": 27.4,
+   "box": [
+    1081,
+    857,
+    1251,
+    953
+   ],
+   "fit": {
+    "at": [
+     1166.8,
+     906.2
+    ],
+    "angle": -24.09,
+    "size": 21.74
+   }
+  }
  },
  {
-  "text": "woelo",
+  "text": "WOELD",
   "box": [
    896,
    919,
    1000,
    943
   ],
-  "slant": 0.0,
-  "conf": 1.0,
-  "retype": true
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    943.5,
+    934
+   ],
+   "angle": -0.83,
+   "length": 103.2,
+   "thick": 23.2,
+   "box": [
+    896,
+    919,
+    1000,
+    943
+   ],
+   "fit": {
+    "at": [
+     943.4,
+     932.9
+    ],
+    "angle": -1.33,
+    "size": 21.85
+   }
+  }
  },
  {
-  "text": "Bais",
+  "text": "BAIS",
   "box": [
    373,
    934,
    433,
    954
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.91,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    400.5,
+    945.6
+   ],
+   "angle": 1.83,
+   "length": 59.3,
+   "thick": 18.1,
+   "box": [
+    373,
+    934,
+    433,
+    954
+   ],
+   "fit": {
+    "at": [
+     400.5,
+     945.1
+    ],
+    "angle": 1.58,
+    "size": 18.72
+   }
+  }
  },
  {
-  "text": "ellio",
+  "text": "ELLIO",
   "box": [
    758,
    946,
@@ -465,10 +1258,33 @@
   ],
   "slant": -1.2,
   "conf": 0.96,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    795.4,
+    960.1
+   ],
+   "angle": -0.74,
+   "length": 63.1,
+   "thick": 18.5,
+   "box": [
+    758,
+    946,
+    830,
+    974
+   ],
+   "fit": {
+    "at": [
+     795.5,
+     962
+    ],
+    "angle": -0.74,
+    "size": 20.64
+   }
+  }
  },
  {
-  "text": "Rhem",
+  "text": "RHEM",
   "box": [
    646,
    977,
@@ -477,10 +1293,41 @@
   ],
   "slant": 1.6,
   "conf": 0.97,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    701,
+    995.8
+   ],
+   "angle": 0.71,
+   "length": 106.3,
+   "thick": 27.1,
+   "box": [
+    646,
+    977,
+    759,
+    1009
+   ],
+   "fit": {
+    "at": [
+     701.1,
+     994.1
+    ],
+    "angle": 0.71,
+    "size": 26.31
+   }
+  },
+  "set": {
+   "at": [
+    703.9,
+    995.2
+   ],
+   "size": 24.5,
+   "angle": 0.7
+  }
  },
  {
-  "text": "Rioma",
+  "text": "RIOMA",
   "box": [
    159,
    1034,
@@ -489,10 +1336,33 @@
   ],
   "slant": 0.9,
   "conf": 0.98,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    218.5,
+    1048
+   ],
+   "angle": 0.76,
+   "length": 109.2,
+   "thick": 19.4,
+   "box": [
+    159,
+    1034,
+    278,
+    1061
+   ],
+   "fit": {
+    "at": [
+     218.5,
+     1049.3
+    ],
+    "angle": 0.76,
+    "size": 19.43
+   }
+  }
  },
  {
-  "text": "duaoon",
+  "text": "DUADON",
   "box": [
    505,
    1038,
@@ -501,22 +1371,68 @@
   ],
   "slant": 0.4,
   "conf": 0.91,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    577.5,
+    1048.6
+   ],
+   "angle": 0.69,
+   "length": 139.2,
+   "thick": 22.2,
+   "box": [
+    505,
+    1038,
+    651,
+    1062
+   ],
+   "fit": {
+    "at": [
+     577.5,
+     1050.7
+    ],
+    "angle": 0.69,
+    "size": 24.39
+   }
+  }
  },
  {
-  "text": "tioo",
+  "text": "TIDO",
   "box": [
    902,
    1018,
    970,
    1040
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.88,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    936,
+    1028.8
+   ],
+   "angle": 2.71,
+   "length": 62.4,
+   "thick": 16.8,
+   "box": [
+    902,
+    1018,
+    970,
+    1040
+   ],
+   "fit": {
+    "at": [
+     936,
+     1029.5
+    ],
+    "angle": 2.71,
+    "size": 18.75
+   }
+  }
  },
  {
-  "text": "dausaR",
+  "text": "DAUSAR",
   "box": [
    1477,
    1035,
@@ -525,22 +1441,68 @@
   ],
   "slant": 0.8,
   "conf": 0.85,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1537,
+    1048.5
+   ],
+   "angle": 1.21,
+   "length": 112.2,
+   "thick": 15.1,
+   "box": [
+    1477,
+    1035,
+    1596,
+    1060
+   ],
+   "fit": {
+    "at": [
+     1537,
+     1049
+    ],
+    "angle": 1.21,
+    "size": 16.32
+   }
+  }
  },
  {
-  "text": "nurshat",
+  "text": "NURSHA",
   "box": [
    173,
-   1108,
-   335,
-   1150
+   1120,
+   298,
+   1144
   ],
   "slant": -2.6,
   "conf": 0.87,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    240.5,
+    1129.9
+   ],
+   "angle": 0.14,
+   "length": 121,
+   "thick": 18,
+   "box": [
+    173,
+    1120,
+    298,
+    1144
+   ],
+   "fit": {
+    "at": [
+     240.5,
+     1130.9
+    ],
+    "angle": 0.14,
+    "size": 18.61
+   }
+  }
  },
  {
-  "text": "aBisko",
+  "text": "ABISKO",
   "box": [
    426,
    1110,
@@ -549,22 +1511,68 @@
   ],
   "slant": -1.2,
   "conf": 0.82,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    473.1,
+    1121.5
+   ],
+   "angle": -1.2,
+   "length": 91.9,
+   "thick": 20.7,
+   "box": [
+    426,
+    1110,
+    523,
+    1136
+   ],
+   "fit": {
+    "at": [
+     473.1,
+     1123.9
+    ],
+    "angle": -0.7,
+    "size": 20.6
+   }
+  }
  },
  {
-  "text": "eala",
+  "text": "EULA",
   "box": [
    640,
    1082,
-   748,
+   712,
    1107
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.97,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    679.5,
+    1094.5
+   ],
+   "angle": 0.65,
+   "length": 71.1,
+   "thick": 17.7,
+   "box": [
+    640,
+    1082,
+    712,
+    1107
+   ],
+   "fit": {
+    "at": [
+     679.5,
+     1095.4
+    ],
+    "angle": 0.65,
+    "size": 18.9
+   }
+  }
  },
  {
-  "text": "gRochod",
+  "text": "GROCHOD",
   "box": [
    550,
    1135,
@@ -573,22 +1581,69 @@
   ],
   "slant": -1.7,
   "conf": 0.95,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    619.9,
+    1150.8
+   ],
+   "angle": -1.56,
+   "length": 128.3,
+   "thick": 21.3,
+   "box": [
+    550,
+    1135,
+    688,
+    1167
+   ],
+   "fit": {
+    "at": [
+     619.9,
+     1150.7
+    ],
+    "angle": -1.56,
+    "size": 18.4
+   }
+  },
+  "reset": true
  },
  {
-  "text": "foRest",
+  "text": "FOREST",
   "box": [
    574,
    1159,
    688,
    1189
   ],
-  "slant": -90.0,
+  "slant": -90,
   "conf": 0.9,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    629,
+    1175.3
+   ],
+   "angle": -1.57,
+   "length": 102.3,
+   "thick": 20.9,
+   "box": [
+    574,
+    1159,
+    688,
+    1189
+   ],
+   "fit": {
+    "at": [
+     629,
+     1175
+    ],
+    "angle": -1.57,
+    "size": 17.65
+   }
+  }
  },
  {
-  "text": "eloenora",
+  "text": "ELDENORA",
   "box": [
    113,
    1171,
@@ -597,10 +1652,33 @@
   ],
   "slant": 0.8,
   "conf": 0.95,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    211.6,
+    1187.1
+   ],
+   "angle": 1.1,
+   "length": 187.2,
+   "thick": 27.1,
+   "box": [
+    113,
+    1171,
+    312,
+    1207
+   ],
+   "fit": {
+    "at": [
+     211.6,
+     1191
+    ],
+    "angle": 1.1,
+    "size": 21.45
+   }
+  }
  },
  {
-  "text": "R.Reloni",
+  "text": "R.RELONI",
   "box": [
    337,
    1169,
@@ -609,46 +1687,139 @@
   ],
   "slant": -27.7,
   "conf": 0.97,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    398.2,
+    1258.1
+   ],
+   "angle": 64.3,
+   "length": 146.9,
+   "thick": 29,
+   "box": [
+    337,
+    1169,
+    447,
+    1317
+   ],
+   "fit": {
+    "at": [
+     400.5,
+     1257.3
+    ],
+    "angle": 71.3,
+    "size": 19.39
+   }
+  },
+  "reset": true
  },
  {
-  "text": "tekaro",
+  "text": "TEKARO",
   "box": [
-   789,
-   1173,
-   921,
-   1203
+   777,
+   1174,
+   909,
+   1204
   ],
   "slant": 0.9,
   "conf": 0.96,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    848.9,
+    1186
+   ],
+   "angle": 1.81,
+   "length": 126.8,
+   "thick": 28,
+   "box": [
+    777,
+    1174,
+    909,
+    1204
+   ],
+   "fit": {
+    "at": [
+     848.8,
+     1191.1
+    ],
+    "angle": 1.31,
+    "size": 19.17
+   }
+  }
  },
  {
-  "text": "saentina",
+  "text": "SUENTINA",
   "box": [
    1124,
    1168,
    1282,
    1189
   ],
-  "slant": 0.0,
-  "conf": 1.0,
-  "retype": true
+  "slant": 0,
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    1202,
+    1178.1
+   ],
+   "angle": -0.09,
+   "length": 152,
+   "thick": 18.1,
+   "box": [
+    1124,
+    1168,
+    1282,
+    1189
+   ],
+   "fit": {
+    "at": [
+     1202,
+     1180
+    ],
+    "angle": -0.22,
+    "size": 19.25
+   }
+  }
  },
  {
-  "text": "ostou",
+  "text": "OSTOV",
   "box": [
-   1369,
+   1375,
    1186,
    1470,
    1211
   ],
-  "slant": -90.0,
+  "slant": -90,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1417.4,
+    1202
+   ],
+   "angle": -1.86,
+   "length": 93.5,
+   "thick": 21.8,
+   "box": [
+    1375,
+    1186,
+    1470,
+    1211
+   ],
+   "fit": {
+    "at": [
+     1417.3,
+     1199.1
+    ],
+    "angle": -1.86,
+    "size": 16.09
+   }
+  }
  },
  {
-  "text": "choo",
+  "text": "CHOD",
   "box": [
    741,
    1227,
@@ -657,10 +1828,33 @@
   ],
   "slant": 1.4,
   "conf": 0.99,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    780.9,
+    1245.1
+   ],
+   "angle": -1.45,
+   "length": 76.4,
+   "thick": 23.8,
+   "box": [
+    741,
+    1227,
+    826,
+    1258
+   ],
+   "fit": {
+    "at": [
+     780.9,
+     1244.4
+    ],
+    "angle": -1.45,
+    "size": 19.63
+   }
+  }
  },
  {
-  "text": "slov\u00eda",
+  "text": "SLOVIA",
   "box": [
    1176,
    1238,
@@ -669,22 +1863,68 @@
   ],
   "slant": 0.1,
   "conf": 0.97,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1240,
+    1255.4
+   ],
+   "angle": -0.4,
+   "length": 118.1,
+   "thick": 23.4,
+   "box": [
+    1176,
+    1238,
+    1305,
+    1271
+   ],
+   "fit": {
+    "at": [
+     1240,
+     1258.6
+    ],
+    "angle": -0.4,
+    "size": 21.87
+   }
+  }
  },
  {
-  "text": "Resa",
+  "text": "RESA",
   "box": [
    1464,
    1236,
    1542,
    1261
   ],
-  "slant": -90.0,
+  "slant": -90,
   "conf": 0.85,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    1502.6,
+    1246.2
+   ],
+   "angle": 1.23,
+   "length": 67.2,
+   "thick": 19.1,
+   "box": [
+    1464,
+    1236,
+    1542,
+    1261
+   ],
+   "fit": {
+    "at": [
+     1502.5,
+     1249.5
+    ],
+    "angle": 1.23,
+    "size": 17.56
+   }
+  }
  },
  {
-  "text": "R.suen",
+  "text": "R. SUEN",
   "box": [
    843,
    1249,
@@ -692,44 +1932,78 @@
    1308
   ],
   "slant": -17.7,
-  "conf": 1.0,
-  "retype": true
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    901.4,
+    1274.1
+   ],
+   "angle": -18.41,
+   "length": 103.1,
+   "thick": 24.4,
+   "box": [
+    843,
+    1249,
+    960,
+    1308
+   ],
+   "fit": {
+    "at": [
+     902.8,
+     1278.3
+    ],
+    "angle": -18.41,
+    "size": 22.71
+   }
+  }
  },
  {
-  "text": "LE",
-  "box": [
-   1644,
-   1251,
-   1663,
-   1279
-  ],
-  "slant": 88.9,
-  "conf": 0.99,
-  "retype": true
- },
- {
-  "text": "oredal",
+  "text": "OREDAL",
   "box": [
    178,
    1296,
    290,
    1318
   ],
-  "slant": 0.0,
+  "slant": 0,
   "conf": 0.95,
-  "retype": true
+  "retype": true,
+  "ink": {
+   "at": [
+    234.5,
+    1306.5
+   ],
+   "angle": 0.07,
+   "length": 105,
+   "thick": 17.1,
+   "box": [
+    178,
+    1296,
+    290,
+    1318
+   ],
+   "fit": {
+    "at": [
+     234.5,
+     1308.4
+    ],
+    "angle": 0.07,
+    "size": 16.68
+   }
+  }
  },
  {
   "text": "50",
   "box": [
    1232,
    1284,
-   1305,
-   1312
+   1277,
+   1305
   ],
   "slant": 1.3,
-  "conf": 1.0,
-  "retype": true
+  "conf": 1,
+  "retype": false
  },
  {
   "text": "100",
@@ -739,9 +2013,9 @@
    1372,
    1303
   ],
-  "slant": 0.0,
-  "conf": 1.0,
-  "retype": true
+  "slant": 0,
+  "conf": 1,
+  "retype": false
  },
  {
   "text": "150 200",
@@ -753,10 +2027,33 @@
   ],
   "slant": 0.3,
   "conf": 0.98,
-  "retype": true
+  "retype": false,
+  "ink": {
+   "at": [
+    1482.5,
+    1299.3
+   ],
+   "angle": 0.34,
+   "length": 133,
+   "thick": 22.9,
+   "box": [
+    1407,
+    1282,
+    1553,
+    1308
+   ],
+   "fit": {
+    "at": [
+     1482.5,
+     1294.3
+    ],
+    "angle": 0.34,
+    "size": 16.7
+   }
+  }
  },
  {
-  "text": "gora",
+  "text": "GORA",
   "box": [
    516,
    1322,
@@ -764,23 +2061,46 @@
    1358
   ],
   "slant": -3.3,
-  "conf": 1.0,
-  "retype": true
+  "conf": 1,
+  "retype": true,
+  "ink": {
+   "at": [
+    557.9,
+    1340.6
+   ],
+   "angle": -4.39,
+   "length": 81.1,
+   "thick": 20.8,
+   "box": [
+    516,
+    1322,
+    605,
+    1358
+   ],
+   "fit": {
+    "at": [
+     557.8,
+     1338.5
+    ],
+    "angle": -4.39,
+    "size": 17.84
+   }
+  }
  },
  {
-  "text": "scale",
+  "text": "SCALE",
   "box": [
    1161,
    1336,
    1243,
    1360
   ],
-  "slant": 0.0,
-  "conf": 1.0,
+  "slant": 0,
+  "conf": 1,
   "retype": false
  },
  {
-  "text": "in",
+  "text": "IN",
   "box": [
    1329,
    1333,
@@ -792,7 +2112,7 @@
   "retype": false
  },
  {
-  "text": "miles",
+  "text": "MILES",
   "box": [
    1441,
    1332,
@@ -811,9 +2131,9 @@
    379,
    1454
   ],
-  "slant": 0.0,
-  "conf": 1.0,
-  "retype": true
+  "slant": 0,
+  "conf": 1,
+  "retype": false
  },
  {
   "text": "FOREST",
@@ -823,12 +2143,12 @@
    686,
    1477
   ],
-  "slant": 0.0,
-  "conf": 1.0,
-  "retype": true
+  "slant": 0,
+  "conf": 1,
+  "retype": false
  },
  {
-  "text": "hills",
+  "text": "HILLS",
   "box": [
    828,
    1422,
@@ -837,10 +2157,10 @@
   ],
   "slant": 1.1,
   "conf": 0.88,
-  "retype": true
+  "retype": false
  },
  {
-  "text": "Chasm",
+  "text": "CHASM",
   "box": [
    1156,
    1426,
@@ -849,10 +2169,10 @@
   ],
   "slant": 0.8,
   "conf": 0.95,
-  "retype": true
+  "retype": false
  },
  {
-  "text": "plAINS",
+  "text": "PLAINS",
   "box": [
    1447,
    1423,
@@ -861,10 +2181,10 @@
   ],
   "slant": -0.8,
   "conf": 0.91,
-  "retype": true
+  "retype": false
  },
  {
-  "text": "CAINS",
+  "text": "TAINS",
   "box": [
    279,
    1448,
@@ -873,6 +2193,53 @@
   ],
   "slant": 0.9,
   "conf": 0.97,
-  "retype": true
+  "retype": false
+ },
+ {
+  "text": "MAGAOOR",
+  "box": [
+   246,
+   615,
+   438,
+   642
+  ],
+  "where": "",
+  "small": false,
+  "retype": true,
+  "ink": {
+   "at": [
+    344,
+    629.5
+   ],
+   "angle": -0.46,
+   "length": 192,
+   "thick": 26.7,
+   "box": [
+    246,
+    615,
+    438,
+    642
+   ],
+   "fit": {
+    "at": [
+     343.9,
+     627.1
+    ],
+    "angle": -0.46,
+    "size": 22.07
+   }
+  }
+ },
+ {
+  "text": "0",
+  "box": [
+   1156,
+   1285,
+   1177,
+   1307
+  ],
+  "where": "",
+  "small": false,
+  "retype": false
  }
 ]

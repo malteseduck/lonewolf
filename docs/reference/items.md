@@ -4,7 +4,7 @@ Two jobs done by hand for each imported book, after importing it and writing its
 (`tools/reading_copy.py`): the **item table**, so the engine gives, offers, takes and gates what the
 text says (spec 4.5a), and the **fight pictures**, so every fight has a plate (spec 6.5). Book 1
 has both (2026-10-01); Book 2 has both (table 2026-10-01, pictures 2026-10-02). Books 3-22 have
-their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 and 14 2026-10-17, 15, 16, 17 and 18 2026-10-25, 19 and 20 2026-10-26, 21 2026-10-31, 22 2026-11-02, 23 2026-11-03). The field reference is in `book-format.md` ("Section", "Item tables").
+their tables (Book 3 2026-10-03, 4-12 2026-10-05, 13 and 14 2026-10-17, 15, 16, 17 and 18 2026-10-25, 19 and 20 2026-10-26, 21 2026-10-31, 22 2026-11-02, 23 2026-11-03, 24 2026-11-13). The field reference is in `book-format.md` ("Section", "Item tables").
 
 Never put the book's text anywhere but `data/projectaon/`: tools print section numbers and
 counts, the table holds only the book's short item names, and everything else is in our words.
@@ -310,6 +310,13 @@ Dagger or a Rope (66, 76, 197), the bribes at 112 and 209 (stakes, settled at 26
 (a mark at 104), 335's Flute, the Cavalia and Varedo seizures and their returns, the fights won within some rounds (34, 128, 284),
 Karvas joining after three rounds (25), 60's single pass, and the Kai Weapon's marks. Torqs are no coin the page keeps (74, 161: by hand).
 No importer miss came back.
+Book 24 (from the draft, 2026-11-13): no errors; 23 items, 128 sections; 126 left out. Of the draft's 128 sections, 111 with a todo,
+about 20 needed nothing (the importer's Meals and gates, a meal only eaten, 145's draw no shot, the Arrows of 262 and 293 loosed at 56), 267's
+bounty read as a find of 0 Crowns and 318's supper as a Meal carried, and its bow gates lacked the Arrow. Sections it did not touch needed
+an entry: the Kai Weapon's marks, three-round and one-round fights (75, 136, 154, 182; 80), the dog's first rounds and bare hands (101,
+265, 312), 53's halved blows, Meals Grand Huntmastery cannot spare (13, 63, 162, 194), the vials, potions and Chalice gated and used, the
+Kai Clothes stowed (156, 348) and spared at 67, and 328's offer, a stake added to the number by hand. 178's bonus for mastering the Kai
+Weapon's kind is an `any` of each kind's weapons with its `mastery`. No importer miss came back.
 `--json` also writes `data/projectaon/<book>/check-items.json`, which `tools/book_status.py` reads
 for checklist step 5 (the dashboard's "Check items" runs it so).
 

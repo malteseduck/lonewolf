@@ -392,3 +392,19 @@ hounds-stag-wellcome.jpg
 23mh/sadanzo-s-sorcerous-blades.webp
   Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
   no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-13.
+
+24rw/zorkaan-the-soultaker.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-13.
+
+24rw/guard-dog.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-13.
+
+24rw/3-eldenoran-deserters.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-13.
+
+24rw/farmer-s-son.webp
+  Made with an AI image generator from a text prompt alone (the proposal sheet's prompt);
+  no book picture was given to it, kept uncommitted (ADR 0042). Moved here 2026-11-13.

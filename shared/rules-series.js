@@ -420,6 +420,7 @@
     21: { give: ['mapSeaRoute'], gold: 20, choose: 5, from: ['quarterstaff', 'bow', 'quiver', 'flute', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe'] },
     22: { give: ['mapSoutheastMagnamund', 'moonstone'], gold: 20, choose: 5, from: ['quarterstaff', 'bow', 'quiver', 'flute', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe'] },
     23: { give: ['mapCentralSouthernMagnamund'], gold: 20, choose: 5, from: ['quarterstaff', 'bow', 'quiver', 'flute', 'dagger', 'sword', { meal: 2 }, 'rope', 'potion', 'axe'] },
+    24: { give: ['mapCentralStornlands'], gold: 20, choose: 5, from: ['axe', 'sword', 'quiver', 'lute', 'dagger', 'bow', { meal: 2 }, 'rope', 'potion', 'broadsword'] },
   };
   const entry = (x) => (typeof x === 'string' ? { item: x, n: 1 } : Object.assign({ n: 1 }, x));
   const entryName = (x) => (x.meal ? x.name || (x.meal > 1 ? `${x.meal} Meals` : 'a Meal') : x.n > 1 ? `${x.n} × ${LW.itemName(x.item)}` : LW.itemName(x.item));
