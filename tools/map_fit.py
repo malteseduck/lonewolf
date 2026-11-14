@@ -96,11 +96,22 @@ class Target:
         return a + b
 
 
-def fit(scan_ink, lab, hand, caps, start, turn=True):
+def tallest(lines, font, thick, leading=1):
+    """The type size whose block, as render() draws it (its stroke too), is <thick> px tall."""
+    _, _, h, _ = map_letter.block(lines, font, 100, leading)
+    return 100 * thick / (h + 2 * 100 * map_letter.BOLD)
+
+
+def fit(scan_ink, lab, hand, caps, start, turn=True, most=None):
     """(centre [x, y], angle in radians, type size), all map-2k, fitted from <start> (the same three)
     over the label's ink; <start> itself where there is no ink to fit to. <turn> False keeps the
-    angle (one given by hand, or stacked lines, set level)."""
+    angle (one given by hand, or stacked lines, set level). <most> caps the size: the type is never
+    taller than the printed letters, though it then comes out shorter than they run (owner,
+    2026-11-13: spread to the length, it read bigger than the map's own type)."""
     t = Target(scan_ink, lab)
+    held = most is not None and start[2] > most
+    if held:
+        start = (start[0], start[1], most)
     if t.n < 10:
         return start
     lines = tuple(lab.get('lines') or [lab['text']])
@@ -117,6 +128,8 @@ def fit(scan_ink, lab, hand, caps, start, turn=True):
     if not turn:
         first[2] = 0
     lo, hi = (math.log(max(start[2], 6) * g) for g in GROW)
+    if most is not None:
+        hi = min(hi, math.log(max(most, 6)))
     step = list(first)
     while step[3] > MIN_STEP * first[3]:
         moved = False
@@ -124,7 +137,9 @@ def fit(scan_ink, lab, hand, caps, start, turn=True):
             for sign in (1, -1):
                 q = list(p)
                 q[i] += sign * step[i]
-                if not step[i] or not lo <= q[3] <= hi:
+                if most is not None and q[3] > hi:  # a step past the height cap stops at it
+                    q[3] = hi
+                if not step[i] or q == p or not lo <= q[3] <= hi:
                     continue
                 c = f(q)
                 if c < best - 1e-9:
@@ -132,12 +147,35 @@ def fit(scan_ink, lab, hand, caps, start, turn=True):
                     break
         if not moved:
             step = [v / 2 for v in step]
-    return np.array(p[:2]), math.radians(p[2]), math.exp(p[3])
+    c, ang, size = np.array(p[:2]), math.radians(p[2]), math.exp(p[3])
+    if held or (most is not None and size >= most * 0.99):
+        # held short of the printed name's length: centred along it, not slid to whichever end it
+        # matched best (owner, 2026-11-13); start's centre is the middle of the ink
+        d = np.array([math.cos(ang), math.sin(ang)])
+        c = c + d * float((np.asarray(start[0], float) - c) @ d)
+    return c, ang, size
 
 
-def start(scan_ink, lab, hand, caps):
+def letters_height(scan_ink, lab, centre, ang):
+    """The printed letters' common height: the ink cut across its length in one slice a letter, each
+    slice's height, the median. The whole ink's height takes in the few letters that rise or drop
+    and a curved name's bow, and type that tall read bigger than the map's (owner, 2026-11-13)."""
+    pts = map_letter.ink_points(scan_ink, lab)
+    d = np.array([math.cos(ang), math.sin(ang)])
+    along, across = (pts - centre) @ d, (pts - centre) @ np.array([-d[1], d[0]])
+    k = len(lab['text'].replace(' ', ''))
+    if k < 2 or len(pts) < 10:
+        return None
+    edges = np.linspace(along.min(), along.max(), k + 1)
+    hs = [np.ptp(across[(along >= a) & (along <= b)]) for a, b in zip(edges, edges[1:])
+          if ((along >= a) & (along <= b)).sum() > 5]
+    return float(np.median(hs)) if hs else None
+
+
+def start(scan_ink, lab, hand, caps, most=False):
     """The measure's placement, before the fit: map_letter.geometry's centre and angle, the type size
-    fitted to the ink's length (stacked lines: level, fitted to the box). None with no ink."""
+    fitted to the ink's length (stacked lines: level, fitted to the box). None with no ink.
+    <most> True adds a fourth: the size at which the type is as tall as the printed letters."""
     g = map_letter.geometry(scan_ink, lab)
     if g is None:
         return None
@@ -147,7 +185,14 @@ def start(scan_ink, lab, hand, caps):
         ang = math.radians(lab.get('angle', 0))
         length = (lab['box'][2] - lab['box'][0]) / map_letter.FILL * 0.95
         thick = lab['box'][3] - lab['box'][1]
-    return centre, ang, map_letter.fit_size(lines, font_of(lab, hand, caps), length, thick, lab.get('leading', 1))
+    font, leading = font_of(lab, hand, caps), lab.get('leading', 1)
+    st = (centre, ang, map_letter.fit_size(lines, font, length, thick, leading))
+    if not most:
+        return st
+    tall = thick
+    if not lab.get('lines') and not map_letter.from_box(scan_ink, lab):
+        tall = min(thick, letters_height(scan_ink, lab, centre, ang) or thick)
+    return (*st, tallest(lines, font, tall, leading))
 
 
 _placed = weakref.WeakKeyDictionary()  # LabelInk -> {label: placement}
@@ -160,8 +205,8 @@ def placement(scan_ink, lab, hand, caps):
     done = _placed.setdefault(scan_ink, {})
     key = (str(hand), str(caps), json.dumps({k: v for k, v in lab.items() if k not in ('ink', 'nudge')}, sort_keys=True))
     if key not in done:
-        st = start(scan_ink, lab, hand, caps)
-        done[key] = st and fit(scan_ink, lab, hand, caps, st, turn=not ('angle' in lab or lab.get('lines')))
+        st = start(scan_ink, lab, hand, caps, most=True)
+        done[key] = st and fit(scan_ink, lab, hand, caps, st[:3], turn=not ('angle' in lab or lab.get('lines')), most=st[3])
     return done[key]
 
 

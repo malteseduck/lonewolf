@@ -229,7 +229,11 @@ Commands run from the project root as
    **The fit** (`map_fit.py`, ADR 0004, 2026-11-06) then lays the type over the printed name: a pattern search moves,
    turns and scales it while the type's pixels and the name's ink come closer (each one's mean distance to the
    other, capped at 3 strokes so a speck cannot drag it), each degree turned costing a little (`TURN`) and the size
-   kept within 0.75-1.33 times the measure's (`GROW`: on part of a name's ink it shrank onto it). A hand `angle`,
+   kept within 0.75-1.33 times the measure's (`GROW`: on part of a name's ink it shrank onto it) and never
+   taller than the printed letters (`tallest` at `letters_height`: the ink cut in one slice a letter, the
+   median slice's height, so the few letters that rise or drop and a curved name's bow do not count; owner, 2026-11-13): where the font sets a
+   name narrower than the hand printed it, the type comes out shorter than the ink rather than taller, and is
+   centred along the printed name. A hand `angle`,
    or stacked `lines`, keep their angle; `nudge` moves the fitted type after; `height` and `spread` are not fitted.
    About 3 s a map. `map_fit.py score <book> ...` scores it against the owner's hand placements (`set`): on 14 maps,
    458 of them, 200 came within 3 px, 2 degrees and 6% (the old measure and size pull, 95), and 144 were over 5 px,

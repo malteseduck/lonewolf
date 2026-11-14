@@ -49,6 +49,27 @@ def test_fit_keeps_the_size_within_reach_of_the_start():
     assert size >= 40 * map_fit.GROW[0] - 0.01
 
 
+def test_type_is_never_taller_than_the_printed_letters_even_if_it_comes_out_shorter():
+    # printed wider than the font sets it (letter-spaced): matching its length would make the type taller
+    # than the printed letters, which reads as too big (owner, 2026-11-13)
+    ink = printed('H O L M G A R D', (160, 110), 0, 22)
+    lab = {'text': 'HOLMGARD', 'box': [20, 80, 300, 140], 'retype': True}
+    c, _, size = map_fit.placement(ink, lab, CABIN, CABIN)
+    assert size <= 22 * 1.03
+    assert math.dist(c, (160, 110)) < 1.5  # the shorter type centred on the printed name, not slid to one end
+
+
+def test_the_letters_height_is_the_common_letters_not_the_few_that_rise_or_drop():
+    # a hand whose letters are mostly short, a few rising above them (h, l, d) or dropping (g): the
+    # type's capitals stand no taller than the common letters (owner, 2026-11-13, Book 24)
+    ink = printed('m o r n a v e s h', (160, 110), 0, 22)
+    lab = {'text': 'MORNAVESH', 'box': [20, 80, 300, 140], 'retype': True}
+    _, _, size = map_fit.placement(ink, lab, CABIN, CABIN)
+    _, _, x_height, _ = map_letter.block(['xmoar'], CABIN, 22)
+    _, _, h, _ = map_letter.block(['MORNAVESH'], CABIN, 100)
+    assert size * (h / 100 + 2 * map_letter.BOLD) <= (x_height + 2 * map_letter.BOLD * 22) * 1.15
+
+
 def test_fit_leaves_the_start_where_there_is_no_ink():
     ink = printed('HOLMGARD', (160, 110), 0, 22)
     lab = {'text': 'HOLM', 'box': [5, 5, 40, 30], 'retype': True}
